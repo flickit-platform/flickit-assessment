@@ -8,10 +8,10 @@
 		<version>3.0.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>ir.asta</groupId>
-	<artifactId>assessment-core</artifactId>
+	<groupId>org.flickit</groupId>
+	<artifactId>flickit-assessment-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>assessment-core</name>
+	<name>flickit-assessment-core</name>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
