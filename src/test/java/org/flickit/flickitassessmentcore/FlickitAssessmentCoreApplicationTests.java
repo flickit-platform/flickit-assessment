@@ -1,4 +1,4 @@
-package ir.asta.assessmentcore;
+package org.flickit.flickitassessmentcore;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
