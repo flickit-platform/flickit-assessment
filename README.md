@@ -1,1 +1,1 @@
-# assessment-core
+# Flickit Assessment Core
