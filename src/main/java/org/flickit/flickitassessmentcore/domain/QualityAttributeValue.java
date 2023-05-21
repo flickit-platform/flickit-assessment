@@ -15,7 +15,6 @@ public class QualityAttributeValue {
     private UUID id;
     private AssessmentResult assessmentResult;
     private Long qualityAttributeId;
-    private Integer maturityLevelValue;
     private Long maturityLevelId;
 
     @Override

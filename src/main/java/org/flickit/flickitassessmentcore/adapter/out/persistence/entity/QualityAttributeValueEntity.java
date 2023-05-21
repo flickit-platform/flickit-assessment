@@ -26,8 +26,6 @@ public class QualityAttributeValueEntity {
     private AssessmentResultEntity assessmentResult;
     @Column(name = "quality_attribute_id", nullable = false)
     private Long qualityAttributeId;
-    @Column(name = "maturity_level_value", nullable = false)
-    private Integer maturityLevelValue;
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
 

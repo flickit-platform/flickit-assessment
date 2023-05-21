@@ -21,7 +21,6 @@ public class AssessmentProject {
     private LocalDateTime creationTime;
     private LocalDateTime lastModificationDate;
     private Long assessmentProfileId;
-    private Status status;
     private AssessmentColor colorId;
     private Long spaceId;
     private Long maturityLevelId;

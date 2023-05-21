@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.flickit.flickitassessmentcore.domain.Status;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
@@ -39,9 +38,6 @@ public class AssessmentProjectEntity {
     private LocalDateTime lastModificationDate;
     @Column(name = "assessment_profile_id", nullable = false)
     private Long assessmentProfileId;
-    @Column(name = "status", length = 10)
-    @Enumerated(EnumType.STRING)
-    private Status status;
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "color_id", referencedColumnName = "id")
     private AssessmentColorEntity colorId;
