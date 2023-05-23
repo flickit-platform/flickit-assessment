@@ -16,9 +16,9 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: testdb
+          POSTGRES_USER: rootuser
+          POSTGRES_PASSWORD: changeme
+          POSTGRES_DB: assessment-core
         ports:
           - 5432:5432
 
@@ -34,6 +34,6 @@ jobs:
 
       - name: Build and test
         env:
-          DATABASE_URL: postgres://postgres:password@localhost:5432/testdb
+          DATABASE_URL: postgres://rootuser:changeme@localhost:5432/assessment-core
         run: |
           mvn clean test
