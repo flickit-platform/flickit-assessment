@@ -10,12 +10,12 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.UUID;
 
 @Entity
-@Table(name = "assessment_metricvalue")
+@Table(name = "assessment_answer")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class MetricValueEntity {
+public class AnswerEntity {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -24,10 +24,10 @@ public class MetricValueEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultEntity assessmentResult;
-    @Column(name = "metric_id", nullable = false)
-    private Long metricId;
-    @Column(name = "answer_id")
-    private Long answerId;
+    @Column(name = "question_id", nullable = false)
+    private Long questionId;
+    @Column(name = "answer_option_id")
+    private Long answerOptionId;
 
     @Override
     public String toString() {

@@ -5,18 +5,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class EvidenceRelation {
+public class Answer {
     private UUID id;
-    private AssessmentProject assessmentProject;
-    private Long metricId;
-    private List<Evidence> evidences;
+    private AssessmentResult assessmentResult;
+    private Long questionId;
+    private Long answerOptionId;
 
     @Override
     public String toString() {

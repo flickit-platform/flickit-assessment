@@ -15,7 +15,7 @@ import java.util.UUID;
 public class AssessmentResult {
     private UUID id;
     private AssessmentProject assessmentProject;
-    private List<MetricValue> metricValues;
+    private List<Answer> answers;
     private List<QualityAttributeValue> qualityAttributeValues;
 
     @Override

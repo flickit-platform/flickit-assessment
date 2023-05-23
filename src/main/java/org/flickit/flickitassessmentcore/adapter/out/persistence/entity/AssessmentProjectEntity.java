@@ -36,8 +36,8 @@ public class AssessmentProjectEntity {
     private LocalDateTime creationTime;
     @Column(name = "last_modification_date", nullable = false)
     private LocalDateTime lastModificationDate;
-    @Column(name = "assessment_profile_id", nullable = false)
-    private Long assessmentProfileId;
+    @Column(name = "assessment_kit_id", nullable = false)
+    private Long assessmentKitId;
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "color_id", referencedColumnName = "id")
     private AssessmentColorEntity colorId;
