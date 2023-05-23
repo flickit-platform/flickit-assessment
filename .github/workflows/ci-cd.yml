@@ -41,7 +41,7 @@ jobs:
       - name: Set up PostgreSQL
         run: |
           sudo apt-get install postgresql-client
-          psql -h localhost -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
+          psql -h postgres -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
 
       - name: Build with Maven
         run: mvn clean package
