@@ -16,9 +16,9 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: rootuser
-          POSTGRES_PASSWORD: changeme
-          POSTGRES_DB: assessment-core
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: github_actions
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -35,6 +35,6 @@ jobs:
 
       - name: Build and test
         env:
-          DATABASE_URL: jdbc:postgresql://postgres:5432/assessment-core
+          DATABASE_URL: postgres://postgres:password@localhost:5432/testdb
         run: |
           mvn clean test
