@@ -11,7 +11,7 @@ env:
   POSTGRES_USER: rootuser
   POSTGRES_PASSWORD: changeme
   POSTGRES_DB: assessment-core
-  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/assessment-core
+  SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/assessment-core
 
 jobs:
   build:
