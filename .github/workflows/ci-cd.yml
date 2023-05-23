@@ -35,6 +35,6 @@ jobs:
 
       - name: Build and test
         env:
-          SPRING_DATASOURCE_URL: jdbc://postgres:5432/assessment-core
+          SPRING_DATASOURCE_URL: postgres://postgres:5432/assessment-core
         run: |
           mvn clean test
