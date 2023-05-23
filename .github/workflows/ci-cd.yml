@@ -35,6 +35,6 @@ jobs:
 
       - name: Build and test
         env:
-          DATABASE_URL: postgres://rootuser:changeme@localhost:5432/assessment-core
+          DATABASE_URL: jdbc://postgres:5432/assessment-core
         run: |
           mvn clean test
