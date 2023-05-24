@@ -14,7 +14,7 @@ import java.util.List;
 public class AssessmentColor {
     private Long id;
     private String title;
-    private String color_code;
+    private String colorCode;
     private List<AssessmentProject> assessmentProjects;
 
     @Override

@@ -12,10 +12,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "assessment_assessmentproject",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"title", "space_id"}),
-                @UniqueConstraint(columnNames = {"code", "space_id"})
-        })
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"title", "space_id"}),
+        @UniqueConstraint(columnNames = {"code", "space_id"})
+    })
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
