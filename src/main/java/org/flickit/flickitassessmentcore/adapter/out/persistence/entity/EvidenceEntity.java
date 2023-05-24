@@ -29,8 +29,10 @@ public class EvidenceEntity {
     @Column(name = "created_by_id", nullable = false)
     private Long createdById;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "evidence_relation_id", nullable = false)
-    private EvidenceRelationEntity evidenceRelation;
+    @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
+    private AssessmentProjectEntity assessmentProject;
+    @Column(name = "question_id", nullable = false)
+    private Long questionId;
 
     @Override
     public String toString() {

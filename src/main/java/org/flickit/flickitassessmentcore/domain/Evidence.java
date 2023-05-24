@@ -18,7 +18,8 @@ public class Evidence {
     private LocalDateTime creationTime;
     private LocalDateTime lastModificationDate;
     private Long createdById;
-    private EvidenceRelation evidenceRelation;
+    private AssessmentProject assessmentProject;
+    private Long questionId;
 
     @Override
     public String toString() {

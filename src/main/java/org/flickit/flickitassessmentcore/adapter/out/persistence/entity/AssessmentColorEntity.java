@@ -20,7 +20,7 @@ public class AssessmentColorEntity {
     @Column(name = "title", length = 40, unique = true, nullable = false)
     private String title;
     @Column(name = "color_code", length = 20, unique = true, nullable = false)
-    private String color_code;
+    private String colorCode;
 
     @Override
     public String toString() {
