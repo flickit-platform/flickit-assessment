@@ -8,10 +8,8 @@ import org.flickit.flickitassessmentcore.application.service.exception.NoAnswerF
 import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -23,8 +21,8 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
     @Override
     public MaturityLevel calculateQualityAttributeMaturityLevel(Set<AssessmentResult> assessmentResults, Long qualityAttributeId) {
         QualityAttribute qualityAttribute = loadQualityAttribute.loadQualityAttribute(qualityAttributeId);
-        Map<QuestionImpact, Integer> impactSumsMap = new HashMap<>();
-        Map<QuestionImpact, Integer> impactCountMap = new HashMap<>();
+        Map<Long, Integer> maturityLevelSumsMap = new HashMap<>();
+        Map<Long, Integer> maturityLevelCountMap = new HashMap<>();
         qualityAttribute.getAssessmentSubject().getQuestionnaires().forEach(questionnaire -> {
             questionnaire.getQuestions().forEach(question -> {
                 Set<QualityAttribute> qualityAttributes = question.getQualityAttributes();
@@ -36,20 +34,21 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
                             if (impact.getOption().getId().equals(questionAnswer.getId())) {
                                 QuestionImpact questionImpact = impact.getImpact();
                                 Integer value = (impact.getValue().intValueExact()) * impact.getImpact().getWeight();
-                                impactSumsMap.put(questionImpact, impactSumsMap.getOrDefault(questionImpact, 0) + value);
-                                impactCountMap.put(questionImpact, impactCountMap.getOrDefault(questionImpact, 0) + 1);
+                                maturityLevelSumsMap.put(questionImpact.getMaturityLevel().getId(), maturityLevelSumsMap.getOrDefault(questionImpact, 0) + value);
+                                maturityLevelCountMap.put(questionImpact.getMaturityLevel().getId(), maturityLevelCountMap.getOrDefault(questionImpact, 0) + 1);
                             }
                         }
                     }
                 }
             });
         });
-        Map<QuestionImpact, Integer> qualityAttributeImpactScoreMap = new HashMap<>();
-        for (QuestionImpact questionImpact : impactSumsMap.keySet()) {
-            qualityAttributeImpactScoreMap.put(questionImpact, impactSumsMap.get(questionImpact) / impactCountMap.get(questionImpact));
+        Map<Long, Integer> qualityAttributeImpactScoreMap = new HashMap<>();
+        for (Long maturityLevelId : maturityLevelSumsMap.keySet()) {
+            qualityAttributeImpactScoreMap.put(maturityLevelId, maturityLevelSumsMap.get(maturityLevelId) / maturityLevelCountMap.get(maturityLevelId));
         }
-        // NOW CHECK THE LEVELS AND FIND THE MATURITY LEVEL
-        return new MaturityLevel();
+        List<MaturityLevel> maturityLevels = qualityAttribute.getAssessmentSubject().getAssessmentProfile().getMaturityLevels().stream().toList();
+        MaturityLevel qualityAttributeMaturityLevel = findMaturityLevel(qualityAttributeImpactScoreMap, maturityLevels);
+        return qualityAttributeMaturityLevel;
     }
 
     private AnswerOption findQuestionAnswer(Set<AssessmentResult> assessmentResults, Question question) {
@@ -62,6 +61,28 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
             }
         }
         throw new NoAnswerFoundException("Question «" + question.getTitle() + " » has no answer!");
+    }
+
+    /**
+     * This method sorts maturity level list of desired profile by its value.
+     * Then iterates over level competences and compares through thresholds.
+     * If no threshold fulfills, it will return first maturity level.
+     */
+    private MaturityLevel findMaturityLevel(Map<Long, Integer> qualityAttributeImpactScoreMap, List<MaturityLevel> maturityLevels) {
+        MaturityLevel result = maturityLevels.get(0);
+        maturityLevels.sort(Comparator.comparingInt(MaturityLevel::getValue));
+        for (MaturityLevel maturityLevel : maturityLevels) {
+            List<LevelCompetence> levelCompetences = maturityLevel.getLevelCompetences().stream().collect(Collectors.toList());
+            for (LevelCompetence levelCompetence : levelCompetences) {
+                Long id = levelCompetence.getMaturityLevelCompetence().getId();
+                if (qualityAttributeImpactScoreMap.containsKey(id) && qualityAttributeImpactScoreMap.get(id) >= levelCompetence.getValue()) {
+                    result = maturityLevels.stream().filter(ml -> ml.getId().equals(id)).findFirst().get();
+                } else {
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
 }

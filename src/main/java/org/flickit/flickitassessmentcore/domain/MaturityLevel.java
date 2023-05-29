@@ -24,4 +24,5 @@ public class MaturityLevel {
     private Set<Assessment> assessments;
     private Set<QualityAttributeValue> qualityAttributeValues;
     private Set<QuestionImpact> questionImpacts;
+    private Set<LevelCompetence> levelCompetences;
 }
