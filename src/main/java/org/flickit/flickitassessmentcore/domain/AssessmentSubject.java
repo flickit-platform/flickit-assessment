@@ -6,23 +6,26 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class Evidence {
-    private UUID id;
+public class AssessmentSubject {
+    private Long id;
+    private String code;
+    private String title;
     private String description;
     private LocalDateTime creationTime;
     private LocalDateTime lastModificationDate;
-    private Long createdById;
-    private Assessment assessment;
-    private Question question;
+    private Integer index;
+    private AssessmentKit assessmentProfile;
+    private Set<Questionnaire> questionnaires;
+    private Set<QualityAttribute> qualityAttributes;
 
     @Override
     public String toString() {
-        return id.toString();
+        return title;
     }
 }

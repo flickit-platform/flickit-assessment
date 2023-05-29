@@ -5,20 +5,15 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentColor {
+public class AnswerOptionImpact {
     private Long id;
-    private String title;
-    private String colorCode;
-    private List<Assessment> assessments;
-
-    @Override
-    public String toString() {
-        return title;
-    }
+    private BigDecimal value;
+    private AnswerOption option;
+    private QuestionImpact impact;
 }

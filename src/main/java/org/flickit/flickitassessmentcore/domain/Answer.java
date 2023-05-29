@@ -14,8 +14,8 @@ import java.util.UUID;
 public class Answer {
     private UUID id;
     private AssessmentResult assessmentResult;
-    private Long questionId;
-    private Long answerOptionId;
+    private Question question;
+    private AnswerOption answerOption;
 
     @Override
     public String toString() {

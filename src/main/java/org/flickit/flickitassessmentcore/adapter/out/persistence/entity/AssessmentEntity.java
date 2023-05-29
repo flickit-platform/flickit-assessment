@@ -5,13 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.flickit.flickitassessmentcore.domain.AssessmentResult;
+import org.flickit.flickitassessmentcore.domain.Evidence;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
-@Table(name = "assessment_assessmentproject",
+@Table(name = "assessment_assessment",
     uniqueConstraints = {
         @UniqueConstraint(columnNames = {"title", "space_id"}),
         @UniqueConstraint(columnNames = {"code", "space_id"})
@@ -20,7 +22,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentProjectEntity {
+public class AssessmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -40,7 +42,7 @@ public class AssessmentProjectEntity {
     private Long assessmentKitId;
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "color_id", referencedColumnName = "id")
-    private AssessmentColorEntity colorId;
+    private AssessmentColorEntity color;
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
     @Column(name = "maturity_level_id")
@@ -51,7 +53,16 @@ public class AssessmentProjectEntity {
         return title;
     }
 
+    public Set<AssessmentResult> getAssessmentResults() {
+        return new HashSet<>();
+    }
+
+    public Set<Evidence> getEvidences() {
+        return new HashSet<>();
+    }
+
     /* TODO:
-     *  - getAssessmentResult
+     *  - getAssessmentResults
+     *  - getEvidences
      */
 }

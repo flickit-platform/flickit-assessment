@@ -5,20 +5,18 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentColor {
+public class AnswerOption {
     private Long id;
-    private String title;
-    private String colorCode;
-    private List<Assessment> assessments;
-
-    @Override
-    public String toString() {
-        return title;
-    }
+    private Question question;
+    private String caption;
+    private Integer value;
+    private Integer index;
+    private Set<Answer> answers;
+    private Set<AnswerOptionImpact> answerOptionImpacts;
 }

@@ -5,20 +5,18 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class QualityAttributeValue {
-    private UUID id;
-    private AssessmentResult assessmentResult;
-    private QualityAttribute qualityAttribute;
+public class QuestionImpact {
+    private Long id;
+    private Integer level;
     private MaturityLevel maturityLevel;
-
-    @Override
-    public String toString() {
-        return id.toString();
-    }
+    private Question question;
+    private QualityAttribute qualityAttribute;
+    private Integer weight;
+    private Set<AnswerOptionImpact> answerOptionImpacts;
 }
