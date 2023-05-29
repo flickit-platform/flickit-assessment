@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 public class CreateAssessmentProjectCommand extends SelfValidating<CreateAssessmentProjectCommand> {
 
-    private final String code;
+    private String code;
     @NotBlank
     private final String title;
     @NotBlank
@@ -25,6 +25,22 @@ public class CreateAssessmentProjectCommand extends SelfValidating<CreateAssessm
     private AssessmentColorDto color;
     @NotNull
     private final Long spaceId;
+
+    public CreateAssessmentProjectCommand(String title,
+                                          String description,
+                                          Long spaceId,
+                                          Long assessmentKitId,
+                                          Long colorId) {
+
+        this.title = title;
+        this.description = description;
+        this.spaceId = spaceId;
+        this.assessmentKitId = assessmentKitId;
+        this.color = new AssessmentColorDto(colorId);
+        this.creationTime = LocalDateTime.now();
+        this.lastModificationDate = LocalDateTime.now();
+        this.validateSelf();
+    }
 
     public CreateAssessmentProjectCommand(String code,
                                           String title,
