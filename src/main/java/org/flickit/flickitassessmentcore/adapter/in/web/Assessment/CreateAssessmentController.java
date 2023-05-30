@@ -6,24 +6,21 @@ import org.flickit.flickitassessmentcore.application.port.in.Assessment.CreateAs
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/assessments")
+@RequestMapping("{spaceId}/assessments")
 public class CreateAssessmentController {
     private final CreateAssessmentUseCase createAssessmentUseCase;
     private final CreateAssessmentWebModelMapper mapper;
 
     @PostMapping
-    public ResponseEntity<UUID> createAssessment(@RequestBody CreateAssessmentWebModel model) {
-        CreateAssessmentCommand createAssessmentCommand = mapper.mapWebModelToCommand(model);
+    public ResponseEntity<UUID> createAssessment(@RequestBody CreateAssessmentWebModel model, @PathVariable("spaceId") Long spaceId) {
+        CreateAssessmentCommand createAssessmentCommand = mapper.mapWebModelToCommand(model, spaceId);
         UUID uuid = createAssessmentUseCase.createAssessment(createAssessmentCommand);
         return new ResponseEntity<>(uuid, HttpStatus.CREATED);
     }

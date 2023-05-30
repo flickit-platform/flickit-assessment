@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CreateAssessmentWebModelMapper {
-    public CreateAssessmentCommand mapWebModelToCommand(CreateAssessmentWebModel webModel) {
+    public CreateAssessmentCommand mapWebModelToCommand(CreateAssessmentWebModel webModel, Long spaceId) {
         return new CreateAssessmentCommand(
             webModel.title(),
             webModel.description(),
-            webModel.spaceId(),
+            spaceId,
             webModel.assessmentKitId(),
             webModel.colorId()
         );
