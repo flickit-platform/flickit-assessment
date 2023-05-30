@@ -1,14 +1,14 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.AssessmentProject;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.Assessment;
 
 import org.flickit.flickitassessmentcore.adapter.out.persistence.entity.AssessmentColorEntity;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.entity.AssessmentProjectEntity;
-import org.flickit.flickitassessmentcore.application.port.in.AssessmentProject.CreateAssessmentProjectCommand;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.entity.AssessmentEntity;
+import org.flickit.flickitassessmentcore.application.port.in.Assessment.CreateAssessmentCommand;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AssessmentProjectMapper {
-    AssessmentProjectEntity mapCreateCommandToJpaEntity(CreateAssessmentProjectCommand command) {
-        return new AssessmentProjectEntity(
+public class AssessmentMapper {
+    AssessmentEntity mapCreateCommandToJpaEntity(CreateAssessmentCommand command) {
+        return new AssessmentEntity(
             null,
             command.getCode(),
             command.getTitle(),

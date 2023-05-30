@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.port.in.AssessmentProject;
+package org.flickit.flickitassessmentcore.application.port.in.Assessment;
 
 import lombok.Getter;
 

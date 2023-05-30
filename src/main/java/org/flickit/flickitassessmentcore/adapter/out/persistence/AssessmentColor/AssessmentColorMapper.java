@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.AssessmentColor;
 
 import org.flickit.flickitassessmentcore.adapter.out.persistence.entity.AssessmentColorEntity;
-import org.flickit.flickitassessmentcore.application.port.in.AssessmentProject.AssessmentColorDto;
+import org.flickit.flickitassessmentcore.application.port.in.Assessment.AssessmentColorDto;
 import org.springframework.stereotype.Component;
 
 @Component

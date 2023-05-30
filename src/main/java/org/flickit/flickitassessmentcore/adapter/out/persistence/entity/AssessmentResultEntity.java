@@ -22,8 +22,8 @@ public class AssessmentResultEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assessment_project_id", referencedColumnName = "id", nullable = false)
-    private AssessmentProjectEntity assessmentProject;
+    @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
+    private AssessmentEntity assessment;
 
     @Override
     public String toString() {

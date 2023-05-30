@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.port.in.AssessmentProject;
+package org.flickit.flickitassessmentcore.application.port.in.Assessment;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import org.flickit.flickitassessmentcore.common.SelfValidating;
 import java.time.LocalDateTime;
 
 @Getter
-public class CreateAssessmentProjectCommand extends SelfValidating<CreateAssessmentProjectCommand> {
+public class CreateAssessmentCommand extends SelfValidating<CreateAssessmentCommand> {
 
     private String code;
     @NotBlank
@@ -26,11 +26,11 @@ public class CreateAssessmentProjectCommand extends SelfValidating<CreateAssessm
     @NotNull
     private final Long spaceId;
 
-    public CreateAssessmentProjectCommand(String title,
-                                          String description,
-                                          Long spaceId,
-                                          Long assessmentKitId,
-                                          Long colorId) {
+    public CreateAssessmentCommand(String title,
+                                   String description,
+                                   Long spaceId,
+                                   Long assessmentKitId,
+                                   Long colorId) {
 
         this.title = title;
         this.description = description;
@@ -42,14 +42,14 @@ public class CreateAssessmentProjectCommand extends SelfValidating<CreateAssessm
         this.validateSelf();
     }
 
-    public CreateAssessmentProjectCommand(String code,
-                                          String title,
-                                          String description,
-                                          LocalDateTime creationTime,
-                                          LocalDateTime lastModificationDate,
-                                          Long assessmentKitId,
-                                          AssessmentColorDto color,
-                                          Long spaceId) {
+    public CreateAssessmentCommand(String code,
+                                   String title,
+                                   String description,
+                                   LocalDateTime creationTime,
+                                   LocalDateTime lastModificationDate,
+                                   Long assessmentKitId,
+                                   AssessmentColorDto color,
+                                   Long spaceId) {
         this.code = code;
         this.title = title;
         this.description = description;

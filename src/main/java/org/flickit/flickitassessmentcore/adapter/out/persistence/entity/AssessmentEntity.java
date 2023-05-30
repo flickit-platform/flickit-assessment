@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "assessment_assessmentproject",
+@Table(name = "assessment_assessment",
     uniqueConstraints = {
         @UniqueConstraint(columnNames = {"title", "space_id"}),
         @UniqueConstraint(columnNames = {"code", "space_id"})
@@ -20,7 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentProjectEntity {
+public class AssessmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")

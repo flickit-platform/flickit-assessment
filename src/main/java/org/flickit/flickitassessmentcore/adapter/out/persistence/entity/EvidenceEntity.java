@@ -30,7 +30,7 @@ public class EvidenceEntity {
     private Long createdById;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
-    private AssessmentProjectEntity assessmentProject;
+    private AssessmentEntity assessment;
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 

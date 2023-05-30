@@ -2,7 +2,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.AssessmentColo
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.entity.AssessmentColorEntity;
-import org.flickit.flickitassessmentcore.application.port.in.AssessmentProject.AssessmentColorDto;
+import org.flickit.flickitassessmentcore.application.port.in.Assessment.AssessmentColorDto;
 import org.flickit.flickitassessmentcore.application.port.out.AssessmentColor.LoadAssessmentColorByIdPort;
 import org.springframework.stereotype.Component;
 

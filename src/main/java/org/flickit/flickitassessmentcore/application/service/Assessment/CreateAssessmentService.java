@@ -1,33 +1,33 @@
-package org.flickit.flickitassessmentcore.application.service.AssessmentProject;
+package org.flickit.flickitassessmentcore.application.service.Assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.AssessmentProject.AssessmentColorDto;
-import org.flickit.flickitassessmentcore.application.port.in.AssessmentProject.CreateAssessmentProjectCommand;
-import org.flickit.flickitassessmentcore.application.port.in.AssessmentProject.CreateAssessmentProjectUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.Assessment.AssessmentColorDto;
+import org.flickit.flickitassessmentcore.application.port.in.Assessment.CreateAssessmentCommand;
+import org.flickit.flickitassessmentcore.application.port.in.Assessment.CreateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.AssessmentColor.LoadAssessmentColorByIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.AssessmentProject.CreateAssessmentProjectPort;
+import org.flickit.flickitassessmentcore.application.port.out.Assessment.CreateAssessmentPort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class CreateAssessmentProjectService implements CreateAssessmentProjectUseCase {
+public class CreateAssessmentService implements CreateAssessmentUseCase {
 
-    private final CreateAssessmentProjectPort createAssessmentProjectPort;
+    private final CreateAssessmentPort createAssessmentPort;
     private final LoadAssessmentColorByIdPort loadAssessmentColorByIdPort;
 
     @Override
-    public UUID createAssessmentProject(CreateAssessmentProjectCommand createAssessmentProjectCommand) {
-        CreateAssessmentProjectCommand refinedCommand = refineProperties(createAssessmentProjectCommand);
-        return createAssessmentProjectPort.persist(refinedCommand);
+    public UUID createAssessment(CreateAssessmentCommand createAssessmentCommand) {
+        CreateAssessmentCommand refinedCommand = refineProperties(createAssessmentCommand);
+        return createAssessmentPort.persist(refinedCommand);
     }
 
-    private CreateAssessmentProjectCommand refineProperties(CreateAssessmentProjectCommand createCommand) {
+    private CreateAssessmentCommand refineProperties(CreateAssessmentCommand createCommand) {
         String code = createCommand.generateSlugCodeByTitle();
         AssessmentColorDto color = loadColor(createCommand.getColor());
 
-        return new CreateAssessmentProjectCommand(
+        return new CreateAssessmentCommand(
             code,
             createCommand.getTitle(),
             createCommand.getDescription(),

@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.port.in.AssessmentProject;
+package org.flickit.flickitassessmentcore.application.port.in.Assessment;
 
 import org.junit.jupiter.api.Test;
 
@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CreateAssessmentProjectCommandTest {
+class CreateAssessmentCommandTest {
 
     @Test
     void generateSlugCodeByTitle_NoWhitespace_ReturnsLowerCaseCode() {
         String title = "ExampleTitle";
-        CreateAssessmentProjectCommand command = createCommandWithTitle(title);
+        CreateAssessmentCommand command = createCommandWithTitle(title);
 
         String code = command.generateSlugCodeByTitle();
 
@@ -22,7 +22,7 @@ class CreateAssessmentProjectCommandTest {
     @Test
     void generateSlugCodeByTitle_WithWhitespace_ReturnsLowerCaseCodeWithHyphens() {
         String title = "Example Title with Whitespace";
-        CreateAssessmentProjectCommand command = createCommandWithTitle(title);
+        CreateAssessmentCommand command = createCommandWithTitle(title);
 
         String code = command.generateSlugCodeByTitle();
 
@@ -32,7 +32,7 @@ class CreateAssessmentProjectCommandTest {
     @Test
     void generateSlugCodeByTitle_WithLeadingAndTrailingWhitespace_ReturnsLowerCaseCodeWithHyphens() {
         String title = "  Example Title with   Leading and Trailing   Whitespace  ";
-        CreateAssessmentProjectCommand command = createCommandWithTitle(title);
+        CreateAssessmentCommand command = createCommandWithTitle(title);
 
         String code = command.generateSlugCodeByTitle();
 
@@ -41,10 +41,10 @@ class CreateAssessmentProjectCommandTest {
 
 
     @Test
-    void createAssessmentProject_ValidCommand_CreationTimeIsAccurate() {
+    void createAssessment_ValidCommand_CreationTimeIsAccurate() {
         LocalDateTime beforeCreateAssessment = LocalDateTime.now();
-        CreateAssessmentProjectCommand command =
-            new CreateAssessmentProjectCommand(
+        CreateAssessmentCommand command =
+            new CreateAssessmentCommand(
                 "title",
                 "description example",
                 1L,
@@ -59,10 +59,10 @@ class CreateAssessmentProjectCommandTest {
 
 
     @Test
-    void createAssessmentProject_ValidCommand_LastModificationDateIsAccurate() {
+    void createAssessment_ValidCommand_LastModificationDateIsAccurate() {
         LocalDateTime beforeCreateAssessment = LocalDateTime.now();
-        CreateAssessmentProjectCommand command =
-            new CreateAssessmentProjectCommand(
+        CreateAssessmentCommand command =
+            new CreateAssessmentCommand(
                 "title",
                 "description example",
                 1L,
@@ -75,8 +75,8 @@ class CreateAssessmentProjectCommandTest {
         assertTrue(afterCreateAssessment.isAfter(command.getLastModificationDate()));
     }
 
-    private static CreateAssessmentProjectCommand createCommandWithTitle(String title) {
-        return new CreateAssessmentProjectCommand(
+    private static CreateAssessmentCommand createCommandWithTitle(String title) {
+        return new CreateAssessmentCommand(
             title,
             "description example",
             1L,

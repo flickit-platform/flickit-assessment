@@ -14,7 +14,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class AssessmentResult {
     private UUID id;
-    private AssessmentProject assessmentProject;
+    private Assessment assessment;
     private List<Answer> answers;
     private List<QualityAttributeValue> qualityAttributeValues;
 

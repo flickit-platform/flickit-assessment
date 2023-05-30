@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentProject {
+public class Assessment {
     private UUID id;
     private String code;
     private String title;

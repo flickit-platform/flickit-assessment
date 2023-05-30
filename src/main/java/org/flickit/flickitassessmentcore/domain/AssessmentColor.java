@@ -15,7 +15,7 @@ public class AssessmentColor {
     private Long id;
     private String title;
     private String colorCode;
-    private List<AssessmentProject> assessmentProjects;
+    private List<Assessment> assessments;
 
     @Override
     public String toString() {
