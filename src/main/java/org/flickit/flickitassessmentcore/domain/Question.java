@@ -26,6 +26,10 @@ public class Question {
     private Set<Evidence> evidences;
     private Set<QualityAttribute> qualityAttributes;
 
+    public Question(Long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return title;

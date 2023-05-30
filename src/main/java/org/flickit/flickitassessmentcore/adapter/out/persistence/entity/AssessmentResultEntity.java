@@ -5,8 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.flickit.flickitassessmentcore.domain.Answer;
+import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -24,6 +28,14 @@ public class AssessmentResultEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
     private AssessmentEntity assessment;
+
+    public List<AnswerEntity> getAnswers() {
+        return new ArrayList<>();
+    }
+
+    public List<QualityAttributeValueEntity> getQualityAttributeValues() {
+        return new ArrayList<>();
+    }
 
     @Override
     public String toString() {

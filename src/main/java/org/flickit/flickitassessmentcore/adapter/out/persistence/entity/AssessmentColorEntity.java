@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "assessment_color")
 @Data
@@ -27,4 +30,7 @@ public class AssessmentColorEntity {
         return title;
     }
 
+    public Set<AssessmentEntity> getAssessments() {
+        return new HashSet<>();
+    }
 }

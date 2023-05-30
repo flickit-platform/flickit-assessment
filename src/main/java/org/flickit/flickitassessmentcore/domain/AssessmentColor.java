@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +15,7 @@ public class AssessmentColor {
     private Long id;
     private String title;
     private String colorCode;
-    private List<Assessment> assessments;
+    private Set<Assessment> assessments;
 
     @Override
     public String toString() {

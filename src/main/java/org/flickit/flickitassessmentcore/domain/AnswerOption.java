@@ -19,4 +19,8 @@ public class AnswerOption {
     private Integer index;
     private Set<Answer> answers;
     private Set<AnswerOptionImpact> answerOptionImpacts;
+
+    public AnswerOption(Long id) {
+        this.id = id;
+    }
 }

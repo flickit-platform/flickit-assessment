@@ -26,6 +26,10 @@ public class QualityAttribute {
     private Set<QuestionImpact> questionImpacts;
     private Set<Question> questions;
 
+    public QualityAttribute(Long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return title;

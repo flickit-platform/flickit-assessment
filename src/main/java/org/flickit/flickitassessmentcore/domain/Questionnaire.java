@@ -20,7 +20,7 @@ public class Questionnaire {
     private LocalDateTime creationTime;
     private LocalDateTime lastModificationDate;
     private Integer index;
-    private AssessmentKit assessmentProfile;
+    private AssessmentKit assessmentKit;
     private Set<Question> questions;
     private Set<AssessmentSubject> subjects;
 

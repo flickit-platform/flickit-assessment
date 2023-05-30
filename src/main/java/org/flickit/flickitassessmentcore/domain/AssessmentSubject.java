@@ -20,7 +20,7 @@ public class AssessmentSubject {
     private LocalDateTime creationTime;
     private LocalDateTime lastModificationDate;
     private Integer index;
-    private AssessmentKit assessmentProfile;
+    private AssessmentKit assessmentKit;
     private Set<Questionnaire> questionnaires;
     private Set<QualityAttribute> qualityAttributes;
 
