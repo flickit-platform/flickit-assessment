@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentPersistence implements CreateAssessmentPort {
+public class AssessmentPersistenceJpaAdaptor implements CreateAssessmentPort {
 
     private final AssessmentJpaRepository assessmentJpaRepository;
     @Override

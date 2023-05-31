@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentColorPersistence
+public class AssessmentColorPersistenceJpaAdaptor
     implements LoadAssessmentColorByIdPort {
     private final AssessmentColorJpaRepository assessmentColorJpaRepository;
 
