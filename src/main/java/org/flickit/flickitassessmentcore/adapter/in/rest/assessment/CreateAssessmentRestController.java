@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("{spaceId}/assessments")
@@ -17,13 +19,27 @@ public class CreateAssessmentRestController {
     public ResponseEntity<CreateAssessmentResponseDto> createAssessment(@RequestBody CreateAssessmentRequestDto requestDto,
                                                                         @PathVariable("spaceId") Long spaceId) {
 
-        CreateAssessmentCommand command = CreateAssessmentRequestMapper.mapWebModelToCommand(requestDto, spaceId);
+        CreateAssessmentCommand command = mapRequestDtoToCommand(requestDto, spaceId);
 
         CreateAssessmentResponseDto responseDto =
-            CreateAssessmentResponseMapper.mapToResponseDto(
+            mapToResponseDto(
                 useCase.createAssessment(command)
             );
 
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+    }
+
+    private CreateAssessmentCommand mapRequestDtoToCommand(CreateAssessmentRequestDto webModel, Long spaceId) {
+        return new CreateAssessmentCommand(
+            webModel.title(),
+            webModel.description(),
+            spaceId,
+            webModel.assessmentKitId(),
+            webModel.colorId()
+        );
+    }
+
+    private CreateAssessmentResponseDto mapToResponseDto(UUID id) {
+        return new CreateAssessmentResponseDto(id);
     }
 }
