@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.in.web.assessment;
+package org.flickit.flickitassessmentcore.adapter.in.rest.assessment;
 
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
 import org.springframework.stereotype.Component;

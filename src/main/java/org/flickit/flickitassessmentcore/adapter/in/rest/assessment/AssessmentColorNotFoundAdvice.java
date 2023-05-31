@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.in.web.assessment;
+package org.flickit.flickitassessmentcore.adapter.in.rest.assessment;
 
 import org.flickit.flickitassessmentcore.application.service.assessment.AssessmentColorNotFoundException;
 import org.springframework.http.HttpStatus;
