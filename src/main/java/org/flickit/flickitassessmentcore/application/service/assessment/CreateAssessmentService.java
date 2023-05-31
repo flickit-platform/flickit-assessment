@@ -48,7 +48,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         }
         AssessmentColorDto detailsDto = loadAssessmentColorByIdPort.loadById(color.getId());
         if (detailsDto == null)
-            throw new AssessmentColorNotFoundException("Color with ID " + color.getId() + " not found.");
+            throw new ResourceNotFoundException("Color with ID " + color.getId() + " not found.");
         return detailsDto;
     }
 

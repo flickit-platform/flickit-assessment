@@ -48,7 +48,7 @@ class CreateAssessmentServiceTest {
         CreateAssessmentCommand command = createValidCommand();
         when(loadAssessmentColorByIdPort.loadById(anyLong())).thenReturn(null);
 
-        assertThrows(AssessmentColorNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             createAssessmentService.createAssessment(command);
         });
         verify(createAssessmentPort, never()).persist(any(CreateAssessmentCommand.class));
