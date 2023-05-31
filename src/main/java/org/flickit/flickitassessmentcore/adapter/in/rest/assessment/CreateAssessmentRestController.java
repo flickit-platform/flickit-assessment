@@ -12,7 +12,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("{spaceId}/assessments")
-public class CreateAssessmentController {
+public class CreateAssessmentRestController {
     private final CreateAssessmentUseCase createAssessmentUseCase;
     private final CreateAssessmentWebModelMapper mapper;
 
