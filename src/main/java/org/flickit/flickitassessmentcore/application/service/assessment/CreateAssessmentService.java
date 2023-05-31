@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.AssessmentColorDto;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.LoadAssessmentColorByIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
-import org.springframework.stereotype.Component;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.LoadAssessmentColorByIdPort;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-@Component
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CreateAssessmentService implements CreateAssessmentUseCase {
