@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("{spaceId}/assessments")
 public class CreateAssessmentRestController {
-    private final CreateAssessmentUseCase createAssessmentUseCase;
+    private final CreateAssessmentUseCase useCase;
 
     @PostMapping
     public ResponseEntity<CreateAssessmentResponseDto> createAssessment(@RequestBody CreateAssessmentRequestDto requestDto,
@@ -21,7 +21,7 @@ public class CreateAssessmentRestController {
 
         CreateAssessmentResponseDto responseDto =
             CreateAssessmentResponseMapper.mapToResponseDto(
-                createAssessmentUseCase.createAssessment(createAssessmentCommand)
+                useCase.createAssessment(createAssessmentCommand)
             );
 
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
