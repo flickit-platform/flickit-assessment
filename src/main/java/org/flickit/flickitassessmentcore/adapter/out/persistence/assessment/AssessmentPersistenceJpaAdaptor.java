@@ -12,11 +12,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AssessmentPersistenceJpaAdaptor implements CreateAssessmentPort {
 
-    private final AssessmentJpaRepository assessmentJpaRepository;
+    private final AssessmentJpaRepository repository;
     @Override
     public UUID persist(CreateAssessmentCommand createAssessmentCommand) {
         AssessmentEntity unsavedEntity = AssessmentMapper.mapCreateCommandToJpaEntity(createAssessmentCommand);
-        AssessmentEntity entity = assessmentJpaRepository.save(unsavedEntity);
+        AssessmentEntity entity = repository.save(unsavedEntity);
         return entity.getId();
     }
 }

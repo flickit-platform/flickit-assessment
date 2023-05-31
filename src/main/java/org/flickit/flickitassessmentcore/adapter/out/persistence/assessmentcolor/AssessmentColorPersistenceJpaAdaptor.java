@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AssessmentColorPersistenceJpaAdaptor
     implements LoadAssessmentColorByIdPort {
-    private final AssessmentColorJpaRepository assessmentColorJpaRepository;
+    private final AssessmentColorJpaRepository repository;
 
     @Override
     public AssessmentColorDto loadById(Long id) {
-        AssessmentColorEntity assessmentColorEntity = assessmentColorJpaRepository.findById(id).orElse(null);
+        AssessmentColorEntity assessmentColorEntity = repository.findById(id).orElse(null);
         if (assessmentColorEntity == null)
             return null;
         return AssessmentColorMapper.mapJpaEntityToColorDto(assessmentColorEntity);
