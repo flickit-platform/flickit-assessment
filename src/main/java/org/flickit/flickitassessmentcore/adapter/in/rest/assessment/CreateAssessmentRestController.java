@@ -17,7 +17,7 @@ public class CreateAssessmentRestController {
     private final CreateAssessmentWebModelMapper mapper;
 
     @PostMapping
-    public ResponseEntity<UUID> createAssessment(@RequestBody CreateAssessmentWebModel model, @PathVariable("spaceId") Long spaceId) {
+    public ResponseEntity<UUID> createAssessment(@RequestBody CreateAssessmentRequestDto model, @PathVariable("spaceId") Long spaceId) {
         CreateAssessmentCommand createAssessmentCommand = mapper.mapWebModelToCommand(model, spaceId);
         UUID uuid = createAssessmentUseCase.createAssessment(createAssessmentCommand);
         return new ResponseEntity<>(uuid, HttpStatus.CREATED);

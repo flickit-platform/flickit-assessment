@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CreateAssessmentWebModelMapper {
-    public CreateAssessmentCommand mapWebModelToCommand(CreateAssessmentWebModel webModel, Long spaceId) {
+    public CreateAssessmentCommand mapWebModelToCommand(CreateAssessmentRequestDto webModel, Long spaceId) {
         return new CreateAssessmentCommand(
             webModel.title(),
             webModel.description(),
