@@ -14,16 +14,16 @@ public class CreateAssessmentRestController {
     private final CreateAssessmentUseCase createAssessmentUseCase;
 
     @PostMapping
-    public ResponseEntity<CreateAssessmentResponseDto> createAssessment(@RequestBody CreateAssessmentRequestDto model,
+    public ResponseEntity<CreateAssessmentResponseDto> createAssessment(@RequestBody CreateAssessmentRequestDto requestDto,
                                                                         @PathVariable("spaceId") Long spaceId) {
 
-        CreateAssessmentCommand createAssessmentCommand = CreateAssessmentRequestMapper.mapWebModelToCommand(model, spaceId);
+        CreateAssessmentCommand createAssessmentCommand = CreateAssessmentRequestMapper.mapWebModelToCommand(requestDto, spaceId);
 
-        CreateAssessmentResponseDto response =
+        CreateAssessmentResponseDto responseDto =
             CreateAssessmentResponseMapper.mapToResponseDto(
                 createAssessmentUseCase.createAssessment(createAssessmentCommand)
             );
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 }
