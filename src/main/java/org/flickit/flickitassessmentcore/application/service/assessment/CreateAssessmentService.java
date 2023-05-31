@@ -14,14 +14,13 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private final CreateAssessmentPort createAssessmentPort;
     private final LoadAssessmentColorByIdPort loadAssessmentColorByIdPort;
 
     @Override
-    @Transactional
     public UUID createAssessment(CreateAssessmentCommand command) {
         CreateAssessmentCommand refinedCommand = refineProperties(command);
         return createAssessmentPort.persist(refinedCommand);
