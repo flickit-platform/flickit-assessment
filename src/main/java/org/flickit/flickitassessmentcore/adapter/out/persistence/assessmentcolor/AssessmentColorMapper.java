@@ -2,11 +2,9 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentcolo
 
 import org.flickit.flickitassessmentcore.adapter.out.persistence.entity.AssessmentColorEntity;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.AssessmentColorDto;
-import org.springframework.stereotype.Component;
 
-@Component
 public class AssessmentColorMapper {
-    public AssessmentColorDto mapJpaEntityToColorDto(AssessmentColorEntity assessmentColorEntity) {
+    static AssessmentColorDto mapJpaEntityToColorDto(AssessmentColorEntity assessmentColorEntity) {
         return new AssessmentColorDto(
             assessmentColorEntity.getId(),
             assessmentColorEntity.getTitle(),

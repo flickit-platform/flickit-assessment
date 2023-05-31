@@ -11,13 +11,12 @@ import org.springframework.stereotype.Component;
 public class AssessmentColorPersistence
     implements LoadAssessmentColorByIdPort {
     private final AssessmentColorJpaRepository assessmentColorJpaRepository;
-    private final AssessmentColorMapper mapper;
 
     @Override
     public AssessmentColorDto loadById(Long id) {
         AssessmentColorEntity assessmentColorEntity = assessmentColorJpaRepository.findById(id).orElse(null);
         if (assessmentColorEntity == null)
             return null;
-        return mapper.mapJpaEntityToColorDto(assessmentColorEntity);
+        return AssessmentColorMapper.mapJpaEntityToColorDto(assessmentColorEntity);
     }
 }
