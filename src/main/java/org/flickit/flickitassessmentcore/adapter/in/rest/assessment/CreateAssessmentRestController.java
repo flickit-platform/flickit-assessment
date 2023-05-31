@@ -17,11 +17,11 @@ public class CreateAssessmentRestController {
     public ResponseEntity<CreateAssessmentResponseDto> createAssessment(@RequestBody CreateAssessmentRequestDto requestDto,
                                                                         @PathVariable("spaceId") Long spaceId) {
 
-        CreateAssessmentCommand createAssessmentCommand = CreateAssessmentRequestMapper.mapWebModelToCommand(requestDto, spaceId);
+        CreateAssessmentCommand command = CreateAssessmentRequestMapper.mapWebModelToCommand(requestDto, spaceId);
 
         CreateAssessmentResponseDto responseDto =
             CreateAssessmentResponseMapper.mapToResponseDto(
-                useCase.createAssessment(createAssessmentCommand)
+                useCase.createAssessment(command)
             );
 
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
