@@ -60,11 +60,4 @@ public class CreateAssessmentCommand extends SelfValidating<CreateAssessmentComm
         this.spaceId = spaceId;
         this.validateSelf();
     }
-
-    public String generateSlugCodeByTitle() {
-        return title
-            .toLowerCase()
-            .strip()
-            .replaceAll("\s+", "-");
-    }
 }

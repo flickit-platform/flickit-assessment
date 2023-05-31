@@ -4,40 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CreateAssessmentCommandTest {
 
-    @Test
-    void generateSlugCodeByTitle_NoWhitespace_ReturnsLowerCaseCode() {
-        String title = "ExampleTitle";
-        CreateAssessmentCommand command = createCommandWithTitle(title);
-
-        String code = command.generateSlugCodeByTitle();
-
-        assertEquals("exampletitle", code);
-    }
-
-    @Test
-    void generateSlugCodeByTitle_WithWhitespace_ReturnsLowerCaseCodeWithHyphens() {
-        String title = "Example Title with Whitespace";
-        CreateAssessmentCommand command = createCommandWithTitle(title);
-
-        String code = command.generateSlugCodeByTitle();
-
-        assertEquals("example-title-with-whitespace", code);
-    }
-
-    @Test
-    void generateSlugCodeByTitle_WithLeadingAndTrailingWhitespace_ReturnsLowerCaseCodeWithHyphens() {
-        String title = "  Example Title with   Leading and Trailing   Whitespace  ";
-        CreateAssessmentCommand command = createCommandWithTitle(title);
-
-        String code = command.generateSlugCodeByTitle();
-
-        assertEquals("example-title-with-leading-and-trailing-whitespace", code);
-    }
 
 
     @Test
@@ -73,16 +43,6 @@ class CreateAssessmentCommandTest {
 
         assertTrue(beforeCreateAssessment.isBefore(command.getLastModificationDate()));
         assertTrue(afterCreateAssessment.isAfter(command.getLastModificationDate()));
-    }
-
-    private static CreateAssessmentCommand createCommandWithTitle(String title) {
-        return new CreateAssessmentCommand(
-            title,
-            "description example",
-            1L,
-            1L,
-            1L
-        );
     }
 
 }

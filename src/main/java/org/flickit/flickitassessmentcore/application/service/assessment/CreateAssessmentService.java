@@ -27,7 +27,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     }
 
     private CreateAssessmentCommand refineProperties(CreateAssessmentCommand createCommand) {
-        String code = createCommand.generateSlugCodeByTitle();
+        String code = generateSlugCode(createCommand.getTitle());
         AssessmentColorDto color = loadColor(createCommand.getColor());
 
         return new CreateAssessmentCommand(
@@ -40,6 +40,13 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             color,
             createCommand.getSpaceId()
         );
+    }
+
+    private String generateSlugCode(String title) {
+        return title
+            .toLowerCase()
+            .strip()
+            .replaceAll("\\s+", "-");
     }
 
     private AssessmentColorDto loadColor(AssessmentColorDto color) {
