@@ -5,12 +5,10 @@ import org.flickit.flickitassessmentcore.application.port.in.Assessment.CreateAs
 import org.flickit.flickitassessmentcore.application.port.in.Assessment.CreateAssessmentUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Component
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("{spaceId}/assessments")
