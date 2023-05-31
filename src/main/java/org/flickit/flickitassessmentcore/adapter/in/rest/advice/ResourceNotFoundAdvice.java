@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ResourceNotFoundAdvice {
     @ResponseBody
     @ExceptionHandler(ResourceNotFoundException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     String assessmentColorNotFoundHandler(ResourceNotFoundException ex) {
         return ex.getMessage();
     }
