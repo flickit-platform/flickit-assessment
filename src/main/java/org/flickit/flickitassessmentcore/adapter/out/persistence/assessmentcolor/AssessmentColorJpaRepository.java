@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.AssessmentColor;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentcolor;
 
 import org.flickit.flickitassessmentcore.adapter.out.persistence.entity.AssessmentColorEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

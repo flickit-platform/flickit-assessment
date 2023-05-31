@@ -1,8 +1,8 @@
-package org.flickit.flickitassessmentcore.adapter.in.web.Assessment;
+package org.flickit.flickitassessmentcore.adapter.in.web.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.Assessment.CreateAssessmentCommand;
-import org.flickit.flickitassessmentcore.application.port.in.Assessment.CreateAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

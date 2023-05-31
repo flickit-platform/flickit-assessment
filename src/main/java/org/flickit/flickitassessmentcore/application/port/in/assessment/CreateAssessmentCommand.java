@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.port.in.Assessment;
+package org.flickit.flickitassessmentcore.application.port.in.assessment;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

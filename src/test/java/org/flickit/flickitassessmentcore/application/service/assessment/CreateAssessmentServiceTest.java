@@ -1,10 +1,10 @@
-package org.flickit.flickitassessmentcore.application.service.Assessment;
+package org.flickit.flickitassessmentcore.application.service.assessment;
 
 
-import org.flickit.flickitassessmentcore.application.port.in.Assessment.AssessmentColorDto;
-import org.flickit.flickitassessmentcore.application.port.in.Assessment.CreateAssessmentCommand;
-import org.flickit.flickitassessmentcore.application.port.out.AssessmentColor.LoadAssessmentColorByIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.Assessment.CreateAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.AssessmentColorDto;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.LoadAssessmentColorByIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

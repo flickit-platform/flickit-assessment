@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.in.web.Assessment;
+package org.flickit.flickitassessmentcore.adapter.in.web.assessment;
 
 public record CreateAssessmentWebModel(String title,
                                        String description,

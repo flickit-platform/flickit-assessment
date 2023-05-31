@@ -1,11 +1,11 @@
-package org.flickit.flickitassessmentcore.application.service.Assessment;
+package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.Assessment.AssessmentColorDto;
-import org.flickit.flickitassessmentcore.application.port.in.Assessment.CreateAssessmentCommand;
-import org.flickit.flickitassessmentcore.application.port.in.Assessment.CreateAssessmentUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.AssessmentColor.LoadAssessmentColorByIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.Assessment.CreateAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.AssessmentColorDto;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.LoadAssessmentColorByIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
