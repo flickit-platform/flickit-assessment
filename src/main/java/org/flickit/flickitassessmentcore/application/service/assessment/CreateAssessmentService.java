@@ -7,17 +7,20 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAs
 import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.LoadAssessmentColorByIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private final CreateAssessmentPort createAssessmentPort;
     private final LoadAssessmentColorByIdPort loadAssessmentColorByIdPort;
 
     @Override
+    @Transactional
     public UUID createAssessment(CreateAssessmentCommand command) {
         CreateAssessmentCommand refinedCommand = refineProperties(command);
         return createAssessmentPort.persist(refinedCommand);
