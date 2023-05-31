@@ -5,6 +5,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.Assessme
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.LoadAssessmentColorByIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
+import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -6,6 +6,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAs
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.LoadAssessmentColorByIdPort;
+import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

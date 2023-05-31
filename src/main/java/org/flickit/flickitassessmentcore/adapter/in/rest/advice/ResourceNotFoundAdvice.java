@@ -1,6 +1,6 @@
-package org.flickit.flickitassessmentcore.adapter.in.rest.assessment;
+package org.flickit.flickitassessmentcore.adapter.in.rest.advice;
 
-import org.flickit.flickitassessmentcore.application.service.assessment.ResourceNotFoundException;
+import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
