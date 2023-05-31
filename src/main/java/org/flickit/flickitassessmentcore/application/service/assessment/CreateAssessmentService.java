@@ -18,8 +18,8 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final LoadAssessmentColorByIdPort loadAssessmentColorByIdPort;
 
     @Override
-    public UUID createAssessment(CreateAssessmentCommand createAssessmentCommand) {
-        CreateAssessmentCommand refinedCommand = refineProperties(createAssessmentCommand);
+    public UUID createAssessment(CreateAssessmentCommand command) {
+        CreateAssessmentCommand refinedCommand = refineProperties(command);
         return createAssessmentPort.persist(refinedCommand);
     }
 
