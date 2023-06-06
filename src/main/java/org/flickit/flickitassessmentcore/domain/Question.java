@@ -20,10 +20,6 @@ public class Question {
     private LocalDateTime lastModificationDate;
     private Integer index;
     private Questionnaire questionnaire;
-    private Set<Answer> answer;
-    private Set<QuestionImpact> questionImpacts;
-    private Set<AnswerOption> answerOptions;
-    private Set<Evidence> evidences;
     private Set<QualityAttribute> qualityAttributes;
 
     public Question(Long id) {

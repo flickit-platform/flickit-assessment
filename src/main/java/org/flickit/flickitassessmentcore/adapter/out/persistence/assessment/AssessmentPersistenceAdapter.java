@@ -12,11 +12,10 @@ import java.util.UUID;
 public class AssessmentPersistenceAdapter implements LoadAssessmentPort {
 
     private final AssessmentRepository assessmentRepository;
-    private final AssessmentMapper assessmentMapper;
 
     @Override
     public Assessment loadAssessment(UUID assessmentId) {
         AssessmentJpaEntity assessmentEntity = assessmentRepository.getReferenceById(assessmentId);
-        return assessmentMapper.mapToDomainModel(assessmentEntity);
+        return AssessmentMapper.mapToDomainModel(assessmentEntity);
     }
 }

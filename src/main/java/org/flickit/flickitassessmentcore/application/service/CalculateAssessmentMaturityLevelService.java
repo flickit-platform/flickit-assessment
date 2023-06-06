@@ -22,13 +22,13 @@ public class CalculateAssessmentMaturityLevelService implements CalculateAssessm
     @Override
     public MaturityLevel calculateAssessmentMaturityLevel(UUID assessmentId) {
         Assessment assessment = loadAssessment.loadAssessment(assessmentId);
-        Set<AssessmentResult> assessmentResults = assessment.getAssessmentResults();
+//        Set<AssessmentResult> assessmentResults = assessment.getAssessmentResults();
         AssessmentKit assessmentKit = loadAssessmentKitPort.loadAssessmentKit(assessment.getAssessmentKit().getId());
-        Set<AssessmentSubject> subjects = assessmentKit.getAssessmentSubjects();
-        subjects.forEach(subject -> {
+//        Set<AssessmentSubject> subjects = assessmentKit.getAssessmentSubjects();
+//        subjects.forEach(subject -> {
             // CALCULATE SUBJECT MATURITY LEVEL
             // THEN ASSESSMENT MATURITY LEVEL
-        });
+//        });
 
         return new MaturityLevel();
     }

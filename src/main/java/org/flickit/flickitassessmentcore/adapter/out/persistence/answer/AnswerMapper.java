@@ -16,7 +16,7 @@ public class AnswerMapper {
         );
     }
 
-    public static AnswerJpaEntity mapToDomainModel(Answer answer) {
+    public static AnswerJpaEntity mapToJpaEntity(Answer answer) {
         return new AnswerJpaEntity(
             answer.getId(),
             AssessmentResultMapper.mapToJpaEntity(answer.getAssessmentResult()),

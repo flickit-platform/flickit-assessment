@@ -18,5 +18,4 @@ public class QuestionImpact {
     private Question question;
     private QualityAttribute qualityAttribute;
     private Integer weight;
-    private Set<AnswerOptionImpact> answerOptionImpacts;
 }

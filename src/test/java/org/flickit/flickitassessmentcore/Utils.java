@@ -1,7 +1,6 @@
 package org.flickit.flickitassessmentcore;
 
 import lombok.NoArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
 import org.flickit.flickitassessmentcore.domain.*;
 
 import java.time.LocalDateTime;
@@ -13,6 +12,10 @@ import static org.flickit.flickitassessmentcore.Constants.*;
 
 @NoArgsConstructor
 public class Utils {
+    public static void completeInitiation(AssessmentResult assessmentResult, AssessmentKit assessmentKit) {
+        assessmentResult.getAssessment().getMaturityLevel().setAssessmentKit(assessmentKit);
+    }
+
     // TODO: this class is in development
     public QualityAttribute createQualityAttribute() {
         AssessmentSubject subject = createAssessmentSubject();
@@ -26,18 +29,15 @@ public class Utils {
             LocalDateTime.now(),
             subject,
             1,
-            QUALITY_ATTRIBUTE_WEIGHT,
-            new HashSet<QualityAttributeValue>(),
-            question.getQuestionImpacts(),
-            new HashSet<Question>(List.of(new Question[]{question}))
+            QUALITY_ATTRIBUTE_WEIGHT
         );
-        subject.getQualityAttributes().add(qualityAttribute);
         question.getQualityAttributes().add(qualityAttribute);
         return qualityAttribute;
     }
 
     public AssessmentSubject createAssessmentSubject() {
         Questionnaire questionnaire = createQuestionnaire();
+        AssessmentKit assessmentKit = createAssessmentKit(KIT_ID_1);
         AssessmentSubject subject = new AssessmentSubject(
             SUBJECT_ID,
             SUBJECT_CODE,
@@ -46,11 +46,10 @@ public class Utils {
             LocalDateTime.now(),
             LocalDateTime.now(),
             1,
-            createAssessmentKit(KIT_ID_1),
-            new HashSet<Questionnaire>(List.of(new Questionnaire[]{questionnaire})),
-            new HashSet<QualityAttribute>()
+            assessmentKit,
+            new HashSet<Questionnaire>(List.of(questionnaire))
         );
-        questionnaire.getSubjects().add(subject);
+        questionnaire.setAssessmentKit(assessmentKit);
         return subject;
     }
 
@@ -63,14 +62,15 @@ public class Utils {
             LocalDateTime.now(),
             LocalDateTime.now(),
             1,
-            new AssessmentKit(),
-            new HashSet<Question>(),
-            new HashSet<AssessmentSubject>()
+            new AssessmentKit()
         );
     }
 
     public Question createQuestion() {
-        return new Question(
+        QuestionImpact questionImpact = createQuestionImpact();
+        AnswerOption answerOption = createAnswerOption();
+        Answer answer = createAnswer();
+        Question question = new Question(
             QUESTION_ID,
             QUESTION_TITLE,
             QUESTION_DESCRIPTION,
@@ -78,19 +78,50 @@ public class Utils {
             LocalDateTime.now(),
             1,
             new Questionnaire(),
-            new HashSet<Answer>(),
-            new HashSet<QuestionImpact>(),
-            new HashSet<AnswerOption>(),
-            new HashSet<Evidence>(),
             new HashSet<QualityAttribute>()
+        );
+        answerOption.setQuestion(question);
+        answer.setQuestion(question);
+        answer.setAnswerOption(answerOption);
+        questionImpact.setQuestion(question);
+        return question;
+    }
+
+    private QuestionImpact createQuestionImpact() {
+        return new QuestionImpact(
+            QUESTION_IMPACT_ID,
+            QUESTION_IMPACT_LEVEL,
+            new MaturityLevel(),
+            new Question(),
+            new QualityAttribute(),
+            QUESTION_IMPACT_WEIGHT
+        );
+    }
+
+    private AnswerOption createAnswerOption() {
+        AnswerOptionImpact answerOptionImpact = createAnswerOptionImpact();
+        AnswerOption answerOption = new AnswerOption(
+            ANSWER_OPTION_ID,
+            new Question(),
+            ANSWER_OPTION_CAPTION,
+            ANSWER_OPTION_VALUE,
+            1
+        );
+        answerOptionImpact.setOption(answerOption);
+        return answerOption;
+    }
+
+    private AnswerOptionImpact createAnswerOptionImpact() {
+        return new AnswerOptionImpact(
+            ANSWER_OPTION_IMPACT_ID,
+            ANSWER_OPTION_IMPACT_VALUE,
+            new AnswerOption(),
+            new QuestionImpact()
         );
     }
 
     public AssessmentKit createAssessmentKit(Long id) {
-        AssessmentSubject subject = createAssessmentSubject();
-        Questionnaire questionnaire = createQuestionnaire();
-        MaturityLevel maturityLevel1 = createMaturityLevel();
-        AssessmentKit assessmentKit = new AssessmentKit(
+        return new AssessmentKit(
             id,
             KIT_CODE,
             KIT_TITLE,
@@ -99,17 +130,8 @@ public class Utils {
             LocalDateTime.now(),
             LocalDateTime.now(),
             1L,
-            true,
-            new HashSet<MaturityLevel>(List.of(new MaturityLevel[]{maturityLevel1})),
-            new HashSet<AssessmentSubject>(List.of(new AssessmentSubject[]{subject})),
-            new HashSet<Assessment>(),
-            new HashSet<Questionnaire>(List.of(new Questionnaire[]{questionnaire}))
+            true
         );
-        subject.setAssessmentKit(assessmentKit);
-        questionnaire.setAssessmentKit(assessmentKit);
-        questionnaire.getSubjects().add(subject);
-        subject.getQuestionnaires().add(questionnaire);
-        return assessmentKit;
     }
 
     public AssessmentResult createAssessmentResult() {
@@ -118,11 +140,8 @@ public class Utils {
         Answer answer = createAnswer();
         AssessmentResult assessmentResult = new AssessmentResult(
             UUID.randomUUID(),
-            assessment,
-            List.of(new Answer[]{answer}),
-            List.of(new QualityAttributeValue[]{qualityAttributeValue})
+            assessment
         );
-        assessment.getAssessmentResults().add(assessmentResult);
         answer.setAssessmentResult(assessmentResult);
         qualityAttributeValue.setAssessmentResult(assessmentResult);
         return assessmentResult;
@@ -139,19 +158,25 @@ public class Utils {
 
     public QualityAttributeValue createQualityAttributeValue() {
         QualityAttribute qualityAttribute = createQualityAttribute();
-        QualityAttributeValue qualityAttributeValue = new QualityAttributeValue(
+        return new QualityAttributeValue(
             UUID.randomUUID(),
             new AssessmentResult(),
             qualityAttribute,
-            null
+            null // maturity level gonna be calculated
         );
-        qualityAttribute.getQualityAttributeValues().add(qualityAttributeValue);
-        return qualityAttributeValue;
     }
 
     public Assessment createAssessment() {
         AssessmentColor assessmentColor = createAssessmentColor();
-        Assessment assessment = new Assessment(
+        MaturityLevel maturityLevel1 = createMaturityLevel(MATURITY_LEVEL_ID1, MATURITY_LEVEL_TITLE1, 1);
+        MaturityLevel maturityLevel2 = createMaturityLevel(MATURITY_LEVEL_ID2, MATURITY_LEVEL_TITLE2, 2);
+        LevelCompetence levelCompetence1 = createLevelCompetence(LEVEL_COMPETENCE_ID1, LEVEL_COMPETENCE_VALUE1);
+        LevelCompetence levelCompetence2 = createLevelCompetence(LEVEL_COMPETENCE_ID2, LEVEL_COMPETENCE_VALUE2);
+        levelCompetence1.setMaturityLevel(maturityLevel2);
+        levelCompetence1.setMaturityLevelCompetence(maturityLevel1);
+        levelCompetence2.setMaturityLevel(maturityLevel2);
+        levelCompetence2.setMaturityLevelCompetence(maturityLevel2);
+        return new Assessment(
             UUID.randomUUID(),
             ASSESSMENT_CODE,
             ASSESSMENT_TITLE,
@@ -161,33 +186,34 @@ public class Utils {
             createAssessmentKit(KIT_ID_1),
             assessmentColor,
             ASSESSMENT_SPACE_ID,
-            createMaturityLevel(),
-            new HashSet<>(),
-            null
+            maturityLevel2 // It must be set after ml calc of qa and subject, but we initiate for now
         );
-        assessmentColor.getAssessments().add(assessment);
-        return assessment;
     }
 
     public AssessmentColor createAssessmentColor() {
         return new AssessmentColor(
             COLOR_ID,
             COLOR_TITLE,
-            COLOR_CODE,
-            new HashSet<Assessment>()
+            COLOR_CODE
         );
     }
 
-    public MaturityLevel createMaturityLevel() {
+    public MaturityLevel createMaturityLevel(Long id, String title, int value) {
         return new MaturityLevel(
-            MATURITY_LEVEL_ID,
-            MATURITY_LEVEL_TITLE,
-            1,
-            new AssessmentKit(),
-            new HashSet<Assessment>(),
-            new HashSet<QualityAttributeValue>(),
-            new HashSet<QuestionImpact>(),
-            new HashSet<LevelCompetence>()
+            id,
+            title,
+            value,
+            new AssessmentKit()
         );
     }
+
+    private LevelCompetence createLevelCompetence(Long id, int value) {
+        return new LevelCompetence(
+            id,
+            new MaturityLevel(),
+            value,
+            new MaturityLevel()
+        );
+    }
+
 }

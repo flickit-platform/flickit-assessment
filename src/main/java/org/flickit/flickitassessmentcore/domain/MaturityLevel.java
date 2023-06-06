@@ -13,16 +13,11 @@ import java.util.Set;
 @EqualsAndHashCode
 public class MaturityLevel {
 
-    public MaturityLevel(Long id) {
-        this.id = id;
-    }
-
     private Long id;
     private String title;
     private Integer value;
     private AssessmentKit assessmentKit;
-    private Set<Assessment> assessments;
-    private Set<QualityAttributeValue> qualityAttributeValues;
-    private Set<QuestionImpact> questionImpacts;
-    private Set<LevelCompetence> levelCompetences;
+    public MaturityLevel(Long id) {
+        this.id = id;
+    }
 }

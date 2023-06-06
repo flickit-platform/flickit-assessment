@@ -24,8 +24,6 @@ public class Assessment {
     private AssessmentColor color;
     private Long spaceId;
     private MaturityLevel maturityLevel;
-    private Set<AssessmentResult> assessmentResults;
-    private Set<Evidence> evidences;
 
     @Override
     public String toString() {

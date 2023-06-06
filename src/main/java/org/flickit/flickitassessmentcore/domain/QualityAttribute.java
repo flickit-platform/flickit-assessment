@@ -22,9 +22,6 @@ public class QualityAttribute {
     private AssessmentSubject assessmentSubject;
     private Integer index;
     private Integer weight;
-    private Set<QualityAttributeValue> qualityAttributeValues;
-    private Set<QuestionImpact> questionImpacts;
-    private Set<Question> questions;
 
     public QualityAttribute(Long id) {
         this.id = id;

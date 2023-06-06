@@ -34,4 +34,9 @@ public class AssessmentColorJpaEntity {
     public Set<AssessmentJpaEntity> getAssessments() {
         return new HashSet<>();
     }
+
+    /*
+    * TODO:
+    *  - getAssessments
+    * */
 }

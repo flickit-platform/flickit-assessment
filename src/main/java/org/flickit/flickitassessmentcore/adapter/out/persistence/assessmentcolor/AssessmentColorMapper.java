@@ -11,11 +11,7 @@ public class AssessmentColorMapper {
         return new AssessmentColor(
             assessmentColorEntity.getId(),
             assessmentColorEntity.getTitle(),
-            assessmentColorEntity.getColorCode(),
-            assessmentColorEntity.getAssessments().stream()
-                .map(AssessmentMapper::mapToDomainModel)
-                .collect(Collectors.toSet())
-        );
+            assessmentColorEntity.getColorCode());
     }
 
     public static AssessmentColorJpaEntity mapToJpaEntity(AssessmentColor assessmentColor) {

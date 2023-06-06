@@ -22,7 +22,6 @@ public class AssessmentSubject {
     private Integer index;
     private AssessmentKit assessmentKit;
     private Set<Questionnaire> questionnaires;
-    private Set<QualityAttribute> qualityAttributes;
 
     @Override
     public String toString() {

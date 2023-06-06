@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -27,10 +28,6 @@ public class AssessmentKit {
     private LocalDateTime lastModificationDate;
     private Long expertGroupId;
     private boolean isActive;
-    private Set<MaturityLevel> maturityLevels;
-    private Set<AssessmentSubject> assessmentSubjects;
-    private Set<Assessment> assessments;
-    private Set<Questionnaire> questionnaires;
 
     @Override
     public String toString() {

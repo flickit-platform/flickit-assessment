@@ -15,8 +15,6 @@ import java.util.UUID;
 public class AssessmentResult {
     private UUID id;
     private Assessment assessment;
-    private List<Answer> answers;
-    private List<QualityAttributeValue> qualityAttributeValues;
 
     @Override
     public String toString() {

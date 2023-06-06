@@ -15,7 +15,6 @@ public class AssessmentColor {
     private Long id;
     private String title;
     private String colorCode;
-    private Set<Assessment> assessments;
 
     @Override
     public String toString() {

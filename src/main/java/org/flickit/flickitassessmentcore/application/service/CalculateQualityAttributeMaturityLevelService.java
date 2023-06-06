@@ -3,9 +3,7 @@ package org.flickit.flickitassessmentcore.application.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.CalculateQualityAttributeMaturityLevelUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.LoadQualityAttributePort;
-import org.flickit.flickitassessmentcore.application.port.out.SaveAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.SaveQualityAttributeValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.*;
 import org.flickit.flickitassessmentcore.application.service.exception.NoAnswerFoundException;
 import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Service;
@@ -18,67 +16,77 @@ import java.util.*;
 public class CalculateQualityAttributeMaturityLevelService implements CalculateQualityAttributeMaturityLevelUseCase {
 
     private final LoadQualityAttributePort loadQualityAttribute;
+    private final LoadQuestionsByQAIdPort loadQuestionsByQAId;
+    private final LoadAnswerOptionImpactsByAnswerOptionPort loadAnswerOptionImpactsByAnswerOption;
+    private final LoadMLByKitPort loadMLByKit;
+    private final LoadQualityAttributeValuesByResultPort loadQualityAttributeValuesByResult;
+    private final LoadAnswersByResultPort loadAnswersByResult;
+    private final LoadLevelCompetenceByMLPort loadLCByML;
     private final SaveQualityAttributeValuePort saveQualityAttributeValue;
     private final SaveAssessmentResultPort saveAssessmentResult;
 
     @Override
     public MaturityLevel calculateQualityAttributeMaturityLevel(AssessmentResult assessmentResult, Long qualityAttributeId) {
         QualityAttribute qualityAttribute = loadQualityAttribute.loadQualityAttribute(qualityAttributeId);
+        Set<Question> questions = loadQuestionsByQAId.loadQuestionsByQualityAttributeId(qualityAttributeId);
         Map<Long, Integer> maturityLevelValueSumMap = new HashMap<>();
         Map<Long, Integer> maturityLevelValueCountMap = new HashMap<>();
-        qualityAttribute.getAssessmentSubject().getQuestionnaires().forEach(questionnaire -> {
-            questionnaire.getQuestions().forEach(question -> {
-                Set<QualityAttribute> qualityAttributes = question.getQualityAttributes();
-                for (QualityAttribute qualityAttribute1 : qualityAttributes) {
-                    if (qualityAttribute1.getId().equals(qualityAttribute.getId())) {
-                        AnswerOption questionAnswer = findQuestionAnswer(assessmentResult, question);
-                        Set<AnswerOptionImpact> answerOptionImpacts = questionAnswer.getAnswerOptionImpacts();
-                        for (AnswerOptionImpact impact : answerOptionImpacts) {
-                            if (impact.getOption().getId().equals(questionAnswer.getId())) {
-                                QuestionImpact questionImpact = impact.getImpact();
-                                Integer value = (impact.getValue().intValueExact()) * impact.getImpact().getWeight();
-                                maturityLevelValueSumMap.put(questionImpact.getMaturityLevel().getId(), maturityLevelValueSumMap.getOrDefault(questionImpact, 0) + value);
-                                maturityLevelValueCountMap.put(questionImpact.getMaturityLevel().getId(), maturityLevelValueCountMap.getOrDefault(questionImpact, 0) + impact.getImpact().getWeight());
-                            }
+        for (Question question : questions) {
+            Set<QualityAttribute> qualityAttributes = question.getQualityAttributes();
+            for (QualityAttribute qualityAttribute1 : qualityAttributes) {
+                if (qualityAttribute1.getId().equals(qualityAttribute.getId())) {
+                    AnswerOption questionAnswer = findQuestionAnswer(assessmentResult, question);
+                    Set<AnswerOptionImpact> answerOptionImpacts = loadAnswerOptionImpactsByAnswerOption.findAnswerOptionImpactsByAnswerOption(questionAnswer.getId());
+                    for (AnswerOptionImpact impact : answerOptionImpacts) {
+                        if (impact.getOption().getId().equals(questionAnswer.getId())) {
+                            QuestionImpact questionImpact = impact.getImpact();
+                            Integer value = (impact.getValue().intValueExact()) * impact.getImpact().getWeight();
+                            Long maturityLevelId = questionImpact.getMaturityLevel().getId();
+                            maturityLevelValueSumMap.put(maturityLevelId, maturityLevelValueSumMap.getOrDefault(maturityLevelId, 0) + value);
+                            maturityLevelValueCountMap.put(maturityLevelId, maturityLevelValueCountMap.getOrDefault(maturityLevelId, 0) + impact.getImpact().getWeight());
                         }
                     }
                 }
-            });
-        });
+            }
+        }
         Map<Long, Integer> qualityAttributeImpactScoreMap = new HashMap<>();
         for (Long maturityLevelId : maturityLevelValueSumMap.keySet()) {
             qualityAttributeImpactScoreMap.put(maturityLevelId, maturityLevelValueSumMap.get(maturityLevelId) / maturityLevelValueCountMap.get(maturityLevelId));
         }
-        List<MaturityLevel> maturityLevels = qualityAttribute.getAssessmentSubject().getAssessmentKit().getMaturityLevels().stream().toList();
-        MaturityLevel qualityAttributeMaturityLevel = findMaturityLevelBasedOnCalculations(qualityAttributeImpactScoreMap, maturityLevels);
-        saveQualityAttributeValue(assessmentResult, qualityAttribute, qualityAttributeMaturityLevel);
-        saveAssessmentResult(assessmentResult, qualityAttributeId, qualityAttributeMaturityLevel);
+        List<MaturityLevel> maturityLevels = loadMLByKit.loadMLByKitId(qualityAttribute.getAssessmentSubject().getAssessmentKit().getId()).stream().toList();
+        MaturityLevel qualityAttMaturityLevel = findMaturityLevelBasedOnCalculations(qualityAttributeImpactScoreMap, maturityLevels);
+        saveQualityAttributeValue(assessmentResult, qualityAttribute, qualityAttMaturityLevel);
 
-        return qualityAttributeMaturityLevel;
+        // TODO
+        // We should keep the previous results
+        // Change result if it really has been changed (if result is same as calculated so don't touch it)
+        saveAssessmentResult(assessmentResult, qualityAttributeId, qualityAttMaturityLevel);
+
+        return qualityAttMaturityLevel;
     }
 
-    private void saveQualityAttributeValue(AssessmentResult assessmentResult, QualityAttribute qualityAttribute, MaturityLevel qualityAttributeMaturityLevel) {
+    private void saveQualityAttributeValue(AssessmentResult assessmentResult, QualityAttribute qualityAttribute, MaturityLevel qualityAttMaturityLevel) {
         QualityAttributeValue qualityAttributeValue = new QualityAttributeValue(
             UUID.randomUUID(),
             assessmentResult,
             qualityAttribute,
-            qualityAttributeMaturityLevel
+            qualityAttMaturityLevel
         );
         saveQualityAttributeValue.saveQualityAttributeValue(qualityAttributeValue);
     }
 
-    private void saveAssessmentResult(AssessmentResult assessmentResult, Long qualityAttributeId, MaturityLevel qualityAttributeMaturityLevel) {
-        List<QualityAttributeValue> qualityAttributeValues = assessmentResult.getQualityAttributeValues();
+    private void saveAssessmentResult(AssessmentResult assessmentResult, Long qualityAttributeId, MaturityLevel qualityAttMaturityLevel) {
+        List<QualityAttributeValue> qualityAttributeValues = loadQualityAttributeValuesByResult.loadQualityAttributeValuesByResultId(assessmentResult.getId()).stream().toList();
         for (QualityAttributeValue qualityAttributeValue1 : qualityAttributeValues) {
             if (qualityAttributeValue1.getQualityAttribute().getId().equals(qualityAttributeId)) {
-                qualityAttributeValue1.setMaturityLevel(qualityAttributeMaturityLevel);
+                qualityAttributeValue1.setMaturityLevel(qualityAttMaturityLevel);
             }
         }
         saveAssessmentResult.saveAssessmentResult(assessmentResult);
     }
 
     private AnswerOption findQuestionAnswer(AssessmentResult assessmentResult, Question question) {
-        List<Answer> answers = assessmentResult.getAnswers();
+        List<Answer> answers = loadAnswersByResult.loadAnswersByResultId(assessmentResult.getId()).stream().toList();
         for (Answer answer : answers) {
             if (answer.getQuestion().getId().equals(question.getId())) {
                 return answer.getAnswerOption();
@@ -92,18 +100,16 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
      * Then iterates over level competences and compares through thresholds.
      * If no threshold fulfills, it will return first maturity level.
      */
-    private MaturityLevel findMaturityLevelBasedOnCalculations(Map<Long, Integer> qualityAttributeImpactScoreMap, List<MaturityLevel> maturityLevels) {
+    private MaturityLevel findMaturityLevelBasedOnCalculations(Map<Long, Integer> qualityAttImpactScoreMap, List<MaturityLevel> maturityLevels) {
         MaturityLevel result = maturityLevels.get(0);
         maturityLevels.sort(Comparator.comparingInt(MaturityLevel::getValue));
         for (MaturityLevel maturityLevel : maturityLevels) {
-            List<LevelCompetence> levelCompetences = maturityLevel.getLevelCompetences().stream().toList();
+            List<LevelCompetence> levelCompetences = loadLCByML.loadLevelCompetenceByMLId(maturityLevel.getId()).stream().toList();
             for (LevelCompetence levelCompetence : levelCompetences) {
                 Long id = levelCompetence.getMaturityLevelCompetence().getId();
-                if (qualityAttributeImpactScoreMap.containsKey(id) && qualityAttributeImpactScoreMap.get(id) >= levelCompetence.getValue()) {
+                if (qualityAttImpactScoreMap.containsKey(id) && qualityAttImpactScoreMap.get(id) >= levelCompetence.getValue()) {
                     Optional<MaturityLevel> resultMaturityLevel = maturityLevels.stream().filter(ml -> ml.getId().equals(id)).findFirst();
-                    if (resultMaturityLevel.isPresent()) {
-                        result = resultMaturityLevel.get();
-                    }
+                    result = resultMaturityLevel.orElseGet(() -> maturityLevels.get(0));
                 } else {
                     break;
                 }

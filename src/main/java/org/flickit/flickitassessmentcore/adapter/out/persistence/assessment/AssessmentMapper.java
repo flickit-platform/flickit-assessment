@@ -17,9 +17,7 @@ public class AssessmentMapper {
             new AssessmentKit(assessmentEntity.getAssessmentKitId()),
             AssessmentColorMapper.mapToDomainModel(assessmentEntity.getColor()),
             assessmentEntity.getSpaceId(),
-            new MaturityLevel(assessmentEntity.getMaturityLevelId()),
-            assessmentEntity.getAssessmentResults(),
-            assessmentEntity.getEvidences());
+            new MaturityLevel(assessmentEntity.getMaturityLevelId()));
     }
 
     public static AssessmentJpaEntity mapToJpaEntity(Assessment assessment) {

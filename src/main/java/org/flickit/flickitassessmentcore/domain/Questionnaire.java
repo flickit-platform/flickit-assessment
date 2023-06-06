@@ -21,8 +21,6 @@ public class Questionnaire {
     private LocalDateTime lastModificationDate;
     private Integer index;
     private AssessmentKit assessmentKit;
-    private Set<Question> questions;
-    private Set<AssessmentSubject> subjects;
 
     @Override
     public String toString() {
