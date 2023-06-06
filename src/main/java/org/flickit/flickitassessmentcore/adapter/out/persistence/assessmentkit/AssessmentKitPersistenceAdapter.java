@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAssessmentKitPort;

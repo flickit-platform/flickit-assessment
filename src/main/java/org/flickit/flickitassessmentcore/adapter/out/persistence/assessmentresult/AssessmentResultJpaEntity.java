@@ -1,12 +1,13 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.entity;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.flickit.flickitassessmentcore.domain.Answer;
-import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaEntity;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentResultEntity {
+public class AssessmentResultJpaEntity {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -27,13 +28,13 @@ public class AssessmentResultEntity {
     private UUID id;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
-    private AssessmentEntity assessment;
+    private AssessmentJpaEntity assessment;
 
-    public List<AnswerEntity> getAnswers() {
+    public List<AnswerJpaEntity> getAnswers() {
         return new ArrayList<>();
     }
 
-    public List<QualityAttributeValueEntity> getQualityAttributeValues() {
+    public List<QualityAttributeValueJpaEntity> getQualityAttributeValues() {
         return new ArrayList<>();
     }
 

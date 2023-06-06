@@ -1,10 +1,11 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.entity;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class EvidenceEntity {
+public class EvidenceJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "uuid")
@@ -30,7 +31,7 @@ public class EvidenceEntity {
     private Long createdById;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
-    private AssessmentEntity assessment;
+    private AssessmentJpaEntity assessment;
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 

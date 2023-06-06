@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.repository;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult;
 
 import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 import org.springframework.data.jpa.repository.JpaRepository;

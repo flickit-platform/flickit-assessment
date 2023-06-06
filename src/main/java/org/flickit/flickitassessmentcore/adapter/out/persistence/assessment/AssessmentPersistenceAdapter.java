@@ -1,9 +1,6 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.entity.AssessmentEntity;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.mapper.AssessmentMapper;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.repository.AssessmentRepository;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.domain.Assessment;
 import org.springframework.stereotype.Component;
@@ -19,7 +16,7 @@ public class AssessmentPersistenceAdapter implements LoadAssessmentPort {
 
     @Override
     public Assessment loadAssessment(UUID assessmentId) {
-        AssessmentEntity assessmentEntity = assessmentRepository.getReferenceById(assessmentId);
+        AssessmentJpaEntity assessmentEntity = assessmentRepository.getReferenceById(assessmentId);
         return assessmentMapper.mapToDomainModel(assessmentEntity);
     }
 }

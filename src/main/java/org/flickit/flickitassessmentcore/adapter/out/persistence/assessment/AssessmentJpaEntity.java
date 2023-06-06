@@ -1,10 +1,11 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.entity;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentcolor.AssessmentColorJpaEntity;
 import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.domain.Evidence;
 import org.hibernate.annotations.GenericGenerator;
@@ -22,7 +23,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentEntity {
+public class AssessmentJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -42,7 +43,7 @@ public class AssessmentEntity {
     private Long assessmentKitId;
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "color_id", referencedColumnName = "id")
-    private AssessmentColorEntity color;
+    private AssessmentColorJpaEntity color;
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
     @Column(name = "maturity_level_id")

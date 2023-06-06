@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattribute;
 
 import org.flickit.flickitassessmentcore.application.port.out.LoadQualityAttributePort;
 import org.flickit.flickitassessmentcore.domain.QualityAttribute;

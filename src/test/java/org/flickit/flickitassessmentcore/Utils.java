@@ -5,7 +5,6 @@ import org.checkerframework.checker.units.qual.A;
 import org.flickit.flickitassessmentcore.domain.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
