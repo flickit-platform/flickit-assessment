@@ -1,15 +1,15 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.AssessmentColorDto;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.LoadAssessmentColorByIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.CheckAssessmentColorExistencePort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -18,27 +18,33 @@ import java.util.UUID;
 public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private final CreateAssessmentPort createAssessmentPort;
-    private final LoadAssessmentColorByIdPort loadAssessmentColorByIdPort;
+    private final CheckAssessmentColorExistencePort checkColorExistencePort;
 
     @Override
     public UUID createAssessment(CreateAssessmentCommand command) {
-        CreateAssessmentCommand refinedCommand = refineProperties(command);
-        return createAssessmentPort.persist(refinedCommand);
+        validateCommand(command);
+        CreateAssessmentPort.Param param = toParam(command);
+        return createAssessmentPort.persist(param);
     }
 
-    private CreateAssessmentCommand refineProperties(CreateAssessmentCommand createCommand) {
-        String code = generateSlugCode(createCommand.getTitle());
-        AssessmentColorDto color = loadColor(createCommand.getColor());
+    private void validateCommand(CreateAssessmentCommand command) {
+        checkColorIdExistence(command.getColorId());
+    }
 
-        return new CreateAssessmentCommand(
+    private CreateAssessmentPort.Param toParam(CreateAssessmentCommand command) {
+        String code = generateSlugCode(command.getTitle());
+        LocalDateTime creationTime = LocalDateTime.now();
+        LocalDateTime lastModificationTime = LocalDateTime.now();
+
+        return new CreateAssessmentPort.Param(
+            command.getTitle(),
+            command.getDescription(),
+            command.getAssessmentKitId(),
+            command.getColorId(),
+            command.getSpaceId(),
             code,
-            createCommand.getTitle(),
-            createCommand.getDescription(),
-            createCommand.getCreationTime(),
-            createCommand.getLastModificationDate(),
-            createCommand.getAssessmentKitId(),
-            color,
-            createCommand.getSpaceId()
+            creationTime,
+            lastModificationTime
         );
     }
 
@@ -49,14 +55,13 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             .replaceAll("\\s+", "-");
     }
 
-    private AssessmentColorDto loadColor(AssessmentColorDto color) {
-        if (color.getId() == null) {
-            return color;
+    private void checkColorIdExistence(Long colorId) {
+        if (colorId == null) {
+            return;
         }
-        AssessmentColorDto detailsDto = loadAssessmentColorByIdPort.loadById(color.getId());
-        if (detailsDto == null)
-            throw new ResourceNotFoundException("Color with ID " + color.getId() + " not found.");
-        return detailsDto;
+        boolean isColorIdExist = checkColorExistencePort.isColorIdExist(colorId);
+        if (!isColorIdExist)
+            throw new ResourceNotFoundException("Color with ID " + colorId + " not found!");
     }
 
 }

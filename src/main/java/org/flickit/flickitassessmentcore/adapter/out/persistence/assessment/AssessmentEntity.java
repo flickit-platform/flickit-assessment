@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.entity;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -38,9 +38,8 @@ public class AssessmentEntity {
     private LocalDateTime lastModificationDate;
     @Column(name = "assessment_kit_id", nullable = false)
     private Long assessmentKitId;
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "color_id", referencedColumnName = "id")
-    private AssessmentColorEntity colorId;
+    @Column(name = "color_id")
+    private Long colorId;
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
     @Column(name = "maturity_level_id")

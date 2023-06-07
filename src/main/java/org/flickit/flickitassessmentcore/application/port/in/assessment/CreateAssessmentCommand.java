@@ -2,29 +2,21 @@ package org.flickit.flickitassessmentcore.application.port.in.assessment;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
-import java.time.LocalDateTime;
-
-@Getter
+@Value
 public class CreateAssessmentCommand extends SelfValidating<CreateAssessmentCommand> {
 
-    private String code;
     @NotBlank
-    private final String title;
+    String title;
     @NotBlank
-    private final String description;
-    private final LocalDateTime creationTime;
-    private final LocalDateTime lastModificationDate;
+    String description;
     @NotNull
-    private final Long assessmentKitId;
-    @Setter
+    Long assessmentKitId;
+    long colorId;
     @NotNull
-    private AssessmentColorDto color;
-    @NotNull
-    private final Long spaceId;
+    Long spaceId;
 
     public CreateAssessmentCommand(String title,
                                    String description,
@@ -36,28 +28,7 @@ public class CreateAssessmentCommand extends SelfValidating<CreateAssessmentComm
         this.description = description;
         this.spaceId = spaceId;
         this.assessmentKitId = assessmentKitId;
-        this.color = new AssessmentColorDto(colorId);
-        this.creationTime = LocalDateTime.now();
-        this.lastModificationDate = LocalDateTime.now();
-        this.validateSelf();
-    }
-
-    public CreateAssessmentCommand(String code,
-                                   String title,
-                                   String description,
-                                   LocalDateTime creationTime,
-                                   LocalDateTime lastModificationDate,
-                                   Long assessmentKitId,
-                                   AssessmentColorDto color,
-                                   Long spaceId) {
-        this.code = code;
-        this.title = title;
-        this.description = description;
-        this.creationTime = creationTime;
-        this.lastModificationDate = lastModificationDate;
-        this.assessmentKitId = assessmentKitId;
-        this.color = color;
-        this.spaceId = spaceId;
+        this.colorId = colorId;
         this.validateSelf();
     }
 }

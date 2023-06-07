@@ -28,9 +28,8 @@ public class EvidenceEntity {
     private LocalDateTime lastModificationDate;
     @Column(name = "created_by_id", nullable = false)
     private Long createdById;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
-    private AssessmentEntity assessment;
+    @Column(name = "assessment_id", nullable = false)
+    private Long assessmentId;
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
