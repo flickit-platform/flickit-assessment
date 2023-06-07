@@ -3,8 +3,8 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 
 public class AssessmentMapper {
-    static AssessmentEntity mapCreateParamToJpaEntity(CreateAssessmentPort.Param param) {
-        return new AssessmentEntity(
+    static AssessmentJpaEntity mapCreateParamToJpaEntity(CreateAssessmentPort.Param param) {
+        return new AssessmentJpaEntity(
             null,
             param.code(),
             param.title(),
