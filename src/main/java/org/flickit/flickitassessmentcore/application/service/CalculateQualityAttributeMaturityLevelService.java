@@ -9,6 +9,7 @@ import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -40,7 +41,7 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
                     for (AnswerOptionImpact impact : answerOptionImpacts) {
                         if (impact.getOption().getId().equals(questionAnswer.getId())) {
                             QuestionImpact questionImpact = impact.getImpact();
-                            Integer value = (impact.getValue().intValueExact()) * impact.getImpact().getWeight();
+                            Integer value = impact.getValue().intValueExact() * impact.getImpact().getWeight();
                             Long maturityLevelId = questionImpact.getMaturityLevel().getId();
                             maturityLevelValueSumMap.put(maturityLevelId, maturityLevelValueSumMap.getOrDefault(maturityLevelId, 0) + value);
                             maturityLevelValueCountMap.put(maturityLevelId, maturityLevelValueCountMap.getOrDefault(maturityLevelId, 0) + impact.getImpact().getWeight());
@@ -53,7 +54,7 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
         for (Long maturityLevelId : maturityLevelValueSumMap.keySet()) {
             qualityAttributeImpactScoreMap.put(maturityLevelId, maturityLevelValueSumMap.get(maturityLevelId) / maturityLevelValueCountMap.get(maturityLevelId));
         }
-        List<MaturityLevel> maturityLevels = loadMLByKit.loadMLByKitId(qualityAttribute.getAssessmentSubject().getAssessmentKit().getId()).stream().toList();
+        List<MaturityLevel> maturityLevels = new ArrayList<>(loadMLByKit.loadMLByKitId(qualityAttribute.getAssessmentSubject().getAssessmentKit().getId()));;
         MaturityLevel qualityAttMaturityLevel = findMaturityLevelBasedOnCalculations(qualityAttributeImpactScoreMap, maturityLevels);
         saveQualityAttributeValue(assessmentResult, qualityAttribute, qualityAttMaturityLevel);
 

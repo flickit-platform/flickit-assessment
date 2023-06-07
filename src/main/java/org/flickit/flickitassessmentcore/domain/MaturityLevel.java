@@ -20,4 +20,14 @@ public class MaturityLevel {
     public MaturityLevel(Long id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "MaturityLevel{" +
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", value=" + value +
+            ", assessmentKit=" + assessmentKit +
+            '}';
+    }
 }
