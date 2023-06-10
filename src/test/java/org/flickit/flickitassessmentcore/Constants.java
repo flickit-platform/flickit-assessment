@@ -82,11 +82,11 @@ public class Constants {
     public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE3 = new BigDecimal(3);
 
     public static final Long ANSWER_OPTION_IMPACT_ID4 = 4L;
-    public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE4 = new BigDecimal(1);
+    public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE4 = new BigDecimal(3);
     public static final Long ANSWER_OPTION_IMPACT_ID5 = 5L;
     public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE5 = new BigDecimal(2);
     public static final Long ANSWER_OPTION_IMPACT_ID6 = 6L;
-    public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE6 = new BigDecimal(3);
+    public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE6 = new BigDecimal(1);
 
     // Assessment Color
     public static final Long COLOR_ID = 1L;

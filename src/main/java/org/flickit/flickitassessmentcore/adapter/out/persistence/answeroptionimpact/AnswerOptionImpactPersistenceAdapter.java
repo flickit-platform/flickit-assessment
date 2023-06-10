@@ -7,11 +7,13 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.util.Set;
 
+@Component
 public class AnswerOptionImpactPersistenceAdapter implements LoadAnswerOptionImpactsByAnswerOptionPort {
     @Override
     public Set<AnswerOptionImpact> findAnswerOptionImpactsByAnswerOption(Long answerOptionId) {

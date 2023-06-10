@@ -2,6 +2,7 @@ package org.flickit.flickitassessmentcore.application.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.application.port.in.CalculateQualityAttributeMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.*;
 import org.flickit.flickitassessmentcore.application.service.exception.NoAnswerFoundException;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CalculateQualityAttributeMaturityLevelService implements CalculateQualityAttributeMaturityLevelUseCase {
 
     private final LoadQualityAttributePort loadQualityAttribute;
@@ -43,6 +45,8 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
                             QuestionImpact questionImpact = impact.getImpact();
                             Integer value = impact.getValue().intValueExact() * impact.getImpact().getWeight();
                             Long maturityLevelId = questionImpact.getMaturityLevel().getId();
+                            log.warn("Question: [{}] with Option: [{}] as answer, has value: [{}], on ml: [{}]",
+                                question.getTitle(), questionAnswer.getId(), value, maturityLevelId);
                             maturityLevelValueSumMap.put(maturityLevelId, maturityLevelValueSumMap.getOrDefault(maturityLevelId, 0) + value);
                             maturityLevelValueCountMap.put(maturityLevelId, maturityLevelValueCountMap.getOrDefault(maturityLevelId, 0) + impact.getImpact().getWeight());
                         }

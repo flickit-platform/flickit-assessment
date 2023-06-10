@@ -13,6 +13,6 @@ public class AssessmentResultPersistenceAdapter implements SaveAssessmentResultP
 
     @Override
     public void saveAssessmentResult(AssessmentResult assessmentResult) {
-        assessmentResultRepository.save(assessmentResult);
+        assessmentResultRepository.save(AssessmentResultMapper.mapToJpaEntity(assessmentResult));
     }
 }

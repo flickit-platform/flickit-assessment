@@ -6,10 +6,12 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 
+@Component
 public class QualityAttributePersistenceAdapter implements LoadQualityAttributePort {
     @Override
     public QualityAttribute loadQualityAttribute(Long qualityAttributeId) {
