@@ -37,7 +37,7 @@ public class ConstraintViolationAdvice {
     }
 
     record ValidationError(
-        String field,
+        String propertyPath,
         String message
     ) {
     }
