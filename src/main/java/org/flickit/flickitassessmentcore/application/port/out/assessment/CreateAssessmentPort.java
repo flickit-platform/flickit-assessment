@@ -7,7 +7,6 @@ public interface CreateAssessmentPort {
     UUID persist(Param param);
 
     record Param(String title,
-                 String description,
                  Long assessmentKitId,
                  Long colorId,
                  Long spaceId,

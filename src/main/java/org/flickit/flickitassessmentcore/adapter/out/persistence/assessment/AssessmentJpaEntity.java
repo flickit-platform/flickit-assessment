@@ -30,8 +30,6 @@ public class AssessmentJpaEntity {
     private String code;
     @Column(name = "title", length = 100, nullable = false)
     private String title;
-    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
-    private String description;
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
     @Column(name = "last_modification_date", nullable = false)

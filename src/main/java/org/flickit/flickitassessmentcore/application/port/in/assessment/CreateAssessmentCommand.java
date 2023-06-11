@@ -16,10 +16,6 @@ public class CreateAssessmentCommand extends SelfValidating<CreateAssessmentComm
     @Size(min = 3, message = CREATE_ASSESSMENT_TITLE_SIZE_MIN)
     @Size(max = 100, message = CREATE_ASSESSMENT_TITLE_SIZE_MAX)
     String title;
-    @NotBlank(message = CREATE_ASSESSMENT_DESCRIPTION_NOT_BLANK)
-    @Size(min = 3, message = CREATE_ASSESSMENT_DESCRIPTION_SIZE_MIN)
-    @Size(max = 500, message = CREATE_ASSESSMENT_DESCRIPTION_SIZE_MAX)
-    String description;
     @NotNull(message = CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
     Long assessmentKitId;
     long colorId;
@@ -27,13 +23,11 @@ public class CreateAssessmentCommand extends SelfValidating<CreateAssessmentComm
     Long spaceId;
 
     public CreateAssessmentCommand(String title,
-                                   String description,
                                    Long spaceId,
                                    Long assessmentKitId,
                                    Long colorId) {
 
         this.title = title.strip();
-        this.description = description.strip();
         this.spaceId = spaceId;
         this.assessmentKitId = assessmentKitId;
         this.colorId = colorId;

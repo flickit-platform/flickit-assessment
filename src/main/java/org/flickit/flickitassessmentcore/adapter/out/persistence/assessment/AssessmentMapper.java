@@ -8,7 +8,6 @@ public class AssessmentMapper {
             null,
             param.code(),
             param.title(),
-            param.description(),
             param.creationTime(),
             param.lastModificationDate(),
             param.assessmentKitId(),

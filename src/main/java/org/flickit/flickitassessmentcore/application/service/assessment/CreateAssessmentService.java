@@ -51,7 +51,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         return new CreateAssessmentPort.Param(
             command.getTitle(),
-            command.getDescription(),
             command.getAssessmentKitId(),
             command.getColorId(),
             command.getSpaceId(),

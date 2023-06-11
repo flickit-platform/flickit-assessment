@@ -29,13 +29,12 @@ public class CreateAssessmentRestController {
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    private CreateAssessmentCommand mapRequestDtoToCommand(CreateAssessmentRequestDto webModel, Long spaceId) {
+    private CreateAssessmentCommand mapRequestDtoToCommand(CreateAssessmentRequestDto requestDto, Long spaceId) {
         return new CreateAssessmentCommand(
-            webModel.title(),
-            webModel.description(),
+            requestDto.title(),
             spaceId,
-            webModel.assessmentKitId(),
-            webModel.colorId()
+            requestDto.assessmentKitId(),
+            requestDto.colorId()
         );
     }
 
