@@ -1,0 +1,41 @@
+{
+	"info": {
+		"_postman_id": "9f7ec93d-fe41-4dd5-8379-f61460fee9cd",
+		"name": "flickit-assessment-core",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18899907"
+	},
+	"item": [
+		{
+			"name": "Create Assessment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"colorId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8098/assessment-core/api/1/assessments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8098",
+					"path": [
+						"assessment-core",
+						"api",
+						"1",
+						"assessments"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
