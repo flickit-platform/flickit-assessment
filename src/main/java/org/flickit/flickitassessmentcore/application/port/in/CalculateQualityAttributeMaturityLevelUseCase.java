@@ -6,6 +6,6 @@ import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 
 public interface CalculateQualityAttributeMaturityLevelUseCase {
 
-    MaturityLevel calculateQualityAttributeMaturityLevel(AssessmentResult assessmentResult, Long qualityAttributeId);
+    MaturityLevel calculateQualityAttributeMaturityLevel(CalculateQAMaturityLevelCommand command);
 
 }

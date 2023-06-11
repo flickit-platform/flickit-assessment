@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.application.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.flickitassessmentcore.application.port.in.CalculateQAMaturityLevelCommand;
 import org.flickit.flickitassessmentcore.application.port.in.CalculateQualityAttributeMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.*;
 import org.flickit.flickitassessmentcore.application.service.exception.NoAnswerFoundException;
@@ -10,7 +11,6 @@ import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -27,9 +27,12 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
     private final LoadLevelCompetenceByMLPort loadLCByML;
     private final SaveQualityAttributeValuePort saveQualityAttributeValue;
     private final SaveAssessmentResultPort saveAssessmentResult;
+    private final LoadAssessmentResultPort loadAssessmentResult;
 
     @Override
-    public MaturityLevel calculateQualityAttributeMaturityLevel(AssessmentResult assessmentResult, Long qualityAttributeId) {
+    public MaturityLevel calculateQualityAttributeMaturityLevel(CalculateQAMaturityLevelCommand command) {
+        Long qualityAttributeId = command.getQaId();
+        AssessmentResult assessmentResult = loadAssessmentResult.loadResult(command.getResultId());
         QualityAttribute qualityAttribute = loadQualityAttribute.loadQualityAttribute(qualityAttributeId);
         Set<Question> questions = loadQuestionsByQAId.loadQuestionsByQualityAttributeId(qualityAttributeId);
         Map<Long, Integer> maturityLevelValueSumMap = new HashMap<>();
@@ -81,7 +84,7 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
     }
 
     private void saveAssessmentResult(AssessmentResult assessmentResult, Long qualityAttributeId, MaturityLevel qualityAttMaturityLevel) {
-        List<QualityAttributeValue> qualityAttributeValues = loadQualityAttributeValuesByResult.loadQualityAttributeValuesByResultId(assessmentResult.getId()).stream().toList();
+        List<QualityAttributeValue> qualityAttributeValues = new ArrayList<>(loadQualityAttributeValuesByResult.loadQualityAttributeValuesByResultId(assessmentResult.getId()));
         for (QualityAttributeValue qualityAttributeValue1 : qualityAttributeValues) {
             if (qualityAttributeValue1.getQualityAttribute().getId().equals(qualityAttributeId)) {
                 qualityAttributeValue1.setMaturityLevel(qualityAttMaturityLevel);
@@ -91,9 +94,9 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
     }
 
     private AnswerOption findQuestionAnswer(AssessmentResult assessmentResult, Question question) {
-        List<Answer> answers = loadAnswersByResult.loadAnswersByResultId(assessmentResult.getId()).stream().toList();
+        List<Answer> answers = new ArrayList<>(loadAnswersByResult.loadAnswersByResultId(assessmentResult.getId()));
         for (Answer answer : answers) {
-            if (answer.getQuestion().getId().equals(question.getId())) {
+            if (answer.getQuestion() != null && answer.getQuestion().getId().equals(question.getId())) {
                 return answer.getAnswerOption();
             }
         }
@@ -109,7 +112,7 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
         MaturityLevel result = maturityLevels.get(0);
         maturityLevels.sort(Comparator.comparingInt(MaturityLevel::getValue));
         for (MaturityLevel maturityLevel : maturityLevels) {
-            List<LevelCompetence> levelCompetences = loadLCByML.loadLevelCompetenceByMLId(maturityLevel.getId()).stream().toList();
+            List<LevelCompetence> levelCompetences = new ArrayList<>(loadLCByML.loadLevelCompetenceByMLId(maturityLevel.getId()));
             for (LevelCompetence levelCompetence : levelCompetences) {
                 Long id = levelCompetence.getMaturityLevelCompetence().getId();
                 if (qualityAttImpactScoreMap.containsKey(id) && qualityAttImpactScoreMap.get(id) >= levelCompetence.getValue()) {
