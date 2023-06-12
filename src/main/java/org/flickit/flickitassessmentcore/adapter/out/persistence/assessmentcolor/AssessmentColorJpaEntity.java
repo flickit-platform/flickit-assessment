@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.entity;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentcolor;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentColorEntity {
+public class AssessmentColorJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
