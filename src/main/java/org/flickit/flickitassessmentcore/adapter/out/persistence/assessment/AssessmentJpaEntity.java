@@ -1,10 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
@@ -16,13 +13,16 @@ import java.util.UUID;
         @UniqueConstraint(columnNames = {"title", "space_id"}),
         @UniqueConstraint(columnNames = {"code", "space_id"})
     })
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
-@EqualsAndHashCode
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AssessmentJpaEntity {
 
     @Id
+    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.UUID)
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
@@ -48,10 +48,4 @@ public class AssessmentJpaEntity {
 
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
-
-    @Override
-    public String toString() {
-        return title;
-    }
-
 }
