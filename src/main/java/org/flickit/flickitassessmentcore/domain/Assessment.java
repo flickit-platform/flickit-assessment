@@ -17,11 +17,10 @@ public class Assessment {
     private UUID id;
     private String code;
     private String title;
-    private String description;
     private LocalDateTime creationTime;
     private LocalDateTime lastModificationDate;
     private Long assessmentKitId;
-    private AssessmentColor colorId;
+    private Long colorId;
     private Long spaceId;
     private Long maturityLevelId;
     private List<AssessmentResult> assessmentResults;

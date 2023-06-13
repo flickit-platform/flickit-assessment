@@ -12,7 +12,6 @@ public class AssessmentMapper {
             param.lastModificationDate(),
             param.assessmentKitId(),
             param.colorId(),
-            param.spaceId(),
-            null);
+            param.spaceId());
     }
 }
