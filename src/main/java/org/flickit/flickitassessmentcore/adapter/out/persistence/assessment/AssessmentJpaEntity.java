@@ -21,23 +21,31 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class AssessmentJpaEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+
     @Column(name = "code", length = 100, nullable = false)
     private String code;
+
     @Column(name = "title", length = 100, nullable = false)
     private String title;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
+
     @Column(name = "last_modification_date", nullable = false)
     private LocalDateTime lastModificationDate;
+
     @Column(name = "assessment_kit_id", nullable = false)
     private Long assessmentKitId;
+
     @Column(name = "color_id")
     private Long colorId;
+
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
 
@@ -46,7 +54,4 @@ public class AssessmentJpaEntity {
         return title;
     }
 
-    /* TODO:
-     *  - getAssessmentResult
-     */
 }

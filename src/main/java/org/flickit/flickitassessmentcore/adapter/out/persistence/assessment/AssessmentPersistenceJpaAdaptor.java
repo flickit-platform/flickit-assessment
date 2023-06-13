@@ -11,6 +11,7 @@ import java.util.UUID;
 public class AssessmentPersistenceJpaAdaptor implements CreateAssessmentPort {
 
     private final AssessmentJpaRepository repository;
+
     @Override
     public UUID persist(Param param) {
         AssessmentJpaEntity unsavedEntity = AssessmentMapper.mapCreateParamToJpaEntity(param);
