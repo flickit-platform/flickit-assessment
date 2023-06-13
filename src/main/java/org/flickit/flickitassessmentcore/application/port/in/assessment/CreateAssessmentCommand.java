@@ -27,7 +27,7 @@ public class CreateAssessmentCommand extends SelfValidating<CreateAssessmentComm
                                    Long assessmentKitId,
                                    Long colorId) {
 
-        this.title = title.strip();
+        this.title = title != null ? title.strip() : null;
         this.spaceId = spaceId;
         this.assessmentKitId = assessmentKitId;
         this.colorId = colorId;
