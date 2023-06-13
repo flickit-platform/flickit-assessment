@@ -18,7 +18,7 @@ public class Evidence {
     private LocalDateTime creationTime;
     private LocalDateTime lastModificationDate;
     private Long createdById;
-    private AssessmentProject assessmentProject;
+    private Assessment assessment;
     private Long questionId;
 
     @Override

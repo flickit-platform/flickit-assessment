@@ -21,9 +21,8 @@ public class AssessmentResultEntity {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assessment_project_id", referencedColumnName = "id", nullable = false)
-    private AssessmentProjectEntity assessmentProject;
+    @Column(name = "assessment_id", nullable = false)
+    private Long assessmentId;
 
     @Override
     public String toString() {
