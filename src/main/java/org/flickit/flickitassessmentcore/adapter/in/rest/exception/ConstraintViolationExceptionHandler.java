@@ -1,8 +1,8 @@
-package org.flickit.flickitassessmentcore.adapter.in.rest.advice;
+package org.flickit.flickitassessmentcore.adapter.in.rest.exception;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.flickitassessmentcore.adapter.in.rest.advice.common.ValidationError;
+import org.flickit.flickitassessmentcore.adapter.in.rest.exception.common.ValidationError;
 import org.flickit.flickitassessmentcore.common.MessageBundle;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

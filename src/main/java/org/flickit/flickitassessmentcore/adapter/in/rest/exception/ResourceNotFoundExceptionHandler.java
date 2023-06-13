@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.in.rest.advice;
+package org.flickit.flickitassessmentcore.adapter.in.rest.exception;
 
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.common.MessageBundle;
