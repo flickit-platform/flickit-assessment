@@ -23,10 +23,10 @@ public class CreateAssessmentRestController {
 
     private CreateAssessmentCommand toCommand(CreateAssessmentRequestDto requestDto) {
         return new CreateAssessmentCommand(
+            requestDto.spaceId(),
             requestDto.title(),
             requestDto.assessmentKitId(),
-            requestDto.colorId(),
-            requestDto.spaceId()
+            requestDto.colorId()
         );
     }
 

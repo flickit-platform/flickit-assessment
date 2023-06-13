@@ -22,11 +22,7 @@ public class CreateAssessmentCommand extends SelfValidating<CreateAssessmentComm
     @NotNull(message = CREATE_ASSESSMENT_SPACE_ID_NOT_NULL)
     Long spaceId;
 
-    public CreateAssessmentCommand(String title,
-                                   Long spaceId,
-                                   Long assessmentKitId,
-                                   Long colorId) {
-
+    public CreateAssessmentCommand(Long spaceId, String title, Long assessmentKitId, Long colorId) {
         this.title = title != null ? title.strip() : null;
         this.spaceId = spaceId;
         this.assessmentKitId = assessmentKitId;

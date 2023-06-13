@@ -85,8 +85,8 @@ class CreateAssessmentServiceTest {
 
     private static CreateAssessmentCommand createValidCommand() {
         return new CreateAssessmentCommand(
-            "title example",
             1L,
+            "title example",
             1L,
             1L
         );
