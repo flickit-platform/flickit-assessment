@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.in.rest.advice;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.flickit.flickitassessmentcore.adapter.in.rest.advice.common.ValidationError;
+import org.flickit.flickitassessmentcore.common.MessageBundle;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
-import static org.flickit.flickitassessmentcore.adapter.in.rest.advice.common.ErrorBundleLoader.getErrorMessage;
 
 @RestControllerAdvice
 public class ConstraintViolationExceptionHandler {
@@ -33,7 +33,7 @@ public class ConstraintViolationExceptionHandler {
                 map(violation ->
                     new ValidationError(
                         violation.getPropertyPath().toString(),
-                        getErrorMessage(violation.getMessage()))).
+                        MessageBundle.message(violation.getMessage()))).
                 collect(toList());
         return null;
     }
