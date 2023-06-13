@@ -11,34 +11,26 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("{spaceId}/assessments")
 public class CreateAssessmentRestController {
     private final CreateAssessmentUseCase useCase;
 
     @PostMapping
-    public ResponseEntity<CreateAssessmentResponseDto> createAssessment(@RequestBody CreateAssessmentRequestDto requestDto,
-                                                                        @PathVariable("spaceId") Long spaceId) {
-
-        CreateAssessmentCommand command = mapRequestDtoToCommand(requestDto, spaceId);
-
-        CreateAssessmentResponseDto responseDto =
-            mapToResponseDto(
-                useCase.createAssessment(command)
-            );
-
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+    @RequestMapping("/assessments")
+    public ResponseEntity<CreateAssessmentResponseDto> createAssessment(@RequestBody CreateAssessmentRequestDto request) {
+        UUID response = useCase.createAssessment(toCommand(request));
+        return new ResponseEntity<>(toResponseDto(response), HttpStatus.CREATED);
     }
 
-    private CreateAssessmentCommand mapRequestDtoToCommand(CreateAssessmentRequestDto requestDto, Long spaceId) {
+    private CreateAssessmentCommand toCommand(CreateAssessmentRequestDto requestDto) {
         return new CreateAssessmentCommand(
             requestDto.title(),
-            spaceId,
             requestDto.assessmentKitId(),
-            requestDto.colorId()
+            requestDto.colorId(),
+            requestDto.spaceId()
         );
     }
 
-    private CreateAssessmentResponseDto mapToResponseDto(UUID id) {
+    private CreateAssessmentResponseDto toResponseDto(UUID id) {
         return new CreateAssessmentResponseDto(id);
     }
 }

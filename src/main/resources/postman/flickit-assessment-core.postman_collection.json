@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"colorId\": 1\n}",
+					"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"colorId\": 1,\n    \"spaceId\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -21,7 +21,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8098/assessment-core/api/1/assessments",
+					"raw": "http://localhost:8098/assessment-core/api/assessments",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -30,7 +30,6 @@
 					"path": [
 						"assessment-core",
 						"api",
-						"1",
 						"assessments"
 					]
 				}
