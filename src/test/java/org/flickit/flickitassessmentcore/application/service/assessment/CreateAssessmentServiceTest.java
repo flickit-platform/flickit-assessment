@@ -2,11 +2,9 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.CheckAssessmentUniqueConstraintPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.CheckAssessmentColorExistencePort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.application.service.exception.UniqueConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,8 +29,6 @@ class CreateAssessmentServiceTest {
     private CreateAssessmentPort createAssessmentPort;
     @Mock
     private CheckAssessmentColorExistencePort checkColorExistencePort;
-    @Mock
-    private CheckAssessmentUniqueConstraintPort assessmentUniqueConstraintPort;
 
     @Test
     void createAssessment_ValidCommand_PersistsAndReturnsId() {
@@ -40,8 +36,6 @@ class CreateAssessmentServiceTest {
         UUID expectedId = UUID.randomUUID();
         doReturn(expectedId).when(createAssessmentPort).persist(any(CreateAssessmentPort.Param.class));
         doReturn(true).when(checkColorExistencePort).isColorIdExist(anyLong());
-        doReturn(false).when(assessmentUniqueConstraintPort).checkTitleAndSpaceIdUniqueConstraint(anyString(), anyLong());
-        doReturn(false).when(assessmentUniqueConstraintPort).checkCodeAndSpaceIdUniqueConstraint(anyString(), anyLong());
 
         UUID actualId = createAssessmentService.createAssessment(command);
 
@@ -54,38 +48,12 @@ class CreateAssessmentServiceTest {
     void createAssessment_InvalidColor_ThrowsException() {
         CreateAssessmentCommand command = createValidCommand();
         doReturn(false).when(checkColorExistencePort).isColorIdExist(anyLong());
-        doReturn(false).when(assessmentUniqueConstraintPort).checkTitleAndSpaceIdUniqueConstraint(anyString(), anyLong());
 
         assertThrows(ResourceNotFoundException.class, () -> {
             createAssessmentService.createAssessment(command);
         });
         verify(createAssessmentPort, never()).persist(any(CreateAssessmentPort.Param.class));
     }
-
-    @Test
-    void createAssessment_DuplicateTitleWithinSpace_ThrowsException() {
-        CreateAssessmentCommand command = createValidCommand();
-        doReturn(true).when(assessmentUniqueConstraintPort).checkTitleAndSpaceIdUniqueConstraint(anyString(), anyLong());
-
-        assertThrows(UniqueConstraintViolationException.class, () -> {
-            createAssessmentService.createAssessment(command);
-        });
-        verify(createAssessmentPort, never()).persist(any(CreateAssessmentPort.Param.class));
-    }
-
-    @Test
-    void createAssessment_DuplicateCodeWithinSpace_ThrowsException() {
-        CreateAssessmentCommand command = createValidCommand();
-        doReturn(true).when(checkColorExistencePort).isColorIdExist(anyLong());
-        doReturn(false).when(assessmentUniqueConstraintPort).checkTitleAndSpaceIdUniqueConstraint(anyString(), anyLong());
-        doReturn(true).when(assessmentUniqueConstraintPort).checkCodeAndSpaceIdUniqueConstraint(anyString(), anyLong());
-
-        assertThrows(UniqueConstraintViolationException.class, () -> {
-            createAssessmentService.createAssessment(command);
-        });
-        verify(createAssessmentPort, never()).persist(any(CreateAssessmentPort.Param.class));
-    }
-
 
     @Test
     void generateSlugCode_NoWhitespace_ReturnsLowerCaseCode() {
