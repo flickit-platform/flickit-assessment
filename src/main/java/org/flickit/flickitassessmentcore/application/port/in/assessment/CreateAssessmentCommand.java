@@ -10,15 +10,17 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 @Value
 public class CreateAssessmentCommand extends SelfValidating<CreateAssessmentCommand> {
-    public static final String PROP_TITLE = "title";
 
     @NotBlank(message = CREATE_ASSESSMENT_TITLE_NOT_BLANK)
     @Size(min = 3, message = CREATE_ASSESSMENT_TITLE_SIZE_MIN)
     @Size(max = 100, message = CREATE_ASSESSMENT_TITLE_SIZE_MAX)
     String title;
+
     @NotNull(message = CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
     Long assessmentKitId;
+
     long colorId;
+
     @NotNull(message = CREATE_ASSESSMENT_SPACE_ID_NOT_NULL)
     Long spaceId;
 

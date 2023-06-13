@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface CreateAssessmentPort {
+
     UUID persist(Param param);
 
     record Param(String title,
@@ -13,6 +14,5 @@ public interface CreateAssessmentPort {
                  String code,
                  LocalDateTime creationTime,
                  LocalDateTime lastModificationDate) {
-
     }
 }

@@ -12,6 +12,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 public class CreateAssessmentRestController {
+
     private final CreateAssessmentUseCase useCase;
 
     @PostMapping

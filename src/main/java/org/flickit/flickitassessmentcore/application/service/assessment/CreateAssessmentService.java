@@ -33,7 +33,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         checkColorIdExistence(command.getColorId());
     }
 
-
     private CreateAssessmentPort.Param toParam(CreateAssessmentCommand command) {
         String code = generateSlugCode(command.getTitle());
         LocalDateTime creationTime = LocalDateTime.now();
