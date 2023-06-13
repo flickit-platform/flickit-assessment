@@ -22,7 +22,6 @@ public class Assessment {
     private Long assessmentKitId;
     private Long colorId;
     private Long spaceId;
-    private Long maturityLevelId;
     private List<AssessmentResult> assessmentResults;
     private List<Evidence> evidences;
 
