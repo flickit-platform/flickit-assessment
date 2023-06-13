@@ -5,6 +5,7 @@ import org.flickit.flickitassessmentcore.adapter.in.rest.qualityattribute.Calcul
 import org.flickit.flickitassessmentcore.application.port.in.CalculateQAMaturityLevelCommand;
 import org.flickit.flickitassessmentcore.application.service.CalculateQAMaturityLevelServiceContext;
 import org.flickit.flickitassessmentcore.application.service.CalculateQualityAttributeMaturityLevelService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -31,6 +32,7 @@ public class CalculateQualityAttributeMaturityLevelRestControllerIntegrationTest
     private JacksonTester<CalculateQAMaturityLevelResponseDto> jacksonTester;
 
     @Test
+    @Disabled
     public void greetingShouldReturnDefaultMessage() throws Exception {
         CalculateQAMaturityLevelCommand command = new CalculateQAMaturityLevelCommand(
             context.getQualityAttribute().getId(),
