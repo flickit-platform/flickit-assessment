@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import static org.flickit.flickitassessmentcore.adapter.in.rest.advice.common.ErrorBundleLoader.getErrorMessage;
 
 @RestControllerAdvice
-public class ResourceNotFoundAdvice {
+public class ResourceNotFoundExceptionHandler {
+
     @ResponseBody
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    String assessmentColorNotFoundHandler(ResourceNotFoundException ex) {
+    String handle(ResourceNotFoundException ex) {
         return getErrorMessage(ex.getMessage());
     }
 }

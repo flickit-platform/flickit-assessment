@@ -16,12 +16,12 @@ import static java.util.stream.Collectors.toList;
 import static org.flickit.flickitassessmentcore.adapter.in.rest.advice.common.ErrorBundleLoader.getErrorMessage;
 
 @RestControllerAdvice
-public class ConstraintViolationAdvice {
+public class ConstraintViolationExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public List<ValidationError> handleConstraintViolation(ConstraintViolationException ex) {
+    public List<ValidationError> handle(ConstraintViolationException ex) {
         return buildValidationErrors(ex.getConstraintViolations());
     }
 
