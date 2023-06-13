@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="create-assessment-color-table" author="MKouhestani">
+        <createTable tableName="assessment_color" schemaName="public">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="id" nullable="false"/>
+            </column>
+            <column name="color_code" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(40)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="assessment_color" columnNames="color_code"
+                             constraintName="uk_dffw6ul3q7i8mdfn719si0qsq"/>
+        <addUniqueConstraint tableName="assessment_color" columnNames="title"
+                             constraintName="uk_pitrekknsevm91icyesmwr9nt"/>
+    </changeSet>
+
+    <changeSet id="create-assessment-assessment-table" author="MKouhestani">
+        <createTable tableName="assessment_assessment" schemaName="public">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="assessment_kit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="timestamp(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_date" type="timestamp(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="maturity_level_id" type="bigint"/>
+            <column name="space_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color_id" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="assessment_color" baseColumnNames="id"
+                                 constraintName="fk576na5ga040mmf4drd9uoo2qj"
+                                 referencedTableName="assessment_color"
+                                 referencedColumnNames="id"/>
+        <addUniqueConstraint tableName="assessment_assessment" columnNames="title, space_id"
+                             constraintName="ukfgtr7tfpot9s8bk769ycqflui"/>
+        <addUniqueConstraint tableName="assessment_assessment" columnNames="code, space_id"
+                             constraintName="ukgvtgd1wbx1d0wsac10g9jmab9"/>
+    </changeSet>
+
+    <changeSet id="create-assessment-assessmentresult-table" author="MKouhestani">
+        <createTable tableName="assessment_assessmentresult" schemaName="public">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="assessment_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="assessment_assessment" baseColumnNames="id"
+                                 constraintName="fkal2s0w1p7uao22jgramvjx5dv"
+                                 referencedTableName="assessment_assessment" referencedColumnNames="id"/>
+
+    </changeSet>
+
+    <changeSet id="create-assessment-evidence-table" author="MKouhestani">
+        <createTable tableName="assessment_evidence" schemaName="public">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="created_by_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="timestamp(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_date" type="timestamp(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="assessment_assessment" baseColumnNames="id"
+                                 constraintName="fkmjc4lam6jfh2onqj1po1cg8ua"
+                                 referencedTableName="assessment_assessment" referencedColumnNames="id"/>
+
+    </changeSet>
+
+    <changeSet id="create-assessment-qualityattributevalue-table" author="MKouhestani">
+        <createTable tableName="assessment_qualityattributevalue" schemaName="public">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="maturity_level_id" type="bigint"/>
+            <column name="quality_attribute_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="assessment_assessmentresult" baseColumnNames="id"
+                                 constraintName="fkk57ds9johhr4d9w0fftcidxys"
+                                 referencedTableName="assessment_assessmentresult" referencedColumnNames="id"/>
+
+    </changeSet>
+
+    <changeSet id="create-assessment-answer-table" author="MKouhestani">
+        <createTable tableName="assessment_answer" schemaName="public">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="answer_option_id" type="bigint"/>
+            <column name="question_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="assessment_assessmentresult" baseColumnNames="id"
+                                 constraintName="fkp8gkrooo4tcp9tak3n33gb40h"
+                                 referencedTableName="assessment_assessmentresult" referencedColumnNames="id"/>
+
+    </changeSet>
+
+
+</databaseChangeLog>
