@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentAssessmentColorPersistenceJpaAdaptor
+public class AssessmentColorPersistenceJpaAdaptor
     implements CheckAssessmentColorExistencePort {
     private final AssessmentColorJpaRepository repository;
 
