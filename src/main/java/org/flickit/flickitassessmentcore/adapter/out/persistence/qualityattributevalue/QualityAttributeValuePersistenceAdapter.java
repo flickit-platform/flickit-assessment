@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.application.port.out.LoadQAValuesByQAIdsPort;
 import org.flickit.flickitassessmentcore.application.port.out.LoadQualityAttributeValuesByResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.SaveQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
@@ -13,7 +14,10 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
-public class QualityAttributeValuePersistenceAdapter implements SaveQualityAttributeValuePort, LoadQualityAttributeValuesByResultPort {
+public class QualityAttributeValuePersistenceAdapter implements
+    SaveQualityAttributeValuePort,
+    LoadQualityAttributeValuesByResultPort,
+    LoadQAValuesByQAIdsPort {
 
     private final QualityAttributeValueRepository qualityAttributeValueRepository;
 
@@ -24,8 +28,17 @@ public class QualityAttributeValuePersistenceAdapter implements SaveQualityAttri
 
     @Override
     public Set<QualityAttributeValue> loadQualityAttributeValuesByResultId(UUID resultId) {
-        List<QualityAttributeValueJpaEntity> qualityAttributeValueEntities =
-            qualityAttributeValueRepository.findQualityAttributeValueByResultId(resultId);
-        return qualityAttributeValueEntities.stream().map(QualityAttributeValueMapper::mapToDomainModel).collect(Collectors.toSet());
+        return qualityAttributeValueRepository.findQualityAttributeValueByResultId(resultId)
+            .stream()
+            .map(QualityAttributeValueMapper::mapToDomainModel)
+            .collect(Collectors.toSet());
+    }
+
+    @Override
+    public List<QualityAttributeValue> LoadQAValuesByQAIds(Set<Long> qaIds) {
+        return qualityAttributeValueRepository.findQualityAttributeValuesByQualityAttributeIds(qaIds)
+            .stream()
+            .map(QualityAttributeValueMapper::mapToDomainModel)
+            .collect(Collectors.toList());
     }
 }

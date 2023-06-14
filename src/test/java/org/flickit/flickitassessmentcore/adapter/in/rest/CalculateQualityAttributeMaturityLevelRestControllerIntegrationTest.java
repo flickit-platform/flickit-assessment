@@ -2,9 +2,9 @@ package org.flickit.flickitassessmentcore.adapter.in.rest;
 
 import org.flickit.flickitassessmentcore.adapter.in.rest.qualityattribute.CalculateQAMaturityLevelResponseDto;
 import org.flickit.flickitassessmentcore.adapter.in.rest.qualityattribute.CalculateQualityAttributeMaturityLevelRestController;
-import org.flickit.flickitassessmentcore.application.port.in.CalculateQAMaturityLevelCommand;
+import org.flickit.flickitassessmentcore.application.port.in.qualityattribute.CalculateQAMaturityLevelCommand;
 import org.flickit.flickitassessmentcore.application.service.CalculateQAMaturityLevelServiceContext;
-import org.flickit.flickitassessmentcore.application.service.CalculateQualityAttributeMaturityLevelService;
+import org.flickit.flickitassessmentcore.application.service.qualityattribute.CalculateQualityAttributeMaturityLevelService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,5 @@
-package org.flickit.flickitassessmentcore.application.port.in;
+package org.flickit.flickitassessmentcore.application.port.in.qualityattribute;
 
-import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 
 

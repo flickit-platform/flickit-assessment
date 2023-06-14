@@ -5,6 +5,7 @@ import org.flickit.flickitassessmentcore.domain.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -44,7 +45,10 @@ public class Utils {
     public static AssessmentResult createAssessmentResult() {
         return new AssessmentResult(
             UUID.randomUUID(),
-            new Assessment()
+            new Assessment(),
+            new ArrayList<QualityAttributeValue>(),
+            new ArrayList<AssessmentSubjectValue>(),
+            false
         );
     }
 
@@ -59,6 +63,15 @@ public class Utils {
             1,
             new AssessmentKit(),
             new HashSet<Questionnaire>()
+        );
+    }
+
+    public static AssessmentSubjectValue createAssessmentSubjectValue() {
+        return new AssessmentSubjectValue(
+            UUID.randomUUID(),
+            new AssessmentResult(),
+            new AssessmentSubject(),
+            new MaturityLevel()
         );
     }
 

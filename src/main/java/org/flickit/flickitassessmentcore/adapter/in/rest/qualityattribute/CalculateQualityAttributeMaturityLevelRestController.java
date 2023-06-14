@@ -2,8 +2,8 @@ package org.flickit.flickitassessmentcore.adapter.in.rest.qualityattribute;
 
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.CalculateQAMaturityLevelCommand;
-import org.flickit.flickitassessmentcore.application.port.in.CalculateQualityAttributeMaturityLevelUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.qualityattribute.CalculateQAMaturityLevelCommand;
+import org.flickit.flickitassessmentcore.application.port.in.qualityattribute.CalculateQualityAttributeMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

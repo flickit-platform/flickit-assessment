@@ -23,6 +23,10 @@ public class AssessmentSubject {
     private AssessmentKit assessmentKit;
     private Set<Questionnaire> questionnaires;
 
+    public AssessmentSubject(Long assessmentSubjectId) {
+        this.id = assessmentSubjectId;
+    }
+
     @Override
     public String toString() {
         return title;

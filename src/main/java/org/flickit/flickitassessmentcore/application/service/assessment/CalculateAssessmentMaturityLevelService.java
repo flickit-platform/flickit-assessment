@@ -1,14 +1,13 @@
-package org.flickit.flickitassessmentcore.application.service;
+package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.CalculateAssessmentMaturityLevelUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CalculateAssessmentMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAssessmentKitPort;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
 import java.util.UUID;
 
 @Transactional

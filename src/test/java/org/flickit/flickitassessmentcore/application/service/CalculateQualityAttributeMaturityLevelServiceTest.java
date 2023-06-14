@@ -1,8 +1,9 @@
 package org.flickit.flickitassessmentcore.application.service;
 
-import org.flickit.flickitassessmentcore.application.port.in.CalculateQAMaturityLevelCommand;
+import org.flickit.flickitassessmentcore.application.port.in.qualityattribute.CalculateQAMaturityLevelCommand;
 import org.flickit.flickitassessmentcore.application.port.out.*;
 import org.flickit.flickitassessmentcore.application.service.exception.NoAnswerFoundException;
+import org.flickit.flickitassessmentcore.application.service.qualityattribute.CalculateQualityAttributeMaturityLevelService;
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

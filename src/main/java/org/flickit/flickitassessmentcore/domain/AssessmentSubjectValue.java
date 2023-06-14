@@ -5,19 +5,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentResult {
+public class AssessmentSubjectValue {
     private UUID id;
-    private Assessment assessment;
-    private List<QualityAttributeValue> qualityAttributeValues;
-    private List<AssessmentSubjectValue> assessmentSubjectValues;
-    private boolean isValid;
+    private AssessmentResult assessmentResult;
+    private AssessmentSubject assessmentSubject;
+    private MaturityLevel maturityLevel;
 
     @Override
     public String toString() {

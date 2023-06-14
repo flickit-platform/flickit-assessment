@@ -1,10 +1,10 @@
-package org.flickit.flickitassessmentcore.application.service;
+package org.flickit.flickitassessmentcore.application.service.qualityattribute;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.flickitassessmentcore.application.port.in.CalculateQAMaturityLevelCommand;
-import org.flickit.flickitassessmentcore.application.port.in.CalculateQualityAttributeMaturityLevelUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.qualityattribute.CalculateQAMaturityLevelCommand;
+import org.flickit.flickitassessmentcore.application.port.in.qualityattribute.CalculateQualityAttributeMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.*;
 import org.flickit.flickitassessmentcore.application.service.exception.NoAnswerFoundException;
 import org.flickit.flickitassessmentcore.domain.*;
@@ -63,12 +63,13 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
         }
         List<MaturityLevel> maturityLevels = new ArrayList<>(loadMLByKit.loadMLByKitId(qualityAttribute.getAssessmentSubject().getAssessmentKit().getId()));;
         MaturityLevel qualityAttMaturityLevel = findMaturityLevelBasedOnCalculations(qualityAttributeImpactScoreMap, maturityLevels);
+
         saveQualityAttributeValue(assessmentResult, qualityAttribute, qualityAttMaturityLevel);
 
         // TODO
         // We should keep the previous results
         // Change result if it really has been changed (if result is same as calculated so don't touch it)
-        saveAssessmentResult(assessmentResult, qualityAttributeId, qualityAttMaturityLevel);
+        saveAssessmentResult(assessmentResult, qualityAttribute, qualityAttMaturityLevel);
 
         return qualityAttMaturityLevel;
     }
@@ -83,14 +84,16 @@ public class CalculateQualityAttributeMaturityLevelService implements CalculateQ
         saveQualityAttributeValue.saveQualityAttributeValue(qualityAttributeValue);
     }
 
-    private void saveAssessmentResult(AssessmentResult assessmentResult, Long qualityAttributeId, MaturityLevel qualityAttMaturityLevel) {
+    private void saveAssessmentResult(AssessmentResult assessmentResult, QualityAttribute qualityAttribute, MaturityLevel qualityAttMaturityLevel) {
         List<QualityAttributeValue> qualityAttributeValues = new ArrayList<>(loadQualityAttributeValuesByResult.loadQualityAttributeValuesByResultId(assessmentResult.getId()));
         for (QualityAttributeValue qualityAttributeValue1 : qualityAttributeValues) {
-            if (qualityAttributeValue1.getQualityAttribute().getId().equals(qualityAttributeId)) {
-                qualityAttributeValue1.setMaturityLevel(qualityAttMaturityLevel);
+            if (qualityAttributeValue1.getQualityAttribute().getId().equals(qualityAttribute.getId())) {
+                if (qualityAttributeValue1.getMaturityLevel().getValue().equals(qualityAttMaturityLevel.getValue())) {
+                    return;
+                }
             }
         }
-        saveAssessmentResult.saveAssessmentResult(assessmentResult);
+        saveQualityAttributeValue(assessmentResult, qualityAttribute, qualityAttMaturityLevel);
     }
 
     private AnswerOption findQuestionAnswer(AssessmentResult assessmentResult, Question question) {

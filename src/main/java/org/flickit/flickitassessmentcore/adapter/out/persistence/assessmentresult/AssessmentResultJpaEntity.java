@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubjectvalue.AssessmentSubjectValueJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -29,12 +30,14 @@ public class AssessmentResultJpaEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
     private AssessmentJpaEntity assessment;
+    @OneToMany(mappedBy = "assessmentResult")
+    private List<QualityAttributeValueJpaEntity> qualityAttributeValues;
+    @OneToMany(mappedBy = "assessmentResult")
+    private List<AssessmentSubjectValueJpaEntity> assessmentSubjectValues;
+    @Column(name = "is_valid")
+    private boolean isValid;
 
     public List<AnswerJpaEntity> getAnswers() {
-        return new ArrayList<>();
-    }
-
-    public List<QualityAttributeValueJpaEntity> getQualityAttributeValues() {
         return new ArrayList<>();
     }
 
