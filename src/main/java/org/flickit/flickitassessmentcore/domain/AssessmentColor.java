@@ -23,4 +23,12 @@ public enum AssessmentColor {
     public String getTitle() {
         return name().toLowerCase();
     }
+
+    public static AssessmentColor getDefault() {
+        return MIDNIGHT_GREEN;
+    }
+
+    public static boolean isValidId(int id) {
+        return id > 0  && id < AssessmentColor.values().length + 1;
+    }
 }
