@@ -3,10 +3,10 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.CheckAssessmentColorExistencePort;
-import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
+import org.flickit.flickitassessmentcore.domain.AssessmentColor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -16,7 +16,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,42 +24,76 @@ class CreateAssessmentServiceTest {
 
     @Spy
     @InjectMocks
-    private CreateAssessmentService createAssessmentService;
+    private CreateAssessmentService service;
+
     @Mock
     private CreateAssessmentPort createAssessmentPort;
-    @Mock
-    private CheckAssessmentColorExistencePort checkColorExistencePort;
+
 
     @Test
     void createAssessment_ValidCommand_PersistsAndReturnsId() {
-        CreateAssessmentCommand command = createValidCommand();
+        CreateAssessmentCommand command = new CreateAssessmentCommand(
+            1L,
+            "title example",
+            1L,
+            1
+        );
         UUID expectedId = UUID.randomUUID();
         doReturn(expectedId).when(createAssessmentPort).persist(any(CreateAssessmentPort.Param.class));
-        doReturn(true).when(checkColorExistencePort).isColorIdExist(anyLong());
 
-        UUID actualId = createAssessmentService.createAssessment(command);
-
+        UUID actualId = service.createAssessment(command);
         assertEquals(expectedId, actualId);
-        verify(createAssessmentPort, times(1)).persist(any(CreateAssessmentPort.Param.class));
-        verify(checkColorExistencePort, times(1)).isColorIdExist(anyLong());
+
+        ArgumentCaptor<CreateAssessmentPort.Param> param = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
+        verify(createAssessmentPort).persist(param.capture());
+
+        assertEquals(command.getTitle(), param.getValue().title());
+        assertEquals(command.getAssessmentKitId(), param.getValue().assessmentKitId());
+        assertEquals(command.getColorId(), param.getValue().colorId());
+        assertEquals("title-example", param.getValue().code());
+        assertNotNull(param.getValue().creationTime());
+        assertNotNull(param.getValue().lastModificationDate());
     }
 
     @Test
-    void createAssessment_InvalidColor_ThrowsException() {
-        CreateAssessmentCommand command = createValidCommand();
-        doReturn(false).when(checkColorExistencePort).isColorIdExist(anyLong());
+    void createAssessment_NullColor_UseDefaultColor() {
+        CreateAssessmentCommand command = new CreateAssessmentCommand(
+            1L,
+            "title example",
+            1L,
+            null
+        );
 
-        assertThrows(ResourceNotFoundException.class, () -> {
-            createAssessmentService.createAssessment(command);
-        });
-        verify(createAssessmentPort, never()).persist(any(CreateAssessmentPort.Param.class));
+        service.createAssessment(command);
+
+        ArgumentCaptor<CreateAssessmentPort.Param> param = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
+        verify(createAssessmentPort).persist(param.capture());
+
+        assertEquals(AssessmentColor.getDefault().getId(), param.getValue().colorId());
+    }
+
+    @Test
+    void createAssessment_InvalidColor_UseDefaultColor() {
+        CreateAssessmentCommand command = new CreateAssessmentCommand(
+            1L,
+            "title example",
+            1L,
+            7
+        );
+
+        service.createAssessment(command);
+
+        ArgumentCaptor<CreateAssessmentPort.Param> param = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
+        verify(createAssessmentPort).persist(param.capture());
+
+        assertEquals(AssessmentColor.getDefault().getId(), param.getValue().colorId());
     }
 
     @Test
     void generateSlugCode_NoWhitespace_ReturnsLowerCaseCode() {
         String title = "ExampleTitle";
 
-        String code = ReflectionTestUtils.invokeMethod(createAssessmentService, "generateSlugCode", title);
+        String code = ReflectionTestUtils.invokeMethod(service, "generateSlugCode", title);
 
         assertEquals("exampletitle", code);
     }
@@ -68,7 +102,7 @@ class CreateAssessmentServiceTest {
     void generateSlugCode_WithWhitespace_ReturnsLowerCaseCodeWithHyphens() {
         String title = "Example Title with Whitespace";
 
-        String code = ReflectionTestUtils.invokeMethod(createAssessmentService, "generateSlugCode", title);
+        String code = ReflectionTestUtils.invokeMethod(service, "generateSlugCode", title);
 
         assertEquals("example-title-with-whitespace", code);
     }
@@ -77,19 +111,9 @@ class CreateAssessmentServiceTest {
     void generateSlugCode_WithLeadingAndTrailingWhitespace_ReturnsLowerCaseCodeWithHyphens() {
         String title = "  Example Title with   Leading and Trailing   Whitespace  ";
 
-        String code = ReflectionTestUtils.invokeMethod(createAssessmentService, "generateSlugCode", title);
+        String code = ReflectionTestUtils.invokeMethod(service, "generateSlugCode", title);
 
         assertEquals("example-title-with-leading-and-trailing-whitespace", code);
-    }
-
-
-    private static CreateAssessmentCommand createValidCommand() {
-        return new CreateAssessmentCommand(
-            1L,
-            "title example",
-            1L,
-            1L
-        );
     }
 
 }
