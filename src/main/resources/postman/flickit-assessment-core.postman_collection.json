@@ -39,15 +39,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8098/assessment-core/api/assessment-colors",
-					"protocol": "http",
+					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
 					"host": [
-						"localhost"
+						"{{base_url}}"
 					],
-					"port": "8098",
 					"path": [
-						"assessment-core",
-						"api",
+						"{{api_path}}",
 						"assessment-colors"
 					]
 				}
