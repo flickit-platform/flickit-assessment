@@ -1,28 +1,32 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.entity;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "assessment_assessmentresult")
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@EqualsAndHashCode
-public class AssessmentResultEntity {
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class AssessmentResultJpaEntity {
+
     @Id
+    @EqualsAndHashCode.Include
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+
     @Column(name = "assessment_id", nullable = false)
-    private Long assessmentId;
+    private UUID assessmentId;
+
+    @Column(name = "is_valid")
+    private Boolean isValid;
 
     @Override
     public String toString() {

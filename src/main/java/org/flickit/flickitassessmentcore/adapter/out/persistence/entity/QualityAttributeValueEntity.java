@@ -21,9 +21,8 @@ public class QualityAttributeValueEntity {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
-    private AssessmentResultEntity assessmentResult;
+    @Column(name = "assessment_result_id", nullable = false)
+    private UUID assessmentResultId;
     @Column(name = "quality_attribute_id", nullable = false)
     private Long qualityAttributeId;
     @Column(name = "maturity_level_id")
