@@ -35,6 +35,27 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Assessment Colors",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8098/assessment-core/api/assessment-colors",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8098",
+					"path": [
+						"assessment-core",
+						"api",
+						"assessment-colors"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
