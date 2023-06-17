@@ -2,7 +2,6 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.domain.Assessment;
-import org.flickit.flickitassessmentcore.domain.AssessmentKit;
 
 public class AssessmentMapper {
 
@@ -12,7 +11,7 @@ public class AssessmentMapper {
             assessmentEntity.getTitle(),
             assessmentEntity.getCreationTime(),
             assessmentEntity.getLastModificationDate(),
-            new AssessmentKit(assessmentEntity.getAssessmentKitId()),
+            assessmentEntity.getAssessmentKitId(),
             assessmentEntity.getColorId(),
             assessmentEntity.getSpaceId(),
             null
@@ -20,15 +19,15 @@ public class AssessmentMapper {
     }
 
     public static AssessmentJpaEntity mapToJpaEntity(Assessment assessment) {
-        return new AssessmentJpaEntity(assessment.getId(),
+        return new AssessmentJpaEntity(
+            assessment.getId(),
             assessment.getCode(),
             assessment.getTitle(),
             assessment.getCreationTime(),
             assessment.getLastModificationDate(),
-            assessment.getAssessmentKit().getId(),
+            assessment.getAssessmentKitId(),
             assessment.getColorId(),
-            assessment.getSpaceId(),
-            assessment.getMaturityLevel().getId());
+            assessment.getSpaceId());
     }
 
     static AssessmentJpaEntity mapCreateParamToJpaEntity(CreateAssessmentPort.Param param) {
