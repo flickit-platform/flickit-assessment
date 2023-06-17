@@ -21,15 +21,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8098/assessment-core/api/assessments",
-					"protocol": "http",
+					"raw": "{{base_url}}/{{api_path}}/assessments",
 					"host": [
-						"localhost"
+						"{{base_url}}"
 					],
-					"port": "8098",
 					"path": [
-						"assessment-core",
-						"api",
+						"{{api_path}}",
 						"assessments"
 					]
 				}
@@ -51,22 +48,36 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8098/assessment-core/api/assessment-results/f74ae115-df83-4cfe-be63-2f64d1c2fe71/answer-question",
-					"protocol": "http",
+					"raw": "{{base_url}}/{{api_path}}/assessment-results/{{assessment_result_id}}/answer-question",
 					"host": [
-						"localhost"
+						"{{base_url}}"
 					],
-					"port": "8098",
 					"path": [
-						"assessment-core",
-						"api",
+						"{{api_path}}",
 						"assessment-results",
-						"f74ae115-df83-4cfe-be63-2f64d1c2fe71",
+						"{{assessment_result_id}}",
 						"answer-question"
 					]
 				}
 			},
 			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8098",
+			"type": "string"
+		},
+		{
+			"key": "api_path",
+			"value": "assessment-core/api",
+			"type": "string"
+		},
+		{
+			"key": "assessment_result_id",
+			"value": "f74ae115-df83-4cfe-be63-2f64d1c2fe72",
+			"type": "string"
 		}
 	]
 }
