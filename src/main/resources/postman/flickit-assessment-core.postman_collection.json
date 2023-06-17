@@ -35,6 +35,38 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Submit Answer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"questionId\": 1,\n    \"answerOptionId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8098/assessment-core/api/assessment-results/f74ae115-df83-4cfe-be63-2f64d1c2fe71/answer-question",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8098",
+					"path": [
+						"assessment-core",
+						"api",
+						"assessment-results",
+						"f74ae115-df83-4cfe-be63-2f64d1c2fe71",
+						"answer-question"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
