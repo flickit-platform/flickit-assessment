@@ -7,5 +7,5 @@ import java.util.Set;
 
 public interface LoadQAValuesByQAIdsPort {
 
-    List<QualityAttributeValue> LoadQAValuesByQAIds(Set<Long> qaIds);
+    List<QualityAttributeValue> loadQAValuesByQAIds(Set<Long> qaIds);
 }

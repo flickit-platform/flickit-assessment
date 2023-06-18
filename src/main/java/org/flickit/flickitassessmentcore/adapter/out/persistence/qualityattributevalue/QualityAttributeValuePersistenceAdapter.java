@@ -35,7 +35,7 @@ public class QualityAttributeValuePersistenceAdapter implements
     }
 
     @Override
-    public List<QualityAttributeValue> LoadQAValuesByQAIds(Set<Long> qaIds) {
+    public List<QualityAttributeValue> loadQAValuesByQAIds(Set<Long> qaIds) {
         return qualityAttributeValueRepository.findQualityAttributeValuesByQualityAttributeIds(qaIds)
             .stream()
             .map(QualityAttributeValueMapper::mapToDomainModel)

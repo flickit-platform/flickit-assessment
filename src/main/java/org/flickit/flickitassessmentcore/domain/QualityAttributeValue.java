@@ -13,7 +13,6 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class QualityAttributeValue {
     private UUID id;
-    private AssessmentResult assessmentResult;
     private QualityAttribute qualityAttribute;
     private MaturityLevel maturityLevel;
 

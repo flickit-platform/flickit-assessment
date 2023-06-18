@@ -58,7 +58,6 @@ public class CalculateQualityAttributeMaturityLevel implements CalculateQualityA
 
         return new QualityAttributeValue(
             UUID.randomUUID(),
-            assessmentResult,
             qualityAttribute,
             qualityAttMaturityLevel
         );

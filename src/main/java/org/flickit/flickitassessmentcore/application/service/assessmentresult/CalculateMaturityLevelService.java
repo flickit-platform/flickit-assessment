@@ -3,12 +3,10 @@ package org.flickit.flickitassessmentcore.application.service.assessmentresult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateAssessmentSubjectMaturityLevelUseCase;
-import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateMaturityLevelCommand;
-import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateMaturityLevelUseCase;
-import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateQualityAttributeMaturityLevelUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.*;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.SaveAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectByAssessmentKitPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeBySubPort;
 import org.flickit.flickitassessmentcore.domain.*;
@@ -26,9 +24,11 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
     private final LoadAssessmentResultByAssessmentPort loadAssessmentResultByAssessment;
     private final LoadAssessmentSubjectByAssessmentKitPort loadSubjectByKit;
     private final LoadQualityAttributeBySubPort loadQualityAttributeBySubject;
+    private final SaveAssessmentResultPort saveAssessmentResult;
 
     private final CalculateQualityAttributeMaturityLevelUseCase calculateQualityAttributeMaturityLevel;
     private final CalculateAssessmentSubjectMaturityLevelUseCase calculateAssessmentSubjectMaturityLevel;
+    private final CalculateAssessmentMaturityLevelUseCase calculateAssessmentMaturityLevel;
 
     /**
      * In this method, maturity level (ml) of quality attribute (qa), subject (sub) and assessment are been calculated
@@ -43,29 +43,34 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
         Assessment assessment = loadAssessment.loadAssessment(command.getAssessmentId());
         List<AssessmentResult> results = new ArrayList<>(loadAssessmentResultByAssessment.loadAssessmentResultByAssessmentId(assessment.getId()));
         AssessmentResult result = results.get(0);
-        List<AssessmentSubject> subjects = loadSubjectByKit.loadSubjectByKitId(assessment.getAssessmentKitId());
-        for (AssessmentSubject subject : subjects) {
-            List<QualityAttribute> qualityAttributes = loadQualityAttributeBySubject.loadQABySubId(subject.getId());
-            List<QualityAttributeValue> qualityAttributeValues = new ArrayList<>();
-            for (QualityAttribute qualityAttribute : qualityAttributes) {
-                QualityAttributeValue qualityAttributeValue = calculateQualityAttributeMaturityLevel.calculateQualityAttributeMaturityLevel(
-                    result,
-                    qualityAttribute
-                );
-                qualityAttributeValues.add(qualityAttributeValue);
+        if (!result.isValid()) {
+            List<AssessmentSubject> subjects = loadSubjectByKit.loadSubjectByKitId(assessment.getAssessmentKitId());
+            for (AssessmentSubject subject : subjects) {
+                List<QualityAttribute> qualityAttributes = loadQualityAttributeBySubject.loadQABySubId(subject.getId());
+                List<QualityAttributeValue> qualityAttributeValues = new ArrayList<>();
+                for (QualityAttribute qualityAttribute : qualityAttributes) {
+                    QualityAttributeValue qualityAttributeValue = calculateQualityAttributeMaturityLevel.calculateQualityAttributeMaturityLevel(
+                        result,
+                        qualityAttribute
+                    );
+                    qualityAttributeValues.add(qualityAttributeValue);
+                }
+                result.getQualityAttributeValues().addAll(qualityAttributeValues);
             }
-            result.getQualityAttributeValues().addAll(qualityAttributeValues);
+
+            for (AssessmentSubject subject : subjects) {
+                AssessmentSubjectValue assessmentSubjectValue = calculateAssessmentSubjectMaturityLevel.calculateAssessmentSubjectMaturityLevel(subject);
+                result.getAssessmentSubjectValues().add(assessmentSubjectValue);
+            }
+
+            MaturityLevel assessmentMaturityLevel = calculateAssessmentMaturityLevel.calculateAssessmentMaturityLevel(result.getAssessmentSubjectValues(), assessment);
+            assessment.setMaturityLevel(assessmentMaturityLevel);
+            result.getAssessment().setMaturityLevel(assessmentMaturityLevel);
+
+            // Save Assessment and others?
+
+            return saveAssessmentResult.saveAssessmentResult(result);
         }
-
-        for (AssessmentSubject subject : subjects) {
-            AssessmentSubjectValue assessmentSubjectValue = calculateAssessmentSubjectMaturityLevel.calculateAssessmentSubjectMaturityLevel(subject);
-            result.getAssessmentSubjectValues().add(assessmentSubjectValue);
-        }
-
-        // Calc Assessment ML
-
-        // Update Assessment Result
-
         return result;
     }
 

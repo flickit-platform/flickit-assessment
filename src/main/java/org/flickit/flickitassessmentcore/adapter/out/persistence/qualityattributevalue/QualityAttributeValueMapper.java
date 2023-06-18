@@ -10,7 +10,6 @@ public class QualityAttributeValueMapper {
     public static QualityAttributeValue mapToDomainModel(QualityAttributeValueJpaEntity qualityAttributeValueEntity) {
         return new QualityAttributeValue(
             qualityAttributeValueEntity.getId(),
-            AssessmentResultMapper.mapToDomainModel(qualityAttributeValueEntity.getAssessmentResult()),
             new QualityAttribute(qualityAttributeValueEntity.getQualityAttributeId()),
             new MaturityLevel(qualityAttributeValueEntity.getMaturityLevelId())
         );
@@ -19,7 +18,7 @@ public class QualityAttributeValueMapper {
     public static QualityAttributeValueJpaEntity mapToJpaEntity(QualityAttributeValue qualityAttributeValue) {
         return new QualityAttributeValueJpaEntity(
             qualityAttributeValue.getId(),
-            AssessmentResultMapper.mapToJpaEntity(qualityAttributeValue.getAssessmentResult()),
+            null, // TODO
             qualityAttributeValue.getQualityAttribute().getId(),
             qualityAttributeValue.getMaturityLevel().getId()
         );

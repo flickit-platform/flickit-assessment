@@ -68,7 +68,6 @@ public class Utils {
     public static AssessmentSubjectValue createAssessmentSubjectValue() {
         return new AssessmentSubjectValue(
             UUID.randomUUID(),
-            new AssessmentResult(),
             new AssessmentSubject(),
             new MaturityLevel()
         );
@@ -104,7 +103,6 @@ public class Utils {
     public static QualityAttributeValue createQualityAttributeValue() {
         return new QualityAttributeValue(
             UUID.randomUUID(),
-            new AssessmentResult(),
             new QualityAttribute(),
             null // maturity level gonna be calculated
         );

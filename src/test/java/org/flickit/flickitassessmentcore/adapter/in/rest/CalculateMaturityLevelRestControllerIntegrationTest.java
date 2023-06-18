@@ -43,7 +43,7 @@ public class CalculateMaturityLevelRestControllerIntegrationTest {
         MockHttpServletResponse response = this.mockMvc.perform(post(url)).andReturn().getResponse();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEqualTo(jacksonTester.write(
-            new CalculateMaturityLevelResponseDto(context.getSubjectValue().getAssessmentResult())
+            new CalculateMaturityLevelResponseDto(context.getResult())
         ).getJson());
     }
 

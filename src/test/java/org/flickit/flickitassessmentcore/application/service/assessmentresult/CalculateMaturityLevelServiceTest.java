@@ -1,10 +1,12 @@
 package org.flickit.flickitassessmentcore.application.service.assessmentresult;
 
+import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateAssessmentMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateAssessmentSubjectMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateMaturityLevelCommand;
 import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateQualityAttributeMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.SaveAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectByAssessmentKitPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeBySubPort;
 import org.flickit.flickitassessmentcore.application.service.exception.NoAnswerFoundException;
@@ -22,21 +24,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class CalculateMaturityLevelServiceTest {
-    // TODO: this class is in development
     private final LoadAssessmentPort loadAssessment = Mockito.mock(LoadAssessmentPort.class);
     private final LoadAssessmentResultByAssessmentPort loadAssessmentResultByAssessment = Mockito.mock(LoadAssessmentResultByAssessmentPort.class);
     private final LoadAssessmentSubjectByAssessmentKitPort loadSubjectByKit = Mockito.mock(LoadAssessmentSubjectByAssessmentKitPort.class);
     private final LoadQualityAttributeBySubPort loadQualityAttributeBySubject = Mockito.mock(LoadQualityAttributeBySubPort.class);
+    private final SaveAssessmentResultPort saveAssessmentResult = Mockito.mock(SaveAssessmentResultPort.class);
     private final CalculateQualityAttributeMaturityLevelUseCase calculateQualityAttributeMaturityLevel = Mockito.mock(CalculateQualityAttributeMaturityLevelUseCase.class);
     private final CalculateAssessmentSubjectMaturityLevelUseCase calculateAssessmentSubjectMaturityLevel = Mockito.mock(CalculateAssessmentSubjectMaturityLevelUseCase.class);
+    private final CalculateAssessmentMaturityLevelUseCase calculateAssessmentMaturityLevel = Mockito.mock(CalculateAssessmentMaturityLevel.class);
     private final CalculateMaturityLevelServiceContext context = new CalculateMaturityLevelServiceContext();
     private final CalculateMaturityLevelService calculateMaturityLevelService = new CalculateMaturityLevelService(
         loadAssessment,
         loadAssessmentResultByAssessment,
         loadSubjectByKit,
         loadQualityAttributeBySubject,
+        saveAssessmentResult,
         calculateQualityAttributeMaturityLevel,
-        calculateAssessmentSubjectMaturityLevel);
+        calculateAssessmentSubjectMaturityLevel,
+        calculateAssessmentMaturityLevel);
 
     private final CalculateMaturityLevelCommand command = new CalculateMaturityLevelCommand(context.getAssessment().getId());
 

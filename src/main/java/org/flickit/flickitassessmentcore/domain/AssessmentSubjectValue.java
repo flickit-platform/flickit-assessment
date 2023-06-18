@@ -13,7 +13,6 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class AssessmentSubjectValue {
     private UUID id;
-    private AssessmentResult assessmentResult;
     private AssessmentSubject assessmentSubject;
     private MaturityLevel maturityLevel;
 

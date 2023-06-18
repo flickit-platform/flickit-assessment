@@ -39,6 +39,7 @@ public class CalculateMaturityLevelServiceContext {
     private final AssessmentColor color;
     private final MaturityLevel maturityLevel1;
     private final MaturityLevel maturityLevel2;
+    private final MaturityLevel maturityLevel3;
     private final LevelCompetence levelCompetence1;
     private final LevelCompetence levelCompetence2;
 
@@ -72,6 +73,7 @@ public class CalculateMaturityLevelServiceContext {
         color = createAssessmentColor();
         maturityLevel1 = createMaturityLevel(MATURITY_LEVEL_ID1, MATURITY_LEVEL_TITLE1, 1);
         maturityLevel2 = createMaturityLevel(MATURITY_LEVEL_ID2, MATURITY_LEVEL_TITLE2, 2);
+        maturityLevel3 = createMaturityLevel(MATURITY_LEVEL_ID3, MATURITY_LEVEL_TITLE3, 3);
         levelCompetence1 = createLevelCompetence(LEVEL_COMPETENCE_ID1, LEVEL_COMPETENCE_VALUE1);
         levelCompetence2 = createLevelCompetence(LEVEL_COMPETENCE_ID2, LEVEL_COMPETENCE_VALUE2);
         this.completeInitiation();
@@ -90,14 +92,12 @@ public class CalculateMaturityLevelServiceContext {
         subject.getQuestionnaires().add(questionnaire);
 
         subjectValue.setAssessmentSubject(subject);
-        subjectValue.setAssessmentResult(result);
 
         questionnaire.setAssessmentKit(kit);
 
         qualityAttribute.setAssessmentSubject(subject);
 
         qualityAttributeValue.setQualityAttribute(qualityAttribute);
-        qualityAttributeValue.setAssessmentResult(result);
 
         question1.getQualityAttributes().add(qualityAttribute);
         question2.getQualityAttributes().add(qualityAttribute);

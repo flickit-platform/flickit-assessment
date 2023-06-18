@@ -98,6 +98,8 @@ public class Constants {
     public static final String MATURITY_LEVEL_TITLE1 = "MaturityLevelTitle1";
     public static final Long MATURITY_LEVEL_ID2 = 2L;
     public static final String MATURITY_LEVEL_TITLE2 = "MaturityLevelTitle2";
+    public static final Long MATURITY_LEVEL_ID3 = 3L;
+    public static final String MATURITY_LEVEL_TITLE3 = "MaturityLevelTitle3";
 
     // LevelCompetence
     public static final Long LEVEL_COMPETENCE_ID1 = 1L;

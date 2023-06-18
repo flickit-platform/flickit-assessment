@@ -24,7 +24,7 @@ public class CalculateAssessmentSubjectMaturityLevel implements CalculateAssessm
 
     public AssessmentSubjectValue calculateAssessmentSubjectMaturityLevel(AssessmentSubject subject) {
         List<QualityAttribute> qualityAttributes = loadQABySubId.loadQABySubId(subject.getId());
-        List<QualityAttributeValue> qualityAttributeValues = loadQAValuesByQAIds.LoadQAValuesByQAIds(
+        List<QualityAttributeValue> qualityAttributeValues = loadQAValuesByQAIds.loadQAValuesByQAIds(
             qualityAttributes.stream()
                 .map(QualityAttribute::getId)
                 .collect(Collectors.toSet()));
@@ -33,7 +33,6 @@ public class CalculateAssessmentSubjectMaturityLevel implements CalculateAssessm
         MaturityLevel subMaturityLevel = findMaturityLevelByValue(weightedMean, maturityLevels, subject.getId());
         return new AssessmentSubjectValue(
             UUID.randomUUID(),
-            new AssessmentResult(),
             subject,
             subMaturityLevel
         );

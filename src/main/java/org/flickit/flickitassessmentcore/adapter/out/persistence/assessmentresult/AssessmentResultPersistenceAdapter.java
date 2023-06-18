@@ -19,8 +19,8 @@ public class AssessmentResultPersistenceAdapter implements SaveAssessmentResultP
     private final AssessmentResultRepository assessmentResultRepository;
 
     @Override
-    public void saveAssessmentResult(AssessmentResult assessmentResult) {
-        assessmentResultRepository.save(AssessmentResultMapper.mapToJpaEntity(assessmentResult));
+    public AssessmentResult saveAssessmentResult(AssessmentResult assessmentResult) {
+        return AssessmentResultMapper.mapToDomainModel(assessmentResultRepository.save(AssessmentResultMapper.mapToJpaEntity(assessmentResult)));
     }
 
     @Override
