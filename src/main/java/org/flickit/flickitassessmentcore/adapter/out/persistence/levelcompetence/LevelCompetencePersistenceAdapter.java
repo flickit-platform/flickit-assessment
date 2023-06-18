@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.levelcompetence;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.out.LoadLevelCompetenceByMLPort;
+import org.flickit.flickitassessmentcore.application.port.out.levelcompetence.LoadLevelCompetenceByMaturityLevelPort;
 import org.flickit.flickitassessmentcore.domain.LevelCompetence;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,9 +16,9 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
-public class LevelCompetencePersistenceAdapter implements LoadLevelCompetenceByMLPort {
+public class LevelCompetencePersistenceAdapter implements LoadLevelCompetenceByMaturityLevelPort {
     @Override
-    public Set<LevelCompetence> loadLevelCompetenceByMLId(Long mlId) {
+    public Set<LevelCompetence> loadLevelCompetenceByMaturityLevelId(Long mlId) {
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
             .setConnectTimeout(Duration.ofSeconds(10))
             .setReadTimeout(Duration.ofSeconds(10))

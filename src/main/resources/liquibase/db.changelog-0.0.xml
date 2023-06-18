@@ -36,9 +36,6 @@
             <column name="creation_time" type="timestamp(6)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="text">
-                <constraints nullable="false"/>
-            </column>
             <column name="last_modification_date" type="timestamp(6)">
                 <constraints nullable="false"/>
             </column>
@@ -69,11 +66,25 @@
             <column name="assessment_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
+            <column name="is_valid" type="boolean"/>
         </createTable>
-        <addForeignKeyConstraint baseTableName="assessment_assessment" baseColumnNames="id"
+        <addForeignKeyConstraint baseTableName="assessment_assessment"
+                                 baseColumnNames="id"
                                  constraintName="fkal2s0w1p7uao22jgramvjx5dv"
-                                 referencedTableName="assessment_assessment" referencedColumnNames="id"/>
-
+                                 referencedTableName="assessment_assessment"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="assessment_assessmentresult"
+                                 baseColumnNames="id"
+                                 constraintName="fk_assessmentresult_qualityattributevalue"
+                                 referencedTableName="assessment_qualityattributevalue"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="assessment_assessmentresult"
+                                 baseColumnNames="id"
+                                 constraintName="fk_assessmentresult_assessmentsubjectvalue"
+                                 referencedTableName="assessment_assessmentsubjectvalue"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
     </changeSet>
 
     <changeSet id="create-assessment-evidence-table" author="MKouhestani">
@@ -138,10 +149,34 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="assessment_assessmentresult" baseColumnNames="id"
+        <addForeignKeyConstraint baseTableName="assessment_assessmentresult"
+                                 baseColumnNames="id"
                                  constraintName="fkp8gkrooo4tcp9tak3n33gb40h"
-                                 referencedTableName="assessment_assessmentresult" referencedColumnNames="id"/>
+                                 referencedTableName="assessment_assessmentresult"
+                                 referencedColumnNames="id"/>
 
+    </changeSet>
+
+    <changeSet id="create-assessment-subject-value-table" author="MKouhestani">
+        <createTable tableName="assessment_assessmentsubjectvalue">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_subject_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="maturity_level_id" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="assessment_assessmentsubjectvalue"
+                baseColumnNames="assessment_result_id"
+                constraintName="fk_assessmentsubjectvalue_assessmentresult"
+                referencedTableName="assessment_assessmentresult"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
     </changeSet>
 
 

@@ -1,8 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.out.LoadMLByKitPort;
-import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
+import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,9 +16,9 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
-public class MaturityLevelPersistenceAdapter implements LoadMLByKitPort {
+public class MaturityLevelPersistenceAdapter implements LoadMaturityLevelByKitPort {
     @Override
-    public Set<MaturityLevel> loadMLByKitId(Long kitId) {
+    public Set<MaturityLevel> loadMaturityLevelByKitId(Long kitId) {
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
             .setConnectTimeout(Duration.ofSeconds(10))
             .setReadTimeout(Duration.ofSeconds(10))

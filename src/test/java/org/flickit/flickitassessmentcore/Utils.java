@@ -18,11 +18,10 @@ public class Utils {
             UUID.randomUUID(),
             ASSESSMENT_CODE,
             ASSESSMENT_TITLE,
-            ASSESSMENT_DESCRIPTION,
             LocalDateTime.now(),
             LocalDateTime.now(),
-            new AssessmentKit(),
-            new AssessmentColor(),
+            0L,
+            0L,
             ASSESSMENT_SPACE_ID,
             new MaturityLevel() // It must be set after ml calc of qa and subject, but we initiate it for now
         );

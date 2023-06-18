@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.answeroptionimpact;
 
-import org.flickit.flickitassessmentcore.application.port.out.LoadAnswerOptionImpactsByAnswerOptionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionPort;
 import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,7 +16,7 @@ import java.util.Set;
 @Component
 public class AnswerOptionImpactPersistenceAdapter implements LoadAnswerOptionImpactsByAnswerOptionPort {
     @Override
-    public Set<AnswerOptionImpact> findAnswerOptionImpactsByAnswerOption(Long answerOptionId) {
+    public Set<AnswerOptionImpact> findAnswerOptionImpactsByAnswerOptionId(Long answerOptionId) {
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
             .setConnectTimeout(Duration.ofSeconds(10))
             .setReadTimeout(Duration.ofSeconds(10))

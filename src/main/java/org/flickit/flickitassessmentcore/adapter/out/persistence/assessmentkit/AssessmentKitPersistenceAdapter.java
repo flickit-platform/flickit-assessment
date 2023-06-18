@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.out.LoadAssessmentKitPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.flickitassessmentcore.domain.AssessmentKit;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;

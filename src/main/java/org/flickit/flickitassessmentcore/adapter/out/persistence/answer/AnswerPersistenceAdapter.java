@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswersByResultPort;
 import org.flickit.flickitassessmentcore.domain.Answer;
 import org.springframework.stereotype.Component;
 

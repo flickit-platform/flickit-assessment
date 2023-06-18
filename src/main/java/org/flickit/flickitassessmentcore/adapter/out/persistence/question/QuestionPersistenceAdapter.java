@@ -1,8 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.question;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.out.LoadQuestionsByQAIdPort;
-import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
+import org.flickit.flickitassessmentcore.application.port.out.question.LoadQuestionsByQualityAttributePort;
 import org.flickit.flickitassessmentcore.domain.Question;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,7 +16,7 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
-public class QuestionPersistenceAdapter implements LoadQuestionsByQAIdPort {
+public class QuestionPersistenceAdapter implements LoadQuestionsByQualityAttributePort {
     @Override
     public Set<Question> loadQuestionsByQualityAttributeId(Long qualityAttributeId) {
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()

@@ -1,9 +1,9 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.out.LoadQAValuesByQAIdsPort;
-import org.flickit.flickitassessmentcore.application.port.out.LoadQualityAttributeValuesByResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.SaveQualityAttributeValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadQAValuesByQAIdsPort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadQualityAttributeValuesByResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.SaveQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
 import org.springframework.stereotype.Component;
 

@@ -1,8 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattribute;
 
-import org.flickit.flickitassessmentcore.application.port.out.LoadQABySubIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.LoadQualityAttributePort;
-import org.flickit.flickitassessmentcore.domain.MaturityLevel;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeBySubPort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributePort;
 import org.flickit.flickitassessmentcore.domain.QualityAttribute;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,10 +13,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Set;
 
 @Component
-public class QualityAttributePersistenceAdapter implements LoadQualityAttributePort, LoadQABySubIdPort {
+public class QualityAttributePersistenceAdapter implements LoadQualityAttributePort, LoadQualityAttributeBySubPort {
     @Override
     public QualityAttribute loadQualityAttribute(Long qualityAttributeId) {
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
