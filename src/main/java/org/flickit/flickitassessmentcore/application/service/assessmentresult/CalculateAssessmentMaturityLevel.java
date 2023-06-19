@@ -7,6 +7,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.Ca
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.flickitassessmentcore.application.service.exception.NoMaturityLevelFound;
 import org.flickit.flickitassessmentcore.domain.*;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @Transactional
 @RequiredArgsConstructor
+@Component
 @Slf4j
 public class CalculateAssessmentMaturityLevel implements CalculateAssessmentMaturityLevelUseCase {
 

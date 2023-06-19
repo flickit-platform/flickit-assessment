@@ -11,6 +11,7 @@ env:
   POSTGRES_USER: flickit
   POSTGRES_PASSWORD: flickit
   POSTGRES_DB: flickit
+  DEFAULT_SCHEMA_NAME: assessment-core
   SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/flickit?currentSchema=assessment-core
   SPRING_DATASOURCE_USERNAME: flickit
   SPRING_DATASOURCE_PASSWORD: flickit
@@ -39,6 +40,11 @@ jobs:
         with:
           java-version: 17
           distribution: adopt
+
+      - name: Create Default Schema
+        run: |
+          psql -U ${{ env.POSTGRES_USER }} -c "CREATE SCHEMA ${{ env.DEFAULT_SCHEMA_NAME }};"
+          psql -U ${{ env.POSTGRES_USER }} -c "SET search_path TO ${{ env.DEFAULT_SCHEMA_NAME }};"
 
       - name: Build with Maven
         run: mvn clean package

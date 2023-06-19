@@ -11,11 +11,13 @@ import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.Load
 import org.flickit.flickitassessmentcore.application.port.out.question.LoadQuestionsByQualityAttributePort;
 import org.flickit.flickitassessmentcore.application.service.exception.NoAnswerFoundException;
 import org.flickit.flickitassessmentcore.domain.*;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Transactional
 @RequiredArgsConstructor
+@Component
 @Slf4j
 public class CalculateQualityAttributeMaturityLevel implements CalculateQualityAttributeMaturityLevelUseCase {
 
