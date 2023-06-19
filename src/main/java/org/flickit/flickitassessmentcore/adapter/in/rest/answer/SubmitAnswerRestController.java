@@ -15,7 +15,7 @@ public class SubmitAnswerRestController {
 
     private final SubmitAnswerUseCase useCase;
 
-    @PostMapping("/assessment-results/{assessmentResultId}/answer-question")
+    @PutMapping("/assessment-results/{assessmentResultId}/answer-question")
     public ResponseEntity<SubmitAnswerResponseDto> submitAnswer(@RequestBody SubmitAnswerRequestDto requestDto,
                                                                 @PathVariable("assessmentResultId") UUID assessmentResultId) {
         SubmitAnswerResponseDto responseDto = toResponseDto(useCase.submitAnswer(toCommand(requestDto, assessmentResultId)));
