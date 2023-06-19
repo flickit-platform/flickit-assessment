@@ -4,15 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentcolor.CheckAssessmentColorExistencePort;
-import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
+import org.flickit.flickitassessmentcore.domain.AssessmentColor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_COLOR_ID_NOT_FOUND_MESSAGE;
 
 @Service
 @RequiredArgsConstructor
@@ -20,17 +17,11 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_AS
 public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private final CreateAssessmentPort createAssessmentPort;
-    private final CheckAssessmentColorExistencePort checkColorExistencePort;
 
     @Override
     public UUID createAssessment(CreateAssessmentCommand command) {
-        validateCommand(command);
         CreateAssessmentPort.Param param = toParam(command);
         return createAssessmentPort.persist(param);
-    }
-
-    private void validateCommand(CreateAssessmentCommand command) {
-        checkColorIdExistence(command.getColorId());
     }
 
     private CreateAssessmentPort.Param toParam(CreateAssessmentCommand command) {
@@ -41,7 +32,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         return new CreateAssessmentPort.Param(
             command.getTitle(),
             command.getAssessmentKitId(),
-            command.getColorId(),
+            getValidColorId(command.getColorId()),
             command.getSpaceId(),
             code,
             creationTime,
@@ -56,12 +47,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             .replaceAll("\\s+", "-");
     }
 
-    private void checkColorIdExistence(Long colorId) {
-        if (colorId == null) {
-            return;
-        }
-        boolean isColorIdExist = checkColorExistencePort.isColorIdExist(colorId);
-        if (!isColorIdExist)
-            throw new ResourceNotFoundException(CREATE_ASSESSMENT_COLOR_ID_NOT_FOUND_MESSAGE);
+    private int getValidColorId(Integer colorId) {
+        if (colorId == null || !AssessmentColor.isValidId(colorId))
+            return AssessmentColor.getDefault().getId();
+        return colorId;
     }
 }

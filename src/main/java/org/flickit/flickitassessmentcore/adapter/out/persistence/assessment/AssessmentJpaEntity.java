@@ -44,7 +44,7 @@ public class AssessmentJpaEntity {
     private Long assessmentKitId;
 
     @Column(name = "color_id")
-    private Long colorId;
+    private Integer colorId;
 
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
