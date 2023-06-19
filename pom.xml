@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.flickit</groupId>
-	<artifactId>flickit-assessment-core</artifactId>
+	<artifactId>assessment.core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>flickit-assessment-core</name>
 	<properties>
