@@ -54,7 +54,7 @@
 		{
 			"name": "Submit Answer",
 			"request": {
-				"method": "POST",
+				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
