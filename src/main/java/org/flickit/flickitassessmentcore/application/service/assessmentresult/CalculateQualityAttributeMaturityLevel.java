@@ -79,6 +79,7 @@ public class CalculateQualityAttributeMaturityLevel implements CalculateQualityA
      * If no threshold fulfills, it will return first maturity level.
      */
     private MaturityLevel findMaturityLevelBasedOnCalculations(Map<Long, Integer> qualityAttImpactScoreMap, List<MaturityLevel> maturityLevels) {
+        maturityLevels.sort(Comparator.comparing(MaturityLevel::getValue));
         MaturityLevel result = maturityLevels.get(0);
         maturityLevels.sort(Comparator.comparingInt(MaturityLevel::getValue));
         for (MaturityLevel maturityLevel : maturityLevels) {

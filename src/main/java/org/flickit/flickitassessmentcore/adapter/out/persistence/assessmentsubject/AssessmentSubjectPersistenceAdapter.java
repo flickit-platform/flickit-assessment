@@ -2,45 +2,22 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubj
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectByAssessmentKitPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadSubjectPort;
 import org.flickit.flickitassessmentcore.domain.AssessmentSubject;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
-public class AssessmentSubjectPersistenceAdapter implements LoadSubjectPort, LoadAssessmentSubjectByAssessmentKitPort {
-
-    /**
-     * Load «Assessment Subject» from other module that contains this Entity with all its related fields (relations).
-     * Get it with RestTemplateBuilder and by use of desired assessmentSubjectId as parameter
-     * */
-
-    @Override
-    public AssessmentSubject loadSubject(Long subId) {
-        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
-            .setConnectTimeout(Duration.ofSeconds(10))
-            .setReadTimeout(Duration.ofSeconds(10))
-            .messageConverters(new MappingJackson2HttpMessageConverter());
-        RestTemplate restTemplate = restTemplateBuilder.build();
-        String url = "https://api.example.com/data";
-        ResponseEntity<AssessmentSubject> responseEntity = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            null,
-            AssessmentSubject.class
-        );
-        AssessmentSubject responseBody = responseEntity.getBody();
-        return responseBody;
-    }
+public class AssessmentSubjectPersistenceAdapter implements LoadAssessmentSubjectByAssessmentKitPort {
 
     @Override
     public List<AssessmentSubject> loadSubjectByKitId(Long kitId) {
@@ -50,10 +27,16 @@ public class AssessmentSubjectPersistenceAdapter implements LoadSubjectPort, Loa
             .messageConverters(new MappingJackson2HttpMessageConverter());
         RestTemplate restTemplate = restTemplateBuilder.build();
         String url = "https://api.example.com/data";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Long> requestBody = new HashMap<>();
+        requestBody.put("kitId", kitId);
+        HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(requestBody, headers);
         ResponseEntity<List<AssessmentSubject>> responseEntity = restTemplate.exchange(
             url,
             HttpMethod.GET,
-            null,
+            requestEntity,
             new ParameterizedTypeReference<List<AssessmentSubject>>() {
             }
         );

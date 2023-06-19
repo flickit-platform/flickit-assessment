@@ -29,7 +29,6 @@ public class CalculateAssessmentSubjectMaturityLevelTest {
         loadQAValuesByQAIds,
         loadMaturityLevelByKitPort);
 
-    @Disabled
     @Test
     public void calculateSubjectMaturityLevelWith2QuestionsResultsInMaturityLevel2_WillSucceed() {
         context.getQualityAttributeValue().setMaturityLevel(context.getMaturityLevel2());
@@ -39,7 +38,6 @@ public class CalculateAssessmentSubjectMaturityLevelTest {
         assertEquals(2, subjectValue.getMaturityLevel().getValue());
     }
 
-    @Disabled
     @Test
     public void calculateSubjectMaturityLevelWith2QuestionsResultsInMaturityLevel1_WillSucceed() {
         context.getQualityAttributeValue().setMaturityLevel(context.getMaturityLevel1());
@@ -49,7 +47,6 @@ public class CalculateAssessmentSubjectMaturityLevelTest {
         assertEquals(1, subjectValue.getMaturityLevel().getValue());
     }
 
-    @Disabled
     @Test
     public void calculateSubjectMaturityLevelWith2QuestionsResultsInNoAnswerException_WillFail() {
         context.getQualityAttributeValue().setMaturityLevel(context.getMaturityLevel3());

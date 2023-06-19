@@ -21,7 +21,7 @@ public class Utils {
             LocalDateTime.now(),
             LocalDateTime.now(),
             0L,
-            0L,
+            AssessmentColor.BLUE.getId(),
             ASSESSMENT_SPACE_ID,
             new MaturityLevel() // It must be set after ml calc of qa and subject, but we initiate it for now
         );
@@ -157,14 +157,6 @@ public class Utils {
             value,
             new AnswerOption(),
             new QuestionImpact()
-        );
-    }
-
-    public static AssessmentColor createAssessmentColor() {
-        return new AssessmentColor(
-            COLOR_ID,
-            COLOR_TITLE,
-            COLOR_CODE
         );
     }
 

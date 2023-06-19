@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult;
 
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentMapper;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubject.AssessmentSubjectValueMapper;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubjectvalue.AssessmentSubjectValueMapper;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueMapper;
 import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 

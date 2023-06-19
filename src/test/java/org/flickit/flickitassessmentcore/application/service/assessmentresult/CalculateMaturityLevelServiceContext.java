@@ -36,7 +36,6 @@ public class CalculateMaturityLevelServiceContext {
     private final AnswerOptionImpact optionImpact1Q2;
     private final AnswerOptionImpact optionImpact2Q2;
     private final AnswerOptionImpact optionImpact3Q2;
-    private final AssessmentColor color;
     private final MaturityLevel maturityLevel1;
     private final MaturityLevel maturityLevel2;
     private final MaturityLevel maturityLevel3;
@@ -70,7 +69,6 @@ public class CalculateMaturityLevelServiceContext {
         optionImpact1Q2 = createAnswerOptionImpact(ANSWER_OPTION_IMPACT_ID4, ANSWER_OPTION_IMPACT_VALUE4);
         optionImpact2Q2 = createAnswerOptionImpact(ANSWER_OPTION_IMPACT_ID5, ANSWER_OPTION_IMPACT_VALUE5);
         optionImpact3Q2 = createAnswerOptionImpact(ANSWER_OPTION_IMPACT_ID6, ANSWER_OPTION_IMPACT_VALUE6);
-        color = createAssessmentColor();
         maturityLevel1 = createMaturityLevel(MATURITY_LEVEL_ID1, MATURITY_LEVEL_TITLE1, 1);
         maturityLevel2 = createMaturityLevel(MATURITY_LEVEL_ID2, MATURITY_LEVEL_TITLE2, 2);
         maturityLevel3 = createMaturityLevel(MATURITY_LEVEL_ID3, MATURITY_LEVEL_TITLE3, 3);
@@ -80,7 +78,6 @@ public class CalculateMaturityLevelServiceContext {
     }
 
     private void completeInitiation() {
-        assessment.setColorId(color.getId());
         assessment.setMaturityLevel(maturityLevel2);
         assessment.setAssessmentKitId(kit.getId());
 

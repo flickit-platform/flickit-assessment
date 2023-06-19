@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubject;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubjectvalue;
 
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultMapper;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubjectvalue.AssessmentSubjectValueJpaEntity;

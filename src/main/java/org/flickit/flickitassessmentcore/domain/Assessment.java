@@ -19,7 +19,7 @@ public class Assessment {
     private LocalDateTime creationTime;
     private LocalDateTime lastModificationDate;
     private Long assessmentKitId;
-    private Long colorId;
+    private Integer colorId;
     private Long spaceId;
     private MaturityLevel maturityLevel;
 

@@ -88,11 +88,6 @@ public class Constants {
     public static final Long ANSWER_OPTION_IMPACT_ID6 = 6L;
     public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE6 = new BigDecimal(1);
 
-    // Assessment Color
-    public static final Long COLOR_ID = 1L;
-    public static final String COLOR_TITLE = "ColorTitle1";
-    public static final String COLOR_CODE = "ColorCode1";
-
     // Maturity Level
     public static final Long MATURITY_LEVEL_ID1 = 1L;
     public static final String MATURITY_LEVEL_TITLE1 = "MaturityLevelTitle1";

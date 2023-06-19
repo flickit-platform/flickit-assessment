@@ -1,6 +1,5 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue;
 
-import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultMapper;
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.flickit.flickitassessmentcore.domain.QualityAttribute;
 import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;

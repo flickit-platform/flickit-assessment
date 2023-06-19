@@ -5,13 +5,14 @@ import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.Load
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -25,10 +26,16 @@ public class MaturityLevelPersistenceAdapter implements LoadMaturityLevelByKitPo
             .messageConverters(new MappingJackson2HttpMessageConverter());
         RestTemplate restTemplate = restTemplateBuilder.build();
         String url = "https://api.example.com/data";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Long> requestBody = new HashMap<>();
+        requestBody.put("kitId", kitId);
+        HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(requestBody, headers);
         ResponseEntity<Set<MaturityLevel>> responseEntity = restTemplate.exchange(
             url,
             HttpMethod.GET,
-            null,
+            requestEntity,
             new ParameterizedTypeReference<Set<MaturityLevel>>() {
             }
         );

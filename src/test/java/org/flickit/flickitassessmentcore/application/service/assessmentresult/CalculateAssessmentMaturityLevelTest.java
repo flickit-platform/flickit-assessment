@@ -25,7 +25,6 @@ public class CalculateAssessmentMaturityLevelTest {
     private final CalculateMaturityLevelServiceContext context = new CalculateMaturityLevelServiceContext();
     private final CalculateAssessmentMaturityLevel service = new CalculateAssessmentMaturityLevel(loadMaturityLevelByKitPort);
 
-    @Disabled
     @Test
     public void calculateSubjectMaturityLevelWith2QuestionsResultsInMaturityLevel2_WillSucceed() {
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel2());
@@ -35,7 +34,6 @@ public class CalculateAssessmentMaturityLevelTest {
         assertEquals(2, ml.getValue());
     }
 
-    @Disabled
     @Test
     public void calculateSubjectMaturityLevelWith2QuestionsResultsInMaturityLevel1_WillSucceed() {
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel1());
@@ -45,7 +43,6 @@ public class CalculateAssessmentMaturityLevelTest {
         assertEquals(1, ml.getValue());
     }
 
-    @Disabled
     @Test
     public void calculateSubjectMaturityLevelWith2QuestionsResultsInNoAnswerException_WillFail() {
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel3());

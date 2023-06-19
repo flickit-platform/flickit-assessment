@@ -7,15 +7,12 @@ import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.Load
 import org.flickit.flickitassessmentcore.application.port.out.question.LoadQuestionsByQualityAttributePort;
 import org.flickit.flickitassessmentcore.application.service.exception.NoAnswerFoundException;
 import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.flickit.flickitassessmentcore.Constants.ANSWER_OPTION_IMPACT_VALUE4;
@@ -38,7 +35,6 @@ public class CalculateQualityAttributeMaturityLevelTest {
         loadAnswersByResult,
         loadLevelCompetenceByMaturityLevel);
 
-    @Disabled
     @Test
     public void calculateQualityAttributeMaturityLevelWith2QuestionsResultsInMaturityLevel2_WillSucceed() {
         doMocks();
@@ -47,7 +43,6 @@ public class CalculateQualityAttributeMaturityLevelTest {
         assertEquals(2, qav.getMaturityLevel().getValue());
     }
 
-    @Disabled
     @Test
     public void calculateQualityAttributeMaturityLevelWith2QuestionsResultsInMaturityLevel1_WillSucceed() {
         context.getOptionImpact1Q2().setValue(new BigDecimal(0));
@@ -59,7 +54,6 @@ public class CalculateQualityAttributeMaturityLevelTest {
         context.getOptionImpact1Q2().setValue(ANSWER_OPTION_IMPACT_VALUE4);
     }
 
-    @Disabled
     @Test
     public void calculateQualityAttributeMaturityLevelWith2QuestionsResultsInNoAnswerException_WillFail() {
         context.getAnswer2().setQuestion(null);
@@ -72,8 +66,8 @@ public class CalculateQualityAttributeMaturityLevelTest {
 
     private void doMocks() {
         doReturn(Set.of(context.getQuestion1(), context.getQuestion2())).when(loadQuestionsByQAId).loadQuestionsByQualityAttributeId(context.getQualityAttribute().getId());
-        doReturn(Set.of(context.getOptionImpact1Q1())).when(loadAnswerOptionImpactsByAnswerOption).findAnswerOptionImpactsByAnswerOptionId(context.getOption1Q1().getId());
-        doReturn(Set.of(context.getOptionImpact2Q2())).when(loadAnswerOptionImpactsByAnswerOption).findAnswerOptionImpactsByAnswerOptionId(context.getOption2Q2().getId());
+        doReturn(Set.of(context.getOptionImpact2Q1())).when(loadAnswerOptionImpactsByAnswerOption).findAnswerOptionImpactsByAnswerOptionId(context.getOption2Q1().getId());
+        doReturn(Set.of(context.getOptionImpact1Q2())).when(loadAnswerOptionImpactsByAnswerOption).findAnswerOptionImpactsByAnswerOptionId(context.getOption1Q2().getId());
         doReturn(Set.of(context.getMaturityLevel1(), context.getMaturityLevel2())).when(loadMaturityLevelByKit).loadMaturityLevelByKitId(context.getKit().getId());
         doReturn(Set.of(context.getAnswer1(), context.getAnswer2())).when(loadAnswersByResult).loadAnswersByResultId(context.getResult().getId());
         doReturn(Set.of(context.getLevelCompetence1(), context.getLevelCompetence2())).when(loadLevelCompetenceByMaturityLevel).loadLevelCompetenceByMaturityLevelId(context.getMaturityLevel2().getId());

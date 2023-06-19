@@ -49,7 +49,4 @@ public class AssessmentJpaEntity {
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
 
-    /* TODO:
-     *  - getAssessmentResult
-     */
 }
