@@ -2,6 +2,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresu
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
@@ -22,8 +23,9 @@ public class AssessmentResultJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "assessment_id", nullable = false)
-    private UUID assessmentId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
+    private AssessmentJpaEntity assessment;
 
     @Column(name = "is_valid")
     private Boolean isValid;
