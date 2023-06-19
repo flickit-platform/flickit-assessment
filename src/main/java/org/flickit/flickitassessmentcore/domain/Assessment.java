@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -20,10 +19,8 @@ public class Assessment {
     private LocalDateTime creationTime;
     private LocalDateTime lastModificationDate;
     private Long assessmentKitId;
-    private Long colorId;
+    private Integer colorId;
     private Long spaceId;
-    private List<AssessmentResult> assessmentResults;
-    private List<Evidence> evidences;
 
     @Override
     public String toString() {
