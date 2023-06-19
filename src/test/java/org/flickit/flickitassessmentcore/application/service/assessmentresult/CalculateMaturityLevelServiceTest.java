@@ -9,29 +9,29 @@ import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.L
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.SaveAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectByAssessmentKitPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeBySubPort;
-import org.flickit.flickitassessmentcore.application.service.exception.NoAnswerFoundException;
 import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
-import static org.flickit.flickitassessmentcore.Constants.ANSWER_OPTION_IMPACT_VALUE4;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CalculateMaturityLevelServiceTest {
-    private final LoadAssessmentPort loadAssessment = Mockito.mock(LoadAssessmentPort.class);
-    private final LoadAssessmentResultByAssessmentPort loadAssessmentResultByAssessment = Mockito.mock(LoadAssessmentResultByAssessmentPort.class);
-    private final LoadAssessmentSubjectByAssessmentKitPort loadSubjectByKit = Mockito.mock(LoadAssessmentSubjectByAssessmentKitPort.class);
-    private final LoadQualityAttributeBySubPort loadQualityAttributeBySubject = Mockito.mock(LoadQualityAttributeBySubPort.class);
-    private final SaveAssessmentResultPort saveAssessmentResult = Mockito.mock(SaveAssessmentResultPort.class);
-    private final CalculateQualityAttributeMaturityLevelUseCase calculateQualityAttributeMaturityLevel = Mockito.mock(CalculateQualityAttributeMaturityLevelUseCase.class);
-    private final CalculateAssessmentSubjectMaturityLevelUseCase calculateAssessmentSubjectMaturityLevel = Mockito.mock(CalculateAssessmentSubjectMaturityLevelUseCase.class);
-    private final CalculateAssessmentMaturityLevelUseCase calculateAssessmentMaturityLevel = Mockito.mock(CalculateAssessmentMaturityLevel.class);
+    private final LoadAssessmentPort loadAssessment = mock(LoadAssessmentPort.class);
+    private final LoadAssessmentResultByAssessmentPort loadAssessmentResultByAssessment = mock(LoadAssessmentResultByAssessmentPort.class);
+    private final LoadAssessmentSubjectByAssessmentKitPort loadSubjectByKit = mock(LoadAssessmentSubjectByAssessmentKitPort.class);
+    private final LoadQualityAttributeBySubPort loadQualityAttributeBySubject = mock(LoadQualityAttributeBySubPort.class);
+    private final SaveAssessmentResultPort saveAssessmentResult = mock(SaveAssessmentResultPort.class);
+    private final CalculateQualityAttributeMaturityLevelUseCase calculateQualityAttributeMaturityLevel = mock(CalculateQualityAttributeMaturityLevelUseCase.class);
+    private final CalculateAssessmentSubjectMaturityLevelUseCase calculateAssessmentSubjectMaturityLevel = mock(CalculateAssessmentSubjectMaturityLevelUseCase.class);
+    private final CalculateAssessmentMaturityLevelUseCase calculateAssessmentMaturityLevel = mock(CalculateAssessmentMaturityLevel.class);
     private final CalculateMaturityLevelServiceContext context = new CalculateMaturityLevelServiceContext();
     private final CalculateMaturityLevelService calculateMaturityLevelService = new CalculateMaturityLevelService(
         loadAssessment,
@@ -47,39 +47,44 @@ public class CalculateMaturityLevelServiceTest {
 
     @Disabled
     @Test
-    public void calculateQualityAttributeMaturityLevelWith2QuestionsResultsInMaturityLevel2_WillSucceed() {
+    public void calculateMaturityLevelWith2QuestionsResultsInMaturityLevel2_WillSucceed() {
+        context.getQualityAttributeValue().setMaturityLevel(context.getMaturityLevel2());
+        context.getSubjectValue().setMaturityLevel(context.getMaturityLevel2());
+        context.getAssessment().setMaturityLevel(context.getMaturityLevel2());
+        doReturn(context.getMaturityLevel2()).when(calculateAssessmentMaturityLevel).calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getAssessment());
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        AssessmentResult maturityLevel = calculateMaturityLevelService.calculateMaturityLevel(command);
-        // assert
+        AssessmentResult result = calculateMaturityLevelService.calculateMaturityLevel(command);
+        assertEquals(2, result.getQualityAttributeValues().get(0).getMaturityLevel().getValue());
+        assertEquals(2, result.getAssessmentSubjectValues().get(0).getMaturityLevel().getValue());
+        assertEquals(2, result.getAssessment().getMaturityLevel().getValue());
     }
 
     @Disabled
     @Test
-    public void calculateQualityAttributeMaturityLevelWith2QuestionsResultsInMaturityLevel1_WillSucceed() {
-        context.getOptionImpact1Q2().setValue(new BigDecimal(0));
+    public void calculateMaturityLevelWith2QuestionsResultsInMaturityLevel1_WillSucceed() {
+        context.getQualityAttributeValue().setMaturityLevel(context.getMaturityLevel1());
+        context.getSubjectValue().setMaturityLevel(context.getMaturityLevel1());
+        context.getAssessment().setMaturityLevel(context.getMaturityLevel1());
+        doReturn(context.getMaturityLevel1()).when(calculateAssessmentMaturityLevel).calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getAssessment());
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        AssessmentResult maturityLevel = calculateMaturityLevelService.calculateMaturityLevel(command);
-        // assert
-        // Return to former state
-        context.getOptionImpact1Q2().setValue(ANSWER_OPTION_IMPACT_VALUE4);
-    }
-
-    @Disabled
-    @Test
-    public void calculateQualityAttributeMaturityLevelWith2QuestionsResultsInNoAnswerException_WillFail() {
-        context.getAnswer2().setQuestion(null);
-        doMocks();
-        // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        assertThrows(NoAnswerFoundException.class, () -> calculateMaturityLevelService.calculateMaturityLevel(command));
-        // Return to former state
-        context.getAnswer2().setQuestion(context.getQuestion2());
+        AssessmentResult result = calculateMaturityLevelService.calculateMaturityLevel(command);
+        assertEquals(1, result.getQualityAttributeValues().get(0).getMaturityLevel().getValue());
+        assertEquals(1, result.getAssessmentSubjectValues().get(0).getMaturityLevel().getValue());
+        assertEquals(1, result.getAssessment().getMaturityLevel().getValue());
     }
 
     private void doMocks() {
-//        doReturn(context.getQualityAttribute()).when(loadQA).loadQualityAttribute(context.getQualityAttribute().getId());
-//        doNothing().when(saveQAValue).saveQualityAttributeValue(context.getQualityAttributeValue());
+        context.getResult().setQualityAttributeValues(new ArrayList<>());
+        context.getResult().setAssessmentSubjectValues(new ArrayList<>());
+        doReturn(context.getAssessment()).when(loadAssessment).loadAssessment(context.getAssessment().getId());
+        doReturn(Set.of(context.getResult())).when(loadAssessmentResultByAssessment).loadAssessmentResultByAssessmentId(context.getAssessment().getId());
+        doReturn(List.of(context.getSubject())).when(loadSubjectByKit).loadSubjectByKitId(context.getKit().getId());
+        doReturn(List.of(context.getQualityAttribute())).when(loadQualityAttributeBySubject).loadQABySubId(context.getSubject().getId());
+        doReturn(context.getQualityAttributeValue()).when(calculateQualityAttributeMaturityLevel).calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute());
+        doReturn(context.getSubjectValue()).when(calculateAssessmentSubjectMaturityLevel).calculateAssessmentSubjectMaturityLevel(context.getSubject());
+        doReturn(context.getResult()).when(saveAssessmentResult).saveAssessmentResult(context.getResult());
     }
 
 
