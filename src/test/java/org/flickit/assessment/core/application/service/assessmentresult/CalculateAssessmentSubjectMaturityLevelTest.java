@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentresult;
 
 import org.flickit.assessment.core.application.port.out.qualityattribute.LoadQualityAttributeBySubPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.LoadQAValuesByQAIdsPort;
-import org.flickit.assessment.core.application.service.exception.NoMaturityLevelFound;
+import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.domain.AssessmentSubjectValue;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ public class CalculateAssessmentSubjectMaturityLevelTest {
         context.getQualityAttributeValue().setMaturityLevel(context.getMaturityLevel3());
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        assertThrows(NoMaturityLevelFound.class, () -> service.calculateAssessmentSubjectMaturityLevel(context.getSubject()));
+        assertThrows(ResourceNotFoundException.class, () -> service.calculateAssessmentSubjectMaturityLevel(context.getSubject()));
     }
 
     private void doMocks() {

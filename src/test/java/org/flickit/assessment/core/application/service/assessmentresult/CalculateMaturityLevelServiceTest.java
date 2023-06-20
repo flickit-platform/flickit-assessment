@@ -1,15 +1,12 @@
 package org.flickit.assessment.core.application.service.assessmentresult;
 
 import org.flickit.assessment.core.application.port.in.assessmentresult.CalculateMaturityLevelCommand;
-import org.flickit.assessment.core.application.port.in.assessmentresult.CalculateQualityAttributeMaturityLevelUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessment.SaveAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.SaveAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentsubjectvalue.SaveAssessmentSubjectValuePort;
 import org.flickit.assessment.core.application.port.out.qualityattribute.LoadQualityAttributeBySubPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.SaveQualityAttributeValuePort;
-import org.flickit.assessment.core.application.port.in.assessmentresult.CalculateAssessmentMaturityLevelUseCase;
-import org.flickit.assessment.core.application.port.in.assessmentresult.CalculateAssessmentSubjectMaturityLevelUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentsubject.LoadAssessmentSubjectByAssessmentKitPort;
 import org.flickit.assessment.core.domain.AssessmentResult;
@@ -35,9 +32,9 @@ public class CalculateMaturityLevelServiceTest {
     private final SaveAssessmentPort saveAssessment = Mockito.mock(SaveAssessmentPort.class);
     private final SaveQualityAttributeValuePort saveQualityAttributeValue = Mockito.mock(SaveQualityAttributeValuePort.class);
     private final SaveAssessmentSubjectValuePort saveAssessmentSubjectValue = Mockito.mock(SaveAssessmentSubjectValuePort.class);
-    private final CalculateQualityAttributeMaturityLevelUseCase calculateQualityAttributeMaturityLevel = mock(CalculateQualityAttributeMaturityLevelUseCase.class);
-    private final CalculateAssessmentSubjectMaturityLevelUseCase calculateAssessmentSubjectMaturityLevel = mock(CalculateAssessmentSubjectMaturityLevelUseCase.class);
-    private final CalculateAssessmentMaturityLevelUseCase calculateAssessmentMaturityLevel = mock(CalculateAssessmentMaturityLevel.class);
+    private final CalculateQualityAttributeMaturityLevel calculateQualityAttributeMaturityLevel = mock(CalculateQualityAttributeMaturityLevel.class);
+    private final CalculateAssessmentSubjectMaturityLevel calculateAssessmentSubjectMaturityLevel = mock(CalculateAssessmentSubjectMaturityLevel.class);
+    private final CalculateAssessmentMaturityLevel calculateAssessmentMaturityLevel = mock(CalculateAssessmentMaturityLevel.class);
     private final CalculateMaturityLevelServiceContext context = new CalculateMaturityLevelServiceContext();
     private final CalculateMaturityLevelService calculateMaturityLevelService = new CalculateMaturityLevelService(
         loadAssessment,
@@ -59,7 +56,7 @@ public class CalculateMaturityLevelServiceTest {
         context.getQualityAttributeValue().setMaturityLevel(context.getMaturityLevel2());
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel2());
         context.getAssessment().setMaturityLevel(context.getMaturityLevel2());
-        doReturn(context.getMaturityLevel2()).when(calculateAssessmentMaturityLevel).calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getAssessment());
+        doReturn(context.getMaturityLevel2()).when(calculateAssessmentMaturityLevel).calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()));
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
         AssessmentResult result = calculateMaturityLevelService.calculateMaturityLevel(command);
@@ -73,7 +70,7 @@ public class CalculateMaturityLevelServiceTest {
         context.getQualityAttributeValue().setMaturityLevel(context.getMaturityLevel1());
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel1());
         context.getAssessment().setMaturityLevel(context.getMaturityLevel1());
-        doReturn(context.getMaturityLevel1()).when(calculateAssessmentMaturityLevel).calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getAssessment());
+        doReturn(context.getMaturityLevel1()).when(calculateAssessmentMaturityLevel).calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()));
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
         AssessmentResult result = calculateMaturityLevelService.calculateMaturityLevel(command);

@@ -34,9 +34,9 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
     private final SaveQualityAttributeValuePort saveQualityAttributeValue;
     private final SaveAssessmentSubjectValuePort saveAssessmentSubjectValue;
 
-    private final CalculateQualityAttributeMaturityLevelUseCase calculateQualityAttributeMaturityLevel;
-    private final CalculateAssessmentSubjectMaturityLevelUseCase calculateAssessmentSubjectMaturityLevel;
-    private final CalculateAssessmentMaturityLevelUseCase calculateAssessmentMaturityLevel;
+    private final CalculateQualityAttributeMaturityLevel calculateQualityAttributeMaturityLevel;
+    private final CalculateAssessmentSubjectMaturityLevel calculateAssessmentSubjectMaturityLevel;
+    private final CalculateAssessmentMaturityLevel calculateAssessmentMaturityLevel;
 
     /**
      * In this method, maturity level (ml) of quality attribute (qa), subject (sub) and assessment are been calculated
@@ -73,7 +73,7 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
                 saveAssessmentSubjectValue.saveAssessmentSubjectValue(assessmentSubjectValue);
             }
 
-            MaturityLevel assessmentMaturityLevel = calculateAssessmentMaturityLevel.calculateAssessmentMaturityLevel(result.getAssessmentSubjectValues(), assessment);
+            MaturityLevel assessmentMaturityLevel = calculateAssessmentMaturityLevel.calculateAssessmentMaturityLevel(result.getAssessmentSubjectValues());
             assessment.setMaturityLevel(assessmentMaturityLevel);
             result.getAssessment().setMaturityLevel(assessmentMaturityLevel);
 

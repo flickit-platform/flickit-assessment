@@ -6,9 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.assessment.core.application.port.out.qualityattribute.LoadQualityAttributeBySubPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.LoadQAValuesByQAIdsPort;
-import org.flickit.assessment.core.application.service.exception.NoMaturityLevelFound;
-import org.flickit.assessment.core.domain.*;
-import org.flickit.assessment.core.application.port.in.assessmentresult.CalculateAssessmentSubjectMaturityLevelUseCase;
+import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.common.ErrorMessageKey;
 import org.flickit.assessment.core.domain.*;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class CalculateAssessmentSubjectMaturityLevel implements CalculateAssessmentSubjectMaturityLevelUseCase {
+public class CalculateAssessmentSubjectMaturityLevel {
 
     private final LoadQualityAttributeBySubPort loadQABySubId;
     private final LoadQAValuesByQAIdsPort loadQAValuesByQAIds;
@@ -33,7 +32,7 @@ public class CalculateAssessmentSubjectMaturityLevel implements CalculateAssessm
                 .collect(Collectors.toSet()));
         long weightedMean = calculateWeightedMeanOfQAMaturityLevels(qualityAttributeValues);
         Set<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadMaturityLevelByKitId(subject.getAssessmentKit().getId());
-        MaturityLevel subMaturityLevel = findMaturityLevelByValue(weightedMean, maturityLevels, subject.getId());
+        MaturityLevel subMaturityLevel = findMaturityLevelByValue(weightedMean, maturityLevels);
         return new AssessmentSubjectValue(
             UUID.randomUUID(),
             subject,
@@ -41,13 +40,13 @@ public class CalculateAssessmentSubjectMaturityLevel implements CalculateAssessm
         );
     }
 
-    private MaturityLevel findMaturityLevelByValue(long weightedMean, Set<MaturityLevel> maturityLevels, Long subId) {
+    private MaturityLevel findMaturityLevelByValue(long weightedMean, Set<MaturityLevel> maturityLevels) {
         for (MaturityLevel ml : maturityLevels) {
             if (ml.getValue() == weightedMean) {
                 return ml;
             }
         }
-        throw new NoMaturityLevelFound("Can't calculate Maturity Level for Subject with id [" + subId + "].");
+        throw new ResourceNotFoundException(ErrorMessageKey.CALCULATE_MATURITY_LEVEL_MATURITY_LEVEL_NOT_FOUND_MESSAGE);
     }
 
     private long calculateWeightedMeanOfQAMaturityLevels(List<QualityAttributeValue> qualityAttributeValues) {

@@ -3,14 +3,13 @@ package org.flickit.assessment.core.application.service.assessmentresult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.core.application.port.in.assessmentresult.CalculateQualityAttributeMaturityLevelUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswersByResultPort;
 import org.flickit.assessment.core.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionPort;
 import org.flickit.assessment.core.application.port.out.levelcompetence.LoadLevelCompetenceByMaturityLevelPort;
-import org.flickit.assessment.core.application.service.exception.NoAnswerFoundException;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsByQualityAttributePort;
-import org.flickit.assessment.core.domain.*;
+import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.common.ErrorMessageKey;
 import org.flickit.assessment.core.domain.*;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class CalculateQualityAttributeMaturityLevel implements CalculateQualityAttributeMaturityLevelUseCase {
+public class CalculateQualityAttributeMaturityLevel {
 
     private final LoadQuestionsByQualityAttributePort loadQuestionsByQAId;
     private final LoadAnswerOptionImpactsByAnswerOptionPort loadAnswerOptionImpactsByAnswerOption;
@@ -73,7 +72,7 @@ public class CalculateQualityAttributeMaturityLevel implements CalculateQualityA
                 return answer.getAnswerOption();
             }
         }
-        throw new NoAnswerFoundException("Question «" + question.getTitle() + " » has no answer!");
+        throw new ResourceNotFoundException(ErrorMessageKey.CALCULATE_MATURITY_LEVEL_ANSWER_NOT_FOUND_MESSAGE);
     }
 
     /**

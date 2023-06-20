@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.application.service.assessmentresult;
 
-import org.flickit.assessment.core.application.service.exception.NoMaturityLevelFound;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
+import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.domain.MaturityLevel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,7 @@ public class CalculateAssessmentMaturityLevelTest {
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel2());
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        MaturityLevel ml = service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getAssessment());
+        MaturityLevel ml = service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()));
         assertEquals(2, ml.getValue());
     }
 
@@ -35,7 +35,7 @@ public class CalculateAssessmentMaturityLevelTest {
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel1());
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        MaturityLevel ml = service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getAssessment());
+        MaturityLevel ml = service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()));
         assertEquals(1, ml.getValue());
     }
 
@@ -44,7 +44,7 @@ public class CalculateAssessmentMaturityLevelTest {
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel3());
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        assertThrows(NoMaturityLevelFound.class, () -> service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getAssessment()));
+        assertThrows(ResourceNotFoundException.class, () -> service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue())));
     }
 
     private void doMocks() {

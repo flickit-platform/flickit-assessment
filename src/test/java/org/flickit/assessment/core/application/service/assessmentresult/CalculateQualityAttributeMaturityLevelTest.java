@@ -5,7 +5,7 @@ import org.flickit.assessment.core.application.port.out.levelcompetence.LoadLeve
 import org.flickit.assessment.core.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsByQualityAttributePort;
-import org.flickit.assessment.core.application.service.exception.NoAnswerFoundException;
+import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.domain.QualityAttributeValue;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,7 @@ public class CalculateQualityAttributeMaturityLevelTest {
         context.getAnswer2().setQuestion(null);
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        assertThrows(NoAnswerFoundException.class, () -> service.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute()));
+        assertThrows(ResourceNotFoundException.class, () -> service.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute()));
         // Return to former state
         context.getAnswer2().setQuestion(context.getQuestion2());
     }
