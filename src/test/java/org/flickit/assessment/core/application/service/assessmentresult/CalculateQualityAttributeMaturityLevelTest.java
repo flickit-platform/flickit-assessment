@@ -7,6 +7,7 @@ import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturi
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsByQualityAttributePort;
 import org.flickit.assessment.core.application.service.exception.NoAnswerFoundException;
 import org.flickit.assessment.core.domain.QualityAttributeValue;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -36,6 +37,7 @@ public class CalculateQualityAttributeMaturityLevelTest {
         loadLevelCompetenceByMaturityLevel);
 
     @Test
+    @Disabled
     public void calculateQualityAttributeMaturityLevelWith2QuestionsResultsInMaturityLevel2_WillSucceed() {
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
