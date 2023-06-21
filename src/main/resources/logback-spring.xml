@@ -24,7 +24,7 @@
 		<appender-ref ref="ASYNC_CONSOLE" />
 	</root>
 
-	<logger name="org.flickit.assessment.core" level="info" additivity="false">
+	<logger name="org.flickit.flickitassessmentcore" level="info" additivity="false">
         <appender-ref ref="ASYNC_CONSOLE" />
     </logger>
 
