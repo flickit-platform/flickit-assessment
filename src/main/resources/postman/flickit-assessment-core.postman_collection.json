@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "9f7ec93d-fe41-4dd5-8379-f61460fee9cd",
+		"_postman_id": "45f6042b-7eaa-4d18-9b48-8b3722fed5cd",
 		"name": "flickit-assessment-core",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "18899907"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -52,6 +51,38 @@
 						"assessment-core",
 						"api",
 						"assessment-colors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View List of Space Assessments",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8098/assessment-core/api/1/assessments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8098",
+					"path": [
+						"assessment-core",
+						"api",
+						"1",
+						"assessments"
 					]
 				}
 			},
