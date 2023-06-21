@@ -3,6 +3,10 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectIdsByAssessmentKitPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentsubjectvalue.CreateAssessmentSubjectValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeIdsByAssessmentSubjectPort;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,10 +17,11 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +33,21 @@ class CreateAssessmentServiceTest {
 
     @Mock
     private CreateAssessmentPort createAssessmentPort;
+
+    @Mock
+    private CreateAssessmentResultPort createAssessmentResultPort;
+
+    @Mock
+    private LoadAssessmentSubjectIdsByAssessmentKitPort loadAssessmentSubjectIdsPort;
+
+    @Mock
+    private CreateAssessmentSubjectValuePort createAssessmentSubjectValuePort;
+
+    @Mock
+    private LoadQualityAttributeIdsByAssessmentSubjectPort loadQualityAttributeIdsPort;
+
+    @Mock
+    private org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort createQualityAttributeValuePort;
 
 
     @Test
@@ -53,6 +73,65 @@ class CreateAssessmentServiceTest {
         assertEquals("title-example", param.getValue().code());
         assertNotNull(param.getValue().creationTime());
         assertNotNull(param.getValue().lastModificationDate());
+    }
+
+    @Test
+    void createAssessment_ValidCommand_PersistsAssessmentResult() {
+        CreateAssessmentCommand command = new CreateAssessmentCommand(
+            1L,
+            "title example",
+            1L,
+            1
+        );
+        UUID assessmentId = UUID.randomUUID();
+        doReturn(assessmentId).when(createAssessmentPort).persist(any(CreateAssessmentPort.Param.class));
+        UUID expectedResultId = UUID.randomUUID();
+        doReturn(expectedResultId).when(createAssessmentResultPort).persist(any(CreateAssessmentResultPort.Param.class));
+
+        service.createAssessment(command);
+
+        ArgumentCaptor<CreateAssessmentResultPort.Param> param = ArgumentCaptor.forClass(CreateAssessmentResultPort.Param.class);
+        verify(createAssessmentResultPort).persist(param.capture());
+
+        assertEquals(assessmentId, param.getValue().assessmentId());
+        assertFalse(param.getValue().isValid());
+    }
+
+    @Test
+    void createAssessment_ValidCommand_PersistsAssessmentSubjectValues() {
+        Long assessmentKitId = 1L;
+        CreateAssessmentCommand command = new CreateAssessmentCommand(
+            1L,
+            "title example",
+            assessmentKitId,
+            1
+        );
+        List<Long> expectedAssessmentSubjectIds = Arrays.asList(1L, 2L, 3L);
+        doReturn(expectedAssessmentSubjectIds).when(loadAssessmentSubjectIdsPort).loadIdsByAssessmentKitId(assessmentKitId);
+
+        service.createAssessment(command);
+
+        verify(createAssessmentSubjectValuePort, times(1)).persistAllWithAssessmentResultId(anyList(), any());
+    }
+
+    @Test
+    void createAssessment_ValidCommand_PersistsQualityAttributeValue() {
+        Long assessmentKitId = 1L;
+        CreateAssessmentCommand command = new CreateAssessmentCommand(
+            1L,
+            "title example",
+            assessmentKitId,
+            1
+        );
+        List<Long> expectedAssessmentSubjectIds = Arrays.asList(1L, 2L, 3L);
+        doReturn(expectedAssessmentSubjectIds).when(loadAssessmentSubjectIdsPort).loadIdsByAssessmentKitId(assessmentKitId);
+        List<Long> expectedQualityAttributeIds = Arrays.asList(1L, 2L, 3L, 4L, 5L);
+        doReturn(expectedQualityAttributeIds).when(loadQualityAttributeIdsPort).loadIdsByAssessmentSubjectId(anyLong());
+
+        service.createAssessment(command);
+
+        verify(loadQualityAttributeIdsPort, times(expectedAssessmentSubjectIds.size())).loadIdsByAssessmentSubjectId(anyLong());
+        verify(createQualityAttributeValuePort, times(expectedAssessmentSubjectIds.size())).persistAllWithAssessmentResultId(anyList(), any());
     }
 
     @Test
