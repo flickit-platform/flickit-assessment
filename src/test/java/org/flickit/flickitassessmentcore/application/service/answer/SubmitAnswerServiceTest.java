@@ -64,7 +64,7 @@ class SubmitAnswerServiceTest {
 
         verify(assessmentResultExistencePort, times(1)).existsById(command.getAssessmentResultId());
         verify(saveAnswerPort, times(1)).persist(any(SaveAnswerPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateAssessmentResultById(command.getAssessmentResultId());
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(command.getAssessmentResultId());
         verifyNoInteractions(
             updateAnswerPort,
             loadAnswerPort
@@ -97,7 +97,7 @@ class SubmitAnswerServiceTest {
         verify(assessmentResultExistencePort, times(1)).existsById(command.getAssessmentResultId());
         verify(loadAnswerPort, times(1)).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateAssessmentResultById(command.getAssessmentResultId());
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(command.getAssessmentResultId());
         verifyNoInteractions(
             saveAnswerPort
         );

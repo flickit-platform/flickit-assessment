@@ -22,7 +22,7 @@ public class AssessmentResultPersistenceJpaAdaptor implements
     }
 
     @Override
-    public void invalidateAssessmentResultById(UUID id) {
+    public void invalidateById(UUID id) {
         repository.invalidateById(id);
     }
 }

@@ -53,7 +53,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
     private void afterSave(SubmitAnswerCommand command, SaveOrUpdateResponse response) {
         if (response.hasChanged())
-            invalidateAssessmentResultPort.invalidateAssessmentResultById(command.getAssessmentResultId());
+            invalidateAssessmentResultPort.invalidateById(command.getAssessmentResultId());
     }
 
     private UUID save(SubmitAnswerCommand command) {
