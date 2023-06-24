@@ -1,37 +1,36 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.entity;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubjectvalue;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
 @Entity
-@Table(name = "assessment_answer")
-@Data
-@AllArgsConstructor
+@Table(name = "assessment_assessmentsubjectvalue")
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
-@EqualsAndHashCode
-public class AnswerEntity {
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class AssessmentSubjectValueJpaEntity {
+
     @Id
+    @EqualsAndHashCode.Include
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
-    @Column(name = "question_id", nullable = false)
-    private Long questionId;
-    @Column(name = "answer_option_id")
-    private Long answerOptionId;
 
-    @Override
-    public String toString() {
-        return id.toString();
-    }
+    @Column(name = "assessment_subject_id", nullable = false)
+    private Long assessmentSubjectId;
+
+    @Column(name = "maturity_level_id")
+    private Long maturityLevelId;
 }
