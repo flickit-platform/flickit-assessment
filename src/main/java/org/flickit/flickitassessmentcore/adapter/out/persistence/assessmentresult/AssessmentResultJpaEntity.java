@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubjectvalue.AssessmentSubjectValueJpaEntity;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class AssessmentResultJpaEntity {
     private AssessmentJpaEntity assessment;
 
     @OneToMany(mappedBy = "assessmentResult")
-    private List<org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaEntity> qualityAttributeValues;
+    private List<QualityAttributeValueJpaEntity> qualityAttributeValues;
 
     @OneToMany(mappedBy = "assessmentResult")
     private List<AssessmentSubjectValueJpaEntity> assessmentSubjectValues;

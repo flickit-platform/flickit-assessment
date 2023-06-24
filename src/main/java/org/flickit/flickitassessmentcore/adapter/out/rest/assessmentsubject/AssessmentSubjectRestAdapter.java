@@ -31,11 +31,11 @@ public class AssessmentSubjectRestAdapter implements LoadAssessmentSubjectIdsAnd
         Map<String, Long> requestBody = new HashMap<>();
         requestBody.put("kitId", assessmentKitId);
         HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam> responseEntity = restTemplate.exchange(
+        ResponseEntity<ResponseParam> responseEntity = restTemplate.exchange(
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam>() {
+            new ParameterizedTypeReference<ResponseParam>() {
             }
         );
         return responseEntity.getBody();
