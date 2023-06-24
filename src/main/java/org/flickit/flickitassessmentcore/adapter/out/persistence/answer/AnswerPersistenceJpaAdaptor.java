@@ -6,7 +6,7 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.application.port.out.answer.CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerByAssessmentResultIdAndQuestionIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.domain.Answer;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_AN
 @RequiredArgsConstructor
 public class AnswerPersistenceJpaAdaptor implements
     SaveAnswerPort,
-    UpdateAnswerPort,
+    UpdateAnswerOptionPort,
     CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort,
     LoadAnswerByAssessmentResultIdAndQuestionIdPort {
 
@@ -39,13 +39,8 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public UUID update(UpdateAnswerPort.Param param) {
-        AnswerJpaEntity unsavedEntity = AnswerMapper.mapUpdateParamToJpaEntity(param);
-        AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(param.assessmentResultId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND_MESSAGE));
-        unsavedEntity.setAssessmentResult(assessmentResult);
-        AnswerJpaEntity entity = repository.save(unsavedEntity);
-        return entity.getId();
+    public void updateAnswerOptionById(UpdateAnswerOptionPort.Param param) {
+        repository.updateAnswerOptionById(param.id(), param.answerOptionId());
     }
 
     @Override

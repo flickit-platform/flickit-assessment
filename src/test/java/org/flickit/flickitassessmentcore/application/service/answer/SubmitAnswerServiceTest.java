@@ -4,7 +4,7 @@ import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswer
 import org.flickit.flickitassessmentcore.application.port.out.answer.CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerByAssessmentResultIdAndQuestionIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.domain.Answer;
 import org.flickit.flickitassessmentcore.domain.AssessmentResult;
@@ -30,7 +30,7 @@ class SubmitAnswerServiceTest {
     private SaveAnswerPort saveAnswerPort;
 
     @Mock
-    private UpdateAnswerPort updateAnswerPort;
+    private UpdateAnswerOptionPort updateAnswerPort;
 
     @Mock
     private LoadAnswerByAssessmentResultIdAndQuestionIdPort loadAnswerPort;
@@ -81,12 +81,10 @@ class SubmitAnswerServiceTest {
         doReturn(true).when(checkAnswerExistencePort).existsByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
         doReturn(existAnswer).when(loadAnswerPort).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
 
-        doReturn(existAnswerId).when(updateAnswerPort).update(any(UpdateAnswerPort.Param.class));
-
         service.submitAnswer(command);
 
         verify(loadAnswerPort, times(1)).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
-        verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
+        verify(updateAnswerPort, times(1)).updateAnswerOptionById(any(UpdateAnswerOptionPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(command.getAssessmentResultId());
         verifyNoInteractions(
             saveAnswerPort
