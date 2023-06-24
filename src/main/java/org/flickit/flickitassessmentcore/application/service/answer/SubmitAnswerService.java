@@ -7,17 +7,13 @@ import org.flickit.flickitassessmentcore.application.port.out.answer.CheckAnswer
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerByAssessmentResultIdAndQuestionIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CheckAssessmentResultExistencePort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.domain.Answer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.UUID;
-
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND_MESSAGE;
 
 @Service
 @RequiredArgsConstructor
@@ -28,19 +24,13 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final UpdateAnswerPort updateAnswerPort;
     private final LoadAnswerByAssessmentResultIdAndQuestionIdPort loadAnswerPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
-    private final CheckAssessmentResultExistencePort assessmentResultExistencePort;
     private final CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort checkAnswerExistencePort;
 
     @Override
     public UUID submitAnswer(SubmitAnswerCommand command) {
-        validateCommand(command);
         SaveOrUpdateResponse response = saveOrUpdate(command);
         afterSave(command, response);
         return response.answerId();
-    }
-
-    private void validateCommand(SubmitAnswerCommand command) {
-        checkAssessmentResultExistence(command.getAssessmentResultId());
     }
 
     private SaveOrUpdateResponse saveOrUpdate(SubmitAnswerCommand command) {
@@ -69,11 +59,6 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
     private boolean answerHasChanged(SubmitAnswerCommand command, Answer answer) {
         return !Objects.equals(command.getAnswerOptionId(), answer.getAnswerOptionId());
-    }
-
-    private void checkAssessmentResultExistence(UUID assessmentResultId) {
-        if (!assessmentResultExistencePort.existsById(assessmentResultId))
-            throw new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND_MESSAGE);
     }
 
     private SaveAnswerPort.Param toSaveParam(SubmitAnswerCommand command) {
