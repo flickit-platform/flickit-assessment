@@ -59,7 +59,7 @@ class CreateAssessmentServiceTest {
             1
         );
         UUID expectedId = UUID.randomUUID();
-        doReturn(expectedId).when(createAssessmentPort).persist(any(CreateAssessmentPort.Param.class));
+        when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
 
         UUID actualId = service.createAssessment(command);
         assertEquals(expectedId, actualId);
@@ -84,9 +84,9 @@ class CreateAssessmentServiceTest {
             1
         );
         UUID assessmentId = UUID.randomUUID();
-        doReturn(assessmentId).when(createAssessmentPort).persist(any(CreateAssessmentPort.Param.class));
+        when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(assessmentId);
         UUID expectedResultId = UUID.randomUUID();
-        doReturn(expectedResultId).when(createAssessmentResultPort).persist(any(CreateAssessmentResultPort.Param.class));
+        when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(expectedResultId);
 
         service.createAssessment(command);
 
@@ -107,7 +107,7 @@ class CreateAssessmentServiceTest {
             1
         );
         List<Long> expectedAssessmentSubjectIds = Arrays.asList(1L, 2L, 3L);
-        doReturn(expectedAssessmentSubjectIds).when(loadAssessmentSubjectIdsPort).loadIdsByAssessmentKitId(assessmentKitId);
+        when(loadAssessmentSubjectIdsPort.loadIdsByAssessmentKitId(assessmentKitId)).thenReturn(expectedAssessmentSubjectIds);
 
         service.createAssessment(command);
 
@@ -124,9 +124,9 @@ class CreateAssessmentServiceTest {
             1
         );
         List<Long> expectedAssessmentSubjectIds = Arrays.asList(1L, 2L, 3L);
-        doReturn(expectedAssessmentSubjectIds).when(loadAssessmentSubjectIdsPort).loadIdsByAssessmentKitId(assessmentKitId);
+        when(loadAssessmentSubjectIdsPort.loadIdsByAssessmentKitId(assessmentKitId)).thenReturn(expectedAssessmentSubjectIds);
         List<Long> expectedQualityAttributeIds = Arrays.asList(1L, 2L, 3L, 4L, 5L);
-        doReturn(expectedQualityAttributeIds).when(loadQualityAttributeIdsPort).loadIdsByAssessmentSubjectId(anyLong());
+        when(loadQualityAttributeIdsPort.loadIdsByAssessmentSubjectId(anyLong())).thenReturn(expectedQualityAttributeIds);
 
         service.createAssessment(command);
 
