@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
-import org.flickit.flickitassessmentcore.application.port.in.assessment.ViewListOfSpaceAssessmentsCommand;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.ViewListOfSpaceAssessmentsUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentBySpacePort;
 import org.flickit.flickitassessmentcore.domain.Assessment;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
@@ -61,22 +61,22 @@ public class ViewListOfSpaceAssessmentsServiceTest {
     @Test
     public void loadAssessmentsOfSpace1_returnsIts2Assessments_success() {
         doMocks();
-        List<Assessment> assessments = service.viewListOfSpaceAssessments(new ViewListOfSpaceAssessmentsCommand(space1));
-        assertEquals(2, assessments.size());
+        ViewListOfSpaceAssessmentsUseCase.Result result = service.viewListOfSpaceAssessments(new ViewListOfSpaceAssessmentsUseCase.Param(space1));
+        assertEquals(2, result.assessments().size());
     }
 
     @Test
     public void loadAssessmentsOfSpace2_returnsIts3Assessments_success() {
         doMocks();
-        List<Assessment> assessments = service.viewListOfSpaceAssessments(new ViewListOfSpaceAssessmentsCommand(space2));
-        assertEquals(3, assessments.size());
+        ViewListOfSpaceAssessmentsUseCase.Result result = service.viewListOfSpaceAssessments(new ViewListOfSpaceAssessmentsUseCase.Param(space2));
+        assertEquals(3, result.assessments().size());
     }
 
     @Test
     public void loadAssessmentsOfSpace3_returnsIts0_success() {
         doMocks();
-        List<Assessment> assessments = service.viewListOfSpaceAssessments(new ViewListOfSpaceAssessmentsCommand(space3));
-        assertEquals(0, assessments.size());
+        ViewListOfSpaceAssessmentsUseCase.Result result = service.viewListOfSpaceAssessments(new ViewListOfSpaceAssessmentsUseCase.Param(space3));
+        assertEquals(0, result.assessments().size());
     }
 
     public void doMocks() {
