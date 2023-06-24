@@ -29,7 +29,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     @Override
     public UUID submitAnswer(SubmitAnswerCommand command) {
         SaveOrUpdateResponse response = saveOrUpdate(command);
-        afterSave(command, response);
+        if (response.hasChanged())
+            invalidateAssessmentResultPort.invalidateById(command.getAssessmentResultId());
         return response.answerId();
     }
 
@@ -39,11 +40,6 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             return update(command);
         }
         return new SaveOrUpdateResponse(true, save(command));
-    }
-
-    private void afterSave(SubmitAnswerCommand command, SaveOrUpdateResponse response) {
-        if (response.hasChanged())
-            invalidateAssessmentResultPort.invalidateById(command.getAssessmentResultId());
     }
 
     private UUID save(SubmitAnswerCommand command) {
