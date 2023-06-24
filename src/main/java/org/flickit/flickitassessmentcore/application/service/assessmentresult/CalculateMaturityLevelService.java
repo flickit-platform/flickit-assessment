@@ -11,10 +11,8 @@ import org.flickit.flickitassessmentcore.application.port.out.assessmentsubjectv
 import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeBySubPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.SaveQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.domain.*;
-import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.*;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectByAssessmentKitPort;
-import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -47,8 +45,8 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
      * All of them are stored in result and saved in db. <br>
      */
     @Override
-    public AssessmentResult calculateMaturityLevel(CalculateMaturityLevelCommand command) {
-        Assessment assessment = loadAssessment.loadAssessment(command.getAssessmentId());
+    public CalculateMaturityLevelUseCase.Result calculateMaturityLevel(CalculateMaturityLevelUseCase.Param param) {
+        Assessment assessment = loadAssessment.loadAssessment(param.getAssessmentId());
         List<AssessmentResult> results = new ArrayList<>(loadAssessmentResultByAssessment.loadAssessmentResultByAssessmentId(assessment.getId()));
         AssessmentResult result = results.get(0);
         if (!result.isValid()) {
@@ -78,9 +76,9 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
             result.getAssessment().setMaturityLevel(assessmentMaturityLevel);
 
             saveAssessment.saveAssessment(assessment);
-            return saveAssessmentResult.saveAssessmentResult(result);
+            return new CalculateMaturityLevelUseCase.Result(saveAssessmentResult.saveAssessmentResult(result));
         }
-        return result;
+        return new CalculateMaturityLevelUseCase.Result(result);
     }
 
 }

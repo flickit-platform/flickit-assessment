@@ -2,9 +2,7 @@ package org.flickit.flickitassessmentcore.adapter.in.rest.assessmentresult;
 
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateMaturityLevelCommand;
 import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateMaturityLevelUseCase;
-import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,16 +22,16 @@ public class CalculateMaturityLevelRestController {
     @PostMapping
     public ResponseEntity<CalculateMaturityLevelResponseDto> calculateMaturityLevel(
         @PathParam("assessmentId") UUID assessmentId) {
-        CalculateMaturityLevelCommand command = new CalculateMaturityLevelCommand(assessmentId);
+        CalculateMaturityLevelUseCase.Param result = new CalculateMaturityLevelUseCase.Param(assessmentId);
         CalculateMaturityLevelResponseDto responseDto =
             mapCommandToResponseDto(
-                useCase.calculateMaturityLevel(command));
+                useCase.calculateMaturityLevel(result));
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    private CalculateMaturityLevelResponseDto mapCommandToResponseDto(AssessmentResult assessmentResult) {
+    private CalculateMaturityLevelResponseDto mapCommandToResponseDto(CalculateMaturityLevelUseCase.Result result) {
         return new CalculateMaturityLevelResponseDto(
-            assessmentResult
+            result.assessmentResult()
         );
     }
 

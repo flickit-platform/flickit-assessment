@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.application.service.assessmentresult;
 
-import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateMaturityLevelCommand;
+import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.SaveAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.SaveAssessmentResultPort;
@@ -9,7 +9,6 @@ import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.L
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.SaveQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectByAssessmentKitPort;
-import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -49,7 +48,7 @@ public class CalculateMaturityLevelServiceTest {
         calculateAssessmentSubjectMaturityLevel,
         calculateAssessmentMaturityLevel);
 
-    private final CalculateMaturityLevelCommand command = new CalculateMaturityLevelCommand(context.getAssessment().getId());
+    private final CalculateMaturityLevelUseCase.Param param = new CalculateMaturityLevelUseCase.Param(context.getAssessment().getId());
 
     @Test
     public void calculateMaturityLevelWith2QuestionsResultsInMaturityLevel2_WillSucceed() {
@@ -59,10 +58,10 @@ public class CalculateMaturityLevelServiceTest {
         doReturn(context.getMaturityLevel2()).when(calculateAssessmentMaturityLevel).calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()));
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        AssessmentResult result = calculateMaturityLevelService.calculateMaturityLevel(command);
-        assertEquals(2, result.getQualityAttributeValues().get(0).getMaturityLevel().getValue());
-        assertEquals(2, result.getAssessmentSubjectValues().get(0).getMaturityLevel().getValue());
-        assertEquals(2, result.getAssessment().getMaturityLevel().getValue());
+        CalculateMaturityLevelUseCase.Result result = calculateMaturityLevelService.calculateMaturityLevel(param);
+        assertEquals(2, result.assessmentResult().getQualityAttributeValues().get(0).getMaturityLevel().getValue());
+        assertEquals(2, result.assessmentResult().getAssessmentSubjectValues().get(0).getMaturityLevel().getValue());
+        assertEquals(2, result.assessmentResult().getAssessment().getMaturityLevel().getValue());
     }
 
     @Test
@@ -73,10 +72,10 @@ public class CalculateMaturityLevelServiceTest {
         doReturn(context.getMaturityLevel1()).when(calculateAssessmentMaturityLevel).calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()));
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        AssessmentResult result = calculateMaturityLevelService.calculateMaturityLevel(command);
-        assertEquals(1, result.getQualityAttributeValues().get(0).getMaturityLevel().getValue());
-        assertEquals(1, result.getAssessmentSubjectValues().get(0).getMaturityLevel().getValue());
-        assertEquals(1, result.getAssessment().getMaturityLevel().getValue());
+        CalculateMaturityLevelUseCase.Result result = calculateMaturityLevelService.calculateMaturityLevel(param);
+        assertEquals(1, result.assessmentResult().getQualityAttributeValues().get(0).getMaturityLevel().getValue());
+        assertEquals(1, result.assessmentResult().getAssessmentSubjectValues().get(0).getMaturityLevel().getValue());
+        assertEquals(1, result.assessmentResult().getAssessment().getMaturityLevel().getValue());
     }
 
     private void doMocks() {
