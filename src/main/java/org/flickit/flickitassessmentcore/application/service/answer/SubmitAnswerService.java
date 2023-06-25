@@ -39,11 +39,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         if (exists) {
             return update(command);
         }
-        return new SaveOrUpdateResponse(true, save(command));
-    }
-
-    private UUID save(SubmitAnswerCommand command) {
-        return saveAnswerPort.persist(toSaveParam(command));
+        UUID saveAnswerId = saveAnswerPort.persist(toSaveParam(command));
+        return new SaveOrUpdateResponse(true, saveAnswerId);
     }
 
     private SaveOrUpdateResponse update(SubmitAnswerCommand command) {
