@@ -24,7 +24,7 @@ public class EvidenceMapper {
             entity.getCreationTime(),
             entity.getLastModificationDate(),
             entity.getCreatedById(),
-            entity.getAssessmentId(), // TODO: How to get the whole model?
+            entity.getAssessmentId(),
             entity.getQuestionId()
         );
     }

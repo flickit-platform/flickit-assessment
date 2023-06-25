@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +24,7 @@ public class AddEvidenceToQuestionService implements AddEvidenceToQuestionUseCas
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.getCreatedById(),
-            param.getAssessmentId(), // TODO: do we need really to set the whole assessment?
+            param.getAssessmentId(),
             param.getQuestionId()
         );
         CreateEvidencePort.Result result = createEvidence.createEvidence(new CreateEvidencePort.Param(evidence));

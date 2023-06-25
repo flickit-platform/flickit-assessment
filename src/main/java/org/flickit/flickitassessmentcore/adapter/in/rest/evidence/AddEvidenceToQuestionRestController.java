@@ -16,7 +16,7 @@ public class AddEvidenceToQuestionRestController {
 
     @PostMapping
     @RequestMapping("/{spaceId}/{assessmentId}/{questionId}/add-evidence")
-    public ResponseEntity<AddEvidenceToQuestionResponseDto> addEvidenceToQuestion(@PathVariable("assessmentId")UUID assessmentId,
+    public ResponseEntity<AddEvidenceToQuestionResponseDto> addEvidenceToQuestion(@PathVariable("assessmentId") UUID assessmentId,
                                                                                   @PathVariable("questionId") Long questionId,
                                                                                   @RequestBody AddEvidenceToQuestionRequestDto request) {
         AddEvidenceToQuestionUseCase.Result result = useCase.addEvidenceToQuestion(toParam(request, assessmentId, questionId));
