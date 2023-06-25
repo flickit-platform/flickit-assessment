@@ -4,11 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerByAssessmentResultIdAndQuestionIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.domain.Answer;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -22,7 +21,7 @@ public class AnswerPersistenceJpaAdaptor implements
     SaveAnswerPort,
     UpdateAnswerOptionPort,
     CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort,
-    LoadAnswerByAssessmentResultIdAndQuestionIdPort {
+    LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort {
 
     private final AnswerJpaRepository repository;
 
@@ -49,8 +48,9 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public Answer loadByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId) {
-        AnswerJpaEntity answerEntity = repository.findByAssessmentResult_IdAndQuestionId(assessmentResultId, questionId);
-        return AnswerMapper.mapToDomainModel(answerEntity);
+    public Result loadByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId) {
+        AnswerIdAndOptionIdProjectionDto dto =
+            repository.selectIdAndOptionIdByAssessmentResultIdAndQuestionId(assessmentResultId, questionId).get(0);
+        return AnswerMapper.mapToAnswerIdAndOptionIdResult(dto);
     }
 }

@@ -2,12 +2,10 @@ package org.flickit.flickitassessmentcore.application.service.answer;
 
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerCommand;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerByAssessmentResultIdAndQuestionIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
-import org.flickit.flickitassessmentcore.domain.Answer;
-import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,7 +31,7 @@ class SubmitAnswerServiceTest {
     private UpdateAnswerOptionPort updateAnswerPort;
 
     @Mock
-    private LoadAnswerByAssessmentResultIdAndQuestionIdPort loadAnswerPort;
+    private LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort loadAnswerIdAndOptionIdPort;
 
     @Mock
     private InvalidateAssessmentResultPort invalidateAssessmentResultPort;
@@ -59,7 +57,7 @@ class SubmitAnswerServiceTest {
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(command.getAssessmentResultId());
         verifyNoInteractions(
             updateAnswerPort,
-            loadAnswerPort
+            loadAnswerIdAndOptionIdPort
         );
     }
 
@@ -71,19 +69,17 @@ class SubmitAnswerServiceTest {
             1L
         );
         UUID existAnswerId = UUID.randomUUID();
-        Answer existAnswer = new Answer(
+        LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result existAnswer = new LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result(
             existAnswerId,
-            new AssessmentResult(),
-            1L,
             2L
         );
 
         doReturn(true).when(checkAnswerExistencePort).existsByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
-        doReturn(existAnswer).when(loadAnswerPort).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
+        doReturn(existAnswer).when(loadAnswerIdAndOptionIdPort).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
 
         service.submitAnswer(command);
 
-        verify(loadAnswerPort, times(1)).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
+        verify(loadAnswerIdAndOptionIdPort, times(1)).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
         verify(updateAnswerPort, times(1)).updateAnswerOptionById(any(UpdateAnswerOptionPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(command.getAssessmentResultId());
         verifyNoInteractions(
@@ -99,18 +95,16 @@ class SubmitAnswerServiceTest {
             1L
         );
         UUID existAnswerId = UUID.randomUUID();
-        Answer existAnswer = new Answer(
+        LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result existAnswer = new LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result(
             existAnswerId,
-            new AssessmentResult(),
-            1L,
             1L
         );
         doReturn(true).when(checkAnswerExistencePort).existsByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
-        doReturn(existAnswer).when(loadAnswerPort).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
+        doReturn(existAnswer).when(loadAnswerIdAndOptionIdPort).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
 
         service.submitAnswer(command);
 
-        verify(loadAnswerPort, times(1)).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
+        verify(loadAnswerIdAndOptionIdPort, times(1)).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
         verifyNoInteractions(
             saveAnswerPort,
             updateAnswerPort,
