@@ -1,7 +1,6 @@
 package org.flickit.flickitassessmentcore.application.service.answer;
 
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.answer.CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result;
 import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
@@ -15,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,9 +40,6 @@ class SubmitAnswerServiceTest {
     @Mock
     private InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
-    @Mock
-    private CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort checkAnswerExistencePort;
-
     @Test
     void submitAnswer_AnswerNotExist_SavesAnswerAndInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
@@ -53,7 +50,8 @@ class SubmitAnswerServiceTest {
             questionId,
             answerOptionId
         );
-        when(checkAnswerExistencePort.existsByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId))).thenReturn(false);
+        when(loadAnswerIdAndOptionIdPort.loadAnswerIdAndOptionId(eq(assessmentResultId), eq(questionId)))
+            .thenReturn(Optional.empty());
 
         UUID savedAnswerId = UUID.randomUUID();
         when(saveAnswerPort.persist(any(SaveAnswerPort.Param.class))).thenReturn(savedAnswerId);
@@ -69,8 +67,7 @@ class SubmitAnswerServiceTest {
         verify(saveAnswerPort, times(1)).persist(any(SaveAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(eq(assessmentResultId));
         verifyNoInteractions(
-            updateAnswerPort,
-            loadAnswerIdAndOptionIdPort
+            updateAnswerPort
         );
     }
 
@@ -86,14 +83,13 @@ class SubmitAnswerServiceTest {
             newAnswerOptionId
         );
         UUID existAnswerId = UUID.randomUUID();
-        Result existAnswer = new Result(
+        Optional<Result> existAnswer = Optional.of(new Result(
             existAnswerId,
             oldAnswerOptionId
-        );
+        ));
         assertNotEquals(oldAnswerOptionId, newAnswerOptionId);
 
-        when(checkAnswerExistencePort.existsByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId))).thenReturn(true);
-        when(loadAnswerIdAndOptionIdPort.loadByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
+        when(loadAnswerIdAndOptionIdPort.loadAnswerIdAndOptionId(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
 
         service.submitAnswer(param);
 
@@ -102,7 +98,7 @@ class SubmitAnswerServiceTest {
         assertEquals(existAnswerId, updateParam.getValue().id());
         assertEquals(newAnswerOptionId, updateParam.getValue().answerOptionId());
 
-        verify(loadAnswerIdAndOptionIdPort, times(1)).loadByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId));
+        verify(loadAnswerIdAndOptionIdPort, times(1)).loadAnswerIdAndOptionId(eq(assessmentResultId), eq(questionId));
         verify(updateAnswerPort, times(1)).updateAnswerOptionById(any(UpdateAnswerOptionPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(eq(assessmentResultId));
         verifyNoInteractions(
@@ -121,16 +117,15 @@ class SubmitAnswerServiceTest {
             sameAnswerOptionId
         );
         UUID existAnswerId = UUID.randomUUID();
-        Result existAnswer = new Result(
+        Optional<Result> existAnswer = Optional.of(new Result(
             existAnswerId,
             sameAnswerOptionId
-        );
-        when(checkAnswerExistencePort.existsByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId))).thenReturn(true);
-        when(loadAnswerIdAndOptionIdPort.loadByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
+        ));
+        when(loadAnswerIdAndOptionIdPort.loadAnswerIdAndOptionId(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
 
         service.submitAnswer(param);
 
-        verify(loadAnswerIdAndOptionIdPort, times(1)).loadByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId));
+        verify(loadAnswerIdAndOptionIdPort, times(1)).loadAnswerIdAndOptionId(eq(assessmentResultId), eq(questionId));
         verifyNoInteractions(
             saveAnswerPort,
             updateAnswerPort,

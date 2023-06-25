@@ -2,7 +2,6 @@ package org.flickit.flickitassessmentcore.application.service.answer;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.answer.CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
@@ -22,7 +21,6 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
     private final LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort loadAnswerIdAndOptionIdPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
-    private final CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort checkAnswerExistencePort;
 
     @Override
     public Result submitAnswer(Param param) {
@@ -33,25 +31,17 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private SaveOrUpdateResponse saveOrUpdate(Param param) {
-        boolean exists = checkAnswerExistencePort.existsByAssessmentResultIdAndQuestionId(param.getAssessmentResultId(), param.getQuestionId());
-        if (exists) {
-            return update(param);
-        }
-        UUID saveAnswerId = saveAnswerPort.persist(toSaveParam(param));
-        return new SaveOrUpdateResponse(true, saveAnswerId);
-    }
-
-    private SaveOrUpdateResponse update(Param param) {
-        var existAnswer = loadAnswerIdAndOptionIdPort.loadByAssessmentResultIdAndQuestionId(param.getAssessmentResultId(), param.getQuestionId());
-        if (answerHasChanged(param, existAnswer)) {
-            updateAnswerOptionPort.updateAnswerOptionById(toUpdateParam(existAnswer.id(), param));
-            return new SaveOrUpdateResponse(true, existAnswer.id());
-        }
-        return new SaveOrUpdateResponse(false, existAnswer.id());
-    }
-
-    private boolean answerHasChanged(Param param, LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result answer) {
-        return !Objects.equals(param.getAnswerOptionId(), answer.answerOptionId());
+        return loadAnswerIdAndOptionIdPort.loadAnswerIdAndOptionId(param.getAssessmentResultId(), param.getQuestionId())
+            .map(existAnswer -> {
+                if (!Objects.equals(param.getAnswerOptionId(), existAnswer.answerOptionId())) { // answer changed
+                    updateAnswerOptionPort.updateAnswerOptionById(toUpdateParam(existAnswer.answerId(), param));
+                    return new SaveOrUpdateResponse(true, existAnswer.answerId());
+                }
+                return new SaveOrUpdateResponse(false, existAnswer.answerId());
+            }).orElseGet(() -> {
+                UUID saveAnswerId = saveAnswerPort.persist(toSaveParam(param));
+                return new SaveOrUpdateResponse(true, saveAnswerId);
+            });
     }
 
     private SaveAnswerPort.Param toSaveParam(Param param) {

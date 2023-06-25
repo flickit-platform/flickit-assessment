@@ -5,16 +5,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID> {
 
-    boolean existsByAssessmentResult_IdAndQuestionId(UUID assessmentResultId, Long questionId);
-
-    @Query("SELECT new org.flickit.flickitassessmentcore.adapter.out.persistence.answer." +
-        "AnswerIdAndOptionIdProjectionDto(a.id, a.answerOptionId) FROM AnswerJpaEntity a " +
-        "WHERE (a.assessmentResult.id=:assessmentResultId AND a.questionId=:questionId)")
-    List<AnswerIdAndOptionIdProjectionDto> selectIdAndOptionIdByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId);
+    Optional<AnswerIdAndOptionIdView> findByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId);
 
     @Modifying
     @Query("UPDATE AnswerJpaEntity a SET a.answerOptionId=:answerOptionId WHERE a.id=:id")
