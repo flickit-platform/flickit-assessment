@@ -1,7 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.answer;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerCommand;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +17,12 @@ public class SubmitAnswerRestController {
     @PutMapping("/assessment-results/{assessmentResultId}/answer-question")
     public ResponseEntity<SubmitAnswerResponseDto> submitAnswer(@RequestBody SubmitAnswerRequestDto requestDto,
                                                                 @PathVariable("assessmentResultId") UUID assessmentResultId) {
-        SubmitAnswerResponseDto responseDto = toResponseDto(useCase.submitAnswer(toCommand(requestDto, assessmentResultId)));
+        SubmitAnswerResponseDto responseDto = toResponseDto(useCase.submitAnswer(toParam(requestDto, assessmentResultId)));
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    private SubmitAnswerCommand toCommand(SubmitAnswerRequestDto requestDto, UUID assessmentResultId) {
-        return new SubmitAnswerCommand(
+    private SubmitAnswerUseCase.Param toParam(SubmitAnswerRequestDto requestDto, UUID assessmentResultId) {
+        return new SubmitAnswerUseCase.Param(
             assessmentResultId,
             requestDto.questionId(),
             requestDto.answerOptionId()

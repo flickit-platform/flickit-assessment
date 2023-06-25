@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.application.service.answer;
 
-import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerCommand;
+import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result;
@@ -48,7 +48,7 @@ class SubmitAnswerServiceTest {
         UUID assessmentResultId = UUID.randomUUID();
         Long questionId = 1L;
         Long answerOptionId = 2L;
-        SubmitAnswerCommand command = new SubmitAnswerCommand(
+        SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
             assessmentResultId,
             questionId,
             answerOptionId
@@ -58,13 +58,13 @@ class SubmitAnswerServiceTest {
         UUID savedAnswerId = UUID.randomUUID();
         when(saveAnswerPort.persist(any(SaveAnswerPort.Param.class))).thenReturn(savedAnswerId);
 
-        service.submitAnswer(command);
+        service.submitAnswer(param);
 
-        ArgumentCaptor<SaveAnswerPort.Param> param = ArgumentCaptor.forClass(SaveAnswerPort.Param.class);
-        verify(saveAnswerPort).persist(param.capture());
-        assertEquals(assessmentResultId, param.getValue().assessmentResultId());
-        assertEquals(questionId, param.getValue().questionId());
-        assertEquals(answerOptionId, param.getValue().answerOptionId());
+        ArgumentCaptor<SaveAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(SaveAnswerPort.Param.class);
+        verify(saveAnswerPort).persist(saveAnswerParam.capture());
+        assertEquals(assessmentResultId, saveAnswerParam.getValue().assessmentResultId());
+        assertEquals(questionId, saveAnswerParam.getValue().questionId());
+        assertEquals(answerOptionId, saveAnswerParam.getValue().answerOptionId());
 
         verify(saveAnswerPort, times(1)).persist(any(SaveAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(eq(assessmentResultId));
@@ -80,7 +80,7 @@ class SubmitAnswerServiceTest {
         Long questionId = 1L;
         Long newAnswerOptionId = 2L;
         Long oldAnswerOptionId = 3L;
-        SubmitAnswerCommand command = new SubmitAnswerCommand(
+        SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
             assessmentResultId,
             questionId,
             newAnswerOptionId
@@ -95,12 +95,12 @@ class SubmitAnswerServiceTest {
         when(checkAnswerExistencePort.existsByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId))).thenReturn(true);
         when(loadAnswerIdAndOptionIdPort.loadByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
 
-        service.submitAnswer(command);
+        service.submitAnswer(param);
 
-        ArgumentCaptor<UpdateAnswerOptionPort.Param> param = ArgumentCaptor.forClass(UpdateAnswerOptionPort.Param.class);
-        verify(updateAnswerPort).updateAnswerOptionById(param.capture());
-        assertEquals(existAnswerId, param.getValue().id());
-        assertEquals(newAnswerOptionId, param.getValue().answerOptionId());
+        ArgumentCaptor<UpdateAnswerOptionPort.Param> updateParam = ArgumentCaptor.forClass(UpdateAnswerOptionPort.Param.class);
+        verify(updateAnswerPort).updateAnswerOptionById(updateParam.capture());
+        assertEquals(existAnswerId, updateParam.getValue().id());
+        assertEquals(newAnswerOptionId, updateParam.getValue().answerOptionId());
 
         verify(loadAnswerIdAndOptionIdPort, times(1)).loadByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId));
         verify(updateAnswerPort, times(1)).updateAnswerOptionById(any(UpdateAnswerOptionPort.Param.class));
@@ -115,7 +115,7 @@ class SubmitAnswerServiceTest {
         UUID assessmentResultId = UUID.randomUUID();
         Long questionId = 1L;
         Long sameAnswerOptionId = 2L;
-        SubmitAnswerCommand command = new SubmitAnswerCommand(
+        SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
             assessmentResultId,
             questionId,
             sameAnswerOptionId
@@ -128,7 +128,7 @@ class SubmitAnswerServiceTest {
         when(checkAnswerExistencePort.existsByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId))).thenReturn(true);
         when(loadAnswerIdAndOptionIdPort.loadByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
 
-        service.submitAnswer(command);
+        service.submitAnswer(param);
 
         verify(loadAnswerIdAndOptionIdPort, times(1)).loadByAssessmentResultIdAndQuestionId(eq(assessmentResultId), eq(questionId));
         verifyNoInteractions(

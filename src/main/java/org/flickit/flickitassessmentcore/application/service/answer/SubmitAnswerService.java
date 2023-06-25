@@ -1,11 +1,9 @@
 package org.flickit.flickitassessmentcore.application.service.answer;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerCommand;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result;
 import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
@@ -27,45 +25,46 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort checkAnswerExistencePort;
 
     @Override
-    public UUID submitAnswer(SubmitAnswerCommand command) {
-        SaveOrUpdateResponse response = saveOrUpdate(command);
+    public UUID submitAnswer(Param param) {
+        SaveOrUpdateResponse response = saveOrUpdate(param);
         if (response.hasChanged())
-            invalidateAssessmentResultPort.invalidateById(command.getAssessmentResultId());
+            invalidateAssessmentResultPort.invalidateById(param.getAssessmentResultId());
         return response.answerId();
     }
 
-    private SaveOrUpdateResponse saveOrUpdate(SubmitAnswerCommand command) {
-        boolean exists = checkAnswerExistencePort.existsByAssessmentResultIdAndQuestionId(command.getAssessmentResultId(), command.getQuestionId());
+    private SaveOrUpdateResponse saveOrUpdate(Param param) {
+        boolean exists = checkAnswerExistencePort.existsByAssessmentResultIdAndQuestionId(param.getAssessmentResultId(), param.getQuestionId());
         if (exists) {
-            return update(command);
+            return update(param);
         }
-        UUID saveAnswerId = saveAnswerPort.persist(toSaveParam(command));
+        UUID saveAnswerId = saveAnswerPort.persist(toSaveParam(param));
         return new SaveOrUpdateResponse(true, saveAnswerId);
     }
 
-    private SaveOrUpdateResponse update(SubmitAnswerCommand command) {
-        Result existAnswer = loadAnswerIdAndOptionIdPort.loadByAssessmentResultIdAndQuestionId(command.getAssessmentResultId(), command.getQuestionId());
-        if (answerHasChanged(command, existAnswer)) {
-            updateAnswerOptionPort.updateAnswerOptionById(toUpdateParam(existAnswer.id(), command));
+    private SaveOrUpdateResponse update(Param param) {
+        LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result existAnswer =
+            loadAnswerIdAndOptionIdPort.loadByAssessmentResultIdAndQuestionId(param.getAssessmentResultId(), param.getQuestionId());
+        if (answerHasChanged(param, existAnswer)) {
+            updateAnswerOptionPort.updateAnswerOptionById(toUpdateParam(existAnswer.id(), param));
             return new SaveOrUpdateResponse(true, existAnswer.id());
         }
         return new SaveOrUpdateResponse(false, existAnswer.id());
     }
 
-    private boolean answerHasChanged(SubmitAnswerCommand command, Result answer) {
-        return !Objects.equals(command.getAnswerOptionId(), answer.answerOptionId());
+    private boolean answerHasChanged(Param param, LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result answer) {
+        return !Objects.equals(param.getAnswerOptionId(), answer.answerOptionId());
     }
 
-    private SaveAnswerPort.Param toSaveParam(SubmitAnswerCommand command) {
+    private SaveAnswerPort.Param toSaveParam(Param param) {
         return new SaveAnswerPort.Param(
-            command.getAssessmentResultId(),
-            command.getQuestionId(),
-            command.getAnswerOptionId()
+            param.getAssessmentResultId(),
+            param.getQuestionId(),
+            param.getAnswerOptionId()
         );
     }
 
-    private UpdateAnswerOptionPort.Param toUpdateParam(UUID id, SubmitAnswerCommand command) {
-        return new UpdateAnswerOptionPort.Param(id, command.getAnswerOptionId());
+    private UpdateAnswerOptionPort.Param toUpdateParam(UUID id, Param param) {
+        return new UpdateAnswerOptionPort.Param(id, param.getAnswerOptionId());
     }
 
     record SaveOrUpdateResponse(boolean hasChanged, UUID answerId) {
