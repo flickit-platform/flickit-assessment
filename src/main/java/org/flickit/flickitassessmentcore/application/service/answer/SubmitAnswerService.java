@@ -42,8 +42,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private SaveOrUpdateResponse update(Param param) {
-        LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result existAnswer =
-            loadAnswerIdAndOptionIdPort.loadByAssessmentResultIdAndQuestionId(param.getAssessmentResultId(), param.getQuestionId());
+        var existAnswer = loadAnswerIdAndOptionIdPort.loadByAssessmentResultIdAndQuestionId(param.getAssessmentResultId(), param.getQuestionId());
         if (answerHasChanged(param, existAnswer)) {
             updateAnswerOptionPort.updateAnswerOptionById(toUpdateParam(existAnswer.id(), param));
             return new SaveOrUpdateResponse(true, existAnswer.id());
