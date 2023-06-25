@@ -46,10 +46,10 @@ class SubmitAnswerServiceTest {
             1L,
             1L
         );
-        doReturn(false).when(checkAnswerExistencePort).existsByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
+        when(checkAnswerExistencePort.existsByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong())).thenReturn(false);
 
         UUID savedAnswerId = UUID.randomUUID();
-        doReturn(savedAnswerId).when(saveAnswerPort).persist(any(SaveAnswerPort.Param.class));
+        when(saveAnswerPort.persist(any(SaveAnswerPort.Param.class))).thenReturn(savedAnswerId);
 
         service.submitAnswer(command);
 
@@ -74,8 +74,8 @@ class SubmitAnswerServiceTest {
             2L
         );
 
-        doReturn(true).when(checkAnswerExistencePort).existsByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
-        doReturn(existAnswer).when(loadAnswerIdAndOptionIdPort).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
+        when(checkAnswerExistencePort.existsByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong())).thenReturn(true);
+        when(loadAnswerIdAndOptionIdPort.loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong())).thenReturn(existAnswer);
 
         service.submitAnswer(command);
 
@@ -99,8 +99,8 @@ class SubmitAnswerServiceTest {
             existAnswerId,
             1L
         );
-        doReturn(true).when(checkAnswerExistencePort).existsByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
-        doReturn(existAnswer).when(loadAnswerIdAndOptionIdPort).loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong());
+        when(checkAnswerExistencePort.existsByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong())).thenReturn(true);
+        when(loadAnswerIdAndOptionIdPort.loadByAssessmentResultIdAndQuestionId(any(UUID.class), anyLong())).thenReturn(existAnswer);
 
         service.submitAnswer(command);
 
