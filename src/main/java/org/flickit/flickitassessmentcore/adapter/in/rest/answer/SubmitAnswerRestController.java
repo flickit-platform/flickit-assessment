@@ -29,7 +29,7 @@ public class SubmitAnswerRestController {
         );
     }
 
-    private SubmitAnswerResponseDto toResponseDto(UUID id) {
-        return new SubmitAnswerResponseDto(id);
+    private SubmitAnswerResponseDto toResponseDto(SubmitAnswerUseCase.Result result) {
+        return new SubmitAnswerResponseDto(result.id());
     }
 }

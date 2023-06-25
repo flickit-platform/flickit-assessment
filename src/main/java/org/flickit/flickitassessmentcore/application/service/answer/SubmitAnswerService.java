@@ -25,11 +25,11 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final CheckAnswerExistenceByAssessmentResultIdAndQuestionIdPort checkAnswerExistencePort;
 
     @Override
-    public UUID submitAnswer(Param param) {
+    public Result submitAnswer(Param param) {
         SaveOrUpdateResponse response = saveOrUpdate(param);
         if (response.hasChanged())
             invalidateAssessmentResultPort.invalidateById(param.getAssessmentResultId());
-        return response.answerId();
+        return new Result(response.answerId());
     }
 
     private SaveOrUpdateResponse saveOrUpdate(Param param) {

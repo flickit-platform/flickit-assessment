@@ -10,7 +10,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 public interface SubmitAnswerUseCase {
 
-    UUID submitAnswer(Param command);
+    Result submitAnswer(Param command);
 
     @Value
     class Param extends SelfValidating<Param> {
@@ -30,5 +30,8 @@ public interface SubmitAnswerUseCase {
             this.answerOptionId = answerOptionId;
             this.validateSelf();
         }
+    }
+
+    record Result(UUID id) {
     }
 }
