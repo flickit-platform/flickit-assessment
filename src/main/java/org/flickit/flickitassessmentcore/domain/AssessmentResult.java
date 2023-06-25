@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -15,8 +14,7 @@ import java.util.UUID;
 public class AssessmentResult {
     private UUID id;
     private Assessment assessment;
-    private List<Answer> answers;
-    private List<QualityAttributeValue> qualityAttributeValues;
+    private Boolean isValid;
 
     @Override
     public String toString() {
