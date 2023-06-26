@@ -3,18 +3,14 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresu
 import jakarta.persistence.*;
 import lombok.*;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubjectvalue.AssessmentSubjectValueJpaEntity;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "assessment_assessmentresult")
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -31,12 +27,11 @@ public class AssessmentResultJpaEntity {
     @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
     private AssessmentJpaEntity assessment;
 
-    @OneToMany(mappedBy = "assessmentResult")
-    private List<QualityAttributeValueJpaEntity> qualityAttributeValues;
-
-    @OneToMany(mappedBy = "assessmentResult")
-    private List<AssessmentSubjectValueJpaEntity> assessmentSubjectValues;
-
     @Column(name = "is_valid")
-    private boolean isValid;
+    private Boolean isValid;
+
+    @Override
+    public String toString() {
+        return id.toString();
+    }
 }
