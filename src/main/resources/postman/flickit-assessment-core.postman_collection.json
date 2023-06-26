@@ -83,7 +83,8 @@
 		{
 			"name": "View List of Space Assessments",
 			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
+				"disabledSystemHeaders": {},
+				"disableBodyPruning": true
 			},
 			"request": {
 				"method": "GET",
@@ -95,18 +96,23 @@
 						"disabled": true
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"spaceId\":\"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8098/assessment-core/api/1/assessments",
-					"protocol": "http",
+					"raw": "{{base_url}}/{{api_path}}/get-assessments",
 					"host": [
-						"localhost"
+						"{{base_url}}"
 					],
-					"port": "8098",
 					"path": [
-						"assessment-core",
-						"api",
-						"1",
-						"assessments"
+						"{{api_path}}",
+						"get-assessments"
 					]
 				}
 			},

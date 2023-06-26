@@ -29,9 +29,7 @@ public class AssessmentMapper {
             assessmentEntity.getLastModificationDate(),
             assessmentEntity.getAssessmentKitId(),
             assessmentEntity.getColorId(),
-            assessmentEntity.getSpaceId(),
-            new ArrayList<>(),
-            new ArrayList<>()
+            assessmentEntity.getSpaceId()
         );
     }
 }

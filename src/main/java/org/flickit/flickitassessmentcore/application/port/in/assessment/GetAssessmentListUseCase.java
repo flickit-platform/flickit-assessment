@@ -7,15 +7,15 @@ import org.flickit.flickitassessmentcore.domain.Assessment;
 
 import java.util.List;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_SPACE_ID_NOT_NULL;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL;
 
-public interface ViewListOfSpaceAssessmentsUseCase {
+public interface GetAssessmentListUseCase {
 
-    public Result viewListOfSpaceAssessments(Param param);
+    Result viewListOfSpaceAssessments(Param param);
 
     @Value
     class Param extends SelfValidating<Param> {
-        @NotNull(message = CREATE_ASSESSMENT_SPACE_ID_NOT_NULL)
+        @NotNull(message = GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL)
         Long spaceId;
 
         public Param(Long spaceId) {

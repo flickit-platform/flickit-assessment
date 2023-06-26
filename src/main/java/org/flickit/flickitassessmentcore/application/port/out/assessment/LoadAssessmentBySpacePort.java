@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface LoadAssessmentBySpacePort {
 
-    public List<Assessment> loadAssessmentBySpaceId(Long spaceId);
+    List<Assessment> loadAssessmentBySpaceId(Long spaceId);
 }

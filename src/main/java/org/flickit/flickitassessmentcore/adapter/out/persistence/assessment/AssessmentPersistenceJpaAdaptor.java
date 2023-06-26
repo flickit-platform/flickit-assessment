@@ -25,7 +25,7 @@ public class AssessmentPersistenceJpaAdaptor implements CreateAssessmentPort, Lo
 
     @Override
     public List<Assessment> loadAssessmentBySpaceId(Long spaceId) {
-        return repository.loadAssessmentBySpaceId(spaceId).stream()
+        return repository.findBySpaceIdOrderByLastModificationDateDesc(spaceId).stream()
             .map(AssessmentMapper::mapToDomainModel)
             .collect(Collectors.toList());
     }

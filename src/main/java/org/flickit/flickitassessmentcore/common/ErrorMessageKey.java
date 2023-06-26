@@ -12,4 +12,5 @@ public class ErrorMessageKey {
     public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_NULL = "submit-answer.assessmentResultId.notNull";
     public static final String SUBMIT_ANSWER_QUESTION_ID_NOT_NULL = "submit-answer.questionId.notNull";
     public static final String SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_NULL = "submit-answer.answerOptionId.notNull";
+    public static final String GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL = "get-assessment-list.spaceId.notNull";
 }
