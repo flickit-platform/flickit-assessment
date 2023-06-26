@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "45f6042b-7eaa-4d18-9b48-8b3722fed5cd",
+		"_postman_id": "9f7ec93d-fe41-4dd5-8379-f61460fee9cd",
 		"name": "flickit-assessment-core",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18899907"
 	},
 	"item": [
 		{
@@ -20,15 +21,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8098/assessment-core/api/assessments",
-					"protocol": "http",
+					"raw": "{{base_url}}/{{api_path}}/assessments",
 					"host": [
-						"localhost"
+						"{{base_url}}"
 					],
-					"port": "8098",
 					"path": [
-						"assessment-core",
-						"api",
+						"{{api_path}}",
 						"assessments"
 					]
 				}
@@ -41,16 +39,42 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8098/assessment-core/api/assessment-colors",
-					"protocol": "http",
+					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
 					"host": [
-						"localhost"
+						"{{base_url}}"
 					],
-					"port": "8098",
 					"path": [
-						"assessment-core",
-						"api",
+						"{{api_path}}",
 						"assessment-colors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit Answer",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"questionId\": 1,\n    \"answerOptionId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-results/{{assessment_result_id}}/answer-question",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-results",
+						"{{assessment_result_id}}",
+						"answer-question"
 					]
 				}
 			},
@@ -87,6 +111,23 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8098",
+			"type": "string"
+		},
+		{
+			"key": "api_path",
+			"value": "assessment-core/api",
+			"type": "string"
+		},
+		{
+			"key": "assessment_result_id",
+			"value": "f74ae115-df83-4cfe-be63-2f64d1c2fe72",
+			"type": "string"
 		}
 	]
 }

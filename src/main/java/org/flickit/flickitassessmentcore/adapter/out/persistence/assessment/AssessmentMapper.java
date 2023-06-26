@@ -7,6 +7,19 @@ import java.util.ArrayList;
 
 public class AssessmentMapper {
 
+    static AssessmentJpaEntity mapCreateParamToJpaEntity(CreateAssessmentPort.Param param) {
+        return new AssessmentJpaEntity(
+            null,
+            param.code(),
+            param.title(),
+            param.creationTime(),
+            param.lastModificationDate(),
+            param.assessmentKitId(),
+            param.colorId(),
+            param.spaceId()
+        );
+    }
+
     public static Assessment mapToDomainModel(AssessmentJpaEntity assessmentEntity) {
         return new Assessment(
             assessmentEntity.getId(),
@@ -20,18 +33,5 @@ public class AssessmentMapper {
             new ArrayList<>(),
             new ArrayList<>()
         );
-    }
-
-
-    static AssessmentJpaEntity mapCreateParamToJpaEntity(CreateAssessmentPort.Param param) {
-        return new AssessmentJpaEntity(
-            null,
-            param.code(),
-            param.title(),
-            param.creationTime(),
-            param.lastModificationDate(),
-            param.assessmentKitId(),
-            param.colorId(),
-            param.spaceId());
     }
 }
