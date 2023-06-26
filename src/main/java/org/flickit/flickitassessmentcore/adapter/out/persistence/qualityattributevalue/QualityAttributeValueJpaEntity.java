@@ -1,11 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import lombok.*;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
@@ -31,7 +26,6 @@ public class QualityAttributeValueJpaEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
-    private AssessmentResultJpaEntity assessmentResult;
     private AssessmentResultJpaEntity assessmentResult;
 
     @Column(name = "quality_attribute_id", nullable = false)
