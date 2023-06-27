@@ -81,10 +81,9 @@
 			"response": []
 		},
 		{
-			"name": "View List of Space Assessments",
+			"name": "Get Assessment List",
 			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {},
-				"disableBodyPruning": true
+				"disabledSystemHeaders": {}
 			},
 			"request": {
 				"method": "GET",
@@ -96,23 +95,28 @@
 						"disabled": true
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"spaceId\":\"1\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/get-assessments",
+					"raw": "{{base_url}}/{{api_path}}/assessments?spaceId=1&page=0&size=10",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"get-assessments"
+						"assessments"
+					],
+					"query": [
+						{
+							"key": "spaceId",
+							"value": "1"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						}
 					]
 				}
 			},
