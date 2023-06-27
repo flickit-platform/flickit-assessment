@@ -28,7 +28,6 @@
                 <constraints nullable="false"/>
             </column>
             <column name="color_id" type="integer"/>
-            <column name="maturity_level_id" type="bigint"/>
         </createTable>
 
         <addUniqueConstraint tableName="assessment_assessment"
@@ -44,6 +43,7 @@
             <column name="assessment_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
+            <column name="maturity_level_id" type="bigint"/>
             <column name="is_valid" type="boolean"/>
         </createTable>
 
