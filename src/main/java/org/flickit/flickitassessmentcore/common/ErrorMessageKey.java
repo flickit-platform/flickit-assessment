@@ -14,4 +14,8 @@ public class ErrorMessageKey {
     public static final String ADD_EVIDENCE_CREATED_BY_ID_NOT_NULL = "add-evidence.createdById.notNull";
     public static final String ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL = "add-evidence.assessmentId.notNull";
     public static final String ADD_EVIDENCE_QUESTION_ID_NOT_NULL = "add-evidence.questionId.notNull";
+    public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND_MESSAGE = "submit-answer.assessmentResultId.notFound.message";
+    public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_NULL = "submit-answer.assessmentResultId.notNull";
+    public static final String SUBMIT_ANSWER_QUESTION_ID_NOT_NULL = "submit-answer.questionId.notNull";
+    public static final String SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_NULL = "submit-answer.answerOptionId.notNull";
 }
