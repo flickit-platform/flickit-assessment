@@ -81,12 +81,12 @@
 			"response": []
 		},
 		{
-			"name": "View List of Evidences",
+			"name": "Get Evidence List",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
 			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Accept",
@@ -96,19 +96,27 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8098/assessment-core/api/1/9c7e097a-c744-4c6d-8f51-34f180d5da68/1/evidences",
-					"protocol": "http",
+					"raw": "{{base_url}}/{{api_path}}/evidences?questionId=1&size=10&page=0",
 					"host": [
-						"localhost"
+						"{{base_url}}"
 					],
-					"port": "8098",
 					"path": [
-						"assessment-core",
-						"api",
-						"1",
-						"9c7e097a-c744-4c6d-8f51-34f180d5da68",
-						"1",
+						"{{api_path}}",
 						"evidences"
+					],
+					"query": [
+						{
+							"key": "questionId",
+							"value": "1"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						}
 					]
 				}
 			},
