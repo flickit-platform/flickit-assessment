@@ -49,7 +49,7 @@
 
         <addForeignKeyConstraint baseTableName="assessment_assessmentresult"
                                  baseColumnNames="assessment_id"
-                                 constraintName="fkal2s0w1p7uao22jgramvjx5dv"
+                                 constraintName="fk_assessmentresult_assessment"
                                  referencedTableName="assessment_assessment"
                                  referencedColumnNames="id"/>
     </changeSet>
@@ -81,7 +81,7 @@
 
         <addForeignKeyConstraint baseTableName="assessment_evidence"
                                  baseColumnNames="assessment_id"
-                                 constraintName="fkmjc4lam6jfh2onqj1po1cg8ua"
+                                 constraintName="fk_assessment_evidence_assessment"
                                  referencedTableName="assessment_assessment"
                                  referencedColumnNames="id"/>
 
@@ -103,7 +103,7 @@
 
         <addForeignKeyConstraint baseTableName="assessment_qualityattributevalue"
                                  baseColumnNames="assessment_result_id"
-                                 constraintName="fkk57ds9johhr4d9w0fftcidxys"
+                                 constraintName="fk_assessmentqualityattributevalue_assessmentresult"
                                  referencedTableName="assessment_assessmentresult"
                                  referencedColumnNames="id"/>
     </changeSet>
@@ -124,7 +124,7 @@
 
         <addForeignKeyConstraint baseTableName="assessment_answer"
                                  baseColumnNames="assessment_result_id"
-                                 constraintName="fkp8gkrooo4tcp9tak3n33gb40h"
+                                 constraintName="fk_assessment_answer_assessmentresult"
                                  referencedTableName="assessment_assessmentresult"
                                  referencedColumnNames="id"/>
 
