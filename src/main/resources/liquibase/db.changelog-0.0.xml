@@ -28,6 +28,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="color_id" type="integer"/>
+            <column name="maturity_level_id" type="bigint"/>
         </createTable>
 
         <addUniqueConstraint tableName="assessment_assessment"
