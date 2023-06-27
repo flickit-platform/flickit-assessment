@@ -4,5 +4,5 @@ import org.flickit.flickitassessmentcore.domain.Assessment;
 
 import java.util.List;
 
-public record ViewListOfSpaceAssessmentsResponseDto(List<Assessment> assessments) {
+public record GetAssessmentListResponseDto(List<Assessment> assessments) {
 }

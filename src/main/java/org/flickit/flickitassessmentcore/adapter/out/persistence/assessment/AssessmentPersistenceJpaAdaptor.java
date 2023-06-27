@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentBySpacePort;
 import org.flickit.flickitassessmentcore.domain.Assessment;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,8 +25,8 @@ public class AssessmentPersistenceJpaAdaptor implements CreateAssessmentPort, Lo
     }
 
     @Override
-    public List<Assessment> loadAssessmentBySpaceId(Long spaceId) {
-        return repository.findBySpaceIdOrderByLastModificationDateDesc(spaceId).stream()
+    public List<Assessment> loadAssessmentBySpaceId(Long spaceId, int page, int size) {
+        return repository.findBySpaceIdOrderByLastModificationDateDesc(spaceId, PageRequest.of(page, size)).stream()
             .map(AssessmentMapper::mapToDomainModel)
             .collect(Collectors.toList());
     }

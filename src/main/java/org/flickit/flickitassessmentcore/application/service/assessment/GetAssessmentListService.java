@@ -14,7 +14,13 @@ public class GetAssessmentListService implements GetAssessmentListUseCase {
     private final LoadAssessmentBySpacePort loadAssessmentBySpace;
 
     @Override
-    public GetAssessmentListUseCase.Result viewListOfSpaceAssessments(GetAssessmentListUseCase.Param param) {
-        return new GetAssessmentListUseCase.Result(loadAssessmentBySpace.loadAssessmentBySpaceId(param.getSpaceId()));
+    public GetAssessmentListUseCase.Result getAssessmentList(GetAssessmentListUseCase.Param param) {
+        return new GetAssessmentListUseCase.Result(
+            loadAssessmentBySpace.loadAssessmentBySpaceId(
+                param.getSpaceId(),
+                param.getPage(),
+                param.getSize()
+            )
+        );
     }
 }

@@ -36,8 +36,8 @@ public class GetAssessmentListServiceTest {
 
     @BeforeEach
     public void init() {
-        when(loadAssessmentBySpace.loadAssessmentBySpaceId(space1)).thenReturn(List.of(assessment1S1, assessment2S1));
-        when(loadAssessmentBySpace.loadAssessmentBySpaceId(space2)).thenReturn(new ArrayList<>());
+        when(loadAssessmentBySpace.loadAssessmentBySpaceId(space1, 0, 10)).thenReturn(List.of(assessment1S1, assessment2S1));
+        when(loadAssessmentBySpace.loadAssessmentBySpaceId(space2, 0, 10)).thenReturn(new ArrayList<>());
     }
 
     private Assessment createAssessment(Long spaceId) {
@@ -56,13 +56,13 @@ public class GetAssessmentListServiceTest {
 
     @Test
     void getAssessmentList_ResultsFound_ItemsReturned() {
-        GetAssessmentListUseCase.Result result = service.viewListOfSpaceAssessments(new GetAssessmentListUseCase.Param(space1));
+        GetAssessmentListUseCase.Result result = service.getAssessmentList(new GetAssessmentListUseCase.Param(space1, 10, 0));
         assertEquals(2, result.assessments().size());
     }
 
     @Test
     void getAssessmentList_NoResultsFound_NoItemReturned() {
-        GetAssessmentListUseCase.Result result = service.viewListOfSpaceAssessments(new GetAssessmentListUseCase.Param(space2));
+        GetAssessmentListUseCase.Result result = service.getAssessmentList(new GetAssessmentListUseCase.Param(space2, 10, 0));
         assertEquals(0, result.assessments().size());
     }
 
