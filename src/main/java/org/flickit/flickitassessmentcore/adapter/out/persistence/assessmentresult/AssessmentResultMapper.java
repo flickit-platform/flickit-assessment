@@ -10,12 +10,14 @@ public class AssessmentResultMapper {
         return new AssessmentResult(
             assessmentResultEntity.getId(),
             AssessmentMapper.mapToDomainModel(assessmentResultEntity.getAssessment()),
+            null,
             assessmentResultEntity.getIsValid()
         );
     }
 
     public static AssessmentResultJpaEntity mapToJpaEntity(CreateAssessmentResultPort.Param param) {
         return new AssessmentResultJpaEntity(
+            null,
             null,
             null,
             param.isValid()

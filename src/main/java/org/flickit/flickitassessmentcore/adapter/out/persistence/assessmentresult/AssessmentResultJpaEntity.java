@@ -27,6 +27,9 @@ public class AssessmentResultJpaEntity {
     @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
     private AssessmentJpaEntity assessment;
 
+    @Column(name = "maturity_level_id")
+    private Long maturityLevelId;
+
     @Column(name = "is_valid")
     private Boolean isValid;
 

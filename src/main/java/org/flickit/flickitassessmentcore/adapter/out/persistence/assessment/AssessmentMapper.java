@@ -14,8 +14,7 @@ public class AssessmentMapper {
             param.lastModificationDate(),
             param.assessmentKitId(),
             param.colorId(),
-            param.spaceId(),
-            null
+            param.spaceId()
         );
     }
 
@@ -28,8 +27,7 @@ public class AssessmentMapper {
             assessmentEntity.getLastModificationDate(),
             assessmentEntity.getAssessmentKitId(),
             assessmentEntity.getColorId(),
-            assessmentEntity.getSpaceId(),
-            assessmentEntity.getMaturityLevelId()
+            assessmentEntity.getSpaceId()
         );
     }
 }
