@@ -47,4 +47,7 @@ public class AssessmentJpaEntity {
 
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
+
+    @Column(name = "maturity_level_id")
+    private Long maturityLevelId;
 }
