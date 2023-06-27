@@ -20,7 +20,7 @@ public interface GetAssessmentListUseCase {
         @NotNull(message = GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL)
         Long spaceId;
 
-        @Min(value = 10, message = GET_ASSESSMENT_LIST_SIZE_MIN)
+        @Min(value = 1, message = GET_ASSESSMENT_LIST_SIZE_MIN)
         @Max(value = 100, message = GET_ASSESSMENT_LIST_SIZE_MAX)
         int size;
 
