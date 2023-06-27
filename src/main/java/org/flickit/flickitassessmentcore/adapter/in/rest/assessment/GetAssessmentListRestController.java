@@ -1,16 +1,11 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.assessment;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_LIST_SPACE_ID_EQUAL_OR_GREATER_THAN_ZERO;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,9 +16,7 @@ public class GetAssessmentListRestController {
 
     @GetMapping("/assessments")
     public ResponseEntity<GetAssessmentListResponseDto> getAssessmentList(
-        @RequestParam("spaceId")
-        @NotNull(message = GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL)
-        @Min(value = 0, message = GET_ASSESSMENT_LIST_SPACE_ID_EQUAL_OR_GREATER_THAN_ZERO)
+        @RequestParam(value = "spaceId", required = false) // validated in the use-case param
         Long spaceId,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page) {
