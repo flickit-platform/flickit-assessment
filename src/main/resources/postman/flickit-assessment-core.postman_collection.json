@@ -81,39 +81,7 @@
 			"response": []
 		},
 		{
-			"name": "View List of Space Assessments",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "default",
-						"disabled": true
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8098/assessment-core/api/1/assessments",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8098",
-					"path": [
-						"assessment-core",
-						"api",
-						"1",
-						"assessments"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add an Evidence to a Question",
+			"name": "Create Evidence",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
 			},
@@ -137,19 +105,23 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8098/assessment-core/api/1/9c7e097a-c744-4c6d-8f51-34f180d5da68/1/add-evidence",
-					"protocol": "http",
+					"raw": "{{base_url}}/{{api_path}}/evidences?assessmentId=a0cde4b5-658a-456c-a19c-cbe5d440e046&questionId=1",
 					"host": [
-						"localhost"
+						"{{base_url}}"
 					],
-					"port": "8098",
 					"path": [
-						"assessment-core",
-						"api",
-						"1",
-						"9c7e097a-c744-4c6d-8f51-34f180d5da68",
-						"1",
-						"add-evidence"
+						"{{api_path}}",
+						"evidences"
+					],
+					"query": [
+						{
+							"key": "assessmentId",
+							"value": "a0cde4b5-658a-456c-a19c-cbe5d440e046"
+						},
+						{
+							"key": "questionId",
+							"value": "1"
+						}
 					]
 				}
 			},

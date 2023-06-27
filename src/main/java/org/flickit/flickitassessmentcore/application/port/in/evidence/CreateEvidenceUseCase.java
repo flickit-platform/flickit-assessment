@@ -11,9 +11,9 @@ import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
-public interface AddEvidenceToQuestionUseCase {
+public interface CreateEvidenceUseCase {
 
-    public Result addEvidenceToQuestion(Param param);
+    Result createEvidence(Param param);
 
     @Value
     class Param extends SelfValidating<Param> {

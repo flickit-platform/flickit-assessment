@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.application.service.evidence;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.evidence.AddEvidenceToQuestionUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.evidence.CreateEvidenceUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
 import org.flickit.flickitassessmentcore.domain.Evidence;
 import org.springframework.stereotype.Service;
@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AddEvidenceToQuestionService implements AddEvidenceToQuestionUseCase {
+public class CreateEvidenceService implements CreateEvidenceUseCase {
 
     private final CreateEvidencePort createEvidence;
 
     @Override
-    public Result addEvidenceToQuestion(Param param) {
+    public Result createEvidence(Param param) {
         Evidence evidence = new Evidence(
             null,
             param.getDescription(),
@@ -28,6 +28,6 @@ public class AddEvidenceToQuestionService implements AddEvidenceToQuestionUseCas
             param.getQuestionId()
         );
         CreateEvidencePort.Result result = createEvidence.createEvidence(new CreateEvidencePort.Param(evidence));
-        return new AddEvidenceToQuestionUseCase.Result(result.evidence());
+        return new CreateEvidenceUseCase.Result(result.evidence());
     }
 }

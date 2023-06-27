@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.application.service.evidence;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.flickitassessmentcore.application.port.in.evidence.AddEvidenceToQuestionUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.evidence.CreateEvidenceUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
 import org.flickit.flickitassessmentcore.domain.Evidence;
 import org.junit.jupiter.api.Test;
@@ -16,14 +16,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AddEvidenceToQuestionServiceTest {
+public class CreateEvidenceServiceTest {
 
     public static final String DESC = "desc";
     private final CreateEvidencePort createEvidence = Mockito.mock(CreateEvidencePort.class);
 
-    private final AddEvidenceToQuestionService service = new AddEvidenceToQuestionService(
+    private final CreateEvidenceService service = new CreateEvidenceService(
         createEvidence
     );
 
@@ -38,10 +39,10 @@ public class AddEvidenceToQuestionServiceTest {
     );
 
     @Test
-    public void createAnEvidenceAndSaveIt_success() {
-        doReturn(new CreateEvidencePort.Result(evidence)).when(createEvidence).createEvidence(any(CreateEvidencePort.Param.class));
+    void createEvidence_ValidCommand_SavesAndReturnsEvidence() {
+        when(createEvidence.createEvidence(any(CreateEvidencePort.Param.class))).thenReturn(new CreateEvidencePort.Result(evidence));
 
-        AddEvidenceToQuestionUseCase.Result result = service.addEvidenceToQuestion(new AddEvidenceToQuestionUseCase.Param(
+        CreateEvidenceUseCase.Result result = service.createEvidence(new CreateEvidenceUseCase.Param(
             evidence.getDescription(),
             evidence.getCreatedById(),
             evidence.getAssessmentId(),
@@ -52,11 +53,11 @@ public class AddEvidenceToQuestionServiceTest {
     }
 
     @Test
-    public void createAnEvidenceWithEmptyDesc_fail() {
+    void createEvidence_EmptyDesc_ReturnsErrorMessage() {
         evidence.setDescription("");
-        doReturn(new CreateEvidencePort.Result(evidence)).when(createEvidence).createEvidence(any(CreateEvidencePort.Param.class));
+        when(createEvidence.createEvidence(any(CreateEvidencePort.Param.class))).thenReturn(new CreateEvidencePort.Result(evidence));
 
-        assertThrows(ConstraintViolationException.class, () -> service.addEvidenceToQuestion(new AddEvidenceToQuestionUseCase.Param(
+        assertThrows(ConstraintViolationException.class, () -> service.createEvidence(new CreateEvidenceUseCase.Param(
             evidence.getDescription(),
             evidence.getCreatedById(),
             evidence.getAssessmentId(),
@@ -67,11 +68,11 @@ public class AddEvidenceToQuestionServiceTest {
     }
 
     @Test
-    public void createAnEvidenceWithNullCreatedById_fail() {
+    void createEvidence_NullCreatedById_ReturnsErrorMessage() {
         evidence.setCreatedById(null);
-        doReturn(new CreateEvidencePort.Result(evidence)).when(createEvidence).createEvidence(any(CreateEvidencePort.Param.class));
+        when(createEvidence.createEvidence(any(CreateEvidencePort.Param.class))).thenReturn(new CreateEvidencePort.Result(evidence));
 
-        assertThrows(ConstraintViolationException.class, () -> service.addEvidenceToQuestion(new AddEvidenceToQuestionUseCase.Param(
+        assertThrows(ConstraintViolationException.class, () -> service.createEvidence(new CreateEvidenceUseCase.Param(
             evidence.getDescription(),
             evidence.getCreatedById(),
             evidence.getAssessmentId(),
@@ -82,11 +83,11 @@ public class AddEvidenceToQuestionServiceTest {
     }
 
     @Test
-    public void createAnEvidenceWithNullAssessmentId_fail() {
+    void createEvidence_NullAssessmentId_ReturnsErrorMessage() {
         evidence.setAssessmentId(null);
-        doReturn(new CreateEvidencePort.Result(evidence)).when(createEvidence).createEvidence(any(CreateEvidencePort.Param.class));
+        when(createEvidence.createEvidence(any(CreateEvidencePort.Param.class))).thenReturn(new CreateEvidencePort.Result(evidence));
 
-        assertThrows(ConstraintViolationException.class, () -> service.addEvidenceToQuestion(new AddEvidenceToQuestionUseCase.Param(
+        assertThrows(ConstraintViolationException.class, () -> service.createEvidence(new CreateEvidenceUseCase.Param(
             evidence.getDescription(),
             evidence.getCreatedById(),
             evidence.getAssessmentId(),
@@ -97,11 +98,11 @@ public class AddEvidenceToQuestionServiceTest {
     }
 
     @Test
-    public void createAnEvidenceWithNullQuestionId_fail() {
+    void createEvidence_NullQuestionId_ReturnsErrorMessage() {
         evidence.setQuestionId(null);
-        doReturn(new CreateEvidencePort.Result(evidence)).when(createEvidence).createEvidence(any(CreateEvidencePort.Param.class));
+        when(createEvidence.createEvidence(any(CreateEvidencePort.Param.class))).thenReturn(new CreateEvidencePort.Result(evidence));
 
-        assertThrows(ConstraintViolationException.class, () -> service.addEvidenceToQuestion(new AddEvidenceToQuestionUseCase.Param(
+        assertThrows(ConstraintViolationException.class, () -> service.createEvidence(new CreateEvidenceUseCase.Param(
             evidence.getDescription(),
             evidence.getCreatedById(),
             evidence.getAssessmentId(),
