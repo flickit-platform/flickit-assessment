@@ -121,6 +121,38 @@
 				}
 			},
 			"response": []
+		},{
+			"name": "Edit Evidence",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"new_desc\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences?id=3d81a3bd-01e9-4462-b650-2796b408b07b",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "3d81a3bd-01e9-4462-b650-2796b408b07b"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
