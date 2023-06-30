@@ -15,8 +15,7 @@ public class CreateAssessmentRestController {
 
     private final CreateAssessmentUseCase useCase;
 
-    @PostMapping
-    @RequestMapping("/assessments")
+    @PostMapping("/assessments")
     public ResponseEntity<CreateAssessmentResponseDto> createAssessment(@RequestBody CreateAssessmentRequestDto request) {
         UUID response = useCase.createAssessment(toCommand(request));
         return new ResponseEntity<>(toResponseDto(response), HttpStatus.CREATED);
