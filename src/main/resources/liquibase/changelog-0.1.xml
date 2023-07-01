@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.1-01" author="MKouhestani">
+        <createTable tableName="fac_assessment">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_assessment"/>
+            </column>
+            <column name="assessment_kit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="space_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color_id" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.1-02" author="MKouhestani">
+        <addUniqueConstraint tableName="fac_assessment"
+                             columnNames="space_id, code"
+                             constraintName="uq_fac_assessment_spaceid_code"/>
+    </changeSet>
+
+    <changeSet id="0.1-03" author="MKouhestani">
+        <createTable tableName="fac_assessment_result">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_assessment_result"/>
+            </column>
+            <column name="assessment_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="maturity_level_id" type="bigint"/>
+            <column name="is_valid" type="boolean"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.1-04" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fac_assessment_result"
+                                 baseColumnNames="assessment_id"
+                                 referencedTableName="fac_assessment"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessmentresult_assessment"/>
+    </changeSet>
+
+    <changeSet id="0.1-05" author="MKouhestani">
+        <createTable tableName="fac_answer">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_answer"/>
+            </column>
+            <column name="answer_option_id" type="bigint">
+            </column>
+            <column name="question_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.1-06" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fac_answer"
+                                 baseColumnNames="assessment_result_id"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_answer_assessmentresult"/>
+    </changeSet>
+
+    <changeSet id="0.1-07" author="MKouhestani">
+        <createTable tableName="fac_evidence">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_evidence"/>
+            </column>
+            <column name="created_by_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.1-08" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fac_evidence"
+                                 baseColumnNames="assessment_id"
+                                 referencedTableName="fac_assessment"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_evidence_assessment"/>
+    </changeSet>
+
+    <changeSet id="0.1-09" author="MKouhestani">
+        <createTable tableName="fac_quality_attribute_value">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_quality_attribute_value"/>
+            </column>
+            <column name="maturity_level_id" type="bigint"/>
+            <column name="quality_attribute_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.1-10" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fac_quality_attribute_value"
+                                 baseColumnNames="assessment_result_id"
+                                 constraintName="fk_fac_qualityattributevalue_assessmentresult"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="0.1-11" author="MKouhestani">
+        <createTable tableName="fac_subject_value">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_subject_value"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_subject_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="maturity_level_id" type="bigint"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.1-12" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fac_subject_value"
+                                 baseColumnNames="assessment_result_id"
+                                 constraintName="fk_fac_subjectvalue_assessmentresult"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

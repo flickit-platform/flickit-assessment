@@ -13,9 +13,9 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class Answer {
     private UUID id;
-    private AssessmentResult assessmentResult;
-    private Question question;
-    private AnswerOption answerOption;
+    private UUID assessmentResultId;
+    private Long questionId;
+    private Long optionId;
 
     @Override
     public String toString() {

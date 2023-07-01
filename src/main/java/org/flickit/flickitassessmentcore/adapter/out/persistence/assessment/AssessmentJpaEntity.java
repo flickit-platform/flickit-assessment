@@ -8,11 +8,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "assessment_assessment",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"title", "space_id"}),
-        @UniqueConstraint(columnNames = {"code", "space_id"})
-    })
+@Table(name = "fac_assessment")
 @Getter
 @Setter
 @ToString
@@ -37,16 +33,15 @@ public class AssessmentJpaEntity {
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
-    @Column(name = "last_modification_date", nullable = false)
+    @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationDate;
 
     @Column(name = "assessment_kit_id", nullable = false)
     private Long assessmentKitId;
 
-    @Column(name = "color_id")
+    @Column(name = "color_id", nullable = false)
     private Integer colorId;
 
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
-
 }

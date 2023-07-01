@@ -15,9 +15,9 @@ import java.util.UUID;
 public class AssessmentResult {
     private UUID id;
     private Assessment assessment;
+    private Boolean isValid;
     private List<QualityAttributeValue> qualityAttributeValues;
     private List<AssessmentSubjectValue> assessmentSubjectValues;
-    private boolean isValid;
 
     @Override
     public String toString() {

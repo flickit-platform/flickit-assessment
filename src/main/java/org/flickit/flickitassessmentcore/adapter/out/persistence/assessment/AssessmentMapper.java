@@ -3,6 +3,8 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.domain.Assessment;
 
+import java.util.ArrayList;
+
 public class AssessmentMapper {
 
     public static Assessment mapToDomainModel(AssessmentJpaEntity assessmentEntity) {
@@ -39,7 +41,20 @@ public class AssessmentMapper {
             param.lastModificationDate(),
             param.assessmentKitId(),
             param.colorId(),
-            param.spaceId());
+            param.spaceId()
+        );
+    }
 
+    public static Assessment mapToDomainModel(AssessmentJpaEntity assessmentEntity) {
+        return new Assessment(
+            assessmentEntity.getId(),
+            assessmentEntity.getCode(),
+            assessmentEntity.getTitle(),
+            assessmentEntity.getCreationTime(),
+            assessmentEntity.getLastModificationDate(),
+            assessmentEntity.getAssessmentKitId(),
+            assessmentEntity.getColorId(),
+            assessmentEntity.getSpaceId()
+        );
     }
 }
