@@ -90,7 +90,7 @@
 						</ports>
 					</container>
 					<from>
-						<image>ghcr.io/avansoft/jdk:17.0.7</image>
+						<image>ghcr.io/avansoft/flickit-assessment-core/jdk:17.0.7</image>
 					</from>
 				</configuration>
 			</plugin>
