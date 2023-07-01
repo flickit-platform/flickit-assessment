@@ -28,7 +28,6 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
     private final LoadAssessmentSubjectByAssessmentKitPort loadSubjectByKit;
     private final LoadQualityAttributeBySubPort loadQualityAttributeBySubject;
     private final SaveAssessmentResultPort saveAssessmentResult;
-    private final SaveAssessmentPort saveAssessment;
     private final SaveQualityAttributeValuePort saveQualityAttributeValue;
     private final SaveAssessmentSubjectValuePort saveAssessmentSubjectValue;
 
@@ -49,7 +48,7 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
         Assessment assessment = loadAssessment.loadAssessment(param.getAssessmentId());
         List<AssessmentResult> results = new ArrayList<>(loadAssessmentResultByAssessment.loadAssessmentResultByAssessmentId(assessment.getId()));
         AssessmentResult result = results.get(0);
-        if (!result.isValid()) {
+        if (!result.getIsValid()) {
             List<AssessmentSubject> subjects = loadSubjectByKit.loadSubjectByKitId(assessment.getAssessmentKitId());
             for (AssessmentSubject subject : subjects) {
                 List<QualityAttribute> qualityAttributes = loadQualityAttributeBySubject.loadQABySubId(subject.getId());
@@ -72,10 +71,8 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
             }
 
             MaturityLevel assessmentMaturityLevel = calculateAssessmentMaturityLevel.calculateAssessmentMaturityLevel(result.getAssessmentSubjectValues());
-            assessment.setMaturityLevel(assessmentMaturityLevel);
-            result.getAssessment().setMaturityLevel(assessmentMaturityLevel);
+            result.setMaturityLevelId(assessmentMaturityLevel.getId());
 
-            saveAssessment.saveAssessment(assessment);
             return new CalculateMaturityLevelUseCase.Result(saveAssessmentResult.saveAssessmentResult(result));
         }
         return new CalculateMaturityLevelUseCase.Result(result);

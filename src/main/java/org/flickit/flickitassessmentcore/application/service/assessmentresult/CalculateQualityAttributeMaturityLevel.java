@@ -35,15 +35,15 @@ public class CalculateQualityAttributeMaturityLevel {
             Set<QualityAttribute> qualityAttributes = question.getQualityAttributes();
             for (QualityAttribute qualityAttribute1 : qualityAttributes) {
                 if (qualityAttribute1.getId().equals(qualityAttribute.getId())) {
-                    AnswerOption questionAnswer = findQuestionAnswer(assessmentResult, question);
-                    Set<AnswerOptionImpact> answerOptionImpacts = loadAnswerOptionImpactsByAnswerOption.findAnswerOptionImpactsByAnswerOptionId(questionAnswer.getId());
+                    Long questionAnswerId = findQuestionAnswer(assessmentResult, question);
+                    Set<AnswerOptionImpact> answerOptionImpacts = loadAnswerOptionImpactsByAnswerOption.findAnswerOptionImpactsByAnswerOptionId(questionAnswerId);
                     for (AnswerOptionImpact impact : answerOptionImpacts) {
-                        if (impact.getOption().getId().equals(questionAnswer.getId())) {
+                        if (impact.getOption().getId().equals(questionAnswerId)) {
                             QuestionImpact questionImpact = impact.getImpact();
                             Integer value = impact.getValue().intValueExact() * impact.getImpact().getWeight();
                             Long maturityLevelId = questionImpact.getMaturityLevel().getId();
                             log.warn("Question: [{}] with Option: [{}] as answer, has value: [{}], on ml: [{}]",
-                                question.getTitle(), questionAnswer.getId(), value, maturityLevelId);
+                                question.getTitle(), questionAnswerId, value, maturityLevelId);
                             maturityLevelValueSumMap.put(maturityLevelId, maturityLevelValueSumMap.getOrDefault(maturityLevelId, 0) + value);
                             maturityLevelValueCountMap.put(maturityLevelId, maturityLevelValueCountMap.getOrDefault(maturityLevelId, 0) + impact.getImpact().getWeight());
                         }
@@ -65,11 +65,11 @@ public class CalculateQualityAttributeMaturityLevel {
         );
     }
 
-    private AnswerOption findQuestionAnswer(AssessmentResult assessmentResult, Question question) {
+    private Long findQuestionAnswer(AssessmentResult assessmentResult, Question question) {
         List<Answer> answers = new ArrayList<>(loadAnswersByResult.loadAnswersByResultId(assessmentResult.getId()));
         for (Answer answer : answers) {
-            if (answer.getQuestion() != null && answer.getQuestion().getId().equals(question.getId())) {
-                return answer.getAnswerOption();
+            if (answer.getQuestionId().equals(question.getId())) {
+                return answer.getOptionId();
             }
         }
         throw new ResourceNotFoundException(ErrorMessageKey.CALCULATE_MATURITY_LEVEL_ANSWER_NOT_FOUND_MESSAGE);

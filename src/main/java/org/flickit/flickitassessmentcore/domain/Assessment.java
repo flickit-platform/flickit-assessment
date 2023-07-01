@@ -21,7 +21,6 @@ public class Assessment {
     private Long assessmentKitId;
     private Integer colorId;
     private Long spaceId;
-    private MaturityLevel maturityLevel;
 
     @Override
     public String toString() {

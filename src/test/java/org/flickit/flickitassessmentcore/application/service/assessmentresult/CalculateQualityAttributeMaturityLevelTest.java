@@ -58,12 +58,12 @@ public class CalculateQualityAttributeMaturityLevelTest {
 
     @Test
     public void calculateQualityAttributeMaturityLevelWith2QuestionsResultsInNoAnswerException_WillFail() {
-        context.getAnswer2().setQuestion(null);
+        context.getAnswer2().setQuestionId(null);
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
         assertThrows(ResourceNotFoundException.class, () -> service.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute()));
         // Return to former state
-        context.getAnswer2().setQuestion(context.getQuestion2());
+        context.getAnswer2().setQuestionId(context.getQuestion2().getId());
     }
 
     private void doMocks() {

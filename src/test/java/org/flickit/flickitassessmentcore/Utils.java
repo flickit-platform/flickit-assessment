@@ -2,7 +2,6 @@ package org.flickit.flickitassessmentcore;
 
 import lombok.NoArgsConstructor;
 import org.flickit.flickitassessmentcore.domain.*;
-import org.flickit.flickitassessmentcore.domain.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,8 +22,7 @@ public class Utils {
             LocalDateTime.now(),
             0L,
             AssessmentColor.BLUE.getId(),
-            ASSESSMENT_SPACE_ID,
-            new MaturityLevel() // It must be set after ml calc of qa and subject, but we initiate it for now
+            ASSESSMENT_SPACE_ID
         );
     }
 
@@ -46,9 +44,10 @@ public class Utils {
         return new AssessmentResult(
             UUID.randomUUID(),
             new Assessment(),
+            false,
+            null,
             new ArrayList<QualityAttributeValue>(),
-            new ArrayList<AssessmentSubjectValue>(),
-            false
+            new ArrayList<AssessmentSubjectValue>()
         );
     }
 
@@ -136,9 +135,9 @@ public class Utils {
     public static Answer createAnswer() {
         return new Answer(
             UUID.randomUUID(),
-            new AssessmentResult(),
-            new Question(),
-            new AnswerOption()
+            null,
+            null,
+            null
         );
     }
 

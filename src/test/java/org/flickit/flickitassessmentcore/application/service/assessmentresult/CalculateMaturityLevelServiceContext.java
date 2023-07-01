@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.flickit.flickitassessmentcore.Constants;
 import org.flickit.flickitassessmentcore.Utils;
 import org.flickit.flickitassessmentcore.domain.*;
-import org.flickit.flickitassessmentcore.domain.*;
 
 @Getter
 public class CalculateMaturityLevelServiceContext {
@@ -77,7 +76,6 @@ public class CalculateMaturityLevelServiceContext {
     }
 
     private void completeInitiation() {
-        assessment.setMaturityLevel(maturityLevel2);
         assessment.setAssessmentKitId(kit.getId());
 
         result.setAssessment(assessment);
@@ -103,9 +101,9 @@ public class CalculateMaturityLevelServiceContext {
         questionImpact2.setQuestion(question2);
         questionImpact2.setMaturityLevel(maturityLevel2);
 
-        answer1.setAssessmentResult(result);
-        answer1.setQuestion(question1);
-        answer1.setAnswerOption(option2Q1);
+        answer1.setAssessmentResultId(result.getId());
+        answer1.setQuestionId(question1.getId());
+        answer1.setOptionId(option2Q1.getId());
 
         option1Q1.setQuestion(question1);
         option2Q1.setQuestion(question1);
@@ -118,9 +116,9 @@ public class CalculateMaturityLevelServiceContext {
         optionImpact3Q1.setOption(option3Q1);
         optionImpact3Q1.setImpact(questionImpact1);
 
-        answer2.setAssessmentResult(result);
-        answer2.setQuestion(question2);
-        answer2.setAnswerOption(option1Q2);
+        answer2.setAssessmentResultId(result.getId());
+        answer2.setQuestionId(question2.getId());
+        answer2.setOptionId(option1Q2.getId());
 
         option1Q2.setQuestion(question2);
         option2Q2.setQuestion(question2);
