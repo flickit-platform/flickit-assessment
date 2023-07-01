@@ -6,7 +6,6 @@ import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvide
 import org.flickit.flickitassessmentcore.application.port.out.evidence.SaveEvidencePort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.domain.Evidence;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -15,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.EDIT_EVIDENCE_ID_NOT_NULL;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -65,13 +64,12 @@ public class EditEvidenceServiceTest {
             () -> service.editEvidence(new EditEvidenceUseCase.Param(
                 savedEvidence.getId(),
                 NEW_DESC
-            )));
+            )),
+            EDIT_EVIDENCE_EVIDENCE_NOT_FOUND);
     }
 
     @Test
     void editEvidence_EmptyId_ErrorMessage() {
-        when(loadEvidence.loadEvidence(new LoadEvidencePort.Param(savedEvidence.getId()))).thenReturn(new LoadEvidencePort.Result(savedEvidence));
-
         assertThrows(ConstraintViolationException.class,
             () -> service.editEvidence(new EditEvidenceUseCase.Param(
                 null,
@@ -81,16 +79,33 @@ public class EditEvidenceServiceTest {
     }
 
     @Test
-    @Disabled
-    void editEvidence_DescriptionIsEmpty_SavedEvidence() {
-        when(loadEvidence.loadEvidence(any(LoadEvidencePort.Param.class))).thenReturn(new LoadEvidencePort.Result(savedEvidence));
+    void editEvidence_DescriptionIsEmpty_ErrorMessage() {
+        assertThrows(ConstraintViolationException.class,
+            () -> service.editEvidence(new EditEvidenceUseCase.Param(
+                savedEvidence.getId(),
+                ""
+            )),
+            EDIT_EVIDENCE_DESC_NOT_BLANK);
+    }
 
-        EditEvidenceUseCase.Result result = service.editEvidence(new EditEvidenceUseCase.Param(
-            savedEvidence.getId(),
-            ""
-        ));
+    @Test
+    void editEvidence_DescriptionIsUnderMinSize_ErrorMessage() {
+        assertThrows(ConstraintViolationException.class,
+            () -> service.editEvidence(new EditEvidenceUseCase.Param(
+                savedEvidence.getId(),
+                "de"
+            )),
+            EDIT_EVIDENCE_DESC_MIN_SIZE);
+    }
 
-        assertEquals(savedEvidence.getId(), result.id());
+    @Test
+    void editEvidence_DescriptionIsAboveMaxSize_ErrorMessage() {
+        assertThrows(ConstraintViolationException.class,
+            () -> service.editEvidence(new EditEvidenceUseCase.Param(
+                savedEvidence.getId(),
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vestibulum elit eu interdum. Lorem ipsum "
+            )),
+            EDIT_EVIDENCE_DESC_NOT_BLANK);
     }
 
 

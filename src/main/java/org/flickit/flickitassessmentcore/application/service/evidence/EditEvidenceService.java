@@ -35,7 +35,7 @@ public class EditEvidenceService implements EditEvidenceUseCase {
     private Evidence updateEvidence(Evidence loadedEvidence, Param param) {
         return new Evidence(
             loadedEvidence.getId(),
-            isDescriptionValid(param.getDescription()) ? param.getDescription() : loadedEvidence.getDescription(),
+            param.getDescription(),
             loadedEvidence.getCreationTime(),
             LocalDateTime.now(),
             loadedEvidence.getCreatedById(),
@@ -44,9 +44,4 @@ public class EditEvidenceService implements EditEvidenceUseCase {
         );
     }
 
-    private boolean isDescriptionValid(String description) {
-        return description != null &&
-            description.length() >= 3 &&
-            description.length() <= 100;
-    }
 }

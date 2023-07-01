@@ -128,7 +128,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"description\": \"new_desc\"}",
+					"raw": "{\n    \"description\": \"new_desc\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

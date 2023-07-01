@@ -20,5 +20,7 @@ public class ErrorMessageKey {
 
     public static final String EDIT_EVIDENCE_ID_NOT_NULL = "edit-evidence.id.notNull";
     public static final String EDIT_EVIDENCE_DESC_NOT_BLANK = "edit-evidence.description.notBlank";
+    public static final String EDIT_EVIDENCE_DESC_MIN_SIZE = "edit-evidence.description.size.min";
+    public static final String EDIT_EVIDENCE_DESC_MAX_SIZE = "edit-evidence.description.size.max";
     public static final String EDIT_EVIDENCE_EVIDENCE_NOT_FOUND = "edit-evidence.evidence-not-found";
 }
