@@ -1,7 +1,8 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 
-import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase.Param;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectIdsAndQualityAttributeIdsPort;
@@ -48,7 +49,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void createAssessment_ValidCommand_PersistsAndReturnsId() {
-        CreateAssessmentCommand command = new CreateAssessmentCommand(
+        Param param = new Param(
             1L,
             "title example",
             1L,
@@ -60,23 +61,23 @@ class CreateAssessmentServiceTest {
             new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
 
-        UUID actualId = service.createAssessment(command);
-        assertEquals(expectedId, actualId);
+        CreateAssessmentUseCase.Result result = service.createAssessment(param);
+        assertEquals(expectedId, result.id());
 
-        ArgumentCaptor<CreateAssessmentPort.Param> param = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
-        verify(createAssessmentPort).persist(param.capture());
+        ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
+        verify(createAssessmentPort).persist(createPortParam.capture());
 
-        assertEquals(command.getTitle(), param.getValue().title());
-        assertEquals(command.getAssessmentKitId(), param.getValue().assessmentKitId());
-        assertEquals(command.getColorId(), param.getValue().colorId());
-        assertEquals("title-example", param.getValue().code());
-        assertNotNull(param.getValue().creationTime());
-        assertNotNull(param.getValue().lastModificationDate());
+        assertEquals(param.getTitle(), createPortParam.getValue().title());
+        assertEquals(param.getAssessmentKitId(), createPortParam.getValue().assessmentKitId());
+        assertEquals(param.getColorId(), createPortParam.getValue().colorId());
+        assertEquals("title-example", createPortParam.getValue().code());
+        assertNotNull(createPortParam.getValue().creationTime());
+        assertNotNull(createPortParam.getValue().lastModificationDate());
     }
 
     @Test
     void createAssessment_ValidCommand_PersistsAssessmentResult() {
-        CreateAssessmentCommand command = new CreateAssessmentCommand(
+        Param param = new Param(
             1L,
             "title example",
             1L,
@@ -90,19 +91,19 @@ class CreateAssessmentServiceTest {
             new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
 
-        service.createAssessment(command);
+        service.createAssessment(param);
 
-        ArgumentCaptor<CreateAssessmentResultPort.Param> param = ArgumentCaptor.forClass(CreateAssessmentResultPort.Param.class);
-        verify(createAssessmentResultPort).persist(param.capture());
+        ArgumentCaptor<CreateAssessmentResultPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentResultPort.Param.class);
+        verify(createAssessmentResultPort).persist(createPortParam.capture());
 
-        assertEquals(assessmentId, param.getValue().assessmentId());
-        assertFalse(param.getValue().isValid());
+        assertEquals(assessmentId, createPortParam.getValue().assessmentId());
+        assertFalse(createPortParam.getValue().isValid());
     }
 
     @Test
     void createAssessment_ValidCommand_PersistsAssessmentSubjectValues() {
         Long assessmentKitId = 1L;
-        CreateAssessmentCommand command = new CreateAssessmentCommand(
+        Param param = new Param(
             1L,
             "title example",
             assessmentKitId,
@@ -114,7 +115,7 @@ class CreateAssessmentServiceTest {
             new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(expectedAssessmentSubjectIds, expectedQualityAttributeIds);
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedResponseParam);
 
-        service.createAssessment(command);
+        service.createAssessment(param);
 
         verify(createSubjectValuePort, times(1)).persistAllWithAssessmentResultId(anyList(), any());
     }
@@ -122,7 +123,7 @@ class CreateAssessmentServiceTest {
     @Test
     void createAssessment_ValidCommand_PersistsQualityAttributeValue() {
         Long assessmentKitId = 1L;
-        CreateAssessmentCommand command = new CreateAssessmentCommand(
+        Param param = new Param(
             1L,
             "title example",
             assessmentKitId,
@@ -134,14 +135,14 @@ class CreateAssessmentServiceTest {
             new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(expectedAssessmentSubjectIds, expectedQualityAttributeIds);
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedResponseParam);
 
-        service.createAssessment(command);
+        service.createAssessment(param);
 
         verify(createQualityAttributeValuePort, times(1)).persistAllWithAssessmentResultId(anyList(), any());
     }
 
     @Test
     void createAssessment_NullColor_UseDefaultColor() {
-        CreateAssessmentCommand command = new CreateAssessmentCommand(
+        Param param = new Param(
             1L,
             "title example",
             1L,
@@ -151,17 +152,17 @@ class CreateAssessmentServiceTest {
             new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
 
-        service.createAssessment(command);
+        service.createAssessment(param);
 
-        ArgumentCaptor<CreateAssessmentPort.Param> param = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
-        verify(createAssessmentPort).persist(param.capture());
+        ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
+        verify(createAssessmentPort).persist(createPortParam.capture());
 
-        assertEquals(AssessmentColor.getDefault().getId(), param.getValue().colorId());
+        assertEquals(AssessmentColor.getDefault().getId(), createPortParam.getValue().colorId());
     }
 
     @Test
     void createAssessment_InvalidColor_UseDefaultColor() {
-        CreateAssessmentCommand command = new CreateAssessmentCommand(
+        Param param = new Param(
             1L,
             "title example",
             1L,
@@ -171,12 +172,12 @@ class CreateAssessmentServiceTest {
             new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
 
-        service.createAssessment(command);
+        service.createAssessment(param);
 
-        ArgumentCaptor<CreateAssessmentPort.Param> param = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
-        verify(createAssessmentPort).persist(param.capture());
+        ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
+        verify(createAssessmentPort).persist(createPortParam.capture());
 
-        assertEquals(AssessmentColor.getDefault().getId(), param.getValue().colorId());
+        assertEquals(AssessmentColor.getDefault().getId(), createPortParam.getValue().colorId());
     }
 
     @Test

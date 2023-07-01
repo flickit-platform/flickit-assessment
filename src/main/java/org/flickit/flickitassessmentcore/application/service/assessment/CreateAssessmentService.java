@@ -1,13 +1,12 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectIdsAndQualityAttributeIdsPort;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,14 +27,14 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final LoadAssessmentSubjectIdsAndQualityAttributeIdsPort loadAssessmentSubjectIdsAndQualityAttributeIdsPort;
 
     @Override
-    public UUID createAssessment(CreateAssessmentCommand command) {
+    public Result createAssessment(Param command) {
         CreateAssessmentPort.Param param = toParam(command);
         UUID id = createAssessmentPort.persist(param);
         createAssessmentResult(id, param.assessmentKitId());
-        return id;
+        return new Result(id);
     }
 
-    private CreateAssessmentPort.Param toParam(CreateAssessmentCommand command) {
+    private CreateAssessmentPort.Param toParam(Param command) {
         String code = generateSlugCode(command.getTitle());
         LocalDateTime creationTime = LocalDateTime.now();
         LocalDateTime lastModificationTime = LocalDateTime.now();
