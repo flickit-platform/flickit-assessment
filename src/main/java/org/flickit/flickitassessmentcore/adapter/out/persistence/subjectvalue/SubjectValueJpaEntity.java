@@ -8,7 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.UUID;
 
 @Entity
-@Table(name = "assessment_assessmentsubjectvalue")
+@Table(name = "fac_subject_value")
 @Getter
 @Setter
 @ToString
