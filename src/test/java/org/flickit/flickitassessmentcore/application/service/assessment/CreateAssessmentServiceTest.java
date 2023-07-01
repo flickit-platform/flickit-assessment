@@ -5,7 +5,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAs
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectIdsAndQualityAttributeIdsPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentsubjectvalue.CreateAssessmentSubjectValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +40,7 @@ class CreateAssessmentServiceTest {
     private LoadAssessmentSubjectIdsAndQualityAttributeIdsPort loadASIdsAndQAIdsPort;
 
     @Mock
-    private CreateAssessmentSubjectValuePort createAssessmentSubjectValuePort;
+    private CreateSubjectValuePort createSubjectValuePort;
 
     @Mock
     private org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort createQualityAttributeValuePort;
@@ -116,7 +116,7 @@ class CreateAssessmentServiceTest {
 
         service.createAssessment(command);
 
-        verify(createAssessmentSubjectValuePort, times(1)).persistAllWithAssessmentResultId(anyList(), any());
+        verify(createSubjectValuePort, times(1)).persistAllWithAssessmentResultId(anyList(), any());
     }
 
     @Test

@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubjectvalue;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class AssessmentSubjectValueJpaEntity {
+public class SubjectValueJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include

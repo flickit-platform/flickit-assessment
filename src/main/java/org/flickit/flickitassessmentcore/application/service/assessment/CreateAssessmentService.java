@@ -6,7 +6,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAs
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectIdsAndQualityAttributeIdsPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentsubjectvalue.CreateAssessmentSubjectValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private final CreateAssessmentPort createAssessmentPort;
     private final CreateAssessmentResultPort createAssessmentResultPort;
-    private final CreateAssessmentSubjectValuePort createAssessmentSubjectValuePort;
+    private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
     private final LoadAssessmentSubjectIdsAndQualityAttributeIdsPort loadAssessmentSubjectIdsAndQualityAttributeIdsPort;
 
@@ -75,9 +75,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     }
 
     private void createAssessmentSubjectValues(List<Long> assessmentSubjectIds, UUID assessmentResultId) {
-        List<CreateAssessmentSubjectValuePort.Param> params = assessmentSubjectIds.stream()
-            .map(CreateAssessmentSubjectValuePort.Param::new).toList();
-        createAssessmentSubjectValuePort.persistAllWithAssessmentResultId(params, assessmentResultId);
+        List<CreateSubjectValuePort.Param> params = assessmentSubjectIds.stream()
+            .map(CreateSubjectValuePort.Param::new).toList();
+        createSubjectValuePort.persistAllWithAssessmentResultId(params, assessmentResultId);
     }
 
     private void createQualityAttributeValues(List<Long> qualityAttributeIds, UUID assessmentResultId) {
