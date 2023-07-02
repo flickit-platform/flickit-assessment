@@ -22,9 +22,6 @@ public class AssessmentSubjectRestAdapter implements LoadAssessmentSubjectIdsAnd
     @Value("${flickit-platform.host}")
     private String flickitPlatformHost;
 
-    @Value("${flickit-platform.jwt.access-token}")
-    private String accessToken;
-
     @Override
     public ResponseParam loadByAssessmentKitId(Long assessmentKitId) {
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
@@ -35,7 +32,6 @@ public class AssessmentSubjectRestAdapter implements LoadAssessmentSubjectIdsAnd
         String url = String.format("%s/api/internal/assessment-kit/%d/assessment-subjects/", flickitPlatformHost, assessmentKitId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(HttpHeaders.AUTHORIZATION, String.format("JWT %s", accessToken));
 
         HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(null, headers);
         ResponseEntity<List<AssessmentSubjectDto>> responseEntity = restTemplate.exchange(
