@@ -21,7 +21,6 @@ public interface SubmitAnswerUseCase {
         @NotNull(message = SUBMIT_ANSWER_QUESTION_ID_NOT_NULL)
         Long questionId;
 
-        @NotNull(message = SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_NULL)
         Long answerOptionId;
 
         public Param(UUID assessmentResultId, Long questionId, Long answerOptionId) {
