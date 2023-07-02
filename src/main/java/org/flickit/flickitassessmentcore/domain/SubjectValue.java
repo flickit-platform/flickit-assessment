@@ -11,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentSubjectValue {
+public class SubjectValue {
     private UUID id;
     private AssessmentResult assessmentResult;
     private Long assessmentSubjectId;
