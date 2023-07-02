@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-public class AnswerOptionImpactPersistenceAdapter implements LoadAnswerOptionImpactsByAnswerOptionPort {
+public class AnswerOptionImpactPersistenceJpaAdapter implements LoadAnswerOptionImpactsByAnswerOptionPort {
     @Override
     public Set<AnswerOptionImpact> findAnswerOptionImpactsByAnswerOptionId(Long answerOptionId) {
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()

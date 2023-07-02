@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentBySpacePort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.SaveAssessmentPort;
 import org.flickit.flickitassessmentcore.domain.Assessment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,6 @@ import java.util.stream.Collectors;
 public class AssessmentPersistenceJpaAdaptor implements
     CreateAssessmentPort,
     LoadAssessmentPort,
-    SaveAssessmentPort,
     LoadAssessmentBySpacePort {
 
     private final AssessmentJpaRepository repository;
@@ -43,8 +41,4 @@ public class AssessmentPersistenceJpaAdaptor implements
         return AssessmentMapper.mapToDomainModel(assessmentEntity);
     }
 
-    @Override
-    public Assessment saveAssessment(Assessment assessment) {
-        return AssessmentMapper.mapToDomainModel(repository.save(AssessmentMapper.mapToJpaEntity(assessment)));
-    }
 }

@@ -27,7 +27,7 @@ public class CalculateQualityAttributeMaturityLevel {
     private final LoadAnswersByResultPort loadAnswersByResult;
     private final LoadLevelCompetenceByMaturityLevelPort loadLevelCompetenceByMaturityLevel;
 
-    public QualityAttributeValue calculateQualityAttributeMaturityLevel(AssessmentResult assessmentResult, QualityAttribute qualityAttribute) {
+    public MaturityLevel calculateQualityAttributeMaturityLevel(AssessmentResult assessmentResult, QualityAttribute qualityAttribute) {
         Set<Question> questions = loadQuestionsByQAId.loadQuestionsByQualityAttributeId(qualityAttribute.getId());
         Map<Long, Integer> maturityLevelValueSumMap = new HashMap<>();
         Map<Long, Integer> maturityLevelValueCountMap = new HashMap<>();
@@ -58,11 +58,7 @@ public class CalculateQualityAttributeMaturityLevel {
         List<MaturityLevel> maturityLevels = new ArrayList<>(loadMaturityLevelByKit.loadMaturityLevelByKitId(qualityAttribute.getAssessmentSubject().getAssessmentKit().getId()));
         MaturityLevel qualityAttMaturityLevel = findMaturityLevelBasedOnCalculations(qualityAttributeImpactScoreMap, maturityLevels);
 
-        return new QualityAttributeValue(
-            UUID.randomUUID(),
-            qualityAttribute,
-            qualityAttMaturityLevel
-        );
+        return qualityAttMaturityLevel;
     }
 
     private Long findQuestionAnswer(AssessmentResult assessmentResult, Question question) {

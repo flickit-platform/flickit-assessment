@@ -1,8 +1,8 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.levelcompetence;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.out.levelcompetence.LoadLevelCompetenceByMaturityLevelPort;
-import org.flickit.flickitassessmentcore.domain.LevelCompetence;
+import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
+import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -17,9 +17,9 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
-public class LevelCompetencePersistenceAdapter implements LoadLevelCompetenceByMaturityLevelPort {
+public class MaturityLevelPersistenceJpaAdapter implements LoadMaturityLevelByKitPort {
     @Override
-    public Set<LevelCompetence> loadLevelCompetenceByMaturityLevelId(Long mlId) {
+    public Set<MaturityLevel> loadMaturityLevelByKitId(Long kitId) {
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
             .setConnectTimeout(Duration.ofSeconds(10))
             .setReadTimeout(Duration.ofSeconds(10))
@@ -30,16 +30,16 @@ public class LevelCompetencePersistenceAdapter implements LoadLevelCompetenceByM
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, Long> requestBody = new HashMap<>();
-        requestBody.put("mlId", mlId);
+        requestBody.put("kitId", kitId);
         HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<Set<LevelCompetence>> responseEntity = restTemplate.exchange(
+        ResponseEntity<Set<MaturityLevel>> responseEntity = restTemplate.exchange(
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<Set<LevelCompetence>>() {
+            new ParameterizedTypeReference<Set<MaturityLevel>>() {
             }
         );
-        Set<LevelCompetence> responseBody = responseEntity.getBody();
+        Set<MaturityLevel> responseBody = responseEntity.getBody();
         return responseBody;
     }
 

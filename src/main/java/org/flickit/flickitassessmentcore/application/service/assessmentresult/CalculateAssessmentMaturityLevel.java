@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.common.ErrorMessageKey;
-import org.flickit.flickitassessmentcore.domain.AssessmentSubject;
 import org.flickit.flickitassessmentcore.domain.AssessmentSubjectValue;
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.springframework.stereotype.Component;
@@ -22,9 +21,8 @@ public class CalculateAssessmentMaturityLevel {
 
     private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
 
-    public MaturityLevel calculateAssessmentMaturityLevel(List<AssessmentSubjectValue> subjectValues) {
-        AssessmentSubject subject = subjectValues.get(0).getAssessmentSubject();
-        Set<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadMaturityLevelByKitId(subject.getAssessmentKit().getId());
+    public MaturityLevel calculateAssessmentMaturityLevel(List<AssessmentSubjectValue> subjectValues, Long assessmentKitId) {
+        Set<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadMaturityLevelByKitId(assessmentKitId);
         long mean = calculateMeanOfSubjectMaturityLevels(subjectValues);
         return findMaturityLevelByValue(mean, maturityLevels);
     }

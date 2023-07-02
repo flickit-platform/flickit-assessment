@@ -5,50 +5,52 @@ import org.flickit.flickitassessmentcore.application.service.exception.ResourceN
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Set;
 
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CALCULATE_MATURITY_LEVEL_MATURITY_LEVEL_NOT_FOUND_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CalculateAssessmentMaturityLevelTest {
-    private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort = Mockito.mock(LoadMaturityLevelByKitPort.class);
+
     private final CalculateMaturityLevelServiceContext context = new CalculateMaturityLevelServiceContext();
-    private final CalculateAssessmentMaturityLevel service = new CalculateAssessmentMaturityLevel(loadMaturityLevelByKitPort);
+    @Mock
+    private LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
+    @Spy
+    @InjectMocks
+    private CalculateAssessmentMaturityLevel service;
 
     @Test
-    public void calculateSubjectMaturityLevelWith2QuestionsResultsInMaturityLevel2_WillSucceed() {
+    void calculateSubjectMaturityLevel_CalculatedMaturityLevelForSubjectsAs2_MaturityLevel2() {
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel2());
-        doMocks();
-        // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        MaturityLevel ml = service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()));
+        when(loadMaturityLevelByKitPort.loadMaturityLevelByKitId(context.getKit().getId())).thenReturn(Set.of(context.getMaturityLevel1(), context.getMaturityLevel2()));
+        MaturityLevel ml = service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getKit().getId());
         assertEquals(2, ml.getValue());
     }
 
     @Test
-    public void calculateSubjectMaturityLevelWith2QuestionsResultsInMaturityLevel1_WillSucceed() {
+    void calculateSubjectMaturityLevel_CalculatedMaturityLevelForSubjectsAs1_MaturityLevel1() {
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel1());
-        doMocks();
-        // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        MaturityLevel ml = service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()));
+        when(loadMaturityLevelByKitPort.loadMaturityLevelByKitId(context.getKit().getId())).thenReturn(Set.of(context.getMaturityLevel1(), context.getMaturityLevel2()));
+        MaturityLevel ml = service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getKit().getId());
         assertEquals(1, ml.getValue());
     }
 
     @Test
-    public void calculateSubjectMaturityLevelWith2QuestionsResultsInNoAnswerException_WillFail() {
+    void calculateSubjectMaturityLevel_CalculatedMaturityLevelForSubjectNotInKit_ErrorMessage() {
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel3());
-        doMocks();
-        // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        assertThrows(ResourceNotFoundException.class, () -> service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue())));
-    }
-
-    private void doMocks() {
-        doReturn(Set.of(context.getMaturityLevel1(), context.getMaturityLevel2())).when(loadMaturityLevelByKitPort).loadMaturityLevelByKitId(context.getKit().getId());
+        when(loadMaturityLevelByKitPort.loadMaturityLevelByKitId(context.getKit().getId())).thenReturn(Set.of(context.getMaturityLevel1(), context.getMaturityLevel2()));
+        assertThrows(ResourceNotFoundException.class,
+            () -> service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getKit().getId()),
+            CALCULATE_MATURITY_LEVEL_MATURITY_LEVEL_NOT_FOUND_MESSAGE);
     }
 
 

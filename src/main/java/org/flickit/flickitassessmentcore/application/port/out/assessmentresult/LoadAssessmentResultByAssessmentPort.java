@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface LoadAssessmentResultByAssessmentPort {
 
-    public Set<AssessmentResult> loadAssessmentResultByAssessmentId(UUID assessmentId);
+    Set<AssessmentResult> loadAssessmentResultByAssessmentId(UUID assessmentId);
 }

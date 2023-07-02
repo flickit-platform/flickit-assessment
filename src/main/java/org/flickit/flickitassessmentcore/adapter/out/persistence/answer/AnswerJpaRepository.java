@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,4 +16,9 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     @Modifying
     @Query("UPDATE AnswerJpaEntity a SET a.answerOptionId=:answerOptionId WHERE a.id=:id")
     void updateAnswerOptionById(UUID id, Long answerOptionId);
+
+    @Query("select a from AnswerJpaEntity a " +
+        "where a.assessmentResult.id = :resultId")
+    List<AnswerJpaEntity> findAnswersByResultId(@Param("resultId") UUID resultId);
+
 }

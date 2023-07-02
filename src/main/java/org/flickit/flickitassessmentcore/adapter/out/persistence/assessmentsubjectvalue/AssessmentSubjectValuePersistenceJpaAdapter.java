@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class AssessmentSubjectValuePersistenceAdapter implements SaveAssessmentSubjectValuePort {
+public class AssessmentSubjectValuePersistenceJpaAdapter implements SaveAssessmentSubjectValuePort {
 
-    private final AssessmentSubjectValueRepository repository;
+    private final AssessmentSubjectValueJpaRepository repository;
 
     @Override
     public void saveAssessmentSubjectValue(AssessmentSubjectValue subjectValue) {

@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.assessmentresult;
 
-import org.flickit.flickitassessmentcore.domain.AssessmentResult;
+import java.util.UUID;
 
-public record CalculateMaturityLevelResponseDto(AssessmentResult assessmentResult) {
+public record CalculateMaturityLevelResponseDto(UUID assessmentResultId) {
 }

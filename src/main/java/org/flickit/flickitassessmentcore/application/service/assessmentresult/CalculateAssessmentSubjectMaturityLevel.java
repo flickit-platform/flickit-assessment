@@ -4,15 +4,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
-import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeBySubPort;
-import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadQAValuesByQAIdsPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.common.ErrorMessageKey;
 import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Transactional
 @RequiredArgsConstructor
@@ -20,24 +17,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CalculateAssessmentSubjectMaturityLevel {
 
-    private final LoadQualityAttributeBySubPort loadQABySubId;
-    private final LoadQAValuesByQAIdsPort loadQAValuesByQAIds;
     private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
 
-    public AssessmentSubjectValue calculateAssessmentSubjectMaturityLevel(AssessmentSubject subject) {
-        List<QualityAttribute> qualityAttributes = loadQABySubId.loadQABySubId(subject.getId());
-        List<QualityAttributeValue> qualityAttributeValues = loadQAValuesByQAIds.loadQAValuesByQAIds(
-            qualityAttributes.stream()
-                .map(QualityAttribute::getId)
-                .collect(Collectors.toSet()));
+    public MaturityLevel calculateAssessmentSubjectMaturityLevel(List<QualityAttributeValue> qualityAttributeValues, Long assessmentKitId) {
         long weightedMean = calculateWeightedMeanOfQAMaturityLevels(qualityAttributeValues);
-        Set<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadMaturityLevelByKitId(subject.getAssessmentKit().getId());
+        Set<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadMaturityLevelByKitId(assessmentKitId);
         MaturityLevel subMaturityLevel = findMaturityLevelByValue(weightedMean, maturityLevels);
-        return new AssessmentSubjectValue(
-            UUID.randomUUID(),
-            subject,
-            subMaturityLevel
-        );
+        return subMaturityLevel;
     }
 
     private MaturityLevel findMaturityLevelByValue(long weightedMean, Set<MaturityLevel> maturityLevels) {

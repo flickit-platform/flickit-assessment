@@ -4,5 +4,5 @@ import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 
 public interface SaveAssessmentResultPort {
 
-    public AssessmentResult saveAssessmentResult(AssessmentResult assessmentResult);
+    AssessmentResult saveAssessmentResult(AssessmentResult assessmentResult);
 }
