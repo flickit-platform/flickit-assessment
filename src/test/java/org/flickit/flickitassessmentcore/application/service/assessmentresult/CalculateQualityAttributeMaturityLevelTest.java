@@ -37,7 +37,7 @@ public class CalculateQualityAttributeMaturityLevelTest {
         loadLevelCompetenceByMaturityLevel);
 
     @Test
-    @Disabled
+//    @Disabled
     public void calculateQualityAttributeMaturityLevelWith2QuestionsResultsInMaturityLevel2_WillSucceed() {
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.

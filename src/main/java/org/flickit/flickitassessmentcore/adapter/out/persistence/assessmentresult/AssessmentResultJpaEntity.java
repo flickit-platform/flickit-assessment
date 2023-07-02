@@ -35,7 +35,6 @@ public class AssessmentResultJpaEntity {
 
     @Column(name = "is_valid")
     private Boolean isValid;
-    @ManyToOne(cascade = CascadeType.ALL)
 
     @OneToMany(mappedBy = "assessmentResult")
     private List<QualityAttributeValueJpaEntity> qualityAttributeValues;

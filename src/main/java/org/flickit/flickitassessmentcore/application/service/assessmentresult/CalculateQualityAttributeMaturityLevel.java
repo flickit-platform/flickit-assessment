@@ -68,7 +68,7 @@ public class CalculateQualityAttributeMaturityLevel {
     private Long findQuestionAnswer(AssessmentResult assessmentResult, Question question) {
         List<Answer> answers = new ArrayList<>(loadAnswersByResult.loadAnswersByResultId(assessmentResult.getId()));
         for (Answer answer : answers) {
-            if (answer.getQuestionId().equals(question.getId())) {
+            if (answer.getQuestionId() != null && answer.getQuestionId().equals(question.getId())) {
                 return answer.getOptionId();
             }
         }
