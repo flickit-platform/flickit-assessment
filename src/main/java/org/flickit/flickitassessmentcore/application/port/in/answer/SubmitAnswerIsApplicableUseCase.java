@@ -8,9 +8,9 @@ import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
-public interface SubmitAnswerUseCase {
+public interface SubmitAnswerIsApplicableUseCase {
 
-    Result submitAnswer(Param param);
+    Result submitAnswerIsApplicable(Param param);
 
     @Value
     class Param extends SelfValidating<Param> {
@@ -21,12 +21,13 @@ public interface SubmitAnswerUseCase {
         @NotNull(message = SUBMIT_ANSWER_QUESTION_ID_NOT_NULL)
         Long questionId;
 
-        Long answerOptionId;
+        @NotNull(message = SUBMIT_ANSWER_IS_APPLICABLE_NOT_NULL)
+        Boolean isApplicable;
 
-        public Param(UUID assessmentResultId, Long questionId, Long answerOptionId) {
+        public Param(UUID assessmentResultId, Long questionId, Boolean isApplicable) {
             this.assessmentResultId = assessmentResultId;
             this.questionId = questionId;
-            this.answerOptionId = answerOptionId;
+            this.isApplicable = isApplicable;
             this.validateSelf();
         }
     }

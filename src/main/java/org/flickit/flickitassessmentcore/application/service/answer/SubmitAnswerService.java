@@ -48,7 +48,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return new SaveAnswerPort.Param(
             param.getAssessmentResultId(),
             param.getQuestionId(),
-            param.getAnswerOptionId()
+            param.getAnswerOptionId(),
+            true
         );
     }
 

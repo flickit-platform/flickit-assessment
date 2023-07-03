@@ -63,6 +63,7 @@ class SubmitAnswerServiceTest {
         assertEquals(assessmentResultId, saveAnswerParam.getValue().assessmentResultId());
         assertEquals(questionId, saveAnswerParam.getValue().questionId());
         assertEquals(answerOptionId, saveAnswerParam.getValue().answerOptionId());
+        assertEquals(true, saveAnswerParam.getValue().isApplicable());
 
         verify(saveAnswerPort, times(1)).persist(any(SaveAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(eq(assessmentResultId));

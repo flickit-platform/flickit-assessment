@@ -13,6 +13,7 @@ public interface SaveAnswerPort {
 
     record Param(UUID assessmentResultId,
                  Long questionId,
-                 Long answerOptionId) {
+                 Long answerOptionId,
+                 Boolean isApplicable) {
     }
 }
