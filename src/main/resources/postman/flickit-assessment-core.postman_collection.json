@@ -81,6 +81,36 @@
 			"response": []
 		},
 		{
+			"name": "Submit Answer Is Applicable",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"questionId\": 1,\n    \"isApplicable\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-results/{{assessment_result_id}}/answer-question/is-applicable",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-results",
+						"{{assessment_result_id}}",
+						"answer-question",
+						"is-applicable"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Assessment List",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
