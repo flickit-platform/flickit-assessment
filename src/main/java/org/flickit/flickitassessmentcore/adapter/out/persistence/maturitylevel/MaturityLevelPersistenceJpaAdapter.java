@@ -2,7 +2,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
-import org.flickit.flickitassessmentcore.domain.MaturityLevel;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -11,40 +11,42 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
 public class MaturityLevelPersistenceJpaAdapter implements LoadMaturityLevelByKitPort {
+
+    @Value("${flickit-platform.host}")
+    private String flickitPlatformHost;
+
     @Override
-    public Set<MaturityLevel> loadMaturityLevelByKitId(Long kitId) {
+    public Result loadMaturityLevelByKitId(Param param) {
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
             .setConnectTimeout(Duration.ofSeconds(10))
             .setReadTimeout(Duration.ofSeconds(10))
             .messageConverters(new MappingJackson2HttpMessageConverter());
         RestTemplate restTemplate = restTemplateBuilder.build();
-        String url = "https://api.example.com/data";
+        String url = String.format("%s/api/internal/assessmentkit/%d/maturitylevel", flickitPlatformHost, param.kitId());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        Map<String, Long> requestBody = new HashMap<>();
-        requestBody.put("kitId", kitId);
-        HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<Set<MaturityLevel>> responseEntity = restTemplate.exchange(
+        HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(null, headers);
+        ResponseEntity<List<MaturityLevelDto>> responseEntity = restTemplate.exchange(
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<Set<MaturityLevel>>() {
+            new ParameterizedTypeReference<List<MaturityLevelDto>>() {
             }
         );
-        Set<MaturityLevel> responseBody = responseEntity.getBody();
-        return responseBody;
+        return MaturityLevelMapper.toResult(responseEntity.getBody());
     }
 
-    /*
-     * TODO:
-     *  - must complete this class with true data
-     * */
+    record MaturityLevelDto(Long id,
+                            String title,
+                            Integer value) {
+    }
+
+
 }

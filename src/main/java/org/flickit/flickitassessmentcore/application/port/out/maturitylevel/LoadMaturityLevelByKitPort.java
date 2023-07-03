@@ -6,5 +6,9 @@ import java.util.Set;
 
 public interface LoadMaturityLevelByKitPort {
 
-    Set<MaturityLevel> loadMaturityLevelByKitId(Long kitId);
+    Result loadMaturityLevelByKitId(Param param);
+
+    record Param(Long kitId) {}
+
+    record Result(Set<MaturityLevel> maturityLevels) {}
 }

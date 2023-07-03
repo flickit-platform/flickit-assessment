@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class LevelCompetence {
     private Long id;
-    private MaturityLevel maturityLevel;
+    private Long maturityLevelId;
     private Integer value;
-    private MaturityLevel maturityLevelCompetence;
+    private Long maturityLevelCompetenceId;
 }

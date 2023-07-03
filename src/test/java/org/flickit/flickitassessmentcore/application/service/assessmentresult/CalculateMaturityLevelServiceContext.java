@@ -109,12 +109,12 @@ public class CalculateMaturityLevelServiceContext {
         option2Q1.setQuestion(question1);
         option3Q1.setQuestion(question1);
 
-        optionImpact1Q1.setOption(option1Q1);
-        optionImpact1Q1.setImpact(questionImpact1);
-        optionImpact2Q1.setOption(option2Q1);
-        optionImpact2Q1.setImpact(questionImpact1);
-        optionImpact3Q1.setOption(option3Q1);
-        optionImpact3Q1.setImpact(questionImpact1);
+        optionImpact1Q1.setOptionId(option1Q1.getId());
+        optionImpact1Q1.setQuestionImapctId(questionImpact1.getId());
+        optionImpact2Q1.setOptionId(option2Q1.getId());
+        optionImpact2Q1.setQuestionImapctId(questionImpact1.getId());
+        optionImpact3Q1.setOptionId(option3Q1.getId());
+        optionImpact3Q1.setQuestionImapctId(questionImpact1.getId());
 
         answer2.setAssessmentResultId(result.getId());
         answer2.setQuestionId(question2.getId());
@@ -124,20 +124,20 @@ public class CalculateMaturityLevelServiceContext {
         option2Q2.setQuestion(question2);
         option3Q2.setQuestion(question2);
 
-        optionImpact1Q2.setOption(option1Q2);
-        optionImpact1Q2.setImpact(questionImpact2);
-        optionImpact2Q2.setOption(option2Q2);
-        optionImpact2Q2.setImpact(questionImpact2);
-        optionImpact3Q2.setOption(option3Q2);
-        optionImpact3Q2.setImpact(questionImpact2);
+        optionImpact1Q2.setOptionId(option1Q2.getId());
+        optionImpact1Q2.setQuestionImapctId(questionImpact2.getId());
+        optionImpact2Q2.setOptionId(option2Q2.getId());
+        optionImpact2Q2.setQuestionImapctId(questionImpact2.getId());
+        optionImpact3Q2.setOptionId(option3Q2.getId());
+        optionImpact3Q2.setQuestionImapctId(questionImpact2.getId());
 
         maturityLevel1.setAssessmentKit(kit);
         maturityLevel2.setAssessmentKit(kit);
 
-        levelCompetence1.setMaturityLevel(maturityLevel2);
-        levelCompetence1.setMaturityLevelCompetence(maturityLevel1);
-        levelCompetence2.setMaturityLevel(maturityLevel2);
-        levelCompetence2.setMaturityLevelCompetence(maturityLevel2);
+        levelCompetence1.setMaturityLevelId(maturityLevel2.getId());
+        levelCompetence1.setMaturityLevelCompetenceId(maturityLevel1.getId());
+        levelCompetence2.setMaturityLevelId(maturityLevel2.getId());
+        levelCompetence2.setMaturityLevelCompetenceId(maturityLevel2.getId());
     }
 
 }

@@ -6,5 +6,9 @@ import java.util.Set;
 
 public interface LoadLevelCompetenceByMaturityLevelPort {
 
-    Set<LevelCompetence> loadLevelCompetenceByMaturityLevelId(Long mlId);
+    Result loadLevelCompetenceByMaturityLevelId(Param param);
+
+    record Param(Long maturityLevelId) {}
+
+    record Result(Set<LevelCompetence> levelCompetences) {}
 }

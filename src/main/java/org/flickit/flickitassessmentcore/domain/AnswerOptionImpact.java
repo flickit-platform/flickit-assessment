@@ -14,6 +14,6 @@ import java.math.BigDecimal;
 public class AnswerOptionImpact {
     private Long id;
     private BigDecimal value;
-    private AnswerOption option;
-    private QuestionImpact impact;
+    private Long optionId;
+    private Long questionImapctId;
 }

@@ -155,8 +155,8 @@ public class Utils {
         return new AnswerOptionImpact(
             id,
             value,
-            new AnswerOption(),
-            new QuestionImpact()
+            null,
+            null
         );
     }
 
@@ -172,9 +172,9 @@ public class Utils {
     public static LevelCompetence createLevelCompetence(Long id, int value) {
         return new LevelCompetence(
             id,
-            new MaturityLevel(),
+            null,
             value,
-            new MaturityLevel()
+            null
         );
     }
 
