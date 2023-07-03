@@ -33,6 +33,9 @@ public class AnswerJpaEntity {
     @Column(name = "answer_option_id")
     private Long answerOptionId;
 
+    @Column(name = "is_applicable")
+    private Boolean isApplicable;
+
     @Override
     public String toString() {
         return id.toString();

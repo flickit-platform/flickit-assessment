@@ -9,7 +9,8 @@ public class AnswerMapper {
             null,
             null,
             param.questionId(),
-            param.answerOptionId()
+            param.answerOptionId(),
+            param.isApplicable()
         );
     }
 }
