@@ -9,4 +9,5 @@ interface AnswerIdAndOptionIdView {
 
     Long getAnswerOptionId();
 
+    Boolean getIsApplicable();
 }

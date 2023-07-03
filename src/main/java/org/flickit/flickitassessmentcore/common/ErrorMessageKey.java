@@ -12,6 +12,7 @@ public class ErrorMessageKey {
     public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_NULL = "submit-answer.assessmentResultId.notNull";
     public static final String SUBMIT_ANSWER_QUESTION_ID_NOT_NULL = "submit-answer.questionId.notNull";
     public static final String SUBMIT_ANSWER_IS_APPLICABLE_NOT_NULL = "submit-answer.isApplicable.notNull";
+    public static final String SUBMIT_ANSWER_ANSWER_IS_NOT_APPLICABLE_MESSAGE = "submit-answer.answer-is-not-applicable.message";
 
     public static final String GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL = "get-assessment-list.spaceId.notNull";
     public static final String GET_ASSESSMENT_LIST_SIZE_MIN = "get-assessment-list.size.min";
