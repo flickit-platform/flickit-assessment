@@ -48,6 +48,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="maturity_level_id" type="bigint"/>
+            <column name="last_modification_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
             <column name="is_valid" type="boolean"/>
         </createTable>
     </changeSet>
