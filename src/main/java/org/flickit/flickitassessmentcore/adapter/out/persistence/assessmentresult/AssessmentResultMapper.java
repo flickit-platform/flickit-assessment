@@ -4,6 +4,7 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.Asse
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubjectvalue.AssessmentSubjectValueMapper;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueMapper;
 import org.flickit.flickitassessmentcore.domain.AssessmentResult;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 
 import java.util.stream.Collectors;
 
@@ -28,6 +29,15 @@ public class AssessmentResultMapper {
             assessmentResult.getIsValid(),
             assessmentResult.getQualityAttributeValues().stream().map(QualityAttributeValueMapper::mapToJpaEntity).collect(Collectors.toList()),
             assessmentResult.getAssessmentSubjectValues().stream().map(AssessmentSubjectValueMapper::mapToJpaEntity).collect(Collectors.toList())
+        );
+    }
+
+    public static AssessmentResultJpaEntity mapToJpaEntity(CreateAssessmentResultPort.Param param) {
+        return new AssessmentResultJpaEntity(
+            null,
+            null,
+            null,
+            param.isValid()
         );
     }
 }

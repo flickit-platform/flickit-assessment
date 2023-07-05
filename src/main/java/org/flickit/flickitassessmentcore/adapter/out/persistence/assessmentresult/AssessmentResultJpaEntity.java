@@ -46,5 +46,4 @@ public class AssessmentResultJpaEntity {
     public String toString() {
         return id.toString();
     }
-
 }

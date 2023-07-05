@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,14 +8,14 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.UUID;
 
 @Entity
-@Table(name = "fac_quality_attribute_value")
+@Table(name = "fac_subject_value")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class QualityAttributeValueJpaEntity {
+public class SubjectValueJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -28,8 +28,8 @@ public class QualityAttributeValueJpaEntity {
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 
-    @Column(name = "quality_attribute_id", nullable = false)
-    private Long qualityAttributeId;
+    @Column(name = "subject_id", nullable = false)
+    private Long subjectId;
 
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;

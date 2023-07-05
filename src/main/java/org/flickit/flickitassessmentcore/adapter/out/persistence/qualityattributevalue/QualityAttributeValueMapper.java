@@ -6,6 +6,15 @@ import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
 
 public class QualityAttributeValueMapper {
 
+    public static QualityAttributeValueJpaEntity mapToJpaEntity(Long qualityAttributeId) {
+        return new QualityAttributeValueJpaEntity(
+            null,
+            null,
+            qualityAttributeId,
+            null
+        );
+    }
+
     public static QualityAttributeValue mapToDomainModel(QualityAttributeValueJpaEntity qualityAttributeValueEntity) {
         return new QualityAttributeValue(
             qualityAttributeValueEntity.getId(),

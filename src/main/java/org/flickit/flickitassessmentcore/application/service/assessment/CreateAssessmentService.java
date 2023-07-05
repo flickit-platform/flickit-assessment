@@ -4,6 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectIdsAndQualityAttributeIdsPort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,23 +22,29 @@ import java.util.UUID;
 public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private final CreateAssessmentPort createAssessmentPort;
+    private final CreateAssessmentResultPort createAssessmentResultPort;
+    private final CreateSubjectValuePort createSubjectValuePort;
+    private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
+    private final LoadSubjectIdsAndQualityAttributeIdsPort loadSubjectIdsAndQualityAttributeIdsPort;
 
     @Override
-    public UUID createAssessment(CreateAssessmentCommand command) {
-        CreateAssessmentPort.Param param = toParam(command);
-        return createAssessmentPort.persist(param);
+    public Result createAssessment(Param param) {
+        CreateAssessmentPort.Param portParam = toParam(param);
+        UUID id = createAssessmentPort.persist(portParam);
+        createAssessmentResult(id, portParam.assessmentKitId());
+        return new Result(id);
     }
 
-    private CreateAssessmentPort.Param toParam(CreateAssessmentCommand command) {
-        String code = generateSlugCode(command.getTitle());
+    private CreateAssessmentPort.Param toParam(Param param) {
+        String code = generateSlugCode(param.getTitle());
         LocalDateTime creationTime = LocalDateTime.now();
         LocalDateTime lastModificationTime = LocalDateTime.now();
 
         return new CreateAssessmentPort.Param(
-            command.getTitle(),
-            command.getAssessmentKitId(),
-            getValidColorId(command.getColorId()),
-            command.getSpaceId(),
+            param.getTitle(),
+            param.getAssessmentKitId(),
+            getValidColorId(param.getColorId()),
+            param.getSpaceId(),
             code,
             creationTime,
             lastModificationTime
@@ -51,5 +62,15 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         if (colorId == null || !AssessmentColor.isValidId(colorId))
             return AssessmentColor.getDefault().getId();
         return colorId;
+    }
+
+    private void createAssessmentResult(UUID assessmentId, Long assessmentKitId) {
+        CreateAssessmentResultPort.Param createAssessmentResultParam = new CreateAssessmentResultPort.Param(assessmentId, false);
+        UUID assessmentResultId = createAssessmentResultPort.persist(createAssessmentResultParam);
+
+        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam responseParams =
+            loadSubjectIdsAndQualityAttributeIdsPort.loadByAssessmentKitId(assessmentKitId);
+        createSubjectValuePort.persistAll(responseParams.subjectIds(), assessmentResultId);
+        createQualityAttributeValuePort.persistAll(responseParams.qualityAttributeIds(), assessmentResultId);
     }
 }
