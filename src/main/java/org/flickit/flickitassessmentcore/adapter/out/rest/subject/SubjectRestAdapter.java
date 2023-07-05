@@ -2,7 +2,7 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.subject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.out.subject.LoadAssessmentSubjectIdsAndQualityAttributeIdsPort;
+import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectIdsAndQualityAttributeIdsPort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
