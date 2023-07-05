@@ -2,6 +2,7 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.subject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectIdsAndQualityAttributeIdsPort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
 import org.springframework.core.ParameterizedTypeReference;
@@ -26,14 +27,14 @@ public class SubjectRestAdapter implements LoadSubjectIdsAndQualityAttributeIdsP
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<List<SubjectDto>> responseEntity = flickitPlatformRestTemplate.exchange(
+        ResponseEntity<DataItemsDto<List<SubjectDto>>> responseEntity = flickitPlatformRestTemplate.exchange(
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<List<SubjectDto>>() {
+            new ParameterizedTypeReference<DataItemsDto<List<SubjectDto>>>() {
             }
         );
-        return SubjectMapper.toResponseParam(responseEntity.getBody());
+        return SubjectMapper.toResponseParam(responseEntity.getBody().items());
     }
 
     record SubjectDto(Long id,
