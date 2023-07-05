@@ -37,7 +37,9 @@ public class AssessmentResultMapper {
             null,
             null,
             null,
-            param.isValid()
+            param.isValid(),
+            null,
+            null
         );
     }
 }

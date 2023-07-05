@@ -15,7 +15,6 @@ import java.util.UUID;
 public class AssessmentResult {
     private UUID id;
     private Assessment assessment;
-    private Long maturityLevelId;
     private Boolean isValid;
     private Long maturityLevelId;
     private List<QualityAttributeValue> qualityAttributeValues;
