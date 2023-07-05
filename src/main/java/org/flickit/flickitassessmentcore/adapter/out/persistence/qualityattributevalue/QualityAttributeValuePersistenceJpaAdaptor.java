@@ -17,11 +17,11 @@ public class QualityAttributeValuePersistenceJpaAdaptor implements CreateQuality
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
-    public void persistAllWithAssessmentResultId(List<Param> params, UUID assessmentResultId) {
+    public void persistAll(List<Long> qualityAttributeIds, UUID assessmentResultId) {
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(assessmentResultId).get();
 
-        List<QualityAttributeValueJpaEntity> entities = params.stream().map(param -> {
-            QualityAttributeValueJpaEntity qualityAttributeValue = QualityAttributeValueMapper.mapToJpaEntity(param);
+        List<QualityAttributeValueJpaEntity> entities = qualityAttributeIds.stream().map(qualityAttributeId -> {
+            QualityAttributeValueJpaEntity qualityAttributeValue = QualityAttributeValueMapper.mapToJpaEntity(qualityAttributeId);
             qualityAttributeValue.setAssessmentResult(assessmentResult);
             return qualityAttributeValue;
         }).toList();

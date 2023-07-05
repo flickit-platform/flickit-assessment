@@ -48,7 +48,7 @@ class CreateAssessmentServiceTest {
 
 
     @Test
-    void createAssessment_ValidCommand_PersistsAndReturnsId() {
+    void createAssessment_ValidParam_PersistsAndReturnsId() {
         Param param = new Param(
             1L,
             "title example",
@@ -76,7 +76,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void createAssessment_ValidCommand_PersistsAssessmentResult() {
+    void createAssessment_ValidParam_PersistsAssessmentResult() {
         Param param = new Param(
             1L,
             "title example",
@@ -101,7 +101,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void createAssessment_ValidCommand_PersistsSubjectValues() {
+    void createAssessment_ValidParam_PersistsSubjectValues() {
         Long assessmentKitId = 1L;
         Param param = new Param(
             1L,
@@ -117,7 +117,7 @@ class CreateAssessmentServiceTest {
 
         service.createAssessment(param);
 
-        verify(createSubjectValuePort, times(1)).persistAllWithAssessmentResultId(anyList(), any());
+        verify(createSubjectValuePort, times(1)).persistAll(anyList(), any());
     }
 
     @Test
@@ -137,7 +137,7 @@ class CreateAssessmentServiceTest {
 
         service.createAssessment(param);
 
-        verify(createQualityAttributeValuePort, times(1)).persistAllWithAssessmentResultId(anyList(), any());
+        verify(createQualityAttributeValuePort, times(1)).persistAll(anyList(), any());
     }
 
     @Test

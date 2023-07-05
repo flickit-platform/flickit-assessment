@@ -17,11 +17,11 @@ public class SubjectValuePersistenceJpaAdaptor implements CreateSubjectValuePort
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
-    public void persistAllWithAssessmentResultId(List<Param> params, UUID assessmentResultId) {
+    public void persistAll(List<Long> subjectIds, UUID assessmentResultId) {
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(assessmentResultId).get();
 
-        List<SubjectValueJpaEntity> entities = params.stream().map(param -> {
-            SubjectValueJpaEntity subjectValue = SubjectValueMapper.mapToJpaEntity(param);
+        List<SubjectValueJpaEntity> entities = subjectIds.stream().map(subjectId -> {
+            SubjectValueJpaEntity subjectValue = SubjectValueMapper.mapToJpaEntity(subjectId);
             subjectValue.setAssessmentResult(assessmentResult);
             return subjectValue;
         }).toList();
