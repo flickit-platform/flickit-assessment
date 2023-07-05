@@ -1,20 +1,21 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult;
+package org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
 @Entity
-@Table(name = "fac_assessment_result")
+@Table(name = "fac_subject_value")
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class AssessmentResultJpaEntity {
+public class SubjectValueJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -24,17 +25,12 @@ public class AssessmentResultJpaEntity {
     private UUID id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
-    private AssessmentJpaEntity assessment;
+    @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
+    private AssessmentResultJpaEntity assessmentResult;
+
+    @Column(name = "subject_id", nullable = false)
+    private Long subjectId;
 
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
-
-    @Column(name = "is_valid")
-    private Boolean isValid;
-
-    @Override
-    public String toString() {
-        return id.toString();
-    }
 }
