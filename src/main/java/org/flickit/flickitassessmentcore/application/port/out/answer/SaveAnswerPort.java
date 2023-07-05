@@ -14,6 +14,6 @@ public interface SaveAnswerPort {
     record Param(UUID assessmentResultId,
                  Long questionId,
                  Long answerOptionId,
-                 Boolean isApplicable) {
+                 Boolean isNotApplicable) {
     }
 }

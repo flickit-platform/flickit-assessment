@@ -19,8 +19,8 @@ public class AnswerPersistenceJpaAdaptor implements
     SaveAnswerPort,
     UpdateAnswerOptionPort,
     LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort,
-    LoadAnswerIdAndIsApplicableByAssessmentResultAndQuestionPort,
-    UpdateAnswerIsApplicablePort {
+    LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort,
+    UpdateAnswerIsNotApplicablePort {
 
     private final AnswerJpaRepository repository;
 
@@ -44,17 +44,17 @@ public class AnswerPersistenceJpaAdaptor implements
     @Override
     public Optional<LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort.Result> loadView(UUID assessmentResultId, Long questionId) {
         return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
-            .map(x -> new LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort.Result(x.getId(), x.getAnswerOptionId(), x.getIsApplicable()));
+            .map(x -> new LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort.Result(x.getId(), x.getAnswerOptionId(), x.getIsNotApplicable()));
     }
 
     @Override
-    public void updateAnswerIsApplicableAndRemoveOptionById(UpdateAnswerIsApplicablePort.Param param) {
-        repository.updateIsApplicableAndRemoveOptionIdById(param.id(), param.isApplicable());
+    public void updateAnswerIsNotApplicableAndRemoveOptionById(UpdateAnswerIsNotApplicablePort.Param param) {
+        repository.updateIsNotApplicableAndRemoveOptionIdById(param.id(), param.isNotApplicable());
     }
 
     @Override
-    public Optional<LoadAnswerIdAndIsApplicableByAssessmentResultAndQuestionPort.Result> loadAnswerIdAndIsApplicable(UUID assessmentResultId, Long questionId) {
+    public Optional<LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort.Result> loadAnswerIdAndIsNotApplicable(UUID assessmentResultId, Long questionId) {
         return repository.findByAssessmentResultIdAndQuestionId_(assessmentResultId, questionId)
-            .map(x -> new LoadAnswerIdAndIsApplicableByAssessmentResultAndQuestionPort.Result(x.getId(), x.getIsApplicable()));
+            .map(x -> new LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort.Result(x.getId(), x.getIsNotApplicable()));
     }
 }

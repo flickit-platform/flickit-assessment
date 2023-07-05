@@ -3,9 +3,9 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 
 import java.util.UUID;
 
-interface AnswerIdAndIsApplicableView {
+interface AnswerIdAndIsNotApplicableView {
 
     UUID getId();
 
-    Boolean getIsApplicable();
+    Boolean getIsNotApplicable();
 }

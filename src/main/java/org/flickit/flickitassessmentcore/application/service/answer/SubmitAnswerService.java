@@ -36,7 +36,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private SaveOrUpdateResponse saveOrUpdate(Param param) {
         return loadExistAnswerViewPort.loadView(param.getAssessmentResultId(), param.getQuestionId())
             .map(existAnswer -> {
-                if (!existAnswer.isApplicable())
+                if (existAnswer.isNotApplicable())
                     throw new AnswerSubmissionNotAllowedException(SUBMIT_ANSWER_ANSWER_IS_NOT_APPLICABLE_MESSAGE);
                 if (!Objects.equals(param.getAnswerOptionId(), existAnswer.answerOptionId())) { // answer changed
                     updateAnswerOptionPort.updateAnswerOptionById(toUpdateParam(existAnswer.answerId(), param));

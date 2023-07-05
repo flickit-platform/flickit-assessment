@@ -16,7 +16,7 @@ public class Answer {
     private UUID assessmentResultId;
     private Long questionId;
     private Long optionId;
-    private Boolean isApplicable;
+    private Boolean isNotApplicable;
 
     @Override
     public String toString() {

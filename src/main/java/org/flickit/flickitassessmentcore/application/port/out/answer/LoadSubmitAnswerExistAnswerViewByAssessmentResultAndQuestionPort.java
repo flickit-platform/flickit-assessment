@@ -7,6 +7,6 @@ public interface LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPor
 
     Optional<Result> loadView(UUID assessmentResultId, Long questionId);
 
-    record Result(UUID answerId, Long answerOptionId, Boolean isApplicable) {
+    record Result(UUID answerId, Long answerOptionId, Boolean isNotApplicable) {
     }
 }

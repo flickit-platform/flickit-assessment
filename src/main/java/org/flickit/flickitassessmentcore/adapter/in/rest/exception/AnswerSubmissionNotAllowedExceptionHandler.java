@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.exception;
 
 import org.flickit.flickitassessmentcore.adapter.in.rest.exception.api.ErrorResponseDto;
-import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
+import org.flickit.flickitassessmentcore.application.service.exception.AnswerSubmissionNotAllowedException;
 import org.flickit.flickitassessmentcore.common.MessageBundle;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,9 +15,9 @@ import static org.flickit.flickitassessmentcore.adapter.in.rest.exception.api.Er
 public class AnswerSubmissionNotAllowedExceptionHandler {
 
     @ResponseBody
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler(AnswerSubmissionNotAllowedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErrorResponseDto handle(ResourceNotFoundException ex) {
+    ErrorResponseDto handle(AnswerSubmissionNotAllowedException ex) {
         return new ErrorResponseDto(NOT_ALLOWED, MessageBundle.message(ex.getMessage()));
     }
 }

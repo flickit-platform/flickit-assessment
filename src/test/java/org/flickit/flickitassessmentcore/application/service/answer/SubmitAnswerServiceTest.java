@@ -63,7 +63,7 @@ class SubmitAnswerServiceTest {
         assertEquals(assessmentResultId, saveAnswerParam.getValue().assessmentResultId());
         assertEquals(questionId, saveAnswerParam.getValue().questionId());
         assertEquals(answerOptionId, saveAnswerParam.getValue().answerOptionId());
-        assertEquals(true, saveAnswerParam.getValue().isApplicable());
+        assertEquals(true, saveAnswerParam.getValue().isNotApplicable());
 
         verify(saveAnswerPort, times(1)).persist(any(SaveAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(eq(assessmentResultId));
@@ -95,7 +95,7 @@ class SubmitAnswerServiceTest {
         assertEquals(assessmentResultId, saveAnswerParam.getValue().assessmentResultId());
         assertEquals(questionId, saveAnswerParam.getValue().questionId());
         assertEquals(answerOptionId, saveAnswerParam.getValue().answerOptionId());
-        assertEquals(true, saveAnswerParam.getValue().isApplicable());
+        assertEquals(true, saveAnswerParam.getValue().isNotApplicable());
 
         verify(saveAnswerPort, times(1)).persist(any(SaveAnswerPort.Param.class));
         verifyNoInteractions(
@@ -119,7 +119,7 @@ class SubmitAnswerServiceTest {
         Optional<Result> existAnswer = Optional.of(new Result(
             existAnswerId,
             oldAnswerOptionId,
-            true
+            false
         ));
         assertNotEquals(oldAnswerOptionId, newAnswerOptionId);
 
@@ -154,7 +154,7 @@ class SubmitAnswerServiceTest {
         Optional<Result> existAnswer = Optional.of(new Result(
             existAnswerId,
             sameAnswerOptionId,
-            true
+            false
         ));
         when(loadExistAnswerViewPort.loadView(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
 
@@ -169,7 +169,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void submitAnswer_AnswerIsNotApplicableExist_throwException() {
+    void submitAnswer_NotApplicableAnswerExist_throwException() {
         UUID assessmentResultId = UUID.randomUUID();
         Long questionId = 1L;
         Long optionId = 2L;
@@ -182,7 +182,7 @@ class SubmitAnswerServiceTest {
         Optional<Result> existAnswer = Optional.of(new Result(
             existAnswerId,
             null,
-            false
+            true
         ));
         when(loadExistAnswerViewPort.loadView(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
 

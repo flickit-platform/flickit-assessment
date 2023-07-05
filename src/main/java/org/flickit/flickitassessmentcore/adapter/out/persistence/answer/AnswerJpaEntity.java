@@ -33,8 +33,8 @@ public class AnswerJpaEntity {
     @Column(name = "answer_option_id")
     private Long answerOptionId;
 
-    @Column(name = "is_applicable")
-    private Boolean isApplicable;
+    @Column(name = "is_not_applicable")
+    private Boolean isNotApplicable;
 
     @Override
     public String toString() {

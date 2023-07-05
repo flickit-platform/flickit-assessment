@@ -1,10 +1,10 @@
 package org.flickit.flickitassessmentcore.application.service.answer;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerIsApplicableUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndIsApplicableByAssessmentResultAndQuestionPort;
+import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerIsNotApplicableUseCase;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerIsApplicablePort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerIsNotApplicablePort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,15 +15,15 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class SubmitAnswerIsApplicableService implements SubmitAnswerIsApplicableUseCase {
+public class SubmitAnswerIsNotApplicableService implements SubmitAnswerIsNotApplicableUseCase {
 
     private final SaveAnswerPort saveAnswerPort;
-    private final UpdateAnswerIsApplicablePort updateAnswerIsApplicablePort;
-    private final LoadAnswerIdAndIsApplicableByAssessmentResultAndQuestionPort loadAnswerIdAndIsApplicablePort;
+    private final UpdateAnswerIsNotApplicablePort updateAnswerIsNotApplicablePort;
+    private final LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort loadAnswerIdAndIsNotApplicablePort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
     @Override
-    public Result submitAnswerIsApplicable(Param param) {
+    public Result submitAnswerIsNotApplicable(Param param) {
         SaveOrUpdateResponse response = saveOrUpdate(param);
         if (response.hasChanged())
             invalidateAssessmentResultPort.invalidateById(param.getAssessmentResultId());
@@ -31,19 +31,16 @@ public class SubmitAnswerIsApplicableService implements SubmitAnswerIsApplicable
     }
 
     private SaveOrUpdateResponse saveOrUpdate(Param param) {
-        return loadAnswerIdAndIsApplicablePort.loadAnswerIdAndIsApplicable(param.getAssessmentResultId(), param.getQuestionId())
+        return loadAnswerIdAndIsNotApplicablePort.loadAnswerIdAndIsNotApplicable(param.getAssessmentResultId(), param.getQuestionId())
             .map(existAnswer -> {
-                if (!Objects.equals(existAnswer.isApplicable(), param.getIsApplicable())) { // answer changed
-                    updateAnswerIsApplicablePort.updateAnswerIsApplicableAndRemoveOptionById(toUpdateParam(existAnswer.id(), param));
+                if (!Objects.equals(existAnswer.isNotApplicable(), param.getIsNotApplicable())) { // answer changed
+                    updateAnswerIsNotApplicablePort.updateAnswerIsNotApplicableAndRemoveOptionById(toUpdateParam(existAnswer.id(), param));
                     return new SaveOrUpdateResponse(true, existAnswer.id());
                 }
                 return new SaveOrUpdateResponse(false, existAnswer.id());
             }).orElseGet(() -> {
                 UUID saveAnswerId = saveAnswerPort.persist(toSaveParam(param));
-                // hasChanged is false
-                // the not applicable answer doesn't affect the assessment result validation
-                // the applicable answer, optionId is null
-                return new SaveOrUpdateResponse(false, saveAnswerId);
+                return new SaveOrUpdateResponse(true, saveAnswerId);
             });
     }
 
@@ -52,12 +49,12 @@ public class SubmitAnswerIsApplicableService implements SubmitAnswerIsApplicable
             param.getAssessmentResultId(),
             param.getQuestionId(),
             null,
-            param.getIsApplicable()
+            param.getIsNotApplicable()
         );
     }
 
-    private UpdateAnswerIsApplicablePort.Param toUpdateParam(UUID id, Param param) {
-        return new UpdateAnswerIsApplicablePort.Param(id, param.getIsApplicable());
+    private UpdateAnswerIsNotApplicablePort.Param toUpdateParam(UUID id, Param param) {
+        return new UpdateAnswerIsNotApplicablePort.Param(id, param.getIsNotApplicable());
     }
 
     record SaveOrUpdateResponse(boolean hasChanged, UUID answerId) {
