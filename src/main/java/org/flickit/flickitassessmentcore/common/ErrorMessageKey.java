@@ -17,4 +17,13 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_LIST_SIZE_MIN = "get-assessment-list.size.min";
     public static final String GET_ASSESSMENT_LIST_SIZE_MAX = "get-assessment-list.size.max";
     public static final String GET_ASSESSMENT_LIST_PAGE_MIN = "get-assessment-list.page.min";
+
+    public static final String EDIT_ASSESSMENT_ASSESSMENT_NOT_FOUND = "edit-assessment.assessment.notFound";
+    public static final String EDIT_ASSESSMENT_ID_NOT_NULL = "edit-assessment.id.notNull";
+    public static final String EDIT_ASSESSMENT_TITLE_NOT_BLANK = "edit-assessment.title.notBlank";
+    public static final String EDIT_ASSESSMENT_TITLE_SIZE_MIN = "edit-assessment.title.min";
+    public static final String EDIT_ASSESSMENT_TITLE_SIZE_MAX = "edit-assessment.title.max";
+    public static final String EDIT_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL = "edit-assessment.assessment-kit-id.notNull";
+    public static final String EDIT_ASSESSMENT_COLOR_ID_NOT_NULL = "edit-assessment.color-id.notNull";
+
 }
