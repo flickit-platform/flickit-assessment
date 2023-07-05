@@ -1,8 +1,8 @@
-package org.flickit.flickitassessmentcore.adapter.out.rest.assessmentsubject;
+package org.flickit.flickitassessmentcore.adapter.out.rest.subject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectIdsAndQualityAttributeIdsPort;
+import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectIdsAndQualityAttributeIdsPort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
-public class AssessmentSubjectRestAdapter implements LoadAssessmentSubjectIdsAndQualityAttributeIdsPort {
+public class SubjectRestAdapter implements LoadSubjectIdsAndQualityAttributeIdsPort {
 
     @Value("${flickit-platform.host}")
     private String flickitPlatformHost;
@@ -34,18 +34,18 @@ public class AssessmentSubjectRestAdapter implements LoadAssessmentSubjectIdsAnd
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<List<AssessmentSubjectDto>> responseEntity = restTemplate.exchange(
+        ResponseEntity<List<SubjectDto>> responseEntity = restTemplate.exchange(
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<List<AssessmentSubjectDto>>() {
+            new ParameterizedTypeReference<List<SubjectDto>>() {
             }
         );
-        return AssessmentSubjectMapper.toResponseParam(responseEntity.getBody());
+        return SubjectMapper.toResponseParam(responseEntity.getBody());
     }
 
-    record AssessmentSubjectDto(Long id,
-                                @JsonProperty("quality_attributes") List<QualityAttributeDto> qualityAttributes) {
+    record SubjectDto(Long id,
+                      @JsonProperty("quality_attributes") List<QualityAttributeDto> qualityAttributes) {
     }
 
     record QualityAttributeDto(Long id, Integer weight) {

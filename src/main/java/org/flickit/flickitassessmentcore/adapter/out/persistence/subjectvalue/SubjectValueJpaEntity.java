@@ -28,8 +28,8 @@ public class SubjectValueJpaEntity {
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 
-    @Column(name = "assessment_subject_id", nullable = false)
-    private Long assessmentSubjectId;
+    @Column(name = "subject_id", nullable = false)
+    private Long subjectId;
 
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;

@@ -8,7 +8,7 @@ public class SubjectValueMapper {
         return new SubjectValueJpaEntity(
             null,
             null,
-            param.assessmentSubjectId(),
+            param.subjectId(),
             null
         );
     }

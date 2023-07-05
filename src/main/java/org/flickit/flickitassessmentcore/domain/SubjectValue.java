@@ -14,7 +14,7 @@ import java.util.UUID;
 public class SubjectValue {
     private UUID id;
     private AssessmentResult assessmentResult;
-    private Long assessmentSubjectId;
+    private Long subjectId;
     private Long maturityLevelId;
 
     @Override

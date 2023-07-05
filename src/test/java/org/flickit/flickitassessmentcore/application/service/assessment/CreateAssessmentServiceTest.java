@@ -5,7 +5,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAs
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase.Param;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentsubject.LoadAssessmentSubjectIdsAndQualityAttributeIdsPort;
+import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectIdsAndQualityAttributeIdsPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class CreateAssessmentServiceTest {
     private CreateAssessmentResultPort createAssessmentResultPort;
 
     @Mock
-    private LoadAssessmentSubjectIdsAndQualityAttributeIdsPort loadASIdsAndQAIdsPort;
+    private LoadSubjectIdsAndQualityAttributeIdsPort loadASIdsAndQAIdsPort;
 
     @Mock
     private CreateSubjectValuePort createSubjectValuePort;
@@ -57,8 +57,8 @@ class CreateAssessmentServiceTest {
         );
         UUID expectedId = UUID.randomUUID();
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
-        LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
+        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
+            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
@@ -87,8 +87,8 @@ class CreateAssessmentServiceTest {
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(assessmentId);
         UUID expectedResultId = UUID.randomUUID();
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(expectedResultId);
-        LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
+        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
+            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
 
         service.createAssessment(param);
@@ -101,7 +101,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void createAssessment_ValidCommand_PersistsAssessmentSubjectValues() {
+    void createAssessment_ValidCommand_PersistsSubjectValues() {
         Long assessmentKitId = 1L;
         Param param = new Param(
             1L,
@@ -109,10 +109,10 @@ class CreateAssessmentServiceTest {
             assessmentKitId,
             1
         );
-        List<Long> expectedAssessmentSubjectIds = Arrays.asList(1L, 2L, 3L);
+        List<Long> expectedSubjectIds = Arrays.asList(1L, 2L, 3L);
         List<Long> expectedQualityAttributeIds = Arrays.asList(1L, 2L, 3L, 4L, 5L);
-        LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(expectedAssessmentSubjectIds, expectedQualityAttributeIds);
+        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
+            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(expectedSubjectIds, expectedQualityAttributeIds);
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedResponseParam);
 
         service.createAssessment(param);
@@ -129,10 +129,10 @@ class CreateAssessmentServiceTest {
             assessmentKitId,
             1
         );
-        List<Long> expectedAssessmentSubjectIds = Arrays.asList(1L, 2L, 3L);
+        List<Long> expectedSubjectIds = Arrays.asList(1L, 2L, 3L);
         List<Long> expectedQualityAttributeIds = Arrays.asList(1L, 2L, 3L, 4L, 5L);
-        LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(expectedAssessmentSubjectIds, expectedQualityAttributeIds);
+        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
+            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(expectedSubjectIds, expectedQualityAttributeIds);
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedResponseParam);
 
         service.createAssessment(param);
@@ -148,8 +148,8 @@ class CreateAssessmentServiceTest {
             1L,
             null
         );
-        LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
+        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
+            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
 
         service.createAssessment(param);
@@ -168,8 +168,8 @@ class CreateAssessmentServiceTest {
             1L,
             7
         );
-        LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadAssessmentSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
+        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
+            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
         when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
 
         service.createAssessment(param);

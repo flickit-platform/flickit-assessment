@@ -21,9 +21,9 @@ public class SubjectValuePersistenceJpaAdaptor implements CreateSubjectValuePort
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(assessmentResultId).get();
 
         List<SubjectValueJpaEntity> entities = params.stream().map(param -> {
-            SubjectValueJpaEntity assessmentSubjectValue = SubjectValueMapper.mapToJpaEntity(param);
-            assessmentSubjectValue.setAssessmentResult(assessmentResult);
-            return assessmentSubjectValue;
+            SubjectValueJpaEntity subjectValue = SubjectValueMapper.mapToJpaEntity(param);
+            subjectValue.setAssessmentResult(assessmentResult);
+            return subjectValue;
         }).toList();
 
         repository.saveAll(entities);

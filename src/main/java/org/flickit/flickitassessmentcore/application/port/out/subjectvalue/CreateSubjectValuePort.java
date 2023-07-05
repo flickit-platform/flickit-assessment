@@ -7,6 +7,6 @@ public interface CreateSubjectValuePort {
 
     void persistAllWithAssessmentResultId(List<Param> params, UUID assessmentResultId);
 
-    record Param(Long assessmentSubjectId) {
+    record Param(Long subjectId) {
     }
 }
