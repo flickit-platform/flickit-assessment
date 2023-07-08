@@ -123,7 +123,7 @@
 			"response": []
 		},
 		{
-			"name": "Create Evidence",
+			"name": "Add Evidence",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
 			},
@@ -139,7 +139,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"description\": \"description\",\n    \"createdById\": 1\n}",
+					"raw": "{\n    \"description\": \"description\",\n    \"createdById\": 1,\n    \"assessmentId\": \"3b39ed16-9478-464f-a295-955f69f89ec2\",\n    \"questionId\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -147,23 +147,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/evidences?assessmentId=a0cde4b5-658a-456c-a19c-cbe5d440e046&questionId=1",
+					"raw": "{{base_url}}/{{api_path}}/evidences",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
 						"evidences"
-					],
-					"query": [
-						{
-							"key": "assessmentId",
-							"value": "a0cde4b5-658a-456c-a19c-cbe5d440e046"
-						},
-						{
-							"key": "questionId",
-							"value": "1"
-						}
 					]
 				}
 			},

@@ -5,22 +5,21 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
-import org.flickit.flickitassessmentcore.domain.Evidence;
 
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
-public interface CreateEvidenceUseCase {
+public interface AddEvidenceUseCase {
 
-    Result createEvidence(Param param);
+    Result addEvidence(Param param);
 
     @Value
     class Param extends SelfValidating<Param> {
 
         @NotBlank(message = ADD_EVIDENCE_DESC_NOT_BLANK)
         @Size(min = 3, message = ADD_EVIDENCE_DESC_SIZE_MIN)
-        @Size(max = 100, message = ADD_EVIDENCE_DESC_SIZE_MAX)
+        @Size(max = 1000, message = ADD_EVIDENCE_DESC_SIZE_MAX)
         String description;
 
         @NotNull(message = ADD_EVIDENCE_CREATED_BY_ID_NOT_NULL)
@@ -41,5 +40,5 @@ public interface CreateEvidenceUseCase {
         }
     }
 
-    record Result(Evidence evidence){}
+    record Result(UUID id){}
 }
