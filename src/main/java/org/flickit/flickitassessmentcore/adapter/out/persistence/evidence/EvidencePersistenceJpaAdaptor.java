@@ -2,10 +2,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.AddEvidencePort;
-import org.flickit.flickitassessmentcore.domain.Evidence;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
