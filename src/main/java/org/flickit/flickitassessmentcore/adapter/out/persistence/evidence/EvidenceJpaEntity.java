@@ -29,7 +29,7 @@ public class EvidenceJpaEntity {
     private LocalDateTime creationTime;
 
     @Column(name = "last_modification_time", nullable = false)
-    private LocalDateTime lastModificationDate;
+    private LocalDateTime lastModificationTime;
 
     @Column(name = "created_by_id", nullable = false)
     private Long createdById;

@@ -25,7 +25,7 @@ public class EvidenceMapper {
             entity.getId(),
             entity.getDescription(),
             entity.getCreationTime(),
-            entity.getLastModificationDate(),
+            entity.getLastModificationTime(),
             entity.getCreatedById(),
             entity.getAssessmentId(),
             entity.getQuestionId()
