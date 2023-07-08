@@ -1,6 +1,8 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.levelcompetence;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.application.port.out.levelcompetence.LoadLevelCompetenceByMaturityLevelPort;
 import org.flickit.flickitassessmentcore.domain.LevelCompetence;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +21,10 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class LevelCompetencePersistenceJpaAdapter implements LoadLevelCompetenceByMaturityLevelPort {
 
-    @Value("${flickit-platform.host}")
+    @Value("${app.flickit-platform.rest.base-url}")
     private String flickitPlatformHost;
 
     @Override
@@ -31,20 +34,23 @@ public class LevelCompetencePersistenceJpaAdapter implements LoadLevelCompetence
             .setReadTimeout(Duration.ofSeconds(10))
             .messageConverters(new MappingJackson2HttpMessageConverter());
         RestTemplate restTemplate = restTemplateBuilder.build();
-        String url = String.format("%s/api/internal/maturitylevel/%d/levelcompetence", flickitPlatformHost, param.maturityLevelId());
+        String url = String.format("%s/api/internal/maturity-level/%d/level-competences", flickitPlatformHost, param.maturityLevelId());
+        log.warn(url);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<List<LevelCompetenceDto>> responseEntity = restTemplate.exchange(
+        ResponseEntity<ResponseDto> responseEntity = restTemplate.exchange(
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<List<LevelCompetenceDto>>() {
+            new ParameterizedTypeReference<ResponseDto>() {
             }
         );
-        return LevelCompetenceMapper.toResult(responseEntity.getBody());
+        return LevelCompetenceMapper.toResult(responseEntity.getBody().items);
     }
+
+    record ResponseDto(@JsonProperty("items") List<LevelCompetenceDto> items) {}
 
     record LevelCompetenceDto(Long id,
                               Long maturityLevelId,

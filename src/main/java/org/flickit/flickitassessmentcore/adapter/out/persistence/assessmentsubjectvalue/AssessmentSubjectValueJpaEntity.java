@@ -11,7 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.UUID;
 
 @Entity
-@Table(name = "assessment_assessmentsubjectvalue")
+@Table(name = "fac_subject_value")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,8 +25,8 @@ public class AssessmentSubjectValueJpaEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
-    @Column(name = "assessment_subject_id", nullable = false)
-    private Long assessmentSubjectId;
+    @Column(name = "subject_id", nullable = false)
+    private Long subjectId;
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
 

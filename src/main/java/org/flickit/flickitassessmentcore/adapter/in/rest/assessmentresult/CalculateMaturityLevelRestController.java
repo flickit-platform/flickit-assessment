@@ -16,7 +16,6 @@ public class CalculateMaturityLevelRestController {
 
     private final CalculateMaturityLevelUseCase useCase;
 
-
     @PostMapping("{assessmentId}/assessment-result")
     public ResponseEntity<CalculateMaturityLevelResponseDto> calculateMaturityLevel(
         @PathVariable("assessmentId") UUID assessmentId) {

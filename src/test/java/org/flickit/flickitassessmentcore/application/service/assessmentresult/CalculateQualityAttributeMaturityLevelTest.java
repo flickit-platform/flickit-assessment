@@ -51,7 +51,7 @@ public class CalculateQualityAttributeMaturityLevelTest {
     void calculateQualityAttributeMaturityLevel_Option2ForQuestion1AndOption1ForQuestion2_MaturityLevel2() {
         doMocks();
         // It is possible that sometimes this test doesn't pass, because mocks haven't been applied before service call.
-        MaturityLevel maturityLevel = service.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute());
+        MaturityLevel maturityLevel = service.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute(), context.getKit().getId());
         assertEquals(2, maturityLevel.getValue());
     }
 
@@ -59,7 +59,7 @@ public class CalculateQualityAttributeMaturityLevelTest {
     void calculateQualityAttributeMaturityLevel_Option2ForQuestion1AndOption1ForQuestion2With0Impact_MaturityLevel1() {
         context.getOptionImpact1Q2().setValue(new BigDecimal(0));
         doMocks();
-        MaturityLevel maturityLevel = service.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute());
+        MaturityLevel maturityLevel = service.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute(), context.getKit().getId());
         assertEquals(1, maturityLevel.getValue());
         // Return to former state
         context.getOptionImpact1Q2().setValue(ANSWER_OPTION_IMPACT_VALUE4);
@@ -72,7 +72,7 @@ public class CalculateQualityAttributeMaturityLevelTest {
         when(loadQuestionsByQAId.loadQuestionsByQualityAttributeId(any())).thenReturn(new LoadQuestionsByQualityAttributePort.Result(Set.of(context.getQuestion1(), context.getQuestion2())));
         when(loadAnswersByResult.loadAnswersByResultId(context.getResult().getId())).thenReturn(Set.of(context.getAnswer1(), context.getAnswer2()));
         assertThrows(ResourceNotFoundException.class,
-            () -> service.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute()),
+            () -> service.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute(), context.getKit().getId()),
             CALCULATE_MATURITY_LEVEL_ANSWER_NOT_FOUND_MESSAGE);
         // Return to former state
         context.getAnswer2().setQuestionId(context.getQuestion2().getId());

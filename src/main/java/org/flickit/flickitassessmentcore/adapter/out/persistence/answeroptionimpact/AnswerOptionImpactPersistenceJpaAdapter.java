@@ -1,6 +1,8 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.answeroptionimpact;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionPort;
 import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +21,10 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class AnswerOptionImpactPersistenceJpaAdapter implements LoadAnswerOptionImpactsByAnswerOptionPort {
 
-    @Value("${flickit-platform.host}")
+    @Value("${app.flickit-platform.rest.base-url}")
     private String flickitPlatformHost;
 
     @Override
@@ -31,20 +34,23 @@ public class AnswerOptionImpactPersistenceJpaAdapter implements LoadAnswerOption
             .setReadTimeout(Duration.ofSeconds(10))
             .messageConverters(new MappingJackson2HttpMessageConverter());
         RestTemplate restTemplate = restTemplateBuilder.build();
-        String url = String.format("%s/api/internal/answertemplate/%d/optionvalue", flickitPlatformHost, param.answerOptionId());
+        String url = String.format("%s/api/internal/questionimpact/%d", flickitPlatformHost, param.answerOptionId());
+        log.warn(url);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<List<AnswerOptionImpactDto>> responseEntity = restTemplate.exchange(
+        ResponseEntity<ResponseDto> responseEntity = restTemplate.exchange(
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<List<AnswerOptionImpactDto>>() {
+            new ParameterizedTypeReference<ResponseDto>() {
             }
         );
-        return AnswerOptionImpactMapper.toResult(responseEntity.getBody());
+        return AnswerOptionImpactMapper.toResult(responseEntity.getBody().items());
     }
+
+    record ResponseDto(@JsonProperty("items") List<AnswerOptionImpactDto> items) {}
 
     record AnswerOptionImpactDto(Long id,
                                  Long optionId,

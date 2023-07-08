@@ -51,7 +51,8 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
             for (QualityAttributeValue qualityAttributeValue : qualityAttributeValues) {
                 MaturityLevel qualityAttributeValueMaturityLevel = calculateQualityAttributeMaturityLevel.calculateQualityAttributeMaturityLevel(
                     result,
-                    qualityAttributeValue.getQualityAttribute()
+                    qualityAttributeValue.getQualityAttribute(),
+                    assessment.getAssessmentKitId()
                 );
                 qualityAttributeValue.setMaturityLevel(qualityAttributeValueMaturityLevel);
                 saveQualityAttributeValue.saveQualityAttributeValue(qualityAttributeValue);

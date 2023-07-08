@@ -73,7 +73,7 @@ public class CalculateMaturityLevelServiceTest {
     private void doMocks() {
         when(loadAssessment.loadAssessment(context.getAssessment().getId())).thenReturn(context.getAssessment());
         when(loadAssessmentResultByAssessment.loadAssessmentResultByAssessmentId(context.getAssessment().getId())).thenReturn(Set.of(context.getResult()));
-        when(calculateQualityAttributeMaturityLevel.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute())).thenReturn(context.getQualityAttributeValue().getMaturityLevel());
+        when(calculateQualityAttributeMaturityLevel.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute(), context.getKit().getId())).thenReturn(context.getQualityAttributeValue().getMaturityLevel());
         when(calculateAssessmentSubjectMaturityLevel.calculateAssessmentSubjectMaturityLevel(any(), eq(context.getKit().getId()))).thenReturn(context.getSubjectValue().getMaturityLevel());
         when(saveAssessmentResult.saveAssessmentResult(context.getResult())).thenReturn(context.getResult());
         doNothing().when(saveQualityAttributeValue).saveQualityAttributeValue(any());

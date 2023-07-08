@@ -9,7 +9,7 @@ public class AssessmentSubjectValueMapper {
     public static AssessmentSubjectValue mapToDomainModel(AssessmentSubjectValueJpaEntity qualityAttributeValueEntity) {
         return new AssessmentSubjectValue(
             qualityAttributeValueEntity.getId(),
-            new AssessmentSubject(qualityAttributeValueEntity.getAssessmentSubjectId()),
+            new AssessmentSubject(qualityAttributeValueEntity.getSubjectId()),
             new MaturityLevel(qualityAttributeValueEntity.getMaturityLevelId())
         );
     }

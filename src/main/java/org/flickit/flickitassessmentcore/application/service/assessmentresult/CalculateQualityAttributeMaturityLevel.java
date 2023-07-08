@@ -9,8 +9,6 @@ import org.flickit.flickitassessmentcore.application.port.out.levelcompetence.Lo
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.flickitassessmentcore.application.port.out.question.LoadQuestionsByQualityAttributePort;
 import org.flickit.flickitassessmentcore.application.port.out.questionImpact.LoadQuestionImpactPort;
-import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.common.ErrorMessageKey;
 import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +27,7 @@ public class CalculateQualityAttributeMaturityLevel {
     private final LoadLevelCompetenceByMaturityLevelPort loadLevelCompetenceByMaturityLevel;
     private final LoadQuestionImpactPort loadQuestionImpact;
 
-    public MaturityLevel calculateQualityAttributeMaturityLevel(AssessmentResult assessmentResult, QualityAttribute qualityAttribute) {
+    public MaturityLevel calculateQualityAttributeMaturityLevel(AssessmentResult assessmentResult, QualityAttribute qualityAttribute, Long assessmentKitId) {
         Set<Question> questions = loadQuestionsByQAId.loadQuestionsByQualityAttributeId(new LoadQuestionsByQualityAttributePort.Param(qualityAttribute.getId())).questions();
         Map<Long, Integer> maturityLevelValueSumMap = new HashMap<>();
         Map<Long, Integer> maturityLevelValueCountMap = new HashMap<>();
@@ -62,7 +60,7 @@ public class CalculateQualityAttributeMaturityLevel {
         }
         List<MaturityLevel> maturityLevels = new ArrayList<>(loadMaturityLevelByKit.loadMaturityLevelByKitId(
             new LoadMaturityLevelByKitPort.Param(
-                qualityAttribute.getAssessmentSubject().getAssessmentKit().getId()))
+                assessmentKitId))
             .maturityLevels());
         MaturityLevel qualityAttMaturityLevel = findMaturityLevelBasedOnCalculations(qualityAttributeImpactScoreMap, maturityLevels);
 
@@ -76,7 +74,8 @@ public class CalculateQualityAttributeMaturityLevel {
                 return answer.getOptionId();
             }
         }
-        throw new ResourceNotFoundException(ErrorMessageKey.CALCULATE_MATURITY_LEVEL_ANSWER_NOT_FOUND_MESSAGE);
+        return null;
+//        throw new ResourceNotFoundException(ErrorMessageKey.CALCULATE_MATURITY_LEVEL_ANSWER_NOT_FOUND_MESSAGE);
     }
 
     /**
