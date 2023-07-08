@@ -1,9 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 
-import org.flickit.flickitassessmentcore.adapter.in.rest.evidence.AddEvidenceRequestDto;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.AddEvidenceUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.AddEvidencePort;
-import org.flickit.flickitassessmentcore.domain.Assessment;
 import org.flickit.flickitassessmentcore.domain.Evidence;
 
 import java.time.LocalDateTime;
@@ -52,15 +50,6 @@ public class EvidenceMapper {
             param.createdById(),
             param.assessmentId(),
             param.questionId()
-        );
-    }
-
-    public static AddEvidenceUseCase.Param toAddEvidenceUseCaseParam(AddEvidenceRequestDto request) {
-        return new AddEvidenceUseCase.Param(
-            request.description(),
-            request.createdById(),
-            request.assessmentId(),
-            request.questionId()
         );
     }
 }
