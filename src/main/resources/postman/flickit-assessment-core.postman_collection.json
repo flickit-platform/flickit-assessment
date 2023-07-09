@@ -34,6 +34,25 @@
 			"response": []
 		},
 		{
+			"name": "Remove Assessment",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/{{assessment_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"{{assessment_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Assessment Colors",
 			"request": {
 				"method": "GET",
@@ -138,6 +157,10 @@
 			"key": "assessment_result_id",
 			"value": "f74ae115-df83-4cfe-be63-2f64d1c2fe72",
 			"type": "string"
+		},
+		{
+			"key": "assessment_id",
+			"value": "cc16cb10-37f1-4bbe-adf2-b7b52a19649f"
 		}
 	]
 }

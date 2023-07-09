@@ -18,4 +18,6 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_LIST_SIZE_MIN = "get-assessment-list.size.min";
     public static final String GET_ASSESSMENT_LIST_SIZE_MAX = "get-assessment-list.size.max";
     public static final String GET_ASSESSMENT_LIST_PAGE_MIN = "get-assessment-list.page.min";
+
+    public static final String REMOVE_ASSESSMENT_ID_NOT_NULL = "remove-assessment.assessmentId.notNull";
 }
