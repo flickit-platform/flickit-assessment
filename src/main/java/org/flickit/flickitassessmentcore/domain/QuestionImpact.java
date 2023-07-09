@@ -10,10 +10,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class QuestionImpact {
+
     private Long id;
+
     private Integer level;
-    private MaturityLevel maturityLevel;
+
+    private Long maturityLevelId;
+
     private Question question;
-    private QualityAttribute qualityAttribute;
+
+    private Long qualityAttributeId;
+
     private Integer weight;
 }

@@ -92,8 +92,10 @@ public class CalculateQualityAttributeMaturityLevelTest {
             .thenReturn(new LoadLevelCompetenceByMaturityLevelPort.Result(new HashSet<>()));
         when(loadLevelCompetenceByMaturityLevel.loadLevelCompetenceByMaturityLevelId(new LoadLevelCompetenceByMaturityLevelPort.Param(context.getMaturityLevel2().getId())))
             .thenReturn(new LoadLevelCompetenceByMaturityLevelPort.Result(Set.of(context.getLevelCompetence1(), context.getLevelCompetence2())));
-        when(loadQuestionImpact.loadQuestionImpact(context.getQuestionImpact1().getId())).thenReturn(context.getQuestionImpact1());
-        when(loadQuestionImpact.loadQuestionImpact(context.getQuestionImpact2().getId())).thenReturn(context.getQuestionImpact2());
+        when(loadQuestionImpact.loadQuestionImpact(new LoadQuestionImpactPort.Param(context.getQuestionImpact1().getId())))
+            .thenReturn(new LoadQuestionImpactPort.Result(context.getQuestionImpact1()));
+        when(loadQuestionImpact.loadQuestionImpact(new LoadQuestionImpactPort.Param(context.getQuestionImpact2().getId())))
+            .thenReturn(new LoadQuestionImpactPort.Result(context.getQuestionImpact2()));
     }
 
 

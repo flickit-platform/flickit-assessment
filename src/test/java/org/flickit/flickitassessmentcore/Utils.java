@@ -125,9 +125,9 @@ public class Utils {
         return new QuestionImpact(
             id,
             level,
-            new MaturityLevel(),
+            null,
             new Question(),
-            new QualityAttribute(),
+            null,
             weight
         );
     }

@@ -12,6 +12,7 @@ import org.flickit.flickitassessmentcore.application.port.out.questionImpact.Loa
 import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Component;
 
+import java.math.RoundingMode;
 import java.util.*;
 
 @Transactional
@@ -41,9 +42,9 @@ public class CalculateQualityAttributeMaturityLevel {
                         for (AnswerOptionImpact impact : answerOptionImpacts) {
                             if (impact.getOptionId().equals(questionAnswerId)) {
                                 Long questionImpactId = impact.getQuestionImapctId();
-                                QuestionImpact questionImpact = loadQuestionImpact.loadQuestionImpact(questionImpactId);
-                                Integer value = impact.getValue().intValueExact() * questionImpact.getWeight();
-                                Long maturityLevelId = questionImpact.getMaturityLevel().getId();
+                                QuestionImpact questionImpact = loadQuestionImpact.loadQuestionImpact(new LoadQuestionImpactPort.Param(questionImpactId)).questionImpact();
+                                Integer value = impact.getValue().setScale(0, RoundingMode.HALF_UP).intValue() * questionImpact.getWeight();
+                                Long maturityLevelId = questionImpact.getMaturityLevelId();
                                 log.debug("Question: [{}] with Option: [{}] as answer, has value: [{}], on ml: [{}]",
                                     question.getTitle(), questionAnswerId, value, maturityLevelId);
                                 maturityLevelValueSumMap.put(maturityLevelId, maturityLevelValueSumMap.getOrDefault(maturityLevelId, 0) + value);

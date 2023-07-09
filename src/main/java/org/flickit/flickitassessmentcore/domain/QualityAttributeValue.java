@@ -12,8 +12,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class QualityAttributeValue {
+
     private UUID id;
+
     private QualityAttribute qualityAttribute;
+
     private MaturityLevel maturityLevel;
 
     @Override

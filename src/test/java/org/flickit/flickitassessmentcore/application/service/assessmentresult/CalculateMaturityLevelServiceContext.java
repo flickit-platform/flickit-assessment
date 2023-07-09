@@ -97,9 +97,9 @@ public class CalculateMaturityLevelServiceContext {
         question2.getQualityAttributes().add(qualityAttribute);
 
         questionImpact1.setQuestion(question1);
-        questionImpact1.setMaturityLevel(maturityLevel1);
+        questionImpact1.setMaturityLevelId(maturityLevel1.getId());
         questionImpact2.setQuestion(question2);
-        questionImpact2.setMaturityLevel(maturityLevel2);
+        questionImpact2.setMaturityLevelId(maturityLevel2.getId());
 
         answer1.setAssessmentResultId(result.getId());
         answer1.setQuestionId(question1.getId());

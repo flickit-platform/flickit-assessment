@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionPort;
-import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,7 +16,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
@@ -34,7 +32,7 @@ public class AnswerOptionImpactPersistenceJpaAdapter implements LoadAnswerOption
             .setReadTimeout(Duration.ofSeconds(10))
             .messageConverters(new MappingJackson2HttpMessageConverter());
         RestTemplate restTemplate = restTemplateBuilder.build();
-        String url = String.format("%s/api/internal/questionimpact/%d", flickitPlatformHost, param.answerOptionId());
+        String url = String.format("%s/api/internal/answer-template/%d/option-values/", flickitPlatformHost, param.answerOptionId());
         log.warn(url);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -53,7 +51,7 @@ public class AnswerOptionImpactPersistenceJpaAdapter implements LoadAnswerOption
     record ResponseDto(@JsonProperty("items") List<AnswerOptionImpactDto> items) {}
 
     record AnswerOptionImpactDto(Long id,
-                                 Long optionId,
+                                 Long option_id,
                                  BigDecimal value,
-                                 Long questionImpactId) {}
+                                 Long metric_impact_id) {}
 }

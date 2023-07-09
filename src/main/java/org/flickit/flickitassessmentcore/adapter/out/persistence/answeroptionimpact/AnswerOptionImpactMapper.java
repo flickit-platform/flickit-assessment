@@ -19,8 +19,8 @@ public class AnswerOptionImpactMapper {
         return new AnswerOptionImpact(
             dto.id(),
             dto.value(),
-            dto.optionId(),
-            dto.questionImpactId()
+            dto.option_id(),
+            dto.metric_impact_id()
         );
     }
 }
