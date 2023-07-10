@@ -11,11 +11,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentResult {
+public class SubjectValue {
     private UUID id;
-    private Assessment assessment;
+    private AssessmentResult assessmentResult;
+    private Long subjectId;
     private Long maturityLevelId;
-    private Boolean isValid;
 
     @Override
     public String toString() {
