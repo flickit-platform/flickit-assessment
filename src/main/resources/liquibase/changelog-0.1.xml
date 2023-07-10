@@ -152,7 +152,7 @@
             <column name="assessment_result_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
-            <column name="assessment_subject_id" type="bigint">
+            <column name="subject_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
             <column name="maturity_level_id" type="bigint"/>

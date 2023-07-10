@@ -2,6 +2,8 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentWithMaturityLevelId;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
+import org.flickit.flickitassessmentcore.domain.Assessment;
+
 
 public class AssessmentMapper {
 
