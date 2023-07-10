@@ -9,6 +9,7 @@ public class AssessmentResultMapper {
             null,
             null,
             null,
+            param.lastModificationTime(),
             param.isValid()
         );
     }

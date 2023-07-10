@@ -97,6 +97,7 @@ class CreateAssessmentServiceTest {
         verify(createAssessmentResultPort).persist(createPortParam.capture());
 
         assertEquals(assessmentId, createPortParam.getValue().assessmentId());
+        assertNotNull(createPortParam.getValue().lastModificationTime());
         assertFalse(createPortParam.getValue().isValid());
     }
 
