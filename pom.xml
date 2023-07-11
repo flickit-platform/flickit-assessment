@@ -14,7 +14,6 @@
 	<name>flickit-assessment-core</name>
 	<properties>
 		<java.version>17</java.version>
-		<jib-maven-plugin.version>3.3.1</jib-maven-plugin.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -73,25 +72,6 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.google.cloud.tools</groupId>
-				<artifactId>jib-maven-plugin</artifactId>
-				<version>${jib-maven-plugin.version}</version>
-				<configuration>
-					<container>
-						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-						<jvmFlags>
-							<jvmFlag>-Dserver.port=8098</jvmFlag>
-						</jvmFlags>
-						<ports>
-							<port>8098</port>
-						</ports>
-					</container>
-					<from>
-						<image>ghcr.io/avansoft/flickit-assessment-core/jdk:17.0.7</image>
-					</from>
 				</configuration>
 			</plugin>
 		</plugins>
