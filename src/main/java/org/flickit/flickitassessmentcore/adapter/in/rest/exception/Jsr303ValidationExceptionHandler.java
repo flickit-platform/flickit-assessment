@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import static org.flickit.flickitassessmentcore.adapter.in.rest.exception.api.ErrorCodes.INVALID_INPUT;
 
 @RestControllerAdvice
-public class ConstraintViolationExceptionHandler {
+public class Jsr303ValidationExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
