@@ -51,9 +51,6 @@ jobs:
           echo $RELEASE_VERSION
           echo ${{ steps.vars.outputs.tag }}
 
-      - name: Build and push image with Maven jib-plugin
-        run: |
-          - if: v${{ steps.project.outputs.version }} != ${{ steps.vars.outputs.tag }}
-            run: echo ${{ steps.project.outputs.version }}
-          - if: v${{ steps.project.outputs.version }} == ${{ steps.vars.outputs.tag }}
-            run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.project.outputs.version }}" ${{ env.JIB_CMD }}
+      - name: Build and push image
+        if: v${{ steps.project.outputs.version }} == ${{ steps.vars.outputs.tag }}
+        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.project.outputs.version }}" ${{ env.JIB_CMD }}
