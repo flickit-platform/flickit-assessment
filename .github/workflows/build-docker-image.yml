@@ -20,9 +20,11 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout repository and set output
+      - name: Checkout repository
         uses: actions/checkout@v3
         id: vars
+        
+      - name: Set output
         run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
       - name: login to GitHub Container Registry
@@ -50,7 +52,7 @@ jobs:
           echo ${{ steps.vars.outputs.tag }}
 
       - name: Build and push image with Maven jib-plugin
-        steps:
+        run: |
           - if: v${{ steps.project.outputs.version }} != ${{ steps.vars.outputs.tag }}
             run: echo ${{ steps.project.outputs.version }}
           - if: v${{ steps.project.outputs.version }} == ${{ steps.vars.outputs.tag }}
