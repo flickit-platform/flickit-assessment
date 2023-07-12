@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
@@ -20,22 +19,22 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class AddEvidenceServiceTest {
 
-    public static final String DESC = "desc";
-    public static final UUID id = UUID.randomUUID();
-    @Spy
     @InjectMocks
     private AddEvidenceService service;
+
     @Mock
     private CreateEvidencePort createEvidencePort;
 
     @Test
     void addEvidence_ValidParam_SavesAndReturnsEvidence() {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
-            DESC,
+            "desc",
             1L,
             UUID.randomUUID(),
             1L
         );
+
+        UUID id = UUID.randomUUID();
 
         when(createEvidencePort.persist(any(CreateEvidencePort.Param.class))).thenReturn(id);
 
@@ -58,7 +57,7 @@ public class AddEvidenceServiceTest {
     @Test
     void addEvidence_NullCreatedById_ReturnsErrorMessage() {
         assertThrows(ConstraintViolationException.class, () -> service.addEvidence(new AddEvidenceUseCase.Param(
-            DESC,
+            "desc",
             null,
             UUID.randomUUID(),
             1L
@@ -68,7 +67,7 @@ public class AddEvidenceServiceTest {
     @Test
     void addEvidence_NullAssessmentId_ReturnsErrorMessage() {
         assertThrows(ConstraintViolationException.class, () -> service.addEvidence(new AddEvidenceUseCase.Param(
-            DESC,
+            "desc",
             1L,
             null,
             1L
@@ -78,7 +77,7 @@ public class AddEvidenceServiceTest {
     @Test
     void addEvidence_NullQuestionId_ReturnsErrorMessage() {
         assertThrows(ConstraintViolationException.class, () -> service.addEvidence(new AddEvidenceUseCase.Param(
-            DESC,
+            "desc",
             1L,
             UUID.randomUUID(),
             null
