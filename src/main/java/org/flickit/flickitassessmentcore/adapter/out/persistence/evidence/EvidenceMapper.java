@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 public class EvidenceMapper {
 
-    public static EvidenceJpaEntity toJpaEntity(CreateEvidencePort.Param param) {
+    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param) {
         return new EvidenceJpaEntity(
             null,
             param.description(),

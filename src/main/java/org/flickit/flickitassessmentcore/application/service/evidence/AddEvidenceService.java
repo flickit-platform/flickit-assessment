@@ -22,7 +22,7 @@ public class AddEvidenceService implements AddEvidenceUseCase {
         return new AddEvidenceUseCase.Result(id);
     }
 
-    private CreateEvidencePort.Param toAddEvidencePortParam(AddEvidenceUseCase.Param param) {
+    private CreateEvidencePort.Param toCreatePortParam(AddEvidenceUseCase.Param param) {
         return new CreateEvidencePort.Param(
             param.getDescription(),
             param.getCreatedById(),
