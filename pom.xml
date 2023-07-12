@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.flickit</groupId>
 	<artifactId>flickit-assessment-core</artifactId>
-	<version>0.1.3</version>
+	<version>0.1.0</version>
 	<name>flickit-assessment-core</name>
 	<properties>
 		<java.version>17</java.version>
