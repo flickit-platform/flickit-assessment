@@ -82,12 +82,6 @@
 				<configuration>
 					<container>
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-						<jvmFlags>
-							<jvmFlag>-Dserver.port=8098</jvmFlag>
-						</jvmFlags>
-						<ports>
-							<port>8098</port>
-						</ports>
 						<labels>
 							<org.opencontainers.image.source>
 								https://github.com/avansoft/flickit-assessment-core
