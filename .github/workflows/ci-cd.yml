@@ -2,8 +2,6 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches-ignore:
-      - '*'
     branches:
       - 'main'
   pull_request:
