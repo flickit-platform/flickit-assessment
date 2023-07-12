@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND_MESSAGE;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
 
 @Component
@@ -30,7 +30,7 @@ public class AnswerPersistenceJpaAdaptor implements
     public UUID persist(SaveAnswerPort.Param param) {
         AnswerJpaEntity unsavedEntity = AnswerMapper.mapSaveParamToJpaEntity(param);
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(param.assessmentResultId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND_MESSAGE));
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND));
         unsavedEntity.setAssessmentResult(assessmentResult);
         AnswerJpaEntity entity = repository.save(unsavedEntity);
         return entity.getId();
