@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND_MESSAGE;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
 
 
 @Component
@@ -56,7 +56,7 @@ public class AssessmentResultPersistenceJpaAdaptor implements
     public UUID persist(Param param) {
         AssessmentResultJpaEntity entity = AssessmentResultMapper.mapToJpaEntity(param);
         AssessmentJpaEntity assessment = assessmentRepository.findById(param.assessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND_MESSAGE));
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND));
         entity.setAssessment(assessment);
         AssessmentResultJpaEntity savedEntity = repository.save(entity);
         return savedEntity.getId();
