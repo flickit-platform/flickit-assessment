@@ -25,6 +25,8 @@ public class AddEvidenceService implements AddEvidenceUseCase {
     private CreateEvidencePort.Param toCreatePortParam(AddEvidenceUseCase.Param param) {
         return new CreateEvidencePort.Param(
             param.getDescription(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
             param.getCreatedById(),
             param.getAssessmentId(),
             param.getQuestionId()

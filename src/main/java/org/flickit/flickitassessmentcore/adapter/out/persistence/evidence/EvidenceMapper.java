@@ -1,9 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 
-import org.flickit.flickitassessmentcore.application.port.in.evidence.AddEvidenceUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
-
-import java.time.LocalDateTime;
 
 public class EvidenceMapper {
 
@@ -11,8 +8,8 @@ public class EvidenceMapper {
         return new EvidenceJpaEntity(
             null,
             param.description(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            param.creationTime(),
+            param.lastModificationDate(),
             param.createdById(),
             param.assessmentId(),
             param.questionId()
