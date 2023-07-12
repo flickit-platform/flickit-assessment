@@ -17,7 +17,8 @@ public class AddEvidenceService implements AddEvidenceUseCase {
 
     @Override
     public Result addEvidence(Param param) {
-        UUID id = createEvidencePort.persist(toAddEvidencePortParam(param));
+        var createPortParam = toCreatePortParam(param);
+        UUID id = createEvidencePort.persist(createPortParam);
         return new AddEvidenceUseCase.Result(id);
     }
 
@@ -29,5 +30,4 @@ public class AddEvidenceService implements AddEvidenceUseCase {
             param.getQuestionId()
         );
     }
-
 }

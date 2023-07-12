@@ -13,8 +13,9 @@ public class EvidencePersistenceJpaAdaptor implements CreateEvidencePort {
     private final EvidenceJpaRepository repository;
 
     @Override
-    public UUID persist(Param param) {
-        EvidenceJpaEntity evidenceJpaEntity = repository.save(EvidenceMapper.toJpaEntity(param));
-        return evidenceJpaEntity.getId();
+    public UUID persist(CreateEvidencePort.Param param) {
+        var unsavedEntity = EvidenceMapper.mapCreateParamToJpaEntity(param);
+        EvidenceJpaEntity entity = repository.save(unsavedEntity);
+        return entity.getId();
     }
 }
