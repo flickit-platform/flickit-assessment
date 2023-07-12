@@ -1,25 +1,33 @@
 package org.flickit.flickitassessmentcore.application.service.evidence;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.evidence.EvidenceMapper;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.AddEvidenceUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.evidence.AddEvidencePort;
-import org.flickit.flickitassessmentcore.domain.Evidence;
+import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class AddEvidenceService implements AddEvidenceUseCase {
 
-    private final AddEvidencePort addEvidence;
+    private final CreateEvidencePort createEvidencePort;
 
     @Override
     public Result addEvidence(Param param) {
-        AddEvidencePort.Result result = addEvidence.addEvidence(EvidenceMapper.toAddEvidencePortParam(param));
-        return new AddEvidenceUseCase.Result(result.id());
+        UUID id = createEvidencePort.persist(toAddEvidencePortParam(param));
+        return new AddEvidenceUseCase.Result(id);
     }
+
+    private CreateEvidencePort.Param toAddEvidencePortParam(AddEvidenceUseCase.Param param) {
+        return new CreateEvidencePort.Param(
+            param.getDescription(),
+            param.getCreatedById(),
+            param.getAssessmentId(),
+            param.getQuestionId()
+        );
+    }
+
 }

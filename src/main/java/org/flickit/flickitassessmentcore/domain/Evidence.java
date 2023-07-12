@@ -13,12 +13,19 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Evidence {
+
     private UUID id;
+
     private String description;
+
     private LocalDateTime creationTime;
-    private LocalDateTime lastModificationDate;
+
+    private LocalDateTime lastModificationTime;
+
     private Long createdById;
+
     private UUID assessmentId;
+
     private Long questionId;
 
     @Override
