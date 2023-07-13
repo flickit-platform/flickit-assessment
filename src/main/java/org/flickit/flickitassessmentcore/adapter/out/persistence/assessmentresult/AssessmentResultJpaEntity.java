@@ -3,11 +3,8 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresu
 import jakarta.persistence.*;
 import lombok.*;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentsubjectvalue.AssessmentSubjectValueJpaEntity;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -36,11 +33,9 @@ public class AssessmentResultJpaEntity {
     @Column(name = "is_valid")
     private Boolean isValid;
 
-    @OneToMany(mappedBy = "assessmentResult")
-    private List<QualityAttributeValueJpaEntity> qualityAttributeValues;
-
-    @OneToMany(mappedBy = "assessmentResult")
-    private List<AssessmentSubjectValueJpaEntity> assessmentSubjectValues;
+    public AssessmentResultJpaEntity(UUID resultId) {
+        this.id = resultId;
+    }
 
     @Override
     public String toString() {

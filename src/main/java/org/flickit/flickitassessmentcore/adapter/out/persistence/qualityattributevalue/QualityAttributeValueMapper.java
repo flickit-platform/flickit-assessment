@@ -1,5 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue;
 
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.flickit.flickitassessmentcore.domain.QualityAttribute;
 import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
@@ -19,14 +20,15 @@ public class QualityAttributeValueMapper {
         return new QualityAttributeValue(
             qualityAttributeValueEntity.getId(),
             new QualityAttribute(qualityAttributeValueEntity.getQualityAttributeId()),
-            new MaturityLevel(qualityAttributeValueEntity.getMaturityLevelId())
+            new MaturityLevel(qualityAttributeValueEntity.getMaturityLevelId()),
+            qualityAttributeValueEntity.getAssessmentResult().getId()
         );
     }
 
     public static QualityAttributeValueJpaEntity mapToJpaEntity(QualityAttributeValue qualityAttributeValue) {
         return new QualityAttributeValueJpaEntity(
             qualityAttributeValue.getId(),
-            null, // TODO
+            new AssessmentResultJpaEntity(qualityAttributeValue.getResultId()),
             qualityAttributeValue.getQualityAttribute().getId(),
             qualityAttributeValue.getMaturityLevel().getId()
         );

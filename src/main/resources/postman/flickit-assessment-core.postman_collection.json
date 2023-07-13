@@ -121,6 +121,34 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Calculate Maturity Level And Save In AssessmentResult",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"colorId\": 1,\n    \"spaceId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/2c6b6d24-a800-4291-8f83-4fec8e9ff29a/assessment-result",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"2c6b6d24-a800-4291-8f83-4fec8e9ff29a",
+						"assessment-result"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [

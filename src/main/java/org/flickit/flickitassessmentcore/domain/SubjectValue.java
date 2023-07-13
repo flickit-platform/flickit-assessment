@@ -12,10 +12,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class SubjectValue {
+
     private UUID id;
-    private AssessmentResult assessmentResult;
-    private Long subjectId;
-    private Long maturityLevelId;
+
+    private AssessmentSubject assessmentSubject;
+
+    private MaturityLevel maturityLevel;
+
+    private UUID resultId;
 
     @Override
     public String toString() {

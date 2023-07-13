@@ -13,4 +13,6 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
     @Query("select a from QualityAttributeValueJpaEntity a " +
         "where a.qualityAttributeId in :qaIds")
     List<QualityAttributeValueJpaEntity> findQualityAttributeValuesByQualityAttributeIds(@Param("qaIds") Set<Long> qaIds);
+
+    List<QualityAttributeValueJpaEntity> findByAssessmentResultId(UUID resultId);
 }

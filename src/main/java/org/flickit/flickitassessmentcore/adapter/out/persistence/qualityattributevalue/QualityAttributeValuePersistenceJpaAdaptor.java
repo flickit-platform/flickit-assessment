@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadQualityAttributeByResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.SaveQualityAttributeValuePort;
+import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,7 +14,10 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class QualityAttributeValuePersistenceJpaAdaptor implements CreateQualityAttributeValuePort {
+public class QualityAttributeValuePersistenceJpaAdaptor implements
+    CreateQualityAttributeValuePort,
+    SaveQualityAttributeValuePort,
+    LoadQualityAttributeByResultPort {
 
     private final QualityAttributeValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -27,5 +33,17 @@ public class QualityAttributeValuePersistenceJpaAdaptor implements CreateQuality
         }).toList();
 
         repository.saveAll(entities);
+    }
+
+    @Override
+    public void saveQualityAttributeValue(QualityAttributeValue qualityAttributeValue) {
+        repository.save(QualityAttributeValueMapper.mapToJpaEntity(qualityAttributeValue));
+    }
+
+    @Override
+    public Result loadQualityAttributeByResultId(Param param) {
+        return new Result(repository.findByAssessmentResultId(param.resultId()).stream()
+            .map(QualityAttributeValueMapper::mapToDomainModel)
+            .toList());
     }
 }

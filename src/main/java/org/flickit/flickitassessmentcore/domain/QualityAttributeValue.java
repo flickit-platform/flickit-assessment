@@ -19,6 +19,8 @@ public class QualityAttributeValue {
 
     private MaturityLevel maturityLevel;
 
+    private UUID resultId;
+
     @Override
     public String toString() {
         return id.toString();

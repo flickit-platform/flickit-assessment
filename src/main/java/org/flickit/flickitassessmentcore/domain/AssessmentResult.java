@@ -13,12 +13,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class AssessmentResult {
+
     private UUID id;
+
     private Assessment assessment;
+
     private Boolean isValid;
+
     private Long maturityLevelId;
-    private List<QualityAttributeValue> qualityAttributeValues;
-    private List<AssessmentSubjectValue> assessmentSubjectValues;
 
     @Override
     public String toString() {

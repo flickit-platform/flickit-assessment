@@ -45,9 +45,7 @@ public class Utils {
             UUID.randomUUID(),
             new Assessment(),
             false,
-            null,
-            new ArrayList<QualityAttributeValue>(),
-            new ArrayList<AssessmentSubjectValue>()
+            null
         );
     }
 
@@ -65,11 +63,12 @@ public class Utils {
         );
     }
 
-    public static AssessmentSubjectValue createAssessmentSubjectValue() {
-        return new AssessmentSubjectValue(
+    public static SubjectValue createSubjectValue() {
+        return new SubjectValue(
             UUID.randomUUID(),
             new AssessmentSubject(),
-            new MaturityLevel()
+            new MaturityLevel(),
+            null
         );
     }
 
@@ -104,7 +103,8 @@ public class Utils {
         return new QualityAttributeValue(
             UUID.randomUUID(),
             new QualityAttribute(),
-            null // maturity level gonna be calculated
+            null, // maturity level gonna be calculated
+            null
         );
     }
 

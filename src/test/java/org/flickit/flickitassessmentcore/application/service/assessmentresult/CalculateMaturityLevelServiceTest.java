@@ -4,7 +4,10 @@ import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.Ca
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.SaveAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentsubjectvalue.SaveAssessmentSubjectValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadQualityAttributeByResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueByResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.SaveSubjectValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeBySubjectPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.SaveQualityAttributeValuePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,25 +26,31 @@ import static org.mockito.Mockito.*;
 public class CalculateMaturityLevelServiceTest {
     private final CalculateMaturityLevelServiceContext context = new CalculateMaturityLevelServiceContext();
     private final CalculateMaturityLevelUseCase.Param param = new CalculateMaturityLevelUseCase.Param(context.getAssessment().getId());
+    @Spy
+    @InjectMocks
+    private CalculateMaturityLevelService calculateMaturityLevelService;
     @Mock
-    private LoadAssessmentPort loadAssessment;
+    private LoadAssessmentPort loadAssessmentPort;
     @Mock
-    private LoadAssessmentResultByAssessmentPort loadAssessmentResultByAssessment;
+    private LoadAssessmentResultByAssessmentPort loadAssessmentResultByAssessmentPort;
     @Mock
-    private SaveAssessmentResultPort saveAssessmentResult;
+    private SaveAssessmentResultPort saveAssessmentResultPort;
     @Mock
-    private SaveQualityAttributeValuePort saveQualityAttributeValue;
+    private SaveQualityAttributeValuePort saveQualityAttributeValuePort;
     @Mock
-    private SaveAssessmentSubjectValuePort saveAssessmentSubjectValue;
+    private SaveSubjectValuePort saveSubjectValuePort;
+    @Mock
+    private LoadQualityAttributeBySubjectPort loadQualityAttributeBySubjectPort;
+    @Mock
+    private LoadQualityAttributeByResultPort loadQualityAttributeByResultPort;
+    @Mock
+    private LoadSubjectValueByResultPort loadSubjectValueByResultPort;
     @Mock
     private CalculateQualityAttributeMaturityLevel calculateQualityAttributeMaturityLevel;
     @Mock
     private CalculateAssessmentSubjectMaturityLevel calculateAssessmentSubjectMaturityLevel;
     @Mock
     private CalculateAssessmentMaturityLevel calculateAssessmentMaturityLevel;
-    @Spy
-    @InjectMocks
-    private CalculateMaturityLevelService calculateMaturityLevelService;
 
     @Test
     void calculateMaturityLevel_QualityAttributeValueAndSubjectValueAndAssessmentWithMaturityLevel2_MaturityLevel2() {
@@ -50,8 +60,6 @@ public class CalculateMaturityLevelServiceTest {
         when(calculateAssessmentMaturityLevel.calculateAssessmentMaturityLevel(any(), eq(context.getKit().getId()))).thenReturn(context.getMaturityLevel2());
         doMocks();
         CalculateMaturityLevelUseCase.Result result = calculateMaturityLevelService.calculateMaturityLevel(param);
-        assertEquals(2, context.getResult().getQualityAttributeValues().get(0).getMaturityLevel().getValue());
-        assertEquals(2, context.getResult().getAssessmentSubjectValues().get(0).getMaturityLevel().getValue());
         assertEquals(2, context.getResult().getMaturityLevelId());
         assertEquals(context.getResult().getId(), result.assessmentResultId());
     }
@@ -64,20 +72,21 @@ public class CalculateMaturityLevelServiceTest {
         when(calculateAssessmentMaturityLevel.calculateAssessmentMaturityLevel(any(), eq(context.getKit().getId()))).thenReturn(context.getMaturityLevel1());
         doMocks();
         CalculateMaturityLevelUseCase.Result result = calculateMaturityLevelService.calculateMaturityLevel(param);
-        assertEquals(1, context.getResult().getQualityAttributeValues().get(0).getMaturityLevel().getValue());
-        assertEquals(1, context.getResult().getAssessmentSubjectValues().get(0).getMaturityLevel().getValue());
         assertEquals(1, context.getResult().getMaturityLevelId());
         assertEquals(context.getResult().getId(), result.assessmentResultId());
     }
 
     private void doMocks() {
-        when(loadAssessment.loadAssessment(context.getAssessment().getId())).thenReturn(context.getAssessment());
-        when(loadAssessmentResultByAssessment.loadAssessmentResultByAssessmentId(context.getAssessment().getId())).thenReturn(Set.of(context.getResult()));
+        when(loadAssessmentPort.loadAssessment(context.getAssessment().getId())).thenReturn(context.getAssessment());
+        when(loadAssessmentResultByAssessmentPort.loadAssessmentResultByAssessmentId(context.getAssessment().getId())).thenReturn(Set.of(context.getResult()));
         when(calculateQualityAttributeMaturityLevel.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute(), context.getKit().getId())).thenReturn(context.getQualityAttributeValue().getMaturityLevel());
         when(calculateAssessmentSubjectMaturityLevel.calculateAssessmentSubjectMaturityLevel(any(), eq(context.getKit().getId()))).thenReturn(context.getSubjectValue().getMaturityLevel());
-        when(saveAssessmentResult.saveAssessmentResult(context.getResult())).thenReturn(context.getResult());
-        doNothing().when(saveQualityAttributeValue).saveQualityAttributeValue(any());
-        doNothing().when(saveAssessmentSubjectValue).saveAssessmentSubjectValue(any());
+        when(saveAssessmentResultPort.saveAssessmentResult(context.getResult())).thenReturn(context.getResult());
+        when(loadQualityAttributeBySubjectPort.loadQualityAttributeBySubjectId(any())).thenReturn(new LoadQualityAttributeBySubjectPort.Result(List.of(context.getQualityAttribute())));
+        when(loadQualityAttributeByResultPort.loadQualityAttributeByResultId(any())).thenReturn(new LoadQualityAttributeByResultPort.Result(List.of(context.getQualityAttributeValue())));
+        when(loadSubjectValueByResultPort.loadSubjectValueByResultId(any())).thenReturn(new LoadSubjectValueByResultPort.Result(List.of(context.getSubjectValue())));
+        doNothing().when(saveQualityAttributeValuePort).saveQualityAttributeValue(any());
+        doNothing().when(saveSubjectValuePort).saveSubjectValue(any());
     }
 
 
