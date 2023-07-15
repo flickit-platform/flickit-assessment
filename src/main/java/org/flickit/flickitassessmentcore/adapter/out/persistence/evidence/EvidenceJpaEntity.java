@@ -1,42 +1,42 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "fac_evidence")
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
-@EqualsAndHashCode
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class EvidenceJpaEntity {
+
     @Id
+    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "uuid")
     private UUID id;
-    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
+
+    @Column(name = "description", nullable = false)
     private String description;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
+
     @Column(name = "last_modification_time", nullable = false)
-    private LocalDateTime lastModificationDate;
+    private LocalDateTime lastModificationTime;
+
     @Column(name = "created_by_id", nullable = false)
     private Long createdById;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assessment_id", referencedColumnName = "id", nullable = false)
-    private AssessmentJpaEntity assessment;
+
+    @Column(name = "assessment_id", nullable = false)
+    private UUID assessmentId;
+
     @Column(name = "question_id", nullable = false)
     private Long questionId;
-
-    @Override
-    public String toString() {
-        return id.toString();
-    }
 }

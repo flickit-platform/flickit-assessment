@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.flickit</groupId>
 	<artifactId>flickit-assessment-core</artifactId>
-	<version>0.1.3</version>
+	<version>0.2.0-SNAPSHOT</version>
 	<name>flickit-assessment-core</name>
 	<properties>
 		<java.version>17</java.version>
@@ -86,12 +86,6 @@
 				<configuration>
 					<container>
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-						<jvmFlags>
-							<jvmFlag>-Dserver.port=8098</jvmFlag>
-						</jvmFlags>
-						<ports>
-							<port>8098</port>
-						</ports>
 						<labels>
 							<org.opencontainers.image.source>
 								https://github.com/avansoft/flickit-assessment-core
