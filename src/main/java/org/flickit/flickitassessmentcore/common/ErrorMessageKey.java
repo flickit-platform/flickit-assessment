@@ -24,4 +24,12 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_LIST_SIZE_MIN = "get-assessment-list.size.min";
     public static final String GET_ASSESSMENT_LIST_SIZE_MAX = "get-assessment-list.size.max";
     public static final String GET_ASSESSMENT_LIST_PAGE_MIN = "get-assessment-list.page.min";
+
+    public static final String ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND = "add-evidence.assessmentId.notFound";
+    public static final String ADD_EVIDENCE_DESC_NOT_BLANK = "add-evidence.desc.notBlank";
+    public static final String ADD_EVIDENCE_DESC_SIZE_MIN = "add-evidence.desc.size.min";
+    public static final String ADD_EVIDENCE_DESC_SIZE_MAX = "add-evidence.desc.size.max";
+    public static final String ADD_EVIDENCE_CREATED_BY_ID_NOT_NULL = "add-evidence.createdById.notNull";
+    public static final String ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL = "add-evidence.assessmentId.notNull";
+    public static final String ADD_EVIDENCE_QUESTION_ID_NOT_NULL = "add-evidence.questionId.notNull";
 }
