@@ -1,6 +1,6 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.question;
+package org.flickit.flickitassessmentcore.adapter.out.rest.question;
 
-import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattribute.QualityAttributeMapper;
+import org.flickit.flickitassessmentcore.adapter.out.rest.qualityattribute.QualityAttributeMapper;
 import org.flickit.flickitassessmentcore.application.port.out.question.LoadQuestionsByQualityAttributePort;
 import org.flickit.flickitassessmentcore.domain.Question;
 
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class QuestionMapper {
 
 
-    public static LoadQuestionsByQualityAttributePort.Result toResult(List<QuestionPersistenceJpaAdapter.QuestionDto> dtos) {
+    public static LoadQuestionsByQualityAttributePort.Result toResult(List<QuestionRestAdapter.QuestionDto> dtos) {
         return new LoadQuestionsByQualityAttributePort.Result(
             dtos.stream().
                 map(QuestionMapper::toDomainModel)
@@ -18,7 +18,7 @@ public class QuestionMapper {
         );
     }
 
-    public static Question toDomainModel(QuestionPersistenceJpaAdapter.QuestionDto dto) {
+    public static Question toDomainModel(QuestionRestAdapter.QuestionDto dto) {
         return new Question(
             dto.id(),
             dto.title(),

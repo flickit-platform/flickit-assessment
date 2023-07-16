@@ -17,8 +17,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     @Query("UPDATE AnswerJpaEntity a SET a.answerOptionId=:answerOptionId WHERE a.id=:id")
     void updateAnswerOptionById(UUID id, Long answerOptionId);
 
-    @Query("select a from AnswerJpaEntity a " +
-        "where a.assessmentResult.id = :resultId")
-    List<AnswerJpaEntity> findAnswersByResultId(@Param("resultId") UUID resultId);
+    @Query("select a.answerOptionId from AnswerJpaEntity a " +
+        "where a.assessmentResult.id = :resultId and a.questionId = :questionId")
+    Long findAnswersByResultId(@Param("resultId") UUID resultId, @Param("questionId") Long questionId);
 
 }

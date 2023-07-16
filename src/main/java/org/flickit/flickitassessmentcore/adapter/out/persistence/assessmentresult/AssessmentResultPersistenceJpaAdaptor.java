@@ -3,16 +3,14 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresu
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaRepository;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.exception.AssessmentResultNotFound;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.*;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CALCULATE_MATURITY_LEVEL_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
 
 
@@ -42,14 +40,14 @@ public class AssessmentResultPersistenceJpaAdaptor implements
     public AssessmentResult loadAssessmentResult(UUID resultId) {
         return AssessmentResultMapper.mapToDomainModel(
             repository.findById(resultId).orElseThrow(
-                () -> new AssessmentResultNotFound("Assessment Result with id [" + resultId + "] not found!")));
+                () -> new ResourceNotFoundException(CALCULATE_MATURITY_LEVEL_ASSESSMENT_RESULT_NOT_FOUND)));
     }
 
     @Override
-    public Set<AssessmentResult> loadAssessmentResultByAssessmentId(UUID assessmentId) {
-        return repository.findByAssessmentId(assessmentId).stream()
+    public Result loadAssessmentResultByAssessmentId(UUID assessmentId) {
+        return new Result(repository.findByAssessmentId(assessmentId).stream()
             .map(AssessmentResultMapper::mapToDomainModel)
-            .collect(Collectors.toSet());
+            .toList());
     }
 
     @Override

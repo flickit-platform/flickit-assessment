@@ -22,7 +22,7 @@ public class SubjectRestAdapter implements LoadSubjectIdsAndQualityAttributeIdsP
 
     @Override
     public ResponseParam loadByAssessmentKitId(Long assessmentKitId) {
-        String url = String.format(properties.getBaseUrl() +properties.getGetSubjectIdsUrl(), assessmentKitId);
+        String url = String.format(properties.getBaseUrl() + properties.getGetSubjectIdsUrl(), assessmentKitId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

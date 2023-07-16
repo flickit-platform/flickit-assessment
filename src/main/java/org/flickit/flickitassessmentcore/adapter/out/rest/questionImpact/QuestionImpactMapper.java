@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.questionImpact;
+package org.flickit.flickitassessmentcore.adapter.out.rest.questionImpact;
 
 import org.flickit.flickitassessmentcore.application.port.out.questionImpact.LoadQuestionImpactPort;
 import org.flickit.flickitassessmentcore.domain.QuestionImpact;
@@ -7,13 +7,13 @@ import java.util.List;
 
 public class QuestionImpactMapper {
 
-    public static LoadQuestionImpactPort.Result toResult(List<QuestionImpactPersistenceJpaAdapter.QuestionImpactDto> items) {
+    public static LoadQuestionImpactPort.Result toResult(List<QuestionImpactRestAdapter.QuestionImpactDto> items) {
         return new LoadQuestionImpactPort.Result(
             toDomainModel(items.get(0))
         );
     }
 
-    private static QuestionImpact toDomainModel(QuestionImpactPersistenceJpaAdapter.QuestionImpactDto questionImpactDto) {
+    private static QuestionImpact toDomainModel(QuestionImpactRestAdapter.QuestionImpactDto questionImpactDto) {
         return new QuestionImpact(
             questionImpactDto.id(),
             questionImpactDto.level(),

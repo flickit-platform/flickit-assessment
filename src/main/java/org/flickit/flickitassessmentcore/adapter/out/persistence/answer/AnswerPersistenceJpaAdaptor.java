@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswersByResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.FindAnswerOptionIdByResultAndQuestionInAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
@@ -26,7 +26,7 @@ public class AnswerPersistenceJpaAdaptor implements
     SaveAnswerPort,
     UpdateAnswerOptionPort,
     LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
-    LoadAnswersByResultPort {
+    FindAnswerOptionIdByResultAndQuestionInAnswerPort {
 
     private final AnswerJpaRepository repository;
 
@@ -54,8 +54,7 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public Set<Answer> loadAnswersByResultId(UUID resultId) {
-        List<AnswerJpaEntity> answerEntities = repository.findAnswersByResultId(resultId);
-        return answerEntities.stream().map(AnswerMapper::mapToDomainModel).collect(Collectors.toSet());
+    public Long findAnswerOptionIdByResultIdAndQuestionId(FindAnswerOptionIdByResultAndQuestionInAnswerPort.Param param) {
+        return repository.findAnswersByResultId(param.resultId(), param.questionId());
     }
 }

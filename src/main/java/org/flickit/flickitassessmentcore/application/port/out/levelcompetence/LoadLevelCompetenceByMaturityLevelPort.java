@@ -2,13 +2,11 @@ package org.flickit.flickitassessmentcore.application.port.out.levelcompetence;
 
 import org.flickit.flickitassessmentcore.domain.LevelCompetence;
 
-import java.util.Set;
+import java.util.List;
 
 public interface LoadLevelCompetenceByMaturityLevelPort {
 
-    Result loadLevelCompetenceByMaturityLevelId(Param param);
+    Result loadLevelCompetenceByMaturityLevelId(Long maturityLevelId);
 
-    record Param(Long maturityLevelId) {}
-
-    record Result(Set<LevelCompetence> levelCompetences) {}
+    record Result(List<LevelCompetence> levelCompetences) {}
 }

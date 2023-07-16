@@ -2,31 +2,30 @@ package org.flickit.flickitassessmentcore.application.service.assessmentresult;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.common.ErrorMessageKey;
-import org.flickit.flickitassessmentcore.domain.*;
+import org.flickit.flickitassessmentcore.domain.MaturityLevel;
+import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
 
 @Transactional
 @RequiredArgsConstructor
 @Component
-@Slf4j
 public class CalculateAssessmentSubjectMaturityLevel {
 
     private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
 
     public MaturityLevel calculateAssessmentSubjectMaturityLevel(List<QualityAttributeValue> qualityAttributeValues, Long assessmentKitId) {
         long weightedMean = calculateWeightedMeanOfQAMaturityLevels(qualityAttributeValues);
-        Set<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadMaturityLevelByKitId(new LoadMaturityLevelByKitPort.Param(assessmentKitId)).maturityLevels();
+        List<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadMaturityLevelByKitId(assessmentKitId).maturityLevels();
         MaturityLevel subMaturityLevel = findMaturityLevelByValue(weightedMean, maturityLevels);
         return subMaturityLevel;
     }
 
-    private MaturityLevel findMaturityLevelByValue(long weightedMean, Set<MaturityLevel> maturityLevels) {
+    private MaturityLevel findMaturityLevelByValue(long weightedMean, List<MaturityLevel> maturityLevels) {
         for (MaturityLevel ml : maturityLevels) {
             if (ml.getValue() == weightedMean) {
                 return ml;

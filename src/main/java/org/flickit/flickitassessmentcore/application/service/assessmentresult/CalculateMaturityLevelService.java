@@ -1,16 +1,15 @@
 package org.flickit.flickitassessmentcore.application.service.assessmentresult;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.SaveAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.SaveSubjectValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeBySubjectPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadQualityAttributeByResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.SaveQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueByResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.SaveSubjectValuePort;
 import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +21,6 @@ import java.util.Objects;
 @Transactional
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class CalculateMaturityLevelService implements CalculateMaturityLevelUseCase {
 
     private final LoadAssessmentPort loadAssessmentPort;
@@ -49,7 +47,7 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
     @Override
     public CalculateMaturityLevelUseCase.Result calculateMaturityLevel(CalculateMaturityLevelUseCase.Param param) {
         Assessment assessment = loadAssessmentPort.loadAssessment(param.getAssessmentId());
-        List<AssessmentResult> results = new ArrayList<>(loadAssessmentResultByAssessmentPort.loadAssessmentResultByAssessmentId(assessment.getId()));
+        List<AssessmentResult> results = loadAssessmentResultByAssessmentPort.loadAssessmentResultByAssessmentId(assessment.getId()).results();
         AssessmentResult result = results.get(0); // For now, we have just 1 result.
         if (!result.getIsValid()) {
             List<QualityAttributeValue> qualityAttributeValues = loadQualityAttributeByResultPort
@@ -68,7 +66,7 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
             List<SubjectValue> subjectValues = loadSubjectValueByResultPort
                 .loadSubjectValueByResultId(new LoadSubjectValueByResultPort.Param(result.getId())).subjectValues();
             for (SubjectValue subjectValue : subjectValues) {
-                List<QualityAttribute> qualityAttributes = loadQualityAttributeBySubjectPort.loadQualityAttributeBySubjectId(new LoadQualityAttributeBySubjectPort.Param(subjectValue.getAssessmentSubject().getId())).qualityAttribute();
+                List<QualityAttribute> qualityAttributes = loadQualityAttributeBySubjectPort.loadQualityAttributeBySubjectId(subjectValue.getAssessmentSubject().getId()).qualityAttribute();
                 List<QualityAttributeValue> qualityAttributeValueList = new ArrayList<>();
                 for (QualityAttributeValue qualityAttributeValue : qualityAttributeValues) {
                     List<QualityAttribute> matchedQualityAttributes = qualityAttributes.stream()

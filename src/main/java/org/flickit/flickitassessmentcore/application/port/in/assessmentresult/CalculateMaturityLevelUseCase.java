@@ -22,6 +22,7 @@ public interface CalculateMaturityLevelUseCase {
 
         public Param(UUID assessmentId) {
             this.assessmentId = assessmentId;
+            this.validateSelf();
         }
     }
 

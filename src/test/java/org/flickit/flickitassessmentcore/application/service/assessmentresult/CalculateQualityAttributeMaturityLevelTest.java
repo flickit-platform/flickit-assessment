@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.application.service.assessmentresult;
 
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswersByResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.FindAnswerOptionIdByResultAndQuestionInAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.levelcompetence.LoadLevelCompetenceByMaturityLevelPort;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
@@ -17,7 +17,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.flickit.flickitassessmentcore.Constants.ANSWER_OPTION_IMPACT_VALUE4;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CalculateQualityAttributeMaturityLevelTest {
+
     private final CalculateMaturityLevelServiceContext context = new CalculateMaturityLevelServiceContext();
     @Spy
     @InjectMocks
@@ -40,7 +42,7 @@ public class CalculateQualityAttributeMaturityLevelTest {
     @Mock
     private LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
     @Mock
-    private LoadAnswersByResultPort loadAnswersByResultPort;
+    private FindAnswerOptionIdByResultAndQuestionInAnswerPort findAnswerOptionIdByResultAndQuestionInAnswerPort;
     @Mock
     private LoadQuestionImpactPort loadQuestionImpactPort;
     @Mock
@@ -71,7 +73,12 @@ public class CalculateQualityAttributeMaturityLevelTest {
         context.getAnswer2().setQuestionId(0L);
         context.getAnswer1().setQuestionId(0L);
         when(loadQuestionsByQualityAttributePort.loadQuestionsByQualityAttributeId(any())).thenReturn(new LoadQuestionsByQualityAttributePort.Result(Set.of(context.getQuestion1(), context.getQuestion2())));
-        when(loadAnswersByResultPort.loadAnswersByResultId(context.getResult().getId())).thenReturn(Set.of(context.getAnswer1(), context.getAnswer2()));
+        when(findAnswerOptionIdByResultAndQuestionInAnswerPort.findAnswerOptionIdByResultIdAndQuestionId(
+            new FindAnswerOptionIdByResultAndQuestionInAnswerPort.Param(context.getResult().getId(), context.getQuestion1().getId())))
+            .thenReturn(context.getAnswer1().getOptionId());
+        when(findAnswerOptionIdByResultAndQuestionInAnswerPort.findAnswerOptionIdByResultIdAndQuestionId(
+            new FindAnswerOptionIdByResultAndQuestionInAnswerPort.Param(context.getResult().getId(), context.getQuestion2().getId())))
+            .thenReturn(context.getAnswer2().getOptionId());
 /*        when(loadMaturityLevelByKit.loadMaturityLevelByKitId(new LoadMaturityLevelByKitPort.Param(context.getKit().getId())))
             .thenReturn(new LoadMaturityLevelByKitPort.Result(Set.of(context.getMaturityLevel1(), context.getMaturityLevel2())));
         when(loadLevelCompetenceByMaturityLevel.loadLevelCompetenceByMaturityLevelId(new LoadLevelCompetenceByMaturityLevelPort.Param(context.getMaturityLevel1().getId())))
@@ -88,17 +95,22 @@ public class CalculateQualityAttributeMaturityLevelTest {
 
     private void doMocks() {
         when(loadQuestionsByQualityAttributePort.loadQuestionsByQualityAttributeId(any())).thenReturn(new LoadQuestionsByQualityAttributePort.Result(Set.of(context.getQuestion1(), context.getQuestion2())));
-        when(loadAnswerOptionImpactsByAnswerOptionPort.findAnswerOptionImpactsByAnswerOptionId(new LoadAnswerOptionImpactsByAnswerOptionPort.Param(context.getOption2Q1().getId())))
+        when(loadAnswerOptionImpactsByAnswerOptionPort.findAnswerOptionImpactsByAnswerOptionId(context.getOption2Q1().getId()))
             .thenReturn(new LoadAnswerOptionImpactsByAnswerOptionPort.Result(Set.of(context.getOptionImpact2Q1())));
-        when(loadAnswerOptionImpactsByAnswerOptionPort.findAnswerOptionImpactsByAnswerOptionId(new LoadAnswerOptionImpactsByAnswerOptionPort.Param(context.getOption1Q2().getId())))
+        when(loadAnswerOptionImpactsByAnswerOptionPort.findAnswerOptionImpactsByAnswerOptionId(context.getOption1Q2().getId()))
             .thenReturn(new LoadAnswerOptionImpactsByAnswerOptionPort.Result(Set.of(context.getOptionImpact1Q2())));
-        when(loadMaturityLevelByKitPort.loadMaturityLevelByKitId(new LoadMaturityLevelByKitPort.Param(context.getKit().getId())))
-            .thenReturn(new LoadMaturityLevelByKitPort.Result(Set.of(context.getMaturityLevel1(), context.getMaturityLevel2())));
-        when(loadAnswersByResultPort.loadAnswersByResultId(context.getResult().getId())).thenReturn(Set.of(context.getAnswer1(), context.getAnswer2()));
-        when(loadLevelCompetenceByMaturityLevelPort.loadLevelCompetenceByMaturityLevelId(new LoadLevelCompetenceByMaturityLevelPort.Param(context.getMaturityLevel1().getId())))
-            .thenReturn(new LoadLevelCompetenceByMaturityLevelPort.Result(new HashSet<>()));
-        when(loadLevelCompetenceByMaturityLevelPort.loadLevelCompetenceByMaturityLevelId(new LoadLevelCompetenceByMaturityLevelPort.Param(context.getMaturityLevel2().getId())))
-            .thenReturn(new LoadLevelCompetenceByMaturityLevelPort.Result(Set.of(context.getLevelCompetence1(), context.getLevelCompetence2())));
+        when(loadMaturityLevelByKitPort.loadMaturityLevelByKitId(context.getKit().getId()))
+            .thenReturn(new LoadMaturityLevelByKitPort.Result(List.of(context.getMaturityLevel1(), context.getMaturityLevel2())));
+        when(findAnswerOptionIdByResultAndQuestionInAnswerPort.findAnswerOptionIdByResultIdAndQuestionId(
+            new FindAnswerOptionIdByResultAndQuestionInAnswerPort.Param(context.getResult().getId(), context.getQuestion1().getId())))
+            .thenReturn(context.getAnswer1().getOptionId());
+        when(findAnswerOptionIdByResultAndQuestionInAnswerPort.findAnswerOptionIdByResultIdAndQuestionId(
+            new FindAnswerOptionIdByResultAndQuestionInAnswerPort.Param(context.getResult().getId(), context.getQuestion2().getId())))
+            .thenReturn(context.getAnswer2().getOptionId());
+        when(loadLevelCompetenceByMaturityLevelPort.loadLevelCompetenceByMaturityLevelId(context.getMaturityLevel1().getId()))
+            .thenReturn(new LoadLevelCompetenceByMaturityLevelPort.Result(new ArrayList<>()));
+        when(loadLevelCompetenceByMaturityLevelPort.loadLevelCompetenceByMaturityLevelId(context.getMaturityLevel2().getId()))
+            .thenReturn(new LoadLevelCompetenceByMaturityLevelPort.Result(List.of(context.getLevelCompetence1(), context.getLevelCompetence2())));
         when(loadQuestionImpactPort.loadQuestionImpact(new LoadQuestionImpactPort.Param(context.getQuestionImpact1().getId())))
             .thenReturn(new LoadQuestionImpactPort.Result(context.getQuestionImpact1()));
         when(loadQuestionImpactPort.loadQuestionImpact(new LoadQuestionImpactPort.Param(context.getQuestionImpact2().getId())))

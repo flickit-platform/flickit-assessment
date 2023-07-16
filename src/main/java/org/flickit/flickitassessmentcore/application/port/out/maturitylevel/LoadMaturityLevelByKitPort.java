@@ -2,13 +2,11 @@ package org.flickit.flickitassessmentcore.application.port.out.maturitylevel;
 
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 
-import java.util.Set;
+import java.util.List;
 
 public interface LoadMaturityLevelByKitPort {
 
-    Result loadMaturityLevelByKitId(Param param);
+    Result loadMaturityLevelByKitId(Long kitId);
 
-    record Param(Long kitId) {}
-
-    record Result(Set<MaturityLevel> maturityLevels) {}
+    record Result(List<MaturityLevel> maturityLevels) {}
 }

@@ -1,6 +1,6 @@
-package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattribute;
+package org.flickit.flickitassessmentcore.adapter.out.rest.qualityattribute;
 
-import org.flickit.flickitassessmentcore.adapter.out.persistence.question.QuestionPersistenceJpaAdapter;
+import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionRestAdapter;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeBySubjectPort;
 import org.flickit.flickitassessmentcore.domain.QualityAttribute;
 
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class QualityAttributeMapper {
-    public static QualityAttribute toDomainModel(QuestionPersistenceJpaAdapter.QualityAttributeDto dto) {
+    public static QualityAttribute toDomainModel(QuestionRestAdapter.QualityAttributeDto dto) {
         return new QualityAttribute(
             dto.id(),
             dto.code(),
@@ -22,7 +22,7 @@ public class QualityAttributeMapper {
         );
     }
 
-    public static LoadQualityAttributeBySubjectPort.Result toResult(List<QualityAttributePersistenceJpaAdapter.QualityAttributeDto> items) {
+    public static LoadQualityAttributeBySubjectPort.Result toResult(List<QualityAttributeRestAdapter.QualityAttributeDto> items) {
         return new LoadQualityAttributeBySubjectPort.Result(
             items.stream().
                 map(QualityAttributeMapper::toDomainModel).
@@ -30,7 +30,7 @@ public class QualityAttributeMapper {
         );
     }
 
-    public static QualityAttribute toDomainModel(QualityAttributePersistenceJpaAdapter.QualityAttributeDto qualityAttributeDto) {
+    public static QualityAttribute toDomainModel(QualityAttributeRestAdapter.QualityAttributeDto qualityAttributeDto) {
         return new QualityAttribute(
             qualityAttributeDto.id(),
             null,
