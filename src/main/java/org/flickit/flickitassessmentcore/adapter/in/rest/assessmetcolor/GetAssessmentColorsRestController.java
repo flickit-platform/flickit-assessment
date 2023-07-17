@@ -17,8 +17,7 @@ public class GetAssessmentColorsRestController {
 
     private final GetAssessmentColorsUseCase useCase;
 
-    @GetMapping
-    @RequestMapping("/assessment-colors")
+    @GetMapping("/assessment-colors")
     public ResponseEntity<DataItemsDto> createAssessment() {
         var response = useCase.getAssessmentColors();
         List<ColorDto> responseDto = response.stream()
