@@ -158,6 +158,33 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Edit Assessment",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"3b39ed16-9478-464f-a295-955f69f89ec2\",\n    \"title\": \"new title\",\n    \"assessmentKitId\": 2,\n    \"colorId\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [

@@ -42,8 +42,8 @@ public class AssessmentPersistenceJpaAdaptor implements
     }
 
     @Override
-    public LoadAssessmentPort.Result loadAssessment(LoadAssessmentPort.Param param) {
-        Optional<AssessmentJpaEntity> jpaEntity = repository.findById(param.id());
+    public LoadAssessmentPort.Result loadAssessment(UUID id) {
+        Optional<AssessmentJpaEntity> jpaEntity = repository.findById(id);
         if (jpaEntity.isPresent()) {
             Assessment assessment = AssessmentMapper.mapToDomainModel(jpaEntity.get());
             return new LoadAssessmentPort.Result(assessment);

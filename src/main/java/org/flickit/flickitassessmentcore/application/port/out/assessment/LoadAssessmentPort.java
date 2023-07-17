@@ -6,9 +6,7 @@ import java.util.UUID;
 
 public interface LoadAssessmentPort {
 
-    Result loadAssessment(Param param);
-
-    record Param(UUID id) {}
+    Result loadAssessment(UUID id);
 
     record Result(Assessment assessment) {}
 }

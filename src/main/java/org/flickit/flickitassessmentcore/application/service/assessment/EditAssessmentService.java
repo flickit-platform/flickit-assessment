@@ -16,12 +16,12 @@ import java.util.UUID;
 @Transactional
 public class EditAssessmentService implements EditAssessmentUseCase {
 
-    private final LoadAssessmentPort loadAssessment;
-    private final SaveAssessmentPort saveAssessment;
+    private final LoadAssessmentPort loadAssessmentPort;
+    private final SaveAssessmentPort saveAssessmentPort;
 
     @Override
     public Result editAssessment(Param param) {
-        Assessment assessment = loadAssessment.loadAssessment(new LoadAssessmentPort.Param(param.getId())).assessment();
+        Assessment assessment = loadAssessmentPort.loadAssessment(param.getId()).assessment();
         Assessment newAssessment = new Assessment(
             assessment.getId(),
             assessment.getCode(),
@@ -32,7 +32,7 @@ public class EditAssessmentService implements EditAssessmentUseCase {
             param.getColorId(),
             assessment.getSpaceId()
         );
-        UUID id = saveAssessment.saveAssessment(new SaveAssessmentPort.Param(newAssessment)).id();
+        UUID id = saveAssessmentPort.saveAssessment(new SaveAssessmentPort.Param(newAssessment)).id();
         return new Result(id);
     }
 }

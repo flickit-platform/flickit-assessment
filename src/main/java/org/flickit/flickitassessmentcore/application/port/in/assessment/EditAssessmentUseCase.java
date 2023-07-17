@@ -1,9 +1,6 @@
 package org.flickit.flickitassessmentcore.application.port.in.assessment;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
@@ -22,8 +19,8 @@ public interface EditAssessmentUseCase {
         UUID id;
 
         @NotBlank(message = EDIT_ASSESSMENT_TITLE_NOT_BLANK)
-        @Min(value = 3, message = EDIT_ASSESSMENT_TITLE_SIZE_MIN)
-        @Max(value = 100, message = EDIT_ASSESSMENT_TITLE_SIZE_MAX)
+        @Size(min = 3, message = EDIT_ASSESSMENT_TITLE_SIZE_MIN)
+        @Size(max = 100, message = EDIT_ASSESSMENT_TITLE_SIZE_MAX)
         String title;
 
         @NotNull(message = EDIT_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
