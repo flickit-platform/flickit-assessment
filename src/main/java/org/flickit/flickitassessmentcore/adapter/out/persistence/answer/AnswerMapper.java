@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
+import org.flickit.flickitassessmentcore.domain.Answer;
 
 public class AnswerMapper {
 
