@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.FindAnswerOptionIdByResultAndQuestionInAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.domain.Answer;
@@ -23,7 +22,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_AN
 @Component
 @RequiredArgsConstructor
 public class AnswerPersistenceJpaAdaptor implements
-    SaveAnswerPort,
+    CreateAnswerPort,
     UpdateAnswerOptionPort,
     LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
     FindAnswerOptionIdByResultAndQuestionInAnswerPort {
@@ -33,8 +32,8 @@ public class AnswerPersistenceJpaAdaptor implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
-    public UUID persist(SaveAnswerPort.Param param) {
-        AnswerJpaEntity unsavedEntity = AnswerMapper.mapSaveParamToJpaEntity(param);
+    public UUID persist(CreateAnswerPort.Param param) {
+        AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param);
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(param.assessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND));
         unsavedEntity.setAssessmentResult(assessmentResult);
@@ -48,7 +47,7 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public Optional<Result> loadAnswerIdAndOptionId(UUID assessmentResultId, Long questionId) {
+    public Optional<LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result> loadAnswerIdAndOptionId(UUID assessmentResultId, Long questionId) {
         return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
             .map(x -> new Result(x.getId(), x.getAnswerOptionId()));
     }

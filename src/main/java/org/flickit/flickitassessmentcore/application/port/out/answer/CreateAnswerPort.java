@@ -4,7 +4,7 @@ import org.flickit.flickitassessmentcore.application.service.exception.ResourceN
 
 import java.util.UUID;
 
-public interface SaveAnswerPort {
+public interface CreateAnswerPort {
 
     /**
      * @throws ResourceNotFoundException if no assessmentResult found by the given id
