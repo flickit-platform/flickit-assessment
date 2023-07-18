@@ -15,7 +15,7 @@ public class SubjectValue {
 
     private UUID id;
 
-    private AssessmentSubject assessmentSubject;
+    private Subject subject;
 
     private MaturityLevel maturityLevel;
 

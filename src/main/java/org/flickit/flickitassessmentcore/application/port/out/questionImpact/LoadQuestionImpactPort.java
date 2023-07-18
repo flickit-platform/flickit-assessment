@@ -4,7 +4,7 @@ import org.flickit.flickitassessmentcore.domain.QuestionImpact;
 
 public interface LoadQuestionImpactPort {
 
-    Result loadQuestionImpact(Param param);
+    Result load(Param param);
 
     record Param(Long id) {}
 

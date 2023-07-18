@@ -6,7 +6,7 @@ import java.util.Set;
 
 public interface LoadAnswerOptionImpactsByAnswerOptionPort {
 
-    Result findAnswerOptionImpactsByAnswerOptionId(Long answerOptionId);
+    Result loadByAnswerOptionId(Long answerOptionId);
 
     record Result(Set<AnswerOptionImpact> optionImpacts) {}
 }

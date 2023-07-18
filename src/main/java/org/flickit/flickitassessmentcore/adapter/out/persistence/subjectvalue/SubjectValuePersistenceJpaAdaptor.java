@@ -3,7 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.SaveSubjectValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.UpdateSubjectValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueByResultPort;
 import org.flickit.flickitassessmentcore.domain.SubjectValue;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SubjectValuePersistenceJpaAdaptor implements
     CreateSubjectValuePort,
-    SaveSubjectValuePort,
+    UpdateSubjectValuePort,
     LoadSubjectValueByResultPort {
 
     private final SubjectValueJpaRepository repository;
@@ -36,12 +36,12 @@ public class SubjectValuePersistenceJpaAdaptor implements
     }
 
     @Override
-    public void saveSubjectValue(SubjectValue subjectValue) {
+    public void update(SubjectValue subjectValue) {
         repository.save(SubjectValueMapper.mapToJpaEntity(subjectValue));
     }
 
     @Override
-    public Result loadSubjectValueByResultId(Param param) {
+    public Result loadByResultId(Param param) {
         return new Result(repository.findByAssessmentResultId(param.resultId()).stream()
             .map(SubjectValueMapper::mapToDomainModel)
             .toList());

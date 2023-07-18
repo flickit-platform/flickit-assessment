@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface LoadMaturityLevelByKitPort {
 
-    Result loadMaturityLevelByKitId(Long kitId);
+    Result loadByKitId(Long kitId);
 
     record Result(List<MaturityLevel> maturityLevels) {}
 }

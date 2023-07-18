@@ -36,7 +36,7 @@ public class AssessmentPersistenceJpaAdaptor implements
     }
 
     @Override
-    public Assessment loadAssessment(UUID assessmentId) {
+    public Assessment load(UUID assessmentId) {
         AssessmentJpaEntity assessmentEntity = repository.getReferenceById(assessmentId);
         return AssessmentMapper.mapToDomainModel(assessmentEntity);
     }

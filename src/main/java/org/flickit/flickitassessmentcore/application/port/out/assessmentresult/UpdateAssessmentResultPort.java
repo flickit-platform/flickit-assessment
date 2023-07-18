@@ -2,7 +2,9 @@ package org.flickit.flickitassessmentcore.application.port.out.assessmentresult;
 
 import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 
-public interface SaveAssessmentResultPort {
+import java.util.UUID;
 
-    AssessmentResult saveAssessmentResult(AssessmentResult assessmentResult);
+public interface UpdateAssessmentResultPort {
+
+    UUID update(AssessmentResult assessmentResult);
 }

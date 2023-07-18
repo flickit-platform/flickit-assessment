@@ -12,7 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AssessmentSubject {
+public class Subject {
     private Long id;
     private String code;
     private String title;
@@ -23,8 +23,8 @@ public class AssessmentSubject {
     private AssessmentKit assessmentKit;
     private Set<Questionnaire> questionnaires;
 
-    public AssessmentSubject(Long assessmentSubjectId) {
-        this.id = assessmentSubjectId;
+    public Subject(Long subjectId) {
+        this.id = subjectId;
     }
 
     @Override

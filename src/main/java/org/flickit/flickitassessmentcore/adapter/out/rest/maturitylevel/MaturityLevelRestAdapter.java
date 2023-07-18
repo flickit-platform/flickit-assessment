@@ -20,7 +20,7 @@ public class MaturityLevelRestAdapter implements LoadMaturityLevelByKitPort {
     private final FlickitPlatformRestProperties properties;
 
     @Override
-    public Result loadMaturityLevelByKitId(Long kitId) {
+    public Result loadByKitId(Long kitId) {
         String url = String.format(properties.getBaseUrl() + properties.getGetMaturityLevelsUrl(), kitId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

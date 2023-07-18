@@ -21,7 +21,7 @@ public class AnswerOptionImpactRestAdapter implements LoadAnswerOptionImpactsByA
     private final FlickitPlatformRestProperties properties;
 
     @Override
-    public Result findAnswerOptionImpactsByAnswerOptionId(Long answerOptionId) {
+    public Result loadByAnswerOptionId(Long answerOptionId) {
         String url = String.format(properties.getBaseUrl() + properties.getGetAnswerOptionImpactsUrl(), answerOptionId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

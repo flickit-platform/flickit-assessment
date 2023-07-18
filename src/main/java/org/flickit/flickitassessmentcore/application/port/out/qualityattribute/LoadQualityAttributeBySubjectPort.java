@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface LoadQualityAttributeBySubjectPort {
 
-    Result loadQualityAttributeBySubjectId(Long subjectId);
+    Result loadBySubjectId(Long subjectId);
 
     record Result(List<QualityAttribute> qualityAttribute) {}
 }

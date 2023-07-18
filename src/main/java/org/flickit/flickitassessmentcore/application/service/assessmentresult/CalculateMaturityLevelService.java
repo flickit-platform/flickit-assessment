@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.SaveAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeBySubjectPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadQualityAttributeByResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.SaveQualityAttributeValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.UpdateQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueByResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.SaveSubjectValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.UpdateSubjectValuePort;
 import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Transactional
 @Service
@@ -25,15 +26,15 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
 
     private final LoadAssessmentPort loadAssessmentPort;
     private final LoadAssessmentResultByAssessmentPort loadAssessmentResultByAssessmentPort;
-    private final SaveAssessmentResultPort saveAssessmentResultPort;
-    private final SaveQualityAttributeValuePort saveQualityAttributeValuePort;
-    private final SaveSubjectValuePort saveSubjectValuePort;
+    private final UpdateAssessmentResultPort updateAssessmentResultPort;
+    private final UpdateQualityAttributeValuePort updateQualityAttributeValuePort;
+    private final UpdateSubjectValuePort updateSubjectValuePort;
     private final LoadQualityAttributeBySubjectPort loadQualityAttributeBySubjectPort;
     private final LoadQualityAttributeByResultPort loadQualityAttributeByResultPort;
     private final LoadSubjectValueByResultPort loadSubjectValueByResultPort;
 
     private final CalculateQualityAttributeMaturityLevel calculateQualityAttributeMaturityLevel;
-    private final CalculateAssessmentSubjectMaturityLevel calculateAssessmentSubjectMaturityLevel;
+    private final CalculateSubjectMaturityLevel calculateSubjectMaturityLevel;
     private final CalculateAssessmentMaturityLevel calculateAssessmentMaturityLevel;
 
     /**
@@ -46,50 +47,66 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
      */
     @Override
     public CalculateMaturityLevelUseCase.Result calculateMaturityLevel(CalculateMaturityLevelUseCase.Param param) {
-        Assessment assessment = loadAssessmentPort.loadAssessment(param.getAssessmentId());
-        List<AssessmentResult> results = loadAssessmentResultByAssessmentPort.loadAssessmentResultByAssessmentId(assessment.getId()).results();
-        AssessmentResult result = results.get(0); // For now, we have just 1 result.
-        if (!result.getIsValid()) {
-            List<QualityAttributeValue> qualityAttributeValues = loadQualityAttributeByResultPort
-                .loadQualityAttributeByResultId(new LoadQualityAttributeByResultPort.Param(result.getId())).qualityAttributeValues();
-            for (QualityAttributeValue qualityAttributeValue : qualityAttributeValues) {
-                MaturityLevel qualityAttributeValueMaturityLevel = calculateQualityAttributeMaturityLevel.calculateQualityAttributeMaturityLevel(
-                    result,
-                    qualityAttributeValue.getQualityAttribute(),
-                    assessment.getAssessmentKitId()
-                );
-                qualityAttributeValue.setMaturityLevel(qualityAttributeValueMaturityLevel);
-                qualityAttributeValue.setResultId(result.getId());
-                saveQualityAttributeValuePort.saveQualityAttributeValue(qualityAttributeValue);
-            }
+        Assessment assessment = loadAssessmentPort.load(param.getAssessmentId());
+        List<AssessmentResult> assessmentResults = loadAssessmentResultByAssessmentPort.loadByAssessmentId(assessment.getId()).results();
+        AssessmentResult assessmentResult = assessmentResults.get(0); // For now, we have just 1 assessmentResult.
 
-            List<SubjectValue> subjectValues = loadSubjectValueByResultPort
-                .loadSubjectValueByResultId(new LoadSubjectValueByResultPort.Param(result.getId())).subjectValues();
-            for (SubjectValue subjectValue : subjectValues) {
-                List<QualityAttribute> qualityAttributes = loadQualityAttributeBySubjectPort.loadQualityAttributeBySubjectId(subjectValue.getAssessmentSubject().getId()).qualityAttribute();
-                List<QualityAttributeValue> qualityAttributeValueList = new ArrayList<>();
-                for (QualityAttributeValue qualityAttributeValue : qualityAttributeValues) {
-                    List<QualityAttribute> matchedQualityAttributes = qualityAttributes.stream()
-                        .filter(qai -> Objects.equals(qai.getId(), qualityAttributeValue.getQualityAttribute().getId()))
-                        .toList();
-                    if (!matchedQualityAttributes.isEmpty()) {
-                        qualityAttributeValue.getQualityAttribute().setWeight(matchedQualityAttributes.get(0).getWeight());
-                        qualityAttributeValueList.add(qualityAttributeValue);
-                    }
-                }
-                MaturityLevel subjectMaturityLevel = calculateAssessmentSubjectMaturityLevel.calculateAssessmentSubjectMaturityLevel(qualityAttributeValueList, assessment.getAssessmentKitId());
-                subjectValue.setMaturityLevel(subjectMaturityLevel);
-                subjectValue.setResultId(result.getId());
-                saveSubjectValuePort.saveSubjectValue(subjectValue);
-            }
-
-            MaturityLevel assessmentMaturityLevel = calculateAssessmentMaturityLevel.calculateAssessmentMaturityLevel(subjectValues, assessment.getAssessmentKitId());
-            result.setMaturityLevelId(assessmentMaturityLevel.getId());
-
-            AssessmentResult savedResult = saveAssessmentResultPort.saveAssessmentResult(result);
-            return new CalculateMaturityLevelUseCase.Result(savedResult.getId());
+        if (assessmentResult.getIsValid()) {
+            return new CalculateMaturityLevelUseCase.Result(assessmentResult.getId());
         }
-        return new CalculateMaturityLevelUseCase.Result(result.getId());
+
+        List<QualityAttributeValue> qualityAttributeValues = calculateQualityAttributesMaturityLevel(assessmentResult);
+        List<SubjectValue> subjectValues = calculateSubjectsMaturityLevel(assessmentResult, qualityAttributeValues);
+        MaturityLevel assessmentMaturityLevel = calculateAssessmentMaturityLevel(assessment, subjectValues);
+
+        assessmentResult.setMaturityLevelId(assessmentMaturityLevel.getId());
+        assessmentResult.setIsValid(Boolean.TRUE);
+
+        UUID updatedResultId = updateAssessmentResultPort.update(assessmentResult);
+        return new CalculateMaturityLevelUseCase.Result(updatedResultId);
+    }
+
+    private List<QualityAttributeValue> calculateQualityAttributesMaturityLevel(AssessmentResult assessmentResult) {
+        List<QualityAttributeValue> qualityAttributeValues = loadQualityAttributeByResultPort
+            .loadByResultId(new LoadQualityAttributeByResultPort.Param(assessmentResult.getId())).qualityAttributeValues();
+        for (QualityAttributeValue qualityAttributeValue : qualityAttributeValues) {
+            MaturityLevel qualityAttributeValueMaturityLevel = calculateQualityAttributeMaturityLevel.calculateQualityAttributeMaturityLevel(
+                assessmentResult,
+                qualityAttributeValue.getQualityAttribute(),
+                assessmentResult.getAssessment().getAssessmentKitId()
+            );
+            qualityAttributeValue.setMaturityLevel(qualityAttributeValueMaturityLevel);
+            qualityAttributeValue.setResultId(assessmentResult.getId());
+            updateQualityAttributeValuePort.update(qualityAttributeValue);
+        }
+        return qualityAttributeValues;
+    }
+
+    private List<SubjectValue> calculateSubjectsMaturityLevel(AssessmentResult assessmentResult, List<QualityAttributeValue> qualityAttributeValues) {
+        List<SubjectValue> subjectValues = loadSubjectValueByResultPort
+            .loadByResultId(new LoadSubjectValueByResultPort.Param(assessmentResult.getId())).subjectValues();
+        for (SubjectValue subjectValue : subjectValues) {
+            List<QualityAttribute> qualityAttributes = loadQualityAttributeBySubjectPort.loadBySubjectId(subjectValue.getSubject().getId()).qualityAttribute();
+            List<QualityAttributeValue> qualityAttributeValueList = new ArrayList<>();
+            for (QualityAttributeValue qualityAttributeValue : qualityAttributeValues) {
+                List<QualityAttribute> matchedQualityAttributes = qualityAttributes.stream()
+                    .filter(qai -> Objects.equals(qai.getId(), qualityAttributeValue.getQualityAttribute().getId()))
+                    .toList();
+                if (!matchedQualityAttributes.isEmpty()) {
+                    qualityAttributeValue.getQualityAttribute().setWeight(matchedQualityAttributes.get(0).getWeight());
+                    qualityAttributeValueList.add(qualityAttributeValue);
+                }
+            }
+            MaturityLevel subjectMaturityLevel = calculateSubjectMaturityLevel.calculateSubjectMaturityLevel(qualityAttributeValueList, assessmentResult.getAssessment().getAssessmentKitId());
+            subjectValue.setMaturityLevel(subjectMaturityLevel);
+            subjectValue.setResultId(assessmentResult.getId());
+            updateSubjectValuePort.update(subjectValue);
+        }
+        return subjectValues;
+    }
+
+    private MaturityLevel calculateAssessmentMaturityLevel(Assessment assessment, List<SubjectValue> subjectValues) {
+        return calculateAssessmentMaturityLevel.calculateAssessmentMaturityLevel(subjectValues, assessment.getAssessmentKitId());
     }
 
 }

@@ -18,7 +18,7 @@ public class QualityAttribute {
     private String description;
     private LocalDateTime creationTime;
     private LocalDateTime lastModificationDate;
-    private AssessmentSubject assessmentSubject;
+    private Subject subject;
     private Integer index;
     private Integer weight;
 

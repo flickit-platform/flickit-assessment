@@ -14,13 +14,13 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 @Component
-public class CalculateAssessmentSubjectMaturityLevel {
+public class CalculateSubjectMaturityLevel {
 
     private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
 
-    public MaturityLevel calculateAssessmentSubjectMaturityLevel(List<QualityAttributeValue> qualityAttributeValues, Long assessmentKitId) {
+    public MaturityLevel calculateSubjectMaturityLevel(List<QualityAttributeValue> qualityAttributeValues, Long assessmentKitId) {
         long weightedMean = calculateWeightedMeanOfQAMaturityLevels(qualityAttributeValues);
-        List<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadMaturityLevelByKitId(assessmentKitId).maturityLevels();
+        List<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadByKitId(assessmentKitId).maturityLevels();
         MaturityLevel subMaturityLevel = findMaturityLevelByValue(weightedMean, maturityLevels);
         return subMaturityLevel;
     }

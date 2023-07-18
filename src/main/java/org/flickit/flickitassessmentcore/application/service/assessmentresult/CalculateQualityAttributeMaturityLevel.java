@@ -29,17 +29,17 @@ public class CalculateQualityAttributeMaturityLevel {
     private final LoadQuestionImpactPort loadQuestionImpactPort;
 
     public MaturityLevel calculateQualityAttributeMaturityLevel(AssessmentResult assessmentResult, QualityAttribute qualityAttribute, Long assessmentKitId) {
-        Set<Question> questions = loadQuestionsByQualityAttributePort.loadQuestionsByQualityAttributeId(new LoadQuestionsByQualityAttributePort.Param(qualityAttribute.getId())).questions();
+        Set<Question> questions = loadQuestionsByQualityAttributePort.loadByQualityAttributeId(new LoadQuestionsByQualityAttributePort.Param(qualityAttribute.getId())).questions();
         Map<Long, Integer> maturityLevelValueSumMap = new HashMap<>();
         Map<Long, Integer> maturityLevelValueCountMap = new HashMap<>();
         for (Question question : questions) {
             Long questionAnswerId = findQuestionAnswer(assessmentResult, question);
             if (questionAnswerId != null) {
-                Set<AnswerOptionImpact> answerOptionImpacts = loadAnswerOptionImpactsByAnswerOptionPort.findAnswerOptionImpactsByAnswerOptionId(questionAnswerId).optionImpacts();
+                Set<AnswerOptionImpact> answerOptionImpacts = loadAnswerOptionImpactsByAnswerOptionPort.loadByAnswerOptionId(questionAnswerId).optionImpacts();
                 for (AnswerOptionImpact impact : answerOptionImpacts) {
                     if (impact.getOptionId().equals(questionAnswerId)) {
                         Long questionImpactId = impact.getQuestionImapctId();
-                        QuestionImpact questionImpact = loadQuestionImpactPort.loadQuestionImpact(new LoadQuestionImpactPort.Param(questionImpactId)).questionImpact();
+                        QuestionImpact questionImpact = loadQuestionImpactPort.load(new LoadQuestionImpactPort.Param(questionImpactId)).questionImpact();
                         Integer value = impact.getValue().setScale(0, RoundingMode.HALF_UP).intValue() * questionImpact.getWeight();
                         Long maturityLevelId = questionImpact.getMaturityLevelId();
                         log.debug("Question: [{}] with Option: [{}] as answer, has value: [{}], on ml: [{}]",
@@ -55,7 +55,7 @@ public class CalculateQualityAttributeMaturityLevel {
             qualityAttributeImpactScoreMap.put(maturityLevelId, maturityLevelValueSumMap.get(maturityLevelId) / maturityLevelValueCountMap.get(maturityLevelId));
         }
         // We have to create a new list, because the output of called method is immutable list, so we can't do anything on it further.
-        List<MaturityLevel> maturityLevels = new ArrayList<>(loadMaturityLevelByKitPort.loadMaturityLevelByKitId(assessmentKitId).maturityLevels());
+        List<MaturityLevel> maturityLevels = new ArrayList<>(loadMaturityLevelByKitPort.loadByKitId(assessmentKitId).maturityLevels());
         MaturityLevel qualityAttMaturityLevel = findMaturityLevelBasedOnCalculations(qualityAttributeImpactScoreMap, maturityLevels);
 
         return qualityAttMaturityLevel;
@@ -76,7 +76,7 @@ public class CalculateQualityAttributeMaturityLevel {
         maturityLevels.sort(Comparator.comparingInt(MaturityLevel::getValue));
         MaturityLevel result = maturityLevels.get(0);
         for (MaturityLevel maturityLevel : maturityLevels) {
-            List<LevelCompetence> levelCompetences = loadLevelCompetenceByMaturityLevelPort.loadLevelCompetenceByMaturityLevelId(maturityLevel.getId()).levelCompetences();
+            List<LevelCompetence> levelCompetences = loadLevelCompetenceByMaturityLevelPort.loadByMaturityLevelId(maturityLevel.getId()).levelCompetences();
             for (LevelCompetence levelCompetence : levelCompetences) {
                 Long id = levelCompetence.getMaturityLevelCompetenceId();
                 if (qualityAttImpactScoreMap.containsKey(id) && qualityAttImpactScoreMap.get(id) >= levelCompetence.getValue()) {

@@ -2,8 +2,8 @@ package org.flickit.flickitassessmentcore.application.port.out.subjectvalue;
 
 import org.flickit.flickitassessmentcore.domain.SubjectValue;
 
-public interface SaveSubjectValuePort {
+public interface UpdateSubjectValuePort {
 
-    void saveSubjectValue(SubjectValue subjectValue);
+    void update(SubjectValue subjectValue);
 
 }

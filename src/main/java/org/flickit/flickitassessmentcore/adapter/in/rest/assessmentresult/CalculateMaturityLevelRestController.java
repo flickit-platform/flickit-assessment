@@ -19,14 +19,12 @@ public class CalculateMaturityLevelRestController {
     @PostMapping("{assessmentId}/assessment-result")
     public ResponseEntity<CalculateMaturityLevelResponseDto> calculateMaturityLevel(
         @PathVariable("assessmentId") UUID assessmentId) {
-        CalculateMaturityLevelUseCase.Param result = new CalculateMaturityLevelUseCase.Param(assessmentId);
-        CalculateMaturityLevelResponseDto responseDto =
-            mapCommandToResponseDto(
-                useCase.calculateMaturityLevel(result));
+        CalculateMaturityLevelUseCase.Param param = new CalculateMaturityLevelUseCase.Param(assessmentId);
+        var responseDto = toResponseDto(useCase.calculateMaturityLevel(param));
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    private CalculateMaturityLevelResponseDto mapCommandToResponseDto(CalculateMaturityLevelUseCase.Result result) {
+    private CalculateMaturityLevelResponseDto toResponseDto(CalculateMaturityLevelUseCase.Result result) {
         return new CalculateMaturityLevelResponseDto(
             result.assessmentResultId()
         );

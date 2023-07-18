@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface LoadLevelCompetenceByMaturityLevelPort {
 
-    Result loadLevelCompetenceByMaturityLevelId(Long maturityLevelId);
+    Result loadByMaturityLevelId(Long maturityLevelId);
 
     record Result(List<LevelCompetence> levelCompetences) {}
 }

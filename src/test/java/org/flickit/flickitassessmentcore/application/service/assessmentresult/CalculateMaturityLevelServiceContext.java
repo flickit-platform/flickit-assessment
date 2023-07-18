@@ -11,7 +11,7 @@ public class CalculateMaturityLevelServiceContext {
     private final Assessment assessment;
     private final AssessmentResult result;
     private final AssessmentKit kit;
-    private final AssessmentSubject subject;
+    private final Subject subject;
     private final SubjectValue subjectValue;
     private final Questionnaire questionnaire;
     private final QualityAttribute qualityAttribute;
@@ -44,7 +44,7 @@ public class CalculateMaturityLevelServiceContext {
         assessment = Utils.createAssessment();
         kit = Utils.createAssessmentKit();
         result = Utils.createAssessmentResult();
-        subject = Utils.createAssessmentSubject();
+        subject = Utils.createSubject();
         subjectValue = Utils.createSubjectValue();
         questionnaire = Utils.createQuestionnaire();
         qualityAttribute = Utils.createQualityAttribute();
@@ -83,11 +83,11 @@ public class CalculateMaturityLevelServiceContext {
         subject.setAssessmentKit(kit);
         subject.getQuestionnaires().add(questionnaire);
 
-        subjectValue.setAssessmentSubject(subject);
+        subjectValue.setSubject(subject);
 
         questionnaire.setAssessmentKit(kit);
 
-        qualityAttribute.setAssessmentSubject(subject);
+        qualityAttribute.setSubject(subject);
 
         qualityAttributeValue.setQualityAttribute(qualityAttribute);
 

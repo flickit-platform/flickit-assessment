@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface LoadQualityAttributeByResultPort {
 
-    Result loadQualityAttributeByResultId(Param param);
+    Result loadByResultId(Param param);
 
     record Param(UUID resultId) {}
 

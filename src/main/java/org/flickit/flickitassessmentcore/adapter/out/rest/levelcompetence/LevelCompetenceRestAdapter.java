@@ -20,7 +20,7 @@ public class LevelCompetenceRestAdapter implements LoadLevelCompetenceByMaturity
     private final FlickitPlatformRestProperties properties;
 
     @Override
-    public Result loadLevelCompetenceByMaturityLevelId(Long maturityLevelId) {
+    public Result loadByMaturityLevelId(Long maturityLevelId) {
         String url = String.format(properties.getBaseUrl() + properties.getGetLevelCompetencesUrl(), maturityLevelId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

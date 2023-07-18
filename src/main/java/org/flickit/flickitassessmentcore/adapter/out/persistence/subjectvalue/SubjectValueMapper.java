@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue;
 
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.flickitassessmentcore.domain.AssessmentSubject;
+import org.flickit.flickitassessmentcore.domain.Subject;
 import org.flickit.flickitassessmentcore.domain.SubjectValue;
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 
@@ -19,7 +19,7 @@ public class SubjectValueMapper {
     public static SubjectValue mapToDomainModel(SubjectValueJpaEntity subjectValueJpaEntity) {
         return new SubjectValue(
             subjectValueJpaEntity.getId(),
-            new AssessmentSubject(subjectValueJpaEntity.getSubjectId()),
+            new Subject(subjectValueJpaEntity.getSubjectId()),
             new MaturityLevel(subjectValueJpaEntity.getMaturityLevelId()),
             subjectValueJpaEntity.getAssessmentResult() != null ? subjectValueJpaEntity.getAssessmentResult().getId() : null
         );
@@ -29,7 +29,7 @@ public class SubjectValueMapper {
         return new SubjectValueJpaEntity(
             subjectValue.getId(),
             new AssessmentResultJpaEntity(subjectValue.getResultId()),
-            subjectValue.getAssessmentSubject().getId(),
+            subjectValue.getSubject().getId(),
             subjectValue.getMaturityLevel().getId()
         );
     }

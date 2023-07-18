@@ -5,7 +5,8 @@ import org.flickit.flickitassessmentcore.domain.Question;
 import java.util.Set;
 
 public interface LoadQuestionsByQualityAttributePort {
-    Result loadQuestionsByQualityAttributeId(Param param);
+
+    Result loadByQualityAttributeId(Param param);
 
     record Param(Long qualityAttributeId) {}
 

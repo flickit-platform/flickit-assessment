@@ -3,8 +3,8 @@ package org.flickit.flickitassessmentcore.application.port.out.qualityattributev
 import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
 
 
-public interface SaveQualityAttributeValuePort {
+public interface UpdateQualityAttributeValuePort {
 
-    void saveQualityAttributeValue(QualityAttributeValue qualityAttributeValue);
+    void update(QualityAttributeValue qualityAttributeValue);
 
 }

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface LoadSubjectValueByResultPort {
 
-    Result loadSubjectValueByResultId(Param param);
+    Result loadByResultId(Param param);
 
     record Param(UUID resultId) {
     }

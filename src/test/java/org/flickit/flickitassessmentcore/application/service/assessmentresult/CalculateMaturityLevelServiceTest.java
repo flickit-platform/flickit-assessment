@@ -3,17 +3,16 @@ package org.flickit.flickitassessmentcore.application.service.assessmentresult;
 import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateMaturityLevelUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.SaveAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattribute.LoadQualityAttributeBySubjectPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadQualityAttributeByResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.SaveQualityAttributeValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.UpdateQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueByResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.SaveSubjectValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.UpdateSubjectValuePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -26,7 +25,6 @@ public class CalculateMaturityLevelServiceTest {
 
     private final CalculateMaturityLevelServiceContext context = new CalculateMaturityLevelServiceContext();
     private final CalculateMaturityLevelUseCase.Param param = new CalculateMaturityLevelUseCase.Param(context.getAssessment().getId());
-    @Spy
     @InjectMocks
     private CalculateMaturityLevelService calculateMaturityLevelService;
     @Mock
@@ -34,11 +32,11 @@ public class CalculateMaturityLevelServiceTest {
     @Mock
     private LoadAssessmentResultByAssessmentPort loadAssessmentResultByAssessmentPort;
     @Mock
-    private SaveAssessmentResultPort saveAssessmentResultPort;
+    private UpdateAssessmentResultPort updateAssessmentResultPort;
     @Mock
-    private SaveQualityAttributeValuePort saveQualityAttributeValuePort;
+    private UpdateQualityAttributeValuePort updateQualityAttributeValuePort;
     @Mock
-    private SaveSubjectValuePort saveSubjectValuePort;
+    private UpdateSubjectValuePort updateSubjectValuePort;
     @Mock
     private LoadQualityAttributeBySubjectPort loadQualityAttributeBySubjectPort;
     @Mock
@@ -48,7 +46,7 @@ public class CalculateMaturityLevelServiceTest {
     @Mock
     private CalculateQualityAttributeMaturityLevel calculateQualityAttributeMaturityLevel;
     @Mock
-    private CalculateAssessmentSubjectMaturityLevel calculateAssessmentSubjectMaturityLevel;
+    private CalculateSubjectMaturityLevel calculateSubjectMaturityLevel;
     @Mock
     private CalculateAssessmentMaturityLevel calculateAssessmentMaturityLevel;
 
@@ -77,16 +75,16 @@ public class CalculateMaturityLevelServiceTest {
     }
 
     private void doMocks() {
-        when(loadAssessmentPort.loadAssessment(context.getAssessment().getId())).thenReturn(context.getAssessment());
-        when(loadAssessmentResultByAssessmentPort.loadAssessmentResultByAssessmentId(context.getAssessment().getId())).thenReturn(new LoadAssessmentResultByAssessmentPort.Result(List.of(context.getResult())));
+        when(loadAssessmentPort.load(context.getAssessment().getId())).thenReturn(context.getAssessment());
+        when(loadAssessmentResultByAssessmentPort.loadByAssessmentId(context.getAssessment().getId())).thenReturn(new LoadAssessmentResultByAssessmentPort.Result(List.of(context.getResult())));
         when(calculateQualityAttributeMaturityLevel.calculateQualityAttributeMaturityLevel(context.getResult(), context.getQualityAttribute(), context.getKit().getId())).thenReturn(context.getQualityAttributeValue().getMaturityLevel());
-        when(calculateAssessmentSubjectMaturityLevel.calculateAssessmentSubjectMaturityLevel(any(), eq(context.getKit().getId()))).thenReturn(context.getSubjectValue().getMaturityLevel());
-        when(saveAssessmentResultPort.saveAssessmentResult(context.getResult())).thenReturn(context.getResult());
-        when(loadQualityAttributeBySubjectPort.loadQualityAttributeBySubjectId(any())).thenReturn(new LoadQualityAttributeBySubjectPort.Result(List.of(context.getQualityAttribute())));
-        when(loadQualityAttributeByResultPort.loadQualityAttributeByResultId(any())).thenReturn(new LoadQualityAttributeByResultPort.Result(List.of(context.getQualityAttributeValue())));
-        when(loadSubjectValueByResultPort.loadSubjectValueByResultId(any())).thenReturn(new LoadSubjectValueByResultPort.Result(List.of(context.getSubjectValue())));
-        doNothing().when(saveQualityAttributeValuePort).saveQualityAttributeValue(any());
-        doNothing().when(saveSubjectValuePort).saveSubjectValue(any());
+        when(calculateSubjectMaturityLevel.calculateSubjectMaturityLevel(any(), eq(context.getKit().getId()))).thenReturn(context.getSubjectValue().getMaturityLevel());
+        when(updateAssessmentResultPort.update(context.getResult())).thenReturn(context.getResult().getId());
+        when(loadQualityAttributeBySubjectPort.loadBySubjectId(any())).thenReturn(new LoadQualityAttributeBySubjectPort.Result(List.of(context.getQualityAttribute())));
+        when(loadQualityAttributeByResultPort.loadByResultId(any())).thenReturn(new LoadQualityAttributeByResultPort.Result(List.of(context.getQualityAttributeValue())));
+        when(loadSubjectValueByResultPort.loadByResultId(any())).thenReturn(new LoadSubjectValueByResultPort.Result(List.of(context.getSubjectValue())));
+        doNothing().when(updateQualityAttributeValuePort).update(any());
+        doNothing().when(updateSubjectValuePort).update(any());
     }
 
 

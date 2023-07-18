@@ -20,7 +20,7 @@ public class QualityAttributeRestAdapter implements LoadQualityAttributeBySubjec
     private final FlickitPlatformRestProperties properties;
 
     @Override
-    public Result loadQualityAttributeBySubjectId(Long subjectId) {
+    public Result loadBySubjectId(Long subjectId) {
         String url = String.format(properties.getBaseUrl() + properties.getGetQualityAttributesUrl(), subjectId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

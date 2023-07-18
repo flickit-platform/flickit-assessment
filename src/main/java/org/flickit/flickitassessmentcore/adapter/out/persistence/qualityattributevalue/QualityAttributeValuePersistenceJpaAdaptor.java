@@ -5,7 +5,7 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadQualityAttributeByResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.SaveQualityAttributeValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.UpdateQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class QualityAttributeValuePersistenceJpaAdaptor implements
     CreateQualityAttributeValuePort,
-    SaveQualityAttributeValuePort,
+        UpdateQualityAttributeValuePort,
     LoadQualityAttributeByResultPort {
 
     private final QualityAttributeValueJpaRepository repository;
@@ -36,12 +36,12 @@ public class QualityAttributeValuePersistenceJpaAdaptor implements
     }
 
     @Override
-    public void saveQualityAttributeValue(QualityAttributeValue qualityAttributeValue) {
+    public void update(QualityAttributeValue qualityAttributeValue) {
         repository.save(QualityAttributeValueMapper.mapToJpaEntity(qualityAttributeValue));
     }
 
     @Override
-    public Result loadQualityAttributeByResultId(Param param) {
+    public Result loadByResultId(Param param) {
         return new Result(repository.findByAssessmentResultId(param.resultId()).stream()
             .map(QualityAttributeValueMapper::mapToDomainModel)
             .toList());

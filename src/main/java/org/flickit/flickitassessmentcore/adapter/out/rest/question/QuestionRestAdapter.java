@@ -21,7 +21,7 @@ public class QuestionRestAdapter implements LoadQuestionsByQualityAttributePort 
     private final FlickitPlatformRestProperties properties;
 
     @Override
-    public Result loadQuestionsByQualityAttributeId(Param param) {
+    public Result loadByQualityAttributeId(Param param) {
         String url = String.format(properties.getBaseUrl() + properties.getGetQuestionsUrl(), param.qualityAttributeId());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
