@@ -35,7 +35,7 @@ public class FlickitPlatformRestProperties {
     private String getLevelCompetencesUrl = "/api/internal/maturity-level/%d/level-competences/";
 
     @NotBlank
-    private String getAnswerOptionImpactsUrl = "/api/internal/answer-template/%d/option-values/";
+    private String getAnswerOptionImpactsUrl = "/api/internal/answer-template/%d/%d/option-values/";
 
     @Valid
     private RestClientProps restClient = new RestClientProps();

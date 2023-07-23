@@ -22,7 +22,7 @@ public class AnswerOptionImpactRestAdapterAndQualityAttribute implements LoadAns
 
     @Override
     public Result loadByAnswerOptionIdAndQualityAttributeId(Long answerOptionId, Long qualityAttributeId) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetAnswerOptionImpactsUrl(), answerOptionId, "/", qualityAttributeId);
+        String url = String.format(properties.getBaseUrl() + properties.getGetAnswerOptionImpactsUrl(), answerOptionId, qualityAttributeId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
