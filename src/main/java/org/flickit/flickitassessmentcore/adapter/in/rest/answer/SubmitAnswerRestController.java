@@ -24,6 +24,7 @@ public class SubmitAnswerRestController {
     private SubmitAnswerUseCase.Param toParam(SubmitAnswerRequestDto requestDto, UUID assessmentResultId) {
         return new SubmitAnswerUseCase.Param(
             assessmentResultId,
+            requestDto.questionnaireId(),
             requestDto.questionId(),
             requestDto.answerOptionId()
         );

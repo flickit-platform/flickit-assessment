@@ -164,4 +164,12 @@
                                  constraintName="fk_fac_subjectvalue_assessmentresult"
         />
     </changeSet>
+
+    <changeSet id="0.1-13" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_answer">
+            <column name="questionnaire_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
