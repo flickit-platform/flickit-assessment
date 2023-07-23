@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
 
-    List<EvidenceJpaEntity> findByQuestionIdOrderByLastModificationDateDesc(Long questionId, Pageable pageable);
+    List<EvidenceJpaEntity> findByQuestionIdOrderByLastModificationTimeDesc(Long questionId, Pageable pageable);
 
 
 }

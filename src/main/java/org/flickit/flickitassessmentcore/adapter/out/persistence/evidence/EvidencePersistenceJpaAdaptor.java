@@ -26,7 +26,7 @@ public class EvidencePersistenceJpaAdaptor implements
 
     @Override
     public LoadEvidencesByQuestionPort.Result loadEvidencesByQuestionId(LoadEvidencesByQuestionPort.Param param, int page, int size) {
-        return new LoadEvidencesByQuestionPort.Result(repository.findByQuestionIdOrderByLastModificationDateDesc(param.questionId(), PageRequest.of(page, size)).stream()
+        return new LoadEvidencesByQuestionPort.Result(repository.findByQuestionIdOrderByLastModificationTimeDesc(param.questionId(), PageRequest.of(page, size)).stream()
             .map(EvidenceMapper::toDomainModel)
             .collect(Collectors.toList()));
     }

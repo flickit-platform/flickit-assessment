@@ -10,22 +10,10 @@ public class EvidenceMapper {
             null,
             param.description(),
             param.creationTime(),
-            param.lastModificationDate(),
+            param.lastModificationTime(),
             param.createdById(),
             param.assessmentId(),
             param.questionId()
-        );
-    }
-
-    public static EvidenceJpaEntity toJpaEntity(Evidence evidence) {
-        return new EvidenceJpaEntity(
-            evidence.getId(),
-            evidence.getDescription(),
-            evidence.getCreationTime(),
-            evidence.getLastModificationDate(),
-            evidence.getCreatedById(),
-            evidence.getAssessmentId(),
-            evidence.getQuestionId()
         );
     }
 
@@ -34,7 +22,7 @@ public class EvidenceMapper {
             entity.getId(),
             entity.getDescription(),
             entity.getCreationTime(),
-            entity.getLastModificationDate(),
+            entity.getLastModificationTime(),
             entity.getCreatedById(),
             entity.getAssessmentId(),
             entity.getQuestionId()
