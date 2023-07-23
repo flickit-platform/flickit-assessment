@@ -121,6 +121,43 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Add Evidence",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"description\",\n    \"createdById\": 1,\n    \"assessmentId\": \"3b39ed16-9478-464f-a295-955f69f89ec2\",\n    \"questionId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences"
+					]
+				}
+			},
+			"response": []
 		},{
 			"name": "Edit Evidence",
 			"request": {
