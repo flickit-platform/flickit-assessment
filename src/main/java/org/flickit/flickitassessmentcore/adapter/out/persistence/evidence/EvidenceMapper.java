@@ -22,7 +22,7 @@ public class EvidenceMapper {
             evidence.getId(),
             evidence.getDescription(),
             evidence.getCreationTime(),
-            evidence.getLastModificationDate(),
+            evidence.getLastModificationTime(),
             evidence.getCreatedById(),
             evidence.getAssessmentId(),
             evidence.getQuestionId()
@@ -34,7 +34,7 @@ public class EvidenceMapper {
             entity.getId(),
             entity.getDescription(),
             entity.getCreationTime(),
-            entity.getLastModificationDate(),
+            entity.getLastModificationTime(),
             entity.getCreatedById(),
             entity.getAssessmentId(),
             entity.getQuestionId()
