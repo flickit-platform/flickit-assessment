@@ -3,12 +3,15 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByAssessmentAndQuestionIdsPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
+import org.flickit.flickitassessmentcore.domain.Answer;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,7 +23,8 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_AN
 public class AnswerPersistenceJpaAdaptor implements
     CreateAnswerPort,
     UpdateAnswerOptionPort,
-    LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort {
+    LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
+    LoadAnswersByAssessmentAndQuestionIdsPort {
 
     private final AnswerJpaRepository repository;
 
@@ -44,6 +48,12 @@ public class AnswerPersistenceJpaAdaptor implements
     @Override
     public Optional<LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result> loadAnswerIdAndOptionId(UUID assessmentResultId, Long questionId) {
         return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
-            .map(x -> new Result(x.getId(), x.getAnswerOptionId()));
+            .map(x -> new LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result(x.getId(), x.getAnswerOptionId()));
+    }
+
+    @Override
+    public List<Answer> loadAnswersByAssessmentAndQuestionIdsPort(LoadAnswersByAssessmentAndQuestionIdsPort.Param param) {
+        List<AnswerJpaEntity> answers = repository.findByAssessmentResultAndQuestionIdIn(param.assessmentId(), param.questionIds());
+        return answers.stream().map(a -> AnswerMapper.mapJpaEntityToDomain(a)).toList();
     }
 }

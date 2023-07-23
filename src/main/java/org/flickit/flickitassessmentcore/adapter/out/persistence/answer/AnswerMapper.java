@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
+import org.flickit.flickitassessmentcore.domain.Answer;
 
 public class AnswerMapper {
 
@@ -10,6 +11,15 @@ public class AnswerMapper {
             null,
             param.questionId(),
             param.answerOptionId()
+        );
+    }
+
+    public static Answer mapJpaEntityToDomain(AnswerJpaEntity answer) {
+        return new Answer(
+            answer.getId(),
+            answer.getAssessmentResult().getId(),
+            answer.getQuestionId(),
+            answer.getAnswerOptionId()
         );
     }
 }
