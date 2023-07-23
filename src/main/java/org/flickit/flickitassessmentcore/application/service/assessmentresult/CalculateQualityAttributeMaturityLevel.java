@@ -41,20 +41,13 @@ public class CalculateQualityAttributeMaturityLevel {
                     if (impact.getOptionId().equals(answerOptionId)) {
                         Long questionImpactId = impact.getQuestionImpactId();
                         QuestionImpact questionImpact = loadQuestionImpactPort.load(questionImpactId).questionImpact();
-                        Integer value = impact.getValue().setScale(0, RoundingMode.HALF_UP).intValue() * questionImpact.getWeight();
-                        Long maturityLevelId = questionImpact.getMaturityLevelId();
-                        log.debug("Question: [{}] with Option: [{}] as answer, has value: [{}], on ml: [{}]",
-                            question.getTitle(), answerOptionId, value, maturityLevelId);
-                        maturityLevelValueSumMap.put(maturityLevelId, maturityLevelValueSumMap.getOrDefault(maturityLevelId, 0) + value);
-                        maturityLevelValueCountMap.put(maturityLevelId, maturityLevelValueCountMap.getOrDefault(maturityLevelId, 0) + questionImpact.getWeight());
+                        Long maturityLevelId = calculateGainedScoreValue(maturityLevelValueSumMap, question, answerOptionId, impact, questionImpact);
+                        calculateRealScore(maturityLevelValueCountMap, questionImpact, maturityLevelId);
                     }
                 }
             }
         }
-        Map<Long, Integer> qualityAttributeImpactScoreMap = new HashMap<>();
-        for (Long maturityLevelId : maturityLevelValueSumMap.keySet()) {
-            qualityAttributeImpactScoreMap.put(maturityLevelId, maturityLevelValueSumMap.get(maturityLevelId) / maturityLevelValueCountMap.get(maturityLevelId));
-        }
+        Map<Long, Integer> qualityAttributeImpactScoreMap = calculateScoreMap(maturityLevelValueSumMap, maturityLevelValueCountMap);
         // We have to create a new list, because the output of called method is immutable list, so we can't do anything on it further.
         List<MaturityLevel> maturityLevels = new ArrayList<>(loadMaturityLevelByKitPort.loadByKitId(assessmentKitId).maturityLevels());
         MaturityLevel qualityAttMaturityLevel = findMaturityLevelBasedOnCalculations(qualityAttributeImpactScoreMap, maturityLevels);
@@ -66,6 +59,27 @@ public class CalculateQualityAttributeMaturityLevel {
         return loadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.loadAnswerIdAndOptionId(
             assessmentResultId, questionId
         ).get().answerOptionId();
+    }
+
+    private static Long calculateGainedScoreValue(Map<Long, Integer> maturityLevelValueSumMap, Question question, Long answerOptionId, AnswerOptionImpact impact, QuestionImpact questionImpact) {
+        Integer value = impact.getValue().setScale(0, RoundingMode.HALF_UP).intValue() * questionImpact.getWeight();
+        Long maturityLevelId = questionImpact.getMaturityLevelId();
+        log.debug("Question: [{}] with Option: [{}] as answer, has value: [{}], on ml: [{}]",
+            question.getTitle(), answerOptionId, value, maturityLevelId);
+        maturityLevelValueSumMap.put(maturityLevelId, maturityLevelValueSumMap.getOrDefault(maturityLevelId, 0) + value);
+        return maturityLevelId;
+    }
+
+    private static void calculateRealScore(Map<Long, Integer> maturityLevelValueCountMap, QuestionImpact questionImpact, Long maturityLevelId) {
+        maturityLevelValueCountMap.put(maturityLevelId, maturityLevelValueCountMap.getOrDefault(maturityLevelId, 0) + questionImpact.getWeight());
+    }
+
+    private static Map<Long, Integer> calculateScoreMap(Map<Long, Integer> maturityLevelValueSumMap, Map<Long, Integer> maturityLevelValueCountMap) {
+        Map<Long, Integer> qualityAttributeImpactScoreMap = new HashMap<>();
+        for (Long maturityLevelId : maturityLevelValueSumMap.keySet()) {
+            qualityAttributeImpactScoreMap.put(maturityLevelId, maturityLevelValueSumMap.get(maturityLevelId) / maturityLevelValueCountMap.get(maturityLevelId));
+        }
+        return qualityAttributeImpactScoreMap;
     }
 
     /**
