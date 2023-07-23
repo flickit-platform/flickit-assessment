@@ -1,5 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
@@ -38,8 +39,12 @@ public class MaturityLevelRestAdapter implements LoadMaturityLevelByKitPort {
 
     record MaturityLevelDto(Long id,
                             String title,
-                            Integer value) {
+                            Integer value,
+                            @JsonProperty("LevelCompetences") List<LevelCompetenceDto> levelCompetences) {
     }
+
+    record LevelCompetenceDto(Integer value,
+                              Long maturityLevelCompetenceId) {}
 
 
 }

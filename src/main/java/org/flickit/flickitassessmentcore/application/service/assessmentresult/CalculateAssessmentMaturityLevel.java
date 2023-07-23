@@ -18,7 +18,7 @@ public class CalculateAssessmentMaturityLevel {
 
     private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
 
-    public MaturityLevel calculateAssessmentMaturityLevel(List<SubjectValue> subjectValues, Long assessmentKitId) {
+    public MaturityLevel calculate(List<SubjectValue> subjectValues, Long assessmentKitId) {
         List<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadByKitId(assessmentKitId).maturityLevels();
         long mean = calculateMeanOfSubjectMaturityLevels(subjectValues);
         return findMaturityLevelByValue(mean, maturityLevels);

@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,6 +17,7 @@ public class MaturityLevel {
     private String title;
     private Integer value;
     private AssessmentKit assessmentKit;
+    private List<LevelCompetence> levelCompetences;
     public MaturityLevel(Long id) {
         this.id = id;
     }

@@ -16,12 +16,12 @@ public class QualityAttributeValueMapper {
         );
     }
 
-    public static QualityAttributeValue mapToDomainModel(QualityAttributeValueJpaEntity qualityAttributeValueEntity) {
+    public static QualityAttributeValue mapToDomainModel(QualityAttributeValueJpaEntity entity) {
         return new QualityAttributeValue(
-            qualityAttributeValueEntity.getId(),
-            new QualityAttribute(qualityAttributeValueEntity.getQualityAttributeId()),
-            new MaturityLevel(qualityAttributeValueEntity.getMaturityLevelId()),
-            qualityAttributeValueEntity.getAssessmentResult().getId()
+            entity.getId(),
+            new QualityAttribute(entity.getQualityAttributeId()),
+            new MaturityLevel(entity.getMaturityLevelId()),
+            entity.getAssessmentResult().getId()
         );
     }
 

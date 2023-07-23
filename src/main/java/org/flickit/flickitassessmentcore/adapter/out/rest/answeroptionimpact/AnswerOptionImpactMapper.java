@@ -1,21 +1,21 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.answeroptionimpact;
 
-import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort;
 import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AnswerOptionImpactMapper {
-    public static LoadAnswerOptionImpactsByAnswerOptionPort.Result toResult(List<AnswerOptionImpactRestAdapter.AnswerOptionImpactDto> dtos) {
-        return new LoadAnswerOptionImpactsByAnswerOptionPort.Result(
+    public static LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort.Result toResult(List<AnswerOptionImpactRestAdapterAndQualityAttribute.AnswerOptionImpactDto> dtos) {
+        return new LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort.Result(
             dtos.stream().
                 map(AnswerOptionImpactMapper::toDomainModel).
                 collect(Collectors.toSet())
         );
     }
 
-    private static AnswerOptionImpact toDomainModel(AnswerOptionImpactRestAdapter.AnswerOptionImpactDto dto) {
+    private static AnswerOptionImpact toDomainModel(AnswerOptionImpactRestAdapterAndQualityAttribute.AnswerOptionImpactDto dto) {
         return new AnswerOptionImpact(
             dto.id(),
             dto.value(),

@@ -2,7 +2,7 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.answeroptionimpact;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
-import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -15,14 +15,14 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
-public class AnswerOptionImpactRestAdapter implements LoadAnswerOptionImpactsByAnswerOptionPort {
+public class AnswerOptionImpactRestAdapterAndQualityAttribute implements LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort {
 
     private final RestTemplate flickitPlatformRestTemplate;
     private final FlickitPlatformRestProperties properties;
 
     @Override
-    public Result loadByAnswerOptionId(Long answerOptionId) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetAnswerOptionImpactsUrl(), answerOptionId);
+    public Result loadByAnswerOptionIdAndQualityAttributeId(Long answerOptionId, Long qualityAttributeId) {
+        String url = String.format(properties.getBaseUrl() + properties.getGetAnswerOptionImpactsUrl(), answerOptionId, "/", qualityAttributeId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

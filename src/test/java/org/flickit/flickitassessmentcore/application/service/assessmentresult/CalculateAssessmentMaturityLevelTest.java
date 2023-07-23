@@ -30,7 +30,7 @@ public class CalculateAssessmentMaturityLevelTest {
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel2());
         when(loadMaturityLevelByKitPort.loadByKitId(context.getKit().getId()))
             .thenReturn(new LoadMaturityLevelByKitPort.Result(List.of(context.getMaturityLevel1(), context.getMaturityLevel2())));
-        MaturityLevel ml = service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getKit().getId());
+        MaturityLevel ml = service.calculate(List.of(context.getSubjectValue()), context.getKit().getId());
         assertEquals(2, ml.getValue());
     }
 
@@ -39,7 +39,7 @@ public class CalculateAssessmentMaturityLevelTest {
         context.getSubjectValue().setMaturityLevel(context.getMaturityLevel1());
         when(loadMaturityLevelByKitPort.loadByKitId(context.getKit().getId()))
             .thenReturn(new LoadMaturityLevelByKitPort.Result(List.of(context.getMaturityLevel1(), context.getMaturityLevel2())));
-        MaturityLevel ml = service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getKit().getId());
+        MaturityLevel ml = service.calculate(List.of(context.getSubjectValue()), context.getKit().getId());
         assertEquals(1, ml.getValue());
     }
 
@@ -49,7 +49,7 @@ public class CalculateAssessmentMaturityLevelTest {
         when(loadMaturityLevelByKitPort.loadByKitId(context.getKit().getId()))
             .thenReturn(new LoadMaturityLevelByKitPort.Result(List.of(context.getMaturityLevel1(), context.getMaturityLevel2())));
         assertThrows(ResourceNotFoundException.class,
-            () -> service.calculateAssessmentMaturityLevel(List.of(context.getSubjectValue()), context.getKit().getId()),
+            () -> service.calculate(List.of(context.getSubjectValue()), context.getKit().getId()),
             CALCULATE_MATURITY_LEVEL_MATURITY_LEVEL_NOT_FOUND_MESSAGE);
     }
 

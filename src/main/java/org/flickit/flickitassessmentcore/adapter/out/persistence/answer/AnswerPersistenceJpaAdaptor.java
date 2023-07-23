@@ -3,12 +3,10 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.flickitassessmentcore.application.port.out.answer.FindAnswerOptionIdByResultAndQuestionInAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.domain.Answer;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,8 +23,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_AN
 public class AnswerPersistenceJpaAdaptor implements
     CreateAnswerPort,
     UpdateAnswerOptionPort,
-    LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
-    FindAnswerOptionIdByResultAndQuestionInAnswerPort {
+    LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort {
 
     private final AnswerJpaRepository repository;
 
@@ -53,8 +50,4 @@ public class AnswerPersistenceJpaAdaptor implements
             .map(x -> new Result(x.getId(), x.getAnswerOptionId()));
     }
 
-    @Override
-    public Long findAnswerOptionIdByResultIdAndQuestionId(FindAnswerOptionIdByResultAndQuestionInAnswerPort.Param param) {
-        return repository.findAnswersByResultId(param.resultId(), param.questionId());
-    }
 }

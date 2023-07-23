@@ -1,6 +1,8 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel;
 
+import org.flickit.flickitassessmentcore.adapter.out.rest.levelcompetence.LevelCompetenceMapper;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
+import org.flickit.flickitassessmentcore.domain.LevelCompetence;
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 
 import java.util.List;
@@ -19,7 +21,10 @@ public class MaturityLevelMapper {
             dto.id(),
             dto.title(),
             dto.value(),
-            null
+            null,
+            dto.levelCompetences().stream()
+                .map(lc -> new LevelCompetence(null, null, dto.value(), lc.maturityLevelCompetenceId()))
+                .toList()
         );
     }
 }

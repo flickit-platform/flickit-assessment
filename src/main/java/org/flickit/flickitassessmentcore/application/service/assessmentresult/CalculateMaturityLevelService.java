@@ -46,13 +46,13 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
      * All of them are stored in result and saved in database. <br>
      */
     @Override
-    public CalculateMaturityLevelUseCase.Result calculateMaturityLevel(CalculateMaturityLevelUseCase.Param param) {
+    public Result calculateMaturityLevel(Param param) {
         Assessment assessment = loadAssessmentPort.load(param.getAssessmentId());
         List<AssessmentResult> assessmentResults = loadAssessmentResultByAssessmentPort.loadByAssessmentId(assessment.getId()).results();
         AssessmentResult assessmentResult = assessmentResults.get(0); // For now, we have just 1 assessmentResult.
 
         if (assessmentResult.getIsValid()) {
-            return new CalculateMaturityLevelUseCase.Result(assessmentResult.getId());
+            return new Result(assessmentResult.getId());
         }
 
         List<QualityAttributeValue> qualityAttributeValues = calculateQualityAttributesMaturityLevel(assessmentResult);
@@ -63,16 +63,16 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
         assessmentResult.setIsValid(Boolean.TRUE);
 
         UUID updatedResultId = updateAssessmentResultPort.update(assessmentResult);
-        return new CalculateMaturityLevelUseCase.Result(updatedResultId);
+        return new Result(updatedResultId);
     }
 
     private List<QualityAttributeValue> calculateQualityAttributesMaturityLevel(AssessmentResult assessmentResult) {
-        List<QualityAttributeValue> qualityAttributeValues = loadQualityAttributeByResultPort
-            .loadByResultId(new LoadQualityAttributeByResultPort.Param(assessmentResult.getId())).qualityAttributeValues();
+        LoadQualityAttributeByResultPort.Param param = new LoadQualityAttributeByResultPort.Param(assessmentResult.getId());
+        List<QualityAttributeValue> qualityAttributeValues = loadQualityAttributeByResultPort.loadByResultId(param).qualityAttributeValues();
         for (QualityAttributeValue qualityAttributeValue : qualityAttributeValues) {
-            MaturityLevel qualityAttributeValueMaturityLevel = calculateQualityAttributeMaturityLevel.calculateQualityAttributeMaturityLevel(
-                assessmentResult,
-                qualityAttributeValue.getQualityAttribute(),
+            MaturityLevel qualityAttributeValueMaturityLevel = calculateQualityAttributeMaturityLevel.calculate(
+                assessmentResult.getId(),
+                qualityAttributeValue.getQualityAttribute().getId(),
                 assessmentResult.getAssessment().getAssessmentKitId()
             );
             qualityAttributeValue.setMaturityLevel(qualityAttributeValueMaturityLevel);
@@ -97,7 +97,7 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
                     qualityAttributeValueList.add(qualityAttributeValue);
                 }
             }
-            MaturityLevel subjectMaturityLevel = calculateSubjectMaturityLevel.calculateSubjectMaturityLevel(qualityAttributeValueList, assessmentResult.getAssessment().getAssessmentKitId());
+            MaturityLevel subjectMaturityLevel = calculateSubjectMaturityLevel.calculate(qualityAttributeValueList, assessmentResult.getAssessment().getAssessmentKitId());
             subjectValue.setMaturityLevel(subjectMaturityLevel);
             subjectValue.setResultId(assessmentResult.getId());
             updateSubjectValuePort.update(subjectValue);
@@ -106,7 +106,7 @@ public class CalculateMaturityLevelService implements CalculateMaturityLevelUseC
     }
 
     private MaturityLevel calculateAssessmentMaturityLevel(Assessment assessment, List<SubjectValue> subjectValues) {
-        return calculateAssessmentMaturityLevel.calculateAssessmentMaturityLevel(subjectValues, assessment.getAssessmentKitId());
+        return calculateAssessmentMaturityLevel.calculate(subjectValues, assessment.getAssessmentKitId());
     }
 
 }

@@ -15,5 +15,5 @@ public class AnswerOptionImpact {
     private Long id;
     private BigDecimal value;
     private Long optionId;
-    private Long questionImapctId;
+    private Long questionImpactId;
 }

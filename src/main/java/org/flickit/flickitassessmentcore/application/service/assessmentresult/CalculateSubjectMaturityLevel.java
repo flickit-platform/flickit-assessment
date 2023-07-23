@@ -18,7 +18,7 @@ public class CalculateSubjectMaturityLevel {
 
     private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
 
-    public MaturityLevel calculateSubjectMaturityLevel(List<QualityAttributeValue> qualityAttributeValues, Long assessmentKitId) {
+    public MaturityLevel calculate(List<QualityAttributeValue> qualityAttributeValues, Long assessmentKitId) {
         long weightedMean = calculateWeightedMeanOfQAMaturityLevels(qualityAttributeValues);
         List<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadByKitId(assessmentKitId).maturityLevels();
         MaturityLevel subMaturityLevel = findMaturityLevelByValue(weightedMean, maturityLevels);

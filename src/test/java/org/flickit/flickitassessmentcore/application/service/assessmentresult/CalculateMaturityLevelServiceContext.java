@@ -108,11 +108,11 @@ public class CalculateMaturityLevelServiceContext {
         option3Q1.setQuestion(question1);
 
         optionImpact1Q1.setOptionId(option1Q1.getId());
-        optionImpact1Q1.setQuestionImapctId(questionImpact1.getId());
+        optionImpact1Q1.setQuestionImpactId(questionImpact1.getId());
         optionImpact2Q1.setOptionId(option2Q1.getId());
-        optionImpact2Q1.setQuestionImapctId(questionImpact1.getId());
+        optionImpact2Q1.setQuestionImpactId(questionImpact1.getId());
         optionImpact3Q1.setOptionId(option3Q1.getId());
-        optionImpact3Q1.setQuestionImapctId(questionImpact1.getId());
+        optionImpact3Q1.setQuestionImpactId(questionImpact1.getId());
 
         answer2.setAssessmentResultId(result.getId());
         answer2.setQuestionId(question2.getId());
@@ -123,11 +123,11 @@ public class CalculateMaturityLevelServiceContext {
         option3Q2.setQuestion(question2);
 
         optionImpact1Q2.setOptionId(option1Q2.getId());
-        optionImpact1Q2.setQuestionImapctId(questionImpact2.getId());
+        optionImpact1Q2.setQuestionImpactId(questionImpact2.getId());
         optionImpact2Q2.setOptionId(option2Q2.getId());
-        optionImpact2Q2.setQuestionImapctId(questionImpact2.getId());
+        optionImpact2Q2.setQuestionImpactId(questionImpact2.getId());
         optionImpact3Q2.setOptionId(option3Q2.getId());
-        optionImpact3Q2.setQuestionImapctId(questionImpact2.getId());
+        optionImpact3Q2.setQuestionImpactId(questionImpact2.getId());
 
         maturityLevel1.setAssessmentKit(kit);
         maturityLevel2.setAssessmentKit(kit);

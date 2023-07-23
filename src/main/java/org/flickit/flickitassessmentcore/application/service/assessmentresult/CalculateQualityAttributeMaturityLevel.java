@@ -3,8 +3,8 @@ package org.flickit.flickitassessmentcore.application.service.assessmentresult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.flickitassessmentcore.application.port.out.answer.FindAnswerOptionIdByResultAndQuestionInAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort;
 import org.flickit.flickitassessmentcore.application.port.out.levelcompetence.LoadLevelCompetenceByMaturityLevelPort;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.flickitassessmentcore.application.port.out.question.LoadQuestionsByQualityAttributePort;
@@ -22,28 +22,29 @@ import java.util.*;
 public class CalculateQualityAttributeMaturityLevel {
 
     private final LoadQuestionsByQualityAttributePort loadQuestionsByQualityAttributePort;
-    private final LoadAnswerOptionImpactsByAnswerOptionPort loadAnswerOptionImpactsByAnswerOptionPort;
+    private final LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort loadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort;
     private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
-    private final FindAnswerOptionIdByResultAndQuestionInAnswerPort findAnswerOptionIdByResultAndQuestionInAnswerPort;
+    private final LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort loadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
     private final LoadLevelCompetenceByMaturityLevelPort loadLevelCompetenceByMaturityLevelPort;
     private final LoadQuestionImpactPort loadQuestionImpactPort;
 
-    public MaturityLevel calculateQualityAttributeMaturityLevel(AssessmentResult assessmentResult, QualityAttribute qualityAttribute, Long assessmentKitId) {
-        Set<Question> questions = loadQuestionsByQualityAttributePort.loadByQualityAttributeId(new LoadQuestionsByQualityAttributePort.Param(qualityAttribute.getId())).questions();
+    public MaturityLevel calculate(UUID assessmentResultId, Long qualityAttributeId, Long assessmentKitId) {
+        Set<Question> questions = loadQuestionsByQualityAttributePort.loadByQualityAttributeId(new LoadQuestionsByQualityAttributePort.Param(qualityAttributeId)).questions();
         Map<Long, Integer> maturityLevelValueSumMap = new HashMap<>();
         Map<Long, Integer> maturityLevelValueCountMap = new HashMap<>();
         for (Question question : questions) {
-            Long questionAnswerId = findQuestionAnswer(assessmentResult, question);
-            if (questionAnswerId != null) {
-                Set<AnswerOptionImpact> answerOptionImpacts = loadAnswerOptionImpactsByAnswerOptionPort.loadByAnswerOptionId(questionAnswerId).optionImpacts();
+            Long answerOptionId = findQuestionAnswer(assessmentResultId, question.getId());
+            if (answerOptionId != null) {
+                Set<AnswerOptionImpact> answerOptionImpacts = loadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort
+                    .loadByAnswerOptionIdAndQualityAttributeId(answerOptionId, qualityAttributeId).optionImpacts();
                 for (AnswerOptionImpact impact : answerOptionImpacts) {
-                    if (impact.getOptionId().equals(questionAnswerId)) {
-                        Long questionImpactId = impact.getQuestionImapctId();
-                        QuestionImpact questionImpact = loadQuestionImpactPort.load(new LoadQuestionImpactPort.Param(questionImpactId)).questionImpact();
+                    if (impact.getOptionId().equals(answerOptionId)) {
+                        Long questionImpactId = impact.getQuestionImpactId();
+                        QuestionImpact questionImpact = loadQuestionImpactPort.load(questionImpactId).questionImpact();
                         Integer value = impact.getValue().setScale(0, RoundingMode.HALF_UP).intValue() * questionImpact.getWeight();
                         Long maturityLevelId = questionImpact.getMaturityLevelId();
                         log.debug("Question: [{}] with Option: [{}] as answer, has value: [{}], on ml: [{}]",
-                            question.getTitle(), questionAnswerId, value, maturityLevelId);
+                            question.getTitle(), answerOptionId, value, maturityLevelId);
                         maturityLevelValueSumMap.put(maturityLevelId, maturityLevelValueSumMap.getOrDefault(maturityLevelId, 0) + value);
                         maturityLevelValueCountMap.put(maturityLevelId, maturityLevelValueCountMap.getOrDefault(maturityLevelId, 0) + questionImpact.getWeight());
                     }
@@ -61,10 +62,10 @@ public class CalculateQualityAttributeMaturityLevel {
         return qualityAttMaturityLevel;
     }
 
-    private Long findQuestionAnswer(AssessmentResult assessmentResult, Question question) {
-        return findAnswerOptionIdByResultAndQuestionInAnswerPort.findAnswerOptionIdByResultIdAndQuestionId(
-            new FindAnswerOptionIdByResultAndQuestionInAnswerPort.Param(assessmentResult.getId(), question.getId())
-        );
+    private Long findQuestionAnswer(UUID assessmentResultId, Long questionId) {
+        return loadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.loadAnswerIdAndOptionId(
+            assessmentResultId, questionId
+        ).get().answerOptionId();
     }
 
     /**
@@ -74,18 +75,23 @@ public class CalculateQualityAttributeMaturityLevel {
      */
     private MaturityLevel findMaturityLevelBasedOnCalculations(Map<Long, Integer> qualityAttImpactScoreMap, List<MaturityLevel> maturityLevels) {
         maturityLevels.sort(Comparator.comparingInt(MaturityLevel::getValue));
-        MaturityLevel result = maturityLevels.get(0);
+        MaturityLevel result = null;
         for (MaturityLevel maturityLevel : maturityLevels) {
-            List<LevelCompetence> levelCompetences = loadLevelCompetenceByMaturityLevelPort.loadByMaturityLevelId(maturityLevel.getId()).levelCompetences();
-            for (LevelCompetence levelCompetence : levelCompetences) {
-                Long id = levelCompetence.getMaturityLevelCompetenceId();
-                if (qualityAttImpactScoreMap.containsKey(id) && qualityAttImpactScoreMap.get(id) >= levelCompetence.getValue()) {
-                    Optional<MaturityLevel> resultMaturityLevel = maturityLevels.stream().filter(ml -> ml.getId().equals(id)).findFirst();
-                    result = resultMaturityLevel.orElseGet(() -> maturityLevels.get(0));
-                } else {
-                    break;
-                }
+            List<LevelCompetence> levelCompetences = maturityLevel.getLevelCompetences();
+            if (levelCompetences.isEmpty()) {
+                result = maturityLevel;
+                continue;
             }
+            boolean allCompetencesMatched = levelCompetences.stream()
+                .allMatch(levelCompetence -> {
+                    Long id = levelCompetence.getMaturityLevelCompetenceId();
+                    return qualityAttImpactScoreMap.containsKey(id) && qualityAttImpactScoreMap.get(id) >= levelCompetence.getValue();
+                });
+
+            if (allCompetencesMatched)
+                result = maturityLevel;
+            else
+                break;
         }
         return result;
     }

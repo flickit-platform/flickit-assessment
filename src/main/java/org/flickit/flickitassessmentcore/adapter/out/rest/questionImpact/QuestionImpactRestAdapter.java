@@ -20,8 +20,8 @@ public class QuestionImpactRestAdapter implements LoadQuestionImpactPort {
     private final FlickitPlatformRestProperties properties;
 
     @Override
-    public Result load(Param param) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetQuestionImpactsUrl(), param.id());
+    public Result load(Long id) {
+        String url = String.format(properties.getBaseUrl() + properties.getGetQuestionImpactsUrl(), id);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

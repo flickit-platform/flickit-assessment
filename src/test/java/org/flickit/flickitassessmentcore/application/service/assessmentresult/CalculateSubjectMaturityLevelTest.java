@@ -30,7 +30,7 @@ public class CalculateSubjectMaturityLevelTest {
         context.getQualityAttributeValue().setMaturityLevel(context.getMaturityLevel2());
         when(loadMaturityLevelByKitPort.loadByKitId(context.getKit().getId()))
             .thenReturn(new LoadMaturityLevelByKitPort.Result(List.of(context.getMaturityLevel1(), context.getMaturityLevel2())));
-        MaturityLevel maturityLevel = service.calculateSubjectMaturityLevel(List.of(context.getQualityAttributeValue()), context.getKit().getId());
+        MaturityLevel maturityLevel = service.calculate(List.of(context.getQualityAttributeValue()), context.getKit().getId());
         assertEquals(2, maturityLevel.getValue());
     }
 
@@ -39,7 +39,7 @@ public class CalculateSubjectMaturityLevelTest {
         context.getQualityAttributeValue().setMaturityLevel(context.getMaturityLevel1());
         when(loadMaturityLevelByKitPort.loadByKitId(context.getKit().getId()))
             .thenReturn(new LoadMaturityLevelByKitPort.Result(List.of(context.getMaturityLevel1(), context.getMaturityLevel2())));
-        MaturityLevel maturityLevel = service.calculateSubjectMaturityLevel(List.of(context.getQualityAttributeValue()), context.getKit().getId());
+        MaturityLevel maturityLevel = service.calculate(List.of(context.getQualityAttributeValue()), context.getKit().getId());
         assertEquals(1, maturityLevel.getValue());
     }
 
@@ -49,7 +49,7 @@ public class CalculateSubjectMaturityLevelTest {
         when(loadMaturityLevelByKitPort.loadByKitId(context.getKit().getId()))
             .thenReturn(new LoadMaturityLevelByKitPort.Result(List.of(context.getMaturityLevel1(), context.getMaturityLevel2())));
         assertThrows(ResourceNotFoundException.class,
-            () -> service.calculateSubjectMaturityLevel(List.of(context.getQualityAttributeValue()), context.getKit().getId()),
+            () -> service.calculate(List.of(context.getQualityAttributeValue()), context.getKit().getId()),
             CALCULATE_MATURITY_LEVEL_MATURITY_LEVEL_NOT_FOUND_MESSAGE);
     }
 
