@@ -5,6 +5,8 @@ import org.flickit.flickitassessmentcore.Constants;
 import org.flickit.flickitassessmentcore.Utils;
 import org.flickit.flickitassessmentcore.domain.*;
 
+import java.util.List;
+
 @Getter
 public class CalculateMaturityLevelServiceContext {
 
@@ -131,6 +133,7 @@ public class CalculateMaturityLevelServiceContext {
 
         maturityLevel1.setAssessmentKit(kit);
         maturityLevel2.setAssessmentKit(kit);
+        maturityLevel2.setLevelCompetences(List.of(levelCompetence1, levelCompetence2));
 
         levelCompetence1.setMaturityLevelId(maturityLevel2.getId());
         levelCompetence1.setMaturityLevelCompetenceId(maturityLevel1.getId());

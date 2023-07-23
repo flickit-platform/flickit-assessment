@@ -5,6 +5,7 @@ import org.flickit.flickitassessmentcore.domain.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -164,7 +165,8 @@ public class Utils {
             id,
             title,
             value,
-            new AssessmentKit()
+            new AssessmentKit(),
+            new ArrayList<>()
         );
     }
 
