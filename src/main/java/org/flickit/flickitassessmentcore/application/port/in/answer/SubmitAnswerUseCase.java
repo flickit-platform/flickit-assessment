@@ -10,7 +10,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 public interface SubmitAnswerUseCase {
 
-    Result submitAnswer(Param command);
+    Result submitAnswer(Param param);
 
     @Value
     class Param extends SelfValidating<Param> {
