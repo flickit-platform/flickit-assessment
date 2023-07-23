@@ -41,10 +41,12 @@ class SubmitAnswerServiceTest {
     @Test
     void submitAnswer_AnswerNotExist_SavesAnswerAndInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 25L;
         Long questionId = 1L;
         Long answerOptionId = 2L;
         SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
             assessmentResultId,
+            questionnaireId,
             questionId,
             answerOptionId
         );
@@ -59,6 +61,7 @@ class SubmitAnswerServiceTest {
         ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
         verify(createAnswerPort).persist(saveAnswerParam.capture());
         assertEquals(assessmentResultId, saveAnswerParam.getValue().assessmentResultId());
+        assertEquals(questionnaireId, saveAnswerParam.getValue().questionnaireId());
         assertEquals(questionId, saveAnswerParam.getValue().questionId());
         assertEquals(answerOptionId, saveAnswerParam.getValue().answerOptionId());
 
@@ -72,11 +75,13 @@ class SubmitAnswerServiceTest {
     @Test
     void submitAnswer_AnswerWithDifferentAnswerOptionExist_UpdatesAnswerAndInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 1L;
         Long questionId = 1L;
         Long newAnswerOptionId = 2L;
         Long oldAnswerOptionId = 3L;
         SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
             assessmentResultId,
+            questionnaireId,
             questionId,
             newAnswerOptionId
         );
@@ -107,10 +112,12 @@ class SubmitAnswerServiceTest {
     @Test
     void submitAnswer_AnswerWithSameAnswerOptionExist_DoesntInvalidateAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 1L;
         Long questionId = 1L;
         Long sameAnswerOptionId = 2L;
         SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
             assessmentResultId,
+            questionnaireId,
             questionId,
             sameAnswerOptionId
         );
