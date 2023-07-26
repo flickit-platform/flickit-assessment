@@ -19,6 +19,7 @@ public class AnswerMapper {
         return new Answer(
             answer.getId(),
             answer.getAssessmentResult().getId(),
+            answer.getQuestionnaireId(),
             answer.getQuestionId(),
             answer.getAnswerOptionId()
         );

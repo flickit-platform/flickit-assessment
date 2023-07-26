@@ -3,7 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByAssessmentAndQuestionIdsPort;
+import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByAssessmentAndQuestionnaireIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
@@ -24,7 +24,7 @@ public class AnswerPersistenceJpaAdaptor implements
     CreateAnswerPort,
     UpdateAnswerOptionPort,
     LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
-    LoadAnswersByAssessmentAndQuestionIdsPort {
+    LoadAnswersByAssessmentAndQuestionnaireIdPort {
 
     private final AnswerJpaRepository repository;
 
@@ -52,8 +52,8 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public List<Answer> loadAnswersByAssessmentAndQuestionIdsPort(LoadAnswersByAssessmentAndQuestionIdsPort.Param param) {
-        List<AnswerJpaEntity> answers = repository.findByAssessmentResultAndQuestionIdIn(param.assessmentId(), param.questionIds());
-        return answers.stream().map(a -> AnswerMapper.mapJpaEntityToDomain(a)).toList();
+    public List<Answer> loadAnswersByAssessmentAndQuestionnaireIdPort(LoadAnswersByAssessmentAndQuestionnaireIdPort.Param param) {
+        List<AnswerJpaEntity> answers = repository.findByAssessmentIdAndQuestionnaireId(param.assessmentId(), param.questionnaireId());
+        return answers.stream().map(AnswerMapper::mapJpaEntityToDomain).toList();
     }
 }

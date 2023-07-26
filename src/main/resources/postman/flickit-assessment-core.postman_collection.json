@@ -158,6 +158,31 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Answers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/{{assessment_id}}/answers?questionnaireId=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"{{assessment_id}}",
+						"answers"
+					],
+					"query": [
+						{
+							"key": "questionnaireId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
@@ -174,6 +199,11 @@
 		{
 			"key": "assessment_result_id",
 			"value": "f74ae115-df83-4cfe-be63-2f64d1c2fe72",
+			"type": "string"
+		},
+		{
+			"key": "assessment_id",
+			"value": "8028f9a4-a7a8-4391-995d-4645c15d53aa",
 			"type": "string"
 		}
 	]

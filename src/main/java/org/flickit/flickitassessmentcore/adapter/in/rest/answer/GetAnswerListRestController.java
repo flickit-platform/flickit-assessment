@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,16 +18,16 @@ public class GetAnswerListRestController {
     @GetMapping("{assessmentId}/answers")
     GetAnswerListResponseDto getAnswerList(
         @PathVariable("assessmentId")UUID assessmentId,
-        @RequestParam("questionIds")List<Long> questionIds){
+        @RequestParam("questionnaireId")Long questionnaireId){
 
-        return toResponseDto(useCase.getAnswerList(toParam(assessmentId, questionIds)));
+        return toResponseDto(useCase.getAnswerList(toParam(assessmentId, questionnaireId)));
     }
 
     private GetAnswerListResponseDto toResponseDto(GetAnswerListUseCase.Result result) {
         return new GetAnswerListResponseDto(result.answers());
     }
 
-    private GetAnswerListUseCase.Param toParam(UUID assessmentId, List<Long> questionIds) {
-        return new GetAnswerListUseCase.Param(assessmentId, questionIds);
+    private GetAnswerListUseCase.Param toParam(UUID assessmentId, Long questionnaireId) {
+        return new GetAnswerListUseCase.Param(assessmentId, questionnaireId);
     }
 }

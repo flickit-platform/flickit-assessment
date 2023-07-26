@@ -33,4 +33,7 @@ public class ErrorMessageKey {
     public static final String ADD_EVIDENCE_CREATED_BY_ID_NOT_NULL = "add-evidence.createdById.notNull";
     public static final String ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL = "add-evidence.assessmentId.notNull";
     public static final String ADD_EVIDENCE_QUESTION_ID_NOT_NULL = "add-evidence.questionId.notNull";
+
+    public static final String GET_ANSWER_LIST_ASSESSMENT_ID_NOTNULL = "get-answer-list.assessmentId.notNull";
+    public static final String GET_ANSWER_LIST_QUESTIONNAIRE_ID_NOTNULL = "get-answer-list.questionnaireId.notNull";
 }
