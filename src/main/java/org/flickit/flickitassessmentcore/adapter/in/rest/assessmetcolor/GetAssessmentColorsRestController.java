@@ -6,7 +6,6 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAsses
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -17,8 +16,7 @@ public class GetAssessmentColorsRestController {
 
     private final GetAssessmentColorsUseCase useCase;
 
-    @GetMapping
-    @RequestMapping("/assessment-colors")
+    @GetMapping("/assessment-colors")
     public ResponseEntity<DataItemsDto> createAssessment() {
         var response = useCase.getAssessmentColors();
         List<ColorDto> responseDto = response.stream()

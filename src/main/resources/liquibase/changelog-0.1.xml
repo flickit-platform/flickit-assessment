@@ -136,9 +136,9 @@
     <changeSet id="0.1-10" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fac_quality_attribute_value"
                                  baseColumnNames="assessment_result_id"
-                                 constraintName="fk_fac_qualityattributevalue_assessmentresult"
                                  referencedTableName="fac_assessment_result"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_qualityattributevalue_assessmentresult"/>
     </changeSet>
 
     <changeSet id="0.1-11" author="MKouhestani">
@@ -159,9 +159,10 @@
     <changeSet id="0.1-12" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fac_subject_value"
                                  baseColumnNames="assessment_result_id"
-                                 constraintName="fk_fac_subjectvalue_assessmentresult"
                                  referencedTableName="fac_assessment_result"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_subjectvalue_assessmentresult"
+        />
     </changeSet>
 
     <changeSet id="0.1-13" author="Mahdi Rezazadeh">
