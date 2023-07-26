@@ -12,14 +12,7 @@ import lombok.NoArgsConstructor;
 public class QuestionImpact {
 
     private Long id;
-
-    private Integer level;
-
     private Long maturityLevelId;
-
-    private Question question;
-
     private Long qualityAttributeId;
-
-    private Integer weight;
+    private Double weight;
 }

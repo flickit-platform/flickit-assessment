@@ -1,9 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.questionImpact;
 
-import org.flickit.flickitassessmentcore.application.port.out.questionImpact.LoadQuestionImpactPort;
 import org.flickit.flickitassessmentcore.domain.QuestionImpact;
-
-import java.util.List;
 
 public class QuestionImpactMapper {
 
@@ -15,12 +12,10 @@ public class QuestionImpactMapper {
 
     private static QuestionImpact toDomainModel(QuestionImpactRestAdapter.QuestionImpactDto questionImpactDto) {
         return new QuestionImpact(
-            questionImpactDto.id(),
-            questionImpactDto.level(),
-            questionImpactDto.maturity_level(),
-            null,
-            questionImpactDto.quality_attribute(),
-            questionImpactDto.weight()
+            dto.id(),
+            dto.maturityLevel(),
+            dto.qualityAttribute(),
+            dto.weight()
         );
     }
 }

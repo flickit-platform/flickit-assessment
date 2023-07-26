@@ -16,19 +16,9 @@ public class MaturityLevel {
     private Long id;
     private String title;
     private Integer value;
-    private AssessmentKit assessmentKit;
     private List<LevelCompetence> levelCompetences;
+
     public MaturityLevel(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "MaturityLevel{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", value=" + value +
-            ", assessmentKit=" + assessmentKit +
-            '}';
     }
 }

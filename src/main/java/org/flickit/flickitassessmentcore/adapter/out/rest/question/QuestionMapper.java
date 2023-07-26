@@ -22,14 +22,9 @@ public class QuestionMapper {
         return new Question(
             dto.id(),
             dto.title(),
-            null,
-            null,
-            null,
-            dto.index(),
-            null,
-            dto.qualityAttributes().stream()
-                .map(QualityAttributeMapper::toDomainModel)
-                .collect(Collectors.toSet())
+            dto.questionImpacts().stream()
+                .map(QuestionImpactMapper::toDomainModel)
+                .collect(Collectors.toList())
         );
     }
 }

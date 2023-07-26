@@ -5,30 +5,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.Set;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Subject {
+
     private Long id;
-    private String code;
-    private String title;
-    private String description;
-    private LocalDateTime creationTime;
-    private LocalDateTime lastModificationDate;
-    private Integer index;
-    private AssessmentKit assessmentKit;
-    private Set<Questionnaire> questionnaires;
-
-    public Subject(Long subjectId) {
-        this.id = subjectId;
-    }
-
-    @Override
-    public String toString() {
-        return title;
-    }
 }

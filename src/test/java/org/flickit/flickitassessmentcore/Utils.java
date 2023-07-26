@@ -3,10 +3,8 @@ package org.flickit.flickitassessmentcore;
 import lombok.NoArgsConstructor;
 import org.flickit.flickitassessmentcore.domain.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.Constants.*;
@@ -27,17 +25,7 @@ public class Utils {
     }
 
     public static AssessmentKit createAssessmentKit() {
-        return new AssessmentKit(
-            KIT_ID_1,
-            KIT_CODE,
-            KIT_TITLE,
-            KIT_SUMMARY,
-            KIT_ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            1L,
-            true
-        );
+        return new AssessmentKit(KIT_ID_1);
     }
 
     public static AssessmentResult createAssessmentResult() {
@@ -50,17 +38,7 @@ public class Utils {
     }
 
     public static Subject createSubject() {
-        return new Subject(
-            SUBJECT_ID,
-            SUBJECT_CODE,
-            SUBJECT_TITLE,
-            SUBJECT_DESCRIPTION,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            1,
-            new AssessmentKit(),
-            new HashSet<Questionnaire>()
-        );
+        return new Subject(SUBJECT_ID);
     }
 
     public static SubjectValue createSubjectValue() {
@@ -72,29 +50,9 @@ public class Utils {
         );
     }
 
-    public static Questionnaire createQuestionnaire() {
-        return new Questionnaire(
-            QUESTIONNAIRE_ID,
-            QUESTIONNAIRE_CODE,
-            QUESTIONNAIRE_TITLE,
-            QUESTIONNAIRE_DESCRIPTION,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            1,
-            new AssessmentKit()
-        );
-    }
-
     public static QualityAttribute createQualityAttribute() {
         return new QualityAttribute(
             QUALITY_ATTRIBUTE_ID,
-            QUALITY_ATTRIBUTE_CODE,
-            QUALITY_ATTRIBUTE_TITLE,
-            QUALITY_ATTRIBUTE_DESCRIPTION,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            new Subject(),
-            1,
             QUALITY_ATTRIBUTE_WEIGHT
         );
     }
@@ -108,26 +66,19 @@ public class Utils {
         );
     }
 
-    public static Question createQuestion(Long id, String title, String desc) {
+    public static Question createQuestion(Long id, String title) {
         return new Question(
             id,
             title,
-            desc,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            1,
-            new Questionnaire(),
-            new HashSet<QualityAttribute>()
+            new ArrayList<QuestionImpact>()
         );
     }
 
-    public static QuestionImpact createQuestionImpact(Long id, Integer level, Integer weight) {
+    public static QuestionImpact createQuestionImpact(Long id, Long maturityLevelId, Long qualityAttributeId, Double weight) {
         return new QuestionImpact(
             id,
-            level,
-            null,
-            new Question(),
-            null,
+            maturityLevelId,
+            qualityAttributeId,
             weight
         );
     }
@@ -144,14 +95,13 @@ public class Utils {
     public static AnswerOption createAnswerOption(Long id, String caption, Integer value) {
         return new AnswerOption(
             id,
-            new Question(),
             caption,
             value,
             1
         );
     }
 
-    public static AnswerOptionImpact createAnswerOptionImpact(Long id, BigDecimal value) {
+    public static AnswerOptionImpact createAnswerOptionImpact(Long id, Double value) {
         return new AnswerOptionImpact(
             id,
             value,
@@ -165,7 +115,6 @@ public class Utils {
             id,
             title,
             value,
-            new AssessmentKit(),
             new ArrayList<>()
         );
     }

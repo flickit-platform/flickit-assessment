@@ -15,7 +15,6 @@ public class CalculateMaturityLevelServiceContext {
     private final AssessmentKit kit;
     private final Subject subject;
     private final SubjectValue subjectValue;
-    private final Questionnaire questionnaire;
     private final QualityAttribute qualityAttribute;
     private final QualityAttributeValue qualityAttributeValue;
     private final Question question1;
@@ -48,13 +47,14 @@ public class CalculateMaturityLevelServiceContext {
         result = Utils.createAssessmentResult();
         subject = Utils.createSubject();
         subjectValue = Utils.createSubjectValue();
-        questionnaire = Utils.createQuestionnaire();
         qualityAttribute = Utils.createQualityAttribute();
         qualityAttributeValue = Utils.createQualityAttributeValue();
-        question1 = Utils.createQuestion(Constants.QUESTION_ID1, Constants.QUESTION_TITLE1, Constants.QUESTION_DESCRIPTION1);
-        question2 = Utils.createQuestion(Constants.QUESTION_ID2, Constants.QUESTION_TITLE2, Constants.QUESTION_DESCRIPTION2);
-        questionImpact1 = Utils.createQuestionImpact(Constants.QUESTION_IMPACT_ID1, Constants.QUESTION_IMPACT_LEVEL1, Constants.QUESTION_IMPACT_WEIGHT1);
-        questionImpact2 = Utils.createQuestionImpact(Constants.QUESTION_IMPACT_ID2, Constants.QUESTION_IMPACT_LEVEL2, Constants.QUESTION_IMPACT_WEIGHT2);
+        question1 = Utils.createQuestion(Constants.QUESTION_ID1, Constants.QUESTION_TITLE1);
+        question2 = Utils.createQuestion(Constants.QUESTION_ID2, Constants.QUESTION_TITLE2);
+        questionImpact1 = Utils.createQuestionImpact(Constants.QUESTION_IMPACT_ID1, Constants.MATURITY_LEVEL_ID1, Constants.QUALITY_ATTRIBUTE_ID, Constants.QUESTION_IMPACT_WEIGHT1);
+        questionImpact2 = Utils.createQuestionImpact(Constants.QUESTION_IMPACT_ID2, Constants.MATURITY_LEVEL_ID2, Constants.QUALITY_ATTRIBUTE_ID, Constants.QUESTION_IMPACT_WEIGHT2);
+        question1.setImpacts(List.of(questionImpact1, questionImpact2));
+        question2.setImpacts(List.of(questionImpact1));
         answer1 = Utils.createAnswer();
         answer2 = Utils.createAnswer();
         option1Q1 = Utils.createAnswerOption(Constants.ANSWER_OPTION_ID1, Constants.ANSWER_OPTION_CAPTION1, Constants.ANSWER_OPTION_VALUE1);
@@ -82,32 +82,16 @@ public class CalculateMaturityLevelServiceContext {
 
         result.setAssessment(assessment);
 
-        subject.setAssessmentKit(kit);
-        subject.getQuestionnaires().add(questionnaire);
-
         subjectValue.setSubject(subject);
-
-        questionnaire.setAssessmentKit(kit);
-
-        qualityAttribute.setSubject(subject);
 
         qualityAttributeValue.setQualityAttribute(qualityAttribute);
 
-        question1.getQualityAttributes().add(qualityAttribute);
-        question2.getQualityAttributes().add(qualityAttribute);
-
-        questionImpact1.setQuestion(question1);
         questionImpact1.setMaturityLevelId(maturityLevel1.getId());
-        questionImpact2.setQuestion(question2);
         questionImpact2.setMaturityLevelId(maturityLevel2.getId());
 
         answer1.setAssessmentResultId(result.getId());
         answer1.setQuestionId(question1.getId());
         answer1.setOptionId(option2Q1.getId());
-
-        option1Q1.setQuestion(question1);
-        option2Q1.setQuestion(question1);
-        option3Q1.setQuestion(question1);
 
         optionImpact1Q1.setOptionId(option1Q1.getId());
         optionImpact1Q1.setQuestionImpactId(questionImpact1.getId());
@@ -120,10 +104,6 @@ public class CalculateMaturityLevelServiceContext {
         answer2.setQuestionId(question2.getId());
         answer2.setOptionId(option1Q2.getId());
 
-        option1Q2.setQuestion(question2);
-        option2Q2.setQuestion(question2);
-        option3Q2.setQuestion(question2);
-
         optionImpact1Q2.setOptionId(option1Q2.getId());
         optionImpact1Q2.setQuestionImpactId(questionImpact2.getId());
         optionImpact2Q2.setOptionId(option2Q2.getId());
@@ -131,8 +111,6 @@ public class CalculateMaturityLevelServiceContext {
         optionImpact3Q2.setOptionId(option3Q2.getId());
         optionImpact3Q2.setQuestionImpactId(questionImpact2.getId());
 
-        maturityLevel1.setAssessmentKit(kit);
-        maturityLevel2.setAssessmentKit(kit);
         maturityLevel2.setLevelCompetences(List.of(levelCompetence1, levelCompetence2));
 
         levelCompetence1.setMaturityLevelId(maturityLevel2.getId());
@@ -140,5 +118,4 @@ public class CalculateMaturityLevelServiceContext {
         levelCompetence2.setMaturityLevelId(maturityLevel2.getId());
         levelCompetence2.setMaturityLevelCompetenceId(maturityLevel2.getId());
     }
-
 }

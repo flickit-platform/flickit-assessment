@@ -1,12 +1,9 @@
 package org.flickit.flickitassessmentcore;
 
-import java.math.BigDecimal;
-
 public class Constants {
     // Assessment
     public static final String ASSESSMENT_CODE = "AssessmentCode1";
     public static final String ASSESSMENT_TITLE = "AssessmentTitle1";
-    public static final String ASSESSMENT_DESCRIPTION = "AssessmentDescription1";
     public static final Long ASSESSMENT_SPACE_ID = 1L;
 
     // Assessment Kit
@@ -22,12 +19,6 @@ public class Constants {
     public static final String SUBJECT_TITLE = "SubjectTitle1";
     public static final String SUBJECT_DESCRIPTION = "SubjectDescription1";
 
-    // Questionnaire
-    public static final Long QUESTIONNAIRE_ID = 1L;
-    public static final String QUESTIONNAIRE_CODE = "QuestionnaireCode1";
-    public static final String QUESTIONNAIRE_TITLE = "QuestionnaireTitle1";
-    public static final String QUESTIONNAIRE_DESCRIPTION = "QuestionnaireDescription1";
-
     // Quality Attribute
     public static final Long QUALITY_ATTRIBUTE_ID = 1L;
     public static final String QUALITY_ATTRIBUTE_CODE = "QACode1";
@@ -38,18 +29,14 @@ public class Constants {
      // Question
     public static final Long QUESTION_ID1 = 1L;
     public static final String QUESTION_TITLE1 = "QuestionTitle1";
-    public static final String QUESTION_DESCRIPTION1 = "QuestionDescription1";
     public static final Long QUESTION_ID2 = 2L;
     public static final String QUESTION_TITLE2 = "QuestionTitle2";
-    public static final String QUESTION_DESCRIPTION2 = "QuestionDescription2";
 
     // QuestionImpact
     public static final Long QUESTION_IMPACT_ID1 = 1L;
-    public static final Integer QUESTION_IMPACT_LEVEL1 = 1;
-    public static final Integer QUESTION_IMPACT_WEIGHT1 = 1;
+    public static final Double QUESTION_IMPACT_WEIGHT1 = 1.0;
     public static final Long QUESTION_IMPACT_ID2 = 2L;
-    public static final Integer QUESTION_IMPACT_LEVEL2 = 2;
-    public static final Integer QUESTION_IMPACT_WEIGHT2 = 2;
+    public static final Double QUESTION_IMPACT_WEIGHT2 = 2.0;
 
     // AnswerOption
     public static final Long ANSWER_OPTION_ID1 = 1L;
@@ -75,18 +62,18 @@ public class Constants {
 
     // AnswerOptionImpact
     public static final Long ANSWER_OPTION_IMPACT_ID1 = 1L;
-    public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE1 = new BigDecimal(1);
+    public static final Double ANSWER_OPTION_IMPACT_VALUE1 = 1.0;
     public static final Long ANSWER_OPTION_IMPACT_ID2 = 2L;
-    public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE2 = new BigDecimal(2);
+    public static final Double ANSWER_OPTION_IMPACT_VALUE2 = 2.0;
     public static final Long ANSWER_OPTION_IMPACT_ID3 = 3L;
-    public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE3 = new BigDecimal(3);
+    public static final Double ANSWER_OPTION_IMPACT_VALUE3 = 3.0;
 
     public static final Long ANSWER_OPTION_IMPACT_ID4 = 4L;
-    public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE4 = new BigDecimal(3);
+    public static final Double ANSWER_OPTION_IMPACT_VALUE4 = 3.0;
     public static final Long ANSWER_OPTION_IMPACT_ID5 = 5L;
-    public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE5 = new BigDecimal(2);
+    public static final Double ANSWER_OPTION_IMPACT_VALUE5 = 2.0;
     public static final Long ANSWER_OPTION_IMPACT_ID6 = 6L;
-    public static final BigDecimal ANSWER_OPTION_IMPACT_VALUE6 = new BigDecimal(1);
+    public static final Double ANSWER_OPTION_IMPACT_VALUE6 = 1.0;
 
     // Maturity Level
     public static final Long MATURITY_LEVEL_ID1 = 1L;

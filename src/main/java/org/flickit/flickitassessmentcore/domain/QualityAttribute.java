@@ -12,22 +12,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class QualityAttribute {
+
     private Long id;
-    private String code;
-    private String title;
-    private String description;
-    private LocalDateTime creationTime;
-    private LocalDateTime lastModificationDate;
-    private Subject subject;
-    private Integer index;
     private Integer weight;
 
     public QualityAttribute(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return title;
     }
 }
