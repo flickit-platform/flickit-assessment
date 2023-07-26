@@ -14,6 +14,7 @@ env:
   SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/assessment-core
   SPRING_DATASOURCE_USERNAME: rootuser
   SPRING_DATASOURCE_PASSWORD: changeme
+  SONAR_PROJECT_KEY: flickit-assessment-core
 
 jobs:
   build:
@@ -45,3 +46,23 @@ jobs:
 
       - name: Run Tests
         run: mvn test
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
