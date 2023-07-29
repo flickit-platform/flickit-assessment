@@ -93,7 +93,7 @@ public class CalculateMaturityLevelServiceContext {
 
         answer1.setAssessmentResultId(result.getId());
         answer1.setQuestionId(question1.getId());
-        answer1.setOptionId(option2Q1.getId());
+        answer1.setAnswerOptionId(option2Q1.getId());
 
         optionImpact1Q1.setOptionId(option1Q1.getId());
         optionImpact1Q1.setQuestionImpactId(questionImpact1.getId());
@@ -104,7 +104,7 @@ public class CalculateMaturityLevelServiceContext {
 
         answer2.setAssessmentResultId(result.getId());
         answer2.setQuestionId(question2.getId());
-        answer2.setOptionId(option1Q2.getId());
+        answer2.setAnswerOptionId(option1Q2.getId());
 
         optionImpact1Q2.setOptionId(option1Q2.getId());
         optionImpact1Q2.setQuestionImpactId(questionImpact2.getId());

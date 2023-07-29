@@ -66,11 +66,11 @@ public class CalculateQualityAttributeMaturityLevelTest {
         when(loadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.loadAnswerIdAndOptionId(
             context.getResult().getId(), context.getQuestion1().getId()))
             .thenReturn(Optional.of(new LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result(
-                context.getAnswer1().getId(), context.getAnswer1().getOptionId())));
+                context.getAnswer1().getId(), context.getAnswer1().getAnswerOptionId())));
         when(loadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.loadAnswerIdAndOptionId(
             context.getResult().getId(), context.getQuestion2().getId()))
             .thenReturn(Optional.of(new LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result(
-                context.getAnswer2().getId(), context.getAnswer2().getOptionId())));
+                context.getAnswer2().getId(), context.getAnswer2().getAnswerOptionId())));
         assertThrows(ResourceNotFoundException.class,
             () -> service.calculate(context.getResult().getId(), context.getMaturityLevels(), context.getQualityAttribute().getId()),
             CALCULATE_MATURITY_LEVEL_ANSWER_NOT_FOUND_MESSAGE);
@@ -90,11 +90,11 @@ public class CalculateQualityAttributeMaturityLevelTest {
         when(loadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.loadAnswerIdAndOptionId(
             context.getResult().getId(), context.getQuestion1().getId()))
             .thenReturn(Optional.of(new LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result(
-                context.getAnswer1().getId(), context.getAnswer1().getOptionId())));
+                context.getAnswer1().getId(), context.getAnswer1().getAnswerOptionId())));
         when(loadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.loadAnswerIdAndOptionId(
             context.getResult().getId(), context.getQuestion2().getId()))
             .thenReturn(Optional.of(new LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result(
-                context.getAnswer2().getId(), context.getAnswer2().getOptionId())));
+                context.getAnswer2().getId(), context.getAnswer2().getAnswerOptionId())));
         when(loadQuestionImpactPort.load(context.getQuestionImpact1().getId()))
             .thenReturn(new LoadQuestionImpactPort.Result(context.getQuestionImpact1()));
         when(loadQuestionImpactPort.load(context.getQuestionImpact2().getId()))
