@@ -11,11 +11,11 @@ public class AnswerOptionImpactMapper {
         return new LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort.Result(
             dtos.stream().
                 map(AnswerOptionImpactMapper::toDomainModel).
-                collect(Collectors.toSet())
+                collect(Collectors.toList())
         );
     }
 
-    private static AnswerOptionImpact toDomainModel(AnswerOptionImpactRestAdapterAndQualityAttribute.AnswerOptionImpactDto dto) {
+    static AnswerOptionImpact toDomainModel(AnswerOptionImpactRestAdapterAndQualityAttribute.AnswerOptionImpactDto dto) {
         return new AnswerOptionImpact(
             dto.id(),
             dto.value(),

@@ -2,11 +2,11 @@ package org.flickit.flickitassessmentcore.application.port.out.answeroptionimpac
 
 import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
 
-import java.util.Set;
+import java.util.List;
 
 public interface LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort {
 
     Result loadByAnswerOptionIdAndQualityAttributeId(Long answerOptionId, Long qualityAttributeId);
 
-    record Result(Set<AnswerOptionImpact> optionImpacts) {}
+    record Result(List<AnswerOptionImpact> optionImpacts) {}
 }

@@ -2,7 +2,7 @@ package org.flickit.flickitassessmentcore.application.port.out.question;
 
 import org.flickit.flickitassessmentcore.domain.Question;
 
-import java.util.Set;
+import java.util.List;
 
 public interface LoadQuestionsByQualityAttributePort {
 
@@ -10,5 +10,5 @@ public interface LoadQuestionsByQualityAttributePort {
 
     record Param(Long qualityAttributeId) {}
 
-    record Result(Set<Question> questions) {}
+    record Result(List<Question> questions) {}
 }
