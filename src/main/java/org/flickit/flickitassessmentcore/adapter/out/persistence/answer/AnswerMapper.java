@@ -14,13 +14,4 @@ public class AnswerMapper {
             param.answerOptionId()
         );
     }
-
-    public static Answer mapToDomainModel(AnswerJpaEntity answerJpaEntity) {
-        return new Answer(
-            answerJpaEntity.getId(),
-            answerJpaEntity.getAssessmentResult().getId(),
-            answerJpaEntity.getQuestionId(),
-            answerJpaEntity.getAnswerOptionId()
-        );
-    }
 }
