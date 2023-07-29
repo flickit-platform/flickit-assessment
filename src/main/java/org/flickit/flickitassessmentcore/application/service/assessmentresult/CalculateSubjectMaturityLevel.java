@@ -1,6 +1,5 @@
 package org.flickit.flickitassessmentcore.application.service.assessmentresult;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.common.ErrorMessageKey;
@@ -10,9 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Transactional
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class CalculateSubjectMaturityLevel {
 
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels, List<QualityAttributeValue> qualityAttributeValues) {

@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Transactional
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CalculateMaturityLevelService implements CalculateMaturityLevelUseCase {
 
     private final LoadAssessmentPort loadAssessmentPort;
