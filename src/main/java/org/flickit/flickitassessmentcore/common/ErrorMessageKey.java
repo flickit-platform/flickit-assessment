@@ -35,4 +35,5 @@ public class ErrorMessageKey {
     public static final String ADD_EVIDENCE_QUESTION_ID_NOT_NULL = "add-evidence.questionId.notNull";
 
     public static final String REMOVE_ASSESSMENT_ID_NOT_NULL = "remove-assessment.assessmentId.notNull";
+    public static final String REMOVE_ASSESSMENT_ID_NOT_FOUND = "remove-assessment.assessmentId.notFound";
 }

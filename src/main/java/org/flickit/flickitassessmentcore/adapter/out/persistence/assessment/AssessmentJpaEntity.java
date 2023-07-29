@@ -44,4 +44,7 @@ public class AssessmentJpaEntity {
 
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
+
+    @Column(name = "deletion_time")
+    private Long deletionTime;
 }

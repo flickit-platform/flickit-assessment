@@ -58,7 +58,8 @@ public class GetAssessmentListServiceTest {
             LocalDateTime.now(),
             1L,
             AssessmentColor.BLUE.getId(),
-            spaceId
+            spaceId,
+            0L
         );
     }
 }

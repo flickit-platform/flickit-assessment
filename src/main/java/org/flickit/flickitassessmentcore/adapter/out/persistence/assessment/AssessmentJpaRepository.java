@@ -8,6 +8,6 @@ import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID> {
 
-    List<AssessmentJpaEntity> findBySpaceIdOrderByLastModificationDateDesc(long spaceId, Pageable pageable);
+    List<AssessmentJpaEntity> findBySpaceIdAndDeletionTimeOrderByLastModificationDateDesc(long spaceId, long deletionTime, Pageable pageable);
 
 }
