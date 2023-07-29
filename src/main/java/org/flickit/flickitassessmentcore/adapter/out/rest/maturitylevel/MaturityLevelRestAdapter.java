@@ -3,15 +3,21 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
+import org.flickit.flickitassessmentcore.adapter.out.rest.api.exception.FlickitPlatformRestException;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
+import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -27,14 +33,21 @@ public class MaturityLevelRestAdapter implements LoadMaturityLevelByKitPort {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<DataItemsDto<List<MaturityLevelDto>>> responseEntity = flickitPlatformRestTemplate.exchange(
+        var responseEntity = flickitPlatformRestTemplate.exchange(
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<DataItemsDto<List<MaturityLevelDto>>>() {
+            new ParameterizedTypeReference<DataItemsDto<MaturityLevelDto>>() {
             }
         );
-        return MaturityLevelMapper.toResult(responseEntity.getBody().items());
+        if (!responseEntity.getStatusCode().is2xxSuccessful())
+            throw new FlickitPlatformRestException(responseEntity.getStatusCode().value());
+
+        List<MaturityLevel> items = responseEntity.getBody().items() != null ?
+            responseEntity.getBody().items().stream()
+                .map(MaturityLevelMapper::toDomainModel)
+                .collect(Collectors.toList()) : List.of();
+        return new LoadMaturityLevelByKitPort.Result(items);
     }
 
     record MaturityLevelDto(Long id,

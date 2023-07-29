@@ -2,16 +2,21 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.answeroptionimpact;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
+import org.flickit.flickitassessmentcore.adapter.out.rest.api.exception.FlickitPlatformRestException;
 import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
+import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -27,19 +32,26 @@ public class AnswerOptionImpactRestAdapterAndQualityAttribute implements LoadAns
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<DataItemsDto<List<AnswerOptionImpactDto>>> responseEntity = flickitPlatformRestTemplate.exchange(
+        var responseEntity = flickitPlatformRestTemplate.exchange(
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<DataItemsDto<List<AnswerOptionImpactDto>>>() {
+            new ParameterizedTypeReference<DataItemsDto<AnswerOptionImpactDto>>() {
             }
         );
-        return AnswerOptionImpactMapper.toResult(responseEntity.getBody().items());
+        if (!responseEntity.getStatusCode().is2xxSuccessful())
+            throw new FlickitPlatformRestException(responseEntity.getStatusCode().value());
+
+        List<AnswerOptionImpact> items = responseEntity.getBody().items() != null ?
+            responseEntity.getBody().items().stream()
+                .map(AnswerOptionImpactMapper::toDomainModel)
+                .collect(Collectors.toList()) : List.of();
+        return new LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort.Result(items);
     }
 
     record AnswerOptionImpactDto(Long id,
                                  Long option_id,
-                                 BigDecimal value,
+                                 Double value,
                                  Long metric_impact_id) {
     }
 }

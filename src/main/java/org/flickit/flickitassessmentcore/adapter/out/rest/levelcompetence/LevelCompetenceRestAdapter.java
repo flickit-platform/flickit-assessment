@@ -2,15 +2,21 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.levelcompetence;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
+import org.flickit.flickitassessmentcore.adapter.out.rest.api.exception.FlickitPlatformRestException;
 import org.flickit.flickitassessmentcore.application.port.out.levelcompetence.LoadLevelCompetenceByMaturityLevelPort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
+import org.flickit.flickitassessmentcore.domain.LevelCompetence;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -26,14 +32,21 @@ public class LevelCompetenceRestAdapter implements LoadLevelCompetenceByMaturity
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<DataItemsDto<List<LevelCompetenceDto>>> responseEntity = flickitPlatformRestTemplate.exchange(
+        var responseEntity = flickitPlatformRestTemplate.exchange(
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<DataItemsDto<List<LevelCompetenceDto>>>() {
+            new ParameterizedTypeReference<DataItemsDto<LevelCompetenceDto>>() {
             }
         );
-        return LevelCompetenceMapper.toResult(responseEntity.getBody().items());
+        if (!responseEntity.getStatusCode().is2xxSuccessful())
+            throw new FlickitPlatformRestException(responseEntity.getStatusCode().value());
+
+        List<LevelCompetence> items = responseEntity.getBody().items() != null ?
+            responseEntity.getBody().items().stream()
+                .map(LevelCompetenceMapper::toDomainModel)
+                .collect(Collectors.toList()) : List.of();
+        return new LoadLevelCompetenceByMaturityLevelPort.Result(items);
     }
 
     record LevelCompetenceDto(Long id,

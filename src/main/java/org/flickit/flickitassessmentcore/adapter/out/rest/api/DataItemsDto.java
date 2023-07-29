@@ -1,4 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.api;
 
-public record DataItemsDto<T>(T items) {
+import java.util.List;
+
+public record DataItemsDto<T>(List<T> items) {
 }

@@ -15,7 +15,7 @@ public class LevelCompetenceMapper {
         );
     }
 
-    private static LevelCompetence toDomainModel(LevelCompetenceRestAdapter.LevelCompetenceDto dto) {
+    static LevelCompetence toDomainModel(LevelCompetenceRestAdapter.LevelCompetenceDto dto) {
         return new LevelCompetence(
             dto.id(),
             dto.maturityLevelId(),
