@@ -9,6 +9,7 @@ public class AnswerMapper {
         return new AnswerJpaEntity(
             null,
             null,
+            param.questionnaireId(),
             param.questionId(),
             param.answerOptionId()
         );
