@@ -5,6 +5,8 @@ import org.flickit.flickitassessmentcore.Constants;
 import org.flickit.flickitassessmentcore.Utils;
 import org.flickit.flickitassessmentcore.domain.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -117,5 +119,9 @@ public class CalculateMaturityLevelServiceContext {
         levelCompetence1.setMaturityLevelCompetenceId(maturityLevel1.getId());
         levelCompetence2.setMaturityLevelId(maturityLevel2.getId());
         levelCompetence2.setMaturityLevelCompetenceId(maturityLevel2.getId());
+    }
+
+    public List<MaturityLevel> getMaturityLevels() {
+        return new ArrayList<>(Arrays.asList(maturityLevel1, maturityLevel2, maturityLevel3));
     }
 }

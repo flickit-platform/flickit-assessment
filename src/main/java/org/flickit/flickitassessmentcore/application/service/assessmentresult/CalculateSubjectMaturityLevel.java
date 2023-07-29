@@ -2,7 +2,6 @@ package org.flickit.flickitassessmentcore.application.service.assessmentresult;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.common.ErrorMessageKey;
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
@@ -16,13 +15,9 @@ import java.util.List;
 @Component
 public class CalculateSubjectMaturityLevel {
 
-    private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
-
-    public MaturityLevel calculate(List<QualityAttributeValue> qualityAttributeValues, Long assessmentKitId) {
+    public MaturityLevel calculate(List<MaturityLevel> maturityLevels, List<QualityAttributeValue> qualityAttributeValues) {
         long weightedMean = calculateWeightedMeanOfQAMaturityLevels(qualityAttributeValues);
-        List<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadByKitId(assessmentKitId).maturityLevels();
-        MaturityLevel subMaturityLevel = findMaturityLevelByValue(weightedMean, maturityLevels);
-        return subMaturityLevel;
+        return findMaturityLevelByValue(weightedMean, maturityLevels);
     }
 
     private MaturityLevel findMaturityLevelByValue(long weightedMean, List<MaturityLevel> maturityLevels) {

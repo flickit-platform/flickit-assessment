@@ -5,14 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answeroptionimpact.LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort;
-import org.flickit.flickitassessmentcore.application.port.out.levelcompetence.LoadLevelCompetenceByMaturityLevelPort;
-import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.flickit.flickitassessmentcore.application.port.out.question.LoadQuestionsByQualityAttributePort;
 import org.flickit.flickitassessmentcore.application.port.out.questionImpact.LoadQuestionImpactPort;
 import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Component;
 
-import java.math.RoundingMode;
 import java.util.*;
 
 @Transactional
@@ -23,9 +20,7 @@ public class CalculateQualityAttributeMaturityLevel {
 
     private final LoadQuestionsByQualityAttributePort loadQuestionsByQualityAttributePort;
     private final LoadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort loadAnswerOptionImpactsByAnswerOptionAndQualityAttributePort;
-    private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
     private final LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort loadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
-    private final LoadLevelCompetenceByMaturityLevelPort loadLevelCompetenceByMaturityLevelPort;
     private final LoadQuestionImpactPort loadQuestionImpactPort;
 
     public MaturityLevel calculate(UUID assessmentResultId, Long qualityAttributeId, Long assessmentKitId) {

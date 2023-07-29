@@ -16,10 +16,7 @@ import java.util.List;
 @Component
 public class CalculateAssessmentMaturityLevel {
 
-    private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
-
-    public MaturityLevel calculate(List<SubjectValue> subjectValues, Long assessmentKitId) {
-        List<MaturityLevel> maturityLevels = loadMaturityLevelByKitPort.loadByKitId(assessmentKitId).maturityLevels();
+    public MaturityLevel calculate(List<MaturityLevel> maturityLevels, List<SubjectValue> subjectValues) {
         long mean = calculateMeanOfSubjectMaturityLevels(subjectValues);
         return findMaturityLevelByValue(mean, maturityLevels);
     }
