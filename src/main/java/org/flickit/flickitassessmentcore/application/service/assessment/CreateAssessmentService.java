@@ -19,6 +19,8 @@ import java.util.UUID;
 @Transactional
 public class CreateAssessmentService implements CreateAssessmentUseCase {
 
+    public static final long NOT_DELETED_DELETION_TIME = 0L;
+
     private final CreateAssessmentPort createAssessmentPort;
     private final CreateAssessmentResultPort createAssessmentResultPort;
     private final CreateSubjectValuePort createSubjectValuePort;
@@ -45,7 +47,8 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             param.getSpaceId(),
             code,
             creationTime,
-            lastModificationTime
+            lastModificationTime,
+            NOT_DELETED_DELETION_TIME
         );
     }
 

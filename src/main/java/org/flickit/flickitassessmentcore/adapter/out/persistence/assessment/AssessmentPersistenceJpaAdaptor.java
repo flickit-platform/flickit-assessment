@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.flickit.flickitassessmentcore.application.service.assessment.CreateAssessmentService.NOT_DELETED_DELETION_TIME;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.REMOVE_ASSESSMENT_ID_NOT_FOUND;
 
 @Component
@@ -30,7 +31,7 @@ public class AssessmentPersistenceJpaAdaptor implements CreateAssessmentPort, Lo
 
     @Override
     public List<Assessment> loadAssessmentBySpaceId(Long spaceId, int page, int size) {
-        return repository.findBySpaceIdAndDeletionTimeOrderByLastModificationDateDesc(spaceId, 0L, PageRequest.of(page, size)).stream()
+        return repository.findBySpaceIdAndDeletionTimeOrderByLastModificationDateDesc(spaceId, NOT_DELETED_DELETION_TIME, PageRequest.of(page, size)).stream()
             .map(AssessmentMapper::mapToDomainModel)
             .collect(Collectors.toList());
     }

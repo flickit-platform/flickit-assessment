@@ -15,7 +15,7 @@ public class AssessmentMapper {
             param.assessmentKitId(),
             param.colorId(),
             param.spaceId(),
-            0L
+            param.deletionTime()
         );
     }
 

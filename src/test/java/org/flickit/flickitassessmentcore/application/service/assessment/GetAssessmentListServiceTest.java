@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.application.service.assessment.CreateAssessmentService.NOT_DELETED_DELETION_TIME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +60,7 @@ public class GetAssessmentListServiceTest {
             1L,
             AssessmentColor.BLUE.getId(),
             spaceId,
-            0L
+            NOT_DELETED_DELETION_TIME
         );
     }
 }

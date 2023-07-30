@@ -13,6 +13,7 @@ public interface CreateAssessmentPort {
                  Long spaceId,
                  String code,
                  LocalDateTime creationTime,
-                 LocalDateTime lastModificationDate) {
+                 LocalDateTime lastModificationDate,
+                 Long deletionTime) {
     }
 }
