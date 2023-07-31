@@ -14,8 +14,9 @@ import java.util.UUID;
 public class Answer {
     private UUID id;
     private UUID assessmentResultId;
+    private Long questionnaireId;
     private Long questionId;
-    private Long optionId;
+    private Long answerOptionId;
     private Boolean isNotApplicable;
 
     @Override
