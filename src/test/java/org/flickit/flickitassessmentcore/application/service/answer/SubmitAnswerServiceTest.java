@@ -50,7 +50,7 @@ class SubmitAnswerServiceTest {
             questionId,
             answerOptionId
         );
-        when(loadExistAnswerViewPort.loadView(eq(assessmentResultId), eq(questionId)))
+        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId))
             .thenReturn(Optional.empty());
 
         UUID savedAnswerId = UUID.randomUUID();
@@ -67,7 +67,7 @@ class SubmitAnswerServiceTest {
         assertEquals(true, saveAnswerParam.getValue().isNotApplicable());
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(eq(assessmentResultId));
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResultId);
         verifyNoInteractions(
             updateAnswerPort
         );
@@ -85,7 +85,7 @@ class SubmitAnswerServiceTest {
             questionId,
             answerOptionId
         );
-        when(loadExistAnswerViewPort.loadView(eq(assessmentResultId), eq(questionId)))
+        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId))
             .thenReturn(Optional.empty());
 
         UUID savedAnswerId = UUID.randomUUID();
@@ -129,7 +129,7 @@ class SubmitAnswerServiceTest {
         ));
         assertNotEquals(oldAnswerOptionId, newAnswerOptionId);
 
-        when(loadExistAnswerViewPort.loadView(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
+        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswer(param);
 
@@ -138,9 +138,9 @@ class SubmitAnswerServiceTest {
         assertEquals(existAnswerId, updateParam.getValue().id());
         assertEquals(newAnswerOptionId, updateParam.getValue().answerOptionId());
 
-        verify(loadExistAnswerViewPort, times(1)).loadView(eq(assessmentResultId), eq(questionId));
+        verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
         verify(updateAnswerPort, times(1)).updateAnswerOptionById(any(UpdateAnswerOptionPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(eq(assessmentResultId));
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResultId);
         verifyNoInteractions(
             createAnswerPort
         );
@@ -164,11 +164,11 @@ class SubmitAnswerServiceTest {
             sameAnswerOptionId,
             false
         ));
-        when(loadExistAnswerViewPort.loadView(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
+        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswer(param);
 
-        verify(loadExistAnswerViewPort, times(1)).loadView(eq(assessmentResultId), eq(questionId));
+        verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
         verifyNoInteractions(
             createAnswerPort,
             updateAnswerPort,
@@ -194,11 +194,11 @@ class SubmitAnswerServiceTest {
             null,
             true
         ));
-        when(loadExistAnswerViewPort.loadView(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
+        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         assertThrows(AnswerSubmissionNotAllowedException.class, () -> service.submitAnswer(param));
 
-        verify(loadExistAnswerViewPort, times(1)).loadView(eq(assessmentResultId), eq(questionId));
+        verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
         verifyNoInteractions(
             createAnswerPort,
             updateAnswerPort,

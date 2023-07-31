@@ -51,7 +51,7 @@ class SubmitAnswerIsNotApplicableServiceTest {
             questionId,
             isNotApplicable
         );
-        when(loadAnswerIdAndIsNotApplicablePort.loadAnswerIdAndIsNotApplicable(eq(assessmentResultId), eq(questionId)))
+        when(loadAnswerIdAndIsNotApplicablePort.loadAnswerIdAndIsNotApplicable(assessmentResultId, questionId))
             .thenReturn(Optional.empty());
 
         UUID savedAnswerId = UUID.randomUUID();
@@ -94,7 +94,7 @@ class SubmitAnswerIsNotApplicableServiceTest {
         ));
         assertNotEquals(oldIsNotApplicable, newIsNotApplicable);
 
-        when(loadAnswerIdAndIsNotApplicablePort.loadAnswerIdAndIsNotApplicable(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
+        when(loadAnswerIdAndIsNotApplicablePort.loadAnswerIdAndIsNotApplicable(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswerIsNotApplicable(param);
 
@@ -103,9 +103,9 @@ class SubmitAnswerIsNotApplicableServiceTest {
         assertEquals(existAnswerId, updateParam.getValue().id());
         assertEquals(newIsNotApplicable, updateParam.getValue().isNotApplicable());
 
-        verify(loadAnswerIdAndIsNotApplicablePort, times(1)).loadAnswerIdAndIsNotApplicable(eq(assessmentResultId), eq(questionId));
+        verify(loadAnswerIdAndIsNotApplicablePort, times(1)).loadAnswerIdAndIsNotApplicable(assessmentResultId, questionId);
         verify(updateIsNotApplicablePort, times(1)).updateAnswerIsNotApplicableAndRemoveOptionById(any(UpdateAnswerIsNotApplicablePort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(eq(assessmentResultId));
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResultId);
         verifyNoInteractions(
             saveAnswerPort
         );
@@ -128,11 +128,11 @@ class SubmitAnswerIsNotApplicableServiceTest {
             existAnswerId,
             sameIsNotApplicable
         ));
-        when(loadAnswerIdAndIsNotApplicablePort.loadAnswerIdAndIsNotApplicable(eq(assessmentResultId), eq(questionId))).thenReturn(existAnswer);
+        when(loadAnswerIdAndIsNotApplicablePort.loadAnswerIdAndIsNotApplicable(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswerIsNotApplicable(param);
 
-        verify(loadAnswerIdAndIsNotApplicablePort, times(1)).loadAnswerIdAndIsNotApplicable(eq(assessmentResultId), eq(questionId));
+        verify(loadAnswerIdAndIsNotApplicablePort, times(1)).loadAnswerIdAndIsNotApplicable(assessmentResultId, questionId);
         verifyNoInteractions(
             saveAnswerPort,
             updateIsNotApplicablePort,
