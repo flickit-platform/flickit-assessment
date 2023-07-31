@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static org.flickit.flickitassessmentcore.adapter.in.rest.exception.api.ErrorCodes.NOT_ALLOWED;
+import static org.flickit.flickitassessmentcore.adapter.in.rest.exception.api.ErrorCodes.INVALID_INPUT;
 
 @RestControllerAdvice
 public class AnswerSubmissionNotAllowedExceptionHandler {
@@ -18,6 +18,6 @@ public class AnswerSubmissionNotAllowedExceptionHandler {
     @ExceptionHandler(AnswerSubmissionNotAllowedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ErrorResponseDto handle(AnswerSubmissionNotAllowedException ex) {
-        return new ErrorResponseDto(NOT_ALLOWED, MessageBundle.message(ex.getMessage()));
+        return new ErrorResponseDto(INVALID_INPUT, MessageBundle.message(ex.getMessage()));
     }
 }
