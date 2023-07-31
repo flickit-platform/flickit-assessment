@@ -29,6 +29,7 @@ public class SubmitAnswerIsNotApplicableRestController {
     private Param toParam(SubmitAnswerIsNotApplicableRequestDto requestDto, UUID assessmentResultId) {
         return new Param(
             assessmentResultId,
+            requestDto.questionnaireId(),
             requestDto.questionId(),
             requestDto.isNotApplicable());
     }

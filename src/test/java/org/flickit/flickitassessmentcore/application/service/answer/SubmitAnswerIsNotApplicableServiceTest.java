@@ -1,9 +1,9 @@
 package org.flickit.flickitassessmentcore.application.service.answer;
 
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerIsNotApplicableUseCase;
+import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort.Result;
-import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerIsNotApplicablePort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class SubmitAnswerIsNotApplicableServiceTest {
     private SubmitAnswerIsNotApplicableService service;
 
     @Mock
-    private SaveAnswerPort saveAnswerPort;
+    private CreateAnswerPort saveAnswerPort;
 
     @Mock
     private UpdateAnswerIsNotApplicablePort updateIsNotApplicablePort;
@@ -42,10 +42,12 @@ class SubmitAnswerIsNotApplicableServiceTest {
     @Test
     void submitAnswer_AnswerNotExist_SavesAnswerAndInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 25L;
         Long questionId = 1L;
         Boolean isNotApplicable = Boolean.TRUE;
         SubmitAnswerIsNotApplicableUseCase.Param param = new SubmitAnswerIsNotApplicableUseCase.Param(
             assessmentResultId,
+            questionnaireId,
             questionId,
             isNotApplicable
         );
@@ -53,18 +55,19 @@ class SubmitAnswerIsNotApplicableServiceTest {
             .thenReturn(Optional.empty());
 
         UUID savedAnswerId = UUID.randomUUID();
-        when(saveAnswerPort.persist(any(SaveAnswerPort.Param.class))).thenReturn(savedAnswerId);
+        when(saveAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
 
         service.submitAnswerIsNotApplicable(param);
 
-        ArgumentCaptor<SaveAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(SaveAnswerPort.Param.class);
+        ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
         verify(saveAnswerPort).persist(saveAnswerParam.capture());
         assertEquals(assessmentResultId, saveAnswerParam.getValue().assessmentResultId());
+        assertEquals(questionnaireId, saveAnswerParam.getValue().questionnaireId());
         assertEquals(questionId, saveAnswerParam.getValue().questionId());
         assertNull(saveAnswerParam.getValue().answerOptionId());
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
 
-        verify(saveAnswerPort, times(1)).persist(any(SaveAnswerPort.Param.class));
+        verify(saveAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class));
         verifyNoInteractions(
             updateIsNotApplicablePort
@@ -74,11 +77,13 @@ class SubmitAnswerIsNotApplicableServiceTest {
     @Test
     void submitAnswer_AnswerWithDifferentApplicableExist_UpdatesAnswerAndInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 25L;
         Long questionId = 1L;
         Boolean oldIsNotApplicable = Boolean.TRUE;
         Boolean newIsNotApplicable = Boolean.FALSE;
         SubmitAnswerIsNotApplicableUseCase.Param param = new SubmitAnswerIsNotApplicableUseCase.Param(
             assessmentResultId,
+            questionnaireId,
             questionId,
             newIsNotApplicable
         );
@@ -109,10 +114,12 @@ class SubmitAnswerIsNotApplicableServiceTest {
     @Test
     void submitAnswer_AnswerWithSameIsNotApplicableExist_DontInvalidateAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 25L;
         Long questionId = 1L;
         Boolean sameIsNotApplicable = Boolean.TRUE;
         SubmitAnswerIsNotApplicableUseCase.Param param = new SubmitAnswerIsNotApplicableUseCase.Param(
             assessmentResultId,
+            questionnaireId,
             questionId,
             sameIsNotApplicable
         );

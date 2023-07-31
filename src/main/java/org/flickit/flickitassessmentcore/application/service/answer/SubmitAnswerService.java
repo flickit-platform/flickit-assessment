@@ -3,7 +3,7 @@ package org.flickit.flickitassessmentcore.application.service.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.service.exception.AnswerSubmissionNotAllowedException;
@@ -33,7 +33,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return new Result(response.answerId());
     }
 
-    private SaveOrUpdateResponse saveOrUpdate(Param param) {
+    private CreateOrUpdateResponse createOrUpdate(Param param) {
         return loadExistAnswerViewPort.loadView(param.getAssessmentResultId(), param.getQuestionId())
             .map(existAnswer -> {
                 if (existAnswer.isNotApplicable())
@@ -44,10 +44,10 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
                 }
                 return new CreateOrUpdateResponse(false, existAnswer.answerId());
             }).orElseGet(() -> {
-                UUID saveAnswerId = saveAnswerPort.persist(toSaveParam(param));
+                UUID saveAnswerId = createAnswerPort.persist(toCreateParam(param));
                 if (param.getAnswerOptionId() != null)
-                    return new SaveOrUpdateResponse(true, saveAnswerId);
-                return new SaveOrUpdateResponse(false, saveAnswerId);
+                    return new CreateOrUpdateResponse(true, saveAnswerId);
+                return new CreateOrUpdateResponse(false, saveAnswerId);
             });
     }
 

@@ -1,12 +1,9 @@
 package org.flickit.flickitassessmentcore.application.service.answer;
 
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort.Result;
-import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.service.exception.AnswerSubmissionNotAllowedException;
@@ -79,10 +76,12 @@ class SubmitAnswerServiceTest {
     @Test
     void submitAnswer_AnswerNotExistAndOptionIdIsNull_SavesAnswerAndDoesntInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 25L;
         Long questionId = 1L;
         Long answerOptionId = null;
         SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
             assessmentResultId,
+            questionnaireId,
             questionId,
             answerOptionId
         );
@@ -90,18 +89,19 @@ class SubmitAnswerServiceTest {
             .thenReturn(Optional.empty());
 
         UUID savedAnswerId = UUID.randomUUID();
-        when(saveAnswerPort.persist(any(SaveAnswerPort.Param.class))).thenReturn(savedAnswerId);
+        when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
 
         service.submitAnswer(param);
 
-        ArgumentCaptor<SaveAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(SaveAnswerPort.Param.class);
-        verify(saveAnswerPort).persist(saveAnswerParam.capture());
+        ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
+        verify(createAnswerPort).persist(saveAnswerParam.capture());
         assertEquals(assessmentResultId, saveAnswerParam.getValue().assessmentResultId());
+        assertEquals(questionnaireId, saveAnswerParam.getValue().questionnaireId());
         assertEquals(questionId, saveAnswerParam.getValue().questionId());
         assertEquals(answerOptionId, saveAnswerParam.getValue().answerOptionId());
         assertEquals(true, saveAnswerParam.getValue().isNotApplicable());
 
-        verify(saveAnswerPort, times(1)).persist(any(SaveAnswerPort.Param.class));
+        verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verifyNoInteractions(
             invalidateAssessmentResultPort,
             updateAnswerPort
@@ -170,7 +170,7 @@ class SubmitAnswerServiceTest {
 
         verify(loadExistAnswerViewPort, times(1)).loadView(eq(assessmentResultId), eq(questionId));
         verifyNoInteractions(
-            saveAnswerPort,
+            createAnswerPort,
             updateAnswerPort,
             invalidateAssessmentResultPort
         );
@@ -179,10 +179,12 @@ class SubmitAnswerServiceTest {
     @Test
     void submitAnswer_NotApplicableAnswerExist_throwException() {
         UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 25L;
         Long questionId = 1L;
         Long optionId = 2L;
         SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
             assessmentResultId,
+            questionnaireId,
             questionId,
             optionId
         );
