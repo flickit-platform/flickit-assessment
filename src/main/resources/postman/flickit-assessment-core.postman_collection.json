@@ -87,7 +87,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"questionId\": 1,\n    \"isNotApplicable\": true\n}",
+					"raw": "{\n    \"questionnaireId\": 1,\n    \"questionId\": 1,\n    \"isNotApplicable\": true\n}",
 					"options": {
 						"raw": {
 							"language": "json"
