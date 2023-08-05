@@ -164,7 +164,7 @@ jobs:
           distribution: adopt
 
       - name: Build and push image
-        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} ${{ env.JIB_CMD }}
+        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" ${{ env.JIB_CMD }}
 
   build-and-push-image:
     name: deploy image
