@@ -12,4 +12,12 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
     @Modifying
     @Query("UPDATE AssessmentResultJpaEntity a SET a.isValid = false WHERE a.id = :id")
     void invalidateById(@Param(value = "id") UUID id);
+
+    AssessmentResultJpaEntity findFirstOrderByLastModificationDateDescByAssessmentId(UUID assessmentId);
+
+    @Modifying
+    @Query("update AssessmentResultJpaEntity a set a.maturityLevelId = :maturityLevelId, isValid = :isValid where a.id = :id")
+    void updateMaturityLeveAndIsValidById(@Param(value = "id") UUID id,
+                                          @Param(value = "maturityLevelId") Long maturityLevelId,
+                                          @Param(value = "isValid") boolean isValid);
 }
