@@ -11,7 +11,8 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class SubjectValuePersistenceJpaAdaptor implements CreateSubjectValuePort {
+public class SubjectValuePersistenceJpaAdaptor implements
+    CreateSubjectValuePort {
 
     private final SubjectValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -28,4 +29,6 @@ public class SubjectValuePersistenceJpaAdaptor implements CreateSubjectValuePort
 
         repository.saveAll(entities);
     }
+
+
 }
