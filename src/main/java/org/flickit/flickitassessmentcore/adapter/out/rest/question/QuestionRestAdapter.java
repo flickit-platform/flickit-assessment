@@ -1,11 +1,9 @@
-package org.flickit.flickitassessmentcore.adapter.out.rest.subject;
+package org.flickit.flickitassessmentcore.adapter.out.rest.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.exception.FlickitPlatformRestException;
-import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
-import org.flickit.flickitassessmentcore.domain.calculate.Subject;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,22 +15,15 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 
-@Component
 @RequiredArgsConstructor
-public class SubjectRestAdapter implements LoadSubjectByAssessmentKitIdPort {
+@Component
+public class QuestionRestAdapter {
 
     private final RestTemplate flickitPlatformRestTemplate;
     private final FlickitPlatformRestProperties properties;
 
-    @Override
-    public List<Subject> loadByAssessmentKitId(Long assessmentKitId) {
-        return loadSubjectsDtoByAssessmentKitId(assessmentKitId).stream()
-            .map(SubjectDto::dtoToDomain)
-            .toList();
-    }
-
-    public List<SubjectDto> loadSubjectsDtoByAssessmentKitId(Long assessmentKitId) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetSubjectsUrl(), assessmentKitId);
+    public List<QuestionDto> loadByAssessmentKitId(Long assessmentKitId) {
+        String url = String.format(properties.getBaseUrl() + properties.getGetQuestionsUrl(), assessmentKitId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -41,15 +32,14 @@ public class SubjectRestAdapter implements LoadSubjectByAssessmentKitIdPort {
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<DataItemsDto<SubjectDto>>() {
+            new ParameterizedTypeReference<DataItemsDto<QuestionDto>>() {
             }
         );
         if (!responseEntity.getStatusCode().is2xxSuccessful())
             throw new FlickitPlatformRestException(responseEntity.getStatusCode().value());
 
-        return responseEntity.getBody() != null && responseEntity.getBody().items() != null ?
-            responseEntity.getBody().items() :
-            List.of();
+        return responseEntity.getBody().items() != null ?
+            responseEntity.getBody().items() : List.of();
     }
-}
 
+}

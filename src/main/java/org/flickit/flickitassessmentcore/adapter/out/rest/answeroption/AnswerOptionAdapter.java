@@ -1,11 +1,9 @@
-package org.flickit.flickitassessmentcore.adapter.out.rest.subject;
+package org.flickit.flickitassessmentcore.adapter.out.rest.answeroption;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.exception.FlickitPlatformRestException;
-import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
-import org.flickit.flickitassessmentcore.domain.calculate.Subject;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,21 +16,14 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
-public class SubjectRestAdapter implements LoadSubjectByAssessmentKitIdPort {
+@AllArgsConstructor
+public class AnswerOptionAdapter {
 
     private final RestTemplate flickitPlatformRestTemplate;
     private final FlickitPlatformRestProperties properties;
 
-    @Override
-    public List<Subject> loadByAssessmentKitId(Long assessmentKitId) {
-        return loadSubjectsDtoByAssessmentKitId(assessmentKitId).stream()
-            .map(SubjectDto::dtoToDomain)
-            .toList();
-    }
-
-    public List<SubjectDto> loadSubjectsDtoByAssessmentKitId(Long assessmentKitId) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetSubjectsUrl(), assessmentKitId);
+    public List<AnswerOptionDto> loadAnswerOptionByQuestionIds(List<Long> answerOptionIds) {
+        String url = String.format(properties.getBaseUrl() + properties.getGetAnswerOptionsUrl(), answerOptionIds);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -41,7 +32,7 @@ public class SubjectRestAdapter implements LoadSubjectByAssessmentKitIdPort {
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<DataItemsDto<SubjectDto>>() {
+            new ParameterizedTypeReference<DataItemsDto<AnswerOptionDto>>() {
             }
         );
         if (!responseEntity.getStatusCode().is2xxSuccessful())
@@ -51,5 +42,5 @@ public class SubjectRestAdapter implements LoadSubjectByAssessmentKitIdPort {
             responseEntity.getBody().items() :
             List.of();
     }
-}
 
+}
