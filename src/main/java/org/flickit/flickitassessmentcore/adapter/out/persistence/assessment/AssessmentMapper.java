@@ -24,7 +24,7 @@ public class AssessmentMapper {
             assessmentEntity.getCode(),
             assessmentEntity.getTitle(),
             assessmentEntity.getCreationTime(),
-            assessmentEntity.getLastModificationDate(),
+            assessmentEntity.getLastModificationTime(),
             assessmentEntity.getAssessmentKitId(),
             assessmentEntity.getColorId(),
             assessmentEntity.getSpaceId()

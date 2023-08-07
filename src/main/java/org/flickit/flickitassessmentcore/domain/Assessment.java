@@ -13,11 +13,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Assessment {
+
     private UUID id;
     private String code;
     private String title;
     private LocalDateTime creationTime;
-    private LocalDateTime lastModificationDate;
+    private LocalDateTime lastModificationTime;
     private Long assessmentKitId;
     private Integer colorId;
     private Long spaceId;
