@@ -1,15 +1,16 @@
 package org.flickit.flickitassessmentcore.domain.calculate.mother;
 
 
-import org.flickit.flickitassessmentcore.domain.calculate.SubjectValue;
+import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
+import org.flickit.flickitassessmentcore.domain.SubjectValue;
 
+import java.util.List;
 import java.util.UUID;
 
 public class SubjectValueMother {
 
-    public static SubjectValue.SubjectValueBuilder builder() {
-        return SubjectValue.builder()
-            .id(UUID.randomUUID());
+    public static SubjectValue withQAValues(List<QualityAttributeValue> qaValues) {
+        return new SubjectValue(UUID.randomUUID(), qaValues);
     }
 
 }

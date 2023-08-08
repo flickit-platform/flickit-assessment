@@ -1,9 +1,7 @@
-package org.flickit.flickitassessmentcore.domain.calculate;
+package org.flickit.flickitassessmentcore.domain;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
 import java.util.List;
 

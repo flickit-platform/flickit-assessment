@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.domain.calculate.mother;
 
-import org.flickit.flickitassessmentcore.domain.calculate.AssessmentKit;
+import org.flickit.flickitassessmentcore.domain.AssessmentKit;
 
 public class AssessmentKitMother {
 

@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.domain.calculate.mother;
 
 
-import org.flickit.flickitassessmentcore.domain.calculate.LevelCompetence;
+import org.flickit.flickitassessmentcore.domain.LevelCompetence;
 
 import static org.flickit.flickitassessmentcore.domain.calculate.mother.MaturityLevelMother.*;
 

@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.domain.calculate.mother;
 
-import org.flickit.flickitassessmentcore.domain.calculate.AssessmentResult;
-import org.flickit.flickitassessmentcore.domain.calculate.SubjectValue;
+import org.flickit.flickitassessmentcore.domain.AssessmentResult;
+import org.flickit.flickitassessmentcore.domain.SubjectValue;
 
 import java.util.List;
 import java.util.UUID;

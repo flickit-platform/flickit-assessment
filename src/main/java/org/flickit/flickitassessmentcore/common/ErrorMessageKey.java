@@ -33,4 +33,9 @@ public class ErrorMessageKey {
     public static final String ADD_EVIDENCE_CREATED_BY_ID_NOT_NULL = "add-evidence.createdById.notNull";
     public static final String ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL = "add-evidence.assessmentId.notNull";
     public static final String ADD_EVIDENCE_QUESTION_ID_NOT_NULL = "add-evidence.questionId.notNull";
+
+    public static final String CALCULATE_MATURITY_LEVEL_ASSESSMENT_ID_NOT_NULL = "calculate-maturity-level.assessment.id.notNull";
+    public static final String CALCULATE_MATURITY_LEVEL_ANSWER_NOT_FOUND_MESSAGE = "calculate-maturity-level.answer.notFound";
+    public static final String CALCULATE_MATURITY_LEVEL_MATURITY_LEVEL_NOT_FOUND_MESSAGE = "calculate-maturity-level.maturity-level.notFound";
+    public static final String CALCULATE_MATURITY_LEVEL_ASSESSMENT_RESULT_NOT_FOUND = "calculate-maturity-level.assessment-result.notFound";
 }

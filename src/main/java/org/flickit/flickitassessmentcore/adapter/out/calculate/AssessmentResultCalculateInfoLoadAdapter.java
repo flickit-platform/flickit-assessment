@@ -20,13 +20,14 @@ import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionRestA
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
-import org.flickit.flickitassessmentcore.domain.calculate.*;
+import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
+import static org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 
 @Component
 @AllArgsConstructor
@@ -53,7 +54,7 @@ public class AssessmentResultCalculateInfoLoadAdapter implements LoadCalculateIn
 
     @Override
     public AssessmentResult load(UUID assessmentId) {
-        AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstOrderByLastModificationDateDescByAssessmentId(assessmentId);
+        AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
         Long assessmentKitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
 
         // list qualityAttrVal and subjectVal(by assessmentResultId)
@@ -154,6 +155,7 @@ public class AssessmentResultCalculateInfoLoadAdapter implements LoadCalculateIn
         List<MaturityLevel> maturityLevels = maturityLevelsDto.stream()
             .map(MaturityLevelDto::dtoToDomain)
             .toList();
-        return new Assessment(assessmentEntity.getId(), new AssessmentKit(assessmentEntity.getAssessmentKitId(), maturityLevels));
+        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), maturityLevels);
+        return mapToDomainModel(assessmentEntity, kit);
     }
 }

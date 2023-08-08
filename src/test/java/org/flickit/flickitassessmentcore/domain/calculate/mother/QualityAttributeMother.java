@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.domain.calculate.mother;
 
-import org.flickit.flickitassessmentcore.domain.calculate.QualityAttribute;
-import org.flickit.flickitassessmentcore.domain.calculate.Question;
+import org.flickit.flickitassessmentcore.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.domain.Question;
 
 import java.util.List;
 

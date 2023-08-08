@@ -1,9 +1,8 @@
-package org.flickit.flickitassessmentcore.domain.calculate;
+package org.flickit.flickitassessmentcore.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
 import java.util.List;
 
@@ -12,7 +11,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Subject {
 
-    private final Long id;
+    private final long id;
     private List<QualityAttribute> qualityAttributes;
-
 }

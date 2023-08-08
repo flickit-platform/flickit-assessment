@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.domain.calculate.mother;
 
-import org.flickit.flickitassessmentcore.domain.calculate.QuestionImpact;
+import org.flickit.flickitassessmentcore.domain.QuestionImpact;
 
 import static org.flickit.flickitassessmentcore.domain.calculate.mother.MaturityLevelMother.*;
 

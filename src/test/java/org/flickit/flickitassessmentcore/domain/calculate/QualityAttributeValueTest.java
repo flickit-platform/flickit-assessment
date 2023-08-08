@@ -1,5 +1,9 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
+import org.flickit.flickitassessmentcore.domain.Answer;
+import org.flickit.flickitassessmentcore.domain.MaturityLevel;
+import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
+import org.flickit.flickitassessmentcore.domain.Question;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.*;
 import org.junit.jupiter.api.Test;
 

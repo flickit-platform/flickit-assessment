@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.domain.calculate.mother;
 
-import org.flickit.flickitassessmentcore.domain.calculate.MaturityLevel;
+import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 
 import java.util.List;
 

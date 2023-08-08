@@ -1,5 +1,8 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
+import org.flickit.flickitassessmentcore.domain.MaturityLevel;
+import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
+import org.flickit.flickitassessmentcore.domain.SubjectValue;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.MaturityLevelMother;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.QualityAttributeValueMother;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.SubjectValueMother;

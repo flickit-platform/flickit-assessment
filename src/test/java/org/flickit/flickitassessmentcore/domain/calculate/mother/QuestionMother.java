@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.domain.calculate.mother;
 
-import org.flickit.flickitassessmentcore.domain.calculate.Question;
-import org.flickit.flickitassessmentcore.domain.calculate.QuestionImpact;
+import org.flickit.flickitassessmentcore.domain.Question;
+import org.flickit.flickitassessmentcore.domain.QuestionImpact;
 
 import java.util.List;
 

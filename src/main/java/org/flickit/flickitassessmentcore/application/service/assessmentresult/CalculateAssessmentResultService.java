@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateAssessmentResultUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculateResultPort;
-import org.flickit.flickitassessmentcore.domain.calculate.AssessmentResult;
-import org.flickit.flickitassessmentcore.domain.calculate.MaturityLevel;
+import org.flickit.flickitassessmentcore.domain.AssessmentResult;
+import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

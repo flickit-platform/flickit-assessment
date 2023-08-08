@@ -8,8 +8,8 @@ import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.C
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
-import org.flickit.flickitassessmentcore.domain.calculate.QualityAttribute;
-import org.flickit.flickitassessmentcore.domain.calculate.Subject;
+import org.flickit.flickitassessmentcore.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.domain.Subject;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.QualityAttributeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

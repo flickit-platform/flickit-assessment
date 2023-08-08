@@ -2,8 +2,8 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.subject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.flickit.flickitassessmentcore.adapter.out.rest.qualityattribute.QualityAttributeDto;
-import org.flickit.flickitassessmentcore.domain.calculate.QualityAttribute;
-import org.flickit.flickitassessmentcore.domain.calculate.Subject;
+import org.flickit.flickitassessmentcore.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.domain.Subject;
 
 import java.util.List;
 

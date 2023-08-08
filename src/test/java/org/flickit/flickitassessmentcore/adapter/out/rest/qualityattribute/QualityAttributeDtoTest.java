@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.qualityattribute;
 
-import org.flickit.flickitassessmentcore.domain.calculate.QualityAttribute;
+import org.flickit.flickitassessmentcore.domain.QualityAttribute;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

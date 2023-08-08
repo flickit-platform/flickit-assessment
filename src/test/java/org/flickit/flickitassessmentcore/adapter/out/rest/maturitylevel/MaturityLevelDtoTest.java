@@ -1,8 +1,8 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel;
 
 import org.flickit.flickitassessmentcore.adapter.out.rest.levelcompetence.LevelCompetenceDto;
-import org.flickit.flickitassessmentcore.domain.calculate.LevelCompetence;
-import org.flickit.flickitassessmentcore.domain.calculate.MaturityLevel;
+import org.flickit.flickitassessmentcore.domain.LevelCompetence;
+import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

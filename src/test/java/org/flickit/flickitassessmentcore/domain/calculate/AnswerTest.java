@@ -1,5 +1,8 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
+import org.flickit.flickitassessmentcore.domain.Answer;
+import org.flickit.flickitassessmentcore.domain.AnswerOption;
+import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.AnswerMother;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.AnswerOptionImpactMother;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.AnswerOptionMother;

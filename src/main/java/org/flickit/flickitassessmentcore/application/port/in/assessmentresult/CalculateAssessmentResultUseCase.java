@@ -3,7 +3,7 @@ package org.flickit.flickitassessmentcore.application.port.in.assessmentresult;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
-import org.flickit.flickitassessmentcore.domain.calculate.MaturityLevel;
+import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 
 import java.util.UUID;
 

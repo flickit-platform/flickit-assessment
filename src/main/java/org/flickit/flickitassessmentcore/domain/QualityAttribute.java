@@ -1,7 +1,6 @@
-package org.flickit.flickitassessmentcore.domain.calculate;
+package org.flickit.flickitassessmentcore.domain;
 
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.Null;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,8 +10,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QualityAttribute {
 
-    private final Long id;
-    private final Integer weight;
+    private final long id;
+    private final int weight;
 
     /** This field is set when required (e.g. calculate) */
     @Nullable

@@ -1,5 +1,6 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
+import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.AnswerOptionImpactMother;
 import org.junit.jupiter.api.Test;
 

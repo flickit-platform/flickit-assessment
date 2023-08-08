@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.levelcompetence;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.flickit.flickitassessmentcore.domain.calculate.LevelCompetence;
+import org.flickit.flickitassessmentcore.domain.LevelCompetence;
 
 public record LevelCompetenceDto(Long id,
                                  Integer value,
