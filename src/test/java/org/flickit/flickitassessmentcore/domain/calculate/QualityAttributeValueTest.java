@@ -25,10 +25,8 @@ class QualityAttributeValueTest {
             AnswerMother.fullScoreOnLevels45(),
             AnswerMother.fullScoreOnLevels45());
 
-        QualityAttributeValue qav = QualityAttributeValueMother.builder()
-            .qualityAttribute(QualityAttributeMother.builder().questions(questions).build())
-            .answers(answers)
-            .build();
+        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
+            QualityAttributeMother.withQuestions(questions), answers);
 
         MaturityLevel maturityLevel = qav.calculate(MaturityLevelMother.allLevels());
 
@@ -51,10 +49,8 @@ class QualityAttributeValueTest {
             AnswerMother.fullScoreOnLevels23(),
             AnswerMother.fullScoreOnLevels23());
 
-        QualityAttributeValue qav = QualityAttributeValueMother.builder()
-            .qualityAttribute(QualityAttributeMother.builder().questions(questions).build())
-            .answers(answers)
-            .build();
+        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
+            QualityAttributeMother.withQuestions(questions), answers);
 
         MaturityLevel maturityLevel = qav.calculate(MaturityLevelMother.allLevels());
 
@@ -77,10 +73,8 @@ class QualityAttributeValueTest {
             AnswerMother.fullScoreOnLevels45(),
             AnswerMother.fullScoreOnLevels45());
 
-        QualityAttributeValue qav = QualityAttributeValueMother.builder()
-            .qualityAttribute(QualityAttributeMother.builder().questions(questions).build())
-            .answers(answers)
-            .build();
+        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
+            QualityAttributeMother.withQuestions(questions), answers);
 
         MaturityLevel maturityLevel = qav.calculate(MaturityLevelMother.allLevels());
 
@@ -103,10 +97,8 @@ class QualityAttributeValueTest {
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24());
 
-        QualityAttributeValue qav = QualityAttributeValueMother.builder()
-            .qualityAttribute(QualityAttributeMother.builder().questions(questions).build())
-            .answers(answers)
-            .build();
+        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
+            QualityAttributeMother.withQuestions(questions), answers);
 
         MaturityLevel maturityLevel = qav.calculate(MaturityLevelMother.allLevels());
 

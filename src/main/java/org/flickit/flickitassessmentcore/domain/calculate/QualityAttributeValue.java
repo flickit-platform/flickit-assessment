@@ -1,7 +1,8 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.util.Assert;
 
@@ -14,12 +15,13 @@ import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
 
 @Getter
-@Builder(toBuilder = true)
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class QualityAttributeValue {
 
-    UUID id;
-    List<Answer> answers;
-    QualityAttribute qualityAttribute;
+    private final UUID id;
+    private final QualityAttribute qualityAttribute;
+    private final List<Answer> answers;
 
     @Setter
     MaturityLevel maturityLevel;

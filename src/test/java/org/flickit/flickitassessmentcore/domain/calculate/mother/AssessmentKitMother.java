@@ -4,9 +4,9 @@ import org.flickit.flickitassessmentcore.domain.calculate.AssessmentKit;
 
 public class AssessmentKitMother {
 
+    private static long id = 134L;
+
     public static AssessmentKit kit() {
-        return AssessmentKit.builder()
-            .maturityLevels(MaturityLevelMother.allLevels())
-            .build();
+        return new AssessmentKit(id++, MaturityLevelMother.allLevels());
     }
 }

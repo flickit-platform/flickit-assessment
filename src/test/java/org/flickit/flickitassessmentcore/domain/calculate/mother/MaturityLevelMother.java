@@ -18,49 +18,34 @@ public class MaturityLevelMother {
         return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive());
     }
 
-    public static MaturityLevel withLevel(int level) {
-        return MaturityLevel.builder()
-            .level(level)
-            .build();
-    }
-
     public static MaturityLevel levelOne() {
-        return MaturityLevel.builder()
-            .id(LEVEL_ONE_ID)
-            .level(1)
-            .levelCompetences(List.of())
-            .build();
+        return new MaturityLevel(LEVEL_ONE_ID, 1,
+            List.of());
     }
 
     public static MaturityLevel levelTwo() {
-        return MaturityLevel.builder()
-            .id(LEVEL_TWO_ID)
-            .level(2)
-            .levelCompetences(List.of(onLevelTwo(60)))
-            .build();
+        return new MaturityLevel(LEVEL_TWO_ID, 2,
+            List.of(onLevelTwo(60)));
     }
 
     public static MaturityLevel levelThree() {
-        return MaturityLevel.builder()
-            .id(LEVEL_THREE_ID)
-            .level(3)
-            .levelCompetences(List.of(onLevelTwo(75), onLevelThree(60)))
-            .build();
+        return new MaturityLevel(LEVEL_THREE_ID, 3,
+            List.of(onLevelTwo(75),
+                onLevelThree(60)));
     }
 
     public static MaturityLevel levelFour() {
-        return MaturityLevel.builder()
-            .id(LEVEL_FOUR_ID)
-            .level(4)
-            .levelCompetences(List.of(onLevelTwo(85), onLevelThree(75), onLevelFour(60)))
-            .build();
+        return new MaturityLevel(LEVEL_FOUR_ID, 4,
+            List.of(onLevelTwo(85),
+                onLevelThree(75),
+                onLevelFour(60)));
     }
 
     public static MaturityLevel levelFive() {
-        return MaturityLevel.builder()
-            .id(LEVEL_FIVE_ID)
-            .level(5)
-            .levelCompetences(List.of(onLevelTwo(95), onLevelThree(85), onLevelFour(70), onLevelFive(60)))
-            .build();
+        return new MaturityLevel(LEVEL_FIVE_ID, 5,
+            List.of(onLevelTwo(95),
+                onLevelThree(85),
+                onLevelFour(70),
+                onLevelFive(60)));
     }
 }

@@ -1,9 +1,7 @@
 package org.flickit.flickitassessmentcore.domain.calculate.mother;
 
 import org.flickit.flickitassessmentcore.domain.calculate.QualityAttribute;
-import org.flickit.flickitassessmentcore.domain.calculate.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.domain.calculate.Question;
-import org.flickit.flickitassessmentcore.domain.calculate.QuestionImpact;
 
 import java.util.List;
 
@@ -11,19 +9,15 @@ public class QualityAttributeMother {
 
     private static long id = 134L;
 
-    public static QualityAttribute.QualityAttributeBuilder builder(){
-        return QualityAttribute.builder()
-            .id(id++);
+    public static QualityAttribute simple() {
+        return new QualityAttribute(id++, 1, null);
     }
 
-    public static QualityAttribute withWeight(int weight) {
-        return QualityAttribute.builder()
-            .id(id++)
-            .weight(weight)
-            .build();
+    public static QualityAttribute withQuestions(List<Question> questions){
+        return new QualityAttribute(id++, 1, questions);
     }
 
-    public static QualityAttribute.QualityAttributeBuilder builderWithQuestionsOnLevel23() {
+    public static QualityAttribute withQuestionsOnLevel23(int weight) {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel23(),
             QuestionMother.withImpactsOnLevel23(),
@@ -31,12 +25,10 @@ public class QualityAttributeMother {
             QuestionMother.withImpactsOnLevel23(),
             QuestionMother.withImpactsOnLevel23());
 
-        return QualityAttribute.builder()
-            .id(id++)
-            .questions(questions);
+        return new QualityAttribute(id++, weight, questions);
     }
 
-    public static QualityAttribute.QualityAttributeBuilder builderWithQuestionsOnLevel24() {
+    public static QualityAttribute withQuestionsOnLevel24(int weight) {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel24(),
             QuestionMother.withImpactsOnLevel24(),
@@ -44,9 +36,7 @@ public class QualityAttributeMother {
             QuestionMother.withImpactsOnLevel24(),
             QuestionMother.withImpactsOnLevel24());
 
-        return QualityAttribute.builder()
-            .id(id++)
-            .questions(questions);
+        return new QualityAttribute(id++, weight, questions);
     }
 
 }

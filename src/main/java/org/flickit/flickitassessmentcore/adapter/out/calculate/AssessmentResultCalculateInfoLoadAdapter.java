@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.calculate;
 import lombok.AllArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaRepository;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaEntity;
@@ -55,8 +56,6 @@ public class AssessmentResultCalculateInfoLoadAdapter implements LoadCalculateIn
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstOrderByLastModificationDateDescByAssessmentId(assessmentId);
         Long assessmentKitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
 
-        List<MaturityLevelDto> maturityLevelsDto = maturityLevelAdapter.loadByKitId(assessmentKitId);
-
         // list qualityAttrVal and subjectVal(by assessmentResultId)
         List<QualityAttributeValueJpaEntity> allQualityAttributeValueEntities = qualityAttrValueRepo.findByAssessmentResultId(assessmentResultEntity.getId());
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultEntity.getId());
@@ -87,7 +86,7 @@ public class AssessmentResultCalculateInfoLoadAdapter implements LoadCalculateIn
             subjectIdToDto,
             qaIdToWeightMap);
 
-        // create QualityAttrValues domain
+        // create QualityAttrId -> QualityAttrValues domain
         Map<Long, QualityAttributeValue> qualityAttrIdToValue = createQualityAttributeValues(context);
 
         // create SubjectValues domain
@@ -95,8 +94,8 @@ public class AssessmentResultCalculateInfoLoadAdapter implements LoadCalculateIn
 
         return new AssessmentResult(
             assessmentResultEntity.getId(),
-            subjectValues,
-            createAssessment(maturityLevelsDto));
+            createAssessment(assessmentResultEntity.getAssessment()),
+            subjectValues);
     }
 
     private Map<Long, QualityAttributeValue> createQualityAttributeValues(Context context) {
@@ -104,17 +103,13 @@ public class AssessmentResultCalculateInfoLoadAdapter implements LoadCalculateIn
         for (QualityAttributeValueJpaEntity qavEntity : context.allQualityAttributeValueEntities) {
             List<Question> impactfulQuestions = questionsWithImpact(qavEntity.getQualityAttributeId(), context);
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            QualityAttribute qualityAttribute = QualityAttribute.builder()
-                .questions(impactfulQuestions)
-                .id(qavEntity.getQualityAttributeId())
-                .weight(context.qaIdToWeightMap.get(qavEntity.getQualityAttributeId()))
-                .build();
+            QualityAttribute qualityAttribute = new QualityAttribute(
+                qavEntity.getQualityAttributeId(),
+                context.qaIdToWeightMap.get(qavEntity.getQualityAttributeId()),
+                impactfulQuestions
+            );
 
-            QualityAttributeValue qualityAttributeValue = QualityAttributeValue.builder()
-                .id(qavEntity.getId())
-                .qualityAttribute(qualityAttribute)
-                .answers(impactfulAnswers)
-                .build();
+            QualityAttributeValue qualityAttributeValue = new QualityAttributeValue(qavEntity.getId(), qualityAttribute, impactfulAnswers);
 
             qualityAttrIdToValue.put(qualityAttribute.getId(), qualityAttributeValue);
         }
@@ -137,8 +132,8 @@ public class AssessmentResultCalculateInfoLoadAdapter implements LoadCalculateIn
         return context.allAnswerEntities.stream()
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
             .map(entity -> {
-                AnswerOptionDto dto = idToAnswerOptionDto.get(entity.getAnswerOptionId());
-                return createAnswer(dto);
+                AnswerOptionDto optionDto = idToAnswerOptionDto.get(entity.getAnswerOptionId());
+                return new Answer(entity.getId(), optionDto.dtoToDomain());
             }).toList();
     }
 
@@ -149,28 +144,16 @@ public class AssessmentResultCalculateInfoLoadAdapter implements LoadCalculateIn
             List<QualityAttributeValue> qavList = dto.qualityAttributes().stream()
                 .map(q -> qualityAttrIdToValue.get(q.id()))
                 .toList();
-            subjectValues.add(SubjectValue.builder()
-                .id(svEntity.getId())
-                .qualityAttributeValues(qavList)
-                .build());
+            subjectValues.add(new SubjectValue(svEntity.getId(), qavList));
         }
         return subjectValues;
     }
 
-    private Assessment createAssessment(List<MaturityLevelDto> maturityLevelsDto) {
+    private Assessment createAssessment(AssessmentJpaEntity assessmentEntity) {
+        List<MaturityLevelDto> maturityLevelsDto = maturityLevelAdapter.loadByKitId(assessmentEntity.getAssessmentKitId());
         List<MaturityLevel> maturityLevels = maturityLevelsDto.stream()
             .map(MaturityLevelDto::dtoToDomain)
             .toList();
-        return Assessment.builder()
-            .assessmentKit(AssessmentKit.builder()
-                .maturityLevels(maturityLevels)
-                .build())
-            .build();
-    }
-
-    private static Answer createAnswer(AnswerOptionDto answerOptionDto) {
-        return Answer.builder()
-            .selectedOption(answerOptionDto.dtoToDomain())
-            .build();
+        return new Assessment(assessmentEntity.getId(), new AssessmentKit(assessmentEntity.getAssessmentKitId(), maturityLevels));
     }
 }

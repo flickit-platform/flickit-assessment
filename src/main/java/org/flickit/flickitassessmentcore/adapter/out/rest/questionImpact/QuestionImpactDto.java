@@ -11,9 +11,6 @@ public record QuestionImpactDto(Long id,
                                 Long qualityAttributeId) {
 
     public QuestionImpact dtoToDomain() {
-        return QuestionImpact.builder()
-            .weight(weight)
-            .maturityLevelId(maturityLevelId)
-            .build();
+        return new QuestionImpact(id, weight, maturityLevelId);
     }
 }

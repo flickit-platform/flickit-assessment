@@ -1,13 +1,13 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Value
-@Builder(toBuilder = true)
+@Getter
+@RequiredArgsConstructor
 public class LevelCompetence {
 
-    Long id;
-    int value;
-    long maturityLevelId;
+    private final long id;
+    private final int value;
+    private final long maturityLevelId;
 }

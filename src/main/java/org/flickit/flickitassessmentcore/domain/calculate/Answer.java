@@ -1,16 +1,18 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
 import jakarta.annotation.Nullable;
-import lombok.Builder;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
-@Value
-@Builder
+@Getter
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class Answer {
 
-    UUID id;
+    private final UUID id;
 
     @Nullable
     AnswerOption selectedOption;

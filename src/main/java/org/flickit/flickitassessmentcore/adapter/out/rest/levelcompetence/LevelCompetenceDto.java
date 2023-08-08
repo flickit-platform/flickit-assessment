@@ -9,11 +9,7 @@ public record LevelCompetenceDto(Long id,
                                  Long maturityLevelId) {
 
     public LevelCompetence dtoToDomain() {
-        return LevelCompetence.builder()
-            .id(id)
-            .value(value)
-            .maturityLevelId(maturityLevelId)
-            .build();
+        return new LevelCompetence(id, value, maturityLevelId);
     }
 }
 

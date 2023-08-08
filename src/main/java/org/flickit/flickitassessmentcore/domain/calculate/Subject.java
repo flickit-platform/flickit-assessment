@@ -1,15 +1,18 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 import java.util.List;
 
-@Value
-@Builder
+@Getter
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class Subject {
 
-    Long id;
-    List<QualityAttribute> qualityAttributes;
+    private final Long id;
+    private List<QualityAttribute> qualityAttributes;
 
 }

@@ -1,12 +1,15 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
-@Value
-@Builder(toBuilder = true)
+@Getter
+@RequiredArgsConstructor
 public class QuestionImpact {
 
-    Long maturityLevelId;
-    int weight;
+    private final Long id;
+    private final int weight;
+    private final Long maturityLevelId;
 }

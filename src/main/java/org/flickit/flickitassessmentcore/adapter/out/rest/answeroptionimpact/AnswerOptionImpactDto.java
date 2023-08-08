@@ -10,10 +10,6 @@ public record AnswerOptionImpactDto(Long id,
                                     QuestionImpactDto questionImpact) {
 
     public AnswerOptionImpact dtoToDomain() {
-        return AnswerOptionImpact.builder()
-            .id(id)
-            .value(value)
-            .questionImpact(questionImpact.dtoToDomain())
-            .build();
+        return new AnswerOptionImpact(id, value, questionImpact.dtoToDomain());
     }
 }

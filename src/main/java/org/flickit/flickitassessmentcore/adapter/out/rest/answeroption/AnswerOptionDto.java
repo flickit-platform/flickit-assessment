@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.answeroption;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.flickit.flickitassessmentcore.adapter.out.rest.answeroptionimpact.AnswerOptionImpactDto;
 import org.flickit.flickitassessmentcore.domain.calculate.AnswerOption;
+import org.flickit.flickitassessmentcore.domain.calculate.AnswerOptionImpact;
 
 import java.util.List;
 
@@ -13,12 +14,9 @@ public record AnswerOptionDto(Long id,
                               List<AnswerOptionImpactDto> answerOptionImpacts) {
 
     public AnswerOption dtoToDomain() {
-        return AnswerOption.builder()
-            .id(id)
-            .questionId(questionId)
-            .impacts(answerOptionImpacts.stream()
-                .map(AnswerOptionImpactDto::dtoToDomain)
-                .toList())
-            .build();
+        List<AnswerOptionImpact> impacts = answerOptionImpacts.stream()
+            .map(AnswerOptionImpactDto::dtoToDomain)
+            .toList();
+        return new AnswerOption(id, questionId, impacts);
     }
 }

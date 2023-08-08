@@ -1,18 +1,20 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class SubjectValue {
 
-    UUID id;
-    List<QualityAttributeValue> qualityAttributeValues;
+    private final UUID id;
+    private final List<QualityAttributeValue> qualityAttributeValues;
 
     @Setter
     MaturityLevel maturityLevel;

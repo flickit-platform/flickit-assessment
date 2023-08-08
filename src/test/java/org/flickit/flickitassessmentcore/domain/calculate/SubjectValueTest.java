@@ -15,16 +15,14 @@ class SubjectValueTest {
     void calculate_withSameWeightsAndLevels() {
 
         List<QualityAttributeValue> qualityAttributeValues = List.of(
-            QualityAttributeValueMother.levelThreeWithWeight(1),
-            QualityAttributeValueMother.levelThreeWithWeight(1),
-            QualityAttributeValueMother.levelThreeWithWeight(1),
-            QualityAttributeValueMother.levelThreeWithWeight(1),
-            QualityAttributeValueMother.levelThreeWithWeight(1));
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1));
 
 
-        SubjectValue subjectValue = SubjectValueMother.builder()
-            .qualityAttributeValues(qualityAttributeValues)
-            .build();
+        SubjectValue subjectValue = SubjectValueMother.withQAValues(qualityAttributeValues);
 
         MaturityLevel subjectMaturityLevel = subjectValue.calculate(MaturityLevelMother.allLevels());
 
@@ -34,15 +32,13 @@ class SubjectValueTest {
     @Test
     void calculate_withDifferentWeightsAndLevels() {
         List<QualityAttributeValue> qualityAttributeValues = List.of(
-            QualityAttributeValueMother.levelFourWithWeight(1),
-            QualityAttributeValueMother.levelFourWithWeight(2),
-            QualityAttributeValueMother.levelThreeWithWeight(10),
-            QualityAttributeValueMother.levelFourWithWeight(2),
-            QualityAttributeValueMother.levelFourWithWeight(1));
+            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(10),
+            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
+            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(1));
 
-        SubjectValue subjectValue = SubjectValueMother.builder()
-            .qualityAttributeValues(qualityAttributeValues)
-            .build();
+        SubjectValue subjectValue = SubjectValueMother.withQAValues(qualityAttributeValues);
 
         MaturityLevel subjectMaturityLevel = subjectValue.calculate(MaturityLevelMother.allLevels());
 

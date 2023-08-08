@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.domain.calculate;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.AssessmentResultMother;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.MaturityLevelMother;
 import org.flickit.flickitassessmentcore.domain.calculate.mother.QualityAttributeValueMother;
+import org.flickit.flickitassessmentcore.domain.calculate.mother.SubjectValueMother;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -15,20 +16,16 @@ class AssessmentResultTest {
     @Test
     void calculate_withSameWeightsAndLevels() {
         List<SubjectValue> subjectValues = new ArrayList<>();
-        subjectValues.add(SubjectValue.builder()
-            .qualityAttributeValues(List.of(
-                QualityAttributeValueMother.levelThreeWithWeight(1),
-                QualityAttributeValueMother.levelThreeWithWeight(1),
-                QualityAttributeValueMother.levelThreeWithWeight(1),
-                QualityAttributeValueMother.levelThreeWithWeight(1),
-                QualityAttributeValueMother.levelThreeWithWeight(1)
-            ))
-            .build());
+        subjectValues.add(SubjectValueMother.withQAValues(List.of(
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1)
+        )));
 
 
-        AssessmentResult assessmentResult = AssessmentResultMother.builder()
-            .subjectValues(subjectValues)
-            .build();
+        AssessmentResult assessmentResult = AssessmentResultMother.invalidResultWithSubjectValues(subjectValues);
 
         MaturityLevel assessmentMaturityLevel = assessmentResult.calculate();
 
@@ -38,20 +35,16 @@ class AssessmentResultTest {
     @Test
     void calculate_withDifferentWeightsAndLevels() {
         List<SubjectValue> subjectValues = new ArrayList<>();
-        subjectValues.add(SubjectValue.builder()
-            .qualityAttributeValues(List.of(
-                QualityAttributeValueMother.levelFourWithWeight(1),
-                QualityAttributeValueMother.levelFourWithWeight(2),
-                QualityAttributeValueMother.levelThreeWithWeight(10),
-                QualityAttributeValueMother.levelFourWithWeight(2),
-                QualityAttributeValueMother.levelFourWithWeight(1)
-            ))
-            .build());
+        subjectValues.add(SubjectValueMother.withQAValues(List.of(
+            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(10),
+            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
+            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(1)
+        )));
 
 
-        AssessmentResult assessmentResult = AssessmentResultMother.builder()
-            .subjectValues(subjectValues)
-            .build();
+        AssessmentResult assessmentResult = AssessmentResultMother.invalidResultWithSubjectValues(subjectValues);
 
         MaturityLevel assessmentMaturityLevel = assessmentResult.calculate();
 

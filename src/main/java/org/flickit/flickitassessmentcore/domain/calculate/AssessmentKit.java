@@ -1,13 +1,16 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 import java.util.List;
 
-@Value
-@Builder
+@Getter
+@RequiredArgsConstructor
 public class AssessmentKit {
 
-    List<MaturityLevel> maturityLevels;
+    private final long id;
+    private final List<MaturityLevel> maturityLevels;
 }

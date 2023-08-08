@@ -1,16 +1,17 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-@Value
-@Builder
+@Getter
+@RequiredArgsConstructor
 public class Question {
 
-    long id;
-    List<QuestionImpact> impacts;
+    private final long id;
+    private final List<QuestionImpact> impacts;
 
     public QuestionImpact findImpactByMaturityLevel(MaturityLevel maturityLevel) {
         return impacts.stream()
@@ -18,5 +19,4 @@ public class Question {
             .findAny()
             .orElse(null);
     }
-
 }

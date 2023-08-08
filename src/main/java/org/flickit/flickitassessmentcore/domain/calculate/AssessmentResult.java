@@ -1,8 +1,8 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.mutable.MutableInt;
 
@@ -10,25 +10,19 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Builder
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class AssessmentResult {
 
-    UUID id;
-    List<SubjectValue> subjectValues;
-    Assessment assessment;
+    private final UUID id;
+    private final Assessment assessment;
+    private final List<SubjectValue> subjectValues;
 
     @Setter
     MaturityLevel maturityLevel;
 
     @Setter
     boolean isValid;
-
-    public AssessmentResult(UUID id, List<SubjectValue> subjectValues, Assessment assessment) {
-        this.id = id;
-        this.subjectValues = subjectValues;
-        this.assessment = assessment;
-    }
 
     public MaturityLevel calculate() {
         List<MaturityLevel> maturityLevels = assessment.getAssessmentKit().getMaturityLevels();

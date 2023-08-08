@@ -1,15 +1,15 @@
 package org.flickit.flickitassessmentcore.domain.calculate;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Value
-@Builder
+@Getter
+@RequiredArgsConstructor
 public class AnswerOptionImpact {
 
-    long id;
-    double value;
-    QuestionImpact questionImpact;
+    private final long id;
+    private final double value;
+    private final QuestionImpact questionImpact;
 
     public Double calculateScore() {
         return questionImpact.getWeight() * value;

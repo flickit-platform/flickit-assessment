@@ -6,38 +6,25 @@ import static org.flickit.flickitassessmentcore.domain.calculate.mother.Maturity
 
 public class QuestionImpactMother {
 
+    private static long id = 134L;
+
     public static QuestionImpact onLevelOne(int weight) {
-        return QuestionImpact.builder()
-            .maturityLevelId(levelOne().getId())
-            .weight(weight)
-            .build();
+        return new QuestionImpact(id++, weight, levelOne().getId());
     }
 
     public static QuestionImpact onLevelTwo(int weight) {
-        return QuestionImpact.builder()
-            .maturityLevelId(levelTwo().getId())
-            .weight(weight)
-            .build();
+        return new QuestionImpact(id++, weight, levelTwo().getId());
     }
 
     public static QuestionImpact onLevelThree(int weight) {
-        return QuestionImpact.builder()
-            .maturityLevelId(levelThree().getId())
-            .weight(weight)
-            .build();
+        return new QuestionImpact(id++, weight, levelThree().getId());
     }
 
     public static QuestionImpact onLevelFour(int weight) {
-        return QuestionImpact.builder()
-            .maturityLevelId(levelFour().getId())
-            .weight(weight)
-            .build();
+        return new QuestionImpact(id++, weight, levelFour().getId());
     }
 
     public static QuestionImpact onLevelFive(int weight) {
-        return QuestionImpact.builder()
-            .maturityLevelId(levelFive().getId())
-            .weight(weight)
-            .build();
+        return new QuestionImpact(id++, weight, levelFive().getId());
     }
 }

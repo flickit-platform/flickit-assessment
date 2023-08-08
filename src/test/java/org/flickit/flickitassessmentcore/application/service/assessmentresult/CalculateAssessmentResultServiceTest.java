@@ -37,30 +37,24 @@ class CalculateAssessmentResultServiceTest {
     @Test
     void calculateMaturityLevel() {
         List<QualityAttributeValue> s1QualityAttributeValues = List.of(
-            QualityAttributeValueMother.levelFourWithWeight(2),
-            QualityAttributeValueMother.levelFourWithWeight(2),
-            QualityAttributeValueMother.levelThreeWithWeight(3),
-            QualityAttributeValueMother.levelThreeWithWeight(3)
+            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
+            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(3),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(3)
         );
 
         List<QualityAttributeValue> s2QualityAttributeValues = List.of(
-            QualityAttributeValueMother.levelFourWithWeight(4),
-            QualityAttributeValueMother.levelThreeWithWeight(1)
+            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(4),
+            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1)
         );
 
         List<SubjectValue> subjectValues = List.of(
-            SubjectValueMother.builder()
-                .qualityAttributeValues(s1QualityAttributeValues).build(),
-            SubjectValueMother.builder()
-                .qualityAttributeValues(s2QualityAttributeValues).build()
+            SubjectValueMother.withQAValues(s1QualityAttributeValues),
+            SubjectValueMother.withQAValues(s2QualityAttributeValues)
         );
 
 
-        AssessmentResult assessmentResult = AssessmentResultMother.builder()
-            .isValid(false)
-            .subjectValues(subjectValues)
-            .build();
-
+        AssessmentResult assessmentResult = AssessmentResultMother.invalidResultWithSubjectValues(subjectValues);
 
         CalculateAssessmentResultUseCase.Param param = new CalculateAssessmentResultUseCase.Param(assessmentResult.getAssessment().getId());
 

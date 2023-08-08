@@ -4,44 +4,35 @@ import org.flickit.flickitassessmentcore.domain.calculate.Answer;
 import org.flickit.flickitassessmentcore.domain.calculate.AnswerOption;
 
 import java.util.List;
+import java.util.UUID;
 
 public class AnswerMother {
 
     public static Answer answer(AnswerOption option) {
-        return Answer.builder()
-            .selectedOption(option)
-            .build();
+        return new Answer(UUID.randomUUID(), option);
     }
 
     public static Answer fullScoreOnLevels23() {
-        return Answer.builder()
-            .selectedOption(AnswerOptionMother.withNoImpacts()
-                .impacts(List.of(AnswerOptionImpactMother.onLevelTwo(1), AnswerOptionImpactMother.onLevelThree(1)))
-                .build())
-            .build();
+        return new Answer(UUID.randomUUID(), AnswerOptionMother.withImpacts(List.of(
+            AnswerOptionImpactMother.onLevelTwo(1),
+            AnswerOptionImpactMother.onLevelThree(1))));
     }
 
     public static Answer fullScoreOnLevels24() {
-        return Answer.builder()
-            .selectedOption(AnswerOptionMother.withNoImpacts()
-                .impacts(List.of(AnswerOptionImpactMother.onLevelTwo(1), AnswerOptionImpactMother.onLevelFour(1)))
-                .build())
-            .build();
+        return new Answer(UUID.randomUUID(), AnswerOptionMother.withImpacts(List.of(
+            AnswerOptionImpactMother.onLevelTwo(1),
+            AnswerOptionImpactMother.onLevelFour(1))));
     }
 
     public static Answer fullScoreOnLevels34() {
-        return Answer.builder()
-            .selectedOption(AnswerOptionMother.withNoImpacts()
-                .impacts(List.of(AnswerOptionImpactMother.onLevelThree(1), AnswerOptionImpactMother.onLevelFour(1)))
-                .build())
-            .build();
+        return new Answer(UUID.randomUUID(), AnswerOptionMother.withImpacts(List.of(
+            AnswerOptionImpactMother.onLevelThree(1),
+            AnswerOptionImpactMother.onLevelFour(1))));
     }
 
     public static Answer fullScoreOnLevels45() {
-        return Answer.builder()
-            .selectedOption(AnswerOptionMother.withNoImpacts()
-                .impacts(List.of(AnswerOptionImpactMother.onLevelFour(1), AnswerOptionImpactMother.onLevelFive(1)))
-                .build())
-            .build();
+        return new Answer(UUID.randomUUID(), AnswerOptionMother.withImpacts(List.of(
+            AnswerOptionImpactMother.onLevelFour(1),
+            AnswerOptionImpactMother.onLevelFive(1))));
     }
 }

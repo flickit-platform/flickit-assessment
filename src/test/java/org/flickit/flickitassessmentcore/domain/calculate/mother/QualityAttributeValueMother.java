@@ -1,25 +1,19 @@
 package org.flickit.flickitassessmentcore.domain.calculate.mother;
 
-import org.flickit.flickitassessmentcore.domain.calculate.*;
+import org.flickit.flickitassessmentcore.domain.calculate.Answer;
+import org.flickit.flickitassessmentcore.domain.calculate.QualityAttribute;
+import org.flickit.flickitassessmentcore.domain.calculate.QualityAttributeValue;
 
 import java.util.List;
 import java.util.UUID;
 
 public class QualityAttributeValueMother {
 
-    public static QualityAttributeValue.QualityAttributeValueBuilder builder() {
-        return QualityAttributeValue.builder()
-            .id(UUID.randomUUID());
+    public static QualityAttributeValue toBeCalcWithQAAndAnswers(QualityAttribute qualityAttribute, List<Answer> answers) {
+        return new QualityAttributeValue(UUID.randomUUID(), qualityAttribute, answers);
     }
 
-    public static QualityAttributeValue withWeightAndLevel(int weight, int level) {
-        return QualityAttributeValue.builder()
-            .qualityAttribute(QualityAttributeMother.withWeight(weight))
-            .maturityLevel(MaturityLevelMother.withLevel(level))
-            .build();
-    }
-
-    public static QualityAttributeValue levelThreeWithWeight(int weight) {
+    public static QualityAttributeValue toBeCalcAsLevelThreeWithWeight(int weight) {
         List<Answer> answers = List.of(
             AnswerMother.fullScoreOnLevels23(),
             AnswerMother.fullScoreOnLevels23(),
@@ -27,14 +21,12 @@ public class QualityAttributeValueMother {
             AnswerMother.fullScoreOnLevels23(),
             AnswerMother.fullScoreOnLevels23());
 
-        return QualityAttributeValueMother.builder()
-            .qualityAttribute(QualityAttributeMother.builderWithQuestionsOnLevel23()
-                .weight(weight).build())
-            .answers(answers)
-            .build();
+        return new QualityAttributeValue(UUID.randomUUID(),
+            QualityAttributeMother.withQuestionsOnLevel23(weight),
+            answers);
     }
 
-    public static QualityAttributeValue levelFourWithWeight(int weight) {
+    public static QualityAttributeValue toBeCalcAsLevelFourWithWeight(int weight) {
         List<Answer> answers = List.of(
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
@@ -42,10 +34,8 @@ public class QualityAttributeValueMother {
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24());
 
-        return QualityAttributeValueMother.builder()
-            .qualityAttribute(QualityAttributeMother.builderWithQuestionsOnLevel24()
-                .weight(weight).build())
-            .answers(answers)
-            .build();
+        return new QualityAttributeValue(UUID.randomUUID(),
+            QualityAttributeMother.withQuestionsOnLevel24(weight),
+            answers);
     }
 }
