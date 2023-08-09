@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.answeroptionimpact;
 
-import org.flickit.flickitassessmentcore.adapter.out.rest.questionImpact.QuestionImpactDto;
+import org.flickit.flickitassessmentcore.adapter.out.rest.questionimpact.QuestionImpactDto;
 import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
 import org.junit.jupiter.api.Test;
 

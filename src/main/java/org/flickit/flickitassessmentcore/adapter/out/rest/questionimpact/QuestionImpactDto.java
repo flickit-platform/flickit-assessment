@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.out.rest.questionImpact;
+package org.flickit.flickitassessmentcore.adapter.out.rest.questionimpact;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.flickit.flickitassessmentcore.domain.QuestionImpact;
