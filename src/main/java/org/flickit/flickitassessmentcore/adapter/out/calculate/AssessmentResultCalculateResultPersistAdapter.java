@@ -21,9 +21,10 @@ public class AssessmentResultCalculateResultPersistAdapter implements UpdateCalc
 
     @Override
     public void updateCalculatedResult(AssessmentResult assessmentResult) {
-        assessmentResultRepo.updateMaturityLeveAndIsValidById(assessmentResult.getId(),
+        assessmentResultRepo.updateAfterCalculate(assessmentResult.getId(),
             assessmentResult.getMaturityLevel().getId(),
-            assessmentResult.isValid());
+            assessmentResult.isValid(),
+            assessmentResult.getLastModificationTime());
 
         List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
         subjectValues.forEach(s -> subjectValueRepo.updateMaturityLevelById(s.getId(), s.getMaturityLevel().getId()));

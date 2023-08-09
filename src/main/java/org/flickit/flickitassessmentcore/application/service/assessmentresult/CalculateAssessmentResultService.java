@@ -9,6 +9,8 @@ import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class CalculateAssessmentResultService implements CalculateAssessmentResu
         MaturityLevel calcResult = assessmentResult.calculate();
         assessmentResult.setMaturityLevel(calcResult);
         assessmentResult.setValid(true);
+        assessmentResult.setLastModificationTime(LocalDateTime.now());
 
         updateCalculateResultPort.updateCalculatedResult(assessmentResult);
 

@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.util.Assert;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
@@ -34,6 +31,8 @@ public class QualityAttributeValue {
     }
 
     private Map<Long, Double> calcTotalScore(List<MaturityLevel> maturityLevels) {
+        if (qualityAttribute.getQuestions() == null)
+            return new HashMap<>();
         return maturityLevels.stream()
             .flatMap(maturityLevel ->
                 qualityAttribute.getQuestions().stream()
