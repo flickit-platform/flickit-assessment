@@ -25,8 +25,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.ref_type == 'branch') }}
 
     services:
       postgres:
@@ -55,8 +53,6 @@ jobs:
   test:
     needs: [build]
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.ref_type == 'branch') }}
 
     services:
       postgres:
@@ -92,8 +88,6 @@ jobs:
   sonar:
     needs: [test]
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.ref_type == 'branch') }}
 
     services:
       postgres:
@@ -166,7 +160,22 @@ jobs:
       - name: Build and push image
         run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" ${{ env.JIB_CMD }}
 
+  darkube-deploy-latest:
+    needs: [build-and-push-latest-image]
+    name: darkube deploy latest
+    container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
+    runs-on: ubuntu-latest
+    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+    steps:
+      - name: Run script
+        run: darkube deploy --ref main --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "latest" --job-id "$GITHUB_RUN_ID" --stateless-app true
+        env:
+          DARKUBE_DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_STAGING }}
+          DARKUBE_APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}
+
   build-and-push-image:
+    needs: [sonar]
     name: deploy image
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
@@ -174,6 +183,9 @@ jobs:
     permissions:
       contents: read
       packages: write
+
+    outputs:
+      project_version: ${{ steps.project.outputs.version }}
 
     steps:
       - name: Checkout repository
@@ -210,3 +222,17 @@ jobs:
       - name: Build and push image
         if: v${{ steps.project.outputs.version }} == ${{ steps.vars.outputs.tag }}
         run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.project.outputs.version }}" ${{ env.JIB_CMD }}
+
+  darkube-deploy:
+    needs: [build-and-push-image]
+    name: darkube deploy
+    container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+    steps:
+      - name: Run script
+        run: darkube deploy --ref main --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "${PROJECT_VERSION}" --job-id "$GITHUB_RUN_ID" --stateless-app true
+        env:
+          DARKUBE_DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_PROD }}
+          DARKUBE_APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_PROD }}
+          PROJECT_VERSION: ${{ needs.build-and-push-image.outputs.project_version }}
