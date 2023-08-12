@@ -34,21 +34,21 @@ public class QualityAttributeValue {
         if (qualityAttribute.getQuestions() == null)
             return new HashMap<>();
         return maturityLevels.stream()
-            .flatMap(maturityLevel ->
+            .flatMap(ml ->
                 qualityAttribute.getQuestions().stream()
-                    .map(question -> question.findImpactByMaturityLevel(maturityLevel))
+                    .map(question -> question.findImpactByMaturityLevel(ml))
                     .filter(Objects::nonNull)
-                    .map(impact -> new MaturityLevelScore(maturityLevel, impact.getWeight()))
+                    .map(impact -> new MaturityLevelScore(ml, impact.getWeight()))
             ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
     }
 
     private Map<Long, Double> calcGainedScore(List<MaturityLevel> maturityLevels) {
         return maturityLevels.stream()
-            .flatMap(maturityLevel ->
+            .flatMap(ml ->
                 answers.stream()
-                    .map(answer -> answer.findImpactByMaturityLevel(maturityLevel))
+                    .map(answer -> answer.findImpactByMaturityLevel(ml))
                     .filter(Objects::nonNull)
-                    .map(impact -> new MaturityLevelScore(maturityLevel, impact.calculateScore()))
+                    .map(impact -> new MaturityLevelScore(ml, impact.calculateScore()))
             ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
     }
 
@@ -67,26 +67,24 @@ public class QualityAttributeValue {
             .toList();
 
         MaturityLevel maxPossibleMaturityLevel = null;
-        for (MaturityLevel maturityLevel : sortedMaturityLevels)
-            maxPossibleMaturityLevel = percentScore.containsKey(maturityLevel.getId()) ?
-                maturityLevel :
-                maxPossibleMaturityLevel;
+        for (MaturityLevel ml : sortedMaturityLevels)
+            maxPossibleMaturityLevel = percentScore.containsKey(ml.getId()) ? ml : maxPossibleMaturityLevel;
 
         MaturityLevel result = null;
-        for (MaturityLevel maturityLevel : sortedMaturityLevels) {
-            List<LevelCompetence> levelCompetences = maturityLevel.getLevelCompetences();
+        for (MaturityLevel ml : sortedMaturityLevels) {
+            List<LevelCompetence> levelCompetences = ml.getLevelCompetences();
             if (levelCompetences.isEmpty()) {
-                result = maturityLevel;
+                result = ml;
                 continue;
             }
             boolean allCompetencesMatched = levelCompetences.stream()
                 .allMatch(levelCompetence -> {
-                    Long id = levelCompetence.getMaturityLevelId();
-                    return !percentScore.containsKey(id) || percentScore.get(id) >= levelCompetence.getValue();
+                    Long mlId = levelCompetence.getMaturityLevelId();
+                    return !percentScore.containsKey(mlId) || percentScore.get(mlId) >= levelCompetence.getValue();
                 });
 
-            if (allCompetencesMatched && maxPossibleMaturityLevel != null && maxPossibleMaturityLevel.getLevel() >= maturityLevel.getLevel())
-                result = maturityLevel;
+            if (allCompetencesMatched && maxPossibleMaturityLevel != null && maxPossibleMaturityLevel.getLevel() >= ml.getLevel())
+                result = ml;
             else
                 break;
         }
