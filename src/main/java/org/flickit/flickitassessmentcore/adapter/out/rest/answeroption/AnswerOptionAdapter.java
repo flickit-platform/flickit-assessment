@@ -12,8 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -22,8 +24,25 @@ public class AnswerOptionAdapter {
     private final RestTemplate flickitPlatformRestTemplate;
     private final FlickitPlatformRestProperties properties;
 
-    public List<AnswerOptionDto> loadAnswerOptionByQuestionIds(List<Long> answerOptionIds) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetAnswerOptionsUrl(), answerOptionIds);
+    public List<AnswerOptionDto> loadAnswerOptionByIds(List<Long> answerOptionIds) {
+        int limit = 100;
+        int count = answerOptionIds.size();
+        String commaSeparatedIds;
+        List<AnswerOptionDto> fetchedAnswerOptions = new ArrayList<>();
+
+        int from = 0;
+        while (from < count) {
+            List<Long> limitedSubList = answerOptionIds.subList(from, Math.min(from + limit, count));
+            commaSeparatedIds = limitedSubList.stream().map(String::valueOf).collect(Collectors.joining(","));
+            fetchedAnswerOptions.addAll(loadAnswerOptions(commaSeparatedIds));
+            from += limit;
+        }
+
+        return fetchedAnswerOptions;
+    }
+
+    private List<AnswerOptionDto> loadAnswerOptions(String commaSeparatedIds) {
+        String url = String.format(properties.getBaseUrl() + properties.getGetAnswerOptionsUrl(), commaSeparatedIds);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

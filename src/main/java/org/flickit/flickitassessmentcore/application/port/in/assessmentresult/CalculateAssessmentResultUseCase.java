@@ -7,7 +7,7 @@ import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CALCULATE_MATURITY_LEVEL_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CALCULATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_NULL;
 
 public interface CalculateAssessmentResultUseCase {
 
@@ -16,7 +16,7 @@ public interface CalculateAssessmentResultUseCase {
     @Value
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = CALCULATE_MATURITY_LEVEL_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = CALCULATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
         public Param(UUID assessmentId) {

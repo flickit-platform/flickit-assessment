@@ -77,7 +77,7 @@ public class AssessmentResultCalculateInfoLoadAdapter implements LoadCalculateIn
 
         // list answerOptions (with impact) by answerOptionIds
         List<Long> allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
-        List<AnswerOptionDto> allAnswerOptionsDto = answerOptionAdapter.loadAnswerOptionByQuestionIds(allAnswerOptionIds);
+        List<AnswerOptionDto> allAnswerOptionsDto = answerOptionAdapter.loadAnswerOptionByIds(allAnswerOptionIds);
 
         Context context = new Context(allQuestionsDto,
             allAnswerEntities,
