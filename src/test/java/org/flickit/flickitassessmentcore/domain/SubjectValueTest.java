@@ -1,16 +1,13 @@
-package org.flickit.flickitassessmentcore.domain.calculate;
+package org.flickit.flickitassessmentcore.domain;
 
-import org.flickit.flickitassessmentcore.domain.MaturityLevel;
-import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
-import org.flickit.flickitassessmentcore.domain.SubjectValue;
-import org.flickit.flickitassessmentcore.domain.calculate.mother.MaturityLevelMother;
-import org.flickit.flickitassessmentcore.domain.calculate.mother.QualityAttributeValueMother;
-import org.flickit.flickitassessmentcore.domain.calculate.mother.SubjectValueMother;
+import org.flickit.flickitassessmentcore.domain.mother.MaturityLevelMother;
+import org.flickit.flickitassessmentcore.domain.mother.QualityAttributeValueMother;
+import org.flickit.flickitassessmentcore.domain.mother.SubjectValueMother;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SubjectValueTest {
 

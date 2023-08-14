@@ -1,10 +1,8 @@
-package org.flickit.flickitassessmentcore.domain.calculate.mother;
+package org.flickit.flickitassessmentcore.domain.mother;
 
 import org.flickit.flickitassessmentcore.domain.MaturityLevel;
 
 import java.util.List;
-
-import static org.flickit.flickitassessmentcore.domain.calculate.mother.LevelCompetenceMother.*;
 
 public class MaturityLevelMother {
 
@@ -25,27 +23,27 @@ public class MaturityLevelMother {
 
     public static MaturityLevel levelTwo() {
         return new MaturityLevel(LEVEL_TWO_ID, 2,
-            List.of(onLevelTwo(60)));
+            List.of(LevelCompetenceMother.onLevelTwo(60)));
     }
 
     public static MaturityLevel levelThree() {
         return new MaturityLevel(LEVEL_THREE_ID, 3,
-            List.of(onLevelTwo(75),
-                onLevelThree(60)));
+            List.of(LevelCompetenceMother.onLevelTwo(75),
+                LevelCompetenceMother.onLevelThree(60)));
     }
 
     public static MaturityLevel levelFour() {
         return new MaturityLevel(LEVEL_FOUR_ID, 4,
-            List.of(onLevelTwo(85),
-                onLevelThree(75),
-                onLevelFour(60)));
+            List.of(LevelCompetenceMother.onLevelTwo(85),
+                LevelCompetenceMother.onLevelThree(75),
+                LevelCompetenceMother.onLevelFour(60)));
     }
 
     public static MaturityLevel levelFive() {
         return new MaturityLevel(LEVEL_FIVE_ID, 5,
-            List.of(onLevelTwo(95),
-                onLevelThree(85),
-                onLevelFour(70),
-                onLevelFive(60)));
+            List.of(LevelCompetenceMother.onLevelTwo(95),
+                LevelCompetenceMother.onLevelThree(85),
+                LevelCompetenceMother.onLevelFour(70),
+                LevelCompetenceMother.onLevelFive(60)));
     }
 }

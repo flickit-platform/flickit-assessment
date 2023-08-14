@@ -1,12 +1,9 @@
-package org.flickit.flickitassessmentcore.domain.calculate;
+package org.flickit.flickitassessmentcore.domain;
 
-import org.flickit.flickitassessmentcore.domain.AssessmentResult;
-import org.flickit.flickitassessmentcore.domain.MaturityLevel;
-import org.flickit.flickitassessmentcore.domain.SubjectValue;
-import org.flickit.flickitassessmentcore.domain.calculate.mother.AssessmentResultMother;
-import org.flickit.flickitassessmentcore.domain.calculate.mother.MaturityLevelMother;
-import org.flickit.flickitassessmentcore.domain.calculate.mother.QualityAttributeValueMother;
-import org.flickit.flickitassessmentcore.domain.calculate.mother.SubjectValueMother;
+import org.flickit.flickitassessmentcore.domain.mother.AssessmentResultMother;
+import org.flickit.flickitassessmentcore.domain.mother.MaturityLevelMother;
+import org.flickit.flickitassessmentcore.domain.mother.QualityAttributeValueMother;
+import org.flickit.flickitassessmentcore.domain.mother.SubjectValueMother;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

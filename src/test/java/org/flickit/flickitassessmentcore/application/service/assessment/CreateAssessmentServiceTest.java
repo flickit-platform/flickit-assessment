@@ -10,7 +10,7 @@ import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.Creat
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.domain.QualityAttribute;
 import org.flickit.flickitassessmentcore.domain.Subject;
-import org.flickit.flickitassessmentcore.domain.calculate.mother.QualityAttributeMother;
+import org.flickit.flickitassessmentcore.domain.mother.QualityAttributeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.domain.calculate.mother;
+package org.flickit.flickitassessmentcore.domain.mother;
 
 import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
 

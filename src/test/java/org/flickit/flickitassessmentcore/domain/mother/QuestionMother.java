@@ -1,11 +1,9 @@
-package org.flickit.flickitassessmentcore.domain.calculate.mother;
+package org.flickit.flickitassessmentcore.domain.mother;
 
 import org.flickit.flickitassessmentcore.domain.Question;
 import org.flickit.flickitassessmentcore.domain.QuestionImpact;
 
 import java.util.List;
-
-import static org.flickit.flickitassessmentcore.domain.calculate.mother.QuestionImpactMother.*;
 
 public class QuestionMother {
 
@@ -16,19 +14,19 @@ public class QuestionMother {
     }
 
     public static Question withImpactsOnLevel23() {
-        return new Question(id++, List.of(onLevelTwo(1), onLevelThree(1)));
+        return new Question(id++, List.of(QuestionImpactMother.onLevelTwo(1), QuestionImpactMother.onLevelThree(1)));
     }
 
     public static Question withImpactsOnLevel24() {
-        return new Question(id++, List.of(onLevelTwo(1), onLevelFour(1)));
+        return new Question(id++, List.of(QuestionImpactMother.onLevelTwo(1), QuestionImpactMother.onLevelFour(1)));
     }
 
     public static Question withImpactsOnLevel34() {
-        return new Question(id++, List.of(onLevelThree(1), onLevelFour(1)));
+        return new Question(id++, List.of(QuestionImpactMother.onLevelThree(1), QuestionImpactMother.onLevelFour(1)));
     }
 
     public static Question withImpactsOnLevel45() {
-        return new Question(id++, List.of(onLevelFour(1), onLevelFive(1)));
+        return new Question(id++, List.of(QuestionImpactMother.onLevelFour(1), QuestionImpactMother.onLevelFive(1)));
     }
 
 }

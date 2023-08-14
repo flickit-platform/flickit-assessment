@@ -1,8 +1,8 @@
-package org.flickit.flickitassessmentcore.domain.calculate.mother;
+package org.flickit.flickitassessmentcore.domain.mother;
 
 import org.flickit.flickitassessmentcore.domain.QuestionImpact;
 
-import static org.flickit.flickitassessmentcore.domain.calculate.mother.MaturityLevelMother.*;
+import static org.flickit.flickitassessmentcore.domain.mother.MaturityLevelMother.*;
 
 public class QuestionImpactMother {
 

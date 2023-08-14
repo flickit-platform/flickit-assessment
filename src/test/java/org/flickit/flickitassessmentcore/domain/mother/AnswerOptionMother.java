@@ -1,12 +1,12 @@
-package org.flickit.flickitassessmentcore.domain.calculate.mother;
+package org.flickit.flickitassessmentcore.domain.mother;
 
 import org.flickit.flickitassessmentcore.domain.AnswerOption;
 import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
 
 import java.util.List;
 
-import static org.flickit.flickitassessmentcore.domain.calculate.mother.AnswerOptionImpactMother.onLevelFour;
-import static org.flickit.flickitassessmentcore.domain.calculate.mother.AnswerOptionImpactMother.onLevelThree;
+import static org.flickit.flickitassessmentcore.domain.mother.AnswerOptionImpactMother.onLevelFour;
+import static org.flickit.flickitassessmentcore.domain.mother.AnswerOptionImpactMother.onLevelThree;
 
 public class AnswerOptionMother {
 
