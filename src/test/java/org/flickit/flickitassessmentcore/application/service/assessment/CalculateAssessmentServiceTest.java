@@ -1,14 +1,15 @@
-package org.flickit.flickitassessmentcore.application.service.assessmentresult;
+package org.flickit.flickitassessmentcore.application.service.assessment;
 
-import org.flickit.flickitassessmentcore.application.port.in.assessmentresult.CalculateAssessmentResultUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CalculateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculateResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculatedResultPort;
+import org.flickit.flickitassessmentcore.application.service.assessmentresult.CalculateAssessmentService;
 import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.domain.SubjectValue;
-import org.flickit.flickitassessmentcore.domain.calculate.mother.AssessmentResultMother;
-import org.flickit.flickitassessmentcore.domain.calculate.mother.QualityAttributeValueMother;
-import org.flickit.flickitassessmentcore.domain.calculate.mother.SubjectValueMother;
+import org.flickit.flickitassessmentcore.domain.mother.AssessmentResultMother;
+import org.flickit.flickitassessmentcore.domain.mother.QualityAttributeValueMother;
+import org.flickit.flickitassessmentcore.domain.mother.SubjectValueMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,16 +24,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CalculateAssessmentResultServiceTest {
+class CalculateAssessmentServiceTest {
 
     @InjectMocks
-    private CalculateAssessmentResultService service;
+    private CalculateAssessmentService service;
 
     @Mock
     private LoadCalculateInfoPort loadCalculateInfoPort;
 
     @Mock
-    private UpdateCalculateResultPort updateCalculateResultPort;
+    private UpdateCalculatedResultPort updateCalculatedResultPort;
 
     @Test
     void calculateMaturityLevel() {
@@ -56,12 +57,12 @@ class CalculateAssessmentResultServiceTest {
 
         AssessmentResult assessmentResult = AssessmentResultMother.invalidResultWithSubjectValues(subjectValues);
 
-        CalculateAssessmentResultUseCase.Param param = new CalculateAssessmentResultUseCase.Param(assessmentResult.getAssessment().getId());
+        CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId());
 
         when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
 
-        CalculateAssessmentResultUseCase.Result result = service.calculateMaturityLevel(param);
-        verify(updateCalculateResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
+        CalculateAssessmentUseCase.Result result = service.calculateMaturityLevel(param);
+        verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
 
         assertNotNull(result);
         assertNotNull(result.maturityLevel());

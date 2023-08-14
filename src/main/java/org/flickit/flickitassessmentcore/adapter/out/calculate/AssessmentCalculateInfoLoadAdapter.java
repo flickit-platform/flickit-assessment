@@ -31,7 +31,7 @@ import static org.flickit.flickitassessmentcore.adapter.out.persistence.assessme
 
 @Component
 @AllArgsConstructor
-public class AssessmentResultCalculateInfoLoadAdapter implements LoadCalculateInfoPort {
+public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort {
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final AnswerJpaRepository answerRepo;

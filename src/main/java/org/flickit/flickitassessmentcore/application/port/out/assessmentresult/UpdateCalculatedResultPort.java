@@ -2,7 +2,7 @@ package org.flickit.flickitassessmentcore.application.port.out.assessmentresult;
 
 import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 
-public interface UpdateCalculateResultPort {
+public interface UpdateCalculatedResultPort {
 
     void updateCalculatedResult(AssessmentResult assessmentResult);
 }
