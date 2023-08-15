@@ -10,8 +10,8 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattribut
 import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue.SubjectValueJpaRepository;
-import org.flickit.flickitassessmentcore.adapter.out.rest.answeroption.AnswerOptionAdapter;
 import org.flickit.flickitassessmentcore.adapter.out.rest.answeroption.AnswerOptionDto;
+import org.flickit.flickitassessmentcore.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel.MaturityLevelDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.flickitassessmentcore.adapter.out.rest.qualityattribute.QualityAttributeDto;
@@ -42,8 +42,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
     private final SubjectRestAdapter subjectRestAdapter;
     private final QuestionRestAdapter questionRestAdapter;
-    private final AnswerOptionAdapter answerOptionAdapter;
-    private final MaturityLevelRestAdapter maturityLevelAdapter;
+    private final AnswerOptionRestAdapter answerOptionRestAdapter;
+    private final MaturityLevelRestAdapter maturityLevelRestAdapter;
 
     record Context(List<QuestionDto> allQuestionsDto,
                    List<AnswerJpaEntity> allAnswerEntities,
@@ -90,7 +90,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         and load all those answerOptions with their impacts
         */
         List<Long> allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
-        List<AnswerOptionDto> allAnswerOptionsDto = answerOptionAdapter.loadAnswerOptionByIds(allAnswerOptionIds);
+        List<AnswerOptionDto> allAnswerOptionsDto = answerOptionRestAdapter.loadAnswerOptionByIds(allAnswerOptionIds);
 
         Context context = new Context(allQuestionsDto,
             allAnswerEntities,
@@ -190,7 +190,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * @return assessment with all information needed for calculation
      */
     private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity) {
-        List<MaturityLevelDto> maturityLevelsDto = maturityLevelAdapter.loadByKitId(assessmentEntity.getAssessmentKitId());
+        List<MaturityLevelDto> maturityLevelsDto = maturityLevelRestAdapter.loadByKitId(assessmentEntity.getAssessmentKitId());
         List<MaturityLevel> maturityLevels = maturityLevelsDto.stream()
             .map(MaturityLevelDto::dtoToDomain)
             .toList();
