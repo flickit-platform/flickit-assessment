@@ -4,6 +4,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAsses
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentBySpacePort;
 import org.flickit.flickitassessmentcore.domain.Assessment;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.domain.AssessmentKit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -54,11 +55,11 @@ public class GetAssessmentListServiceTest {
             UUID.randomUUID(),
             "code",
             "title",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            1L,
+            new AssessmentKit(1L, null),
             AssessmentColor.BLUE.getId(),
-            spaceId
+            spaceId,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         );
     }
 }
