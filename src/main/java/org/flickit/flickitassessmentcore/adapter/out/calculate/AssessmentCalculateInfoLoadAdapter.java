@@ -20,6 +20,7 @@ import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionRestA
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
+import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.domain.*;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,7 @@ import java.util.*;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
 @AllArgsConstructor
@@ -54,7 +56,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
     @Override
     public AssessmentResult load(UUID assessmentId) {
-        AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
+        AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
         UUID assessmentResultId = assessmentResultEntity.getId();
         Long assessmentKitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
 

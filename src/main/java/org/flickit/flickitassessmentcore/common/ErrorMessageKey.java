@@ -34,5 +34,6 @@ public class ErrorMessageKey {
     public static final String ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL = "add-evidence.assessmentId.notNull";
     public static final String ADD_EVIDENCE_QUESTION_ID_NOT_NULL = "add-evidence.questionId.notNull";
 
-    public static final String CALCULATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_NULL = "calculate-assessment-result.assessment.id.notNull";
+    public static final String CALCULATE_ASSESSMENT_ID_NOT_NULL = "calculate-assessment.assessment.id.notNull";
+    public static final String CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "calculate-assessment.assessmentResult.notFount";
 }

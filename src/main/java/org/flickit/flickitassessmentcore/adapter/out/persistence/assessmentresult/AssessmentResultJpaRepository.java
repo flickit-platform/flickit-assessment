@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentResultJpaEntity, UUID> {
@@ -14,7 +15,7 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
     @Query("UPDATE AssessmentResultJpaEntity a SET a.isValid = false WHERE a.id = :id")
     void invalidateById(@Param(value = "id") UUID id);
 
-    AssessmentResultJpaEntity findFirstByAssessment_IdOrderByLastModificationTimeDesc(UUID assessmentId);
+    Optional<AssessmentResultJpaEntity> findFirstByAssessment_IdOrderByLastModificationTimeDesc(UUID assessmentId);
 
     @Modifying
     @Query("UPDATE AssessmentResultJpaEntity a SET " +
