@@ -28,7 +28,7 @@ public class AssessmentPersistenceJpaAdaptor implements
 
     @Override
     public List<AssessmentWithMaturityLevelId> loadAssessmentsWithLastResultMaturityLevelIdBySpaceId(Long spaceId, int page, int size) {
-        return repository.findBySpaceIdOrderByLastModificationDateDescWithLastMaturityLevelId(spaceId, PageRequest.of(page, size)).stream()
+        return repository.findBySpaceIdOrderByLastModificationTimeDescWithLastMaturityLevelId(spaceId, PageRequest.of(page, size)).stream()
             .map(AssessmentMapper::mapToDomainModelWithMaturityLevelId)
             .toList();
     }

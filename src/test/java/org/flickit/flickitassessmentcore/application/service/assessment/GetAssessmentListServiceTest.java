@@ -4,10 +4,11 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAsses
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentWithMaturityLevelId;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentsWithMaturityLevelIdBySpacePort;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
-import org.junit.jupiter.api.BeforeEach;
+import org.flickit.flickitassessmentcore.domain.AssessmentKit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -21,51 +22,44 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class GetAssessmentListServiceTest {
 
-    private final LoadAssessmentsWithMaturityLevelIdBySpacePort loadAssessmentBySpace = Mockito.mock(LoadAssessmentsWithMaturityLevelIdBySpacePort.class);
+    @InjectMocks
+    private GetAssessmentListService service;
 
-    private final GetAssessmentListService service = new GetAssessmentListService(
-        loadAssessmentBySpace
-    );
-
-    private final Long space1 = 1L;
-    private final Long space2 = 2L;
-
-    private final AssessmentWithMaturityLevelId assessment1S1 = createAssessmentWithMaturityLevelId(space1);
-    private final AssessmentWithMaturityLevelId assessment2S1 = createAssessmentWithMaturityLevelId(space1);
-
-    @BeforeEach
-    public void init() {
-        when(loadAssessmentBySpace.loadAssessmentsWithLastResultMaturityLevelIdBySpaceId(space1, 0, 10))
-            .thenReturn(List.of(assessment1S1, assessment2S1));
-        when(loadAssessmentBySpace.loadAssessmentsWithLastResultMaturityLevelIdBySpaceId(space2, 0, 10))
-            .thenReturn(new ArrayList<>());
-    }
-
-    private AssessmentWithMaturityLevelId createAssessmentWithMaturityLevelId(Long spaceId) {
-        return new AssessmentWithMaturityLevelId(
-            UUID.randomUUID(),
-            "code",
-            "title",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            1L,
-            AssessmentColor.BLUE.getId(),
-            spaceId,
-            1L
-        );
-    }
-
+    @Mock
+    private final LoadAssessmentsWithMaturityLevelIdBySpacePort loadAssessmentBySpace;
 
     @Test
     void getAssessmentList_ResultsFound_ItemsReturned() {
-        GetAssessmentListUseCase.Result result = service.getAssessmentList(new GetAssessmentListUseCase.Param(space1, 10, 0));
+        Long spaceId = 1L;
+        Assessment assessment1S1 = createAssessment(spaceId);
+        Assessment assessment2S1 = createAssessment(spaceId);
+
+        when(loadAssessmentPort.loadAssessmentBySpaceId(spaceId, 0, 10)).thenReturn(List.of(assessment1S1, assessment2S1));
+
+        GetAssessmentListUseCase.Result result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceId, 10, 0));
         assertEquals(2, result.assessments().size());
     }
 
     @Test
     void getAssessmentList_NoResultsFound_NoItemReturned() {
-        GetAssessmentListUseCase.Result result = service.getAssessmentList(new GetAssessmentListUseCase.Param(space2, 10, 0));
+        Long spaceId = 2L;
+
+        when(loadAssessmentPort.loadAssessmentBySpaceId(spaceId, 0, 10)).thenReturn(new ArrayList<>());
+
+        GetAssessmentListUseCase.Result result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceId, 10, 0));
         assertEquals(0, result.assessments().size());
     }
 
+    private Assessment createAssessment(Long spaceId) {
+        return new Assessment(
+            UUID.randomUUID(),
+            "code",
+            "title",
+            new AssessmentKit(1L, null),
+            AssessmentColor.BLUE.getId(),
+            spaceId,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+    }
 }

@@ -14,7 +14,8 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         "LEFT JOIN AssessmentResultJpaEntity r " +
         "ON a.id = r.assessment.id " +
         "WHERE a.spaceId=:spaceId AND " +
-        "r.lastModificationDate = (SELECT MAX(ar.lastModificationDate) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id) " +
-        "ORDER BY a.lastModificationDate DESC")
-    List<AssessmentsWithMaturityLevelView> findBySpaceIdOrderByLastModificationDateDescWithLastMaturityLevelId(long spaceId, Pageable pageable);
+        "r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id) " +
+        "ORDER BY a.lastModificationTime DESC")
+    List<AssessmentsWithMaturityLevelView> findBySpaceIdOrderByLastModificationTimeDesc(long spaceId, Pageable pageable);
+
 }

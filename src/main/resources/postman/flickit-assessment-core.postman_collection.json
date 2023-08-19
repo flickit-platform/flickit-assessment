@@ -58,25 +58,14 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"questionId\": 1,\n    \"answerOptionId\": 1\n}",
+					"raw": "{\n    \"questionnaireId\": 1,\n    \"questionId\": 1,\n    \"answerOptionId\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-results/{{assessment_result_id}}/answer-question",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessment-results",
-						"{{assessment_result_id}}",
-						"answer-question"
-					]
-				}
+				"url": "{{base_url}}/{{api_path}}/assessment-results/da7e2a90-31a5-43ac-ab6b-93d43cd46a1b/answer-question"
 			},
 			"response": []
 		},
@@ -121,6 +110,81 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Add Evidence",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"description\",\n    \"createdById\": 1,\n    \"assessmentId\": \"3b39ed16-9478-464f-a295-955f69f89ec2\",\n    \"questionId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Calculate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/{{api_path}}/assessments/cb0f9b94-f2bb-438a-b6da-b941e59daae4/calculate"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	],
 	"variable": [
@@ -132,11 +196,6 @@
 		{
 			"key": "api_path",
 			"value": "assessment-core/api",
-			"type": "string"
-		},
-		{
-			"key": "assessment_result_id",
-			"value": "f74ae115-df83-4cfe-be63-2f64d1c2fe72",
 			"type": "string"
 		}
 	]

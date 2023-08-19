@@ -3,7 +3,7 @@ package org.flickit.flickitassessmentcore.application.service.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.springframework.stereotype.Service;
@@ -17,36 +17,37 @@ import java.util.UUID;
 @Transactional
 public class SubmitAnswerService implements SubmitAnswerUseCase {
 
-    private final SaveAnswerPort saveAnswerPort;
+    private final CreateAnswerPort createAnswerPort;
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
     private final LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort loadAnswerIdAndOptionIdPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
     @Override
     public Result submitAnswer(Param param) {
-        SaveOrUpdateResponse response = saveOrUpdate(param);
+        CreateOrUpdateResponse response = createOrUpdate(param);
         if (response.hasChanged())
             invalidateAssessmentResultPort.invalidateById(param.getAssessmentResultId());
         return new Result(response.answerId());
     }
 
-    private SaveOrUpdateResponse saveOrUpdate(Param param) {
+    private CreateOrUpdateResponse createOrUpdate(Param param) {
         return loadAnswerIdAndOptionIdPort.loadAnswerIdAndOptionId(param.getAssessmentResultId(), param.getQuestionId())
             .map(existAnswer -> {
                 if (!Objects.equals(param.getAnswerOptionId(), existAnswer.answerOptionId())) { // answer changed
                     updateAnswerOptionPort.updateAnswerOptionById(toUpdateParam(existAnswer.answerId(), param));
-                    return new SaveOrUpdateResponse(true, existAnswer.answerId());
+                    return new CreateOrUpdateResponse(true, existAnswer.answerId());
                 }
-                return new SaveOrUpdateResponse(false, existAnswer.answerId());
+                return new CreateOrUpdateResponse(false, existAnswer.answerId());
             }).orElseGet(() -> {
-                UUID saveAnswerId = saveAnswerPort.persist(toSaveParam(param));
-                return new SaveOrUpdateResponse(true, saveAnswerId);
+                UUID saveAnswerId = createAnswerPort.persist(toCreateParam(param));
+                return new CreateOrUpdateResponse(true, saveAnswerId);
             });
     }
 
-    private SaveAnswerPort.Param toSaveParam(Param param) {
-        return new SaveAnswerPort.Param(
+    private CreateAnswerPort.Param toCreateParam(Param param) {
+        return new CreateAnswerPort.Param(
             param.getAssessmentResultId(),
+            param.getQuestionnaireId(),
             param.getQuestionId(),
             param.getAnswerOptionId()
         );
@@ -56,6 +57,6 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return new UpdateAnswerOptionPort.Param(id, param.getAnswerOptionId());
     }
 
-    record SaveOrUpdateResponse(boolean hasChanged, UUID answerId) {
+    record CreateOrUpdateResponse(boolean hasChanged, UUID answerId) {
     }
 }

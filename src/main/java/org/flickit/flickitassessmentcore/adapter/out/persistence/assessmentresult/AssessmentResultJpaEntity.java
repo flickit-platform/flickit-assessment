@@ -37,6 +37,9 @@ public class AssessmentResultJpaEntity {
     @Column(name = "is_valid")
     private Boolean isValid;
 
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
+
     @Override
     public String toString() {
         return id.toString();

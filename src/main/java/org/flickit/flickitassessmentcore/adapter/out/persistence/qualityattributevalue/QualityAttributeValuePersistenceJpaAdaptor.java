@@ -11,7 +11,8 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class QualityAttributeValuePersistenceJpaAdaptor implements CreateQualityAttributeValuePort {
+public class QualityAttributeValuePersistenceJpaAdaptor implements
+    CreateQualityAttributeValuePort {
 
     private final QualityAttributeValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -28,4 +29,5 @@ public class QualityAttributeValuePersistenceJpaAdaptor implements CreateQuality
 
         repository.saveAll(entities);
     }
+
 }

@@ -6,9 +6,9 @@ import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAss
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class GetAssessmentListService implements GetAssessmentListUseCase {
 
     private final LoadAssessmentsWithMaturityLevelIdBySpacePort loadAssessmentsBySpace;
