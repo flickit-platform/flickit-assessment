@@ -16,6 +16,6 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         "WHERE a.spaceId=:spaceId AND " +
         "r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id) " +
         "ORDER BY a.lastModificationTime DESC")
-    List<AssessmentsWithMaturityLevelView> findBySpaceIdOrderByLastModificationTimeDesc(long spaceId, Pageable pageable);
+    List<AssessmentsWithMaturityLevelView> findBySpaceIdOrderByLastModificationTimeDescWithMaturityLevel(long spaceId, Pageable pageable);
 
 }

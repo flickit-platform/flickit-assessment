@@ -43,11 +43,11 @@ public interface GetAssessmentListUseCase {
         UUID id,
         String code,
         String title,
-        LocalDateTime creationTime,
-        LocalDateTime lastModificationDate,
         Long assessmentKitId,
         Integer colorId,
         Long spaceId,
+        LocalDateTime creationTime,
+        LocalDateTime lastModificationDate,
         Long maturityLevelId
     ){
     }

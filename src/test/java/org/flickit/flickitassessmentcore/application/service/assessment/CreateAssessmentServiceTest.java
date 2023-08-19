@@ -66,12 +66,12 @@ class CreateAssessmentServiceTest {
         ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
         verify(createAssessmentPort).persist(createPortParam.capture());
 
+        assertEquals("title-example", createPortParam.getValue().code());
         assertEquals(param.getTitle(), createPortParam.getValue().title());
         assertEquals(param.getAssessmentKitId(), createPortParam.getValue().assessmentKitId());
         assertEquals(param.getColorId(), createPortParam.getValue().colorId());
-        assertEquals("title-example", createPortParam.getValue().code());
         assertNotNull(createPortParam.getValue().creationTime());
-        assertNotNull(createPortParam.getValue().lastModificationDate());
+        assertNotNull(createPortParam.getValue().lastModificationTime());
     }
 
     @Test

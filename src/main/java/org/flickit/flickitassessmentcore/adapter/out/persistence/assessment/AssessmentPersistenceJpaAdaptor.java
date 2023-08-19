@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class AssessmentPersistenceJpaAdaptor implements
 
     @Override
     public List<AssessmentWithMaturityLevelId> loadAssessmentsWithLastResultMaturityLevelIdBySpaceId(Long spaceId, int page, int size) {
-        return repository.findBySpaceIdOrderByLastModificationTimeDescWithLastMaturityLevelId(spaceId, PageRequest.of(page, size)).stream()
+        return repository.findBySpaceIdOrderByLastModificationTimeDescWithMaturityLevel(spaceId, PageRequest.of(page, size)).stream()
             .map(AssessmentMapper::mapToDomainModelWithMaturityLevelId)
             .toList();
     }

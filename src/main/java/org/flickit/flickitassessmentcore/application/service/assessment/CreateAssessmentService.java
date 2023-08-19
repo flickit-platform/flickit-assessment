@@ -42,11 +42,11 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         LocalDateTime lastModificationTime = LocalDateTime.now();
 
         return new CreateAssessmentPort.Param(
+            code,
             param.getTitle(),
             param.getAssessmentKitId(),
             getValidColorId(param.getColorId()),
             param.getSpaceId(),
-            code,
             creationTime,
             lastModificationTime
         );

@@ -13,11 +13,11 @@ public class AssessmentMapper {
             null,
             param.code(),
             param.title(),
-            param.creationTime(),
-            param.lastModificationDate(),
             param.assessmentKitId(),
             param.colorId(),
-            param.spaceId()
+            param.spaceId(),
+            param.creationTime(),
+            param.lastModificationTime()
         );
     }
 
@@ -45,11 +45,11 @@ public class AssessmentMapper {
             assessmentEntity.getId(),
             assessmentEntity.getCode(),
             assessmentEntity.getTitle(),
-            assessmentEntity.getCreationTime(),
-            assessmentEntity.getLastModificationDate(),
             assessmentEntity.getAssessmentKitId(),
             assessmentEntity.getColorId(),
             assessmentEntity.getSpaceId(),
+            assessmentEntity.getCreationTime(),
+            assessmentEntity.getLastModificationTime(),
             assessmentWithMaturityLevel.getMaturityLevelId()
         );
     }
