@@ -31,9 +31,6 @@ public class AssessmentResultJpaEntity {
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
 
-    @Column(name = "last_modification_time", nullable = false)
-    private LocalDateTime lastModificationDate;
-
     @Column(name = "is_valid")
     private Boolean isValid;
 
