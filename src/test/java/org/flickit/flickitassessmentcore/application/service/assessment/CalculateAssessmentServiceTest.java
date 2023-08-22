@@ -3,7 +3,6 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CalculateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculatedResultPort;
-import org.flickit.flickitassessmentcore.application.service.assessmentresult.CalculateAssessmentService;
 import org.flickit.flickitassessmentcore.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.domain.SubjectValue;

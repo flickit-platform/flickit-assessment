@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.service.assessmentresult;
+package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CalculateAssessmentUseCase;
