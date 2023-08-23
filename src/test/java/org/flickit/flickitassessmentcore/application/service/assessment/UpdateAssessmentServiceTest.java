@@ -52,14 +52,13 @@ public class UpdateAssessmentServiceTest {
             1L,
             LocalDateTime.now(),
             LocalDateTime.now()
-            );
+        );
         when(loadAssessmentPort.loadAssessment(id)).thenReturn(new LoadAssessmentPort.Result(loadedAssessment));
         when(saveAssessmentPort.saveAssessment(any())).thenReturn(new SaveAssessmentPort.Result(id));
 
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
             "new title",
-            2L,
             AssessmentColor.EMERALD.getId()
         );
         UUID resultId = service.updateAssessment(param).id();
@@ -82,7 +81,7 @@ public class UpdateAssessmentServiceTest {
         when(loadAssessmentPort.loadAssessment(any())).thenThrow(ResourceNotFoundException.class);
         assertThrows(ResourceNotFoundException.class,
             () -> service.updateAssessment(new UpdateAssessmentUseCase.Param(
-                UUID.randomUUID(), "title", 1L, AssessmentColor.BLUE.getId()
+                UUID.randomUUID(), "title", AssessmentColor.BLUE.getId()
             )), UPDATE_ASSESSMENT_ASSESSMENT_NOT_FOUND);
     }
 
@@ -90,7 +89,7 @@ public class UpdateAssessmentServiceTest {
     void updateAssessment_NullId_ErrorMessage() {
         assertThrows(ConstraintViolationException.class,
             () -> service.updateAssessment(new UpdateAssessmentUseCase.Param(
-                null, "title", 1L, AssessmentColor.BLUE.getId()
+                null, "title", AssessmentColor.BLUE.getId()
             )), UPDATE_ASSESSMENT_ID_NOT_NULL);
     }
 
@@ -98,23 +97,15 @@ public class UpdateAssessmentServiceTest {
     void updateAssessment_InvalidTitle_ErrorMessage() {
         assertThrows(ConstraintViolationException.class,
             () -> service.updateAssessment(new UpdateAssessmentUseCase.Param(
-                UUID.randomUUID(), "", 1L, AssessmentColor.BLUE.getId()
+                UUID.randomUUID(), "", AssessmentColor.BLUE.getId()
             )), UPDATE_ASSESSMENT_TITLE_NOT_BLANK);
-    }
-
-    @Test
-    void updateAssessment_NullAssessmentId_ErrorMessage() {
-        assertThrows(ConstraintViolationException.class,
-            () -> service.updateAssessment(new UpdateAssessmentUseCase.Param(
-                UUID.randomUUID(), "title", null, AssessmentColor.BLUE.getId()
-            )), UPDATE_ASSESSMENT_ASSESSMENT_NOT_FOUND);
     }
 
     @Test
     void updateAssessment_NullColorId_ErrorMessage() {
         assertThrows(ConstraintViolationException.class,
             () -> service.updateAssessment(new UpdateAssessmentUseCase.Param(
-                UUID.randomUUID(), "title", 1L, null
+                UUID.randomUUID(), "title", null
             )), UPDATE_ASSESSMENT_COLOR_ID_NOT_NULL);
     }
 }

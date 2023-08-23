@@ -1,6 +1,8 @@
 package org.flickit.flickitassessmentcore.application.port.in.assessment;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
@@ -23,16 +25,12 @@ public interface UpdateAssessmentUseCase {
         @Size(max = 100, message = UPDATE_ASSESSMENT_TITLE_SIZE_MAX)
         String title;
 
-        @NotNull(message = UPDATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
-        Long assessmentKitId;
-
         @NotNull(message = UPDATE_ASSESSMENT_COLOR_ID_NOT_NULL)
         Integer colorId;
 
-        public Param(UUID id, String title, Long assessmentKitId, Integer colorId) {
+        public Param(UUID id, String title, Integer colorId) {
             this.id = id;
             this.title = title;
-            this.assessmentKitId = assessmentKitId;
             this.colorId = colorId;
             this.validateSelf();
         }
