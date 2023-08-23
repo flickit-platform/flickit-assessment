@@ -2,22 +2,16 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import jakarta.validation.ConstraintViolationException;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.UpdateAssessmentUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.SaveAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.domain.Assessment;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
-import org.flickit.flickitassessmentcore.domain.AssessmentKit;
-import org.flickit.flickitassessmentcore.domain.mother.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
@@ -27,34 +21,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateAssessmentServiceTest {
+class UpdateAssessmentServiceTest {
 
-    @Spy
     @InjectMocks
     private UpdateAssessmentService service;
 
     @Mock
-    private LoadAssessmentPort loadAssessmentPort;
-
-    @Mock
-    private SaveAssessmentPort saveAssessmentPort;
+    private UpdateAssessmentPort updateAssessmentPort;
 
     @Test
     void updateAssessment_ValidParam_UpdatedAndReturnsId() {
         UUID id = UUID.randomUUID();
-        AssessmentKit kit = AssessmentKitMother.kit();
-        Assessment loadedAssessment = new Assessment(
-            id,
-            "code",
-            "title",
-            kit,
-            AssessmentColor.BLUE.getId(),
-            1L,
-            LocalDateTime.now(),
-            LocalDateTime.now()
-        );
-        when(loadAssessmentPort.loadAssessment(id)).thenReturn(new LoadAssessmentPort.Result(loadedAssessment));
-        when(saveAssessmentPort.saveAssessment(any())).thenReturn(new SaveAssessmentPort.Result(id));
+
+        when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
@@ -64,21 +43,20 @@ public class UpdateAssessmentServiceTest {
         UUID resultId = service.updateAssessment(param).id();
         assertEquals(id, resultId);
 
-        ArgumentCaptor<SaveAssessmentPort.Param> savePortParam = ArgumentCaptor.forClass(SaveAssessmentPort.Param.class);
-        verify(saveAssessmentPort).saveAssessment(savePortParam.capture());
+        ArgumentCaptor<UpdateAssessmentPort.Param> updatePortParam = ArgumentCaptor.forClass(UpdateAssessmentPort.Param.class);
+        verify(updateAssessmentPort).update(updatePortParam.capture());
 
-        assertEquals(param.getId(), savePortParam.getValue().assessment().getId());
-        assertEquals(param.getTitle(), savePortParam.getValue().assessment().getTitle());
-        assertEquals(param.getColorId(), savePortParam.getValue().assessment().getColorId());
-        assertNotNull(savePortParam.getValue().assessment().getCreationTime());
-        assertNotNull(savePortParam.getValue().assessment().getLastModificationTime());
-        assertNotNull(savePortParam.getValue().assessment().getSpaceId());
-        assertNotNull(savePortParam.getValue().assessment().getCode());
+        assertEquals(param.getId(), updatePortParam.getValue().id());
+        assertEquals(param.getTitle(), updatePortParam.getValue().title());
+        assertEquals(param.getColorId(), updatePortParam.getValue().colorId());
+        assertNotNull(updatePortParam.getValue().title());
+        assertNotNull(updatePortParam.getValue().colorId());
+        assertNotNull(updatePortParam.getValue().lastModificationTime());
     }
 
     @Test
     void updateAssessment_NotExistingId_ErrorMessage() {
-        when(loadAssessmentPort.loadAssessment(any())).thenThrow(ResourceNotFoundException.class);
+        when(updateAssessmentPort.update(any())).thenThrow(ResourceNotFoundException.class);
         assertThrows(ResourceNotFoundException.class,
             () -> service.updateAssessment(new UpdateAssessmentUseCase.Param(
                 UUID.randomUUID(), "title", AssessmentColor.BLUE.getId()

@@ -1,7 +1,5 @@
 package org.flickit.flickitassessmentcore.application.port.out.assessment;
 
-import org.flickit.flickitassessmentcore.domain.Assessment;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -9,7 +7,7 @@ public interface UpdateAssessmentPort {
 
     Result update(Param param);
 
-    record Param(String title, Long colorId, LocalDateTime lastUpdateTime) {}
+    record Param(UUID id, String title, Integer colorId, LocalDateTime lastModificationTime) {}
 
     record Result(UUID id) {}
 }
