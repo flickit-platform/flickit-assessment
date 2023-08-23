@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.EDIT_ASSESSMENT_ASSESSMENT_NOT_FOUND;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.UPDATE_ASSESSMENT_ASSESSMENT_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -48,7 +48,7 @@ public class AssessmentPersistenceJpaAdaptor implements
             Assessment assessment = AssessmentMapper.mapToDomainModel(jpaEntity.get());
             return new LoadAssessmentPort.Result(assessment);
         } else {
-            throw new ResourceNotFoundException(EDIT_ASSESSMENT_ASSESSMENT_NOT_FOUND);
+            throw new ResourceNotFoundException(UPDATE_ASSESSMENT_ASSESSMENT_NOT_FOUND);
         }
     }
 

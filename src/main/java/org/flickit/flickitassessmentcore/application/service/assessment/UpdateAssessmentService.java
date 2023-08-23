@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.EditAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.UpdateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.SaveAssessmentPort;
 import org.flickit.flickitassessmentcore.domain.Assessment;
@@ -14,13 +14,13 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class EditAssessmentService implements EditAssessmentUseCase {
+public class UpdateAssessmentService implements UpdateAssessmentUseCase {
 
     private final LoadAssessmentPort loadAssessmentPort;
     private final SaveAssessmentPort saveAssessmentPort;
 
     @Override
-    public Result editAssessment(Param param) {
+    public Result updateAssessment(Param param) {
         Assessment assessment = loadAssessmentPort.loadAssessment(param.getId()).assessment();
         Assessment newAssessment = new Assessment(
             assessment.getId(),

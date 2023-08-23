@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.EditAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.UpdateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.SaveAssessmentPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
@@ -27,11 +27,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class EditAssessmentServiceTest {
+public class UpdateAssessmentServiceTest {
 
     @Spy
     @InjectMocks
-    private EditAssessmentService service;
+    private UpdateAssessmentService service;
 
     @Mock
     private LoadAssessmentPort loadAssessmentPort;
@@ -40,7 +40,7 @@ public class EditAssessmentServiceTest {
     private SaveAssessmentPort saveAssessmentPort;
 
     @Test
-    void editAssessment_ValidParam_UpdatedAndReturnsId() {
+    void updateAssessment_ValidParam_UpdatedAndReturnsId() {
         UUID id = UUID.randomUUID();
         AssessmentKit kit = AssessmentKitMother.kit();
         Assessment loadedAssessment = new Assessment(
@@ -56,13 +56,13 @@ public class EditAssessmentServiceTest {
         when(loadAssessmentPort.loadAssessment(id)).thenReturn(new LoadAssessmentPort.Result(loadedAssessment));
         when(saveAssessmentPort.saveAssessment(any())).thenReturn(new SaveAssessmentPort.Result(id));
 
-        EditAssessmentUseCase.Param param = new EditAssessmentUseCase.Param(
+        UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
             "new title",
             2L,
             AssessmentColor.EMERALD.getId()
         );
-        UUID resultId = service.editAssessment(param).id();
+        UUID resultId = service.updateAssessment(param).id();
         assertEquals(id, resultId);
 
         ArgumentCaptor<SaveAssessmentPort.Param> savePortParam = ArgumentCaptor.forClass(SaveAssessmentPort.Param.class);
@@ -78,43 +78,43 @@ public class EditAssessmentServiceTest {
     }
 
     @Test
-    void editAssessment_NotExistingId_ErrorMessage() {
+    void updateAssessment_NotExistingId_ErrorMessage() {
         when(loadAssessmentPort.loadAssessment(any())).thenThrow(ResourceNotFoundException.class);
         assertThrows(ResourceNotFoundException.class,
-            () -> service.editAssessment(new EditAssessmentUseCase.Param(
+            () -> service.updateAssessment(new UpdateAssessmentUseCase.Param(
                 UUID.randomUUID(), "title", 1L, AssessmentColor.BLUE.getId()
-            )), EDIT_ASSESSMENT_ASSESSMENT_NOT_FOUND);
+            )), UPDATE_ASSESSMENT_ASSESSMENT_NOT_FOUND);
     }
 
     @Test
-    void editAssessment_NullId_ErrorMessage() {
+    void updateAssessment_NullId_ErrorMessage() {
         assertThrows(ConstraintViolationException.class,
-            () -> service.editAssessment(new EditAssessmentUseCase.Param(
+            () -> service.updateAssessment(new UpdateAssessmentUseCase.Param(
                 null, "title", 1L, AssessmentColor.BLUE.getId()
-            )), EDIT_ASSESSMENT_ID_NOT_NULL);
+            )), UPDATE_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void editAssessment_InvalidTitle_ErrorMessage() {
+    void updateAssessment_InvalidTitle_ErrorMessage() {
         assertThrows(ConstraintViolationException.class,
-            () -> service.editAssessment(new EditAssessmentUseCase.Param(
+            () -> service.updateAssessment(new UpdateAssessmentUseCase.Param(
                 UUID.randomUUID(), "", 1L, AssessmentColor.BLUE.getId()
-            )), EDIT_ASSESSMENT_TITLE_NOT_BLANK);
+            )), UPDATE_ASSESSMENT_TITLE_NOT_BLANK);
     }
 
     @Test
-    void editAssessment_NullAssessmentId_ErrorMessage() {
+    void updateAssessment_NullAssessmentId_ErrorMessage() {
         assertThrows(ConstraintViolationException.class,
-            () -> service.editAssessment(new EditAssessmentUseCase.Param(
+            () -> service.updateAssessment(new UpdateAssessmentUseCase.Param(
                 UUID.randomUUID(), "title", null, AssessmentColor.BLUE.getId()
-            )), EDIT_ASSESSMENT_ASSESSMENT_NOT_FOUND);
+            )), UPDATE_ASSESSMENT_ASSESSMENT_NOT_FOUND);
     }
 
     @Test
-    void editAssessment_NullColorId_ErrorMessage() {
+    void updateAssessment_NullColorId_ErrorMessage() {
         assertThrows(ConstraintViolationException.class,
-            () -> service.editAssessment(new EditAssessmentUseCase.Param(
+            () -> service.updateAssessment(new UpdateAssessmentUseCase.Param(
                 UUID.randomUUID(), "title", 1L, null
-            )), EDIT_ASSESSMENT_COLOR_ID_NOT_NULL);
+            )), UPDATE_ASSESSMENT_COLOR_ID_NOT_NULL);
     }
 }

@@ -8,25 +8,25 @@ import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
-public interface EditAssessmentUseCase {
+public interface UpdateAssessmentUseCase {
 
-    Result editAssessment(Param param);
+    Result updateAssessment(Param param);
 
     @Value
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = EDIT_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = UPDATE_ASSESSMENT_ID_NOT_NULL)
         UUID id;
 
-        @NotBlank(message = EDIT_ASSESSMENT_TITLE_NOT_BLANK)
-        @Size(min = 3, message = EDIT_ASSESSMENT_TITLE_SIZE_MIN)
-        @Size(max = 100, message = EDIT_ASSESSMENT_TITLE_SIZE_MAX)
+        @NotBlank(message = UPDATE_ASSESSMENT_TITLE_NOT_BLANK)
+        @Size(min = 3, message = UPDATE_ASSESSMENT_TITLE_SIZE_MIN)
+        @Size(max = 100, message = UPDATE_ASSESSMENT_TITLE_SIZE_MAX)
         String title;
 
-        @NotNull(message = EDIT_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
+        @NotNull(message = UPDATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
         Long assessmentKitId;
 
-        @NotNull(message = EDIT_ASSESSMENT_COLOR_ID_NOT_NULL)
+        @NotNull(message = UPDATE_ASSESSMENT_COLOR_ID_NOT_NULL)
         Integer colorId;
 
         public Param(UUID id, String title, Long assessmentKitId, Integer colorId) {
