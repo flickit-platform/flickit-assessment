@@ -19,21 +19,22 @@ public class AssessmentResultPersistenceJpaAdaptor implements
     InvalidateAssessmentResultPort,
     CreateAssessmentResultPort {
 
-    private final AssessmentResultJpaRepository repository;
-    private final AssessmentJpaRepository assessmentRepository;
+    private final AssessmentResultJpaRepository repo;
+    private final AssessmentJpaRepository assessmentRepo;
 
     @Override
     public void invalidateById(UUID id) {
-        repository.invalidateById(id);
+        repo.invalidateById(id);
     }
 
     @Override
     public UUID persist(Param param) {
         AssessmentResultJpaEntity entity = AssessmentResultMapper.mapToJpaEntity(param);
-        AssessmentJpaEntity assessment = assessmentRepository.findById(param.assessmentId())
+        AssessmentJpaEntity assessment = assessmentRepo.findById(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND));
         entity.setAssessment(assessment);
-        AssessmentResultJpaEntity savedEntity = repository.save(entity);
+        AssessmentResultJpaEntity savedEntity = repo.save(entity);
         return savedEntity.getId();
     }
 }
+

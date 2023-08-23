@@ -1,5 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue;
 
+
 public class SubjectValueMapper {
 
     public static SubjectValueJpaEntity mapToJpaEntity(Long subjectId){
@@ -10,4 +11,5 @@ public class SubjectValueMapper {
             null
         );
     }
+
 }

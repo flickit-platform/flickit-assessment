@@ -3,7 +3,7 @@ package org.flickit.flickitassessmentcore.application.service.answer;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result;
-import org.flickit.flickitassessmentcore.application.port.out.answer.SaveAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -24,12 +23,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SubmitAnswerServiceTest {
 
-    @Spy
     @InjectMocks
     private SubmitAnswerService service;
 
     @Mock
-    private SaveAnswerPort saveAnswerPort;
+    private CreateAnswerPort createAnswerPort;
 
     @Mock
     private UpdateAnswerOptionPort updateAnswerPort;
@@ -43,10 +41,12 @@ class SubmitAnswerServiceTest {
     @Test
     void submitAnswer_AnswerNotExist_SavesAnswerAndInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 25L;
         Long questionId = 1L;
         Long answerOptionId = 2L;
         SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
             assessmentResultId,
+            questionnaireId,
             questionId,
             answerOptionId
         );
@@ -54,17 +54,18 @@ class SubmitAnswerServiceTest {
             .thenReturn(Optional.empty());
 
         UUID savedAnswerId = UUID.randomUUID();
-        when(saveAnswerPort.persist(any(SaveAnswerPort.Param.class))).thenReturn(savedAnswerId);
+        when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
 
         service.submitAnswer(param);
 
-        ArgumentCaptor<SaveAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(SaveAnswerPort.Param.class);
-        verify(saveAnswerPort).persist(saveAnswerParam.capture());
+        ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
+        verify(createAnswerPort).persist(saveAnswerParam.capture());
         assertEquals(assessmentResultId, saveAnswerParam.getValue().assessmentResultId());
+        assertEquals(questionnaireId, saveAnswerParam.getValue().questionnaireId());
         assertEquals(questionId, saveAnswerParam.getValue().questionId());
         assertEquals(answerOptionId, saveAnswerParam.getValue().answerOptionId());
 
-        verify(saveAnswerPort, times(1)).persist(any(SaveAnswerPort.Param.class));
+        verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(eq(assessmentResultId));
         verifyNoInteractions(
             updateAnswerPort
@@ -74,11 +75,13 @@ class SubmitAnswerServiceTest {
     @Test
     void submitAnswer_AnswerWithDifferentAnswerOptionExist_UpdatesAnswerAndInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 1L;
         Long questionId = 1L;
         Long newAnswerOptionId = 2L;
         Long oldAnswerOptionId = 3L;
         SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
             assessmentResultId,
+            questionnaireId,
             questionId,
             newAnswerOptionId
         );
@@ -102,17 +105,19 @@ class SubmitAnswerServiceTest {
         verify(updateAnswerPort, times(1)).updateAnswerOptionById(any(UpdateAnswerOptionPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(eq(assessmentResultId));
         verifyNoInteractions(
-            saveAnswerPort
+            createAnswerPort
         );
     }
 
     @Test
     void submitAnswer_AnswerWithSameAnswerOptionExist_DoesntInvalidateAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 1L;
         Long questionId = 1L;
         Long sameAnswerOptionId = 2L;
         SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
             assessmentResultId,
+            questionnaireId,
             questionId,
             sameAnswerOptionId
         );
@@ -127,7 +132,7 @@ class SubmitAnswerServiceTest {
 
         verify(loadAnswerIdAndOptionIdPort, times(1)).loadAnswerIdAndOptionId(eq(assessmentResultId), eq(questionId));
         verifyNoInteractions(
-            saveAnswerPort,
+            createAnswerPort,
             updateAnswerPort,
             invalidateAssessmentResultPort
         );

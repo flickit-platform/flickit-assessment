@@ -18,14 +18,18 @@ public interface SubmitAnswerUseCase {
         @NotNull(message = SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_NULL)
         UUID assessmentResultId;
 
+        @NotNull(message = SUBMIT_ANSWER_QUESTIONNAIRE_ID_NOT_NULL)
+        Long questionnaireId;
+
         @NotNull(message = SUBMIT_ANSWER_QUESTION_ID_NOT_NULL)
         Long questionId;
 
         @NotNull(message = SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_NULL)
         Long answerOptionId;
 
-        public Param(UUID assessmentResultId, Long questionId, Long answerOptionId) {
+        public Param(UUID assessmentResultId, Long questionnaireId, Long questionId, Long answerOptionId) {
             this.assessmentResultId = assessmentResultId;
+            this.questionnaireId = questionnaireId;
             this.questionId = questionId;
             this.answerOptionId = answerOptionId;
             this.validateSelf();

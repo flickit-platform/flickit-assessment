@@ -65,18 +65,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-results/{{assessment_result_id}}/answer-question",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessment-results",
-						"{{assessment_result_id}}",
-						"answer-question"
-					]
-				}
+				"url": "{{base_url}}/{{api_path}}/assessment-results/da7e2a90-31a5-43ac-ab6b-93d43cd46a1b/answer-question"
 			},
 			"response": []
 		},
@@ -160,6 +149,24 @@
 			"response": []
 		},
 		{
+			"name": "Calculate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/{{api_path}}/assessments/cb0f9b94-f2bb-438a-b6da-b941e59daae4/calculate"
+			},
+			"response": []
+		},
+		{
 			"name": "Edit Assessment",
 			"request": {
 				"method": "PUT",
@@ -196,11 +203,6 @@
 		{
 			"key": "api_path",
 			"value": "assessment-core/api",
-			"type": "string"
-		},
-		{
-			"key": "assessment_result_id",
-			"value": "f74ae115-df83-4cfe-be63-2f64d1c2fe72",
 			"type": "string"
 		}
 	]

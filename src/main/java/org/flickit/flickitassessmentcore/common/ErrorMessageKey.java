@@ -17,6 +17,7 @@ public class ErrorMessageKey {
 
     public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND = "submit-answer.assessmentResultId.notFound";
     public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_NULL = "submit-answer.assessmentResultId.notNull";
+    public static final String SUBMIT_ANSWER_QUESTIONNAIRE_ID_NOT_NULL = "submit-answer.questionnaireId.notNull";
     public static final String SUBMIT_ANSWER_QUESTION_ID_NOT_NULL = "submit-answer.questionId.notNull";
     public static final String SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_NULL = "submit-answer.answerOptionId.notNull";
 
@@ -41,4 +42,6 @@ public class ErrorMessageKey {
     public static final String EDIT_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL = "edit-assessment.assessment-kit-id.notNull";
     public static final String EDIT_ASSESSMENT_COLOR_ID_NOT_NULL = "edit-assessment.color-id.notNull";
 
+    public static final String CALCULATE_ASSESSMENT_ID_NOT_NULL = "calculate-assessment.assessment.id.notNull";
+    public static final String CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "calculate-assessment.assessmentResult.notFount";
 }

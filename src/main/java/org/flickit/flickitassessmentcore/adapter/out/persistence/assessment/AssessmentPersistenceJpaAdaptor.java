@@ -36,7 +36,7 @@ public class AssessmentPersistenceJpaAdaptor implements
 
     @Override
     public List<Assessment> loadAssessmentBySpaceId(Long spaceId, int page, int size) {
-        return repository.findBySpaceIdOrderByLastModificationDateDesc(spaceId, PageRequest.of(page, size)).stream()
+        return repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceId, PageRequest.of(page, size)).stream()
             .map(AssessmentMapper::mapToDomainModel)
             .collect(Collectors.toList());
     }
