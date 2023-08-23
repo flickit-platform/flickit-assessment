@@ -26,11 +26,11 @@ public class EditAssessmentService implements EditAssessmentUseCase {
             assessment.getId(),
             assessment.getCode(),
             param.getTitle(),
-            assessment.getCreationTime(),
-            LocalDateTime.now(),
-            param.getAssessmentKitId(),
+            assessment.getAssessmentKit(),
             param.getColorId(),
-            assessment.getSpaceId()
+            assessment.getSpaceId(),
+            assessment.getCreationTime(),
+            LocalDateTime.now()
         );
         UUID id = saveAssessmentPort.saveAssessment(new SaveAssessmentPort.Param(newAssessment)).id();
         return new Result(id);

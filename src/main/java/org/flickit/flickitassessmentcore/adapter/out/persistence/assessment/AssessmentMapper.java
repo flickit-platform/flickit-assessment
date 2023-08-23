@@ -43,8 +43,8 @@ public class AssessmentMapper {
             assessment.getCode(),
             assessment.getTitle(),
             assessment.getCreationTime(),
-            assessment.getLastModificationDate(),
-            assessment.getAssessmentKitId(),
+            assessment.getLastModificationTime(),
+            assessment.getAssessmentKit().getId(),
             assessment.getColorId(),
             assessment.getSpaceId()
         );

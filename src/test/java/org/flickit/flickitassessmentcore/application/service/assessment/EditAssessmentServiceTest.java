@@ -7,6 +7,8 @@ import org.flickit.flickitassessmentcore.application.port.out.assessment.SaveAss
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.domain.Assessment;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.domain.AssessmentKit;
+import org.flickit.flickitassessmentcore.domain.mother.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -40,16 +42,17 @@ public class EditAssessmentServiceTest {
     @Test
     void editAssessment_ValidParam_UpdatedAndReturnsId() {
         UUID id = UUID.randomUUID();
+        AssessmentKit kit = AssessmentKitMother.kit();
         Assessment loadedAssessment = new Assessment(
             id,
             "code",
             "title",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            1L,
+            kit,
             AssessmentColor.BLUE.getId(),
-            1L
-        );
+            1L,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+            );
         when(loadAssessmentPort.loadAssessment(id)).thenReturn(new LoadAssessmentPort.Result(loadedAssessment));
         when(saveAssessmentPort.saveAssessment(any())).thenReturn(new SaveAssessmentPort.Result(id));
 
@@ -67,10 +70,10 @@ public class EditAssessmentServiceTest {
 
         assertEquals(param.getId(), savePortParam.getValue().assessment().getId());
         assertEquals(param.getTitle(), savePortParam.getValue().assessment().getTitle());
-        assertEquals(param.getAssessmentKitId(), savePortParam.getValue().assessment().getAssessmentKitId());
+        assertEquals(param.getAssessmentKitId(), savePortParam.getValue().assessment().getAssessmentKit().getId());
         assertEquals(param.getColorId(), savePortParam.getValue().assessment().getColorId());
         assertNotNull(savePortParam.getValue().assessment().getCreationTime());
-        assertNotNull(savePortParam.getValue().assessment().getLastModificationDate());
+        assertNotNull(savePortParam.getValue().assessment().getLastModificationTime());
         assertNotNull(savePortParam.getValue().assessment().getSpaceId());
         assertNotNull(savePortParam.getValue().assessment().getCode());
     }
