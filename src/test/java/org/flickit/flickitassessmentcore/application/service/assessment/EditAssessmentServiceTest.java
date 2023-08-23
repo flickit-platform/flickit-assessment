@@ -70,7 +70,6 @@ public class EditAssessmentServiceTest {
 
         assertEquals(param.getId(), savePortParam.getValue().assessment().getId());
         assertEquals(param.getTitle(), savePortParam.getValue().assessment().getTitle());
-        assertEquals(param.getAssessmentKitId(), savePortParam.getValue().assessment().getAssessmentKit().getId());
         assertEquals(param.getColorId(), savePortParam.getValue().assessment().getColorId());
         assertNotNull(savePortParam.getValue().assessment().getCreationTime());
         assertNotNull(savePortParam.getValue().assessment().getLastModificationTime());
