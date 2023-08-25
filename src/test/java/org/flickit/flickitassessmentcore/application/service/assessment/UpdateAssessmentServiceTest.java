@@ -66,28 +66,28 @@ class UpdateAssessmentServiceTest {
 
     @Test
     void updateAssessment_NullId_ErrorMessage() {
-        UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
-            null, "title", AssessmentColor.BLUE.getId());
+        String title = "title";
+        int colorId = AssessmentColor.BLUE.getId();
         assertThrows(ConstraintViolationException.class,
-            () -> service.updateAssessment(param),
+            () -> new UpdateAssessmentUseCase.Param(null, title, colorId),
             UPDATE_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
     void updateAssessment_InvalidTitle_ErrorMessage() {
-        UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
-            UUID.randomUUID(), "", AssessmentColor.BLUE.getId());
+        UUID id = UUID.randomUUID();
+        int colorId = AssessmentColor.BLUE.getId();
         assertThrows(ConstraintViolationException.class,
-            () -> service.updateAssessment(param),
+            () -> new UpdateAssessmentUseCase.Param(id, "", colorId),
             UPDATE_ASSESSMENT_TITLE_NOT_BLANK);
     }
 
     @Test
     void updateAssessment_NullColorId_ErrorMessage() {
-        UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
-            UUID.randomUUID(), "title", null);
+        UUID id = UUID.randomUUID();
+        String title = "title";
         assertThrows(ConstraintViolationException.class,
-            () -> service.updateAssessment(param),
+            () -> new UpdateAssessmentUseCase.Param(id, title, null),
             UPDATE_ASSESSMENT_COLOR_ID_NOT_NULL);
     }
 }
