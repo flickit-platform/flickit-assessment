@@ -8,20 +8,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import static org.flickit.flickitassessmentcore.domain.Assessment.generateSlugCode;
+
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class UpdateAssessmentService implements UpdateAssessmentUseCase {
 
     private final UpdateAssessmentPort updateAssessmentPort;
 
     @Override
     public Result updateAssessment(Param param) {
+        String code = generateSlugCode(param.getTitle());
+        LocalDateTime lastModificationTime = LocalDateTime.now();
         UpdateAssessmentPort.Param updateParam = new UpdateAssessmentPort.Param(
             param.getId(),
             param.getTitle(),
+            code,
             param.getColorId(),
-            LocalDateTime.now());
+            lastModificationTime);
 
         return new Result(updateAssessmentPort.update(updateParam).id());
     }

@@ -18,10 +18,12 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     @Query("UPDATE AssessmentJpaEntity a SET "+
         "a.title = :title, " +
         "a.colorId = :colorId, " +
+        "a.code = :code, " +
         "a.lastModificationTime = :lastModificationTime " +
         "WHERE a.id = :id")
-    UUID update(@Param(value = "id") UUID id,
+    void update(@Param(value = "id") UUID id,
                 @Param(value = "title") String title,
+                @Param(value = "code") String code,
                 @Param(value = "colorId") Integer colorId,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
 }

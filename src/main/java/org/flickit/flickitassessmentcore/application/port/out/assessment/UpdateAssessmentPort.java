@@ -7,7 +7,11 @@ public interface UpdateAssessmentPort {
 
     Result update(Param param);
 
-    record Param(UUID id, String title, Integer colorId, LocalDateTime lastModificationTime) {}
+    record Param(UUID id,
+                 String title,
+                 String code,
+                 Integer colorId,
+                 LocalDateTime lastModificationTime) {}
 
     record Result(UUID id) {}
 }

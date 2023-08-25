@@ -37,10 +37,12 @@ public class AssessmentPersistenceJpaAdaptor implements
 
     @Override
     public UpdateAssessmentPort.Result update(UpdateAssessmentPort.Param param) {
-        return new UpdateAssessmentPort.Result(repository.update(
+        repository.update(
             param.id(),
             param.title(),
+            param.code(),
             param.colorId(),
-            param.lastModificationTime()));
+            param.lastModificationTime());
+        return new UpdateAssessmentPort.Result(param.id());
     }
 }
