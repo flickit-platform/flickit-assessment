@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
-public interface AssessmentsWithMaturityLevelView {
+public interface AssessmentListItemView {
 
     AssessmentJpaEntity getAssessment();
 

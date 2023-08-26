@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
-import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentWithMaturityLevelId;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.domain.Assessment;
 import org.flickit.flickitassessmentcore.domain.AssessmentKit;
@@ -39,16 +39,13 @@ public class AssessmentMapper {
         );
     }
 
-    public static AssessmentWithMaturityLevelId mapToDomainModelWithMaturityLevelId(AssessmentsWithMaturityLevelView assessmentWithMaturityLevel) {
+    public static AssessmentListItem mapToAssessmentListItem(AssessmentListItemView assessmentWithMaturityLevel) {
         AssessmentJpaEntity assessmentEntity = assessmentWithMaturityLevel.getAssessment();
-        return new AssessmentWithMaturityLevelId(
+        return new AssessmentListItem(
             assessmentEntity.getId(),
-            assessmentEntity.getCode(),
             assessmentEntity.getTitle(),
             assessmentEntity.getAssessmentKitId(),
             assessmentEntity.getColorId(),
-            assessmentEntity.getSpaceId(),
-            assessmentEntity.getCreationTime(),
             assessmentEntity.getLastModificationTime(),
             assessmentWithMaturityLevel.getMaturityLevelId()
         );

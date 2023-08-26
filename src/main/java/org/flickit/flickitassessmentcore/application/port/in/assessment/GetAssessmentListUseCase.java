@@ -36,17 +36,14 @@ public interface GetAssessmentListUseCase {
         }
     }
 
-    record Result(List<AssessmentWithMaturityLevelId> assessments) {
+    record Result(List<AssessmentListItem> assessments) {
     }
 
-    record AssessmentWithMaturityLevelId(
+    record AssessmentListItem(
         UUID id,
-        String code,
         String title,
         Long assessmentKitId,
         Integer colorId,
-        Long spaceId,
-        LocalDateTime creationTime,
         LocalDateTime lastModificationDate,
         Long maturityLevelId
     ){

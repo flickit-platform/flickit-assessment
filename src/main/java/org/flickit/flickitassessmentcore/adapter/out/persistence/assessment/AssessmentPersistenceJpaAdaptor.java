@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentWithMaturityLevelId;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentsWithMaturityLevelIdBySpacePort;
 import org.springframework.data.domain.PageRequest;
@@ -26,9 +26,9 @@ public class AssessmentPersistenceJpaAdaptor implements
     }
 
     @Override
-    public List<AssessmentWithMaturityLevelId> loadAssessmentsWithLastResultMaturityLevelIdBySpaceId(Long spaceId, int page, int size) {
-        return repository.findBySpaceIdOrderByLastModificationTimeDescWithMaturityLevel(spaceId, PageRequest.of(page, size)).stream()
-            .map(AssessmentMapper::mapToDomainModelWithMaturityLevelId)
+    public List<AssessmentListItem> loadAssessmentListItemBySpaceId(Long spaceId, int page, int size) {
+        return repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceId, PageRequest.of(page, size)).stream()
+            .map(AssessmentMapper::mapToAssessmentListItem)
             .toList();
     }
 }

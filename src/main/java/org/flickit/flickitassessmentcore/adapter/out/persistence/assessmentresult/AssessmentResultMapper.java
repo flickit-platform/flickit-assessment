@@ -2,8 +2,6 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresu
 
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 
-import java.time.LocalDateTime;
-
 public class AssessmentResultMapper {
 
 

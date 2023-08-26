@@ -16,7 +16,7 @@ public class GetAssessmentListService implements GetAssessmentListUseCase {
     @Override
     public GetAssessmentListUseCase.Result getAssessmentList(GetAssessmentListUseCase.Param param) {
         return new GetAssessmentListUseCase.Result(
-            loadAssessmentsBySpace.loadAssessmentsWithLastResultMaturityLevelIdBySpaceId(
+            loadAssessmentsBySpace.loadAssessmentListItemBySpaceId(
                 param.getSpaceId(),
                 param.getPage(),
                 param.getSize()
