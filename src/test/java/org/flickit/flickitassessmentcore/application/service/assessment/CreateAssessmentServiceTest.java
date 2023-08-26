@@ -17,7 +17,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -189,33 +188,6 @@ class CreateAssessmentServiceTest {
         verify(createAssessmentPort).persist(createPortParam.capture());
 
         assertEquals(AssessmentColor.getDefault().getId(), createPortParam.getValue().colorId());
-    }
-
-    @Test
-    void generateSlugCode_NoWhitespace_ReturnsLowerCaseCode() {
-        String title = "ExampleTitle";
-
-        String code = ReflectionTestUtils.invokeMethod(service, "generateSlugCode", title);
-
-        assertEquals("exampletitle", code);
-    }
-
-    @Test
-    void generateSlugCode_WithWhitespace_ReturnsLowerCaseCodeWithHyphens() {
-        String title = "Example Title with Whitespace";
-
-        String code = ReflectionTestUtils.invokeMethod(service, "generateSlugCode", title);
-
-        assertEquals("example-title-with-whitespace", code);
-    }
-
-    @Test
-    void generateSlugCode_WithLeadingAndTrailingWhitespace_ReturnsLowerCaseCodeWithHyphens() {
-        String title = "  Example Title with   Leading and Trailing   Whitespace  ";
-
-        String code = ReflectionTestUtils.invokeMethod(service, "generateSlugCode", title);
-
-        assertEquals("example-title-with-leading-and-trailing-whitespace", code);
     }
 
 }

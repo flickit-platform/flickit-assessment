@@ -36,4 +36,17 @@ public class AssessmentMapper {
             entity.getLastModificationTime()
         );
     }
+
+    public static AssessmentJpaEntity mapToJpaEntity(Assessment assessment) {
+        return new AssessmentJpaEntity(
+            assessment.getId(),
+            assessment.getCode(),
+            assessment.getTitle(),
+            assessment.getCreationTime(),
+            assessment.getLastModificationTime(),
+            assessment.getAssessmentKit().getId(),
+            assessment.getColorId(),
+            assessment.getSpaceId()
+        );
+    }
 }

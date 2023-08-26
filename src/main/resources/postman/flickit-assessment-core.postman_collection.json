@@ -58,7 +58,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"questionnaireId\": 1,\n    \"questionId\": 1,\n    \"answerOptionId\": 1\n}",
+					"raw": "{\n    \"questionId\": 1,\n    \"answerOptionId\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -165,26 +165,33 @@
 				"url": "{{base_url}}/{{api_path}}/assessments/cb0f9b94-f2bb-438a-b6da-b941e59daae4/calculate"
 			},
 			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
 		},
 		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
+			"name": "Edit Assessment",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"3b39ed16-9478-464f-a295-955f69f89ec2\",\n    \"title\": \"new title\",\n    \"assessmentKitId\": 2,\n    \"colorId\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
