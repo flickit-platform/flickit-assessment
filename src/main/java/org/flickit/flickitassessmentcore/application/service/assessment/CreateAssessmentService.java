@@ -44,11 +44,11 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         LocalDateTime lastModificationTime = LocalDateTime.now();
 
         return new CreateAssessmentPort.Param(
+            code,
             param.getTitle(),
             param.getAssessmentKitId(),
             getValidColorId(param.getColorId()),
             param.getSpaceId(),
-            code,
             creationTime,
             lastModificationTime
         );
@@ -61,8 +61,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     }
 
     private void createAssessmentResult(UUID assessmentId, Long assessmentKitId) {
-        CreateAssessmentResultPort.Param createAssessmentResultParam = new CreateAssessmentResultPort.Param(assessmentId, false);
-        UUID assessmentResultId = createAssessmentResultPort.persist(createAssessmentResultParam);
+        LocalDateTime lastModificationTime = LocalDateTime.now();
+        CreateAssessmentResultPort.Param param = new CreateAssessmentResultPort.Param(assessmentId, lastModificationTime, false);
+        UUID assessmentResultId = createAssessmentResultPort.persist(param);
 
 
         List<Subject> subjects = loadSubjectByAssessmentKitIdPort.loadByAssessmentKitId(assessmentKitId);

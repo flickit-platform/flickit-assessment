@@ -1,8 +1,10 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.domain.Assessment;
 import org.flickit.flickitassessmentcore.domain.AssessmentKit;
+
 
 public class AssessmentMapper {
 
@@ -11,11 +13,11 @@ public class AssessmentMapper {
             null,
             param.code(),
             param.title(),
-            param.creationTime(),
-            param.lastModificationDate(),
             param.assessmentKitId(),
             param.colorId(),
-            param.spaceId()
+            param.spaceId(),
+            param.creationTime(),
+            param.lastModificationTime()
         );
     }
 
@@ -37,16 +39,15 @@ public class AssessmentMapper {
         );
     }
 
-    public static AssessmentJpaEntity mapToJpaEntity(Assessment assessment) {
-        return new AssessmentJpaEntity(
-            assessment.getId(),
-            assessment.getCode(),
-            assessment.getTitle(),
-            assessment.getCreationTime(),
-            assessment.getLastModificationTime(),
-            assessment.getAssessmentKit().getId(),
-            assessment.getColorId(),
-            assessment.getSpaceId()
+    public static AssessmentListItem mapToAssessmentListItem(AssessmentListItemView itemView) {
+        AssessmentJpaEntity assessmentEntity = itemView.getAssessment();
+        return new AssessmentListItem(
+            assessmentEntity.getId(),
+            assessmentEntity.getTitle(),
+            assessmentEntity.getAssessmentKitId(),
+            assessmentEntity.getColorId(),
+            assessmentEntity.getLastModificationTime(),
+            itemView.getMaturityLevelId()
         );
     }
 }
