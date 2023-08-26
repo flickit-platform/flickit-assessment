@@ -39,6 +39,19 @@ public class AssessmentMapper {
         );
     }
 
+    public static AssessmentJpaEntity mapToJpaEntity(Assessment assessment) {
+        return new AssessmentJpaEntity(
+            assessment.getId(),
+            assessment.getCode(),
+            assessment.getTitle(),
+            assessment.getAssessmentKit().getId(),
+            assessment.getColorId(),
+            assessment.getSpaceId(),
+            assessment.getCreationTime(),
+            assessment.getLastModificationTime()
+        );
+    }
+
     public static AssessmentListItem mapToAssessmentListItem(AssessmentListItemView assessmentWithMaturityLevel) {
         AssessmentJpaEntity assessmentEntity = assessmentWithMaturityLevel.getAssessment();
         return new AssessmentListItem(

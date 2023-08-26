@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.domain.Assessment.generateSlugCode;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -50,13 +52,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             creationTime,
             lastModificationTime
         );
-    }
-
-    private String generateSlugCode(String title) {
-        return title
-            .toLowerCase()
-            .strip()
-            .replaceAll("\\s+", "-");
     }
 
     private int getValidColorId(Integer colorId) {
