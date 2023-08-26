@@ -39,28 +39,15 @@ public class AssessmentMapper {
         );
     }
 
-    public static AssessmentJpaEntity mapToJpaEntity(Assessment assessment) {
-        return new AssessmentJpaEntity(
-            assessment.getId(),
-            assessment.getCode(),
-            assessment.getTitle(),
-            assessment.getAssessmentKit().getId(),
-            assessment.getColorId(),
-            assessment.getSpaceId(),
-            assessment.getCreationTime(),
-            assessment.getLastModificationTime()
-        );
-    }
-
-    public static AssessmentListItem mapToAssessmentListItem(AssessmentListItemView assessmentWithMaturityLevel) {
-        AssessmentJpaEntity assessmentEntity = assessmentWithMaturityLevel.getAssessment();
+    public static AssessmentListItem mapToAssessmentListItem(AssessmentListItemView itemView) {
+        AssessmentJpaEntity assessmentEntity = itemView.getAssessment();
         return new AssessmentListItem(
             assessmentEntity.getId(),
             assessmentEntity.getTitle(),
             assessmentEntity.getAssessmentKitId(),
             assessmentEntity.getColorId(),
             assessmentEntity.getLastModificationTime(),
-            assessmentWithMaturityLevel.getMaturityLevelId()
+            itemView.getMaturityLevelId()
         );
     }
 }
