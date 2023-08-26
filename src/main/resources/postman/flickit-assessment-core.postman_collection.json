@@ -34,38 +34,30 @@
 			"response": []
 		},
 		{
-			"name": "Get Assessment Colors",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessment-colors"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Submit Answer",
+			"name": "Update Assessment",
 			"request": {
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"questionId\": 1,\n    \"answerOptionId\": 1\n}",
+					"raw": "{\r\n    \"title\": \"The title2\",\r\n    \"colorId\": 1\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{base_url}}/{{api_path}}/assessment-results/da7e2a90-31a5-43ac-ab6b-93d43cd46a1b/answer-question"
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"ff1b2ae3-92b7-437d-b321-539753b71608"
+					]
+				}
 			},
 			"response": []
 		},
@@ -106,6 +98,53 @@
 							"key": "size",
 							"value": "10"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Assessment Colors",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-colors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit Answer",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"questionnaireId\": 1102,\n    \"questionId\": 2163,\n    \"answerOptionId\": 5494\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-results/da7e2a90-31a5-43ac-ab6b-93d43cd46a1b/answer-question",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-results",
+						"da7e2a90-31a5-43ac-ab6b-93d43cd46a1b",
+						"answer-question"
 					]
 				}
 			},
@@ -162,32 +201,16 @@
 						}
 					}
 				},
-				"url": "{{base_url}}/{{api_path}}/assessments/cb0f9b94-f2bb-438a-b6da-b941e59daae4/calculate"
-			},
-			"response": []
-		},
-		{
-			"name": "Edit Assessment",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"id\": \"3b39ed16-9478-464f-a295-955f69f89ec2\",\n    \"title\": \"new title\",\n    \"assessmentKitId\": 2,\n    \"colorId\": 2\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments",
+					"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/calculate",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"assessments"
+						"assessments",
+						"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+						"calculate"
 					]
 				}
 			},
