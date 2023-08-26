@@ -2,7 +2,7 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentsWithMaturityLevelIdBySpacePort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +25,7 @@ public class GetAssessmentListServiceTest {
     private GetAssessmentListService service;
 
     @Mock
-    private LoadAssessmentsWithMaturityLevelIdBySpacePort loadAssessmentPort;
+    private LoadAssessmentListItemsBySpacePort loadAssessmentPort;
 
     @Test
     void getAssessmentList_ResultsFound_ItemsReturned() {

@@ -3,21 +3,19 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentsWithMaturityLevelIdBySpacePort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
-import org.flickit.flickitassessmentcore.domain.Assessment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class AssessmentPersistenceJpaAdaptor implements
     CreateAssessmentPort,
-    LoadAssessmentsWithMaturityLevelIdBySpacePort,
+    LoadAssessmentListItemsBySpacePort,
     UpdateAssessmentPort {
 
     private final AssessmentJpaRepository repository;

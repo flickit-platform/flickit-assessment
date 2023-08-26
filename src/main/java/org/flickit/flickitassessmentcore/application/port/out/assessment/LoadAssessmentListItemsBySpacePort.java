@@ -4,7 +4,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAsses
 
 import java.util.List;
 
-public interface LoadAssessmentsWithMaturityLevelIdBySpacePort {
+public interface LoadAssessmentListItemsBySpacePort {
 
     List<AssessmentListItem> loadAssessmentListItemBySpaceId(Long spaceId, int page, int size);
 }
