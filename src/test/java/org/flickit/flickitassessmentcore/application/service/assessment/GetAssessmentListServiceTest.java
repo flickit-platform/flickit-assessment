@@ -4,6 +4,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAsses
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.domain.crud.PaginatedResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class GetAssessmentListServiceTest {
+class GetAssessmentListServiceTest {
 
     @InjectMocks
     private GetAssessmentListService service;
@@ -30,26 +31,40 @@ public class GetAssessmentListServiceTest {
     @Test
     void getAssessmentList_ResultsFound_ItemsReturned() {
         Long spaceId = 1L;
-        AssessmentListItem assessment1S1 = createAssessment(spaceId);
-        AssessmentListItem assessment2S1 = createAssessment(spaceId);
+        AssessmentListItem assessment1S1 = createAssessment();
+        AssessmentListItem assessment2S1 = createAssessment();
 
-        when(loadAssessmentPort.loadAssessmentListItemBySpaceId(spaceId, 0, 10)).thenReturn(List.of(assessment1S1, assessment2S1));
+        PaginatedResponse<AssessmentListItem> paginatedResponse = new PaginatedResponse<>(
+            List.of(assessment1S1, assessment2S1),
+            0,
+            2,
+            "lastModificationTime",
+            "DESC",
+            2);
+        when(loadAssessmentPort.loadAssessments(spaceId, 0, 10)).thenReturn(paginatedResponse);
 
-        GetAssessmentListUseCase.Result result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceId, 10, 0));
-        assertEquals(2, result.assessments().size());
+        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceId, 10, 0));
+        assertEquals(paginatedResponse, result);
     }
 
     @Test
     void getAssessmentList_NoResultsFound_NoItemReturned() {
         Long spaceId = 2L;
 
-        when(loadAssessmentPort.loadAssessmentListItemBySpaceId(spaceId, 0, 10)).thenReturn(new ArrayList<>());
+        PaginatedResponse<AssessmentListItem> paginatedResponse = new PaginatedResponse<>(
+            new ArrayList<>(),
+            0,
+            0,
+            "lastModificationTime",
+            "DESC",
+            2);
+        when(loadAssessmentPort.loadAssessments(spaceId, 0, 10)).thenReturn(paginatedResponse);
 
-        GetAssessmentListUseCase.Result result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceId, 10, 0));
-        assertEquals(0, result.assessments().size());
+        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceId, 10, 0));
+        assertEquals(paginatedResponse, result);
     }
 
-    private AssessmentListItem createAssessment(Long spaceId) {
+    private AssessmentListItem createAssessment() {
         return new AssessmentListItem(
             UUID.randomUUID(),
             "title",

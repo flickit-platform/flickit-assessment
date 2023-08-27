@@ -7,6 +7,8 @@ import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Table(name = "fac_assessment")
 @Getter
@@ -44,4 +46,9 @@ public class AssessmentJpaEntity {
 
     @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
+    }
 }
