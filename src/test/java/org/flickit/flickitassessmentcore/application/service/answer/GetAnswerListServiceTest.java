@@ -1,8 +1,8 @@
 package org.flickit.flickitassessmentcore.application.service.answer;
 
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerItem;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByAssessmentAndQuestionnaireIdPort;
-import org.flickit.flickitassessmentcore.domain.Answer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -34,9 +34,9 @@ class GetAnswerListServiceTest {
         Long questionnaireId = 123L;
         GetAnswerListUseCase.Param param = new GetAnswerListUseCase.Param(assessmentId, questionnaireId);
 
-        List<Answer> mockAnswers = Arrays.asList(
-            new Answer(),
-            new Answer()
+        List<AnswerItem> mockAnswers = Arrays.asList(
+            new AnswerItem(UUID.randomUUID(), 1L, 1L),
+            new AnswerItem(UUID.randomUUID(), 1L, 1L)
         );
         when(loadAnswersPort.loadAnswersByAssessmentAndQuestionnaireIdPort(any())).thenReturn(mockAnswers);
 

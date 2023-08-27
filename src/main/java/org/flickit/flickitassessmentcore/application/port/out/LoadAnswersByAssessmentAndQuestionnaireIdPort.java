@@ -1,13 +1,13 @@
 package org.flickit.flickitassessmentcore.application.port.out;
 
-import org.flickit.flickitassessmentcore.domain.Answer;
+import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerItem;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface LoadAnswersByAssessmentAndQuestionnaireIdPort {
 
-    List<Answer> loadAnswersByAssessmentAndQuestionnaireIdPort(Param param);
+    List<AnswerItem> loadAnswersByAssessmentAndQuestionnaireIdPort(Param param);
 
     record Param(UUID assessmentId, Long questionnaireId) {
     }

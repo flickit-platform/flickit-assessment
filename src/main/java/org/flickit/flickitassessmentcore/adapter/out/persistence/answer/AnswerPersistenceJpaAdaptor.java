@@ -3,12 +3,12 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerItem;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByAssessmentAndQuestionnaireIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.domain.Answer;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -52,8 +52,8 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public List<Answer> loadAnswersByAssessmentAndQuestionnaireIdPort(LoadAnswersByAssessmentAndQuestionnaireIdPort.Param param) {
+    public List<AnswerItem> loadAnswersByAssessmentAndQuestionnaireIdPort(LoadAnswersByAssessmentAndQuestionnaireIdPort.Param param) {
         List<AnswerJpaEntity> answers = repository.findByAssessmentIdAndQuestionnaireId(param.assessmentId(), param.questionnaireId());
-        return answers.stream().map(AnswerMapper::mapJpaEntityToDomain).toList();
+        return answers.stream().map(AnswerMapper::mapJpaEntityToAnswerItem).toList();
     }
 }

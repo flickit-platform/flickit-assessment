@@ -1,8 +1,8 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.answer;
 
-import org.flickit.flickitassessmentcore.domain.Answer;
+import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerItem;
 
 import java.util.List;
 
-public record GetAnswerListResponseDto(List<Answer> answers) {
+public record GetAnswerListResponseDto(List<AnswerItem> answers) {
 }

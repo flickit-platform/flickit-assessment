@@ -3,7 +3,6 @@ package org.flickit.flickitassessmentcore.application.service.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByAssessmentAndQuestionnaireIdPort;
-import org.flickit.flickitassessmentcore.domain.Answer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +24,7 @@ public class GetAnswerListService implements GetAnswerListUseCase {
         return new LoadAnswersByAssessmentAndQuestionnaireIdPort.Param(param.getAssessmentId(), param.getQuestionnaireId());
     }
 
-    private Result mapToResult(List<Answer> answers) {
+    private Result mapToResult(List<AnswerItem> answers) {
         return new Result(answers);
     }
 }

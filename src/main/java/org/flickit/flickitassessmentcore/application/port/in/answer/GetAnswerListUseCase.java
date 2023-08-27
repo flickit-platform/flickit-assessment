@@ -3,7 +3,6 @@ package org.flickit.flickitassessmentcore.application.port.in.answer;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
-import org.flickit.flickitassessmentcore.domain.Answer;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +30,12 @@ public interface GetAnswerListUseCase {
         }
     }
 
-    record Result(List<Answer> answers){
+    record Result(List<AnswerItem> answers){
+    }
+
+    record AnswerItem(
+        UUID id,
+        Long questionId,
+        Long answerOptionId){
     }
 }
