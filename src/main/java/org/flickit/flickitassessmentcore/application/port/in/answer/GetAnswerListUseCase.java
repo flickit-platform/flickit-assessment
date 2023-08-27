@@ -36,6 +36,7 @@ public interface GetAnswerListUseCase {
     record AnswerItem(
         UUID id,
         Long questionId,
-        Long answerOptionId){
+        Long answerOptionId,
+        Boolean isNotApplicable){
     }
 }

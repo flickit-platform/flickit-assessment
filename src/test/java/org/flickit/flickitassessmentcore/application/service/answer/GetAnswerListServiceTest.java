@@ -35,8 +35,8 @@ class GetAnswerListServiceTest {
         GetAnswerListUseCase.Param param = new GetAnswerListUseCase.Param(assessmentId, questionnaireId);
 
         List<AnswerItem> mockAnswers = Arrays.asList(
-            new AnswerItem(UUID.randomUUID(), 1L, 1L),
-            new AnswerItem(UUID.randomUUID(), 1L, 1L)
+            new AnswerItem(UUID.randomUUID(), 1L, 1L, Boolean.FALSE),
+            new AnswerItem(UUID.randomUUID(), 1L, 1L, Boolean.FALSE)
         );
         when(loadAnswersPort.loadAnswersByAssessmentAndQuestionnaireIdPort(any())).thenReturn(mockAnswers);
 

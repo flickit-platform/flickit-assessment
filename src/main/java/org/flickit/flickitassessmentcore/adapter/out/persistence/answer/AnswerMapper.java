@@ -19,7 +19,8 @@ public class AnswerMapper {
         return new AnswerItem(
             answer.getId(),
             answer.getQuestionId(),
-            answer.getAnswerOptionId()
+            answer.getAnswerOptionId(),
+            Boolean.FALSE
         );
     }
 }
