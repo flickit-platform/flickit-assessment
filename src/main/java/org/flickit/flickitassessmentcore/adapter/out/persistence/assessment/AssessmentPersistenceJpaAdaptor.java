@@ -5,7 +5,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAsses
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
-import org.flickit.flickitassessmentcore.domain.crud.PaginatedResponse;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;

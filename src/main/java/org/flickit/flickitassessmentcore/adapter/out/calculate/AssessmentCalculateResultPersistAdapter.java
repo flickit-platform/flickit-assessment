@@ -5,8 +5,8 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculatedResultPort;
-import org.flickit.flickitassessmentcore.domain.AssessmentResult;
-import org.flickit.flickitassessmentcore.domain.SubjectValue;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
+import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

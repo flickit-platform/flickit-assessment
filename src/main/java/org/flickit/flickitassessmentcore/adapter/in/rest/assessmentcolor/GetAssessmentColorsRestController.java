@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.assessmentcolor;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.adapter.in.rest.api.DataItemsDto;
+import org.flickit.flickitassessmentcore.application.domain.crud.DataItems;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentColorsUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +17,11 @@ public class GetAssessmentColorsRestController {
     private final GetAssessmentColorsUseCase useCase;
 
     @GetMapping("/assessment-colors")
-    public ResponseEntity<DataItemsDto> createAssessment() {
+    public ResponseEntity<DataItems> createAssessment() {
         var response = useCase.getAssessmentColors();
         List<ColorDto> responseDto = response.stream()
             .map(x -> new ColorDto(x.getId(), x.getTitle(), x.getCode()))
             .toList();
-        return new ResponseEntity<>(new DataItemsDto(responseDto), HttpStatus.OK);
+        return new ResponseEntity<>(new DataItems(responseDto), HttpStatus.OK);
     }
 }

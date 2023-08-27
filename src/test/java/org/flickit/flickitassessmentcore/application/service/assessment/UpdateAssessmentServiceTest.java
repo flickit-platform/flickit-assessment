@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.UpdateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

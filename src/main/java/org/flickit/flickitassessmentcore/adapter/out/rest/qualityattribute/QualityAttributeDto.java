@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.qualityattribute;
 
-import org.flickit.flickitassessmentcore.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
 
 public record QualityAttributeDto(Long id, Integer weight) {
 

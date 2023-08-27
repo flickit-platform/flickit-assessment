@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.application.port.out.subject;
 
-import org.flickit.flickitassessmentcore.domain.Subject;
+import org.flickit.flickitassessmentcore.application.domain.Subject;
 
 import java.util.List;
 

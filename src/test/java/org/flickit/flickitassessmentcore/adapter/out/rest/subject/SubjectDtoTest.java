@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.subject;
 
 import org.flickit.flickitassessmentcore.adapter.out.rest.qualityattribute.QualityAttributeDto;
-import org.flickit.flickitassessmentcore.domain.Subject;
+import org.flickit.flickitassessmentcore.application.domain.Subject;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

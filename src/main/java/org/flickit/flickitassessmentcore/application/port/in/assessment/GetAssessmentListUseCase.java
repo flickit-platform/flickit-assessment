@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
-import org.flickit.flickitassessmentcore.domain.crud.PaginatedResponse;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
