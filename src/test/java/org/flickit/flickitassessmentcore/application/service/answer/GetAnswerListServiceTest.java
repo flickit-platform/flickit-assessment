@@ -29,7 +29,7 @@ class GetAnswerListServiceTest {
     private LoadAnswersByAssessmentAndQuestionnaireIdPort loadAnswersPort;
 
     @Test
-    public void testGetAnswerList() {
+    void testGetAnswerList() {
         UUID assessmentId = UUID.randomUUID();
         Long questionnaireId = 123L;
         GetAnswerListUseCase.Param param = new GetAnswerListUseCase.Param(assessmentId, questionnaireId);
@@ -54,7 +54,7 @@ class GetAnswerListServiceTest {
     }
 
     @Test
-    public void testGetAnswerList_EmptyResult() {
+    void testGetAnswerList_EmptyResult() {
         UUID assessmentId = UUID.randomUUID();
         Long questionnaireId = 125L;
         GetAnswerListUseCase.Param param = new GetAnswerListUseCase.Param(assessmentId, questionnaireId);
