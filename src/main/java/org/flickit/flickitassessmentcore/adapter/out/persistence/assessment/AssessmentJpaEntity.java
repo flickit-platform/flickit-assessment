@@ -49,6 +49,6 @@ public class AssessmentJpaEntity {
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
-        public static final String lastModificationTime = "lastModificationTime";
+        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
     }
 }
