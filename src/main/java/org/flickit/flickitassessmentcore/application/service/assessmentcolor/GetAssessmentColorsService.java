@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.application.service.assessmentcolor;
 
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentColorsUseCase;
-import org.flickit.flickitassessmentcore.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

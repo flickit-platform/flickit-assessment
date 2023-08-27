@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.application.port.in.assessment;
 
-import org.flickit.flickitassessmentcore.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 
 import java.util.List;
 

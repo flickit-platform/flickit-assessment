@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.levelcompetence;
 
-import org.flickit.flickitassessmentcore.domain.LevelCompetence;
+import org.flickit.flickitassessmentcore.application.domain.LevelCompetence;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

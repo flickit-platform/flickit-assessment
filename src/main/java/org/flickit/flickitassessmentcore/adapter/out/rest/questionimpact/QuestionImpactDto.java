@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.questionimpact;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.flickit.flickitassessmentcore.domain.QuestionImpact;
+import org.flickit.flickitassessmentcore.application.domain.QuestionImpact;
 
 public record QuestionImpactDto(Long id,
                                 Integer weight,

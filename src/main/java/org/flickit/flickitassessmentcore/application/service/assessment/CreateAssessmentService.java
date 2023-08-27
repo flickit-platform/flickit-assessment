@@ -7,9 +7,9 @@ import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.C
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.flickitassessmentcore.domain.AssessmentColor;
-import org.flickit.flickitassessmentcore.domain.QualityAttribute;
-import org.flickit.flickitassessmentcore.domain.Subject;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.application.domain.Subject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.domain.Assessment.generateSlugCode;
+import static org.flickit.flickitassessmentcore.application.domain.Assessment.generateSlugCode;
 
 @Service
 @RequiredArgsConstructor

@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.application.service.assessmentcolor;
 
-import org.flickit.flickitassessmentcore.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

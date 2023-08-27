@@ -2,8 +2,8 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.flickit.flickitassessmentcore.adapter.out.rest.levelcompetence.LevelCompetenceDto;
-import org.flickit.flickitassessmentcore.domain.LevelCompetence;
-import org.flickit.flickitassessmentcore.domain.MaturityLevel;
+import org.flickit.flickitassessmentcore.application.domain.LevelCompetence;
+import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
 
 import java.util.List;
 

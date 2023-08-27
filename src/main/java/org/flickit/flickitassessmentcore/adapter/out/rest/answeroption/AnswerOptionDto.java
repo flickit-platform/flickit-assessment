@@ -2,8 +2,8 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.answeroption;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.flickit.flickitassessmentcore.adapter.out.rest.answeroptionimpact.AnswerOptionImpactDto;
-import org.flickit.flickitassessmentcore.domain.AnswerOption;
-import org.flickit.flickitassessmentcore.domain.AnswerOptionImpact;
+import org.flickit.flickitassessmentcore.application.domain.AnswerOption;
+import org.flickit.flickitassessmentcore.application.domain.AnswerOptionImpact;
 
 import java.util.List;
 
