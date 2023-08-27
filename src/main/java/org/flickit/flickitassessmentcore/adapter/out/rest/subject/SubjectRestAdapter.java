@@ -5,7 +5,7 @@ import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.exception.FlickitPlatformRestException;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
-import org.flickit.flickitassessmentcore.domain.Subject;
+import org.flickit.flickitassessmentcore.application.domain.Subject;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

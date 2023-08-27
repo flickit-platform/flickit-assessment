@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static org.flickit.flickitassessmentcore.domain.Assessment.generateSlugCode;
+import static org.flickit.flickitassessmentcore.application.domain.Assessment.generateSlugCode;
 
 @Service
 @Transactional

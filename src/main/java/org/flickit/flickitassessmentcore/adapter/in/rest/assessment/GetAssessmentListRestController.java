@@ -3,7 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.in.rest.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
-import org.flickit.flickitassessmentcore.domain.crud.PaginatedResponse;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
