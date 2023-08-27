@@ -30,12 +30,6 @@ public class AssessmentJpaEntity {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @Column(name = "creation_time", nullable = false)
-    private LocalDateTime creationTime;
-
-    @Column(name = "last_modification_time", nullable = false)
-    private LocalDateTime lastModificationDate;
-
     @Column(name = "assessment_kit_id", nullable = false)
     private Long assessmentKitId;
 
@@ -44,4 +38,10 @@ public class AssessmentJpaEntity {
 
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
+
+    @Column(name = "creation_time", nullable = false)
+    private LocalDateTime creationTime;
+
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
 }

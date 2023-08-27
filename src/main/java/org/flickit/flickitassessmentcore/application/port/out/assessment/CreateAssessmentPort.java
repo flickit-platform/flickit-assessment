@@ -7,12 +7,12 @@ public interface CreateAssessmentPort {
 
     UUID persist(Param param);
 
-    record Param(String title,
+    record Param(String code,
+                 String title,
                  Long assessmentKitId,
                  Integer colorId,
                  Long spaceId,
-                 String code,
                  LocalDateTime creationTime,
-                 LocalDateTime lastModificationDate) {
+                 LocalDateTime lastModificationTime) {
     }
 }

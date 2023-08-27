@@ -1,25 +1,29 @@
 package org.flickit.flickitassessmentcore.domain;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
-@Data
+@Getter
+@RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
 public class Answer {
-    private UUID id;
-    private UUID assessmentResultId;
-    private Long questionnaireId;
-    private Long questionId;
-    private Long answerOptionId;
 
-    @Override
-    public String toString() {
-        return id.toString();
+    private final UUID id;
+
+    @Nullable
+    AnswerOption selectedOption;
+
+    @Nullable
+    public AnswerOptionImpact findImpactByMaturityLevel(MaturityLevel maturityLevel) {
+        if (selectedOption == null)
+            return null;
+        return selectedOption.getImpacts().stream()
+            .filter(i -> i.getQuestionImpact().getMaturityLevelId() == maturityLevel.getId())
+            .findAny()
+            .orElse(null);
     }
 }

@@ -34,31 +34,13 @@
 			"response": []
 		},
 		{
-			"name": "Get Assessment Colors",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessment-colors"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Submit Answer",
+			"name": "Update Assessment",
 			"request": {
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"questionnaireId\": 1,\n    \"questionId\": 1,\n    \"answerOptionId\": 1\n}",
+					"raw": "{\r\n    \"title\": \"The title2\",\r\n    \"colorId\": 1\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -66,15 +48,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-results/{{assessment_result_id}}/answer-question",
+					"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"assessment-results",
-						"{{assessment_result_id}}",
-						"answer-question"
+						"assessments",
+						"ff1b2ae3-92b7-437d-b321-539753b71608"
 					]
 				}
 			},
@@ -123,6 +104,53 @@
 			"response": []
 		},
 		{
+			"name": "Get Assessment Colors",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-colors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit Answer",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"questionnaireId\": 1102,\n    \"questionId\": 2163,\n    \"answerOptionId\": 5494\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-results/da7e2a90-31a5-43ac-ab6b-93d43cd46a1b/answer-question",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-results",
+						"da7e2a90-31a5-43ac-ab6b-93d43cd46a1b",
+						"answer-question"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Add Evidence",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
@@ -160,18 +188,47 @@
 			"response": []
 		},
 		{
-			"name": "Get Answers",
+			"name": "Calculate",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/{{assessment_id}}/answers?questionnaireId=1",
+					"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/calculate",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"{{assessment_id}}",
+						"assessments",
+						"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+						"calculate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Answers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/8028f9a4-a7a8-4391-995d-4645c15d53aa/answers?questionnaireId=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"8028f9a4-a7a8-4391-995d-4645c15d53aa",
 						"answers"
 					],
 					"query": [
@@ -194,16 +251,6 @@
 		{
 			"key": "api_path",
 			"value": "assessment-core/api",
-			"type": "string"
-		},
-		{
-			"key": "assessment_result_id",
-			"value": "f74ae115-df83-4cfe-be63-2f64d1c2fe72",
-			"type": "string"
-		},
-		{
-			"key": "assessment_id",
-			"value": "8028f9a4-a7a8-4391-995d-4645c15d53aa",
 			"type": "string"
 		}
 	]

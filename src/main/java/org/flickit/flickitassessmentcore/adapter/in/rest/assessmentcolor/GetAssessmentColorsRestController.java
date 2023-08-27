@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.adapter.in.rest.assessmetcolor;
+package org.flickit.flickitassessmentcore.adapter.in.rest.assessmentcolor;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.in.rest.api.DataItemsDto;

@@ -5,14 +5,19 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAs
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
-import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectIdsAndQualityAttributeIdsPort;
+import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.flickitassessmentcore.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.domain.Subject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+
+import static org.flickit.flickitassessmentcore.domain.Assessment.generateSlugCode;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +28,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateAssessmentResultPort createAssessmentResultPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
-    private final LoadSubjectIdsAndQualityAttributeIdsPort loadSubjectIdsAndQualityAttributeIdsPort;
+    private final LoadSubjectByAssessmentKitIdPort loadSubjectByAssessmentKitIdPort;
 
     @Override
     public Result createAssessment(Param param) {
@@ -39,21 +44,14 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         LocalDateTime lastModificationTime = LocalDateTime.now();
 
         return new CreateAssessmentPort.Param(
+            code,
             param.getTitle(),
             param.getAssessmentKitId(),
             getValidColorId(param.getColorId()),
             param.getSpaceId(),
-            code,
             creationTime,
             lastModificationTime
         );
-    }
-
-    private String generateSlugCode(String title) {
-        return title
-            .toLowerCase()
-            .strip()
-            .replaceAll("\\s+", "-");
     }
 
     private int getValidColorId(Integer colorId) {
@@ -63,12 +61,17 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     }
 
     private void createAssessmentResult(UUID assessmentId, Long assessmentKitId) {
-        CreateAssessmentResultPort.Param createAssessmentResultParam = new CreateAssessmentResultPort.Param(assessmentId, false);
-        UUID assessmentResultId = createAssessmentResultPort.persist(createAssessmentResultParam);
+        LocalDateTime lastModificationTime = LocalDateTime.now();
+        CreateAssessmentResultPort.Param param = new CreateAssessmentResultPort.Param(assessmentId, lastModificationTime, false);
+        UUID assessmentResultId = createAssessmentResultPort.persist(param);
 
-        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam responseParams =
-            loadSubjectIdsAndQualityAttributeIdsPort.loadByAssessmentKitId(assessmentKitId);
-        createSubjectValuePort.persistAll(responseParams.subjectIds(), assessmentResultId);
-        createQualityAttributeValuePort.persistAll(responseParams.qualityAttributeIds(), assessmentResultId);
+
+        List<Subject> subjects = loadSubjectByAssessmentKitIdPort.loadByAssessmentKitId(assessmentKitId);
+        List<Long> subjectIds = subjects.stream().map(Subject::getId).toList();
+        List<Long> qualityAttributeIds = subjects.stream()
+            .map(x -> x.getQualityAttributes().stream().map(QualityAttribute::getId).toList())
+            .flatMap(List::stream).toList();
+        createSubjectValuePort.persistAll(subjectIds, assessmentResultId);
+        createQualityAttributeValuePort.persistAll(qualityAttributeIds, assessmentResultId);
     }
 }

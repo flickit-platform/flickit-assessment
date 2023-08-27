@@ -1,29 +1,28 @@
 package org.flickit.flickitassessmentcore.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
+@Getter
+@RequiredArgsConstructor
 public class Assessment {
-    private UUID id;
-    private String code;
-    private String title;
-    private LocalDateTime creationTime;
-    private LocalDateTime lastModificationDate;
-    private Long assessmentKitId;
-    private Integer colorId;
-    private Long spaceId;
 
-    @Override
-    public String toString() {
-        return title;
+    private final UUID id;
+    private final String code;
+    private final String title;
+    private final AssessmentKit assessmentKit;
+    private final int colorId;
+    private final long spaceId;
+    private final LocalDateTime creationTime;
+    private final LocalDateTime lastModificationTime;
+
+    public static String generateSlugCode(String title) {
+        return title
+            .toLowerCase()
+            .strip()
+            .replaceAll("\\s+", "-");
     }
 }
