@@ -1,10 +1,9 @@
 package org.flickit.flickitassessmentcore.application.port.out.assessment;
 
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
-
-import java.util.List;
+import org.flickit.flickitassessmentcore.domain.crud.PaginatedResponse;
 
 public interface LoadAssessmentListItemsBySpacePort {
 
-    List<AssessmentListItem> loadAssessmentListItemBySpaceId(Long spaceId, int page, int size);
+    PaginatedResponse<AssessmentListItem> loadAssessments(Long spaceId, int page, int size);
 }

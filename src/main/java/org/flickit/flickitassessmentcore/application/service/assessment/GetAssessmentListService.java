@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
+import org.flickit.flickitassessmentcore.domain.crud.PaginatedResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,13 +15,11 @@ public class GetAssessmentListService implements GetAssessmentListUseCase {
     private final LoadAssessmentListItemsBySpacePort loadAssessmentsBySpace;
 
     @Override
-    public GetAssessmentListUseCase.Result getAssessmentList(GetAssessmentListUseCase.Param param) {
-        return new GetAssessmentListUseCase.Result(
-            loadAssessmentsBySpace.loadAssessmentListItemBySpaceId(
-                param.getSpaceId(),
-                param.getPage(),
-                param.getSize()
-            )
+    public PaginatedResponse<AssessmentListItem> getAssessmentList(GetAssessmentListUseCase.Param param) {
+        return loadAssessmentsBySpace.loadAssessments(
+            param.getSpaceId(),
+            param.getPage(),
+            param.getSize()
         );
     }
 }

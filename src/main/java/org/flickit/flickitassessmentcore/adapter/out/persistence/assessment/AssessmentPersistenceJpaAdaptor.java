@@ -5,10 +5,11 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAsses
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
+import org.flickit.flickitassessmentcore.domain.crud.PaginatedResponse;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -28,10 +29,19 @@ public class AssessmentPersistenceJpaAdaptor implements
     }
 
     @Override
-    public List<AssessmentListItem> loadAssessmentListItemBySpaceId(Long spaceId, int page, int size) {
-        return repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceId, PageRequest.of(page, size)).stream()
+    public PaginatedResponse<AssessmentListItem> loadAssessments(Long spaceId, int page, int size) {
+        var pageResult = repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceId, PageRequest.of(page, size));
+        var items = pageResult.getContent().stream()
             .map(AssessmentMapper::mapToAssessmentListItem)
             .toList();
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            AssessmentJpaEntity.Fields.lastModificationTime,
+            Sort.Direction.DESC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
     }
 
     @Override
