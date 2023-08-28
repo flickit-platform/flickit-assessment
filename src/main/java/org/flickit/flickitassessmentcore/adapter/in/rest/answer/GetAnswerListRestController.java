@@ -1,7 +1,10 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.answer;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,18 +19,17 @@ public class GetAnswerListRestController {
     private final GetAnswerListUseCase useCase;
 
     @GetMapping("{assessmentId}/answers")
-    GetAnswerListResponseDto getAnswerList(
+    ResponseEntity<PaginatedResponse<GetAnswerListUseCase.AnswerListItem>> getAnswerList(
         @PathVariable("assessmentId")UUID assessmentId,
-        @RequestParam("questionnaireId")Long questionnaireId){
+        @RequestParam("questionnaireId")Long questionnaireId,
+        @RequestParam(defaultValue = "50") int size,
+        @RequestParam(defaultValue = "0") int page){
 
-        return toResponseDto(useCase.getAnswerList(toParam(assessmentId, questionnaireId)));
+        PaginatedResponse<GetAnswerListUseCase.AnswerListItem> result = useCase.getAnswerList(toParam(assessmentId, questionnaireId, size, page));
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private GetAnswerListResponseDto toResponseDto(GetAnswerListUseCase.Result result) {
-        return new GetAnswerListResponseDto(result.answers());
-    }
-
-    private GetAnswerListUseCase.Param toParam(UUID assessmentId, Long questionnaireId) {
-        return new GetAnswerListUseCase.Param(assessmentId, questionnaireId);
+    private GetAnswerListUseCase.Param toParam(UUID assessmentId, Long questionnaireId, int size, int page) {
+        return new GetAnswerListUseCase.Param(assessmentId, questionnaireId, size, page);
     }
 }

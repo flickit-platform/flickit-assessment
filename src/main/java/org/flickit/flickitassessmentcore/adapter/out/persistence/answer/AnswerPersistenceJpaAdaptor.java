@@ -3,12 +3,15 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerItem;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
+import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByAssessmentAndQuestionnaireIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -52,8 +55,19 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public List<AnswerItem> loadAnswersByAssessmentAndQuestionnaireIdPort(LoadAnswersByAssessmentAndQuestionnaireIdPort.Param param) {
-        List<AnswerJpaEntity> answers = repository.findByAssessmentIdAndQuestionnaireId(param.assessmentId(), param.questionnaireId());
-        return answers.stream().map(AnswerMapper::mapJpaEntityToAnswerItem).toList();
+    public PaginatedResponse<AnswerListItem> loadAnswersByAssessmentAndQuestionnaireIdPort(LoadAnswersByAssessmentAndQuestionnaireIdPort.Param param) {
+        Page<AnswerJpaEntity> pageResult = repository.findByAssessmentIdAndQuestionnaireId(param.assessmentId(),
+            param.questionnaireId(),
+            PageRequest.of(param.page(), param.size()));
+
+        List<AnswerListItem> items = pageResult.getContent().stream().map(AnswerMapper::mapJpaEntityToAnswerItem).toList();
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getNumberOfElements(),
+            null,
+            null,
+            (int) pageResult.getTotalElements()
+        );
     }
 }

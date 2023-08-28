@@ -1,5 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,5 +21,5 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
     @Query("FROM AnswerJpaEntity a WHERE a.assessmentResult.assessment.id=:assessmentId AND a.questionnaireId in :questionnaireId")
-    List<AnswerJpaEntity> findByAssessmentIdAndQuestionnaireId(UUID assessmentId, Long questionnaireId);
+    Page<AnswerJpaEntity> findByAssessmentIdAndQuestionnaireId(UUID assessmentId, Long questionnaireId, Pageable pageable);
 }

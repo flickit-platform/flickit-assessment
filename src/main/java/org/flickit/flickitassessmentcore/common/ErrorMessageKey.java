@@ -46,4 +46,7 @@ public class ErrorMessageKey {
 
     public static final String GET_ANSWER_LIST_ASSESSMENT_ID_NOTNULL = "get-answer-list.assessmentId.notNull";
     public static final String GET_ANSWER_LIST_QUESTIONNAIRE_ID_NOTNULL = "get-answer-list.questionnaireId.notNull";
+    public static final String GET_ANSWER_LIST_SIZE_MIN = "get-answer-list.size.min";
+    public static final String GET_ANSWER_LIST_SIZE_MAX = "get-answer-list.size.max";
+    public static final String GET_ANSWER_LIST_PAGE_MIN = "get-answer-list.page.min";
 }
