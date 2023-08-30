@@ -14,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -64,7 +63,9 @@ public class AnswerPersistenceJpaAdaptor implements
             param.questionnaireId(),
             PageRequest.of(param.page(), param.size()));
 
-        List<AnswerListItem> items = pageResult.getContent().stream().map(AnswerMapper::mapJpaEntityToAnswerItem).toList();
+        var items = pageResult.getContent().stream()
+            .map(AnswerMapper::mapJpaEntityToAnswerItem)
+            .toList();
         return new PaginatedResponse<>(
             items,
             pageResult.getNumber(),
