@@ -5,9 +5,9 @@ import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerLis
 
 import java.util.UUID;
 
-public interface LoadAnswersByAssessmentAndQuestionnaireIdPort {
+public interface LoadAnswersByQuestionnaireIdPort {
 
-    PaginatedResponse<AnswerListItem> loadAnswersByAssessmentAndQuestionnaireIdPort(Param param);
+    PaginatedResponse<AnswerListItem> loadAnswersByQuestionnaireId(Param param);
 
     record Param(UUID assessmentId, Long questionnaireId, int page, int size) {
     }

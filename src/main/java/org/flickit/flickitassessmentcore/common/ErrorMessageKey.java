@@ -49,4 +49,5 @@ public class ErrorMessageKey {
     public static final String GET_ANSWER_LIST_SIZE_MIN = "get-answer-list.size.min";
     public static final String GET_ANSWER_LIST_SIZE_MAX = "get-answer-list.size.max";
     public static final String GET_ANSWER_LIST_PAGE_MIN = "get-answer-list.page.min";
+    public static final String GET_ANSWER_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND = "get-answer-list.assessmentResultId.notFound";
 }

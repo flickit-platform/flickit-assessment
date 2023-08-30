@@ -5,19 +5,20 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
-import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByAssessmentAndQuestionnaireIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByQuestionnaireIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ANSWER_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
 
@@ -27,16 +28,16 @@ public class AnswerPersistenceJpaAdaptor implements
     CreateAnswerPort,
     UpdateAnswerOptionPort,
     LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
-    LoadAnswersByAssessmentAndQuestionnaireIdPort {
+    LoadAnswersByQuestionnaireIdPort {
 
     private final AnswerJpaRepository repository;
 
-    private final AssessmentResultJpaRepository assessmentResultRepository;
+    private final AssessmentResultJpaRepository assessmentResultRepo;
 
     @Override
     public UUID persist(CreateAnswerPort.Param param) {
         AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param);
-        AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(param.assessmentResultId())
+        AssessmentResultJpaEntity assessmentResult = assessmentResultRepo.findById(param.assessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND));
         unsavedEntity.setAssessmentResult(assessmentResult);
         AnswerJpaEntity entity = repository.save(unsavedEntity);
@@ -55,8 +56,11 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public PaginatedResponse<AnswerListItem> loadAnswersByAssessmentAndQuestionnaireIdPort(LoadAnswersByAssessmentAndQuestionnaireIdPort.Param param) {
-        Page<AnswerJpaEntity> pageResult = repository.findByAssessmentIdAndQuestionnaireId(param.assessmentId(),
+    public PaginatedResponse<AnswerListItem> loadAnswersByQuestionnaireId(LoadAnswersByQuestionnaireIdPort.Param param) {
+        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ANSWER_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND));
+
+        var pageResult = repository.findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIdAsc(assessmentResult.getId(),
             param.questionnaireId(),
             PageRequest.of(param.page(), param.size()));
 
@@ -64,9 +68,9 @@ public class AnswerPersistenceJpaAdaptor implements
         return new PaginatedResponse<>(
             items,
             pageResult.getNumber(),
-            pageResult.getNumberOfElements(),
-            null,
-            null,
+            pageResult.getSize(),
+            AnswerJpaEntity.Fields.QUESTION_ID,
+            Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
     }

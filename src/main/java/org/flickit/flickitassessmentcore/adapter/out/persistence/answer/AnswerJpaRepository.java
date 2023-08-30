@@ -20,6 +20,5 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
-    @Query("FROM AnswerJpaEntity a WHERE a.assessmentResult.assessment.id=:assessmentId AND a.questionnaireId in :questionnaireId")
-    Page<AnswerJpaEntity> findByAssessmentIdAndQuestionnaireId(UUID assessmentId, Long questionnaireId, Pageable pageable);
+    Page<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIdAsc(UUID assessmentResultId, Long questionnaireId, Pageable pageable);
 }
