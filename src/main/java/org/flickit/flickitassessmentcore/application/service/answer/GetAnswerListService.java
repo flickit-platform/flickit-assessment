@@ -16,10 +16,10 @@ public class GetAnswerListService implements GetAnswerListUseCase {
 
     @Override
     public PaginatedResponse<AnswerListItem> getAnswerList(Param param) {
-        return loadAnswersPort.loadAnswersByQuestionnaireId(mapToPortParam(param));
+        return loadAnswersPort.loadAnswersByQuestionnaireId(toPortParam(param));
     }
 
-    private LoadAnswersByQuestionnaireIdPort.Param mapToPortParam(Param param) {
+    private LoadAnswersByQuestionnaireIdPort.Param toPortParam(Param param) {
         return new LoadAnswersByQuestionnaireIdPort.Param(param.getAssessmentId(),
             param.getQuestionnaireId(),
             param.getPage(),
