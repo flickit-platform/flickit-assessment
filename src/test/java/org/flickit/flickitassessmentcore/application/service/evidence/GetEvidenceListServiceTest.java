@@ -79,7 +79,6 @@ class GetEvidenceListServiceTest {
 
     @Test
     void getEvidenceList_NullQuestion_ReturnErrorMessage() {
-        GetEvidenceListUseCase.Param param = new GetEvidenceListUseCase.Param(null, 10, 0);
-        assertThrows(ConstraintViolationException.class, () -> service.getEvidenceList(param));
+        assertThrows(ConstraintViolationException.class, () -> new GetEvidenceListUseCase.Param(null, 10, 0));
     }
 }
