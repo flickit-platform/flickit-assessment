@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class GetEvidenceListServiceTest {
+class GetEvidenceListServiceTest {
 
     private final LoadEvidencesByQuestionPort loadEvidencesByQuestion = Mockito.mock(LoadEvidencesByQuestionPort.class);
 
@@ -79,6 +79,7 @@ public class GetEvidenceListServiceTest {
 
     @Test
     void getEvidenceList_NullQuestion_ReturnErrorMessage() {
-        assertThrows(ConstraintViolationException.class, () -> service.getEvidenceList(new GetEvidenceListUseCase.Param(null, 10, 0)));
+        GetEvidenceListUseCase.Param param = new GetEvidenceListUseCase.Param(null, 10, 0);
+        assertThrows(ConstraintViolationException.class, () -> service.getEvidenceList(param));
     }
 }
