@@ -1,9 +1,9 @@
 package org.flickit.flickitassessmentcore.application.service.evidence;
 
 import jakarta.validation.ConstraintViolationException;
+import org.flickit.flickitassessmentcore.application.domain.Evidence;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencesByQuestionPort;
-import org.flickit.flickitassessmentcore.domain.Evidence;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -29,8 +29,24 @@ public class GetEvidenceListServiceTest {
     private final Long QUESTION2_ID = 2L;
     private final String DESC = "desc";
 
-    private final Evidence evidence1Q1 = new Evidence(UUID.randomUUID(), DESC, LocalDateTime.now(), LocalDateTime.now(), 1L, UUID.randomUUID(), QUESTION1_ID);
-    private final Evidence evidence2Q1 = new Evidence(UUID.randomUUID(), DESC, LocalDateTime.now(), LocalDateTime.now(), 1L, UUID.randomUUID(), QUESTION1_ID);
+    private final Evidence evidence1Q1 = new Evidence(
+        UUID.randomUUID(),
+        DESC,
+        1L,
+        UUID.randomUUID(),
+        QUESTION1_ID,
+        LocalDateTime.now(),
+        LocalDateTime.now()
+    );
+    private final Evidence evidence2Q1 = new Evidence(
+        UUID.randomUUID(),
+        DESC,
+        1L,
+        UUID.randomUUID(),
+        QUESTION1_ID,
+        LocalDateTime.now(),
+        LocalDateTime.now()
+    );
 
     @Test
     void getEvidenceList_ResultsFound_2ItemsReturned() {

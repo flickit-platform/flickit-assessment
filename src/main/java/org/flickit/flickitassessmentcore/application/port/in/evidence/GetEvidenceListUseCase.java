@@ -4,8 +4,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
+import org.flickit.flickitassessmentcore.application.domain.Evidence;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
-import org.flickit.flickitassessmentcore.domain.Evidence;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.evidence;
 
-import org.flickit.flickitassessmentcore.domain.Evidence;
+import org.flickit.flickitassessmentcore.application.domain.Evidence;
 
 import java.util.List;
 

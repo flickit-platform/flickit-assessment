@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 
+import org.flickit.flickitassessmentcore.application.domain.Evidence;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
-import org.flickit.flickitassessmentcore.domain.Evidence;
 
 public class EvidenceMapper {
 
@@ -21,11 +21,11 @@ public class EvidenceMapper {
         return new Evidence(
             entity.getId(),
             entity.getDescription(),
-            entity.getCreationTime(),
-            entity.getLastModificationTime(),
             entity.getCreatedById(),
             entity.getAssessmentId(),
-            entity.getQuestionId()
+            entity.getQuestionId(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime()
         );
     }
 }
