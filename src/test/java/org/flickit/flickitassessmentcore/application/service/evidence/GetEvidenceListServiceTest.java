@@ -1,8 +1,9 @@
 package org.flickit.flickitassessmentcore.application.service.evidence;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.flickitassessmentcore.application.domain.Evidence;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencesByQuestionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,41 +30,51 @@ public class GetEvidenceListServiceTest {
     private final Long QUESTION2_ID = 2L;
     private final String DESC = "desc";
 
-    private final Evidence evidence1Q1 = new Evidence(
+    private final EvidenceListItem evidence1Q1 = new EvidenceListItem(
         UUID.randomUUID(),
         DESC,
         1L,
         UUID.randomUUID(),
-        QUESTION1_ID,
-        LocalDateTime.now(),
         LocalDateTime.now()
     );
-    private final Evidence evidence2Q1 = new Evidence(
+    private final EvidenceListItem evidence2Q1 = new EvidenceListItem(
         UUID.randomUUID(),
         DESC,
         1L,
         UUID.randomUUID(),
-        QUESTION1_ID,
-        LocalDateTime.now(),
         LocalDateTime.now()
     );
 
     @Test
     void getEvidenceList_ResultsFound_2ItemsReturned() {
-        when(loadEvidencesByQuestion.loadEvidencesByQuestionId(new LoadEvidencesByQuestionPort.Param(QUESTION1_ID), 0, 10)).thenReturn(new LoadEvidencesByQuestionPort.Result(List.of(evidence1Q1, evidence2Q1)));
+        when(loadEvidencesByQuestion.loadEvidencesByQuestionId(QUESTION1_ID, 0, 10))
+            .thenReturn(new PaginatedResponse<>(
+                List.of(evidence1Q1, evidence2Q1),
+                0,
+                2,
+                "lastModificationTime",
+                "DESC",
+                2));
 
-        GetEvidenceListUseCase.Result result = service.getEvidenceList(new GetEvidenceListUseCase.Param(QUESTION1_ID, 10, 0));
+        PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new GetEvidenceListUseCase.Param(QUESTION1_ID, 10, 0));
 
-        assertEquals(2, result.evidences().size());
+        assertEquals(2, result.getItems().size());
     }
 
     @Test
     void getEvidenceList_ResultsFound_0ItemReturned() {
-        when(loadEvidencesByQuestion.loadEvidencesByQuestionId(new LoadEvidencesByQuestionPort.Param(QUESTION2_ID), 0, 10)).thenReturn(new LoadEvidencesByQuestionPort.Result(new ArrayList<>()));
+        when(loadEvidencesByQuestion.loadEvidencesByQuestionId(QUESTION2_ID, 0, 10))
+            .thenReturn(new PaginatedResponse<>(
+                new ArrayList<>(),
+                0,
+                0,
+                "lastModificationTime",
+                "DESC",
+                0));
 
-        GetEvidenceListUseCase.Result result = service.getEvidenceList(new GetEvidenceListUseCase.Param(QUESTION2_ID, 10, 0));
+        PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new GetEvidenceListUseCase.Param(QUESTION2_ID, 10, 0));
 
-        assertEquals(0, result.evidences().size());
+        assertEquals(0, result.getItems().size());
     }
 
     @Test

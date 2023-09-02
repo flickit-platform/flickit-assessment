@@ -1,19 +1,21 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
+import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencesByQuestionPort;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class EvidencePersistenceJpaAdaptor implements
     CreateEvidencePort,
-    LoadEvidencesByQuestionPort{
+    LoadEvidencesByQuestionPort {
 
     private final EvidenceJpaRepository repository;
 
@@ -25,9 +27,18 @@ public class EvidencePersistenceJpaAdaptor implements
     }
 
     @Override
-    public LoadEvidencesByQuestionPort.Result loadEvidencesByQuestionId(LoadEvidencesByQuestionPort.Param param, int page, int size) {
-        return new LoadEvidencesByQuestionPort.Result(repository.findByQuestionIdOrderByLastModificationTimeDesc(param.questionId(), PageRequest.of(page, size)).stream()
+    public PaginatedResponse<EvidenceListItem> loadEvidencesByQuestionId(Long questionId, int page, int size) {
+        var pageResult = repository.findByQuestionIdOrderByLastModificationTimeDesc(questionId, PageRequest.of(page, size));
+        var items = pageResult.getContent().stream()
             .map(EvidenceMapper::toDomainModel)
-            .collect(Collectors.toList()));
+            .toList();
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            EvidenceJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            Sort.Direction.DESC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
     }
 }

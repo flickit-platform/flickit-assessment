@@ -4,16 +4,17 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
-import org.flickit.flickitassessmentcore.application.domain.Evidence;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 public interface GetEvidenceListUseCase {
 
-    Result getEvidenceList(Param param);
+    PaginatedResponse<EvidenceListItem> getEvidenceList(Param param);
 
     @Value
     class Param extends SelfValidating<Param> {
@@ -36,5 +37,11 @@ public interface GetEvidenceListUseCase {
         }
     }
 
-    record Result(List<Evidence> evidences){}
+    record EvidenceListItem(
+        UUID id,
+        String description,
+        long createdById,
+        UUID assessmentId,
+        LocalDateTime lastModificationTime
+    ){}
 }
