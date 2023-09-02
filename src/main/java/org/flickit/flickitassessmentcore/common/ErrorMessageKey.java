@@ -17,6 +17,7 @@ public class ErrorMessageKey {
 
     public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND = "submit-answer.assessmentResultId.notFound";
     public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_NULL = "submit-answer.assessmentResultId.notNull";
+    public static final String SUBMIT_ANSWER_QUESTIONNAIRE_ID_NOT_NULL = "submit-answer.questionnaireId.notNull";
     public static final String SUBMIT_ANSWER_QUESTION_ID_NOT_NULL = "submit-answer.questionId.notNull";
     public static final String SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_NULL = "submit-answer.answerOptionId.notNull";
 
@@ -32,6 +33,23 @@ public class ErrorMessageKey {
     public static final String ADD_EVIDENCE_CREATED_BY_ID_NOT_NULL = "add-evidence.createdById.notNull";
     public static final String ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL = "add-evidence.assessmentId.notNull";
     public static final String ADD_EVIDENCE_QUESTION_ID_NOT_NULL = "add-evidence.questionId.notNull";
+
+    public static final String UPDATE_ASSESSMENT_ASSESSMENT_NOT_FOUND = "update-assessment.assessment.notFound";
+    public static final String UPDATE_ASSESSMENT_ID_NOT_NULL = "update-assessment.id.notNull";
+    public static final String UPDATE_ASSESSMENT_TITLE_NOT_BLANK = "update-assessment.title.notBlank";
+    public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MIN = "update-assessment.title.min";
+    public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MAX = "update-assessment.title.max";
+    public static final String UPDATE_ASSESSMENT_COLOR_ID_NOT_NULL = "update-assessment.color-id.notNull";
+
+    public static final String CALCULATE_ASSESSMENT_ID_NOT_NULL = "calculate-assessment.assessment.id.notNull";
+    public static final String CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "calculate-assessment.assessmentResult.notFount";
+
+    public static final String GET_ANSWER_LIST_ASSESSMENT_ID_NOTNULL = "get-answer-list.assessmentId.notNull";
+    public static final String GET_ANSWER_LIST_QUESTIONNAIRE_ID_NOTNULL = "get-answer-list.questionnaireId.notNull";
+    public static final String GET_ANSWER_LIST_SIZE_MIN = "get-answer-list.size.min";
+    public static final String GET_ANSWER_LIST_SIZE_MAX = "get-answer-list.size.max";
+    public static final String GET_ANSWER_LIST_PAGE_MIN = "get-answer-list.page.min";
+    public static final String GET_ANSWER_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND = "get-answer-list.assessmentResultId.notFound";
 
     public static final String GET_EVIDENCE_LIST_QUESTION_ID_NOT_NULL = "get-evidence-list.questionId.notNull";
     public static final String GET_EVIDENCE_LIST_SIZE_MIN = "get-evidence-list.size.min";

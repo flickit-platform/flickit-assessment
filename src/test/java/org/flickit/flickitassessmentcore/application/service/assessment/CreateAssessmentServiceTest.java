@@ -5,18 +5,19 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAs
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase.Param;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectIdsAndQualityAttributeIdsPort;
+import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.flickitassessmentcore.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.application.domain.Subject;
+import org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ class CreateAssessmentServiceTest {
     private CreateAssessmentResultPort createAssessmentResultPort;
 
     @Mock
-    private LoadSubjectIdsAndQualityAttributeIdsPort loadASIdsAndQAIdsPort;
+    private LoadSubjectByAssessmentKitIdPort loadSubjectsPort;
 
     @Mock
     private CreateSubjectValuePort createSubjectValuePort;
@@ -55,9 +56,8 @@ class CreateAssessmentServiceTest {
         );
         UUID expectedId = UUID.randomUUID();
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
-        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
-        when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
+        List<Subject> expectedResponse = List.of();
+        when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
         assertEquals(expectedId, result.id());
@@ -65,12 +65,12 @@ class CreateAssessmentServiceTest {
         ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
         verify(createAssessmentPort).persist(createPortParam.capture());
 
+        assertEquals("title-example", createPortParam.getValue().code());
         assertEquals(param.getTitle(), createPortParam.getValue().title());
         assertEquals(param.getAssessmentKitId(), createPortParam.getValue().assessmentKitId());
         assertEquals(param.getColorId(), createPortParam.getValue().colorId());
-        assertEquals("title-example", createPortParam.getValue().code());
         assertNotNull(createPortParam.getValue().creationTime());
-        assertNotNull(createPortParam.getValue().lastModificationDate());
+        assertNotNull(createPortParam.getValue().lastModificationTime());
     }
 
     @Test
@@ -85,9 +85,8 @@ class CreateAssessmentServiceTest {
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(assessmentId);
         UUID expectedResultId = UUID.randomUUID();
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(expectedResultId);
-        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
-        when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
+        List<Subject> expectedResponse = List.of();
+        when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
 
         service.createAssessment(param);
 
@@ -95,6 +94,7 @@ class CreateAssessmentServiceTest {
         verify(createAssessmentResultPort).persist(createPortParam.capture());
 
         assertEquals(assessmentId, createPortParam.getValue().assessmentId());
+        assertNotNull(createPortParam.getValue().lastModificationTime());
         assertFalse(createPortParam.getValue().isValid());
     }
 
@@ -107,11 +107,19 @@ class CreateAssessmentServiceTest {
             assessmentKitId,
             1
         );
-        List<Long> expectedSubjectIds = Arrays.asList(1L, 2L, 3L);
-        List<Long> expectedQualityAttributeIds = Arrays.asList(1L, 2L, 3L, 4L, 5L);
-        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(expectedSubjectIds, expectedQualityAttributeIds);
-        when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedResponseParam);
+
+        QualityAttribute qa1 = QualityAttributeMother.simple();
+        QualityAttribute qa2 = QualityAttributeMother.simple();
+        QualityAttribute qa3 = QualityAttributeMother.simple();
+        QualityAttribute qa4 = QualityAttributeMother.simple();
+        QualityAttribute qa5 = QualityAttributeMother.simple();
+
+        List<Subject> expectedSubjects = List.of(
+            new Subject(1L, List.of(qa1, qa2)),
+            new Subject(2L, List.of(qa3, qa4)),
+            new Subject(3L, List.of(qa5))
+        );
+        when(loadSubjectsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedSubjects);
 
         service.createAssessment(param);
 
@@ -127,11 +135,18 @@ class CreateAssessmentServiceTest {
             assessmentKitId,
             1
         );
-        List<Long> expectedSubjectIds = Arrays.asList(1L, 2L, 3L);
-        List<Long> expectedQualityAttributeIds = Arrays.asList(1L, 2L, 3L, 4L, 5L);
-        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(expectedSubjectIds, expectedQualityAttributeIds);
-        when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedResponseParam);
+        QualityAttribute qa1 = QualityAttributeMother.simple();
+        QualityAttribute qa2 = QualityAttributeMother.simple();
+        QualityAttribute qa3 = QualityAttributeMother.simple();
+        QualityAttribute qa4 = QualityAttributeMother.simple();
+        QualityAttribute qa5 = QualityAttributeMother.simple();
+
+        List<Subject> expectedSubjects = List.of(
+            new Subject(1L, List.of(qa1, qa2)),
+            new Subject(2L, List.of(qa3, qa4)),
+            new Subject(3L, List.of(qa5))
+        );
+        when(loadSubjectsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedSubjects);
 
         service.createAssessment(param);
 
@@ -146,9 +161,8 @@ class CreateAssessmentServiceTest {
             1L,
             null
         );
-        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
-        when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
+        List<Subject> expectedResponse = List.of();
+        when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
 
         service.createAssessment(param);
 
@@ -166,9 +180,8 @@ class CreateAssessmentServiceTest {
             1L,
             7
         );
-        LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam expectedResponseParam =
-            new LoadSubjectIdsAndQualityAttributeIdsPort.ResponseParam(Arrays.asList(), Arrays.asList());
-        when(loadASIdsAndQAIdsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponseParam);
+        List<Subject> expectedResponse = List.of();
+        when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
 
         service.createAssessment(param);
 
@@ -176,33 +189,6 @@ class CreateAssessmentServiceTest {
         verify(createAssessmentPort).persist(createPortParam.capture());
 
         assertEquals(AssessmentColor.getDefault().getId(), createPortParam.getValue().colorId());
-    }
-
-    @Test
-    void generateSlugCode_NoWhitespace_ReturnsLowerCaseCode() {
-        String title = "ExampleTitle";
-
-        String code = ReflectionTestUtils.invokeMethod(service, "generateSlugCode", title);
-
-        assertEquals("exampletitle", code);
-    }
-
-    @Test
-    void generateSlugCode_WithWhitespace_ReturnsLowerCaseCodeWithHyphens() {
-        String title = "Example Title with Whitespace";
-
-        String code = ReflectionTestUtils.invokeMethod(service, "generateSlugCode", title);
-
-        assertEquals("example-title-with-whitespace", code);
-    }
-
-    @Test
-    void generateSlugCode_WithLeadingAndTrailingWhitespace_ReturnsLowerCaseCodeWithHyphens() {
-        String title = "  Example Title with   Leading and Trailing   Whitespace  ";
-
-        String code = ReflectionTestUtils.invokeMethod(service, "generateSlugCode", title);
-
-        assertEquals("example-title-with-leading-and-trailing-whitespace", code);
     }
 
 }

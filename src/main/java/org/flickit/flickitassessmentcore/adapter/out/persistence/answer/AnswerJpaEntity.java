@@ -7,6 +7,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Table(name = "fac_answer")
 @Getter
@@ -27,6 +29,9 @@ public class AnswerJpaEntity {
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 
+    @Column(name = "questionnaire_id", nullable = false)
+    private Long questionnaireId;
+
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
@@ -36,5 +41,10 @@ public class AnswerJpaEntity {
     @Override
     public String toString() {
         return id.toString();
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String QUESTION_ID = "questionId";
     }
 }
