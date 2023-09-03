@@ -71,7 +71,8 @@ class GetAssessmentListServiceTest {
             1L,
             AssessmentColor.BLUE.getId(),
             LocalDateTime.now(),
-            1L
+            1L,
+            true
         );
     }
 }

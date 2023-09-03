@@ -5,4 +5,6 @@ public interface AssessmentListItemView {
     AssessmentJpaEntity getAssessment();
 
     Long getMaturityLevelId();
+
+    boolean getIsCalculateValid();
 }
