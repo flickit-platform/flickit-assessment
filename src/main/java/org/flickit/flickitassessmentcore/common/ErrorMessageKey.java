@@ -50,4 +50,9 @@ public class ErrorMessageKey {
     public static final String GET_ANSWER_LIST_SIZE_MAX = "get-answer-list.size.max";
     public static final String GET_ANSWER_LIST_PAGE_MIN = "get-answer-list.page.min";
     public static final String GET_ANSWER_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND = "get-answer-list.assessmentResultId.notFound";
+
+    public static final String REPORT_ASSESSMENT_ID_NOT_NULL = "report-assessment.assessment.id.notNull";
+    public static final String REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "report-assessment.assessmentResult.notFound";
+    public static final String REPORT_ASSESSMENT_MATURITY_LEVEL_NOT_FOUND = "report-assessment.maturityLevelId.notFound";
+    public static final String REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID = "report-assessment.assessmentResult.notValid";
 }
