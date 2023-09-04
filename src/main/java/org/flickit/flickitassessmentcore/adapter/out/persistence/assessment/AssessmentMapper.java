@@ -47,7 +47,8 @@ public class AssessmentMapper {
             assessmentEntity.getAssessmentKitId(),
             assessmentEntity.getColorId(),
             assessmentEntity.getLastModificationTime(),
-            itemView.getMaturityLevelId()
+            itemView.getMaturityLevelId(),
+            itemView.getIsCalculateValid()
         );
     }
 }

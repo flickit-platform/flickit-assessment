@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID> {
 
-    @Query("SELECT a as assessment, r.maturityLevelId as maturityLevelId " +
+    @Query("SELECT a as assessment, r.maturityLevelId as maturityLevelId, r.isValid as isCalculateValid " +
         "FROM AssessmentJpaEntity a " +
         "LEFT JOIN AssessmentResultJpaEntity r " +
         "ON a.id = r.assessment.id " +
