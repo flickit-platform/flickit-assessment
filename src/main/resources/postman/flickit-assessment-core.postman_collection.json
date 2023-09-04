@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "15802ea3-3cd4-4e03-89f1-2daad2eb7a08",
+		"_postman_id": "9f7ec93d-fe41-4dd5-8379-f61460fee9cd",
 		"name": "flickit-assessment-core",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "6692064"
+		"_exporter_id": "18899907"
 	},
 	"item": [
 		{
@@ -222,7 +222,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/8028f9a4-a7a8-4391-995d-4645c15d53aa/answers?questionnaireId=1&page=0&size=50",
+					"raw": "{{base_url}}/{{api_path}}/assessments/8028f9a4-a7a8-4391-995d-4645c15d53aa/answers?questionnaireId=1",
 					"host": [
 						"{{base_url}}"
 					],
@@ -265,6 +265,48 @@
 						"assessments",
 						"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
 						"report"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Evidence List",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences?questionId=1&size=10&page=0",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences"
+					],
+					"query": [
+						{
+							"key": "questionId",
+							"value": "1"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						}
 					]
 				}
 			},

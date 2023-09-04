@@ -2,7 +2,6 @@ package org.flickit.flickitassessmentcore.application.service.evidence;
 
 import jakarta.validation.ConstraintViolationException;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.AddEvidenceUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +50,7 @@ public class AddEvidenceServiceTest {
         assertEquals(param.getAssessmentId(), createPortParam.getValue().assessmentId());
         assertEquals(param.getQuestionId(), createPortParam.getValue().questionId());
         assertNotNull(createPortParam.getValue().creationTime());
-        assertNotNull(createPortParam.getValue().lastModificationDate());
+        assertNotNull(createPortParam.getValue().lastModificationTime());
     }
 
     @Test
