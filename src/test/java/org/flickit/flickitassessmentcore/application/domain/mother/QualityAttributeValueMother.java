@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.application.domain.mother;
 
 import org.flickit.flickitassessmentcore.application.domain.Answer;
+import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
 
@@ -39,53 +40,13 @@ public class QualityAttributeValueMother {
             answers);
     }
 
-    public static QualityAttributeValue calcAsLevelOneWithAttribute(QualityAttribute attribute) {
+    public static QualityAttributeValue withAttributeAndMaturityLevel(QualityAttribute attribute, MaturityLevel maturityLevel) {
         QualityAttributeValue attributeValue = new QualityAttributeValue(
             UUID.randomUUID(),
             attribute,
             null);
 
-        attributeValue.setMaturityLevel(MaturityLevelMother.levelOne());
-        return attributeValue;
-    }
-
-    public static QualityAttributeValue calcAsLevelTwoWithAttribute(QualityAttribute attribute) {
-        QualityAttributeValue attributeValue = new QualityAttributeValue(
-            UUID.randomUUID(),
-            attribute,
-            null);
-
-        attributeValue.setMaturityLevel(MaturityLevelMother.levelTwo());
-        return attributeValue;
-    }
-
-    public static QualityAttributeValue calcAsLevelThreeWithAttribute(QualityAttribute attribute) {
-        QualityAttributeValue attributeValue = new QualityAttributeValue(
-            UUID.randomUUID(),
-            attribute,
-            null);
-
-        attributeValue.setMaturityLevel(MaturityLevelMother.levelThree());
-        return attributeValue;
-    }
-
-    public static QualityAttributeValue calcAsLevelFourWithAttribute(QualityAttribute attribute) {
-        QualityAttributeValue attributeValue = new QualityAttributeValue(
-            UUID.randomUUID(),
-            attribute,
-            null);
-
-        attributeValue.setMaturityLevel(MaturityLevelMother.levelFour());
-        return attributeValue;
-    }
-
-    public static QualityAttributeValue calcAsLevelFiveWithAttribute(QualityAttribute attribute) {
-        QualityAttributeValue attributeValue = new QualityAttributeValue(
-            UUID.randomUUID(),
-            attribute,
-            null);
-
-        attributeValue.setMaturityLevel(MaturityLevelMother.levelFive());
+        attributeValue.setMaturityLevel(maturityLevel);
         return attributeValue;
     }
 }

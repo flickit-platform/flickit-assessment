@@ -1,16 +1,16 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.application.domain.Subject;
+import org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeMother;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase.Param;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
-import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
-import org.flickit.flickitassessmentcore.application.domain.Subject;
-import org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -108,11 +108,11 @@ class CreateAssessmentServiceTest {
             1
         );
 
-        QualityAttribute qa1 = QualityAttributeMother.simple();
-        QualityAttribute qa2 = QualityAttributeMother.simple();
-        QualityAttribute qa3 = QualityAttributeMother.simple();
-        QualityAttribute qa4 = QualityAttributeMother.simple();
-        QualityAttribute qa5 = QualityAttributeMother.simple();
+        QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
+        QualityAttribute qa2 = QualityAttributeMother.simpleAttribute();
+        QualityAttribute qa3 = QualityAttributeMother.simpleAttribute();
+        QualityAttribute qa4 = QualityAttributeMother.simpleAttribute();
+        QualityAttribute qa5 = QualityAttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
             new Subject(1L, List.of(qa1, qa2)),
@@ -135,11 +135,11 @@ class CreateAssessmentServiceTest {
             assessmentKitId,
             1
         );
-        QualityAttribute qa1 = QualityAttributeMother.simple();
-        QualityAttribute qa2 = QualityAttributeMother.simple();
-        QualityAttribute qa3 = QualityAttributeMother.simple();
-        QualityAttribute qa4 = QualityAttributeMother.simple();
-        QualityAttribute qa5 = QualityAttributeMother.simple();
+        QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
+        QualityAttribute qa2 = QualityAttributeMother.simpleAttribute();
+        QualityAttribute qa3 = QualityAttributeMother.simpleAttribute();
+        QualityAttribute qa4 = QualityAttributeMother.simpleAttribute();
+        QualityAttribute qa5 = QualityAttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
             new Subject(1L, List.of(qa1, qa2)),

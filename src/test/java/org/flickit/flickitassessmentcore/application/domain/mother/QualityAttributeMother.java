@@ -9,7 +9,7 @@ public class QualityAttributeMother {
 
     private static long id = 134L;
 
-    public static QualityAttribute simple() {
+    public static QualityAttribute simpleAttribute() {
         return new QualityAttribute(id++, 1, null);
     }
 
