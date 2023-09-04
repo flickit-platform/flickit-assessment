@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "9f7ec93d-fe41-4dd5-8379-f61460fee9cd",
+		"_postman_id": "15802ea3-3cd4-4e03-89f1-2daad2eb7a08",
 		"name": "flickit-assessment-core",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "18899907"
+		"_exporter_id": "6692064"
 	},
 	"item": [
 		{
@@ -222,7 +222,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/8028f9a4-a7a8-4391-995d-4645c15d53aa/answers?questionnaireId=1",
+					"raw": "{{base_url}}/{{api_path}}/assessments/8028f9a4-a7a8-4391-995d-4645c15d53aa/answers?questionnaireId=1&page=0&size=50",
 					"host": [
 						"{{base_url}}"
 					],
@@ -245,6 +245,26 @@
 							"key": "size",
 							"value": "50"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Report Assessment",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/report",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+						"report"
 					]
 				}
 			},
