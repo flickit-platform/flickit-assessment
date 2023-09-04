@@ -38,4 +38,54 @@ public class QualityAttributeValueMother {
             QualityAttributeMother.withQuestionsOnLevel24(weight),
             answers);
     }
+
+    public static QualityAttributeValue calcAsLevelOneWithAttribute(QualityAttribute attribute) {
+        QualityAttributeValue attributeValue = new QualityAttributeValue(
+            UUID.randomUUID(),
+            attribute,
+            null);
+
+        attributeValue.setMaturityLevel(MaturityLevelMother.levelOne());
+        return attributeValue;
+    }
+
+    public static QualityAttributeValue calcAsLevelTwoWithAttribute(QualityAttribute attribute) {
+        QualityAttributeValue attributeValue = new QualityAttributeValue(
+            UUID.randomUUID(),
+            attribute,
+            null);
+
+        attributeValue.setMaturityLevel(MaturityLevelMother.levelTwo());
+        return attributeValue;
+    }
+
+    public static QualityAttributeValue calcAsLevelThreeWithAttribute(QualityAttribute attribute) {
+        QualityAttributeValue attributeValue = new QualityAttributeValue(
+            UUID.randomUUID(),
+            attribute,
+            null);
+
+        attributeValue.setMaturityLevel(MaturityLevelMother.levelThree());
+        return attributeValue;
+    }
+
+    public static QualityAttributeValue calcAsLevelFourWithAttribute(QualityAttribute attribute) {
+        QualityAttributeValue attributeValue = new QualityAttributeValue(
+            UUID.randomUUID(),
+            attribute,
+            null);
+
+        attributeValue.setMaturityLevel(MaturityLevelMother.levelFour());
+        return attributeValue;
+    }
+
+    public static QualityAttributeValue calcAsLevelFiveWithAttribute(QualityAttribute attribute) {
+        QualityAttributeValue attributeValue = new QualityAttributeValue(
+            UUID.randomUUID(),
+            attribute,
+            null);
+
+        attributeValue.setMaturityLevel(MaturityLevelMother.levelFive());
+        return attributeValue;
+    }
 }
