@@ -14,6 +14,7 @@ import java.util.UUID;
 public class SubjectValue {
 
     private final UUID id;
+    private final Subject subject;
     private final List<QualityAttributeValue> qualityAttributeValues;
 
     @Setter

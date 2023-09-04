@@ -19,9 +19,9 @@ import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionRestAdapter;
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectRestAdapter;
+import org.flickit.flickitassessmentcore.application.domain.*;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.application.domain.*;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -180,7 +180,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             List<QualityAttributeValue> qavList = dto.qualityAttributes().stream()
                 .map(q -> qualityAttrIdToValue.get(q.id()))
                 .toList();
-            subjectValues.add(new SubjectValue(svEntity.getId(), qavList));
+            subjectValues.add(new SubjectValue(svEntity.getId(), dto.dtoToDomain(), qavList));
         }
         return subjectValues;
     }
@@ -190,7 +190,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * @return assessment with all information needed for calculation
      */
     private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity) {
-        List<MaturityLevelDto> maturityLevelsDto = maturityLevelRestAdapter.loadByKitId(assessmentEntity.getAssessmentKitId());
+        List<MaturityLevelDto> maturityLevelsDto = maturityLevelRestAdapter.loadMaturityLevelsDtoByKitId(assessmentEntity.getAssessmentKitId());
         List<MaturityLevel> maturityLevels = maturityLevelsDto.stream()
             .map(MaturityLevelDto::dtoToDomain)
             .toList();
