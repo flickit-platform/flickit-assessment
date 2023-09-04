@@ -1,6 +1,5 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.exception;
 
-import jakarta.validation.ValidationException;
 import org.flickit.flickitassessmentcore.adapter.in.rest.exception.api.ErrorResponseDto;
 import org.flickit.flickitassessmentcore.application.exception.CalculateNotValidException;
 import org.flickit.flickitassessmentcore.common.MessageBundle;
