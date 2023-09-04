@@ -3,16 +3,22 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattribu
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class QualityAttributeValuePersistenceJpaAdaptor implements
-    CreateQualityAttributeValuePort {
+    CreateQualityAttributeValuePort,
+    LoadAttributeValueListPort {
 
     private final QualityAttributeValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -30,4 +36,16 @@ public class QualityAttributeValuePersistenceJpaAdaptor implements
         repository.saveAll(entities);
     }
 
+    @Override
+    public List<QualityAttributeValue> loadAttributeValues(UUID assessmentResultId, Map<Long, MaturityLevel> maturityLevels) {
+        List<QualityAttributeValueJpaEntity> allAttributeValueEntities = repository.findByAssessmentResultId(assessmentResultId);
+        return allAttributeValueEntities.stream()
+            .map(x -> new QualityAttributeValue(
+                x.getId(),
+                new QualityAttribute(x.getQualityAttributeId(), 1, null),
+                null,
+                maturityLevels.get(x.getMaturityLevelId())
+            ))
+            .toList();
+    }
 }

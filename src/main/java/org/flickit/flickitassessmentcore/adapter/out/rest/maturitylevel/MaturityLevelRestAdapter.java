@@ -3,6 +3,8 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.exception.FlickitPlatformRestException;
+import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
+import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelsByKitPort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -17,12 +19,19 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
-public class MaturityLevelRestAdapter {
+public class MaturityLevelRestAdapter implements LoadMaturityLevelsByKitPort {
 
     private final RestTemplate flickitPlatformRestTemplate;
     private final FlickitPlatformRestProperties properties;
 
-    public List<MaturityLevelDto> loadByKitId(Long kitId) {
+    @Override
+    public List<MaturityLevel> loadByKitId(Long kitId) {
+        return loadMaturityLevelsDtoByKitId(kitId).stream()
+            .map(MaturityLevelDto::dtoToDomain)
+            .toList();
+    }
+
+    public List<MaturityLevelDto> loadMaturityLevelsDtoByKitId(Long kitId) {
         String url = String.format(properties.getBaseUrl() + properties.getGetMaturityLevelsUrl(), kitId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
