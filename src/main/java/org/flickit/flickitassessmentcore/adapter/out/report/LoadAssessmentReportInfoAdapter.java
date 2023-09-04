@@ -9,8 +9,8 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue.Su
 import org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.flickitassessmentcore.application.domain.*;
-import org.flickit.flickitassessmentcore.application.exception.CalculateNotValidException;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.flickitassessmentcore.application.service.exception.CalculateNotValidException;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -38,8 +38,10 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsValid()))
+        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsValid())) {
+            log.warn("The calculated result is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultEntity.getId());
             throw new CalculateNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
+        }
 
         UUID assessmentResultId = assessmentResultEntity.getId();
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
