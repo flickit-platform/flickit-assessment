@@ -286,7 +286,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/evidences?questionId=1&size=10&page=0",
+					"raw": "{{base_url}}/{{api_path}}/evidences?questionId=1&assessmentId=c4e0b4a4-66a1-4383-872f-be9fc6c3cecb&size=10&page=0",
 					"host": [
 						"{{base_url}}"
 					],
@@ -298,6 +298,10 @@
 						{
 							"key": "questionId",
 							"value": "1"
+						},
+						{
+							"key": "assessmentId",
+							"value": "c4e0b4a4-66a1-4383-872f-be9fc6c3cecb"
 						},
 						{
 							"key": "size",
