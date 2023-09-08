@@ -69,7 +69,8 @@ class GetEvidenceListServiceTest {
 
     @Test
     void getEvidenceList_NullQuestion_ReturnErrorMessage() {
-        assertThrows(ConstraintViolationException.class, () -> new GetEvidenceListUseCase.Param(null, UUID.randomUUID(), 10, 0));
+        UUID ASSESSMENT_ID = UUID.randomUUID();
+        assertThrows(ConstraintViolationException.class, () -> new GetEvidenceListUseCase.Param(null, ASSESSMENT_ID, 10, 0));
     }
 
     @Test
