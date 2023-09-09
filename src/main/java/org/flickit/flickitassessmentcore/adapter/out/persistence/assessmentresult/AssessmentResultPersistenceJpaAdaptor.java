@@ -3,8 +3,10 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresu
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaRepository;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultBySubjectValueId;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +19,8 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_AS
 @RequiredArgsConstructor
 public class AssessmentResultPersistenceJpaAdaptor implements
     InvalidateAssessmentResultPort,
-    CreateAssessmentResultPort {
+    CreateAssessmentResultPort,
+    LoadAssessmentResultBySubjectValueId {
 
     private final AssessmentResultJpaRepository repo;
     private final AssessmentJpaRepository assessmentRepo;
@@ -35,6 +38,11 @@ public class AssessmentResultPersistenceJpaAdaptor implements
         entity.setAssessment(assessment);
         AssessmentResultJpaEntity savedEntity = repo.save(entity);
         return savedEntity.getId();
+    }
+
+    @Override
+    public AssessmentResult load(UUID subValueId) {
+        return null;
     }
 }
 

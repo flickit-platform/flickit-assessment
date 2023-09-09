@@ -4,21 +4,23 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
-import org.flickit.flickitassessmentcore.application.domain.report.AssessmentReport.AttributeReportItem;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
+import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport.AttributeReportItem;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport.QualityAttributeReportItem;
 import org.flickit.flickitassessmentcore.application.port.in.subject.ReportSubjectUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultBySubjectValueId;
+import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectTitle;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueBySubjectIdPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.reverseOrder;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.toMap;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,43 +28,45 @@ import static java.util.Comparator.comparingInt;
 public class ReportSubjectService implements ReportSubjectUseCase {
 
     private static final int TOP_COUNT = 3;
-    private final LoadAttributeValueListPort loadAttributeValueListPort;
+    private final LoadSubjectTitle loadSubjectTitle;
+    private final LoadAssessmentResultBySubjectValueId loadAssessmentResultBySubjectValueId;
     private final LoadSubjectValueBySubjectIdPort loadSubjectValueBySubjectIdPort;
 
     @Override
     public SubjectReport reportSubject(Param param) {
         var subjectValue = loadSubjectValueBySubjectIdPort.load(param.getSubjectId());
+        String subjectTitle = loadSubjectTitle.load(param.getSubjectId());
+        var result = loadAssessmentResultBySubjectValueId.load(subjectValue.getId());
+        var maturityLevels = result.getAssessment().getAssessmentKit().getMaturityLevels();
+        var attributeValues = subjectValue.getQualityAttributeValues();
 
-//        var maturityLevels = subjectValue.getAssessment().getAssessmentKit().getMaturityLevels();
-//        Map<Long, MaturityLevel> maturityLevelsMap = maturityLevels.stream()
-//            .collect(toMap(MaturityLevel::getId, x -> x));
-
-//        var attributeValues = loadAttributeValueListPort.loadAttributeValues(subjectValue.getId(), maturityLevelsMap);
-
-        var subjectReportItem = buildSubject(subjectValue);
+        var subjectReportItem = buildSubject(subjectValue, subjectTitle, result.isValid());
         var attributeReportItems = buildAttributes(subjectValue);
-//        var midLevelMaturity = middleLevel(maturityLevels);
-//        var topStrengths = getTopStrengths(attributeValues, midLevelMaturity);
-//        var topWeaknesses = getTopWeaknesses(attributeValues, midLevelMaturity);
+        var midLevelMaturity = middleLevel(maturityLevels);
+        var topStrengths = getTopStrengths(attributeValues, midLevelMaturity);
+        var topWeaknesses = getTopWeaknesses(attributeValues, midLevelMaturity);
 
         return new SubjectReport(
             subjectReportItem,
-            new ArrayList<>(),
-            new ArrayList<>(),
+            topStrengths,
+            topWeaknesses,
             attributeReportItems);
     }
 
-    private SubjectReport.SubjectReportItem buildSubject(SubjectValue subjectValue) {
+    private SubjectReport.SubjectReportItem buildSubject(SubjectValue subjectValue, String title, boolean isCalculateValid) {
         return new SubjectReport.SubjectReportItem(
             subjectValue.getSubject().getId(),
-            "",
+            title,
             subjectValue.getMaturityLevel().getId(),
-            false
+            isCalculateValid
         );
     }
 
     private List<QualityAttributeReportItem> buildAttributes(SubjectValue subjectValue) {
-        return new ArrayList<>();
+        return subjectValue.getQualityAttributeValues()
+            .stream()
+            .map(x -> new QualityAttributeReportItem(x.getQualityAttribute().getId(), x.getMaturityLevel().getId()))
+            .toList();
     }
 
     private List<AttributeReportItem> getTopStrengths(List<QualityAttributeValue> attributeValues, MaturityLevel midLevelMaturity) {
