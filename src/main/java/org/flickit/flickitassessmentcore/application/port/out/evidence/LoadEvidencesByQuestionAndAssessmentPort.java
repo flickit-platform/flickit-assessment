@@ -3,8 +3,10 @@ package org.flickit.flickitassessmentcore.application.port.out.evidence;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 
-public interface LoadEvidencesByQuestionPort {
+import java.util.UUID;
 
-    PaginatedResponse<EvidenceListItem> loadEvidencesByQuestionId(Long questionId, int page, int size);
+public interface LoadEvidencesByQuestionAndAssessmentPort {
+
+    PaginatedResponse<EvidenceListItem> loadEvidencesByQuestionIdAndAssessmentId(Long questionId, UUID assessmentId, int page, int size);
 
 }
