@@ -15,8 +15,8 @@ public interface SubmitAnswerUseCase {
     @Value
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_NULL)
-        UUID assessmentResultId;
+        @NotNull(message = SUBMIT_ANSWER_ASSESSMENT_ID_NOT_NULL)
+        UUID assessmentId;
 
         @NotNull(message = SUBMIT_ANSWER_QUESTIONNAIRE_ID_NOT_NULL)
         Long questionnaireId;
@@ -26,8 +26,8 @@ public interface SubmitAnswerUseCase {
 
         Long answerOptionId;
 
-        public Param(UUID assessmentResultId, Long questionnaireId, Long questionId, Long answerOptionId) {
-            this.assessmentResultId = assessmentResultId;
+        public Param(UUID assessmentId, Long questionnaireId, Long questionId, Long answerOptionId) {
+            this.assessmentId = assessmentId;
             this.questionnaireId = questionnaireId;
             this.questionId = questionId;
             this.answerOptionId = answerOptionId;

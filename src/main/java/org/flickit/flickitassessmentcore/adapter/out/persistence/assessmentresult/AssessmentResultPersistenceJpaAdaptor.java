@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
 
 @Component
@@ -23,8 +24,11 @@ public class AssessmentResultPersistenceJpaAdaptor implements
     private final AssessmentJpaRepository assessmentRepo;
 
     @Override
-    public void invalidateById(UUID id) {
-        repo.invalidateById(id);
+    public void invalidateByAssessmentId(UUID assessmentId) {
+        var assessmentResult = repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND));
+
+        repo.invalidateById(assessmentResult.getId());
     }
 
     @Override

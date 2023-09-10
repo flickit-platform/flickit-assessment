@@ -11,7 +11,7 @@ public interface CreateAnswerPort {
      */
     UUID persist(Param param);
 
-    record Param(UUID assessmentResultId,
+    record Param(UUID assessmentId,
                  Long questionnaireId,
                  Long questionId,
                  Long answerOptionId) {
