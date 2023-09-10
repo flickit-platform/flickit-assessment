@@ -28,6 +28,6 @@ public interface GetQuestionnairesProgressUseCase {
     record Result(Progress<UUID> assessmentProgress, List<Progress<Long>> questionnairesProgress){
     }
 
-    record Progress<ID>(ID id, Integer answersCount) {
+    record Progress<K>(K id, Integer answersCount) {
     }
 }
