@@ -5,20 +5,23 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
+import org.flickit.flickitassessmentcore.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.Progress;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByQuestionnaireIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.flickitassessmentcore.application.port.out.questionnaire.GetQuestionnairesProgressByAssessmentPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ANSWER_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 
 @Component
@@ -27,7 +30,9 @@ public class AnswerPersistenceJpaAdaptor implements
     CreateAnswerPort,
     UpdateAnswerOptionPort,
     LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
-    LoadAnswersByQuestionnaireIdPort {
+    LoadAnswersByQuestionnaireIdPort,
+    GetAssessmentProgressPort,
+    GetQuestionnairesProgressByAssessmentPort {
 
     private final AnswerJpaRepository repository;
 
@@ -74,5 +79,23 @@ public class AnswerPersistenceJpaAdaptor implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public Progress<UUID> getAssessmentProgressById(UUID assessmentId) {
+        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
+
+        Integer answersCount = repository.getCountByAssessmentResult_Id(assessmentResult.getId());
+        return new Progress<>(assessmentId, answersCount);
+    }
+
+    @Override
+    public List<Progress<Long>> getQuestionnairesProgressByAssessmentId(UUID assessmentId) {
+        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var progress = repository.getCountByAssessmentResult_IdGroupByQuestionnaireId(assessmentResult.getId());
+        return progress.stream().map(AnswerMapper::mapQuestionnaireProgressView).toList();
     }
 }
