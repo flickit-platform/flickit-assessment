@@ -222,7 +222,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/8028f9a4-a7a8-4391-995d-4645c15d53aa/answers?questionnaireId=1",
+					"raw": "{{base_url}}/{{api_path}}/assessments/8028f9a4-a7a8-4391-995d-4645c15d53aa/answers?questionnaireId=1&page=0&size=50",
 					"host": [
 						"{{base_url}}"
 					],
@@ -307,6 +307,26 @@
 							"key": "page",
 							"value": "0"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Questionnaires Progress",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/c4e0b4a4-66a1-4383-872f-be9fc6c3cecb/questionnaires-progress",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"c4e0b4a4-66a1-4383-872f-be9fc6c3cecb",
+						"questionnaires-progress"
 					]
 				}
 			},
