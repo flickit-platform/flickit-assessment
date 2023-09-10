@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
-import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencesByQuestionPort;
+import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencesByQuestionAndAssessmentPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EvidencePersistenceJpaAdaptor implements
     CreateEvidencePort,
-    LoadEvidencesByQuestionPort {
+    LoadEvidencesByQuestionAndAssessmentPort {
 
     private final EvidenceJpaRepository repository;
 
@@ -27,8 +27,8 @@ public class EvidencePersistenceJpaAdaptor implements
     }
 
     @Override
-    public PaginatedResponse<EvidenceListItem> loadEvidencesByQuestionId(Long questionId, int page, int size) {
-        var pageResult = repository.findByQuestionIdOrderByLastModificationTimeDesc(questionId, PageRequest.of(page, size));
+    public PaginatedResponse<EvidenceListItem> loadEvidencesByQuestionIdAndAssessmentId(Long questionId, UUID assessmentId, int page, int size) {
+        var pageResult = repository.findByQuestionIdAndAssessmentIdOrderByLastModificationTimeDesc(questionId, assessmentId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(EvidenceMapper::toDomainModel)
             .toList();
