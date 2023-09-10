@@ -9,7 +9,6 @@ public record SubjectReport(SubjectReportItem subject,
                             List<QualityAttributeReportItem> attributes) {
 
     public record SubjectReportItem(Long id,
-                                    String title,
                                     Long maturityLevelId,
                                     boolean isCalculateValid) {
     }

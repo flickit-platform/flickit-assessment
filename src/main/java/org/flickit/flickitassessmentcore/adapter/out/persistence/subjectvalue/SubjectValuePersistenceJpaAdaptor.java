@@ -38,7 +38,6 @@ public class SubjectValuePersistenceJpaAdaptor implements
     public SubjectValue load(Long subjectId) {
         SubjectValueJpaEntity entity = repository.findBySubjectIdOrderByLastModificationTimeDesc(subjectId).get(0);
         SubjectValue subjectValue = SubjectValueMapper.mapToDomainModel(entity);
-        // TODO: set qa and ml for subValue
         return subjectValue;
     }
 }

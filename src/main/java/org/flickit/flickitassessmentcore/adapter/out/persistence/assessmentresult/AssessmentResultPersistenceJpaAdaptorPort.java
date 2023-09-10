@@ -6,10 +6,11 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.Asse
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultBySubjectValueId;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultBySubjectValueIdPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
@@ -17,10 +18,10 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_AS
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentResultPersistenceJpaAdaptor implements
+public class AssessmentResultPersistenceJpaAdaptorPort implements
     InvalidateAssessmentResultPort,
     CreateAssessmentResultPort,
-    LoadAssessmentResultBySubjectValueId {
+    LoadAssessmentResultBySubjectValueIdPort {
 
     private final AssessmentResultJpaRepository repo;
     private final AssessmentJpaRepository assessmentRepo;
@@ -41,8 +42,8 @@ public class AssessmentResultPersistenceJpaAdaptor implements
     }
 
     @Override
-    public AssessmentResult load(UUID subValueId) {
-        return null;
+    public Optional<AssessmentResult> load(UUID subValueId) {
+        return Optional.of(AssessmentResultMapper.mapToDomainEntity(repo.findFirstBySubjectValueId(subValueId)));
     }
 }
 

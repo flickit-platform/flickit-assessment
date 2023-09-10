@@ -4,9 +4,10 @@ import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.service.exception.CalculateNotValidException;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 
+import java.util.Optional;
 import java.util.UUID;
 
-public interface LoadAssessmentResultBySubjectValueId {
+public interface LoadAssessmentResultBySubjectValueIdPort {
 
     /**
      * Loads a result by the given {@code subValueId}.
@@ -16,5 +17,5 @@ public interface LoadAssessmentResultBySubjectValueId {
      * @throws ResourceNotFoundException  If the subject value is not found.
      * @throws CalculateNotValidException If the subject value is not valid.
      */
-    AssessmentResult load(UUID subValueId);
+    Optional<AssessmentResult> load(UUID subValueId);
 }

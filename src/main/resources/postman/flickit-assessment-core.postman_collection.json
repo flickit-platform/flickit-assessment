@@ -311,6 +311,26 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Report Subject",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/subjects/57/report",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"subjects",
+						"57",
+						"report"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
