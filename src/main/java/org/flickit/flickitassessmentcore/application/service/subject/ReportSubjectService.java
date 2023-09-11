@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.flickitassessmentcore.application.domain.*;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
-import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport.AttributeReportItem;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport.QualityAttributeReportItem;
 import org.flickit.flickitassessmentcore.application.port.in.subject.ReportSubjectUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
@@ -20,11 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Collections.reverseOrder;
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.flickitassessmentcore.common.report.EntityReportCommonCalculations.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,6 +38,12 @@ public class ReportSubjectService implements ReportSubjectUseCase {
     private final LoadAssessmentPort loadAssessmentPort;
     private final LoadSubjectByAssessmentKitIdPort loadSubjectByAssessmentKitIdPort;
 
+    private static List<SubjectReport.AttributeReportItem> mapToSubjectReportAttrItem(List<Long> attributeValues) {
+        return attributeValues
+            .stream()
+            .map(SubjectReport.AttributeReportItem::new)
+            .toList();
+    }
 
     @Override
     public SubjectReport reportSubject(Param param) {
@@ -55,8 +58,8 @@ public class ReportSubjectService implements ReportSubjectUseCase {
         var subjectReportItem = buildSubject(subjectValue, result.isValid());
         var attributeReportItems = buildAttributes(attributeValues);
         var midLevelMaturity = middleLevel(maturityLevels);
-        var topStrengths = getTopStrengths(attributeValues, midLevelMaturity);
-        var topWeaknesses = getTopWeaknesses(attributeValues, midLevelMaturity);
+        var topStrengths = mapToSubjectReportAttrItem(getTopStrengths(attributeValues, midLevelMaturity));
+        var topWeaknesses = mapToSubjectReportAttrItem(getTopWeaknesses(attributeValues, midLevelMaturity));
 
         return new SubjectReport(
             subjectReportItem,
@@ -76,11 +79,10 @@ public class ReportSubjectService implements ReportSubjectUseCase {
         Map<Long, QualityAttribute> qualityAttributeMap = subject.getQualityAttributes()
             .stream()
             .collect(toMap(QualityAttribute::getId, x -> x));
-        var attributeValues = loadAttributeValueListPort.loadAttributeValues(result.getId(), maturityLevelMap)
+        return loadAttributeValueListPort.loadAttributeValues(result.getId(), maturityLevelMap)
             .stream()
             .filter(x -> qualityAttributeMap.containsKey(x.getQualityAttribute().getId()))
             .toList();
-        return attributeValues;
     }
 
     private SubjectReport.SubjectReportItem buildSubject(SubjectValue subjectValue, boolean isCalculateValid) {
@@ -95,39 +97,6 @@ public class ReportSubjectService implements ReportSubjectUseCase {
         return attributeValues.stream()
             .map(x -> new QualityAttributeReportItem(x.getQualityAttribute().getId(), x.getMaturityLevel().getId()))
             .toList();
-    }
-
-    private List<AttributeReportItem> getTopStrengths(List<QualityAttributeValue> attributeValues, MaturityLevel midLevelMaturity) {
-        return attributeValues.stream()
-            .sorted(comparing(x -> x.getMaturityLevel().getLevel(), reverseOrder()))
-            .filter(x -> isHigherThanOrEqualToMiddleLevel(x.getMaturityLevel(), midLevelMaturity))
-            .limit(TOP_COUNT)
-            .map(x -> new AttributeReportItem(x.getQualityAttribute().getId()))
-            .toList();
-    }
-
-    private boolean isHigherThanOrEqualToMiddleLevel(MaturityLevel maturityLevel, MaturityLevel midLevelMaturity) {
-        return maturityLevel.getLevel() >= midLevelMaturity.getLevel();
-    }
-
-    private List<AttributeReportItem> getTopWeaknesses(List<QualityAttributeValue> attributeValues, MaturityLevel midLevelMaturity) {
-        return attributeValues.stream()
-            .sorted(comparingInt(x -> x.getMaturityLevel().getLevel()))
-            .filter(x -> isLowerThanMiddleLevel(x.getMaturityLevel(), midLevelMaturity))
-            .limit(TOP_COUNT)
-            .map(x -> new AttributeReportItem(x.getQualityAttribute().getId()))
-            .toList();
-    }
-
-    private boolean isLowerThanMiddleLevel(MaturityLevel maturityLevel, MaturityLevel midLevelMaturity) {
-        return maturityLevel.getLevel() < midLevelMaturity.getLevel();
-    }
-
-    private MaturityLevel middleLevel(List<MaturityLevel> maturityLevels) {
-        var sortedMaturityLevels = maturityLevels.stream()
-            .sorted(comparingInt(MaturityLevel::getLevel))
-            .toList();
-        return sortedMaturityLevels.get((sortedMaturityLevels.size() / 2));
     }
 
 }

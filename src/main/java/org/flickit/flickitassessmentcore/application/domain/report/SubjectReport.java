@@ -1,7 +1,6 @@
 package org.flickit.flickitassessmentcore.application.domain.report;
 
 import java.util.List;
-import java.util.UUID;
 
 public record SubjectReport(SubjectReportItem subject,
                             List<AttributeReportItem> topStrengths,

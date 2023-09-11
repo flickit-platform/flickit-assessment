@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
-import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.application.domain.report.AssessmentReport;
 import org.flickit.flickitassessmentcore.application.domain.report.AssessmentReport.AssessmentReportItem;
-import org.flickit.flickitassessmentcore.application.domain.report.AssessmentReport.AttributeReportItem;
 import org.flickit.flickitassessmentcore.application.domain.report.AssessmentReport.SubjectReportItem;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
@@ -18,10 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Collections.reverseOrder;
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.flickitassessmentcore.common.report.EntityReportCommonCalculations.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,8 +27,12 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
     private final LoadAssessmentReportInfoPort loadReportInfoPort;
     private final LoadAttributeValueListPort loadAttributeValueListPort;
 
-
-    private static final int TOP_COUNT = 3;
+    private static List<AssessmentReport.AttributeReportItem> mapToAssessmentReportAttrItem(List<Long> attributeValues) {
+        return attributeValues
+            .stream()
+            .map(AssessmentReport.AttributeReportItem::new)
+            .toList();
+    }
 
     @Override
     public AssessmentReport reportAssessment(Param param) {
@@ -47,8 +47,8 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
         var assessmentReportItem = buildAssessment(assessmentResult);
         var subjectReportItems = buildSubjects(assessmentResult);
         var midLevelMaturity = middleLevel(maturityLevels);
-        var topStrengths = getTopStrengths(attributeValues, midLevelMaturity);
-        var topWeaknesses = getTopWeaknesses(attributeValues, midLevelMaturity);
+        var topStrengths = mapToAssessmentReportAttrItem(getTopStrengths(attributeValues, midLevelMaturity));
+        var topWeaknesses = mapToAssessmentReportAttrItem(getTopWeaknesses(attributeValues, midLevelMaturity));
 
         return new AssessmentReport(
             assessmentReportItem,
@@ -74,39 +74,6 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
             .stream()
             .map(x -> new SubjectReportItem(x.getSubject().getId(), x.getMaturityLevel().getId()))
             .toList();
-    }
-
-    private List<AttributeReportItem> getTopStrengths(List<QualityAttributeValue> attributeValues, MaturityLevel midLevelMaturity) {
-        return attributeValues.stream()
-            .sorted(comparing(x -> x.getMaturityLevel().getLevel(), reverseOrder()))
-            .filter(x -> isHigherThanOrEqualToMiddleLevel(x.getMaturityLevel(), midLevelMaturity))
-            .limit(TOP_COUNT)
-            .map(x -> new AttributeReportItem(x.getQualityAttribute().getId()))
-            .toList();
-    }
-
-    private boolean isHigherThanOrEqualToMiddleLevel(MaturityLevel maturityLevel, MaturityLevel midLevelMaturity) {
-        return maturityLevel.getLevel() >= midLevelMaturity.getLevel();
-    }
-
-    private List<AttributeReportItem> getTopWeaknesses(List<QualityAttributeValue> attributeValues, MaturityLevel midLevelMaturity) {
-        return attributeValues.stream()
-            .sorted(comparingInt(x -> x.getMaturityLevel().getLevel()))
-            .filter(x -> isLowerThanMiddleLevel(x.getMaturityLevel(), midLevelMaturity))
-            .limit(TOP_COUNT)
-            .map(x -> new AttributeReportItem(x.getQualityAttribute().getId()))
-            .toList();
-    }
-
-    private boolean isLowerThanMiddleLevel(MaturityLevel maturityLevel, MaturityLevel midLevelMaturity) {
-        return maturityLevel.getLevel() < midLevelMaturity.getLevel();
-    }
-
-    private MaturityLevel middleLevel(List<MaturityLevel> maturityLevels) {
-        var sortedMaturityLevels = maturityLevels.stream()
-            .sorted(comparingInt(MaturityLevel::getLevel))
-            .toList();
-        return sortedMaturityLevels.get((sortedMaturityLevels.size() / 2));
     }
 
 }

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ReportSubjectServiceTest {
+class ReportSubjectServiceTest {
 
     @InjectMocks
     private ReportSubjectService service;

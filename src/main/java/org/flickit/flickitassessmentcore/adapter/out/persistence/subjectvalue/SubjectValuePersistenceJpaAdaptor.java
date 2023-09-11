@@ -37,7 +37,6 @@ public class SubjectValuePersistenceJpaAdaptor implements
     @Override
     public SubjectValue load(Long subjectId) {
         SubjectValueJpaEntity entity = repository.findBySubjectIdOrderByLastModificationTimeDesc(subjectId).get(0);
-        SubjectValue subjectValue = SubjectValueMapper.mapToDomainModel(entity);
-        return subjectValue;
+        return SubjectValueMapper.mapToDomainModel(entity);
     }
 }

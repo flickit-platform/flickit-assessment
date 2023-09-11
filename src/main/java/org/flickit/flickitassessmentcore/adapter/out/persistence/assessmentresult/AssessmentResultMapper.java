@@ -4,8 +4,6 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.Asse
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 
-import java.util.ArrayList;
-
 public class AssessmentResultMapper {
 
 
