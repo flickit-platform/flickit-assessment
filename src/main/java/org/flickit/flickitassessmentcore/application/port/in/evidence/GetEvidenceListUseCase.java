@@ -22,6 +22,9 @@ public interface GetEvidenceListUseCase {
         @NotNull(message = GET_EVIDENCE_LIST_QUESTION_ID_NOT_NULL)
         Long questionId;
 
+        @NotNull(message = GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL)
+        UUID assessmentId;
+
         @Min(value = 10, message = GET_EVIDENCE_LIST_SIZE_MIN)
         @Max(value = 100, message = GET_EVIDENCE_LIST_SIZE_MAX)
         int size;
@@ -29,8 +32,9 @@ public interface GetEvidenceListUseCase {
         @Min(value = 0, message = GET_EVIDENCE_LIST_PAGE_MIN)
         int page;
 
-        public Param(Long questionId, int size, int page) {
+        public Param(Long questionId, UUID assessmentId, int size, int page) {
             this.questionId = questionId;
+            this.assessmentId = assessmentId;
             this.size = size;
             this.page = page;
             this.validateSelf();
