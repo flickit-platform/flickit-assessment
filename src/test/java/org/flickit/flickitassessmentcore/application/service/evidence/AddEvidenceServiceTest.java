@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,41 +56,46 @@ public class AddEvidenceServiceTest {
 
     @Test
     void addEvidence_EmptyDesc_ReturnsErrorMessage() {
-        assertThrows(ConstraintViolationException.class, () -> service.addEvidence(new AddEvidenceUseCase.Param(
+        var throwable = assertThrows(ConstraintViolationException.class, () -> service.addEvidence(new AddEvidenceUseCase.Param(
             "",
             1L,
             UUID.randomUUID(),
             1L
-        )), ADD_EVIDENCE_DESC_NOT_BLANK);
+        )));
+        assertThat(throwable).hasMessageContaining("description: " + ADD_EVIDENCE_DESC_NOT_BLANK);
+        assertThat(throwable).hasMessageContaining("description: " + ADD_EVIDENCE_DESC_SIZE_MIN);
     }
 
     @Test
     void addEvidence_NullCreatedById_ReturnsErrorMessage() {
-        assertThrows(ConstraintViolationException.class, () -> service.addEvidence(new AddEvidenceUseCase.Param(
+        var throwable = assertThrows(ConstraintViolationException.class, () -> service.addEvidence(new AddEvidenceUseCase.Param(
             "desc",
             null,
             UUID.randomUUID(),
             1L
-        )), ADD_EVIDENCE_CREATED_BY_ID_NOT_NULL);
+        )));
+        assertThat(throwable).hasMessage("createdById: " + ADD_EVIDENCE_CREATED_BY_ID_NOT_NULL);
     }
 
     @Test
     void addEvidence_NullAssessmentId_ReturnsErrorMessage() {
-        assertThrows(ConstraintViolationException.class, () -> service.addEvidence(new AddEvidenceUseCase.Param(
+        var throwable = assertThrows(ConstraintViolationException.class, () -> service.addEvidence(new AddEvidenceUseCase.Param(
             "desc",
             1L,
             null,
             1L
-        )), ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL);
+        )));
+        assertThat(throwable).hasMessage("assessmentId: " + ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
     void addEvidence_NullQuestionId_ReturnsErrorMessage() {
-        assertThrows(ConstraintViolationException.class, () -> service.addEvidence(new AddEvidenceUseCase.Param(
+        var throwable = assertThrows(ConstraintViolationException.class, () -> service.addEvidence(new AddEvidenceUseCase.Param(
             "desc",
             1L,
             UUID.randomUUID(),
             null
-        )), ADD_EVIDENCE_QUESTION_ID_NOT_NULL);
+        )));
+        assertThat(throwable).hasMessage("questionId: " + ADD_EVIDENCE_QUESTION_ID_NOT_NULL);
     }
 }
