@@ -56,11 +56,12 @@ public class AddEvidenceServiceTest {
 
     @Test
     void addEvidence_EmptyDesc_ReturnsErrorMessage() {
+        UUID assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new AddEvidenceUseCase.Param(
             "",
             1L,
-            UUID.randomUUID(),
+            assessmentId,
             1L
         ));
         assertThat(throwable).hasMessageContaining("description: " + ADD_EVIDENCE_DESC_NOT_BLANK)
@@ -69,10 +70,11 @@ public class AddEvidenceServiceTest {
 
     @Test
     void addEvidence_NullCreatedById_ReturnsErrorMessage() {
+        UUID assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class, () -> new AddEvidenceUseCase.Param(
             "desc",
             null,
-            UUID.randomUUID(),
+            assessmentId,
             1L
         ));
         assertThat(throwable).hasMessage("createdById: " + ADD_EVIDENCE_CREATED_BY_ID_NOT_NULL);
@@ -91,12 +93,15 @@ public class AddEvidenceServiceTest {
 
     @Test
     void addEvidence_NullQuestionId_ReturnsErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class, () -> new AddEvidenceUseCase.Param(
-            "desc",
-            1L,
-            UUID.randomUUID(),
-            null
-        ));
+        UUID assessmentId = UUID.randomUUID();
+        var throwable = assertThrows(ConstraintViolationException.class, () -> {
+            new AddEvidenceUseCase.Param(
+                "desc",
+                1L,
+                assessmentId,
+                null
+            );
+        });
         assertThat(throwable).hasMessage("questionId: " + ADD_EVIDENCE_QUESTION_ID_NOT_NULL);
     }
 }
