@@ -11,6 +11,9 @@ import static java.util.Comparator.comparingInt;
 
 public class EntityReportCommonCalculations {
 
+    private EntityReportCommonCalculations() {
+    }
+
     private static final int TOP_COUNT = 3;
 
     public static List<Long> getTopStrengths(List<QualityAttributeValue> attributeValues, MaturityLevel midLevelMaturity) {
