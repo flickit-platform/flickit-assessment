@@ -80,8 +80,8 @@ class UpdateAssessmentServiceTest {
         int colorId = AssessmentColor.BLUE.getId();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateAssessmentUseCase.Param(id, "", colorId));
-        assertThat(throwable).hasMessageContaining("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MIN);
-        assertThat(throwable).hasMessageContaining("title: " + UPDATE_ASSESSMENT_TITLE_NOT_BLANK);
+        assertThat(throwable).hasMessageContaining("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MIN)
+            .hasMessageContaining("title: " + UPDATE_ASSESSMENT_TITLE_NOT_BLANK);
     }
 
     @Test
