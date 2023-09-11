@@ -5,8 +5,10 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
+import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnsweredQuestionsCountUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByQuestionnaireIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.GetAnsweredQuestionsCountPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
@@ -17,8 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ANSWER_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 
 @Component
@@ -27,7 +28,8 @@ public class AnswerPersistenceJpaAdaptor implements
     CreateAnswerPort,
     UpdateAnswerOptionPort,
     LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
-    LoadAnswersByQuestionnaireIdPort {
+    LoadAnswersByQuestionnaireIdPort,
+    GetAnsweredQuestionsCountPort {
 
     private final AnswerJpaRepository repository;
 
@@ -75,4 +77,14 @@ public class AnswerPersistenceJpaAdaptor implements
             (int) pageResult.getTotalElements()
         );
     }
+
+    @Override
+    public GetAnsweredQuestionsCountUseCase.Progress<UUID> getAnsweredQuestionsCountById(UUID assessmentId) {
+        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ANSWERED_QUESTIONS_COUNT_ASSESSMENT_RESULT_NOT_FOUND));
+
+        Integer answersCount = repository.getCountByAssessmentResult_Id(assessmentResult.getId());
+        return new GetAnsweredQuestionsCountUseCase.Progress<>(assessmentId, answersCount);
+    }
+
 }

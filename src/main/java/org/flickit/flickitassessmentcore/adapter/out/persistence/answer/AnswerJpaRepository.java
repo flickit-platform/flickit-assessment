@@ -18,6 +18,9 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     @Query("UPDATE AnswerJpaEntity a SET a.answerOptionId=:answerOptionId WHERE a.id=:id")
     void updateAnswerOptionById(UUID id, Long answerOptionId);
 
+    @Query("SELECT COUNT(a) FROM AnswerJpaEntity a where a.assessmentResult.id=:assessmentResultId AND a.answerOptionId IS NOT NULL")
+    Integer getCountByAssessmentResult_Id(UUID assessmentResultId);
+
     List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
     Page<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIdAsc(UUID assessmentResultId, Long questionnaireId, Pageable pageable);
