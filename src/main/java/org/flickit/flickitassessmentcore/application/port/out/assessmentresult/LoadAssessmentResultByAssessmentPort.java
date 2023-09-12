@@ -4,7 +4,6 @@ import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.service.exception.CalculateNotValidException;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public interface LoadAssessmentResultByAssessmentPort {

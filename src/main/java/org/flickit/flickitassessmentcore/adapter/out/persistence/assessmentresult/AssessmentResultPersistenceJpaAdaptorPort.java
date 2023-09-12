@@ -10,7 +10,6 @@ import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.L
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
