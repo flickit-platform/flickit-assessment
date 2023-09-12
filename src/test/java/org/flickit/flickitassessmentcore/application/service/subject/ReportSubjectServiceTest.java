@@ -6,10 +6,10 @@ import org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevel
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.port.in.subject.ReportSubjectUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultBySubjectValueIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueBySubjectIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueBySubjectIdAndAssessmentResultPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,10 +37,10 @@ class ReportSubjectServiceTest {
     private ReportSubjectService service;
 
     @Mock
-    private LoadAssessmentResultBySubjectValueIdPort loadAssessmentResultBySubjectValueIdPort;
+    private LoadAssessmentResultByAssessmentPort loadAssessmentResultByAssessmentPort;
 
     @Mock
-    private LoadSubjectValueBySubjectIdPort loadSubjectValueBySubjectIdPort;
+    private LoadSubjectValueBySubjectIdAndAssessmentResultPort loadSubjectValueBySubjectIdAndAssessmentResultPort;
 
     @Mock
     private LoadAttributeValueListPort loadAttributeValueListPort;
@@ -83,10 +83,12 @@ class ReportSubjectServiceTest {
         Map<Long, MaturityLevel> maturityLevels = assessmentResult.getAssessment().getAssessmentKit().getMaturityLevels()
             .stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
-        ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(subjectValue.getSubject().getId());
+        ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(
+            assessmentResult.getAssessment().getId(),
+            subjectValue.getSubject().getId());
 
-        when(loadAssessmentResultBySubjectValueIdPort.load(subjectValue.getId())).thenReturn(Optional.of(assessmentResult));
-        when(loadSubjectValueBySubjectIdPort.load(subjectValue.getSubject().getId())).thenReturn(subjectValue);
+        when(loadAssessmentResultByAssessmentPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
+        when(loadSubjectValueBySubjectIdAndAssessmentResultPort.load(subjectValue.getSubject().getId(), assessmentResult.getId())).thenReturn(subjectValue);
         when(loadAttributeValueListPort.loadAttributeValues(assessmentResult.getId(), maturityLevels)).thenReturn(qaValues);
         when(maturityLevelRestAdapter.loadByKitId(assessmentResult.getAssessment().getAssessmentKit().getId()))
             .thenReturn(maturityLevels.values().stream().toList());

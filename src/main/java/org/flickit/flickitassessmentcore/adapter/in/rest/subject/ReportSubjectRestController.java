@@ -9,20 +9,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 public class ReportSubjectRestController {
 
     private final ReportSubjectUseCase useCase;
 
-    @GetMapping("/subjects/{subjectId}/report")
-    public ResponseEntity<SubjectReport> reportSubject(@PathVariable("subjectId") Long subjectId) {
-        var param = toParam(subjectId);
+    @GetMapping("/assessments/{assessmentId}/report/subjects/{subjectId}")
+    public ResponseEntity<SubjectReport> reportSubject(
+        @PathVariable("assessmentId") UUID assessmentId,
+        @PathVariable("subjectId") Long subjectId) {
+        var param = toParam(assessmentId, subjectId);
         var result = useCase.reportSubject(param);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private ReportSubjectUseCase.Param toParam(Long subjectId) {
-        return new ReportSubjectUseCase.Param(subjectId);
+    private ReportSubjectUseCase.Param toParam(UUID assessmentId, Long subjectId) {
+        return new ReportSubjectUseCase.Param(assessmentId, subjectId);
     }
 }

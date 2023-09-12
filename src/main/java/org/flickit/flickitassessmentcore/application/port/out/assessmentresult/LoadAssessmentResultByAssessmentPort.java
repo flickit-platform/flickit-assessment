@@ -7,15 +7,15 @@ import org.flickit.flickitassessmentcore.application.service.exception.ResourceN
 import java.util.Optional;
 import java.util.UUID;
 
-public interface LoadAssessmentResultBySubjectValueIdPort {
+public interface LoadAssessmentResultByAssessmentPort {
 
     /**
-     * Loads a result by the given {@code subValueId}.
+     * Loads a result by the given {@code assessmentId}.
      *
-     * @param subValueId The ID of the subject value to load the result for.
+     * @param assessmentId The ID of the assessment to load the result for.
      * @return The loaded AssessmentResult object.
-     * @throws ResourceNotFoundException  If the subject value is not found.
-     * @throws CalculateNotValidException If the subject value is not valid.
+     * @throws ResourceNotFoundException  If the assessment is not found.
+     * @throws CalculateNotValidException If the assessment is not valid.
      */
-    Optional<AssessmentResult> load(UUID subValueId);
+    AssessmentResult load(UUID assessmentId);
 }

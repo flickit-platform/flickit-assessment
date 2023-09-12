@@ -5,14 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.flickitassessmentcore.application.domain.*;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
-import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport.QualityAttributeReportItem;
+import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport.AttributeReportItem;
 import org.flickit.flickitassessmentcore.application.port.in.subject.ReportSubjectUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultBySubjectValueIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueBySubjectIdPort;
-import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueBySubjectIdAndAssessmentResultPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.flickitassessmentcore.common.report.EntityReportCommonCalculations.*;
 
 @Service
@@ -29,28 +27,20 @@ import static org.flickit.flickitassessmentcore.common.report.EntityReportCommon
 @Slf4j
 public class ReportSubjectService implements ReportSubjectUseCase {
 
-    private static final int TOP_COUNT = 3;
-
-    private final LoadAssessmentResultBySubjectValueIdPort loadAssessmentResultBySubjectValueIdPort;
-    private final LoadSubjectValueBySubjectIdPort loadSubjectValueBySubjectIdPort;
+    private final LoadAssessmentResultByAssessmentPort loadAssessmentResultByAssessmentPort;
+    private final LoadSubjectValueBySubjectIdAndAssessmentResultPort loadSubjectValueBySubjectIdAndAssessmentResultPort;
     private final LoadAttributeValueListPort loadAttributeValueListPort;
     private final MaturityLevelRestAdapter maturityLevelRestAdapter;
     private final LoadAssessmentPort loadAssessmentPort;
     private final LoadSubjectByAssessmentKitIdPort loadSubjectByAssessmentKitIdPort;
 
-    private static List<SubjectReport.AttributeReportItem> mapToSubjectReportAttrItem(List<Long> attributeValues) {
-        return attributeValues
-            .stream()
-            .map(SubjectReport.AttributeReportItem::new)
-            .toList();
-    }
-
     @Override
     public SubjectReport reportSubject(Param param) {
-        var subjectValue = loadSubjectValueBySubjectIdPort.load(param.getSubjectId());
-        var result = loadAssessmentResultBySubjectValueIdPort.load(subjectValue.getId())
-            .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND));
-        var assessment = loadAssessmentPort.loadAssessment(result.getAssessment().getId());
+        var assessment = loadAssessmentPort.loadAssessment(param.getAssessmentId());
+        var result = loadAssessmentResultByAssessmentPort.load(param.getAssessmentId());
+        var subjectValue = loadSubjectValueBySubjectIdAndAssessmentResultPort.load(
+            param.getSubjectId(),
+            result.getId());
 
         var maturityLevels = maturityLevelRestAdapter.loadByKitId(assessment.getAssessmentKit().getId());
         var attributeValues = buildQualityAttributes(maturityLevels, result, assessment.getAssessmentKit(), param.getSubjectId());
@@ -93,9 +83,16 @@ public class ReportSubjectService implements ReportSubjectUseCase {
         );
     }
 
-    private List<QualityAttributeReportItem> buildAttributes(List<QualityAttributeValue> attributeValues) {
+    private List<AttributeReportItem> buildAttributes(List<QualityAttributeValue> attributeValues) {
         return attributeValues.stream()
-            .map(x -> new QualityAttributeReportItem(x.getQualityAttribute().getId(), x.getMaturityLevel().getId()))
+            .map(x -> new AttributeReportItem(x.getQualityAttribute().getId(), x.getMaturityLevel().getId()))
+            .toList();
+    }
+
+    private List<SubjectReport.TopAttributeItem> mapToSubjectReportAttrItem(List<Long> attributeValues) {
+        return attributeValues
+            .stream()
+            .map(SubjectReport.TopAttributeItem::new)
             .toList();
     }
 

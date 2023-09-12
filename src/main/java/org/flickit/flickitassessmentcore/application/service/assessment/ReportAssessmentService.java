@@ -27,10 +27,10 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
     private final LoadAssessmentReportInfoPort loadReportInfoPort;
     private final LoadAttributeValueListPort loadAttributeValueListPort;
 
-    private static List<AssessmentReport.AttributeReportItem> mapToAssessmentReportAttrItem(List<Long> attributeValues) {
+    private static List<AssessmentReport.TopAttributeItem> mapToAssessmentReportAttrItem(List<Long> attributeValues) {
         return attributeValues
             .stream()
-            .map(AssessmentReport.AttributeReportItem::new)
+            .map(AssessmentReport.TopAttributeItem::new)
             .toList();
     }
 

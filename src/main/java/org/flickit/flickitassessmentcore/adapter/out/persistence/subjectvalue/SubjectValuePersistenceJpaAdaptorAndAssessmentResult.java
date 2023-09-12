@@ -5,17 +5,21 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueBySubjectIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValueBySubjectIdAndAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
+import org.flickit.flickitassessmentcore.common.ErrorMessageKey;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND;
+
 @Component
 @RequiredArgsConstructor
-public class SubjectValuePersistenceJpaAdaptor implements
+public class SubjectValuePersistenceJpaAdaptorAndAssessmentResult implements
     CreateSubjectValuePort,
-    LoadSubjectValueBySubjectIdPort {
+    LoadSubjectValueBySubjectIdAndAssessmentResultPort {
 
     private final SubjectValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -35,8 +39,9 @@ public class SubjectValuePersistenceJpaAdaptor implements
 
 
     @Override
-    public SubjectValue load(Long subjectId) {
-        SubjectValueJpaEntity entity = repository.findBySubjectIdOrderByLastModificationTimeDesc(subjectId).get(0);
+    public SubjectValue load(Long subjectId, UUID resultId) {
+        SubjectValueJpaEntity entity = repository.findBySubjectIdOrderByLastModificationTimeDesc(subjectId, resultId)
+            .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
         return SubjectValueMapper.mapToDomainModel(entity);
     }
 }

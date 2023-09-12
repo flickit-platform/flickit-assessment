@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpaEntity, UUID> {
@@ -13,10 +14,8 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
     List<SubjectValueJpaEntity> findByAssessmentResultId(UUID resultId);
 
     @Query("SELECT s AS subVal FROM SubjectValueJpaEntity s " +
-        "LEFT JOIN AssessmentResultJpaEntity ar ON s.assessmentResult.id = ar.id " +
-        "WHERE ar.lastModificationTime = (SELECT MAX(r.lastModificationTime) FROM AssessmentResultJpaEntity r WHERE r.id = s.assessmentResult.id) " +
-        "ORDER BY ar.lastModificationTime DESC")
-    List<SubjectValueJpaEntity> findBySubjectIdOrderByLastModificationTimeDesc(Long subjectId);
+        "WHERE s.assessmentResult.id = :resultId AND s.subjectId = :subjectId")
+    Optional<SubjectValueJpaEntity> findBySubjectIdOrderByLastModificationTimeDesc(Long subjectId, UUID resultId);
 
     @Modifying
     @Query("update SubjectValueJpaEntity a set a.maturityLevelId = :maturityLevelId where a.id = :id")
