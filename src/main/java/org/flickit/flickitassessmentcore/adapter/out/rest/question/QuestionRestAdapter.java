@@ -61,4 +61,23 @@ public class QuestionRestAdapter {
 
         return responseEntity.getBody();
     }
+
+    public List<QuestionDto> loadImpactfulQuestionsBySubjectId(long subjectId) {
+        String url = String.format(properties.getBaseUrl() + properties.getGetImpactfulQuestionsUrl(), subjectId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(null, headers);
+        var responseEntity = flickitPlatformRestTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            requestEntity,
+            new ParameterizedTypeReference<List<QuestionDto>>() {
+            }
+        );
+        if (!responseEntity.getStatusCode().is2xxSuccessful())
+            throw new FlickitPlatformRestException(responseEntity.getStatusCode().value());
+
+        return responseEntity.getBody();
+    }
 }
