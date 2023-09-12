@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -70,12 +72,16 @@ class GetEvidenceListServiceTest {
     @Test
     void getEvidenceList_NullQuestion_ReturnErrorMessage() {
         UUID ASSESSMENT_ID = UUID.randomUUID();
-        assertThrows(ConstraintViolationException.class, () -> new GetEvidenceListUseCase.Param(null, ASSESSMENT_ID, 10, 0));
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new GetEvidenceListUseCase.Param(null, ASSESSMENT_ID, 10, 0));
+        assertThat(throwable).hasMessage("questionId: " + GET_EVIDENCE_LIST_QUESTION_ID_NOT_NULL);
     }
 
     @Test
     void getEvidenceList_NullAssessment_ReturnErrorMessage() {
-        assertThrows(ConstraintViolationException.class, () -> new GetEvidenceListUseCase.Param(0L, null, 10, 0));
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new GetEvidenceListUseCase.Param(0L, null, 10, 0));
+        assertThat(throwable).hasMessage("assessmentId: " + GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL);
     }
 
     private EvidenceListItem createEvidence() {
