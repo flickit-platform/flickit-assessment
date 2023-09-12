@@ -2,8 +2,8 @@ package org.flickit.flickitassessmentcore.application.service.answer;
 
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentAndQuestionPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentAndQuestionPort.Result;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort.Result;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class SubmitAnswerServiceTest {
     private UpdateAnswerOptionPort updateAnswerPort;
 
     @Mock
-    private LoadAnswerIdAndOptionIdByAssessmentAndQuestionPort loadAnswerIdAndOptionIdPort;
+    private LoadAnswerPort loadAnswerIdAndOptionIdPort;
 
     @Mock
     private InvalidateAssessmentResultPort invalidateAssessmentResultPort;

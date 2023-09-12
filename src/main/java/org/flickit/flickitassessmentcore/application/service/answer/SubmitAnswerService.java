@@ -3,7 +3,7 @@ package org.flickit.flickitassessmentcore.application.service.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentAndQuestionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
     private final CreateAnswerPort createAnswerPort;
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
-    private final LoadAnswerIdAndOptionIdByAssessmentAndQuestionPort loadAnswerIdAndOptionIdPort;
+    private final LoadAnswerPort loadAnswerIdAndOptionIdPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
     @Override
