@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.question;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.PaginatedDataItemsDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.exception.FlickitPlatformRestException;
+import org.flickit.flickitassessmentcore.application.port.out.question.LoadImpactfulQuestionsBySubjectPort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
-public class QuestionRestAdapter {
+public class QuestionRestAdapter implements LoadImpactfulQuestionsBySubjectPort {
 
     private final RestTemplate flickitPlatformRestTemplate;
     private final FlickitPlatformRestProperties properties;
@@ -62,6 +63,7 @@ public class QuestionRestAdapter {
         return responseEntity.getBody();
     }
 
+    @Override
     public List<QuestionDto> loadImpactfulQuestionsBySubjectId(long subjectId) {
         String url = String.format(properties.getBaseUrl() + properties.getGetImpactfulQuestionsUrl(), subjectId);
         HttpHeaders headers = new HttpHeaders();

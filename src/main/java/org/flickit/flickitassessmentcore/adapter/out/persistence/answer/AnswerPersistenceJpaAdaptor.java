@@ -6,6 +6,7 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByQuestionnaireIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.CountAnswersByQuestionAndAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,7 +29,8 @@ public class AnswerPersistenceJpaAdaptor implements
     CreateAnswerPort,
     UpdateAnswerOptionPort,
     LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
-    LoadAnswersByQuestionnaireIdPort {
+    LoadAnswersByQuestionnaireIdPort,
+    CountAnswersByQuestionAndAssessmentResultPort {
 
     private final AnswerJpaRepository repository;
 
@@ -74,5 +77,10 @@ public class AnswerPersistenceJpaAdaptor implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public int countAnswersByQuestionIdAndAssessmentResult(List<Long> questionIds, UUID resultId) {
+        return repository.getCountByQuestionIdAndAssessmentResultId(questionIds, resultId);
     }
 }

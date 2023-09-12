@@ -62,5 +62,6 @@ public class ErrorMessageKey {
     public static final String REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID = "report-assessment.assessmentResult.notValid";
 
     public static final String GET_SUBJECT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-subject-progress.assessment.id.notNull";
+    public static final String GET_SUBJECT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND = "get-subject-progress.assessmentResultId.notFound";
     public static final String GET_SUBJECT_PROGRESS_SUBJECT_ID_NOT_NULL = "get-subject-progress.subject.id.notNull";
 }

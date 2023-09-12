@@ -3,21 +3,25 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresu
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaRepository;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_SUBJECT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
 
 
 @Component
 @RequiredArgsConstructor
 public class AssessmentResultPersistenceJpaAdaptor implements
     InvalidateAssessmentResultPort,
-    CreateAssessmentResultPort {
+    CreateAssessmentResultPort,
+    LoadAssessmentResultByAssessmentPort {
 
     private final AssessmentResultJpaRepository repo;
     private final AssessmentJpaRepository assessmentRepo;
@@ -35,6 +39,13 @@ public class AssessmentResultPersistenceJpaAdaptor implements
         entity.setAssessment(assessment);
         AssessmentResultJpaEntity savedEntity = repo.save(entity);
         return savedEntity.getId();
+    }
+
+    @Override
+    public AssessmentResult loadByAssessmentId(UUID assessmentId) {
+        var result = repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_SUBJECT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
+        return AssessmentResultMapper.mapToDomain(result);
     }
 }
 
