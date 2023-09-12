@@ -7,7 +7,6 @@ import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedRespon
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByQuestionnaireIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.GetAnsweredQuestionsCountPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
@@ -27,8 +26,7 @@ public class AnswerPersistenceJpaAdaptor implements
     CreateAnswerPort,
     UpdateAnswerOptionPort,
     LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
-    LoadAnswersByQuestionnaireIdPort,
-    GetAnsweredQuestionsCountPort {
+    LoadAnswersByQuestionnaireIdPort {
 
     private final AnswerJpaRepository repository;
 
@@ -75,15 +73,6 @@ public class AnswerPersistenceJpaAdaptor implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
-    }
-
-    @Override
-    public GetAnsweredQuestionsCountPort.Result getAnsweredQuestionsCountById(UUID assessmentId) {
-        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ANSWERED_QUESTIONS_COUNT_ASSESSMENT_RESULT_NOT_FOUND));
-
-        Integer answersCount = repository.getCountByAssessmentResult_Id(assessmentResult.getId());
-        return new GetAnsweredQuestionsCountPort.Result(assessmentId, answersCount);
     }
 
 }

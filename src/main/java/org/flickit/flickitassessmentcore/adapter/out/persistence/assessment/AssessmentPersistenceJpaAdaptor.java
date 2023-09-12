@@ -1,25 +1,32 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
+import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
+
 @Component
 @RequiredArgsConstructor
 public class AssessmentPersistenceJpaAdaptor implements
     CreateAssessmentPort,
     LoadAssessmentListItemsBySpacePort,
-    UpdateAssessmentPort {
+    UpdateAssessmentPort,
+    GetAssessmentProgressPort {
 
     private final AssessmentJpaRepository repository;
+    private final AssessmentResultJpaRepository resultRepository;
 
     @Override
     public UUID persist(CreateAssessmentPort.Param param) {
@@ -53,5 +60,14 @@ public class AssessmentPersistenceJpaAdaptor implements
             param.colorId(),
             param.lastModificationTime());
         return new UpdateAssessmentPort.Result(param.id());
+    }
+
+    @Override
+    public GetAssessmentProgressPort.Result getAssessmentProgressById(UUID assessmentId) {
+        var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
+
+        Integer answersCount = repository.getCountByAssessmentResult_Id(assessmentResult.getId());
+        return new GetAssessmentProgressPort.Result(assessmentId, answersCount);
     }
 }
