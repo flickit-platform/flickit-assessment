@@ -21,4 +21,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
     Page<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIdAsc(UUID assessmentResultId, Long questionnaireId, Pageable pageable);
+
+    @Query("SELECT COUNT(a) FROM AnswerJpaEntity a where a.assessmentResult.id=:assessmentResultId " +
+        "AND a.answerOptionId IS NOT NULL")
+    int getCountByAssessmentResult_Id(UUID assessmentResultId);
 }

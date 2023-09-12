@@ -33,4 +33,5 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 @Param(value = "code") String code,
                 @Param(value = "colorId") Integer colorId,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
+
 }

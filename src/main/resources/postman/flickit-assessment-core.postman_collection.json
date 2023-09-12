@@ -315,6 +315,36 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Assessment Progress",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/c8cd59b5-d75a-4226-8d4a-df243cfeace1/progress",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"c8cd59b5-d75a-4226-8d4a-df243cfeace1",
+						"progress"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
