@@ -39,9 +39,7 @@ class GetAnsweredQuestionsCountServiceTest {
         Param param = new Param(assessmentId);
 
         when(getAnsweredQuestionsCountPort.getAnsweredQuestionsCountById(assessmentId))
-            .thenReturn(new GetAnsweredQuestionsCountUseCase.Progress<UUID>(
-                assessmentId, 5
-            ));
+            .thenReturn(new GetAnsweredQuestionsCountPort.Result(assessmentId, 5));
 
         var result = service.getAnsweredQuestionsCount(param);
 
@@ -51,8 +49,8 @@ class GetAnsweredQuestionsCountServiceTest {
         assertEquals(assessmentId, answerPortAssessmentId.getValue());
         verify(getAnsweredQuestionsCountPort, times(1)).getAnsweredQuestionsCountById(any());
 
-        assertEquals(assessmentId, result.assessmentProgress().id());
-        assertEquals(5, result.assessmentProgress().allAnswersCount());
+        assertEquals(assessmentId, result.id());
+        assertEquals(5, result.allAnswersCount());
     }
 
     @Test

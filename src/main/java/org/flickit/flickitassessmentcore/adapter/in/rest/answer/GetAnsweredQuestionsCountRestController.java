@@ -27,6 +27,6 @@ public class GetAnsweredQuestionsCountRestController {
     }
 
     private GetAnsweredQuestionsCountResponseDto toResponse(GetAnsweredQuestionsCountUseCase.Result result) {
-        return new GetAnsweredQuestionsCountResponseDto(result.assessmentProgress());
+        return new GetAnsweredQuestionsCountResponseDto(result.id(), result.allAnswersCount());
     }
 }

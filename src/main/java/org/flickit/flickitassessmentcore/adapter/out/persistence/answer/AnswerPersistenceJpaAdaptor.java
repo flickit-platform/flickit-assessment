@@ -79,12 +79,12 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public GetAnsweredQuestionsCountUseCase.Progress<UUID> getAnsweredQuestionsCountById(UUID assessmentId) {
+    public GetAnsweredQuestionsCountPort.Result getAnsweredQuestionsCountById(UUID assessmentId) {
         var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ANSWERED_QUESTIONS_COUNT_ASSESSMENT_RESULT_NOT_FOUND));
 
         Integer answersCount = repository.getCountByAssessmentResult_Id(assessmentResult.getId());
-        return new GetAnsweredQuestionsCountUseCase.Progress<>(assessmentId, answersCount);
+        return new GetAnsweredQuestionsCountPort.Result(assessmentId, answersCount);
     }
 
 }

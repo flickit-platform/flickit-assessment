@@ -15,7 +15,7 @@ public class GetAnsweredQuestionsCountService implements GetAnsweredQuestionsCou
 
     @Override
     public Result getAnsweredQuestionsCount(Param param) {
-        var assessmentProgress = getAnsweredQuestionsCountPort.getAnsweredQuestionsCountById(param.getAssessmentId());
-        return new Result(assessmentProgress);
+        var result = getAnsweredQuestionsCountPort.getAnsweredQuestionsCountById(param.getAssessmentId());
+        return new Result(result.id(), result.allAnswersCount());
     }
 }

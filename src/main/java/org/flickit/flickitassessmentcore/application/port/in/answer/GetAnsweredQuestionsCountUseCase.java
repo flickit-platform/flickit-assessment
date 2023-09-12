@@ -24,9 +24,7 @@ public interface GetAnsweredQuestionsCountUseCase {
         }
     }
 
-    record Result(Progress<UUID> assessmentProgress){
+    record Result(UUID id, Integer allAnswersCount){
     }
 
-    record Progress<K>(K id, Integer allAnswersCount) {
-    }
 }
