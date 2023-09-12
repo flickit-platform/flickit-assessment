@@ -317,7 +317,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Answered Questions Count",
+			"name": "Get Assessment Progress",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
 			},

@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
@@ -27,6 +28,7 @@ public class AssessmentPersistenceJpaAdaptor implements
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
+    private final AnswerJpaRepository answerRepository;
 
     @Override
     public UUID persist(CreateAssessmentPort.Param param) {
@@ -67,7 +69,7 @@ public class AssessmentPersistenceJpaAdaptor implements
         var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
 
-        Integer answersCount = repository.getCountByAssessmentResult_Id(assessmentResult.getId());
+        int answersCount = answerRepository.getCountByAssessmentResult_Id(assessmentResult.getId());
         return new GetAssessmentProgressPort.Result(assessmentId, answersCount);
     }
 }

@@ -6,6 +6,6 @@ public interface GetAssessmentProgressPort {
 
     Result getAssessmentProgressById(UUID assessmentId);
 
-    record Result(UUID id, Integer allAnswersCount) {
+    record Result(UUID id, int allAnswersCount) {
     }
 }

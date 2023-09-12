@@ -33,7 +33,7 @@ class GetAssessmentProgressServiceTest {
     private GetAssessmentProgressPort getAssessmentProgressPort;
 
     @Test
-    void getAnsweredQuestionsCount_ValidResult() {
+    void getAssessmentProgress_ValidResult() {
         var assessment = AssessmentMother.assessment();
         UUID assessmentId = assessment.getId();
         Param param = new Param(assessmentId);
@@ -54,13 +54,13 @@ class GetAssessmentProgressServiceTest {
     }
 
     @Test
-    void getAnsweredQuestionsCount_NullAssessmentId() {
+    void getAssessmentProgress_NullAssessmentId() {
         var throwable = assertThrows(ConstraintViolationException.class, () -> new Param(null));
         Assertions.assertThat(throwable).hasMessage("assessmentId: " + GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void getAnsweredQuestionsCount_InValidAssessmentId() {
+    void getAssessmentProgress_InValidAssessmentId() {
         var assessment = AssessmentMother.assessment();
         UUID assessmentId = assessment.getId();
         Param param = new Param(assessmentId);

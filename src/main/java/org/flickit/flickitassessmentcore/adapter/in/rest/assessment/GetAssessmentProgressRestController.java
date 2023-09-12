@@ -16,7 +16,7 @@ public class GetAssessmentProgressRestController {
 
     private final GetAssessmentProgressUseCase useCase;
 
-    @GetMapping("assessments/{assessmentId}/progress")
+    @GetMapping("/assessments/{assessmentId}/progress")
     public ResponseEntity<GetAssessmentProgressResponseDto> getAssessmentProgress(@PathVariable("assessmentId") UUID assessmentId) {
         var response = toResponse(useCase.getAssessmentProgress(toParam(assessmentId)));
         return new ResponseEntity<>(response, HttpStatus.OK);

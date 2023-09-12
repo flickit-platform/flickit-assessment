@@ -34,7 +34,4 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 @Param(value = "colorId") Integer colorId,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
 
-    @Query("SELECT COUNT(a) FROM AnswerJpaEntity a where a.assessmentResult.id=:assessmentResultId " +
-        "AND a.answerOptionId IS NOT NULL")
-    Integer getCountByAssessmentResult_Id(UUID assessmentResultId);
 }
