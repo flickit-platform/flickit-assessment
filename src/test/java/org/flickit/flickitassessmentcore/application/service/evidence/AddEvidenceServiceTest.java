@@ -55,17 +55,29 @@ public class AddEvidenceServiceTest {
     }
 
     @Test
-    void addEvidence_EmptyDesc_ReturnsErrorMessage() {
+    void addEvidence_BlankDesc_ReturnsErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new AddEvidenceUseCase.Param(
-            "",
+            "    ",
             1L,
             assessmentId,
             1L
         ));
-        assertThat(throwable).hasMessageContaining("description: " + ADD_EVIDENCE_DESC_NOT_BLANK)
-            .hasMessageContaining("description: " + ADD_EVIDENCE_DESC_SIZE_MIN);
+        assertThat(throwable).hasMessage("description: " + ADD_EVIDENCE_DESC_NOT_BLANK);
+    }
+
+    @Test
+    void addEvidence_InvalidDescMinSize_ReturnsErrorMessage() {
+        UUID assessmentId = UUID.randomUUID();
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new AddEvidenceUseCase.Param(
+                "ab",
+                1L,
+                assessmentId,
+                1L
+            ));
+        assertThat(throwable).hasMessage("description: " + ADD_EVIDENCE_DESC_SIZE_MIN);
     }
 
     @Test

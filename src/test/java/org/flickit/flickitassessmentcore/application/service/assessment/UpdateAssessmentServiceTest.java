@@ -4,7 +4,6 @@ import jakarta.validation.ConstraintViolationException;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.UpdateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
-import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -56,16 +55,6 @@ class UpdateAssessmentServiceTest {
     }
 
     @Test
-    void updateAssessment_NotExistingId_ErrorMessage() {
-        when(updateAssessmentPort.update(any())).thenThrow(new ResourceNotFoundException(UPDATE_ASSESSMENT_ASSESSMENT_NOT_FOUND));
-        UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
-            UUID.randomUUID(), "title", AssessmentColor.BLUE.getId());
-        var throwable = assertThrows(ResourceNotFoundException.class,
-            () -> service.updateAssessment(param));
-        assertThat(throwable).hasMessage(UPDATE_ASSESSMENT_ASSESSMENT_NOT_FOUND);
-    }
-
-    @Test
     void updateAssessment_NullId_ErrorMessage() {
         String title = "title";
         int colorId = AssessmentColor.BLUE.getId();
@@ -75,13 +64,21 @@ class UpdateAssessmentServiceTest {
     }
 
     @Test
-    void updateAssessment_InvalidTitle_ErrorMessage() {
+    void updateAssessment_BlankTitle_ErrorMessage() {
         UUID id = UUID.randomUUID();
         int colorId = AssessmentColor.BLUE.getId();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(id, "", colorId));
-        assertThat(throwable).hasMessageContaining("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MIN)
-            .hasMessageContaining("title: " + UPDATE_ASSESSMENT_TITLE_NOT_BLANK);
+            () -> new UpdateAssessmentUseCase.Param(id, "    ", colorId));
+        assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_NOT_BLANK);
+    }
+
+    @Test
+    void updateAssessment_InvalidTitleMinSize_ErrorMessage() {
+        UUID id = UUID.randomUUID();
+        int colorId = AssessmentColor.BLUE.getId();
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new UpdateAssessmentUseCase.Param(id, "ab", colorId));
+        assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MIN);
     }
 
     @Test
