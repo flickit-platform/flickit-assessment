@@ -28,10 +28,4 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
                               @Param(value = "isValid") boolean isValid,
                               @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
 
-    @Query("SELECT ar AS result FROM AssessmentResultJpaEntity ar " +
-        "LEFT JOIN AssessmentJpaEntity a ON ar.assessment = a.id " +
-        "WHERE ar.id IN (SELECT s.assessmentResult.id FROM SubjectValueJpaEntity s WHERE s.assessmentResult.id = ar.id AND s.id=:subjectId) " +
-        "AND ar.lastModificationTime = (SELECT MAX(r.lastModificationTime) FROM AssessmentResultJpaEntity r WHERE r.assessment.id = a.id) " +
-        "ORDER BY ar.lastModificationTime DESC")
-    AssessmentResultJpaEntity findFirstBySubjectValueId(@Param("subjectId") UUID subjectId);
 }

@@ -6,10 +6,11 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.Asse
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
@@ -18,10 +19,10 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.REPORT_SU
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentResultPersistenceJpaAdaptorPort implements
+public class AssessmentResultPersistenceJpaAdaptor implements
     InvalidateAssessmentResultPort,
     CreateAssessmentResultPort,
-    LoadAssessmentResultByAssessmentPort {
+    LoadAssessmentResultPort {
 
     private final AssessmentResultJpaRepository repo;
     private final AssessmentJpaRepository assessmentRepo;
@@ -42,10 +43,9 @@ public class AssessmentResultPersistenceJpaAdaptorPort implements
     }
 
     @Override
-    public AssessmentResult load(UUID assessmentId) {
-        var result = repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND));
-        return AssessmentResultMapper.mapToDomainEntity(result);
+    public Optional<AssessmentResult> loadByAssessmentId(UUID assessmentId) {
+        return repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .map(AssessmentResultMapper::mapToDomainModel);
     }
 }
 

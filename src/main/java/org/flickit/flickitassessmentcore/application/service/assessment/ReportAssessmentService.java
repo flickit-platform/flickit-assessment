@@ -27,13 +27,6 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
     private final LoadAssessmentReportInfoPort loadReportInfoPort;
     private final LoadAttributeValueListPort loadAttributeValueListPort;
 
-    private static List<AssessmentReport.TopAttributeItem> mapToAssessmentReportAttrItem(List<Long> attributeValues) {
-        return attributeValues
-            .stream()
-            .map(AssessmentReport.TopAttributeItem::new)
-            .toList();
-    }
-
     @Override
     public AssessmentReport reportAssessment(Param param) {
         var assessmentResult = loadReportInfoPort.load(param.getAssessmentId());
@@ -76,4 +69,11 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
             .toList();
     }
 
+
+    private List<AssessmentReport.TopAttributeItem> mapToAssessmentReportAttrItem(List<Long> attributeValues) {
+        return attributeValues
+            .stream()
+            .map(AssessmentReport.TopAttributeItem::new)
+            .toList();
+    }
 }

@@ -13,9 +13,7 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
 
     List<SubjectValueJpaEntity> findByAssessmentResultId(UUID resultId);
 
-    @Query("SELECT s AS subVal FROM SubjectValueJpaEntity s " +
-        "WHERE s.assessmentResult.id = :resultId AND s.subjectId = :subjectId")
-    Optional<SubjectValueJpaEntity> findBySubjectIdOrderByLastModificationTimeDesc(Long subjectId, UUID resultId);
+    Optional<SubjectValueJpaEntity> findBySubjectIdAndAssessmentResult_Id(Long subjectId, UUID assessmentResultId);
 
     @Modifying
     @Query("update SubjectValueJpaEntity a set a.maturityLevelId = :maturityLevelId where a.id = :id")

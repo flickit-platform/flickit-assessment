@@ -1,11 +1,9 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.springframework.data.domain.PageRequest;
@@ -19,8 +17,7 @@ import java.util.UUID;
 public class AssessmentPersistenceJpaAdaptor implements
     CreateAssessmentPort,
     LoadAssessmentListItemsBySpacePort,
-    UpdateAssessmentPort,
-    LoadAssessmentPort {
+    UpdateAssessmentPort {
 
     private final AssessmentJpaRepository repository;
 
@@ -56,10 +53,5 @@ public class AssessmentPersistenceJpaAdaptor implements
             param.colorId(),
             param.lastModificationTime());
         return new UpdateAssessmentPort.Result(param.id());
-    }
-
-    @Override
-    public Assessment loadAssessment(UUID id) {
-        return AssessmentMapper.mapToDomainModel(repository.getReferenceById(id));
     }
 }
