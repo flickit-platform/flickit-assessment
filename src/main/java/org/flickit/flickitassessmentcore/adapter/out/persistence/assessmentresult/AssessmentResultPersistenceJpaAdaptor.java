@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresu
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaRepository;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentResultIdByAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
@@ -18,17 +19,15 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_AN
 @RequiredArgsConstructor
 public class AssessmentResultPersistenceJpaAdaptor implements
     InvalidateAssessmentResultPort,
-    CreateAssessmentResultPort {
+    CreateAssessmentResultPort,
+    LoadAssessmentResultIdByAssessmentPort {
 
     private final AssessmentResultJpaRepository repo;
     private final AssessmentJpaRepository assessmentRepo;
 
     @Override
-    public void invalidateByAssessmentId(UUID assessmentId) {
-        var assessmentResult = repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND));
-
-        repo.invalidateById(assessmentResult.getId());
+    public void invalidateById(UUID assessmentResultId) {
+        repo.invalidateById(assessmentResultId);
     }
 
     @Override
@@ -39,6 +38,12 @@ public class AssessmentResultPersistenceJpaAdaptor implements
         entity.setAssessment(assessment);
         AssessmentResultJpaEntity savedEntity = repo.save(entity);
         return savedEntity.getId();
+    }
+
+    @Override
+    public UUID loadAssessmentResultIdByAssessmentId(UUID assessmentId) {
+        return repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND)).getId();
     }
 }
 

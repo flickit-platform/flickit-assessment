@@ -36,7 +36,7 @@ public class AnswerPersistenceJpaAdaptor implements
     @Override
     public UUID persist(CreateAnswerPort.Param param) {
         AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param);
-        AssessmentResultJpaEntity assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
+        AssessmentResultJpaEntity assessmentResult = assessmentResultRepo.findById(param.assessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND));
         unsavedEntity.setAssessmentResult(assessmentResult);
         AnswerJpaEntity entity = repository.save(unsavedEntity);
@@ -49,11 +49,8 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public Optional<LoadAnswerPort.Result> loadAnswerIdAndOptionId(UUID assessmentId, Long questionId) {
-        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND));
-
-        return repository.findByAssessmentResultIdAndQuestionId(assessmentResult.getId(), questionId)
+    public Optional<LoadAnswerPort.Result> loadAnswerIdAndOptionId(UUID assessmentResultId, Long questionId) {
+        return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
             .map(x -> new LoadAnswerPort.Result(x.getId(), x.getAnswerOptionId()));
     }
 
