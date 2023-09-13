@@ -84,7 +84,7 @@ public class AnswerPersistenceJpaAdaptor implements
         var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var progresses = repository.getCountByAssessmentResult_IdGroupByQuestionnaireId(assessmentResult.getId());
+        var progresses = repository.getQuestionnairesProgressByAssessmentResultId(assessmentResult.getId());
         return progresses.stream().map(p -> new QuestionnaireProgress(p.getQuestionnaireId(), p.getAnswerCount())).toList();
     }
 }
