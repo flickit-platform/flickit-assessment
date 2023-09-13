@@ -7,11 +7,14 @@ import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerP
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentResultIdByAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.UUID;
+
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -20,13 +23,14 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
     private final CreateAnswerPort createAnswerPort;
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
-    private final LoadAnswerPort loadAnswerIdAndOptionIdPort;
+    private final LoadAnswerPort loadAnswerPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
     private final LoadAssessmentResultIdByAssessmentPort loadAssessmentResultPort;
 
     @Override
     public Result submitAnswer(Param param) {
-        UUID assessmentResultId = loadAssessmentResultPort.loadAssessmentResultIdByAssessmentId(param.getAssessmentId());
+        UUID assessmentResultId = loadAssessmentResultPort.loadAssessmentResultByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND)).getId();
         CreateOrUpdateResponse response = createOrUpdate(param, assessmentResultId);
         if (response.hasChanged())
             invalidateAssessmentResultPort.invalidateById(assessmentResultId);
@@ -34,7 +38,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private CreateOrUpdateResponse createOrUpdate(Param param, UUID assessmentResultId) {
-        return loadAnswerIdAndOptionIdPort.loadAnswerIdAndOptionId(assessmentResultId, param.getQuestionId())
+        return loadAnswerPort.loadAnswerIdAndOptionId(assessmentResultId, param.getQuestionId())
             .map(existAnswer -> {
                 if (!Objects.equals(param.getAnswerOptionId(), existAnswer.answerOptionId())) { // answer changed
                     updateAnswerOptionPort.updateAnswerOptionById(toUpdateParam(existAnswer.answerId(), param));

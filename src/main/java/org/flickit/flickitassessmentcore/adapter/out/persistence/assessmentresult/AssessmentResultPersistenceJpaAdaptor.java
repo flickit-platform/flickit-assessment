@@ -3,16 +3,17 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresu
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaRepository;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentResultIdByAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
 
 @Component
@@ -41,9 +42,9 @@ public class AssessmentResultPersistenceJpaAdaptor implements
     }
 
     @Override
-    public UUID loadAssessmentResultIdByAssessmentId(UUID assessmentId) {
-        return repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND)).getId();
+    public Optional<AssessmentResult> loadAssessmentResultByAssessmentId(UUID assessmentId) {
+        var entity = repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
+        return entity.map(AssessmentResultMapper::mapToDomain).or(Optional::empty);
     }
 }
 
