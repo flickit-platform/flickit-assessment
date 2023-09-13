@@ -1,10 +1,8 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.questionnaire;
 
-import org.flickit.flickitassessmentcore.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.Progress;
+import org.flickit.flickitassessmentcore.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.QuestionnaireProgress;
 
 import java.util.List;
-import java.util.UUID;
 
-record GetQuestionnairesProgressResponseDto(Progress<UUID> assessmentProgress,
-                                            List<Progress<Long>> questionnairesProgress) {
+record GetQuestionnairesProgressResponseDto(List<QuestionnaireProgress> items) {
 }

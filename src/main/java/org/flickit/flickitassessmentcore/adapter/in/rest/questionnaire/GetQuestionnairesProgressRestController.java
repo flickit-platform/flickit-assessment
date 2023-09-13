@@ -17,13 +17,13 @@ public class GetQuestionnairesProgressRestController {
 
     private final GetQuestionnairesProgressUseCase useCase;
 
-    @GetMapping("assessments/{assessmentId}/questionnaires-progress")
-    ResponseEntity<GetQuestionnairesProgressResponseDto> getResult(@PathVariable("assessmentId") UUID assessmentId) {
+    @GetMapping("assessments/{assessmentId}/questionnaires/progress")
+    ResponseEntity<GetQuestionnairesProgressResponseDto> getQuestionnairesProgress(@PathVariable("assessmentId") UUID assessmentId) {
         return new ResponseEntity<>(toResponseDto(useCase.getQuestionnairesProgress(toParam(assessmentId))), HttpStatus.OK);
     }
 
     private GetQuestionnairesProgressResponseDto toResponseDto(Result result) {
-        return new GetQuestionnairesProgressResponseDto(result.assessmentProgress(), result.questionnairesProgress());
+        return new GetQuestionnairesProgressResponseDto(result.questionnairesProgress());
     }
 
     private GetQuestionnairesProgressUseCase.Param toParam(UUID assessmentId) {

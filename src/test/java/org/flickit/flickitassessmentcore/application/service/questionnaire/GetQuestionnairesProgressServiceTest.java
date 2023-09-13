@@ -1,7 +1,6 @@
 package org.flickit.flickitassessmentcore.application.service.questionnaire;
 
 import org.flickit.flickitassessmentcore.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.Param;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.flickitassessmentcore.application.port.out.questionnaire.GetQuestionnairesProgressByAssessmentPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,9 +23,6 @@ class GetQuestionnairesProgressServiceTest {
     private GetQuestionnairesProgressService service;
 
     @Mock
-    private GetAssessmentProgressPort getAssessmentProgressPort;
-
-    @Mock
     private GetQuestionnairesProgressByAssessmentPort getQuestionnairesProgressPort;
 
     @Test
@@ -36,16 +32,11 @@ class GetQuestionnairesProgressServiceTest {
 
         service.getQuestionnairesProgress(useCaseParam);
 
-        ArgumentCaptor<UUID> assessmentPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
-        verify(getAssessmentProgressPort).getAssessmentProgressById(assessmentPortAssessmentId.capture());
+        ArgumentCaptor<UUID> portArgAssessmentId = ArgumentCaptor.forClass(UUID.class);
+        verify(getQuestionnairesProgressPort).getQuestionnairesProgressByAssessmentId(portArgAssessmentId.capture());
 
-        ArgumentCaptor<UUID> questionnairesPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
-        verify(getQuestionnairesProgressPort).getQuestionnairesProgressByAssessmentId(questionnairesPortAssessmentId.capture());
+        assertEquals(assessmentId, portArgAssessmentId.getValue());
 
-        assertEquals(assessmentId, assessmentPortAssessmentId.getValue());
-        assertEquals(assessmentId, questionnairesPortAssessmentId.getValue());
-
-        verify(getAssessmentProgressPort, times(1)).getAssessmentProgressById(any());
         verify(getQuestionnairesProgressPort, times(1)).getQuestionnairesProgressByAssessmentId(any());
     }
 }
