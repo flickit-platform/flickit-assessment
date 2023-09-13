@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.application.service.subject;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.adapter.out.rest.question.ImpactfulQuestionDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionDto;
 import org.flickit.flickitassessmentcore.application.port.in.subject.GetSubjectProgressUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CountAnswersByQuestionAndAssessmentResultPort;
@@ -24,7 +25,7 @@ public class GetSubjectProgressService implements GetSubjectProgressUseCase {
     public Result getSubjectProgress(Param param) {
         var impactfulQuestions = loadImpactfulQuestionsBySubjectPort.loadImpactfulQuestionsBySubjectId(param.getSubjectId());
         var impactfulQuestionsIds = impactfulQuestions.stream()
-            .map(QuestionDto::id)
+            .map(ImpactfulQuestionDto::id)
             .toList();
         var result = loadAssessmentResultByAssessmentPort.loadByAssessmentId(param.getAssessmentId());
         int answerCount = countAnswersByQuestionAndAssessmentResultPort

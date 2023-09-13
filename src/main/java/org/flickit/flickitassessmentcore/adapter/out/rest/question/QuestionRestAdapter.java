@@ -64,7 +64,7 @@ public class QuestionRestAdapter implements LoadImpactfulQuestionsBySubjectPort 
     }
 
     @Override
-    public List<QuestionDto> loadImpactfulQuestionsBySubjectId(long subjectId) {
+    public List<ImpactfulQuestionDto> loadImpactfulQuestionsBySubjectId(long subjectId) {
         String url = String.format(properties.getBaseUrl() + properties.getGetImpactfulQuestionsUrl(), subjectId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -74,7 +74,7 @@ public class QuestionRestAdapter implements LoadImpactfulQuestionsBySubjectPort 
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<List<QuestionDto>>() {
+            new ParameterizedTypeReference<List<ImpactfulQuestionDto>>() {
             }
         );
         if (!responseEntity.getStatusCode().is2xxSuccessful())
