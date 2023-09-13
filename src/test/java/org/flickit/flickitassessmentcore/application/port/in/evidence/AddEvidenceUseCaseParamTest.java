@@ -66,14 +66,14 @@ class AddEvidenceUseCaseParamTest {
     @Test
     void addEvidence_NullQuestionId_ReturnsErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
-        var throwable = assertThrows(ConstraintViolationException.class, () -> {
+        var throwable = assertThrows(ConstraintViolationException.class, () ->
             new AddEvidenceUseCase.Param(
                 "desc",
                 1L,
                 assessmentId,
                 null
-            );
-        });
+            )
+        );
         assertThat(throwable).hasMessage("questionId: " + ADD_EVIDENCE_QUESTION_ID_NOT_NULL);
     }
 }
