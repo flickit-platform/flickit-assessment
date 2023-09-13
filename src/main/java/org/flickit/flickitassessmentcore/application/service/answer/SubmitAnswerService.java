@@ -25,12 +25,13 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
     private final LoadAnswerPort loadAnswerPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
-    private final LoadAssessmentResultIdByAssessmentPort loadAssessmentResultPort;
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Override
     public Result submitAnswer(Param param) {
-        UUID assessmentResultId = loadAssessmentResultPort.loadAssessmentResultByAssessmentId(param.getAssessmentId())
+        UUID assessmentResultId = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND)).getId();
+
         CreateOrUpdateResponse response = createOrUpdate(param, assessmentResultId);
         if (response.hasChanged())
             invalidateAssessmentResultPort.invalidateById(assessmentResultId);

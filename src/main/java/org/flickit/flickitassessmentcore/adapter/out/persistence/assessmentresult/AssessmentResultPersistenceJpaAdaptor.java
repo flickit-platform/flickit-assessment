@@ -21,7 +21,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_AS
 public class AssessmentResultPersistenceJpaAdaptor implements
     InvalidateAssessmentResultPort,
     CreateAssessmentResultPort,
-    LoadAssessmentResultIdByAssessmentPort {
+    LoadAssessmentResultPort {
 
     private final AssessmentResultJpaRepository repo;
     private final AssessmentJpaRepository assessmentRepo;
@@ -42,9 +42,9 @@ public class AssessmentResultPersistenceJpaAdaptor implements
     }
 
     @Override
-    public Optional<AssessmentResult> loadAssessmentResultByAssessmentId(UUID assessmentId) {
+    public Optional<AssessmentResult> loadByAssessmentId(UUID assessmentId) {
         var entity = repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
-        return entity.map(AssessmentResultMapper::mapToDomain).or(Optional::empty);
+        return entity.map(AssessmentResultMapper::mapToDomain);
     }
 }
 

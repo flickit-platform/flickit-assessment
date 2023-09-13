@@ -5,6 +5,6 @@ import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface LoadAssessmentResultIdByAssessmentPort {
-    Optional<AssessmentResult> loadAssessmentResultByAssessmentId(UUID assessmentId);
+public interface LoadAssessmentResultPort {
+    Optional<AssessmentResult> loadByAssessmentId(UUID assessmentId);
 }

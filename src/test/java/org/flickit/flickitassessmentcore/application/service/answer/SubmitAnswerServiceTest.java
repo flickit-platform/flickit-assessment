@@ -41,7 +41,7 @@ class SubmitAnswerServiceTest {
     private InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
     @Mock
-    private LoadAssessmentResultIdByAssessmentPort loadAssessmentResultPort;
+    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Test
     void submitAnswer_AnswerNotExist_SavesAnswerAndInvalidatesAssessmentResult() {
@@ -57,7 +57,7 @@ class SubmitAnswerServiceTest {
             questionId,
             answerOptionId
         );
-        when(loadAssessmentResultPort.loadAssessmentResultByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.loadAnswerIdAndOptionId(assessmentResultId, questionId))
             .thenReturn(Optional.empty());
 
@@ -102,7 +102,7 @@ class SubmitAnswerServiceTest {
         ));
         assertNotEquals(oldAnswerOptionId, newAnswerOptionId);
 
-        when(loadAssessmentResultPort.loadAssessmentResultByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.loadAnswerIdAndOptionId(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswer(param);
@@ -139,7 +139,7 @@ class SubmitAnswerServiceTest {
             existAnswerId,
             sameAnswerOptionId
         ));
-        when(loadAssessmentResultPort.loadAssessmentResultByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.loadAnswerIdAndOptionId(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswer(param);
@@ -164,11 +164,11 @@ class SubmitAnswerServiceTest {
             questionId,
             sameAnswerOptionId
         );
-        when(loadAssessmentResultPort.loadAssessmentResultByAssessmentId(assessmentId)).thenReturn(Optional.empty());
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> service.submitAnswer(param));
 
-        verify(loadAssessmentResultPort, times(1)).loadAssessmentResultByAssessmentId(assessmentId);
+        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(assessmentId);
         verifyNoInteractions(
             loadAnswerPort,
             createAnswerPort,
