@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.port.out;
+package org.flickit.flickitassessmentcore.application.port.out.answer;
 
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
