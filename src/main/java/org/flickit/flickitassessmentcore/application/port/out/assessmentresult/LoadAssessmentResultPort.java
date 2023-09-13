@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.port.out.assessment;
+package org.flickit.flickitassessmentcore.application.port.out.assessmentresult;
 
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 
