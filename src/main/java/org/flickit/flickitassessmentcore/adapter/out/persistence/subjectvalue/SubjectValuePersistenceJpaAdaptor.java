@@ -7,7 +7,6 @@ import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValuePort;
-import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
