@@ -6,7 +6,6 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,8 +17,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_SU
 @Component
 @RequiredArgsConstructor
 public class SubjectValuePersistenceJpaAdaptor implements
-    CreateSubjectValuePort,
-    LoadSubjectValuePort {
+    CreateSubjectValuePort {
 
     private final SubjectValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -38,10 +36,4 @@ public class SubjectValuePersistenceJpaAdaptor implements
         repository.saveAll(entities);
     }
 
-
-    @Override
-    public Optional<SubjectValue> load(Long subjectId, UUID resultId) {
-        return repository.findBySubjectIdAndAssessmentResult_Id(subjectId, resultId)
-            .map(SubjectValueMapper::mapToDomainModel);
-    }
 }

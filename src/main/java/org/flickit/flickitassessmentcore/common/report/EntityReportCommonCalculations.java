@@ -25,7 +25,7 @@ public class EntityReportCommonCalculations {
             .toList();
     }
 
-    public static boolean isHigherThanOrEqualToMiddleLevel(MaturityLevel maturityLevel, MaturityLevel midLevelMaturity) {
+    private static boolean isHigherThanOrEqualToMiddleLevel(MaturityLevel maturityLevel, MaturityLevel midLevelMaturity) {
         return maturityLevel.getLevel() >= midLevelMaturity.getLevel();
     }
 
@@ -38,7 +38,7 @@ public class EntityReportCommonCalculations {
             .toList();
     }
 
-    public static boolean isLowerThanMiddleLevel(MaturityLevel maturityLevel, MaturityLevel midLevelMaturity) {
+    private static boolean isLowerThanMiddleLevel(MaturityLevel maturityLevel, MaturityLevel midLevelMaturity) {
         return maturityLevel.getLevel() < midLevelMaturity.getLevel();
     }
 

@@ -1,14 +1,10 @@
 package org.flickit.flickitassessmentcore.application.service.subject;
 
-import org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.flickitassessmentcore.application.domain.*;
 import org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.port.in.subject.ReportSubjectUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
-import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectValuePort;
+import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.flickitassessmentcore.application.domain.mother.AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel;
@@ -36,19 +31,7 @@ class ReportSubjectServiceTest {
     private ReportSubjectService service;
 
     @Mock
-    private LoadAssessmentResultPort loadAssessmentResultPort;
-
-    @Mock
-    private LoadSubjectValuePort loadSubjectValuePort;
-
-    @Mock
-    private LoadAttributeValueListPort loadAttributeValueListPort;
-
-    @Mock
-    private MaturityLevelRestAdapter maturityLevelRestAdapter;
-
-    @Mock
-    private LoadSubjectByAssessmentKitIdPort loadSubjectByAssessmentKitIdPort;
+    private LoadSubjectReportInfoPort loadSubjectReportInfoPort;
 
     @Test
     void reportSubject_ValidResult() {
@@ -83,15 +66,8 @@ class ReportSubjectServiceTest {
             assessmentResult.getAssessment().getId(),
             subjectValue.getSubject().getId());
 
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId()))
-            .thenReturn(Optional.of(assessmentResult));
-        when(loadSubjectValuePort.load(subjectValue.getSubject().getId(), assessmentResult.getId()))
-            .thenReturn(Optional.of(subjectValue));
-        when(loadAttributeValueListPort.loadAttributeValues(assessmentResult.getId(), maturityLevels)).thenReturn(qaValues);
-        when(maturityLevelRestAdapter.loadByKitId(assessmentResult.getAssessment().getAssessmentKit().getId()))
-            .thenReturn(maturityLevels.values().stream().toList());
-        when(loadSubjectByAssessmentKitIdPort.loadByAssessmentKitId(assessmentResult.getAssessment().getAssessmentKit().getId()))
-            .thenReturn(List.of(subjectValue.getSubject()));
+        when(loadSubjectReportInfoPort.load(assessmentResult.getAssessment().getId(), subjectValue.getSubject().getId()))
+            .thenReturn(assessmentResult);
 
         SubjectReport subjectReport = service.reportSubject(param);
 

@@ -6,7 +6,6 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.Asse
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -20,8 +19,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_AS
 @RequiredArgsConstructor
 public class AssessmentResultPersistenceJpaAdaptor implements
     InvalidateAssessmentResultPort,
-    CreateAssessmentResultPort,
-    LoadAssessmentResultPort {
+    CreateAssessmentResultPort {
 
     private final AssessmentResultJpaRepository repo;
     private final AssessmentJpaRepository assessmentRepo;
@@ -41,10 +39,5 @@ public class AssessmentResultPersistenceJpaAdaptor implements
         return savedEntity.getId();
     }
 
-    @Override
-    public Optional<AssessmentResult> loadByAssessmentId(UUID assessmentId) {
-        return repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .map(AssessmentResultMapper::mapToDomainModel);
-    }
 }
 

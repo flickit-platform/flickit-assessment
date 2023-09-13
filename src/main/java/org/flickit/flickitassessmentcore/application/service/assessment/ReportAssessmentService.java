@@ -40,8 +40,8 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
         var assessmentReportItem = buildAssessment(assessmentResult);
         var subjectReportItems = buildSubjects(assessmentResult);
         var midLevelMaturity = middleLevel(maturityLevels);
-        var topStrengths = mapToAssessmentReportAttrItem(getTopStrengths(attributeValues, midLevelMaturity));
-        var topWeaknesses = mapToAssessmentReportAttrItem(getTopWeaknesses(attributeValues, midLevelMaturity));
+        var topStrengths = toTopAttributeItem(getTopStrengths(attributeValues, midLevelMaturity));
+        var topWeaknesses = toTopAttributeItem(getTopWeaknesses(attributeValues, midLevelMaturity));
 
         return new AssessmentReport(
             assessmentReportItem,
@@ -70,8 +70,8 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
     }
 
 
-    private List<AssessmentReport.TopAttributeItem> mapToAssessmentReportAttrItem(List<Long> attributeValues) {
-        return attributeValues
+    private List<AssessmentReport.TopAttributeItem> toTopAttributeItem(List<Long> topAttributes) {
+        return topAttributes
             .stream()
             .map(AssessmentReport.TopAttributeItem::new)
             .toList();
