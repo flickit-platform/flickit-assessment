@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.application.port.in.assessment;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
@@ -15,6 +16,7 @@ public interface UpdateAssessmentUseCase {
     Result updateAssessment(Param param);
 
     @Value
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = UPDATE_ASSESSMENT_ID_NOT_NULL)

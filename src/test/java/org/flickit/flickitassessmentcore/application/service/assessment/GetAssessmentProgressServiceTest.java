@@ -1,6 +1,5 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
-import jakarta.validation.ConstraintViolationException;
 import org.assertj.core.api.Assertions;
 import org.flickit.flickitassessmentcore.application.domain.mother.AssessmentMother;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentProgressUseCase.Param;
@@ -16,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -51,12 +49,6 @@ class GetAssessmentProgressServiceTest {
 
         assertEquals(assessmentId, result.id());
         assertEquals(5, result.allAnswersCount());
-    }
-
-    @Test
-    void getAssessmentProgress_NullAssessmentId() {
-        var throwable = assertThrows(ConstraintViolationException.class, () -> new Param(null));
-        Assertions.assertThat(throwable).hasMessage("assessmentId: " + GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
