@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.application.port.in.answer;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
@@ -16,6 +17,7 @@ public interface GetAnswerListUseCase {
     PaginatedResponse<AnswerListItem> getAnswerList(Param param);
 
     @Value
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_ANSWER_LIST_ASSESSMENT_ID_NOTNULL)

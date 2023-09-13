@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.application.port.in.evidence;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
@@ -17,6 +18,7 @@ public interface GetEvidenceListUseCase {
     PaginatedResponse<EvidenceListItem> getEvidenceList(Param param);
 
     @Value
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_EVIDENCE_LIST_QUESTION_ID_NOT_NULL)
@@ -46,6 +48,5 @@ public interface GetEvidenceListUseCase {
         String description,
         long createdById,
         UUID assessmentId,
-        LocalDateTime lastModificationTime
-    ){}
+        LocalDateTime lastModificationTime){}
 }
