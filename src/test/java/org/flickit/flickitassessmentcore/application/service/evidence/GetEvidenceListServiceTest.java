@@ -1,6 +1,5 @@
 package org.flickit.flickitassessmentcore.application.service.evidence;
 
-import jakarta.validation.ConstraintViolationException;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -65,17 +63,6 @@ class GetEvidenceListServiceTest {
         PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new GetEvidenceListUseCase.Param(QUESTION2_ID, ASSESSMENT_ID, 10, 0));
 
         assertEquals(0, result.getItems().size());
-    }
-
-    @Test
-    void getEvidenceList_NullQuestion_ReturnErrorMessage() {
-        UUID ASSESSMENT_ID = UUID.randomUUID();
-        assertThrows(ConstraintViolationException.class, () -> new GetEvidenceListUseCase.Param(null, ASSESSMENT_ID, 10, 0));
-    }
-
-    @Test
-    void getEvidenceList_NullAssessment_ReturnErrorMessage() {
-        assertThrows(ConstraintViolationException.class, () -> new GetEvidenceListUseCase.Param(0L, null, 10, 0));
     }
 
     private EvidenceListItem createEvidence() {

@@ -34,7 +34,6 @@ public class ErrorMessageKey {
     public static final String ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL = "add-evidence.assessmentId.notNull";
     public static final String ADD_EVIDENCE_QUESTION_ID_NOT_NULL = "add-evidence.questionId.notNull";
 
-    public static final String UPDATE_ASSESSMENT_ASSESSMENT_NOT_FOUND = "update-assessment.assessment.notFound";
     public static final String UPDATE_ASSESSMENT_ID_NOT_NULL = "update-assessment.id.notNull";
     public static final String UPDATE_ASSESSMENT_TITLE_NOT_BLANK = "update-assessment.title.notBlank";
     public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MIN = "update-assessment.title.min";
@@ -61,6 +60,9 @@ public class ErrorMessageKey {
     public static final String REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "report-assessment.assessmentResult.notFound";
     public static final String REPORT_ASSESSMENT_MATURITY_LEVEL_NOT_FOUND = "report-assessment.maturityLevelId.notFound";
     public static final String REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID = "report-assessment.assessmentResult.notValid";
+
+    public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-assessment-progress.assessment.id.notNull";
+    public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-progress.assessmentResult.notFound";
 
     public static final String REPORT_SUBJECT_ASSESSMENT_ID_NOT_NULL = "report-subject.assessment.id.notNull";
     public static final String REPORT_SUBJECT_ID_NOT_NULL = "report-subject.subject.id.notNull";
