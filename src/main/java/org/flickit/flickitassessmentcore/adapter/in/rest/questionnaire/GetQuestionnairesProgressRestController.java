@@ -19,7 +19,8 @@ public class GetQuestionnairesProgressRestController {
 
     @GetMapping("assessments/{assessmentId}/questionnaires/progress")
     ResponseEntity<GetQuestionnairesProgressResponseDto> getQuestionnairesProgress(@PathVariable("assessmentId") UUID assessmentId) {
-        return new ResponseEntity<>(toResponseDto(useCase.getQuestionnairesProgress(toParam(assessmentId))), HttpStatus.OK);
+        var response = toResponseDto(useCase.getQuestionnairesProgress(toParam(assessmentId)));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private GetQuestionnairesProgressResponseDto toResponseDto(Result result) {
