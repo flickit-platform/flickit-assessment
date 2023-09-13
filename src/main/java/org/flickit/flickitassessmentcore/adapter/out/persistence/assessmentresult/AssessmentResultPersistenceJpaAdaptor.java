@@ -3,13 +3,11 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresu
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaRepository;
-import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
