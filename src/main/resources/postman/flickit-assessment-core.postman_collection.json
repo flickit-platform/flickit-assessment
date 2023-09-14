@@ -136,13 +136,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-results/da7e2a90-31a5-43ac-ab6b-93d43cd46a1b/answer-question",
+					"raw": "{{base_url}}/{{api_path}}/assessments/da7e2a90-31a5-43ac-ab6b-93d43cd46a1b/answer-question",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"assessment-results",
+						"assessments",
 						"da7e2a90-31a5-43ac-ab6b-93d43cd46a1b",
 						"answer-question"
 					]
