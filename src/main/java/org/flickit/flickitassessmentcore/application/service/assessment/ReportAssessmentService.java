@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.flickitassessmentcore.common.report.EntityReportCommonCalculations.*;
+import static org.flickit.flickitassessmentcore.application.domain.MaturityLevel.middleLevel;
 
 @Service
 @Transactional(readOnly = true)
