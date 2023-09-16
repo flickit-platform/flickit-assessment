@@ -17,7 +17,7 @@ public class AssessmentResultMapper {
         );
     }
 
-    public static AssessmentResult mapToDomain(AssessmentResultJpaEntity entity) {
+    public static AssessmentResult mapToDomainModel(AssessmentResultJpaEntity entity) {
         return new AssessmentResult(
             entity.getId(),
             AssessmentMapper.mapToDomainModel(entity.getAssessment()),

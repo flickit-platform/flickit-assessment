@@ -44,7 +44,7 @@ public class AssessmentResultPersistenceJpaAdaptor implements
     @Override
     public Optional<AssessmentResult> loadByAssessmentId(UUID assessmentId) {
         var entity = repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
-        return entity.map(AssessmentResultMapper::mapToDomain);
+        return entity.map(AssessmentResultMapper::mapToDomainModel);
     }
 }
 
