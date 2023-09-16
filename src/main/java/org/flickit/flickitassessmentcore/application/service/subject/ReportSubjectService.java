@@ -6,6 +6,7 @@ import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValu
 import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport.AttributeReportItem;
+import org.flickit.flickitassessmentcore.application.domain.report.TopAttributeResolver;
 import org.flickit.flickitassessmentcore.application.port.in.subject.ReportSubjectUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND;
-import static org.flickit.flickitassessmentcore.common.report.EntityReportCommonCalculations.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -42,9 +42,11 @@ public class ReportSubjectService implements ReportSubjectUseCase {
 
         var subjectReportItem = buildSubject(subjectValue, assessmentResult.isValid());
         var attributeReportItems = buildAttributes(attributeValues);
+
         var midLevelMaturity = middleLevel(maturityLevels);
-        var topStrengths = toTopAttributeItem(getTopStrengths(attributeValues, midLevelMaturity));
-        var topWeaknesses = toTopAttributeItem(getTopWeaknesses(attributeValues, midLevelMaturity));
+        TopAttributeResolver topAttributeResolver = new TopAttributeResolver(attributeValues, midLevelMaturity);
+        var topStrengths = topAttributeResolver.getTopStrengths();
+        var topWeaknesses = topAttributeResolver.getTopWeaknesses();
 
         return new SubjectReport(
             subjectReportItem,
@@ -66,12 +68,4 @@ public class ReportSubjectService implements ReportSubjectUseCase {
             .map(x -> new AttributeReportItem(x.getQualityAttribute().getId(), x.getMaturityLevel().getId()))
             .toList();
     }
-
-    private List<SubjectReport.TopAttributeItem> toTopAttributeItem(List<Long> topAttributes) {
-        return topAttributes
-            .stream()
-            .map(SubjectReport.TopAttributeItem::new)
-            .toList();
-    }
-
 }

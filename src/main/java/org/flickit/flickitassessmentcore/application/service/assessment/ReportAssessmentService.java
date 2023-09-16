@@ -7,6 +7,7 @@ import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
 import org.flickit.flickitassessmentcore.application.domain.report.AssessmentReport;
 import org.flickit.flickitassessmentcore.application.domain.report.AssessmentReport.AssessmentReportItem;
 import org.flickit.flickitassessmentcore.application.domain.report.AssessmentReport.SubjectReportItem;
+import org.flickit.flickitassessmentcore.application.domain.report.TopAttributeResolver;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
@@ -39,9 +40,11 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
 
         var assessmentReportItem = buildAssessment(assessmentResult);
         var subjectReportItems = buildSubjects(assessmentResult);
+
         var midLevelMaturity = middleLevel(maturityLevels);
-        var topStrengths = toTopAttributeItem(getTopStrengths(attributeValues, midLevelMaturity));
-        var topWeaknesses = toTopAttributeItem(getTopWeaknesses(attributeValues, midLevelMaturity));
+        TopAttributeResolver topAttributeResolver = new TopAttributeResolver(attributeValues, midLevelMaturity);
+        var topStrengths = topAttributeResolver.getTopStrengths();
+        var topWeaknesses = topAttributeResolver.getTopWeaknesses();
 
         return new AssessmentReport(
             assessmentReportItem,
@@ -66,14 +69,6 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
         return assessmentResult.getSubjectValues()
             .stream()
             .map(x -> new SubjectReportItem(x.getSubject().getId(), x.getMaturityLevel().getId()))
-            .toList();
-    }
-
-
-    private List<AssessmentReport.TopAttributeItem> toTopAttributeItem(List<Long> topAttributes) {
-        return topAttributes
-            .stream()
-            .map(AssessmentReport.TopAttributeItem::new)
             .toList();
     }
 }

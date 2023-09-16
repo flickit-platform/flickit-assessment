@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 public record AssessmentReport(AssessmentReportItem assessment,
-                               List<TopAttributeItem> topStrengths,
-                               List<TopAttributeItem> topWeaknesses,
+                               List<TopAttribute> topStrengths,
+                               List<TopAttribute> topWeaknesses,
                                List<SubjectReportItem> subjects) {
 
     public record AssessmentReportItem(UUID id,
@@ -15,9 +15,6 @@ public record AssessmentReport(AssessmentReportItem assessment,
                                        boolean isCalculateValid,
                                        int colorId,
                                        LocalDateTime lastModificationTime) {
-    }
-
-    public record TopAttributeItem(Long id) {
     }
 
     public record SubjectReportItem(Long id, Long maturityLevelId) {
