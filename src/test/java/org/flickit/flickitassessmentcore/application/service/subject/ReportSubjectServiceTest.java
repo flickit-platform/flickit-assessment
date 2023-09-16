@@ -1,6 +1,9 @@
 package org.flickit.flickitassessmentcore.application.service.subject;
 
-import org.flickit.flickitassessmentcore.application.domain.*;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
+import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
 import org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.port.in.subject.ReportSubjectUseCase;
@@ -12,9 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Map;
 
-import static java.util.stream.Collectors.toMap;
 import static org.flickit.flickitassessmentcore.application.domain.mother.AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel;
 import static org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother.*;
 import static org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeMother.simpleAttribute;
@@ -59,9 +60,6 @@ class ReportSubjectServiceTest {
         AssessmentResult assessmentResult = validResultWithSubjectValuesAndMaturityLevel(
             List.of(subjectValue), levelTwo());
 
-        Map<Long, MaturityLevel> maturityLevels = assessmentResult.getAssessment().getAssessmentKit().getMaturityLevels()
-            .stream()
-            .collect(toMap(MaturityLevel::getId, x -> x));
         ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(
             assessmentResult.getAssessment().getId(),
             subjectValue.getSubject().getId());
