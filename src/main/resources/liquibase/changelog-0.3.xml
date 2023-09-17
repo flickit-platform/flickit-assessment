@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.3-01" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_assessment">
+            <column name="deletion_time" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.3-02" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fac_assessment"
+                             constraintName="uq_fac_assessment_spaceid_code"/>
+    </changeSet>
+
+    <changeSet id="0.3-03" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fac_assessment"
+                             columnNames="space_id, code, deletion_time"
+                             constraintName="uq_fac_assessment_spaceid_code_deletion_time"/>
+    </changeSet>
+</databaseChangeLog>
