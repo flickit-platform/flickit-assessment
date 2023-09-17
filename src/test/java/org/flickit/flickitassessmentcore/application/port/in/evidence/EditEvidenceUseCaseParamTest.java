@@ -12,7 +12,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class EditEvidenceUseCaseParamTest {
+class EditEvidenceUseCaseParamTest {
 
     @Test
     void editEvidence_EmptyId_ErrorMessage() {
