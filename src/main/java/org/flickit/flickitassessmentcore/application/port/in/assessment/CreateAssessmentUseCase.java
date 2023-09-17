@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.application.port.in.assessment;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
@@ -15,6 +16,7 @@ public interface CreateAssessmentUseCase {
     Result createAssessment(Param param);
 
     @Value
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
         @NotBlank(message = CREATE_ASSESSMENT_TITLE_NOT_BLANK)
