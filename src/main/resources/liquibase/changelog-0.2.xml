@@ -12,20 +12,28 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.2-02" author="Mahdi Rezazadeh">
+    <changeSet id="0.2-02" author="Mahnaz Khorsandi">
+        <addColumn tableName="fac_assessment_result">
+            <column name="last_modification_time" type="timestamp" defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.2-03" author="Mahdi Rezazadeh">
         <addColumn tableName="fac_assessment">
             <column name="deletion_time" type="bigint"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.2-03" author="Mahdi Rezazadeh">
+    <changeSet id="0.2-04" author="Mahdi Rezazadeh">
         <dropForeignKeyConstraint baseTableName="fac_assessment"
                              constraintName="uq_fac_assessment_spaceid_code"/>
     </changeSet>
 
-    <changeSet id="0.2-04" author="Mahdi Rezazadeh">
+    <changeSet id="0.2-05" author="Mahdi Rezazadeh">
         <addUniqueConstraint tableName="fac_assessment"
                              columnNames="space_id, code, deletion_time"
-                             constraintName="uq_fac_assessment_spaceid_code"/>
+                             constraintName="uq_fac_assessment_spaceid_code_deletion_time"/>
     </changeSet>
 </databaseChangeLog>

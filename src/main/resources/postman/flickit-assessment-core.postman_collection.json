@@ -34,50 +34,13 @@
 			"response": []
 		},
 		{
-			"name": "Remove Assessment",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/{{assessment_id}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessments",
-						"{{assessment_id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Assessment Colors",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessment-colors"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Submit Answer",
+			"name": "Update Assessment",
 			"request": {
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"questionnaireId\": 1,\n    \"questionId\": 1,\n    \"answerOptionId\": 1\n}",
+					"raw": "{\r\n    \"title\": \"The title2\",\r\n    \"colorId\": 1\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -85,15 +48,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-results/{{assessment_result_id}}/answer-question",
+					"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"assessment-results",
-						"{{assessment_result_id}}",
-						"answer-question"
+						"assessments",
+						"ff1b2ae3-92b7-437d-b321-539753b71608"
 					]
 				}
 			},
@@ -142,6 +104,72 @@
 			"response": []
 		},
 		{
+			"name": "Remove Assessment",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"ff1b2ae3-92b7-437d-b321-539753b71608"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Assessment Colors",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-colors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit Answer",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"questionnaireId\": 1102,\n    \"questionId\": 2163,\n    \"answerOptionId\": 5494\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/da7e2a90-31a5-43ac-ab6b-93d43cd46a1b/answer-question",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"da7e2a90-31a5-43ac-ab6b-93d43cd46a1b",
+						"answer-question"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Add Evidence",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
@@ -177,6 +205,197 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Calculate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/calculate",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+						"calculate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Answers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/8028f9a4-a7a8-4391-995d-4645c15d53aa/answers?questionnaireId=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"8028f9a4-a7a8-4391-995d-4645c15d53aa",
+						"answers"
+					],
+					"query": [
+						{
+							"key": "questionnaireId",
+							"value": "1"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "50"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Report Assessment",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/report",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+						"report"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Evidence List",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences?questionId=1&assessmentId=c4e0b4a4-66a1-4383-872f-be9fc6c3cecb&size=10&page=0",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences"
+					],
+					"query": [
+						{
+							"key": "questionId",
+							"value": "1"
+						},
+						{
+							"key": "assessmentId",
+							"value": "c4e0b4a4-66a1-4383-872f-be9fc6c3cecb"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Assessment Progress",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/c8cd59b5-d75a-4226-8d4a-df243cfeace1/progress",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"c8cd59b5-d75a-4226-8d4a-df243cfeace1",
+						"progress"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Report Subject",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/c8cd59b5-d75a-4226-8d4a-df243cfeace1/report/subjects/57",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"c8cd59b5-d75a-4226-8d4a-df243cfeace1",
+						"report",
+						"subjects",
+						"57"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
@@ -189,15 +408,6 @@
 			"key": "api_path",
 			"value": "assessment-core/api",
 			"type": "string"
-		},
-		{
-			"key": "assessment_result_id",
-			"value": "f74ae115-df83-4cfe-be63-2f64d1c2fe72",
-			"type": "string"
-		},
-		{
-			"key": "assessment_id",
-			"value": "cc16cb10-37f1-4bbe-adf2-b7b52a19649f"
 		}
 	]
 }

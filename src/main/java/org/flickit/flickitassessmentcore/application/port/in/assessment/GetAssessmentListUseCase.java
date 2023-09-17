@@ -3,20 +3,24 @@ package org.flickit.flickitassessmentcore.application.port.in.assessment;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
-import org.flickit.flickitassessmentcore.domain.Assessment;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 public interface GetAssessmentListUseCase {
 
-    Result getAssessmentList(Param param);
+    PaginatedResponse<AssessmentListItem> getAssessmentList(Param param);
 
     @Value
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
+
         @NotNull(message = GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL)
         Long spaceId;
 
@@ -35,7 +39,14 @@ public interface GetAssessmentListUseCase {
         }
     }
 
-    record Result(List<Assessment> assessments) {
+    record AssessmentListItem(
+        UUID id,
+        String title,
+        Long assessmentKitId,
+        Integer colorId,
+        LocalDateTime lastModificationDate,
+        Long maturityLevelId,
+        boolean isCalculateValid
+    ) {
     }
-
 }

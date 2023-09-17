@@ -6,6 +6,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Table(name = "fac_evidence")
 @Getter
@@ -39,4 +41,9 @@ public class EvidenceJpaEntity {
 
     @Column(name = "question_id", nullable = false)
     private Long questionId;
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
+    }
 }
