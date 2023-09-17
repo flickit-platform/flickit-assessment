@@ -39,5 +39,5 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     @Query("UPDATE AssessmentJpaEntity a SET " +
         "a.deletionTime = :deletionTime " +
         "WHERE a.id = :id")
-    void softDeleteById(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
+    void setDeletionTimeById(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
 }

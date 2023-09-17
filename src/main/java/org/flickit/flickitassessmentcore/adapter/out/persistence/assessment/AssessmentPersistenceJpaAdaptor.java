@@ -76,7 +76,7 @@ public class AssessmentPersistenceJpaAdaptor implements
     }
 
     @Override
-    public void softDeleteAndSetDeletionTimeById(SoftDeleteAssessmentPort.Param param) {
-        repository.softDeleteById(param.id(), param.deletionTime());
+    public void setDeletionTimeById(SoftDeleteAssessmentPort.Param param) {
+        repository.setDeletionTimeById(param.id(), param.deletionTime());
     }
 }

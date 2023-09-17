@@ -19,7 +19,7 @@ public class RemoveAssessmentService implements RemoveAssessmentUseCase {
 
     @Override
     public void removeAssessment(Param param) {
-        deleteAssessmentPort.softDeleteAndSetDeletionTimeById(toParam(param));
+        deleteAssessmentPort.setDeletionTimeById(toParam(param));
     }
 
     private SoftDeleteAssessmentPort.Param toParam(Param param) {

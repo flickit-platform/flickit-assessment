@@ -17,7 +17,7 @@ public class RemoveAssessmentRestController {
     private final RemoveAssessmentUseCase useCase;
 
     @DeleteMapping("/assessments/{id}")
-    public ResponseEntity<?> removeAssessmentById(@PathVariable("id") UUID id) {
+    public ResponseEntity removeAssessmentById(@PathVariable("id") UUID id) {
         useCase.removeAssessment(new RemoveAssessmentUseCase.Param(id));
         return new ResponseEntity<>(HttpStatus.OK);
     }
