@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.application.port.in.evidence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
@@ -15,6 +16,7 @@ public interface EditEvidenceUseCase {
     Result editEvidence(Param param);
 
     @Value
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = EDIT_EVIDENCE_ID_NOT_NULL)
