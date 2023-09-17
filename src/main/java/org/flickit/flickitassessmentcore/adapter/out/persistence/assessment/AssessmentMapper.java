@@ -1,9 +1,9 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
-import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentKit;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 
 
 public class AssessmentMapper {
@@ -36,7 +36,8 @@ public class AssessmentMapper {
             entity.getColorId(),
             entity.getSpaceId(),
             entity.getCreationTime(),
-            entity.getLastModificationTime()
+            entity.getLastModificationTime(),
+            entity.getDeletionTime()
         );
     }
 

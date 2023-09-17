@@ -1,10 +1,10 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
-import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
-import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.application.service.assessment.CreateAssessmentService.NOT_DELETED_DELETION_TIME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +41,7 @@ class GetAssessmentListServiceTest {
             "lastModificationTime",
             "DESC",
             2);
-        when(loadAssessmentPort.loadAssessments(spaceId, 0, 10)).thenReturn(paginatedResponse);
+        when(loadAssessmentPort.loadAssessments(spaceId, 0L, 0, 10)).thenReturn(paginatedResponse);
 
         PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceId, 10, 0));
         assertEquals(paginatedResponse, result);
@@ -59,7 +58,7 @@ class GetAssessmentListServiceTest {
             "lastModificationTime",
             "DESC",
             2);
-        when(loadAssessmentPort.loadAssessments(spaceId, 0, 10)).thenReturn(paginatedResponse);
+        when(loadAssessmentPort.loadAssessments(spaceId, 0L, 0, 10)).thenReturn(paginatedResponse);
 
         PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceId, 10, 0));
         assertEquals(paginatedResponse, result);
@@ -73,8 +72,7 @@ class GetAssessmentListServiceTest {
             AssessmentColor.BLUE.getId(),
             LocalDateTime.now(),
             1L,
-            true,
-            NOT_DELETED_DELETION_TIME
+            true
         );
     }
 }

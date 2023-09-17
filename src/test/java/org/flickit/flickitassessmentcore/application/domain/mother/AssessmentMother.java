@@ -20,7 +20,8 @@ public class AssessmentMother {
             AssessmentColor.BLUE.getId(),
             1L,
             LocalDateTime.now(),
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            0L
         );
     }
 }

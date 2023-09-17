@@ -22,7 +22,9 @@
 
     <changeSet id="0.2-03" author="Mahdi Rezazadeh">
         <addColumn tableName="fac_assessment">
-            <column name="deletion_time" type="bigint"/>
+            <column name="deletion_time" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
     </changeSet>
 

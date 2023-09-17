@@ -17,9 +17,10 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         "LEFT JOIN AssessmentResultJpaEntity r " +
         "ON a.id = r.assessment.id " +
         "WHERE a.spaceId=:spaceId AND " +
+        "a.deletionTime=:deletionTime AND " +
         "r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id) " +
         "ORDER BY a.lastModificationTime DESC")
-    Page<AssessmentListItemView> findBySpaceIdOrderByLastModificationTimeDesc(long spaceId, Pageable pageable);
+    Page<AssessmentListItemView> findBySpaceIdOrderByLastModificationTimeDesc(long spaceId, long deletionTime, Pageable pageable);
 
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +
@@ -34,6 +35,9 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 @Param(value = "colorId") Integer colorId,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
 
-    Page<AssessmentJpaEntity> findBySpaceIdAndDeletionTimeOrderByLastModificationDateDesc(long spaceId, long deletionTime, Pageable pageable);
-
+    @Modifying
+    @Query("UPDATE AssessmentJpaEntity a SET " +
+        "a.deletionTime = :deletionTime " +
+        "WHERE a.id = :id")
+    void softDeleteById(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
 }

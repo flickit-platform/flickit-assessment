@@ -1,15 +1,15 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.application.domain.Subject;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
-import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
-import org.flickit.flickitassessmentcore.application.domain.Subject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,7 +67,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         LocalDateTime lastModificationTime = LocalDateTime.now();
         CreateAssessmentResultPort.Param param = new CreateAssessmentResultPort.Param(assessmentId, lastModificationTime, false);
         UUID assessmentResultId = createAssessmentResultPort.persist(param);
-
 
         List<Subject> subjects = loadSubjectByAssessmentKitIdPort.loadByAssessmentKitId(assessmentKitId);
         List<Long> subjectIds = subjects.stream().map(Subject::getId).toList();

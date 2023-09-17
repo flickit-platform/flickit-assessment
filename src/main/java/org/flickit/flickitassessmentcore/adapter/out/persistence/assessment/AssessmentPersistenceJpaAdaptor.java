@@ -3,17 +3,14 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.SoftDeleteAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
-import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentBySpacePort;
-import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.domain.Assessment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -21,9 +18,6 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
-
-import static org.flickit.flickitassessmentcore.application.service.assessment.CreateAssessmentService.NOT_DELETED_DELETION_TIME;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.REMOVE_ASSESSMENT_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -46,8 +40,8 @@ public class AssessmentPersistenceJpaAdaptor implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentListItem> loadAssessments(Long spaceId, int page, int size) {
-        var pageResult = repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceId, NOT_DELETED_DELETION_TIME, PageRequest.of(page, size));
+    public PaginatedResponse<AssessmentListItem> loadAssessments(Long spaceId, Long deletionTime, int page, int size) {
+        var pageResult = repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceId, deletionTime, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(AssessmentMapper::mapToAssessmentListItem)
             .toList();
@@ -83,9 +77,6 @@ public class AssessmentPersistenceJpaAdaptor implements
 
     @Override
     public void softDeleteAndSetDeletionTimeById(SoftDeleteAssessmentPort.Param param) {
-        AssessmentJpaEntity entity = repository.findById(param.id())
-            .orElseThrow(()->new ResourceNotFoundException(REMOVE_ASSESSMENT_ID_NOT_FOUND));
-        entity.setDeletionTime(param.deletionTime());
-        repository.save(entity);
+        repository.softDeleteById(param.id(), param.deletionTime());
     }
 }
