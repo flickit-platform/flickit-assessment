@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -37,20 +38,19 @@ class GetQuestionnairesProgressServiceTest {
             new QuestionnaireProgress(2L, 17));
         when(getQuestionnairesProgressPort.getQuestionnairesProgressByAssessmentId(assessmentId)).thenReturn(expectedQProgresses);
 
-        Result questionnairesProgress = service.getQuestionnairesProgress(useCaseParam);
+        Result result = service.getQuestionnairesProgress(useCaseParam);
 
         ArgumentCaptor<UUID> portArgAssessmentId = ArgumentCaptor.forClass(UUID.class);
         verify(getQuestionnairesProgressPort).getQuestionnairesProgressByAssessmentId(portArgAssessmentId.capture());
-
-        assertEquals(expectedQProgresses.size(), questionnairesProgress.questionnairesProgress().size());
-        for (int progressIndex = 0; progressIndex < expectedQProgresses.size(); progressIndex++) {
-            QuestionnaireProgress expected = expectedQProgresses.get(progressIndex);
-            QuestionnaireProgress result = questionnairesProgress.questionnairesProgress().get(progressIndex);
-            assertEquals(expected.id(), result.id());
-            assertEquals(expected.answersCount(), result.answersCount());
-        }
         assertEquals(assessmentId, portArgAssessmentId.getValue());
 
         verify(getQuestionnairesProgressPort, times(1)).getQuestionnairesProgressByAssessmentId(any());
+
+        assertNotNull(result.questionnairesProgress());
+        assertEquals(expectedQProgresses.size(), result.questionnairesProgress().size());
+        for (int i = 0; i < expectedQProgresses.size(); i++) {
+            assertEquals(expectedQProgresses.get(i).id(), result.questionnairesProgress().get(i).id());
+            assertEquals(expectedQProgresses.get(i).answersCount(), result.questionnairesProgress().get(i).answersCount());
+        }
     }
 }
