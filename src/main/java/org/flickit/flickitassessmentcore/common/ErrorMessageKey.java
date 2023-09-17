@@ -16,10 +16,9 @@ public class ErrorMessageKey {
     public static final String CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND = "crate-subjectvalue.assessmentResultId.notFound";
 
     public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND = "submit-answer.assessmentResultId.notFound";
-    public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_NULL = "submit-answer.assessmentResultId.notNull";
+    public static final String SUBMIT_ANSWER_ASSESSMENT_ID_NOT_NULL = "submit-answer.assessmentId.notNull";
     public static final String SUBMIT_ANSWER_QUESTIONNAIRE_ID_NOT_NULL = "submit-answer.questionnaireId.notNull";
     public static final String SUBMIT_ANSWER_QUESTION_ID_NOT_NULL = "submit-answer.questionId.notNull";
-    public static final String SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_NULL = "submit-answer.answerOptionId.notNull";
 
     public static final String GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL = "get-assessment-list.spaceId.notNull";
     public static final String GET_ASSESSMENT_LIST_SIZE_MIN = "get-assessment-list.size.min";
@@ -63,6 +62,13 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-assessment-progress.assessment.id.notNull";
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-progress.assessmentResult.notFound";
+
+    public static final String REPORT_SUBJECT_ASSESSMENT_ID_NOT_NULL = "report-subject.assessment.id.notNull";
+    public static final String REPORT_SUBJECT_ID_NOT_NULL = "report-subject.subject.id.notNull";
+    public static final String REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND = "report-subject.assessmentResult.notFound";
+    public static final String REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND = "report-subject.subjectValue.notFound";
+    public static final String REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_VALID = "report-subject.assessmentResult.notValid";
+    public static final String REPORT_SUBJECT_MATURITY_LEVEL_NOT_FOUND = "report-subject.maturityLevelId.notFound";
 
     public static final String GET_SUBJECT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-subject-progress.assessment.id.notNull";
     public static final String GET_SUBJECT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND = "get-subject-progress.assessmentResultId.notFound";

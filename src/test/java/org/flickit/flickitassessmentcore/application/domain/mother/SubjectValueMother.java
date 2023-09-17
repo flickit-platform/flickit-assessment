@@ -2,6 +2,7 @@ package org.flickit.flickitassessmentcore.application.domain.mother;
 
 
 import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
 
@@ -16,6 +17,12 @@ public class SubjectValueMother {
 
     public static SubjectValue withQAValuesAndMaturityLevel(List<QualityAttributeValue> qaValues, MaturityLevel maturityLevel) {
         SubjectValue subjectValue = new SubjectValue(UUID.randomUUID(), SubjectMother.withNoAttributes(), qaValues);
+        subjectValue.setMaturityLevel(maturityLevel);
+        return subjectValue;
+    }
+
+    public static SubjectValue withQAValuesAndMaturityLevelAndSubjectWithQAs(List<QualityAttributeValue> qaValues, MaturityLevel maturityLevel, List<QualityAttribute> qas) {
+        SubjectValue subjectValue = new SubjectValue(UUID.randomUUID(), SubjectMother.withAttributes(qas), qaValues);
         subjectValue.setMaturityLevel(maturityLevel);
         return subjectValue;
     }

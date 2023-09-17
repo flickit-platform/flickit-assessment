@@ -6,11 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpaEntity, UUID> {
 
     List<SubjectValueJpaEntity> findByAssessmentResultId(UUID resultId);
+
+    Optional<SubjectValueJpaEntity> findBySubjectIdAndAssessmentResult_Id(Long subjectId, UUID assessmentResultId);
 
     @Modifying
     @Query("update SubjectValueJpaEntity a set a.maturityLevelId = :maturityLevelId where a.id = :id")

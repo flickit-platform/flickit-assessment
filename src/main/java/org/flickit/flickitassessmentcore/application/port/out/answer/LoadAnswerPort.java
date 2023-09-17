@@ -3,7 +3,7 @@ package org.flickit.flickitassessmentcore.application.port.out.answer;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort {
+public interface LoadAnswerPort {
 
     Optional<Result> loadAnswerIdAndOptionId(UUID assessmentResultId, Long questionId);
 

@@ -8,7 +8,8 @@ import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerLis
 import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByQuestionnaireIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CountAnswersByQuestionAndAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswersByQuestionnaireIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
@@ -27,8 +28,9 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 public class AnswerPersistenceJpaAdaptor implements
     CreateAnswerPort,
     UpdateAnswerOptionPort,
-    LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
+    LoadAnswerPort,
     LoadAnswersByQuestionnaireIdPort,
+    LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
     CountAnswersByQuestionAndAssessmentResultPort {
 
     private final AnswerJpaRepository repository;
@@ -51,9 +53,9 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public Optional<LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result> loadAnswerIdAndOptionId(UUID assessmentResultId, Long questionId) {
+    public Optional<LoadAnswerPort.Result> loadAnswerIdAndOptionId(UUID assessmentResultId, Long questionId) {
         return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
-            .map(x -> new LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort.Result(x.getId(), x.getAnswerOptionId()));
+            .map(x -> new LoadAnswerPort.Result(x.getId(), x.getAnswerOptionId()));
     }
 
     @Override
