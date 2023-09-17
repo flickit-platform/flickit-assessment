@@ -27,4 +27,5 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
                               @Param(value = "maturityLevelId") Long maturityLevelId,
                               @Param(value = "isValid") boolean isValid,
                               @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
+
 }

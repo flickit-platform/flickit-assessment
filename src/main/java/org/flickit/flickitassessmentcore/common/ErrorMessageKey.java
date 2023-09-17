@@ -65,4 +65,12 @@ public class ErrorMessageKey {
 
     public static final String GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-questionnaires-progress.assessmentId.notNull";
     public static final String GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND = "get-questionnaires-progress.assessmentResult.notFound";
+
+    public static final String REPORT_SUBJECT_ASSESSMENT_ID_NOT_NULL = "report-subject.assessment.id.notNull";
+    public static final String REPORT_SUBJECT_ID_NOT_NULL = "report-subject.subject.id.notNull";
+    public static final String REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND = "report-subject.assessmentResult.notFound";
+    public static final String REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND = "report-subject.subjectValue.notFound";
+    public static final String REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_VALID = "report-subject.assessmentResult.notValid";
+    public static final String REPORT_SUBJECT_MATURITY_LEVEL_NOT_FOUND = "report-subject.maturityLevelId.notFound";
+
 }
