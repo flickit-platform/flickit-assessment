@@ -10,7 +10,7 @@ import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswe
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswersByQuestionnaireIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
-import org.flickit.flickitassessmentcore.application.port.out.questionnaire.GetQuestionnairesProgressByAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.questionnaire.GetQuestionnairesProgressPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -30,7 +30,7 @@ public class AnswerPersistenceJpaAdaptor implements
     UpdateAnswerOptionPort,
     LoadAnswerPort,
     LoadAnswersByQuestionnaireIdPort,
-    GetQuestionnairesProgressByAssessmentPort {
+    GetQuestionnairesProgressPort {
 
     private final AnswerJpaRepository repository;
 

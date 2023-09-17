@@ -5,6 +5,7 @@ import org.flickit.flickitassessmentcore.application.port.in.questionnaire.GetQu
 import java.util.List;
 import java.util.UUID;
 
-public interface GetQuestionnairesProgressByAssessmentPort {
+public interface GetQuestionnairesProgressPort {
     List<QuestionnaireProgress> getQuestionnairesProgressByAssessmentId(UUID assessmentId);
 }
+

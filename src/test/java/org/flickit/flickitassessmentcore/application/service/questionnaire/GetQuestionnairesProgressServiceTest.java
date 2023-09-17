@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.application.service.questionnaire;
 
 import org.flickit.flickitassessmentcore.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.Param;
-import org.flickit.flickitassessmentcore.application.port.out.questionnaire.GetQuestionnairesProgressByAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.questionnaire.GetQuestionnairesProgressPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -23,7 +23,7 @@ class GetQuestionnairesProgressServiceTest {
     private GetQuestionnairesProgressService service;
 
     @Mock
-    private GetQuestionnairesProgressByAssessmentPort getQuestionnairesProgressPort;
+    private GetQuestionnairesProgressPort getQuestionnairesProgressPort;
 
     @Test
     void getQuestionnairesProgressTest(){
