@@ -17,7 +17,7 @@ public class GetSubjectProgressRestController {
     private final GetSubjectProgressUseCase useCase;
 
     @GetMapping("assessments/{assessmentId}/subjects/{subjectId}/progress")
-    public ResponseEntity<GetSubjectAnsweredQuestionsCountResponseDto> getSubjectAnsweredQuestionsCount(
+    public ResponseEntity<GetSubjectProgressResponseDto> getSubjectProgress(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("subjectId") Long subjectId) {
         var response = toResponse(useCase.getSubjectProgress(toParam(assessmentId, subjectId)));
@@ -28,7 +28,7 @@ public class GetSubjectProgressRestController {
         return new GetSubjectProgressUseCase.Param(assessmentId, subjectId);
     }
 
-    private GetSubjectAnsweredQuestionsCountResponseDto toResponse(GetSubjectProgressUseCase.Result result) {
-        return new GetSubjectAnsweredQuestionsCountResponseDto(result.id(), result.answerCount(), result.questionCount());
+    private GetSubjectProgressResponseDto toResponse(GetSubjectProgressUseCase.Result result) {
+        return new GetSubjectProgressResponseDto(result.id(), result.answerCount(), result.questionCount());
     }
 }

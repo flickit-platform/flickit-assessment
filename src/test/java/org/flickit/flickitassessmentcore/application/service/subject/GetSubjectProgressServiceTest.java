@@ -6,9 +6,9 @@ import org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevel
 import org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeValueMother;
 import org.flickit.flickitassessmentcore.application.domain.mother.SubjectValueMother;
 import org.flickit.flickitassessmentcore.application.port.in.subject.GetSubjectProgressUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.answer.CountAnswersByQuestionAndAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultByAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.question.LoadImpactfulQuestionsBySubjectPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.CountAnswersByQuestionIdsPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.question.LoadQuestionsBySubjectPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -27,13 +28,13 @@ class GetSubjectProgressServiceTest {
     private GetSubjectProgressService service;
 
     @Mock
-    private LoadImpactfulQuestionsBySubjectPort loadImpactfulQuestionsBySubjectPort;
+    private LoadQuestionsBySubjectPort loadQuestionsBySubjectPort;
 
     @Mock
-    private LoadAssessmentResultByAssessmentPort loadAssessmentResultByAssessmentPort;
+    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    private CountAnswersByQuestionAndAssessmentResultPort countAnswersByQuestionAndAssessmentResultPort;
+    private CountAnswersByQuestionIdsPort countAnswersByQuestionIdsPort;
 
     @Test
     void GetSubjectProgress_ValidResult() {
@@ -50,11 +51,11 @@ class GetSubjectProgressServiceTest {
         var result = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(
             List.of(subjectValue), MaturityLevelMother.levelTwo());
 
-        when(loadImpactfulQuestionsBySubjectPort.loadImpactfulQuestionsBySubjectId(subjectValue.getSubject().getId())).
+        when(loadQuestionsBySubjectPort.loadImpactfulQuestionsBySubjectId(subjectValue.getSubject().getId())).
             thenReturn(impactfulQuestionsList);
-        when(loadAssessmentResultByAssessmentPort.loadByAssessmentId(result.getAssessment().getId())).thenReturn(result);
-        when(countAnswersByQuestionAndAssessmentResultPort.countAnswersByQuestionIdAndAssessmentResult(
-            questionIds, result.getId())).thenReturn(2);
+        when(loadAssessmentResultPort.loadByAssessmentId(result.getAssessment().getId())).thenReturn(Optional.of(result));
+        when(countAnswersByQuestionIdsPort.countByQuestionIds(
+            result.getId(), questionIds)).thenReturn(2);
 
         var subjectProgress = service.getSubjectProgress(new GetSubjectProgressUseCase.Param(
             result.getAssessment().getId(), subjectValue.getSubject().getId()));

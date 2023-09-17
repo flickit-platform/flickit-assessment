@@ -5,8 +5,7 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
-import org.flickit.flickitassessmentcore.application.port.out.LoadAnswersByQuestionnaireIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.CountAnswersByQuestionAndAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.CountAnswersByQuestionIdsPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswersByQuestionnaireIdPort;
@@ -30,8 +29,7 @@ public class AnswerPersistenceJpaAdaptor implements
     UpdateAnswerOptionPort,
     LoadAnswerPort,
     LoadAnswersByQuestionnaireIdPort,
-    LoadAnswerIdAndOptionIdByAssessmentResultAndQuestionPort,
-    CountAnswersByQuestionAndAssessmentResultPort {
+    CountAnswersByQuestionIdsPort {
 
     private final AnswerJpaRepository repository;
 
@@ -81,7 +79,7 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
-    public int countAnswersByQuestionIdAndAssessmentResult(List<Long> questionIds, UUID resultId) {
-        return repository.getCountByQuestionIdAndAssessmentResultId(questionIds, resultId);
+    public int countByQuestionIds(UUID assessmentResultId, List<Long> questionIds) {
+        return repository.getCountByQuestionIds(assessmentResultId, questionIds);
     }
 }

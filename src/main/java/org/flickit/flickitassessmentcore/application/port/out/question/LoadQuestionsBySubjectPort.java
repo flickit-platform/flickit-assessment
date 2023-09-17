@@ -4,7 +4,7 @@ import org.flickit.flickitassessmentcore.adapter.out.rest.question.ImpactfulQues
 
 import java.util.List;
 
-public interface LoadImpactfulQuestionsBySubjectPort {
+public interface LoadQuestionsBySubjectPort {
 
     List<ImpactfulQuestionDto> loadImpactfulQuestionsBySubjectId(long subjectId);
 }
