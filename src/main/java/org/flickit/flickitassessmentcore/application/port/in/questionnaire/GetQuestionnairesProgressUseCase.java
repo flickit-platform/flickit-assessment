@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.application.port.in.questionnaire;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
@@ -14,6 +15,7 @@ public interface GetQuestionnairesProgressUseCase {
     Result getQuestionnairesProgress(Param param);
 
     @Value
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_ID_NOT_NULL)
