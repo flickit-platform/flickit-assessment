@@ -16,9 +16,9 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
 
     @Modifying
     @Query("UPDATE EvidenceJpaEntity e SET " +
-        "a.description = :description, " +
-        "a.lastModificationTime = :lastModificationTime " +
-        "WHERE a.id = :id")
+        "e.description = :description, " +
+        "e.lastModificationTime = :lastModificationTime " +
+        "WHERE e.id = :id")
     void update(@Param(value = "id") UUID id,
                 @Param(value = "description") String description,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
