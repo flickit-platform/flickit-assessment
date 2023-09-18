@@ -45,7 +45,7 @@ public interface GetAssessmentListUseCase {
         String title,
         Long assessmentKitId,
         AssessmentColor color,
-        LocalDateTime lastModificationDate,
+        LocalDateTime lastModificationTime,
         Long maturityLevelId,
         boolean isCalculateValid
     ) {
