@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 
@@ -43,7 +44,7 @@ public interface GetAssessmentListUseCase {
         UUID id,
         String title,
         Long assessmentKitId,
-        Integer colorId,
+        AssessmentColor color,
         LocalDateTime lastModificationDate,
         Long maturityLevelId,
         boolean isCalculateValid
