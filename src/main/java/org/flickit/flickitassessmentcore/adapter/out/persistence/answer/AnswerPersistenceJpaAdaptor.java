@@ -82,16 +82,16 @@ public class AnswerPersistenceJpaAdaptor implements
     }
 
     @Override
+    public int countByQuestionIds(UUID assessmentResultId, List<Long> questionIds) {
+        return repository.getCountByQuestionIds(assessmentResultId, questionIds);
+    }
+
+    @Override
     public List<QuestionnaireProgress> getQuestionnairesProgressByAssessmentId(UUID assessmentId) {
         var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
 
         var progresses = repository.getQuestionnairesProgressByAssessmentResultId(assessmentResult.getId());
         return progresses.stream().map(p -> new QuestionnaireProgress(p.getQuestionnaireId(), p.getAnswerCount())).toList();
-    }
-
-    @Override
-    public int countByQuestionIds(UUID assessmentResultId, List<Long> questionIds) {
-        return repository.getCountByQuestionIds(assessmentResultId, questionIds);
     }
 }
