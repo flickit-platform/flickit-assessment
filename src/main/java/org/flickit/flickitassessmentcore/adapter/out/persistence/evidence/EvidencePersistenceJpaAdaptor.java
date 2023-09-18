@@ -1,15 +1,11 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.domain.Evidence;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
-import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencesByQuestionAndAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.evidence.SaveEvidencePort;
-import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.common.ErrorMessageKey;
+import org.flickit.flickitassessmentcore.application.port.out.evidence.UpdateEvidencePort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -21,8 +17,7 @@ import java.util.UUID;
 public class EvidencePersistenceJpaAdaptor implements
     CreateEvidencePort,
     LoadEvidencesByQuestionAndAssessmentPort,
-    SaveEvidencePort,
-    LoadEvidencePort {
+    UpdateEvidencePort {
 
     private final EvidenceJpaRepository repository;
 
@@ -49,16 +44,14 @@ public class EvidencePersistenceJpaAdaptor implements
         );
     }
 
-    @Override
-    public Evidence loadEvidence(UUID id) {
-        var evidenceEntity = repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.EDIT_EVIDENCE_EVIDENCE_NOT_FOUND));
-        return EvidenceMapper.toDomainModel(evidenceEntity);
-    }
 
     @Override
-    public UUID saveEvidence(Evidence evidence) {
-        var savedEntity = repository.save(EvidenceMapper.toJpaEntity(evidence));
-        return savedEntity.getId();
+    public Result update(UpdateEvidencePort.Param param) {
+        repository.update(
+            param.id(),
+            param.description(),
+            param.lastModificationTime()
+        );
+        return new UpdateEvidencePort.Result(param.id());
     }
 }

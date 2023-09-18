@@ -11,20 +11,20 @@ import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
-public interface EditEvidenceUseCase {
+public interface UpdateEvidenceUseCase {
 
-    Result editEvidence(Param param);
+    Result updateEvidence(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = EDIT_EVIDENCE_ID_NOT_NULL)
+        @NotNull(message = UPDATE_EVIDENCE_ID_NOT_NULL)
         UUID id;
 
-        @NotBlank(message = EDIT_EVIDENCE_DESC_NOT_BLANK)
-        @Size(min = 3, message = EDIT_EVIDENCE_DESC_MIN_SIZE)
-        @Size(max = 100, message = EDIT_EVIDENCE_DESC_MAX_SIZE)
+        @NotBlank(message = UPDATE_EVIDENCE_DESC_NOT_BLANK)
+        @Size(min = 3, message = UPDATE_EVIDENCE_DESC_MIN_SIZE)
+        @Size(max = 100, message = UPDATE_EVIDENCE_DESC_MAX_SIZE)
         String description;
 
         public Param(UUID id, String description) {
