@@ -3,7 +3,6 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.subject;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.exception.FlickitPlatformRestException;
-import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionRestAdapter;
 import org.flickit.flickitassessmentcore.application.domain.Subject;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
@@ -24,7 +23,6 @@ public class SubjectRestAdapter implements LoadSubjectByAssessmentKitIdPort {
 
     private final RestTemplate flickitPlatformRestTemplate;
     private final FlickitPlatformRestProperties properties;
-    private final QuestionRestAdapter questionRestAdapter;
 
     @Override
     public List<Subject> loadByAssessmentKitId(Long assessmentKitId) {

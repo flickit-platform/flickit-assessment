@@ -31,6 +31,6 @@ public interface GetSubjectProgressUseCase {
         }
     }
 
-    record Result(UUID id, Integer answerCount, Integer questionCount) {
+    record Result(Long id, Integer answerCount) {
     }
 }

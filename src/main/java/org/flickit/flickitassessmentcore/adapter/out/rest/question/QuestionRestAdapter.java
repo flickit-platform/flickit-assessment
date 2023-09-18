@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.rest.question;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.PaginatedDataItemsDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.exception.FlickitPlatformRestException;
+import org.flickit.flickitassessmentcore.application.domain.Question;
 import org.flickit.flickitassessmentcore.application.port.out.question.LoadQuestionsBySubjectPort;
 import org.flickit.flickitassessmentcore.config.FlickitPlatformRestProperties;
 import org.springframework.core.ParameterizedTypeReference;
@@ -64,8 +65,8 @@ public class QuestionRestAdapter implements LoadQuestionsBySubjectPort {
     }
 
     @Override
-    public List<ImpactfulQuestionDto> loadImpactfulQuestionsBySubjectId(long subjectId) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetQuestionsBySubject(), subjectId);
+    public List<Question> loadImpactfulQuestionsBySubjectId(long subjectId) {
+        String url = String.format(properties.getBaseUrl() + properties.getGetQuestionsBySubjectUrl(), subjectId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -80,6 +81,10 @@ public class QuestionRestAdapter implements LoadQuestionsBySubjectPort {
         if (!responseEntity.getStatusCode().is2xxSuccessful())
             throw new FlickitPlatformRestException(responseEntity.getStatusCode().value());
 
-        return responseEntity.getBody();
+        List<ImpactfulQuestionDto> responseEntityBody = responseEntity.getBody();
+        return responseEntityBody != null ? responseEntityBody.stream()
+            .map(QuestionMapper::toDomainModel)
+            .toList() :
+            List.of();
     }
 }
