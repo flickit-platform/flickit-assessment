@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 public class QuestionMapper {
 
+    private QuestionMapper() {}
+
     public static Question toDomainModel(ImpactfulQuestionDto impactfulQuestionDto) {
         return new Question(
             impactfulQuestionDto.id(),
