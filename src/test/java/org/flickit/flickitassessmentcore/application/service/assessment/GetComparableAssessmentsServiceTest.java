@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class GetComparableAssessmentsServiceTest {
+class GetComparableAssessmentsServiceTest {
 
     @InjectMocks
     private GetComparableAssessmentsService service;
@@ -51,12 +51,12 @@ public class GetComparableAssessmentsServiceTest {
         var param = new GetComparableAssessmentsUseCase.Param(spaceIds, assessment1.assessmentKitId(), 20, 0);
         var assessments = service.getComparableAssessments(param);
 
-        assertEquals(assessments.getItems().size(), 2);
-        assertEquals(assessments.getSize(), 20);
-        assertEquals(assessments.getPage(), 0);
-        assertEquals(assessments.getTotal(), 2);
-        assertEquals(assessments.getOrder(), Sort.Direction.DESC.name().toLowerCase());
-        assertEquals(assessments.getSort(), AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME);
+        assertEquals(2, assessments.getItems().size());
+        assertEquals(20, assessments.getSize());
+        assertEquals(0, assessments.getPage());
+        assertEquals(2, assessments.getTotal());
+        assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
+        assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
     }
 
     @Test
@@ -83,12 +83,12 @@ public class GetComparableAssessmentsServiceTest {
         var param = new GetComparableAssessmentsUseCase.Param(spaceIds, assessment1.assessmentKitId(), 20, 0);
         var assessments = service.getComparableAssessments(param);
 
-        assertEquals(assessments.getItems().size(), 1);
-        assertEquals(assessments.getSize(), 20);
-        assertEquals(assessments.getPage(), 0);
-        assertEquals(assessments.getTotal(), 1);
-        assertEquals(assessments.getOrder(), Sort.Direction.DESC.name().toLowerCase());
-        assertEquals(assessments.getSort(), AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME);
+        assertEquals(1, assessments.getItems().size());
+        assertEquals(20, assessments.getSize());
+        assertEquals(0, assessments.getPage());
+        assertEquals(1, assessments.getTotal());
+        assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
+        assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
     }
 
     @Test
@@ -112,11 +112,11 @@ public class GetComparableAssessmentsServiceTest {
         var param = new GetComparableAssessmentsUseCase.Param(spaceIds, null, 20, 0);
         var assessments = service.getComparableAssessments(param);
 
-        assertEquals(assessments.getItems().size(), 0);
-        assertEquals(assessments.getSize(), 20);
-        assertEquals(assessments.getPage(), 0);
-        assertEquals(assessments.getTotal(), 0);
-        assertEquals(assessments.getOrder(), Sort.Direction.DESC.name().toLowerCase());
-        assertEquals(assessments.getSort(), AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME);
+        assertEquals(0, assessments.getItems().size());
+        assertEquals(20, assessments.getSize());
+        assertEquals(0, assessments.getPage());
+        assertEquals(0, assessments.getTotal());
+        assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
+        assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
     }
 }

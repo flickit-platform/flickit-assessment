@@ -29,9 +29,10 @@ class GetComparableAssessmentsUseCaseParamTest {
 
     @Test
     void getComparableAssessments_EmptySpaceIds() {
+        ArrayList<Long> spaceIds = new ArrayList<>();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetComparableAssessmentsUseCase.Param(
-                new ArrayList<>(),
+                spaceIds,
                 null,
                 20,
                 0
@@ -41,9 +42,10 @@ class GetComparableAssessmentsUseCaseParamTest {
 
     @Test
     void getComparableAssessments_MinSize() {
+        List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetComparableAssessmentsUseCase.Param(
-                List.of(1L, 2L),
+                spaceIds,
                 null,
                 0,
                 0
@@ -53,9 +55,10 @@ class GetComparableAssessmentsUseCaseParamTest {
 
     @Test
     void getComparableAssessments_MaxSize() {
+        List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetComparableAssessmentsUseCase.Param(
-                List.of(1L, 2L),
+                spaceIds,
                 null,
                 101,
                 0
@@ -65,9 +68,10 @@ class GetComparableAssessmentsUseCaseParamTest {
 
     @Test
     void getComparableAssessments_MinPage() {
+        List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetComparableAssessmentsUseCase.Param(
-                List.of(1L, 2L),
+                spaceIds,
                 null,
                 20,
                 -1
