@@ -5,11 +5,7 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJp
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
-import org.flickit.flickitassessmentcore.application.port.out.SoftDeleteAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentProgressPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.*;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -76,7 +72,7 @@ public class AssessmentPersistenceJpaAdaptor implements
     }
 
     @Override
-    public void setDeletionTimeById(SoftDeleteAssessmentPort.Param param) {
-        repository.setDeletionTimeById(param.id(), param.deletionTime());
+    public void setDeletionTimeById(UUID id, Long deletionTime) {
+        repository.setDeletionTimeById(id, deletionTime);
     }
 }

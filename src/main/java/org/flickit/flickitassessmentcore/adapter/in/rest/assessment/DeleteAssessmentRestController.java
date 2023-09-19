@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.RemoveAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.DeleteAssessmentUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @RestController
-public class RemoveAssessmentRestController {
+@RequiredArgsConstructor
+public class DeleteAssessmentRestController {
 
-    private final RemoveAssessmentUseCase useCase;
+    private final DeleteAssessmentUseCase useCase;
 
     @DeleteMapping("/assessments/{id}")
-    public ResponseEntity<Void> removeAssessmentById(@PathVariable("id") UUID id) {
-        useCase.removeAssessment(new RemoveAssessmentUseCase.Param(id));
+    public ResponseEntity<Void> deleteAssessmentById(@PathVariable("id") UUID id) {
+        useCase.deleteAssessment(new DeleteAssessmentUseCase.Param(id));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

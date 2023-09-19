@@ -18,13 +18,12 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.application.domain.Assessment.generateSlugCode;
+import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class CreateAssessmentService implements CreateAssessmentUseCase {
-
-    public static final long NOT_DELETED_DELETION_TIME = 0L;
 
     private final CreateAssessmentPort createAssessmentPort;
     private final CreateAssessmentResultPort createAssessmentResultPort;

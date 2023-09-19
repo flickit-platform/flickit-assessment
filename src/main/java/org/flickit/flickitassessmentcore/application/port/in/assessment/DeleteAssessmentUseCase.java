@@ -9,9 +9,9 @@ import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.REMOVE_ASSESSMENT_ID_NOT_NULL;
 
-public interface RemoveAssessmentUseCase {
+public interface DeleteAssessmentUseCase {
 
-    void removeAssessment(Param param);
+    void deleteAssessment(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
