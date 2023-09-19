@@ -46,7 +46,7 @@ public class EvidencePersistenceJpaAdaptor implements
 
 
     @Override
-    public Result update(UpdateEvidencePort.Param param) {
+    public UpdateEvidencePort.Result update(UpdateEvidencePort.Param param) {
         repository.update(
             param.id(),
             param.description(),

@@ -1,6 +1,5 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 
-import org.flickit.flickitassessmentcore.application.domain.Evidence;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
 
@@ -15,30 +14,6 @@ public class EvidenceMapper {
             param.createdById(),
             param.assessmentId(),
             param.questionId()
-        );
-    }
-
-    public static EvidenceJpaEntity toJpaEntity(Evidence evidence) {
-        return new EvidenceJpaEntity(
-            evidence.getId(),
-            evidence.getDescription(),
-            evidence.getCreationTime(),
-            evidence.getLastModificationTime(),
-            evidence.getCreatedById(),
-            evidence.getAssessmentId(),
-            evidence.getQuestionId()
-        );
-    }
-
-    public static Evidence toDomainModel(EvidenceJpaEntity entity) {
-        return new Evidence(
-            entity.getId(),
-            entity.getDescription(),
-            entity.getCreatedById(),
-            entity.getAssessmentId(),
-            entity.getQuestionId(),
-            entity.getCreationTime(),
-            entity.getLastModificationTime()
         );
     }
 

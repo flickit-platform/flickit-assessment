@@ -24,7 +24,7 @@ public interface UpdateEvidenceUseCase {
 
         @NotBlank(message = UPDATE_EVIDENCE_DESC_NOT_BLANK)
         @Size(min = 3, message = UPDATE_EVIDENCE_DESC_MIN_SIZE)
-        @Size(max = 100, message = UPDATE_EVIDENCE_DESC_MAX_SIZE)
+        @Size(max = 1000, message = UPDATE_EVIDENCE_DESC_MAX_SIZE)
         String description;
 
         public Param(UUID id, String description) {

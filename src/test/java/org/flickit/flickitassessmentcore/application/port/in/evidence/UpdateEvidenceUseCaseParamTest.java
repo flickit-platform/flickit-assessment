@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.application.port.in.evidence;
 
 import jakarta.validation.ConstraintViolationException;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,19 +43,40 @@ class UpdateEvidenceUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateEvidenceUseCase.Param(
                 id,
-                "de"
+                "ab"
             ));
-        assertThat(throwable).hasMessage("description: "+ UPDATE_EVIDENCE_DESC_MIN_SIZE);
+        assertThat(throwable).hasMessage("description: " + UPDATE_EVIDENCE_DESC_MIN_SIZE);
+    }
+
+    @Test
+    void updateEvidence_DescriptionIsEqualToMinSize() {
+        String new_desc = "abc";
+        UpdateEvidenceUseCase.Param param = new UpdateEvidenceUseCase.Param(
+            UUID.randomUUID(),
+            new_desc
+        );
+        assertEquals(new_desc, param.getDescription());
     }
 
     @Test
     void updateEvidence_DescriptionIsAboveMaxSize_ErrorMessage() {
         var id = UUID.randomUUID();
+        var desc = RandomStringUtils.randomAlphabetic(1001);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateEvidenceUseCase.Param(
                 id,
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vestibulum elit eu interdum. Lorem ipsum "
+                desc
             ));
         assertThat(throwable).hasMessage("description: " + UPDATE_EVIDENCE_DESC_MAX_SIZE);
+    }
+
+    @Test
+    void updateEvidence_DescriptionIsEqualToMaxSize_ErrorMessage() {
+        String new_desc = RandomStringUtils.randomAlphabetic(1000);
+        var param = new UpdateEvidenceUseCase.Param(
+            UUID.randomUUID(),
+            new_desc
+        );
+        assertEquals(new_desc, param.getDescription());
     }
 }

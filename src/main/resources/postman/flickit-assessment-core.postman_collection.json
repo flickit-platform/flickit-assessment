@@ -399,7 +399,7 @@
 			},
 			"response": []
 		},{
-			"name": "Edit Evidence",
+			"name": "Update Evidence",
 			"request": {
 				"method": "PUT",
 				"header": [],
