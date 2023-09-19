@@ -398,6 +398,53 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Comparable Assessment List",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/compare/assessments?spaceIds=1,2&page=0&size=20&assessmentKitId=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"compare",
+						"assessments"
+					],
+					"query": [
+						{
+							"key": "spaceIds",
+							"value": "1,2"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "20"
+						},
+						{
+							"key": "assessmentKitId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [

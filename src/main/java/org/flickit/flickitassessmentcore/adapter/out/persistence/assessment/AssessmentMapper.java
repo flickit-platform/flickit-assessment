@@ -1,10 +1,11 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
-import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentKit;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetComparableAssessmentsUseCase;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 
 
 public class AssessmentMapper {
@@ -47,6 +48,21 @@ public class AssessmentMapper {
             assessmentEntity.getTitle(),
             assessmentEntity.getAssessmentKitId(),
             AssessmentColor.valueOfById(assessmentEntity.getColorId()),
+            assessmentEntity.getLastModificationTime(),
+            itemView.getMaturityLevelId(),
+            itemView.getIsCalculateValid()
+        );
+    }
+
+    public static GetComparableAssessmentsUseCase.AssessmentListItem mapToAssessmentListItem(
+        ComparableAssessmentListItemView itemView) {
+        AssessmentJpaEntity assessmentEntity = itemView.getAssessment();
+        return new GetComparableAssessmentsUseCase.AssessmentListItem(
+            assessmentEntity.getId(),
+            assessmentEntity.getTitle(),
+            assessmentEntity.getAssessmentKitId(),
+            assessmentEntity.getSpaceId(),
+            AssessmentColor.valueOfById(assessmentEntity.getColorId()).getId(),
             assessmentEntity.getLastModificationTime(),
             itemView.getMaturityLevelId(),
             itemView.getIsCalculateValid()

@@ -73,4 +73,9 @@ public class ErrorMessageKey {
     public static final String REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_VALID = "report-subject.assessmentResult.notValid";
     public static final String REPORT_SUBJECT_MATURITY_LEVEL_NOT_FOUND = "report-subject.maturityLevelId.notFound";
 
+    public static final String GET_COMPARABLE_ASSESSMENTS_SPACE_IDS_NOT_NULL = "get-comparable-assessments.spaceIds.notNull";
+    public static final String GET_COMPARABLE_ASSESSMENTS_SIZE_MIN = "get-comparable-assessments.size.min";
+    public static final String GET_COMPARABLE_ASSESSMENTS_SIZE_MAX = "get-comparable-assessments.size.max";
+    public static final String GET_COMPARABLE_ASSESSMENTS_PAGE_MIN = "get-comparable-assessments.page.min";
+
 }

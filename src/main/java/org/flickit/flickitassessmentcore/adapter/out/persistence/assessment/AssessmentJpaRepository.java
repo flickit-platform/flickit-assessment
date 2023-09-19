@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID> {
@@ -33,5 +34,17 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 @Param(value = "code") String code,
                 @Param(value = "colorId") Integer colorId,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Query("SELECT a as assessment, r.maturityLevelId as maturityLevelId, r.isValid as isCalculateValid " +
+        "FROM AssessmentJpaEntity a " +
+        "LEFT JOIN AssessmentResultJpaEntity r " +
+        "ON a.id = r.assessment.id " +
+        "WHERE a.spaceId IN :spaceIds AND " +
+        "(a.assessmentKitId=:kitId OR :kitId IS NULL) AND " +
+        "r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id) " +
+        "ORDER BY a.lastModificationTime DESC"
+    )
+    Page<ComparableAssessmentListItemView> findBySpaceIdAndKitIdOrderByLastModificationTimeDesc(
+        List<Long> spaceIds, Long kitId, Pageable pageable);
 
 }
