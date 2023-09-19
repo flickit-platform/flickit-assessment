@@ -1,10 +1,15 @@
 package org.flickit.flickitassessmentcore.application.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.stream.Stream;
+
 @Getter
 @RequiredArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AssessmentColor {
 
     CRAYOLA("#EF476F"),
@@ -20,8 +25,16 @@ public enum AssessmentColor {
         return ordinal() + 1;
     }
 
+    @JsonIgnore
     public String getTitle() {
         return name().toLowerCase();
+    }
+
+    public static AssessmentColor valueOfById(int id) {
+        return Stream.of(AssessmentColor.values())
+            .filter(x -> x.getId() == id)
+            .findAny()
+            .orElse(null);
     }
 
     public static AssessmentColor getDefault() {

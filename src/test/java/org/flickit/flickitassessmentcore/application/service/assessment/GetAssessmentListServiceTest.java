@@ -69,7 +69,7 @@ class GetAssessmentListServiceTest {
             UUID.randomUUID(),
             "title",
             1L,
-            AssessmentColor.BLUE.getId(),
+            AssessmentColor.BLUE,
             LocalDateTime.now(),
             1L,
             true
