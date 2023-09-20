@@ -1,12 +1,7 @@
 package org.flickit.flickitassessmentcore.application.service.subject;
 
-import org.flickit.flickitassessmentcore.adapter.out.rest.question.ImpactfulQuestionDto;
-import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionMapper;
 import org.flickit.flickitassessmentcore.application.domain.Question;
-import org.flickit.flickitassessmentcore.application.domain.mother.AssessmentResultMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeValueMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.SubjectValueMother;
+import org.flickit.flickitassessmentcore.application.domain.mother.*;
 import org.flickit.flickitassessmentcore.application.port.in.subject.GetSubjectProgressUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CountAnswersByQuestionIdsPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -40,14 +35,11 @@ class GetSubjectProgressServiceTest {
 
     @Test
     void GetSubjectProgress_ValidResult() {
-        var impactfulQuestionsList = List.of(
-            new ImpactfulQuestionDto(1L),
-            new ImpactfulQuestionDto(2L),
-            new ImpactfulQuestionDto(3L)
+        var questions = List.of(
+            QuestionMother.withNoImpact(),
+            QuestionMother.withNoImpact(),
+            QuestionMother.withNoImpact()
         );
-        var questions = impactfulQuestionsList.stream()
-            .map(QuestionMapper::toDomainModel)
-            .toList();
         var questionIds = questions.stream()
             .map(Question::getId)
             .toList();

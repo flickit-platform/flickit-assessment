@@ -79,15 +79,15 @@ public class QuestionRestAdapter implements LoadQuestionsBySubjectPort {
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<List<ImpactfulQuestionDto>>() {
+            new ParameterizedTypeReference<List<QuestionDto>>() {
             }
         );
         if (!responseEntity.getStatusCode().is2xxSuccessful())
             throw new FlickitPlatformRestException(responseEntity.getStatusCode().value());
 
-        List<ImpactfulQuestionDto> responseEntityBody = responseEntity.getBody();
+        List<QuestionDto> responseEntityBody = responseEntity.getBody();
         return responseEntityBody != null ? responseEntityBody.stream()
-            .map(QuestionMapper::toDomainModel)
+            .map(x -> new Question(x.id(), new ArrayList<>()))
             .toList() :
             List.of();
     }
