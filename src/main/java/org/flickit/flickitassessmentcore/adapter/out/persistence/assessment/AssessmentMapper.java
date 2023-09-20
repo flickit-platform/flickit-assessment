@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CheckComparativeAssessmentsUseCase;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
@@ -50,6 +51,21 @@ public class AssessmentMapper {
             assessmentEntity.getLastModificationTime(),
             itemView.getMaturityLevelId(),
             itemView.getIsCalculateValid()
+        );
+    }
+
+    public static CheckComparativeAssessmentsUseCase.AssessmentListItem mapToComparativeAssessmentListItem(AssessmentListItemView itemView) {
+        AssessmentJpaEntity assessmentEntity = itemView.getAssessment();
+        return new CheckComparativeAssessmentsUseCase.AssessmentListItem(
+            assessmentEntity.getId(),
+            assessmentEntity.getTitle(),
+            assessmentEntity.getAssessmentKitId(),
+            assessmentEntity.getSpaceId(),
+            AssessmentColor.valueOfById(assessmentEntity.getColorId()).getId(),
+            assessmentEntity.getLastModificationTime(),
+            itemView.getMaturityLevelId(),
+            itemView.getIsCalculateValid(),
+            null
         );
     }
 }
