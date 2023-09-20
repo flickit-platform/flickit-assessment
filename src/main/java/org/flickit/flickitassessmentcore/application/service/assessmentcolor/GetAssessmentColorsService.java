@@ -11,7 +11,7 @@ import java.util.List;
 public class GetAssessmentColorsService implements GetAssessmentColorsUseCase {
 
     @Override
-    public AssessmentColors getAssessmentColors() {
+    public Result getAssessmentColors() {
         AssessmentColor defaultColor = AssessmentColor.getDefault();
 
         ColorItem defaultColorItem =
@@ -21,6 +21,6 @@ public class GetAssessmentColorsService implements GetAssessmentColorsUseCase {
             .map(x -> new ColorItem(x.getId(), x.getTitle(), x.getCode()))
             .toList();
 
-        return new AssessmentColors(defaultColorItem, colorItems);
+        return new Result(defaultColorItem, colorItems);
     }
 }

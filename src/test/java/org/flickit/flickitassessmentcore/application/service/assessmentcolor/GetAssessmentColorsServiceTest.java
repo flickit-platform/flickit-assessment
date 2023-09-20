@@ -1,14 +1,14 @@
 package org.flickit.flickitassessmentcore.application.service.assessmentcolor;
 
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentColorsUseCase.AssessmentColors;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentColorsUseCase.Result;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentColorsUseCase.ColorItem;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GetAssessmentColorsServiceTest {
 
@@ -24,6 +24,6 @@ class GetAssessmentColorsServiceTest {
             .map(e -> new ColorItem(e.getId(), e.getTitle(), e.getCode()))
             .toList();
 
-        assertEquals(new AssessmentColors(defaultColorItem, colorItems), service.getAssessmentColors());
+        assertEquals(new Result(defaultColorItem, colorItems), service.getAssessmentColors());
     }
 }

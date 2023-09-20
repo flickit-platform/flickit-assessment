@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface GetAssessmentColorsUseCase {
 
-    AssessmentColors getAssessmentColors();
+    Result getAssessmentColors();
 
-    record AssessmentColors(ColorItem defaultColor, List<ColorItem> colors) {}
+    record Result(ColorItem defaultColor, List<ColorItem> colors) {}
 
     record ColorItem(int id, String title, String code) {}
 }
