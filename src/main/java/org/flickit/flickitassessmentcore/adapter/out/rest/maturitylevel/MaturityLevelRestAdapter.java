@@ -35,7 +35,7 @@ public class MaturityLevelRestAdapter implements LoadMaturityLevelsByKitPort {
     }
 
     public List<MaturityLevelDto> loadMaturityLevelsDtoByKitId(Long kitId) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetMaturityLevelsUrl(), kitId);
+        String url = properties.getBaseUrl() + String.format(properties.getGetMaturityLevelsUrl(), kitId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

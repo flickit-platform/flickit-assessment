@@ -35,7 +35,7 @@ public class SubjectRestAdapter implements LoadSubjectByAssessmentKitIdPort {
     }
 
     public List<SubjectDto> loadSubjectsDtoByAssessmentKitId(Long assessmentKitId) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetSubjectsUrl(), assessmentKitId);
+        String url = properties.getBaseUrl() + String.format(properties.getGetSubjectsUrl(), assessmentKitId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

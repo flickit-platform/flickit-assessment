@@ -45,7 +45,7 @@ public class AnswerOptionRestAdapter {
     }
 
     private List<AnswerOptionDto> loadAnswerOptions(String commaSeparatedIds) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetAnswerOptionsUrl(), commaSeparatedIds);
+        String url = properties.getBaseUrl() + String.format(properties.getGetAnswerOptionsUrl(), commaSeparatedIds);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
