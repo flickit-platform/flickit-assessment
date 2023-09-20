@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 public class UpdateEvidenceRestController {
 
     private final UpdateEvidenceUseCase useCase;

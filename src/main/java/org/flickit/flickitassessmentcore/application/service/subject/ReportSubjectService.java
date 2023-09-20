@@ -18,10 +18,10 @@ import java.util.List;
 import static org.flickit.flickitassessmentcore.application.domain.MaturityLevel.middleLevel;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-@Slf4j
 public class ReportSubjectService implements ReportSubjectUseCase {
 
     private final LoadSubjectReportInfoPort loadSubjectReportInfoPort;
