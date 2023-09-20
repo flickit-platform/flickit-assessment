@@ -22,7 +22,7 @@ public class AssessmentPersistenceJpaAdaptor implements
     LoadAssessmentListItemsBySpacePort,
     UpdateAssessmentPort,
     GetAssessmentProgressPort,
-    SoftDeleteAssessmentPort {
+    DeleteAssessmentPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;

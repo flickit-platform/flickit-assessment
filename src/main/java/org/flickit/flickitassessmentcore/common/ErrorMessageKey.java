@@ -73,5 +73,5 @@ public class ErrorMessageKey {
     public static final String REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_VALID = "report-subject.assessmentResult.notValid";
     public static final String REPORT_SUBJECT_MATURITY_LEVEL_NOT_FOUND = "report-subject.maturityLevelId.notFound";
 
-    public static final String REMOVE_ASSESSMENT_ID_NOT_NULL = "remove-assessment.assessmentId.notNull";
+    public static final String DELETE_ASSESSMENT_ID_NOT_NULL = "delete-assessment.assessmentId.notNull";
 }

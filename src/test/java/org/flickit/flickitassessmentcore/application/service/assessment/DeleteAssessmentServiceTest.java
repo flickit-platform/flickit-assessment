@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import org.flickit.flickitassessmentcore.application.port.in.assessment.DeleteAssessmentUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.SoftDeleteAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.DeleteAssessmentPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -28,10 +28,10 @@ class DeleteAssessmentServiceTest {
     private DeleteAssessmentService service;
 
     @Mock
-    private SoftDeleteAssessmentPort deleteAssessmentPort;
+    private DeleteAssessmentPort deleteAssessmentPort;
 
     @Test
-    void testRemoveAssessment() {
+    void testDeleteAssessment() {
         UUID id = UUID.randomUUID();
         DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(id);
         doNothing().when(deleteAssessmentPort).setDeletionTimeById(any(), any());

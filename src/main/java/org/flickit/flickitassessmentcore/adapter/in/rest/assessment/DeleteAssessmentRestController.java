@@ -17,7 +17,7 @@ public class DeleteAssessmentRestController {
     private final DeleteAssessmentUseCase useCase;
 
     @DeleteMapping("/assessments/{id}")
-    public ResponseEntity<Void> deleteAssessmentById(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> deleteAssessment(@PathVariable("id") UUID id) {
         useCase.deleteAssessment(new DeleteAssessmentUseCase.Param(id));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

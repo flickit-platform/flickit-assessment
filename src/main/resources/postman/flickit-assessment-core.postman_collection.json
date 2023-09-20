@@ -104,7 +104,7 @@
 			"response": []
 		},
 		{
-			"name": "Remove Assessment",
+			"name": "Delete Assessment",
 			"request": {
 				"method": "DELETE",
 				"header": [],
