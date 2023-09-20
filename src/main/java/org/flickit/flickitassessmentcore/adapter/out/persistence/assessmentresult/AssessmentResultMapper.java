@@ -1,8 +1,11 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult;
 
-import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentMapper;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentMapper;
+import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
+
+import java.util.ArrayList;
 
 public class AssessmentResultMapper {
 
@@ -21,8 +24,8 @@ public class AssessmentResultMapper {
         return new AssessmentResult(
             entity.getId(),
             AssessmentMapper.mapToDomainModel(entity.getAssessment()),
-            null,
-            null,
+            new ArrayList<>(),
+            new MaturityLevel(entity.getMaturityLevelId(), 0, new ArrayList<>()),
             entity.getIsValid(),
             entity.getLastModificationTime()
         );

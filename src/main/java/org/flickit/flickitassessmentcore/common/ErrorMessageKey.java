@@ -73,6 +73,15 @@ public class ErrorMessageKey {
     public static final String REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_VALID = "report-subject.assessmentResult.notValid";
     public static final String REPORT_SUBJECT_MATURITY_LEVEL_NOT_FOUND = "report-subject.maturityLevelId.notFound";
 
+    public static final String UPDATE_EVIDENCE_ID_NOT_NULL = "update-evidence.id.notNull";
+    public static final String UPDATE_EVIDENCE_DESC_NOT_BLANK = "update-evidence.description.notBlank";
+    public static final String UPDATE_EVIDENCE_DESC_MIN_SIZE = "update-evidence.description.size.min";
+    public static final String UPDATE_EVIDENCE_DESC_MAX_SIZE = "update-evidence.description.size.max";
+
+    public static final String GET_SUBJECT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-subject-progress.assessment.id.notNull";
+    public static final String GET_SUBJECT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND = "get-subject-progress.assessmentResultId.notFound";
+    public static final String GET_SUBJECT_PROGRESS_SUBJECT_ID_NOT_NULL = "get-subject-progress.subject.id.notNull";
+
     public static final String GET_COMPARABLE_ASSESSMENTS_SPACE_IDS_NOT_NULL = "get-comparable-assessments.spaceIds.notNull";
     public static final String GET_COMPARABLE_ASSESSMENTS_SIZE_MIN = "get-comparable-assessments.size.min";
     public static final String GET_COMPARABLE_ASSESSMENTS_SIZE_MAX = "get-comparable-assessments.size.max";
