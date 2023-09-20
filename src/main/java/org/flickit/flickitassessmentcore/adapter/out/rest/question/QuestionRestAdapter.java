@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class QuestionRestAdapter implements LoadQuestionsBySubjectPort {
 
     private final RestTemplate flickitPlatformRestTemplate;
@@ -28,25 +28,29 @@ public class QuestionRestAdapter implements LoadQuestionsBySubjectPort {
     public List<QuestionDto> loadByAssessmentKitId(long assessmentKitId) {
         int count;
         int page = 1;
-        List<QuestionDto> fetchedQuestions = new ArrayList<>();
 
         PaginatedDataItemsDto<QuestionDto> responseDto = loadByPage(assessmentKitId, page);
 
+        if (responseDto == null)
+            return new ArrayList<>();
+
         count = responseDto.count();
 
-        fetchedQuestions.addAll(responseDto.items() != null ?
+        List<QuestionDto> fetchedQuestions = new ArrayList<>(responseDto.items() != null ?
             responseDto.items() : List.of());
 
         while (responseDto.next() != null && fetchedQuestions.size() < count) {
             page++;
             responseDto = loadByPage(assessmentKitId, page);
+            if (responseDto == null)
+                break;
             fetchedQuestions.addAll(responseDto.items());
         }
         return fetchedQuestions;
     }
 
     private PaginatedDataItemsDto<QuestionDto> loadByPage(long assessmentKitId, int page) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetQuestionsUrl(), assessmentKitId, page);
+        String url = properties.getBaseUrl() + String.format(properties.getGetQuestionsUrl(), assessmentKitId, page);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

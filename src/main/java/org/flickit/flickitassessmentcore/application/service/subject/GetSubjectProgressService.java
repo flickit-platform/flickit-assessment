@@ -23,14 +23,15 @@ public class GetSubjectProgressService implements GetSubjectProgressUseCase {
 
     @Override
     public Result getSubjectProgress(Param param) {
-        var impactfulQuestions = loadQuestionsBySubjectPort.loadImpactfulQuestionsBySubjectId(param.getSubjectId());
-        var impactfulQuestionsIds = impactfulQuestions.stream()
-            .map(Question::getId)
-            .toList();
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_SUBJECT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
-        int answerCount = countAnswersByQuestionIdsPort
-            .countByQuestionIds(assessmentResult.getId(), impactfulQuestionsIds);
+
+        var questionIds = loadQuestionsBySubjectPort.loadQuestionsBySubject(param.getSubjectId())
+            .stream()
+            .map(Question::getId)
+            .toList();
+
+        int answerCount = countAnswersByQuestionIdsPort.countByQuestionIds(assessmentResult.getId(), questionIds);
         return new Result(param.getSubjectId(), answerCount);
     }
 }

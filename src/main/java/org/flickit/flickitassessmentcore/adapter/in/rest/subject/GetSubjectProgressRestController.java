@@ -16,7 +16,7 @@ public class GetSubjectProgressRestController {
 
     private final GetSubjectProgressUseCase useCase;
 
-    @GetMapping("assessments/{assessmentId}/subjects/{subjectId}/progress")
+    @GetMapping("/assessments/{assessmentId}/subjects/{subjectId}/progress")
     public ResponseEntity<GetSubjectProgressResponseDto> getSubjectProgress(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("subjectId") Long subjectId) {
