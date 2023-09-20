@@ -52,7 +52,8 @@ class GetAssessmentSpaceServiceTest {
         when(loadSpaceIdPort.loadSpaceIdByAssessmentId(assessmentId))
             .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_SPACE_ID_ASSESSMENT_ID_NOT_FOUND));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentSpace(new Param(assessmentId)));
+        Param param = new Param(assessmentId);
+        assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentSpace(param));
 
         ArgumentCaptor<UUID> assessmentIdArgument = ArgumentCaptor.forClass(UUID.class);
         verify(loadSpaceIdPort).loadSpaceIdByAssessmentId(assessmentIdArgument.capture());
