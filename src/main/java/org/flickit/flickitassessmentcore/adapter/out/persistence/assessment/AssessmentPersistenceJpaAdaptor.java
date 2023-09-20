@@ -3,12 +3,9 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentProgressPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.*;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_SPACE_ID_ASSESSMENT_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -24,7 +22,8 @@ public class AssessmentPersistenceJpaAdaptor implements
     CreateAssessmentPort,
     LoadAssessmentListItemsBySpacePort,
     UpdateAssessmentPort,
-    GetAssessmentProgressPort {
+    GetAssessmentProgressPort,
+    LoadSpaceIdPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -71,5 +70,12 @@ public class AssessmentPersistenceJpaAdaptor implements
 
         int answersCount = answerRepository.getCountByAssessmentResultId(assessmentResult.getId());
         return new GetAssessmentProgressPort.Result(assessmentId, answersCount);
+    }
+
+    @Override
+    public Long loadSpaceIdByAssessmentId(UUID assessmentId) {
+        var assessment = repository.findById(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_SPACE_ID_ASSESSMENT_ID_NOT_FOUND));
+        return assessment.getSpaceId();
     }
 }

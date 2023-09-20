@@ -398,7 +398,8 @@
 				}
 			},
 			"response": []
-		},{
+		},
+		{
 			"name": "Update Evidence",
 			"request": {
 				"method": "PUT",
@@ -426,6 +427,26 @@
 							"key": "id",
 							"value": "3d81a3bd-01e9-4462-b650-2796b408b07b"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Assessment Space",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment/fcd18fef-850c-4a11-be43-039534a39039/space",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment",
+						"fcd18fef-850c-4a11-be43-039534a39039",
+						"space"
 					]
 				}
 			},
