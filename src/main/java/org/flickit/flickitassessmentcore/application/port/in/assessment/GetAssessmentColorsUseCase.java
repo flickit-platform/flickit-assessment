@@ -1,10 +1,13 @@
 package org.flickit.flickitassessmentcore.application.port.in.assessment;
 
-import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
-
 import java.util.List;
 
 public interface GetAssessmentColorsUseCase {
 
-    List<AssessmentColor> getAssessmentColors();
+    AssessmentColors getAssessmentColors();
+
+    record AssessmentColors(ColorItem defaultColor, List<ColorItem> colors) {
+    }
+
+    record ColorItem(int id, String title, String code) {}
 }
