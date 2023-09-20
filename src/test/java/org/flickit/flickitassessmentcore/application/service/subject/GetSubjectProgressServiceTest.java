@@ -56,7 +56,7 @@ class GetSubjectProgressServiceTest {
         var result = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(
             List.of(subjectValue), MaturityLevelMother.levelTwo());
 
-        when(loadQuestionsBySubjectPort.loadImpactfulQuestionsBySubjectId(subjectValue.getSubject().getId())).
+        when(loadQuestionsBySubjectPort.loadQuestionsBySubject(subjectValue.getSubject().getId())).
             thenReturn(questions);
         when(loadAssessmentResultPort.loadByAssessmentId(result.getAssessment().getId())).thenReturn(Optional.of(result));
         when(countAnswersByQuestionIdsPort.countByQuestionIds(

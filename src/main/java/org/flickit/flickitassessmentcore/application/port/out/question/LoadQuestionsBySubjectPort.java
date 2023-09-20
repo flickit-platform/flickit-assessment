@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface LoadQuestionsBySubjectPort {
 
-    List<Question> loadImpactfulQuestionsBySubjectId(long subjectId);
+    List<Question> loadQuestionsBySubject(long subjectId);
 }

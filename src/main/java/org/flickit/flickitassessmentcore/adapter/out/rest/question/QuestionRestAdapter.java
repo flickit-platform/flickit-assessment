@@ -65,8 +65,8 @@ public class QuestionRestAdapter implements LoadQuestionsBySubjectPort {
     }
 
     @Override
-    public List<Question> loadImpactfulQuestionsBySubjectId(long subjectId) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetQuestionsBySubjectUrl(), subjectId);
+    public List<Question> loadQuestionsBySubject(long subjectId) {
+        String url = properties.getBaseUrl() + String.format(properties.getGetQuestionsBySubjectUrl(), subjectId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
