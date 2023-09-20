@@ -3,5 +3,5 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAsses
 
 import java.util.List;
 
-public record ResponseDto(ColorItem defaultColor, List<ColorItem> colors) {
+public record GetAssessmentColorsResponseDto(ColorItem defaultColor, List<ColorItem> colors) {
 }

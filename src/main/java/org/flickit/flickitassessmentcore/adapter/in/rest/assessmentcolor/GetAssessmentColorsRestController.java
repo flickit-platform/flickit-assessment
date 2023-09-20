@@ -16,13 +16,13 @@ public class GetAssessmentColorsRestController {
     private final GetAssessmentColorsUseCase useCase;
 
     @GetMapping("/assessment-colors")
-    public ResponseEntity<ResponseDto> getAssessmentColors() {
+    public ResponseEntity<GetAssessmentColorsResponseDto> getAssessmentColors() {
         var response = useCase.getAssessmentColors();
-        ResponseDto responseDto = toResponseDto(response);
+        GetAssessmentColorsResponseDto responseDto = toResponseDto(response);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    private ResponseDto toResponseDto(Result result) {
-        return new ResponseDto(result.defaultColor(), result.colors());
+    private GetAssessmentColorsResponseDto toResponseDto(Result result) {
+        return new GetAssessmentColorsResponseDto(result.defaultColor(), result.colors());
     }
 }
