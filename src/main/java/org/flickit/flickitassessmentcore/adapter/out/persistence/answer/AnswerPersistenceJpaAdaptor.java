@@ -5,6 +5,7 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
+import org.flickit.flickitassessmentcore.application.port.out.answer.CountAnswersByQuestionIdsPort;
 import org.flickit.flickitassessmentcore.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.QuestionnaireProgress;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
@@ -30,7 +31,8 @@ public class AnswerPersistenceJpaAdaptor implements
     UpdateAnswerOptionPort,
     LoadAnswerPort,
     LoadAnswersByQuestionnaireIdPort,
-    GetQuestionnairesProgressPort {
+    GetQuestionnairesProgressPort,
+    CountAnswersByQuestionIdsPort {
 
     private final AnswerJpaRepository repository;
 
@@ -77,6 +79,11 @@ public class AnswerPersistenceJpaAdaptor implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public int countByQuestionIds(UUID assessmentResultId, List<Long> questionIds) {
+        return repository.getCountByQuestionIds(assessmentResultId, questionIds);
     }
 
     @Override

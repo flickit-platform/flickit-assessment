@@ -23,6 +23,9 @@ public class FlickitPlatformRestProperties {
     private String getQuestionsUrl = "/api/internal/v1/assessment-kits/%d/questions?page=%d";
 
     @NotBlank
+    private String getQuestionsBySubjectUrl = "/api/internal/v1/subjects/%d/questions";
+
+    @NotBlank
     private String getMaturityLevelsUrl = "/api/internal/v1/assessment-kits/%d/maturity-levels";
 
     @NotBlank

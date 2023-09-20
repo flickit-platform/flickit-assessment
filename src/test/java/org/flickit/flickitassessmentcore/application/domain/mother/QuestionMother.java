@@ -29,4 +29,8 @@ public class QuestionMother {
         return new Question(id++, List.of(QuestionImpactMother.onLevelFour(1), QuestionImpactMother.onLevelFive(1)));
     }
 
+    public static Question withNoImpact() {
+        return new Question(id++, null);
+    }
+
 }

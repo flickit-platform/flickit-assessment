@@ -5,6 +5,7 @@ import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedRespon
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencesByQuestionAndAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.evidence.UpdateEvidencePort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EvidencePersistenceJpaAdaptor implements
     CreateEvidencePort,
-    LoadEvidencesByQuestionAndAssessmentPort {
+    LoadEvidencesByQuestionAndAssessmentPort,
+    UpdateEvidencePort {
 
     private final EvidenceJpaRepository repository;
 
@@ -30,7 +32,7 @@ public class EvidencePersistenceJpaAdaptor implements
     public PaginatedResponse<EvidenceListItem> loadEvidencesByQuestionIdAndAssessmentId(Long questionId, UUID assessmentId, int page, int size) {
         var pageResult = repository.findByQuestionIdAndAssessmentIdOrderByLastModificationTimeDesc(questionId, assessmentId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
-            .map(EvidenceMapper::toDomainModel)
+            .map(EvidenceMapper::toEvidenceListItem)
             .toList();
         return new PaginatedResponse<>(
             items,
@@ -40,5 +42,16 @@ public class EvidencePersistenceJpaAdaptor implements
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+
+    @Override
+    public UpdateEvidencePort.Result update(UpdateEvidencePort.Param param) {
+        repository.update(
+            param.id(),
+            param.description(),
+            param.lastModificationTime()
+        );
+        return new UpdateEvidencePort.Result(param.id());
     }
 }
