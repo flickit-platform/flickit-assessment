@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AssessmentTest {
 
     @Test
-    void generateSlugCode_NoWhitespace_ReturnsLowerCaseCode() {
+    void testGenerateSlugCode_NoWhitespace_ReturnsLowerCaseCode() {
         assertEquals("exampletitle",
             generateSlugCode("ExampleTitle"));
 

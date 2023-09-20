@@ -12,7 +12,7 @@ class GetAssessmentColorsServiceTest {
     private final GetAssessmentColorsService service = new GetAssessmentColorsService();
 
     @Test
-    void getAssessmentColors() {
+    void testGetAssessmentColors() {
         assertEquals(Arrays.asList(AssessmentColor.values()), service.getAssessmentColors());
     }
 }

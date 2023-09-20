@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class QuestionTest {
 
     @Test
-    void findImpactByMaturityLevel() {
+    void testFindImpactByMaturityLevel() {
         Question question = QuestionMother.withImpactsOnLevel24();
 
         QuestionImpact impact = question.findImpactByMaturityLevel(MaturityLevelMother.levelTwo());

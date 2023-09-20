@@ -13,8 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetAssessmentProgressUseCaseParamTest {
 
     @Test
-    void getAssessmentProgress_NullAssessmentId() {
-        var throwable = assertThrows(ConstraintViolationException.class, () -> new GetAssessmentProgressUseCase.Param(null));
+    void testGetAssessmentProgress_AssessmentIdIsNull_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new GetAssessmentProgressUseCase.Param(null));
         Assertions.assertThat(throwable).hasMessage("assessmentId: " + GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL);
     }
 }

@@ -41,7 +41,7 @@ class ReportAssessmentServiceTest {
     private LoadAttributeValueListPort loadAttributeValueListPort;
 
     @Test
-    void reportAssessment_ValidResult() {
+    void testReportAssessment_ValidResult() {
         List<QualityAttributeValue> qaValues = List.of(
             withAttributeAndMaturityLevel(simpleAttribute(), levelOne()),
             withAttributeAndMaturityLevel(simpleAttribute(), levelTwo()),
