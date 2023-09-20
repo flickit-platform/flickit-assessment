@@ -17,7 +17,7 @@ public class EvidenceMapper {
         );
     }
 
-    public static EvidenceListItem toDomainModel(EvidenceJpaEntity entity) {
+    public static EvidenceListItem toEvidenceListItem(EvidenceJpaEntity entity) {
         return new EvidenceListItem(
             entity.getId(),
             entity.getDescription(),
