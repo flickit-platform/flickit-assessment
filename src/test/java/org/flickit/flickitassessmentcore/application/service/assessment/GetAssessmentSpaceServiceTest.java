@@ -2,7 +2,7 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentSpaceUseCase.Param;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentSpaceUseCase.Result;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadSpaceIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentSpacePort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,39 +26,39 @@ class GetAssessmentSpaceServiceTest {
     private GetAssessmentSpaceService service;
 
     @Mock
-    private LoadSpaceIdPort loadSpaceIdPort;
+    private GetAssessmentSpacePort getAssessmentSpacePort;
 
     @Test
     void getAssessmentSpaceId_validResult() {
         UUID assessmentId = UUID.randomUUID();
         Long spaceId = 1L;
 
-        when(loadSpaceIdPort.loadSpaceIdByAssessmentId(assessmentId)).thenReturn(spaceId);
+        when(getAssessmentSpacePort.getSpaceIdByAssessmentId(assessmentId)).thenReturn(spaceId);
 
         Result assessmentSpace = service.getAssessmentSpace(new Param(assessmentId));
 
         ArgumentCaptor<UUID> assessmentIdArgument = ArgumentCaptor.forClass(UUID.class);
-        verify(loadSpaceIdPort).loadSpaceIdByAssessmentId(assessmentIdArgument.capture());
+        verify(getAssessmentSpacePort).getSpaceIdByAssessmentId(assessmentIdArgument.capture());
 
         assertEquals(assessmentId, assessmentIdArgument.getValue());
         assertEquals(spaceId, assessmentSpace.spaceId());
-        verify(loadSpaceIdPort, times(1)).loadSpaceIdByAssessmentId(any());
+        verify(getAssessmentSpacePort, times(1)).getSpaceIdByAssessmentId(any());
     }
 
     @Test
     void getAssessmentSpaceId_invalidAssessmentId() {
         UUID assessmentId = UUID.randomUUID();
 
-        when(loadSpaceIdPort.loadSpaceIdByAssessmentId(assessmentId))
-            .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_SPACE_ID_ASSESSMENT_ID_NOT_FOUND));
+        when(getAssessmentSpacePort.getSpaceIdByAssessmentId(assessmentId))
+            .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_SPACE_ASSESSMENT_ID_NOT_FOUND));
 
         Param param = new Param(assessmentId);
         assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentSpace(param));
 
         ArgumentCaptor<UUID> assessmentIdArgument = ArgumentCaptor.forClass(UUID.class);
-        verify(loadSpaceIdPort).loadSpaceIdByAssessmentId(assessmentIdArgument.capture());
+        verify(getAssessmentSpacePort).getSpaceIdByAssessmentId(assessmentIdArgument.capture());
 
         assertEquals(assessmentId, assessmentIdArgument.getValue());
-        verify(loadSpaceIdPort, times(1)).loadSpaceIdByAssessmentId(any());
+        verify(getAssessmentSpacePort, times(1)).getSpaceIdByAssessmentId(any());
     }
 }

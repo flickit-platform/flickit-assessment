@@ -2,7 +2,7 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentSpaceUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadSpaceIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentSpacePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class GetAssessmentSpaceService implements GetAssessmentSpaceUseCase {
 
-    private final LoadSpaceIdPort loadAssessmentSpacePort;
+    private final GetAssessmentSpacePort getAssessmentSpacePort;
 
     @Override
     public Result getAssessmentSpace(Param param) {
-        Long spaceId = loadAssessmentSpacePort.loadSpaceIdByAssessmentId(param.getAssessmentId());
+        Long spaceId = getAssessmentSpacePort.getSpaceIdByAssessmentId(param.getAssessmentId());
         return new Result(spaceId);
     }
 }

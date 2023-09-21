@@ -2,7 +2,7 @@ package org.flickit.flickitassessmentcore.application.port.out.assessment;
 
 import java.util.UUID;
 
-public interface LoadSpaceIdPort {
+public interface GetAssessmentSpacePort {
 
-    Long loadSpaceIdByAssessmentId(UUID assessmentId);
+    Long getSpaceIdByAssessmentId(UUID assessmentId);
 }
