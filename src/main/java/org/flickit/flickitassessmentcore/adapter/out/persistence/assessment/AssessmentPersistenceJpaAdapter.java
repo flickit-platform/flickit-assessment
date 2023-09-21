@@ -9,6 +9,9 @@ import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateA
 import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
+import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.*;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_SPACE_ASSESSMENT_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -24,7 +28,8 @@ public class AssessmentPersistenceJpaAdapter implements
     CreateAssessmentPort,
     LoadAssessmentListItemsBySpacePort,
     UpdateAssessmentPort,
-    GetAssessmentProgressPort {
+    GetAssessmentProgressPort,
+    GetAssessmentSpacePort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -71,5 +76,11 @@ public class AssessmentPersistenceJpaAdapter implements
 
         int answersCount = answerRepository.getCountByAssessmentResultId(assessmentResult.getId());
         return new GetAssessmentProgressPort.Result(assessmentId, answersCount);
+    }
+
+    @Override
+    public Long getSpaceIdByAssessmentId(UUID assessmentId) {
+        return repository.findSpaceIdByAssessmentId(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_SPACE_ASSESSMENT_ID_NOT_FOUND));
     }
 }
