@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID> {
@@ -34,4 +35,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 @Param(value = "colorId") Integer colorId,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
 
+
+    @Query("SELECT a.spaceId as spaceId FROM AssessmentJpaEntity a WHERE a.id = :id")
+    Optional<Long> findSpaceIdByAssessmentId(UUID id);
 }

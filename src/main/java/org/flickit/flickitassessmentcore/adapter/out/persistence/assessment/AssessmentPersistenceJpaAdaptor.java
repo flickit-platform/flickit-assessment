@@ -73,9 +73,8 @@ public class AssessmentPersistenceJpaAdaptor implements
     }
 
     @Override
-    public Long loadSpaceIdByAssessmentId(UUID assessmentId) {
-        var assessment = repository.findById(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_SPACE_ID_ASSESSMENT_ID_NOT_FOUND));
-        return assessment.getSpaceId();
+    public Long getSpaceIdByAssessmentId(UUID assessmentId) {
+        return repository.findSpaceIdByAssessmentId(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_SPACE_ASSESSMENT_ID_NOT_FOUND));
     }
 }
