@@ -16,8 +16,6 @@ class GetAssessmentColorsServiceTest {
 
     @Test
     void testGetAssessmentColors() {
-        assertEquals(Arrays.asList(AssessmentColor.values()), service.getAssessmentColors());
-    void getAssessmentColors() {
         AssessmentColor defaultColor = AssessmentColor.getDefault();
         ColorItem defaultColorItem =
             new ColorItem(defaultColor.getId(), defaultColor.getTitle(), defaultColor.getCode());
