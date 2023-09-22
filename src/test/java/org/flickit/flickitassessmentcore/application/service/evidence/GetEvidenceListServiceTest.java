@@ -27,7 +27,7 @@ class GetEvidenceListServiceTest {
     private LoadEvidencesByQuestionAndAssessmentPort loadEvidencesPort;
 
     @Test
-    void getEvidenceList_ResultsFound_2ItemsReturned() {
+    void testGetEvidenceList_ResultsFound_2ItemsReturned() {
         Long question1Id = 1L;
         EvidenceListItem evidence1Q1 = createEvidence();
         EvidenceListItem evidence2Q1 = createEvidence();
@@ -48,7 +48,7 @@ class GetEvidenceListServiceTest {
     }
 
     @Test
-    void getEvidenceList_ResultsFound_0ItemReturned() {
+    void testGetEvidenceList_ResultsFound_NoItemReturned() {
         Long QUESTION2_ID = 2L;
         UUID ASSESSMENT_ID = UUID.randomUUID();
         when(loadEvidencesPort.loadEvidencesByQuestionIdAndAssessmentId(QUESTION2_ID, ASSESSMENT_ID, 0, 10))

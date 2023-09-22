@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class MaturityLevelDtoTest {
 
     @Test
-    void dtoToDomain() {
+    void testDtoToDomain() {
         List<LevelCompetenceDto> lcDtoList = List.of(
             new LevelCompetenceDto(123L, 25, 123L),
             new LevelCompetenceDto(234L, 60, 234L)

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AssessmentColorTest {
 
     @Test
-    void idOfColorsShouldNotBeChanged() {
+    void testAssessmentColor_IdOfColorsShouldNotBeChanged() {
         assertEquals(1, AssessmentColor.CRAYOLA.getId());
         assertEquals(2, AssessmentColor.CORAL.getId());
         assertEquals(3, AssessmentColor.SUN_GLOW.getId());
@@ -17,5 +17,4 @@ class AssessmentColorTest {
 
         assertEquals(6, AssessmentColor.values().length);
     }
-
 }

@@ -17,59 +17,44 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateEvidenceUseCaseParamTest {
 
     @Test
-    void updateEvidence_EmptyId_ErrorMessage() {
+    void testUpdateEvidenceParam_IdIsEmpty_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateEvidenceUseCase.Param(
-                null,
-                "new_description"
-            ));
+            () -> new UpdateEvidenceUseCase.Param(null,"new_description"));
         assertThat(throwable).hasMessage("id: " + UPDATE_EVIDENCE_ID_NOT_NULL);
     }
 
     @Test
-    void updateEvidence_DescriptionIsEmpty_ErrorMessage() {
+    void testUpdateEvidenceParam_DescriptionIsBlank_ErrorMessage() {
         var id = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateEvidenceUseCase.Param(
-                id,
-                "    "
-            ));
+            () -> new UpdateEvidenceUseCase.Param(id,"    "));
         assertThat(throwable).hasMessage("description: " + UPDATE_EVIDENCE_DESC_NOT_BLANK);
     }
 
     @Test
-    void updateEvidence_DescriptionIsUnderMinSize_ErrorMessage() {
+    void testUpdateEvidenceParam_DescriptionIsLessThanMin_ErrorMessage() {
         var id = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateEvidenceUseCase.Param(
-                id,
-                "ab"
-            ));
+            () -> new UpdateEvidenceUseCase.Param(id,"ab"));
         assertThat(throwable).hasMessage("description: " + UPDATE_EVIDENCE_DESC_MIN_SIZE);
     }
 
     @Test
-    void updateEvidence_MinDescriptionSize_Success() {
-        assertDoesNotThrow(() -> new UpdateEvidenceUseCase.Param(
-            UUID.randomUUID(),
-            "abc"
-        ));
+    void testUpdateEvidenceParam_DescriptionSizeIsEqualToMin_Success() {
+        assertDoesNotThrow(() -> new UpdateEvidenceUseCase.Param(UUID.randomUUID(),"abc"));
     }
 
     @Test
-    void updateEvidence_DescriptionIsAboveMaxSize_ErrorMessage() {
+    void testUpdateEvidenceParam_DescriptionSizeIsGreaterThanMax_ErrorMessage() {
         var id = UUID.randomUUID();
         var desc = randomAlphabetic(1001);
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateEvidenceUseCase.Param(
-                id,
-                desc
-            ));
+            () -> new UpdateEvidenceUseCase.Param(id, desc));
         assertThat(throwable).hasMessage("description: " + UPDATE_EVIDENCE_DESC_MAX_SIZE);
     }
 
     @Test
-    void updateEvidence_MaxDescriptionSize_Success() {
+    void testUpdateEvidenceParam_DescriptionSizeIsEqualToMax_Success() {
         assertDoesNotThrow(() -> new UpdateEvidenceUseCase.Param(
             UUID.randomUUID(),
             randomAlphabetic(1000)

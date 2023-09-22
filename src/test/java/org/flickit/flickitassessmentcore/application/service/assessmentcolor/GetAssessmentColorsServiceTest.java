@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GetAssessmentColorsServiceTest {
 
     private final GetAssessmentColorsService service = new GetAssessmentColorsService();
 
     @Test
-    void getAssessmentColors() {
+    void testGetAssessmentColors() {
         AssessmentColor defaultColor = AssessmentColor.getDefault();
         ColorItem defaultColorItem =
             new ColorItem(defaultColor.getId(), defaultColor.getTitle(), defaultColor.getCode());

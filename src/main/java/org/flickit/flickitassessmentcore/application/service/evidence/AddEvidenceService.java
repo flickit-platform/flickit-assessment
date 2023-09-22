@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class AddEvidenceService implements AddEvidenceUseCase {
 
     private final CreateEvidencePort createEvidencePort;

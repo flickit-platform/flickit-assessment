@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class EvidencePersistenceJpaAdaptor implements
+public class EvidencePersistenceJpaAdapter implements
     CreateEvidencePort,
     LoadEvidencesByQuestionAndAssessmentPort,
     UpdateEvidencePort {

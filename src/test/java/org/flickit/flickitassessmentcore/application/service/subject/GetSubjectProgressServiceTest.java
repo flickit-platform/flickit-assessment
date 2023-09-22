@@ -34,7 +34,7 @@ class GetSubjectProgressServiceTest {
     private CountAnswersByQuestionIdsPort countAnswersByQuestionIdsPort;
 
     @Test
-    void GetSubjectProgress_ValidResult() {
+    void testGetSubjectProgress_ValidResult() {
         var questions = List.of(
             QuestionMother.withNoImpact(),
             QuestionMother.withNoImpact(),
