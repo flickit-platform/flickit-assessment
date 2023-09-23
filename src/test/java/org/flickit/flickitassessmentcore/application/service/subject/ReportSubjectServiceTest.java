@@ -35,7 +35,7 @@ class ReportSubjectServiceTest {
     private LoadSubjectReportInfoPort loadSubjectReportInfoPort;
 
     @Test
-    void reportSubject_ValidResult() {
+    void testReportSubject_ValidResult() {
         QualityAttribute attribute1 = simpleAttribute();
         QualityAttribute attribute2 = simpleAttribute();
         QualityAttribute attribute3 = simpleAttribute();

@@ -28,7 +28,7 @@ class UpdateAssessmentServiceTest {
     private UpdateAssessmentPort updateAssessmentPort;
 
     @Test
-    void updateAssessment_ValidParam_UpdatedAndReturnsId() {
+    void testUpdateAssessment_ValidParam_UpdatedAndReturnsId() {
         UUID id = UUID.randomUUID();
 
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));

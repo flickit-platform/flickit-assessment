@@ -19,7 +19,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_QU
 
 @Component
 @RequiredArgsConstructor
-public class QualityAttributeValuePersistenceJpaAdaptor implements
+public class QualityAttributeValuePersistenceJpaAdapter implements
     CreateQualityAttributeValuePort,
     LoadAttributeValueListPort {
 

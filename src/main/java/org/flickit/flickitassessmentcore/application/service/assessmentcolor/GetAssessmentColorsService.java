@@ -11,7 +11,16 @@ import java.util.List;
 public class GetAssessmentColorsService implements GetAssessmentColorsUseCase {
 
     @Override
-    public List<AssessmentColor> getAssessmentColors() {
-        return Arrays.asList(AssessmentColor.values());
+    public Result getAssessmentColors() {
+        AssessmentColor defaultColor = AssessmentColor.getDefault();
+
+        ColorItem defaultColorItem =
+            new ColorItem(defaultColor.getId(), defaultColor.getTitle(), defaultColor.getCode());
+
+        List<ColorItem> colorItems = Arrays.stream(AssessmentColor.values())
+            .map(x -> new ColorItem(x.getId(), x.getTitle(), x.getCode()))
+            .toList();
+
+        return new Result(defaultColorItem, colorItems);
     }
 }

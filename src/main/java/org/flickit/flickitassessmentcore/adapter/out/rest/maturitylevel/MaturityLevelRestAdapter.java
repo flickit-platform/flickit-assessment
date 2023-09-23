@@ -12,13 +12,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
 
-@RequiredArgsConstructor
 @Component
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
+@RequiredArgsConstructor
 public class MaturityLevelRestAdapter implements LoadMaturityLevelsByKitPort {
 
     private final RestTemplate flickitPlatformRestTemplate;
@@ -32,7 +35,7 @@ public class MaturityLevelRestAdapter implements LoadMaturityLevelsByKitPort {
     }
 
     public List<MaturityLevelDto> loadMaturityLevelsDtoByKitId(Long kitId) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetMaturityLevelsUrl(), kitId);
+        String url = properties.getBaseUrl() + String.format(properties.getGetMaturityLevelsUrl(), kitId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

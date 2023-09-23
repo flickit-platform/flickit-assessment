@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class QuestionDtoTest {
 
     @Test
-    void dtoToDomain() {
+    void testDtoToDomain() {
         List<QuestionImpactDto> questionImpactDtoList = List.of(
             new QuestionImpactDto(100L, 1, 110L, 120L),
             new QuestionImpactDto(200L, 2, 210L, 220L)

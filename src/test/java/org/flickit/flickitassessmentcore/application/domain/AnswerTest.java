@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AnswerTest {
 
     @Test
-    void findImpactByMaturityLevel_optionOne() {
+    void testFindImpactByMaturityLevel_optionOne() {
         AnswerOption optionOne = AnswerOptionMother.optionOne();
         Answer answer = AnswerMother.answer(optionOne);
 

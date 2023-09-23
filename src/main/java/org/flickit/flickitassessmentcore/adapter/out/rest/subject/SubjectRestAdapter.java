@@ -12,12 +12,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
 
 @Component
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
 @RequiredArgsConstructor
 public class SubjectRestAdapter implements LoadSubjectByAssessmentKitIdPort {
 
@@ -32,7 +35,7 @@ public class SubjectRestAdapter implements LoadSubjectByAssessmentKitIdPort {
     }
 
     public List<SubjectDto> loadSubjectsDtoByAssessmentKitId(Long assessmentKitId) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetSubjectsUrl(), assessmentKitId);
+        String url = properties.getBaseUrl() + String.format(properties.getGetSubjectsUrl(), assessmentKitId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
