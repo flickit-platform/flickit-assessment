@@ -56,7 +56,9 @@ public class AssessmentMapper {
         );
     }
 
-    public static CheckComparativeAssessmentsUseCase.AssessmentListItem mapToComparativeAssessmentListItem(AssessmentListItemView itemView) {
+    public static CheckComparativeAssessmentsUseCase.AssessmentListItem mapToComparativeAssessmentListItem(
+        AssessmentListItemView itemView,
+        CheckComparativeAssessmentsUseCase.Progress progress) {
         AssessmentJpaEntity assessmentEntity = itemView.getAssessment();
         return new CheckComparativeAssessmentsUseCase.AssessmentListItem(
             assessmentEntity.getId(),
@@ -67,7 +69,7 @@ public class AssessmentMapper {
             assessmentEntity.getLastModificationTime(),
             itemView.getMaturityLevelId(),
             itemView.getIsCalculateValid(),
-            null
+            progress
         );
     }
 }

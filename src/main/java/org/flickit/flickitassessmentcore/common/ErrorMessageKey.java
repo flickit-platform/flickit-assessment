@@ -86,4 +86,5 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_SPACE_ASSESSMENT_ID_NOT_FOUND = "get-assessment-space.assessmentId.notFound";
 
     public static final String CHECK_COMPARATIVE_ASSESSMENTS_ASSESSMENT_LIST_NOT_NULL = "check-comparative-assessments.assessment.list.notNull";
+    public static final String CHECK_COMPARATIVE_ASSESSMENTS_ASSESSMENTS_NOT_COMPARABLE = "check-comparative-assessments.assessments.notComparable";
 }

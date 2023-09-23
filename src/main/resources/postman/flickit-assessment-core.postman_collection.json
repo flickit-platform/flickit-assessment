@@ -451,6 +451,31 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Check Comparative Assessments Lists",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/compare/assessments?assessmentIds=ddd68c97-64db-464d-848e-ce4e31c476fb,bfcb89e3-592f-4e89-ae8f-84321de05bed",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"compare",
+						"assessments"
+					],
+					"query": [
+						{
+							"key": "assessmentIds",
+							"value": "ddd68c97-64db-464d-848e-ce4e31c476fb,bfcb89e3-592f-4e89-ae8f-84321de05bed"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [

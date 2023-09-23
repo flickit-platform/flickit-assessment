@@ -41,6 +41,6 @@ public interface CheckComparativeAssessmentsUseCase {
     ) {
     }
 
-    record Progress(int progress, int totalQuestionNumber, int totalAnsweredQuestionNumber) {
+    record Progress(int totalAnsweredQuestionNumber) {
     }
 }

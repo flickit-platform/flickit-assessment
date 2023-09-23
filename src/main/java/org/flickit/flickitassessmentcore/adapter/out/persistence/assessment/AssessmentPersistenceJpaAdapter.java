@@ -3,10 +3,8 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.CheckComparativeAssessmentsUseCase;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.*;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CheckComparativeAssessmentsUseCase;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.*;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
@@ -87,7 +85,10 @@ public class AssessmentPersistenceJpaAdapter implements
     public List<CheckComparativeAssessmentsUseCase.AssessmentListItem> load(List<UUID> assessmentIds) {
         List<AssessmentListItemView> assessmentJpaEntities = repository.findAllByIdOrderByLastModificationTimeDesc(assessmentIds);
         return assessmentJpaEntities.stream()
-            .map(AssessmentMapper::mapToComparativeAssessmentListItem)
+            .map(x -> AssessmentMapper.mapToComparativeAssessmentListItem(x,
+                new CheckComparativeAssessmentsUseCase.Progress(
+                    getAssessmentProgressById(x.getAssessment().getId()).allAnswersCount()
+                )))
             .toList();
     }
 }
