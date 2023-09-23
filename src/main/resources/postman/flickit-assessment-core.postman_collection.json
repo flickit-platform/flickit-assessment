@@ -468,7 +468,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/compare/assessments?spaceIds=1,2&page=0&size=20&assessmentKitId=1",
+					"raw": "{{base_url}}/{{api_path}}/compare/assessments?spaceIds=1,2&assessmentKitId=1&size=20&page=0",
 					"host": [
 						"{{base_url}}"
 					],
@@ -483,16 +483,16 @@
 							"value": "1,2"
 						},
 						{
-							"key": "page",
-							"value": "0"
+							"key": "assessmentKitId",
+							"value": "1"
 						},
 						{
 							"key": "size",
 							"value": "20"
 						},
 						{
-							"key": "assessmentKitId",
-							"value": "1"
+							"key": "page",
+							"value": "0"
 						}
 					]
 				}

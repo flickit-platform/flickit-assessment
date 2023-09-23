@@ -3,7 +3,6 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
-import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentKit;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
@@ -65,7 +64,7 @@ public class AssessmentMapper {
             assessmentEntity.getTitle(),
             assessmentEntity.getAssessmentKitId(),
             assessmentEntity.getSpaceId(),
-            AssessmentColor.valueOfById(assessmentEntity.getColorId()).getId(),
+            AssessmentColor.valueOfById(assessmentEntity.getColorId()).getCode(),
             assessmentEntity.getLastModificationTime(),
             itemView.getMaturityLevelId(),
             itemView.getIsCalculateValid()

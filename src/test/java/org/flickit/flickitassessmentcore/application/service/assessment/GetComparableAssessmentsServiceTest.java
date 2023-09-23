@@ -8,6 +8,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.GetCompa
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpaceAndKitPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,7 +17,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetComparableAssessmentsServiceTest {
@@ -51,18 +52,35 @@ class GetComparableAssessmentsServiceTest {
         var param = new GetComparableAssessmentsUseCase.Param(spaceIds, assessment1.assessmentKitId(), 20, 0);
         var assessments = service.getComparableAssessments(param);
 
+        ArgumentCaptor<List<Long>> spaceIdsArgument = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<Long> kitIdArgument = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<Integer> sizeArgument = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Integer> pageArgument = ArgumentCaptor.forClass(Integer.class);
+        verify(loadAssessmentListItemsBySpaceAndKitPort).loadBySpaceIdAndKitId(
+            spaceIdsArgument.capture(),
+            kitIdArgument.capture(),
+            pageArgument.capture(),
+            sizeArgument.capture());
+
+        assertEquals(spaceIds, spaceIdsArgument.getValue());
+        assertEquals(assessment1.assessmentKitId(), kitIdArgument.getValue());
+        assertEquals(20, sizeArgument.getValue());
+        assertEquals(0, pageArgument.getValue());
+
         assertEquals(2, assessments.getItems().size());
         assertEquals(20, assessments.getSize());
         assertEquals(0, assessments.getPage());
         assertEquals(2, assessments.getTotal());
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
         assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
+
+        verify(loadAssessmentListItemsBySpaceAndKitPort, times(1)).loadBySpaceIdAndKitId(
+            any(), any(), anyInt(), anyInt());
     }
 
     @Test
     void getComparableAssessments_ValidResultsWithKit() {
         var assessment1 = AssessmentMother.assessmentListItem();
-        var assessment2 = AssessmentMother.assessmentListItem();
 
         var spaceIds = List.of(assessment1.spaceId());
         var paginatedRes = new PaginatedResponse<>(

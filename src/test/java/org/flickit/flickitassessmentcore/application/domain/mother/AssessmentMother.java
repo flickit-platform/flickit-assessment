@@ -32,7 +32,7 @@ public class AssessmentMother {
             "my-assessment-" + counter,
             AssessmentKitMother.kit().getId(),
             1L,
-            AssessmentColor.BLUE.getId(),
+            AssessmentColor.BLUE.getCode(),
             LocalDateTime.now(),
             1L,
             Boolean.TRUE
