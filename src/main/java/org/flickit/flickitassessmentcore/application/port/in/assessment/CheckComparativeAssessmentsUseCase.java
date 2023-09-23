@@ -33,7 +33,7 @@ public interface CheckComparativeAssessmentsUseCase {
         String title,
         Long assessmentKitId,
         Long spaceId,
-        int colorId,
+        String colorCode,
         LocalDateTime lastModificationTime,
         Long maturityLevelId,
         boolean isCalculateValid,

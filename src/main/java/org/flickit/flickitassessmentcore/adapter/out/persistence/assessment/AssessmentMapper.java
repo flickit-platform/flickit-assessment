@@ -65,7 +65,7 @@ public class AssessmentMapper {
             assessmentEntity.getTitle(),
             assessmentEntity.getAssessmentKitId(),
             assessmentEntity.getSpaceId(),
-            AssessmentColor.valueOfById(assessmentEntity.getColorId()).getId(),
+            AssessmentColor.valueOfById(assessmentEntity.getColorId()).getCode(),
             assessmentEntity.getLastModificationTime(),
             itemView.getMaturityLevelId(),
             itemView.getIsCalculateValid(),
