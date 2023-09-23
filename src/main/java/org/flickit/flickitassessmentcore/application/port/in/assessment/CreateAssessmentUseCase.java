@@ -24,13 +24,14 @@ public interface CreateAssessmentUseCase {
         @Size(max = 100, message = CREATE_ASSESSMENT_TITLE_SIZE_MAX)
         String title;
 
+        @NotNull(message = CREATE_ASSESSMENT_SPACE_ID_NOT_NULL)
+        Long spaceId;
+
         @NotNull(message = CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
         Long assessmentKitId;
 
+        @NotNull(message = CREATE_ASSESSMENT_COLOR_ID_NOT_NULL)
         Integer colorId;
-
-        @NotNull(message = CREATE_ASSESSMENT_SPACE_ID_NOT_NULL)
-        Long spaceId;
 
         public Param(Long spaceId, String title, Long assessmentKitId, Integer colorId) {
             this.title = title != null ? title.strip() : null;

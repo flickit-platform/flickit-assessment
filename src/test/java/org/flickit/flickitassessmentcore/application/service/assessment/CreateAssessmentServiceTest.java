@@ -155,25 +155,6 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void testCreateAssessment_NullColor_UseDefaultColor() {
-        Param param = new Param(
-            1L,
-            "title example",
-            1L,
-            null
-        );
-        List<Subject> expectedResponse = List.of();
-        when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
-
-        service.createAssessment(param);
-
-        ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
-        verify(createAssessmentPort).persist(createPortParam.capture());
-
-        assertEquals(AssessmentColor.getDefault().getId(), createPortParam.getValue().colorId());
-    }
-
-    @Test
     void testCreateAssessment_InvalidColor_UseDefaultColor() {
         Param param = new Param(
             1L,
