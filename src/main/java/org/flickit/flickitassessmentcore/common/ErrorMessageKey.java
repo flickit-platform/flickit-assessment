@@ -82,5 +82,8 @@ public class ErrorMessageKey {
     public static final String GET_SUBJECT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND = "get-subject-progress.assessmentResultId.notFound";
     public static final String GET_SUBJECT_PROGRESS_SUBJECT_ID_NOT_NULL = "get-subject-progress.subject.id.notNull";
 
+    public static final String GET_ASSESSMENT_SPACE_ASSESSMENT_ID_NOT_NULL = "get-assessment-space.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_SPACE_ASSESSMENT_ID_NOT_FOUND = "get-assessment-space.assessmentId.notFound";
+
     public static final String CHECK_COMPARATIVE_ASSESSMENTS_ASSESSMENT_LIST_NOT_NULL = "check-comparative-assessments.assessment.list.notNull";
 }

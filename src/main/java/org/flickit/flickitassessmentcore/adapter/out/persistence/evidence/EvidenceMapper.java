@@ -1,8 +1,11 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvidenceMapper {
 
     public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param) {

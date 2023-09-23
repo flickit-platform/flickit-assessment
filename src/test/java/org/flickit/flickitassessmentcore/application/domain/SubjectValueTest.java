@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class SubjectValueTest {
 
     @Test
-    void calculate_withSameWeightsAndLevels() {
+    void testCalculate_withSameWeightsAndLevels() {
 
         List<QualityAttributeValue> qualityAttributeValues = List.of(
             QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),

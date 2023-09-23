@@ -1,13 +1,15 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentKit;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CheckComparativeAssessmentsUseCase;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
-import org.flickit.flickitassessmentcore.application.domain.Assessment;
-import org.flickit.flickitassessmentcore.application.domain.AssessmentKit;
 
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentMapper {
 
     static AssessmentJpaEntity mapCreateParamToJpaEntity(CreateAssessmentPort.Param param) {
@@ -24,7 +26,7 @@ public class AssessmentMapper {
     }
 
     public static Assessment mapToDomainModel(AssessmentJpaEntity entity) {
-        AssessmentKit kit = new AssessmentKit(entity.getAssessmentKitId(), null); // TODO
+        AssessmentKit kit = new AssessmentKit(entity.getAssessmentKitId(), null);
         return mapToDomainModel(entity, kit);
     }
 

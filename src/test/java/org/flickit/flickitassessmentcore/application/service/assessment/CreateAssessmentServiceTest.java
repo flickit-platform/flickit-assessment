@@ -9,6 +9,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAs
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase.Param;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.CreateAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.junit.jupiter.api.Test;
@@ -43,11 +44,11 @@ class CreateAssessmentServiceTest {
     private CreateSubjectValuePort createSubjectValuePort;
 
     @Mock
-    private org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort createQualityAttributeValuePort;
+    private CreateQualityAttributeValuePort createQualityAttributeValuePort;
 
 
     @Test
-    void createAssessment_ValidParam_PersistsAndReturnsId() {
+    void testCreateAssessment_ValidParam_PersistsAndReturnsId() {
         Param param = new Param(
             1L,
             "title example",
@@ -74,7 +75,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void createAssessment_ValidParam_PersistsAssessmentResult() {
+    void testCreateAssessment_ValidParam_PersistsAssessmentResult() {
         Param param = new Param(
             1L,
             "title example",
@@ -99,7 +100,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void createAssessment_ValidParam_PersistsSubjectValues() {
+    void testCreateAssessment_ValidParam_PersistsSubjectValues() {
         Long assessmentKitId = 1L;
         Param param = new Param(
             1L,
@@ -127,7 +128,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void createAssessment_ValidCommand_PersistsQualityAttributeValue() {
+    void testCreateAssessment_ValidCommand_PersistsQualityAttributeValue() {
         Long assessmentKitId = 1L;
         Param param = new Param(
             1L,
@@ -154,7 +155,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void createAssessment_NullColor_UseDefaultColor() {
+    void testCreateAssessment_NullColor_UseDefaultColor() {
         Param param = new Param(
             1L,
             "title example",
@@ -173,7 +174,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void createAssessment_InvalidColor_UseDefaultColor() {
+    void testCreateAssessment_InvalidColor_UseDefaultColor() {
         Param param = new Param(
             1L,
             "title example",

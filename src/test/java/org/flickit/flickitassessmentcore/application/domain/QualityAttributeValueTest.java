@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class QualityAttributeValueTest {
 
     @Test
-    void calculate_fullScoreOnAllLevels() {
+    void testCalculate_fullScoreOnAllLevels() {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel23(),
             QuestionMother.withImpactsOnLevel23(),

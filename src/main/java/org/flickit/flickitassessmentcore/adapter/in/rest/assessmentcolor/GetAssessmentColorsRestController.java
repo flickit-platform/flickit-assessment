@@ -1,14 +1,13 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.assessmentcolor;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.domain.crud.DataItems;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentColorsUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentColorsUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,11 +16,13 @@ public class GetAssessmentColorsRestController {
     private final GetAssessmentColorsUseCase useCase;
 
     @GetMapping("/assessment-colors")
-    public ResponseEntity<DataItems> createAssessment() {
+    public ResponseEntity<GetAssessmentColorsResponseDto> getAssessmentColors() {
         var response = useCase.getAssessmentColors();
-        List<ColorDto> responseDto = response.stream()
-            .map(x -> new ColorDto(x.getId(), x.getTitle(), x.getCode()))
-            .toList();
-        return new ResponseEntity<>(new DataItems(responseDto), HttpStatus.OK);
+        GetAssessmentColorsResponseDto responseDto = toResponseDto(response);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    private GetAssessmentColorsResponseDto toResponseDto(Result result) {
+        return new GetAssessmentColorsResponseDto(result.defaultColor(), result.colors());
     }
 }

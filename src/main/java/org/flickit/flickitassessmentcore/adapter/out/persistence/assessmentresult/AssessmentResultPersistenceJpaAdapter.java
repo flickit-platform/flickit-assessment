@@ -18,7 +18,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_AS
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentResultPersistenceJpaAdaptor implements
+public class AssessmentResultPersistenceJpaAdapter implements
     InvalidateAssessmentResultPort,
     CreateAssessmentResultPort,
     LoadAssessmentResultPort {

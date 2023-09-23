@@ -10,6 +10,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
 @AllArgsConstructor
 public class AnswerOptionRestAdapter {
 
@@ -42,7 +45,7 @@ public class AnswerOptionRestAdapter {
     }
 
     private List<AnswerOptionDto> loadAnswerOptions(String commaSeparatedIds) {
-        String url = String.format(properties.getBaseUrl() + properties.getGetAnswerOptionsUrl(), commaSeparatedIds);
+        String url = properties.getBaseUrl() + String.format(properties.getGetAnswerOptionsUrl(), commaSeparatedIds);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
