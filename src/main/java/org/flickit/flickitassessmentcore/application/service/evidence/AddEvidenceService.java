@@ -14,8 +14,8 @@ import java.util.UUID;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class AddEvidenceService implements AddEvidenceUseCase {
 
     private final CreateEvidencePort createEvidencePort;

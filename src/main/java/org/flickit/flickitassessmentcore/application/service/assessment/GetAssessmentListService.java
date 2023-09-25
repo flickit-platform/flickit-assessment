@@ -11,8 +11,8 @@ import static org.flickit.flickitassessmentcore.application.service.constant.Ass
 
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class GetAssessmentListService implements GetAssessmentListUseCase {
 
     private final LoadAssessmentListItemsBySpacePort loadAssessmentsBySpace;

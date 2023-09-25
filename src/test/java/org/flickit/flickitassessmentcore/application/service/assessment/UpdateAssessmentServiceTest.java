@@ -31,7 +31,7 @@ class UpdateAssessmentServiceTest {
     private CheckAssessmentExistencePort checkAssessmentExistencePort;
 
     @Test
-    void updateAssessment_ValidParam_UpdatedAndReturnsId() {
+    void testUpdateAssessment_ValidParam_UpdatedAndReturnsId() {
         UUID id = UUID.randomUUID();
 
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
@@ -54,6 +54,24 @@ class UpdateAssessmentServiceTest {
         assertNotNull(updatePortParam.getValue().title());
         assertNotNull(updatePortParam.getValue().colorId());
         assertNotNull(updatePortParam.getValue().lastModificationTime());
+    }
+
+    @Test
+    void testUpdateAssessment_InvalidColor_UseDefaultColor() {
+        UUID id = UUID.randomUUID();
+        UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
+            id,
+            "title example",
+            7
+        );
+        when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
+
+        service.updateAssessment(param);
+
+        ArgumentCaptor<UpdateAssessmentPort.Param> updatePortParam = ArgumentCaptor.forClass(UpdateAssessmentPort.Param.class);
+        verify(updateAssessmentPort).update(updatePortParam.capture());
+
+        assertEquals(AssessmentColor.getDefault().getId(), updatePortParam.getValue().colorId());
     }
 
     @Test

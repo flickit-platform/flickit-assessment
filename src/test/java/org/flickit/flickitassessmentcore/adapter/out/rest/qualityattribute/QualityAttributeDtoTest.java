@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class QualityAttributeDtoTest {
 
     @Test
-    void dtoToDomain() {
+    void testDtoToDomain() {
         QualityAttributeDto dto = new QualityAttributeDto(123L, 3);
 
         QualityAttribute domain = dto.dtoToDomain();

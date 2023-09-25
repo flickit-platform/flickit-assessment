@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValuePersistenceJpaAdaptor;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValuePersistenceJpaAdapter;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectRestAdapter;
@@ -35,7 +35,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
     private final MaturityLevelRestAdapter maturityLevelRestAdapter;
     private final SubjectRestAdapter subjectRestAdapter;
 
-    private final QualityAttributeValuePersistenceJpaAdaptor attributeValuePersistenceJpaAdaptor;
+    private final QualityAttributeValuePersistenceJpaAdapter attributeValuePersistenceJpaAdapter;
 
     @Override
     public AssessmentResult load(UUID assessmentId, Long subjectId) {
@@ -83,7 +83,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
         Map<Long, QualityAttribute> qualityAttributeMap = subject.getQualityAttributes()
             .stream()
             .collect(toMap(QualityAttribute::getId, x -> x));
-        return attributeValuePersistenceJpaAdaptor.loadAttributeValues(assessmentResultId, maturityLevels)
+        return attributeValuePersistenceJpaAdapter.loadAttributeValues(assessmentResultId, maturityLevels)
             .stream()
             .filter(x -> qualityAttributeMap.containsKey(x.getQualityAttribute().getId()))
             .toList();

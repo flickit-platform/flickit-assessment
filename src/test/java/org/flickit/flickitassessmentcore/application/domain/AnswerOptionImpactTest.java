@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AnswerOptionImpactTest {
 
     @Test
-    void calculateScore() {
+    void testCalculateScore() {
         AnswerOptionImpact impact = AnswerOptionImpactMother.onLevelTwo(0.1);
 
         double score = impact.calculateScore();

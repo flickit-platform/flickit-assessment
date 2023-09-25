@@ -153,7 +153,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void submitAnswer_AssessmentResultNotFound_ThrowsException() {
+    void testSubmitAnswer_AssessmentResultNotFound_ThrowsException() {
         UUID assessmentId = UUID.randomUUID();
         Long questionnaireId = 1L;
         Long questionId = 1L;

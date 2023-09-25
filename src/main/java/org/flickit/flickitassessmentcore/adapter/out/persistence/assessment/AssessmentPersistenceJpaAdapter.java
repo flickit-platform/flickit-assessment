@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.*;
@@ -14,15 +15,18 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND;
 import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentPersistenceJpaAdaptor implements
+public class AssessmentPersistenceJpaAdapter implements
     CreateAssessmentPort,
     LoadAssessmentListItemsBySpacePort,
     UpdateAssessmentPort,
+    GetAssessmentProgressPort,
+    GetAssessmentPort,
     GetAssessmentProgressPort,
     DeleteAssessmentPort,
     CheckAssessmentExistencePort,
@@ -73,6 +77,12 @@ public class AssessmentPersistenceJpaAdaptor implements
 
         int answersCount = answerRepository.getCountByAssessmentResultId(assessmentResult.getId());
         return new GetAssessmentProgressPort.Result(assessmentId, answersCount);
+    }
+
+    @Override
+    public Assessment getAssessmentById(UUID assessmentId) {
+        return AssessmentMapper.mapToDomainModel(repository.findById(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND)));
     }
 
     @Override

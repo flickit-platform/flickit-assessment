@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.flickit.flickitassessmentcore.application.domain.Assessment.generateSlugCode;
+import static org.flickit.flickitassessmentcore.application.domain.AssessmentColor.getValidId;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.UPDATE_ASSESSMENT_ID_NOT_FOUND;
 
 @Service
@@ -31,7 +32,7 @@ public class UpdateAssessmentService implements UpdateAssessmentUseCase {
             param.getId(),
             param.getTitle(),
             code,
-            param.getColorId(),
+            getValidId(param.getColorId()),
             lastModificationTime);
 
         return new Result(updateAssessmentPort.update(updateParam).id());

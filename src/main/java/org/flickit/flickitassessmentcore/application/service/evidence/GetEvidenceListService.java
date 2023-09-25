@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class GetEvidenceListService implements GetEvidenceListUseCase {
 
     private final LoadEvidencesByQuestionAndAssessmentPort loadEvidencesPort;

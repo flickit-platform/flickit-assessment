@@ -30,7 +30,7 @@ class AddEvidenceServiceTest {
     private CheckAssessmentExistencePort checkAssessmentExistencePort;
 
     @Test
-    void addEvidence_ValidParam_PersistsAndReturnsId() {
+    void testAddEvidence_ValidParam_PersistsAndReturnsId() {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
             1L,

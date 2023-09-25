@@ -23,7 +23,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
-public class AnswerPersistenceJpaAdaptor implements
+public class AnswerPersistenceJpaAdapter implements
     CreateAnswerPort,
     UpdateAnswerOptionPort,
     LoadAnswerPort,

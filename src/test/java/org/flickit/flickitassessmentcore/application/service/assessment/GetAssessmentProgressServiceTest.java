@@ -30,7 +30,7 @@ class GetAssessmentProgressServiceTest {
     private GetAssessmentProgressPort getAssessmentProgressPort;
 
     @Test
-    void getAssessmentProgress_ValidResult() {
+    void testGetAssessmentProgress_ValidResult() {
         var assessment = AssessmentMother.assessment();
         UUID assessmentId = assessment.getId();
         Param param = new Param(assessmentId);
@@ -51,7 +51,7 @@ class GetAssessmentProgressServiceTest {
     }
 
     @Test
-    void getAssessmentProgress_InValidAssessmentId() {
+    void testGetAssessmentProgress_InValidAssessmentId() {
         var assessment = AssessmentMother.assessment();
         UUID assessmentId = assessment.getId();
         Param param = new Param(assessmentId);

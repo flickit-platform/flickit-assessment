@@ -30,7 +30,7 @@ class GetQuestionnairesProgressServiceTest {
     private GetQuestionnairesProgressPort getQuestionnairesProgressPort;
 
     @Test
-    void getQuestionnairesProgressTest(){
+    void testGetQuestionnairesProgressTest(){
         UUID assessmentId = UUID.randomUUID();
         Param useCaseParam = new Param(assessmentId);
 

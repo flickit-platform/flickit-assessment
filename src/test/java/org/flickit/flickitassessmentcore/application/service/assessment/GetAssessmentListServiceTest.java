@@ -29,7 +29,7 @@ class GetAssessmentListServiceTest {
     private LoadAssessmentListItemsBySpacePort loadAssessmentPort;
 
     @Test
-    void getAssessmentList_ResultsFound_ItemsReturned() {
+    void testGetAssessmentList_ResultsFound_ItemsReturned() {
         Long spaceId = 1L;
         AssessmentListItem assessment1S1 = createAssessment();
         AssessmentListItem assessment2S1 = createAssessment();
@@ -48,7 +48,7 @@ class GetAssessmentListServiceTest {
     }
 
     @Test
-    void getAssessmentList_NoResultsFound_NoItemReturned() {
+    void testGetAssessmentList_NoResultsFound_NoItemReturned() {
         Long spaceId = 2L;
 
         PaginatedResponse<AssessmentListItem> paginatedResponse = new PaginatedResponse<>(

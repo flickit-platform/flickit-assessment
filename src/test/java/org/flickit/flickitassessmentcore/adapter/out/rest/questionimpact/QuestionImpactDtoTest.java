@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class QuestionImpactDtoTest {
 
     @Test
-    void dtoToDomain() {
+    void testDtoToDomain() {
         QuestionImpactDto dto = new QuestionImpactDto(123L, 2, 234L, 345L);
 
         QuestionImpact domain = dto.dtoToDomain();

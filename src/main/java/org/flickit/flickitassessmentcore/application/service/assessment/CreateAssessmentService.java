@@ -1,6 +1,8 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
+import org.flickit.flickitassessmentcore.application.domain.Subject;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
 import org.flickit.flickitassessmentcore.application.domain.Subject;
@@ -18,11 +20,12 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.application.domain.Assessment.generateSlugCode;
+import static org.flickit.flickitassessmentcore.application.domain.AssessmentColor.getValidId;
 import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private final CreateAssessmentPort createAssessmentPort;
@@ -48,18 +51,12 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             code,
             param.getTitle(),
             param.getAssessmentKitId(),
-            getValidColorId(param.getColorId()),
+            getValidId(param.getColorId()),
             param.getSpaceId(),
             creationTime,
             lastModificationTime,
             NOT_DELETED_DELETION_TIME
         );
-    }
-
-    private int getValidColorId(Integer colorId) {
-        if (colorId == null || !AssessmentColor.isValidId(colorId))
-            return AssessmentColor.getDefault().getId();
-        return colorId;
     }
 
     private void createAssessmentResult(UUID assessmentId, Long assessmentKitId) {

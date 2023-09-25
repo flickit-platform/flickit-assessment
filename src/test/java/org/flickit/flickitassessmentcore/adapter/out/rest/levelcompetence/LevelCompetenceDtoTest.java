@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class LevelCompetenceDtoTest {
 
     @Test
-    void dtoToDomain() {
+    void testDtoToDomain() {
         LevelCompetenceDto dto = new LevelCompetenceDto(123L, 75, 234L);
 
         LevelCompetence domain = dto.dtoToDomain();

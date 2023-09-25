@@ -31,7 +31,7 @@ class UpdateEvidenceServiceTest {
     private CheckAssessmentExistenceByEvidenceIdPort checkAssessmentExistencePort;
 
     @Test
-    void updateEvidence_ValidParam_UpdatedAndReturnsId() {
+    void testUpdateEvidence_ValidParam_UpdatedAndReturnsId() {
         var savedEvidence = simpleEvidence();
         var param = new UpdateEvidenceUseCase.Param(
             savedEvidence.getId(),
