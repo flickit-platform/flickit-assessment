@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
@@ -22,4 +23,13 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     void update(@Param(value = "id") UUID id,
                 @Param(value = "description") String description,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Modifying
+    @Query("UPDATE EvidenceJpaEntity e SET " +
+        "e.deletionTime = :deletionTime " +
+        "WHERE e.id = :id")
+    void setDeletionTimeById(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
+
+    Optional<EvidenceJpaEntity> findByIdAndDeletionTime(@Param(value = "id") UUID id,
+                                                        @Param(value = "deletionTime") Long notDeletedDeletionTime);
 }

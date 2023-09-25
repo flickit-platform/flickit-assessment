@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.application.port.in.evidence;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
@@ -13,6 +14,7 @@ public interface DeleteEvidenceUseCase {
     void deleteEvidence(Param param);
 
     @Value
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = DELETE_EVIDENCE_EVIDENCE_ID_NOT_NULL)

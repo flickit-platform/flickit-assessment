@@ -1,63 +1,62 @@
 package org.flickit.flickitassessmentcore.application.service.evidence;
 
-import jakarta.validation.ConstraintViolationException;
-import org.flickit.flickitassessmentcore.application.domain.Evidence;
+import org.flickit.flickitassessmentcore.application.domain.mother.EvidenceMother;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.DeleteEvidenceUseCase;
+import org.flickit.flickitassessmentcore.application.port.out.evidence.CheckEvidenceExistencePort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.DeleteEvidencePort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
-import org.flickit.flickitassessmentcore.common.ErrorMessageKey;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.DELETE_EVIDENCE_EVIDENCE_NOT_FOUND;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class DeleteEvidenceServiceTest {
 
-    @Mock
-    private DeleteEvidencePort deleteEvidencePort;
-
-    @Spy
     @InjectMocks
     private DeleteEvidenceService service;
-
-    private final Evidence evidence = new Evidence(
-        UUID.randomUUID(),
-        "Description",
-        1L,
-        UUID.randomUUID(),
-        1L,
-        LocalDateTime.now(),
-        LocalDateTime.now()
-    );
+    @Mock
+    private DeleteEvidencePort deleteEvidencePort;
+    @Mock
+    private CheckEvidenceExistencePort checkEvidenceExistencePort;
 
     @Test
     void deleteEvidence_IdGiven_Delete() {
-        doNothing().when(deleteEvidencePort).deleteEvidence(new DeleteEvidencePort.Param(evidence.getId()));
+        var evidence = EvidenceMother.deletedEvidence();
+        doNothing().when(deleteEvidencePort).setDeletionTimeById(eq(evidence.getId()), any());
+        when(checkEvidenceExistencePort.existsById(evidence.getId())).thenReturn(Boolean.TRUE);
         service.deleteEvidence(new DeleteEvidenceUseCase.Param(evidence.getId()));
-        verify(deleteEvidencePort).deleteEvidence(new DeleteEvidencePort.Param(evidence.getId()));
-    }
 
-    @Test
-    void deleteEvidence_IdIsNull_ErrorMessage() {
-        assertThrows(ConstraintViolationException.class,
-            () -> service.deleteEvidence(new DeleteEvidenceUseCase.Param(null)),
-            ErrorMessageKey.DELETE_EVIDENCE_EVIDENCE_ID_NOT_NULL);
+        ArgumentCaptor<UUID> idDeletePortArgument = ArgumentCaptor.forClass(UUID.class);
+        ArgumentCaptor<Long> deletionTimeDeletePortArgument = ArgumentCaptor.forClass(Long.class);
+        verify(deleteEvidencePort).setDeletionTimeById(idDeletePortArgument.capture(),
+            deletionTimeDeletePortArgument.capture());
+
+        assertEquals(evidence.getId(), idDeletePortArgument.getValue());
+
+        ArgumentCaptor<UUID> idCheckPortArgument = ArgumentCaptor.forClass(UUID.class);
+        verify(checkEvidenceExistencePort).existsById(idCheckPortArgument.capture());
+
+        assertEquals(evidence.getId(), idCheckPortArgument.getValue());
     }
 
     @Test
     void deleteEvidence_IdGivenButEvidenceNotExist_ErrorMessage() {
-        doThrow(ResourceNotFoundException.class).when(deleteEvidencePort).deleteEvidence(any());
-        assertThrows(ResourceNotFoundException.class,
-            () -> service.deleteEvidence(new DeleteEvidenceUseCase.Param(evidence.getId())),
-            ErrorMessageKey.DELETE_EVIDENCE_EVIDENCE_NOT_FOUND);
+        UUID id = UUID.randomUUID();
+        when(checkEvidenceExistencePort.existsById(id)).thenReturn(Boolean.FALSE);
+        var param = new DeleteEvidenceUseCase.Param(id);
+        var throwable = assertThrows(ResourceNotFoundException.class,
+            () -> service.deleteEvidence(param));
+        assertThat(throwable).hasMessage(DELETE_EVIDENCE_EVIDENCE_NOT_FOUND);
     }
 }

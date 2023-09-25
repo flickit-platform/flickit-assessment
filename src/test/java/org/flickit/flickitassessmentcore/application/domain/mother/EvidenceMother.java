@@ -15,7 +15,21 @@ public class EvidenceMother {
             UUID.randomUUID(),
             1L,
             LocalDateTime.now(),
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            0L
+        );
+    }
+
+    public static Evidence deletedEvidence() {
+        return new Evidence(
+            UUID.randomUUID(),
+            "description",
+            1L,
+            UUID.randomUUID(),
+            1L,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            System.currentTimeMillis()
         );
     }
 }

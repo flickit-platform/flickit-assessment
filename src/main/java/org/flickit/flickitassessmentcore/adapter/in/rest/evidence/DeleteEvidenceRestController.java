@@ -5,7 +5,7 @@ import org.flickit.flickitassessmentcore.application.port.in.evidence.DeleteEvid
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -16,9 +16,9 @@ public class DeleteEvidenceRestController {
 
     private final DeleteEvidenceUseCase useCase;
 
-    @DeleteMapping("/evidences")
-    public ResponseEntity deleteEvidence(@RequestParam("id") UUID evidenceId) {
-        useCase.deleteEvidence(new DeleteEvidenceUseCase.Param(evidenceId));
-        return new ResponseEntity(null, HttpStatus.OK);
+    @DeleteMapping("/evidences/{id}")
+    public ResponseEntity<Void> deleteEvidence(@PathVariable("id") UUID id) {
+        useCase.deleteEvidence(new DeleteEvidenceUseCase.Param(id));
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

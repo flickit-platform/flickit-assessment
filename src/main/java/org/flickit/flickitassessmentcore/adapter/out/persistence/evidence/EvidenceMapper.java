@@ -16,7 +16,8 @@ public class EvidenceMapper {
             param.lastModificationTime(),
             param.createdById(),
             param.assessmentId(),
-            param.questionId()
+            param.questionId(),
+            0L
         );
     }
 

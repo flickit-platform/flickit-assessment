@@ -42,6 +42,9 @@ public class EvidenceJpaEntity {
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
+    @Column(name = "deletion_time", nullable = false)
+    private Long deletionTime;
+
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
         public static final String LAST_MODIFICATION_TIME = "lastModificationTime";

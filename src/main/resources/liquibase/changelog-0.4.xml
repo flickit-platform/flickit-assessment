@@ -4,8 +4,12 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <include file="classpath:liquibase/changelog-0.1.xml"/>
-    <include file="classpath:liquibase/changelog-0.2.xml"/>
-    <include file="classpath:liquibase/changelog-0.4.xml"/>
+    <changeSet id="0.4-04" author="MKouhestani">
+        <addColumn tableName="fac_evidence">
+            <column name="deletion_time" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

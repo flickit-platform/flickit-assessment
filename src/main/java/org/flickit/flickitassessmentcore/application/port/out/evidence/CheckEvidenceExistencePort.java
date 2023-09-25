@@ -2,8 +2,7 @@ package org.flickit.flickitassessmentcore.application.port.out.evidence;
 
 import java.util.UUID;
 
-public interface DeleteEvidencePort {
+public interface CheckEvidenceExistencePort {
 
-    void setDeletionTimeById(UUID id, Long deletionTime);
-
+    boolean existsById(UUID id);
 }
