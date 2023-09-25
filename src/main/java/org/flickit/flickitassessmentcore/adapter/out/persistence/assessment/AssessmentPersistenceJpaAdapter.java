@@ -80,7 +80,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public Assessment getAssessmentById(UUID assessmentId) {
-        return AssessmentMapper.mapToDomainModel(repository.findById(assessmentId)
+        return AssessmentMapper.mapToDomainModel(repository.findByIdAndDeletionTime(assessmentId, NOT_DELETED_DELETION_TIME)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND)));
     }
 

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
+import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,9 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 public interface GetEvidenceListUseCase {
 
+    /**
+     * @throws ResourceNotFoundException if no assessment found by the given assessmentId
+     */
     PaginatedResponse<EvidenceListItem> getEvidenceList(Param param);
 
     @Value
