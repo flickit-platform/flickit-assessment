@@ -1,28 +1,28 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentCommand;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CreateAssessmentUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 public class CreateAssessmentRestController {
 
     private final CreateAssessmentUseCase useCase;
 
     @PostMapping("/assessments")
     public ResponseEntity<CreateAssessmentResponseDto> createAssessment(@RequestBody CreateAssessmentRequestDto request) {
-        UUID response = useCase.createAssessment(toCommand(request));
-        return new ResponseEntity<>(toResponseDto(response), HttpStatus.CREATED);
+        CreateAssessmentResponseDto response = toResponseDto(useCase.createAssessment(toParam(request)));
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    private CreateAssessmentCommand toCommand(CreateAssessmentRequestDto requestDto) {
-        return new CreateAssessmentCommand(
+    private Param toParam(CreateAssessmentRequestDto requestDto) {
+        return new Param(
             requestDto.spaceId(),
             requestDto.title(),
             requestDto.assessmentKitId(),
@@ -30,7 +30,7 @@ public class CreateAssessmentRestController {
         );
     }
 
-    private CreateAssessmentResponseDto toResponseDto(UUID id) {
-        return new CreateAssessmentResponseDto(id);
+    private CreateAssessmentResponseDto toResponseDto(CreateAssessmentUseCase.Result result) {
+        return new CreateAssessmentResponseDto(result.id());
     }
 }
