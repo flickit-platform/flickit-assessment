@@ -64,6 +64,7 @@ class UpdateAssessmentServiceTest {
             "title example",
             7
         );
+        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         service.updateAssessment(param);
