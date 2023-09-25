@@ -24,7 +24,8 @@ public class AssessmentPersistenceJpaAdapter implements
     LoadAssessmentListItemsBySpacePort,
     UpdateAssessmentPort,
     GetAssessmentProgressPort,
-    GetAssessmentPort {
+    GetAssessmentPort,
+    CountAssessmentsByKitPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -77,5 +78,10 @@ public class AssessmentPersistenceJpaAdapter implements
     public Assessment getAssessmentById(UUID assessmentId) {
         return AssessmentMapper.mapToDomainModel(repository.findById(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND)));
+    }
+
+    @Override
+    public int count(Long assessmentKitId, Boolean includeDeleted, Boolean includeNotDeleted) {
+        return repository.countByKitId(assessmentKitId, includeDeleted, includeNotDeleted);
     }
 }

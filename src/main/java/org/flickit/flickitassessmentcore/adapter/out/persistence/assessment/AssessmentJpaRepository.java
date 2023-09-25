@@ -33,4 +33,11 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 @Param(value = "code") String code,
                 @Param(value = "colorId") Integer colorId,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Query("SELECT COUNT(a) " +
+        "FROM AssessmentJpaEntity a " +
+        "WHERE a.assessmentKitId=:assessmentKitId AND " +
+        "(deletionTime = 0 OR :includeNotDeleted = true) AND " +
+        "(deletionTime > 0 OR :includeDeleted = true)")
+    int countByKitId(Long assessmentKitId, Boolean includeDeleted, Boolean includeNotDeleted);
 }
