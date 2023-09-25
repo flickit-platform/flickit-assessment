@@ -83,7 +83,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         List<QuestionDto> allQuestionsDto = questionRestAdapter.loadByAssessmentKitId(assessmentKitId);
 
         // load all answers submitted with this assessmentResult
-        List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
+        List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultIdAndAnswerOptionIdNotNull(assessmentResultId);
 
         /*
         based on answers, extract all selected options
