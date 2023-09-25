@@ -7,7 +7,7 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.CountUse
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,9 +18,9 @@ public class CountRestController {
 
     @GetMapping("/assessments/counters")
     public ResponseEntity<CountResponseDto> count(
-        @PathVariable("assessmentKitId") Long assessmentKitId,
-        @PathVariable("includeDeleted") Boolean includeDeleted,
-        @PathVariable("includeNotDeleted") Boolean includeNotDeleted
+        @RequestParam("assessmentKitId") Long assessmentKitId,
+        @RequestParam("includeDeleted") Boolean includeDeleted,
+        @RequestParam("includeNotDeleted") Boolean includeNotDeleted
     ) {
         var result = useCase.count(toParam(assessmentKitId, includeDeleted, includeNotDeleted));
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
