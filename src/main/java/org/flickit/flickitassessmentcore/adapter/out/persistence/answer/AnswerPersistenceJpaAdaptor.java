@@ -5,12 +5,8 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
-import org.flickit.flickitassessmentcore.application.port.out.answer.CountAnswersByQuestionIdsPort;
 import org.flickit.flickitassessmentcore.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.QuestionnaireProgress;
-import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswersByQuestionnaireIdPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.*;
 import org.flickit.flickitassessmentcore.application.port.out.questionnaire.GetQuestionnairesProgressPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 
@@ -61,7 +58,7 @@ public class AnswerPersistenceJpaAdaptor implements
 
     @Override
     public PaginatedResponse<AnswerListItem> loadAnswersByQuestionnaireId(LoadAnswersByQuestionnaireIdPort.Param param) {
-        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
+        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdAndAssessment_DeletionTimeOrderByLastModificationTimeDesc(param.assessmentId(), NOT_DELETED_DELETION_TIME)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ANSWER_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
         var pageResult = repository.findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIdAsc(assessmentResult.getId(),
@@ -88,7 +85,7 @@ public class AnswerPersistenceJpaAdaptor implements
 
     @Override
     public List<QuestionnaireProgress> getQuestionnairesProgressByAssessmentId(UUID assessmentId) {
-        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdAndAssessment_DeletionTimeOrderByLastModificationTimeDesc(assessmentId, NOT_DELETED_DELETION_TIME)
             .orElseThrow(() -> new ResourceNotFoundException(GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
 
         var progresses = repository.getQuestionnairesProgressByAssessmentResultId(assessmentResult.getId());

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
 
 
@@ -34,7 +35,7 @@ public class AssessmentResultPersistenceJpaAdaptor implements
     @Override
     public UUID persist(Param param) {
         AssessmentResultJpaEntity entity = AssessmentResultMapper.mapToJpaEntity(param);
-        AssessmentJpaEntity assessment = assessmentRepo.findById(param.assessmentId())
+        AssessmentJpaEntity assessment = assessmentRepo.findByIdAndDeletionTime(param.assessmentId(), NOT_DELETED_DELETION_TIME)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND));
         entity.setAssessment(assessment);
         AssessmentResultJpaEntity savedEntity = repo.save(entity);
@@ -43,7 +44,7 @@ public class AssessmentResultPersistenceJpaAdaptor implements
 
     @Override
     public Optional<AssessmentResult> loadByAssessmentId(UUID assessmentId) {
-        var entity = repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
+        var entity = repo.findFirstByAssessment_IdAndAssessment_DeletionTimeOrderByLastModificationTimeDesc(assessmentId, NOT_DELETED_DELETION_TIME);
         return entity.map(AssessmentResultMapper::mapToDomainModel);
     }
 

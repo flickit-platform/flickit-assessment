@@ -11,8 +11,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
@@ -22,7 +24,9 @@ public class AssessmentPersistenceJpaAdaptor implements
     LoadAssessmentListItemsBySpacePort,
     UpdateAssessmentPort,
     GetAssessmentProgressPort,
-    DeleteAssessmentPort {
+    DeleteAssessmentPort,
+    CheckAssessmentExistencePort,
+    CheckAssessmentExistenceByEvidenceIdPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -64,7 +68,7 @@ public class AssessmentPersistenceJpaAdaptor implements
 
     @Override
     public GetAssessmentProgressPort.Result getAssessmentProgressById(UUID assessmentId) {
-        var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+        var assessmentResult = resultRepository.findFirstByAssessment_IdAndAssessment_DeletionTimeOrderByLastModificationTimeDesc(assessmentId, NOT_DELETED_DELETION_TIME)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
 
         int answersCount = answerRepository.getCountByAssessmentResultId(assessmentResult.getId());
@@ -74,5 +78,17 @@ public class AssessmentPersistenceJpaAdaptor implements
     @Override
     public void setDeletionTimeById(UUID id, Long deletionTime) {
         repository.setDeletionTimeById(id, deletionTime);
+    }
+
+    @Override
+    public boolean existsById(UUID id) {
+        Optional<AssessmentJpaEntity> entity = repository.findByIdAndDeletionTime(id, NOT_DELETED_DELETION_TIME);
+        return entity.isPresent();
+    }
+
+    @Override
+    public boolean isAssessmentExistsByEvidenceId(UUID evidenceId) {
+        Optional<AssessmentJpaEntity> entity = repository.findByEvidenceIdAndDeletionTime(evidenceId, NOT_DELETED_DELETION_TIME);
+        return entity.isPresent();
     }
 }

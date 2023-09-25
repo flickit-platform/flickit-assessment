@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID> {
@@ -40,4 +41,13 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         "a.deletionTime = :deletionTime " +
         "WHERE a.id = :id")
     void setDeletionTimeById(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
+
+    Optional<AssessmentJpaEntity> findByIdAndDeletionTime(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
+
+    @Query("FROM AssessmentJpaEntity a " +
+        "LEFT JOIN EvidenceJpaEntity e " +
+        "ON a.id = e.assessmentId " +
+        "WHERE e.id=:evidenceId AND " +
+        "a.deletionTime = :deletionTime")
+    Optional<AssessmentJpaEntity> findByEvidenceIdAndDeletionTime(@Param(value = "evidenceId") UUID evidenceId, @Param(value = "deletionTime") Long deletionTime);
 }
