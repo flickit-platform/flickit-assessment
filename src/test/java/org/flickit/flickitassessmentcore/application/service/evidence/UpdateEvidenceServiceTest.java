@@ -66,10 +66,10 @@ class UpdateEvidenceServiceTest {
 
         assertThrows(ResourceNotFoundException.class, () -> service.updateEvidence(param));
 
-        ArgumentCaptor<UUID> evidenceIdArgumentCaptor = ArgumentCaptor.forClass(UUID.class);
-        verify(checkAssessmentExistencePort).isAssessmentExistsByEvidenceId(evidenceIdArgumentCaptor.capture());
+        ArgumentCaptor<UUID> evidenceIdParam = ArgumentCaptor.forClass(UUID.class);
+        verify(checkAssessmentExistencePort).isAssessmentExistsByEvidenceId(evidenceIdParam.capture());
 
-        assertEquals(param.getId(), evidenceIdArgumentCaptor.getValue());
+        assertEquals(param.getId(), evidenceIdParam.getValue());
         verify(checkAssessmentExistencePort, times(1)).isAssessmentExistsByEvidenceId(any());
         verify(updateEvidencePort, never()).update(any());
     }

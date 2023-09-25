@@ -69,10 +69,10 @@ class UpdateAssessmentServiceTest {
         );
         assertThrows(ResourceNotFoundException.class, () -> service.updateAssessment(param));
 
-        ArgumentCaptor<UUID> assessmentIdCapture = ArgumentCaptor.forClass(UUID.class);
-        verify(checkAssessmentExistencePort).existsById(assessmentIdCapture.capture());
+        ArgumentCaptor<UUID> portIdParam = ArgumentCaptor.forClass(UUID.class);
+        verify(checkAssessmentExistencePort).existsById(portIdParam.capture());
 
-        assertEquals(param.getId(), assessmentIdCapture.getValue());
+        assertEquals(param.getId(), portIdParam.getValue());
         verify(updateAssessmentPort, never()).update(any());
     }
 }
