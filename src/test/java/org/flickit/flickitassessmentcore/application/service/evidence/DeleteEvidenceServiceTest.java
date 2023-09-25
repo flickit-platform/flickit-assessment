@@ -1,11 +1,11 @@
 package org.flickit.flickitassessmentcore.application.service.evidence;
 
 import jakarta.validation.ConstraintViolationException;
+import org.flickit.flickitassessmentcore.application.domain.Evidence;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.DeleteEvidenceUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.DeleteEvidencePort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.common.ErrorMessageKey;
-import org.flickit.flickitassessmentcore.domain.Evidence;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,11 +32,11 @@ public class DeleteEvidenceServiceTest {
     private final Evidence evidence = new Evidence(
         UUID.randomUUID(),
         "Description",
-        LocalDateTime.now(),
-        LocalDateTime.now(),
         1L,
         UUID.randomUUID(),
-        1L
+        1L,
+        LocalDateTime.now(),
+        LocalDateTime.now()
     );
 
     @Test
