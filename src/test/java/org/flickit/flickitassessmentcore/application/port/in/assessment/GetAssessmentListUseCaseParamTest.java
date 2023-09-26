@@ -13,69 +13,69 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-class GetComparableAssessmentsUseCaseParamTest {
+public class GetAssessmentListUseCaseParamTest {
 
     @Test
-    void getComparableAssessments_NullSpaceIds() {
+    void testGetAssessmentList_NullSpaceIds_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetComparableAssessmentsUseCase.Param(
+            () -> new GetAssessmentListUseCase.Param(
                 null,
                 null,
                 20,
                 0
             ));
-        assertThat(throwable).hasMessage("spaceIds: " + GET_COMPARABLE_ASSESSMENTS_SPACE_IDS_NOT_NULL);
+        assertThat(throwable).hasMessage("spaceIds: " + GET_ASSESSMENT_LIST_SPACE_IDS_NOT_NULL);
     }
 
     @Test
-    void getComparableAssessments_EmptySpaceIds() {
-        ArrayList<Long> spaceIds = new ArrayList<>();
+    void testGetAssessmentList_EmptySpaceIds_ErrorMessage() {
+        List<Long> spaceIds = new ArrayList<>();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetComparableAssessmentsUseCase.Param(
+            () -> new GetAssessmentListUseCase.Param(
                 spaceIds,
                 null,
                 20,
                 0
             ));
-        assertThat(throwable).hasMessage("spaceIds: " + GET_COMPARABLE_ASSESSMENTS_SPACE_IDS_NOT_NULL);
+        assertThat(throwable).hasMessage("spaceIds: " + GET_ASSESSMENT_LIST_SPACE_IDS_NOT_NULL);
     }
 
     @Test
-    void getComparableAssessments_MinSize() {
+    void testGetAssessmentList_MinSize_ErrorMessage() {
         List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetComparableAssessmentsUseCase.Param(
+            () -> new GetAssessmentListUseCase.Param(
                 spaceIds,
                 null,
                 0,
                 0
             ));
-        assertThat(throwable).hasMessage("size: " + GET_COMPARABLE_ASSESSMENTS_SIZE_MIN);
+        assertThat(throwable).hasMessage("size: " + GET_ASSESSMENT_LIST_SIZE_MIN);
     }
 
     @Test
-    void getComparableAssessments_MaxSize() {
+    void testGetAssessmentList_MaxSize_ErrorMessage() {
         List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetComparableAssessmentsUseCase.Param(
+            () -> new GetAssessmentListUseCase.Param(
                 spaceIds,
                 null,
                 101,
                 0
             ));
-        assertThat(throwable).hasMessage("size: " + GET_COMPARABLE_ASSESSMENTS_SIZE_MAX);
+        assertThat(throwable).hasMessage("size: " + GET_ASSESSMENT_LIST_SIZE_MAX);
     }
 
     @Test
-    void getComparableAssessments_MinPage() {
+    void testGetAssessmentList_MinPage_ErrorMessage() {
         List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetComparableAssessmentsUseCase.Param(
+            () -> new GetAssessmentListUseCase.Param(
                 spaceIds,
                 null,
                 20,
                 -1
             ));
-        assertThat(throwable).hasMessage("page: " + GET_COMPARABLE_ASSESSMENTS_PAGE_MIN);
+        assertThat(throwable).hasMessage("page: " + GET_ASSESSMENT_LIST_PAGE_MIN);
     }
 }

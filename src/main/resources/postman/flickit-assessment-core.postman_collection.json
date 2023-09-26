@@ -77,7 +77,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments?spaceId=1&page=0&size=10",
+					"raw": "{{base_url}}/{{api_path}}/assessments?spaceIds=1&page=0&size=10",
 					"host": [
 						"{{base_url}}"
 					],
@@ -87,7 +87,53 @@
 					],
 					"query": [
 						{
-							"key": "spaceId",
+							"key": "spaceIds",
+							"value": "1"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Comparable Assessment List",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments?spaceIds=1,2&assessmentKitId=1&page=0&size=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments"
+					],
+					"query": [
+						{
+							"key": "spaceIds",
+							"value": "1,2"
+						},
+						{
+							"key": "assessmentKitId",
 							"value": "1"
 						},
 						{

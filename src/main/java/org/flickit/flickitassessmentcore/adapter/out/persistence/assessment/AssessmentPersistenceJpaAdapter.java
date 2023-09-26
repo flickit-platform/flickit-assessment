@@ -6,7 +6,6 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresul
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.GetComparableAssessmentsUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.*;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
@@ -26,8 +25,7 @@ public class AssessmentPersistenceJpaAdapter implements
     LoadAssessmentListItemsBySpacePort,
     UpdateAssessmentPort,
     GetAssessmentProgressPort,
-    GetAssessmentPort,
-    LoadAssessmentListItemsBySpaceAndKitPort {
+    GetAssessmentPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -41,8 +39,8 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentListItem> loadAssessments(Long spaceId, int page, int size) {
-        var pageResult = repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceId, PageRequest.of(page, size));
+    public PaginatedResponse<AssessmentListItem> loadAssessments(List<Long> spaceIds, Long kitId, int page, int size) {
+        var pageResult = repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceIds, kitId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(AssessmentMapper::mapToAssessmentListItem)
             .toList();
@@ -82,22 +80,4 @@ public class AssessmentPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND)));
     }
 
-    @Override
-    public PaginatedResponse<GetComparableAssessmentsUseCase.AssessmentListItem> loadBySpaceIdAndKitId(
-        List<Long> spaceIds, Long kitId, int page, int size) {
-        var pageResult = repository.findBySpaceIdAndKitIdOrderByLastModificationTimeDesc(
-            spaceIds, kitId, PageRequest.of(page, size)
-        );
-        var items = pageResult.getContent().stream()
-            .map(AssessmentMapper::mapToAssessmentListItem)
-            .toList();
-        return new PaginatedResponse<>(
-            items,
-            pageResult.getNumber(),
-            pageResult.getSize(),
-            AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME,
-            Sort.Direction.DESC.name().toLowerCase(),
-            (int) pageResult.getTotalElements()
-        );
-    }
 }

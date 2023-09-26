@@ -6,7 +6,6 @@ import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentKit;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.GetComparableAssessmentsUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -49,6 +48,7 @@ public class AssessmentMapper {
             assessmentEntity.getId(),
             assessmentEntity.getTitle(),
             assessmentEntity.getAssessmentKitId(),
+            assessmentEntity.getSpaceId(),
             AssessmentColor.valueOfById(assessmentEntity.getColorId()),
             assessmentEntity.getLastModificationTime(),
             itemView.getMaturityLevelId(),
@@ -56,18 +56,4 @@ public class AssessmentMapper {
         );
     }
 
-    public static GetComparableAssessmentsUseCase.AssessmentListItem mapToAssessmentListItem(
-        ComparableAssessmentListItemView itemView) {
-        AssessmentJpaEntity assessmentEntity = itemView.getAssessment();
-        return new GetComparableAssessmentsUseCase.AssessmentListItem(
-            assessmentEntity.getId(),
-            assessmentEntity.getTitle(),
-            assessmentEntity.getAssessmentKitId(),
-            assessmentEntity.getSpaceId(),
-            AssessmentColor.valueOfById(assessmentEntity.getColorId()).getCode(),
-            assessmentEntity.getLastModificationTime(),
-            itemView.getMaturityLevelId(),
-            itemView.getIsCalculateValid()
-        );
-    }
 }
