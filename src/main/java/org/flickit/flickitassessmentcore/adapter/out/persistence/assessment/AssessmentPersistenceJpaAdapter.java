@@ -27,7 +27,6 @@ public class AssessmentPersistenceJpaAdapter implements
     UpdateAssessmentPort,
     GetAssessmentProgressPort,
     GetAssessmentPort,
-    GetAssessmentSpacePort,
     LoadAssessmentListItemsBySpaceAndKitPort {
 
     private final AssessmentJpaRepository repository;
