@@ -18,7 +18,7 @@ public class GetComparableAssessmentsRestController {
 
     private final GetComparableAssessmentsUseCase useCase;
 
-    @GetMapping("/compare/assessments")
+    @GetMapping("/assessments/compare")
     public ResponseEntity<PaginatedResponse<AssessmentListItem>> getComparableAssessments(
         @RequestParam(value = "spaceIds", required = false) List<Long> spaceIds,
         @RequestParam(value = "assessmentKitId", required = false) Long kitId,
