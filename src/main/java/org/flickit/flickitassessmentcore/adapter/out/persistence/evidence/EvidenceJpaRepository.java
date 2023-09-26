@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
 
-    Page<EvidenceJpaEntity> findByQuestionIdAndAssessmentIdOrderByLastModificationTimeDesc(Long questionId, UUID assessmentId, Pageable pageable);
+    Page<EvidenceJpaEntity> findByQuestionIdAndAssessmentIdAndDeletionTimeOrderByLastModificationTimeDesc(Long questionId, UUID assessmentId, long deletionTime, Pageable pageable);
 
     @Modifying
     @Query("UPDATE EvidenceJpaEntity e SET " +
