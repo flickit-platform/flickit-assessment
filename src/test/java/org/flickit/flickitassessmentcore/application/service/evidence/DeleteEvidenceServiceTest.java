@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DeleteEvidenceServiceTest {
+class DeleteEvidenceServiceTest {
 
     @InjectMocks
     private DeleteEvidenceService service;

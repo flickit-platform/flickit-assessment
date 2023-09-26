@@ -10,7 +10,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.DELETE_EV
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class DeleteEvidenceUseCaseParamTest {
+class DeleteEvidenceUseCaseParamTest {
 
     @Test
     void deleteEvidence_IdIsNull_ErrorMessage() {
