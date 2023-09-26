@@ -13,7 +13,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class GetAssessmentListUseCaseParamTest {
+class GetAssessmentListUseCaseParamTest {
 
     @Test
     void testGetAssessmentList_NullSpaceIds_ErrorMessage() {
