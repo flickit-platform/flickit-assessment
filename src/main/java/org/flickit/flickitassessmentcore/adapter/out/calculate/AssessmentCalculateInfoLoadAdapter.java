@@ -163,7 +163,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
             .map(entity -> {
                 AnswerOptionDto optionDto = idToAnswerOptionDto.get(entity.getAnswerOptionId());
-                return new Answer(entity.getId(), optionDto.dtoToDomain());
+                return new Answer(entity.getId(), optionDto.dtoToDomain(), entity.getIsNotApplicable());
             }).toList();
     }
 

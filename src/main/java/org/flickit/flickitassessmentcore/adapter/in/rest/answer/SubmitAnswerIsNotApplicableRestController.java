@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 public class SubmitAnswerIsNotApplicableRestController {
 
     private final SubmitAnswerIsNotApplicableUseCase useCase;
@@ -22,8 +22,8 @@ public class SubmitAnswerIsNotApplicableRestController {
     @PutMapping("/assessment-results/{assessmentResultId}/answer-is-not-applicable")
     public ResponseEntity<SubmitAnswerIsNotApplicableResponseDto> submitAnswerIsNotApplicable(@RequestBody SubmitAnswerIsNotApplicableRequestDto requestDto,
                                                                                               @PathVariable("assessmentResultId") UUID assessmentResultId) {
-        SubmitAnswerIsNotApplicableResponseDto responseDto = toResponseDto(useCase.submitAnswerIsNotApplicable(toParam(requestDto, assessmentResultId)));
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+        var result = toResponseDto(useCase.submitAnswerIsNotApplicable(toParam(requestDto, assessmentResultId)));
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     private Param toParam(SubmitAnswerIsNotApplicableRequestDto requestDto, UUID assessmentResultId) {

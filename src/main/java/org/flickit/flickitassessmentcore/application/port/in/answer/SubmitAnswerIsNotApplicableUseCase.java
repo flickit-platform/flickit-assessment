@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.application.port.in.answer;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
@@ -13,6 +14,7 @@ public interface SubmitAnswerIsNotApplicableUseCase {
     Result submitAnswerIsNotApplicable(Param param);
 
     @Value
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_NULL)

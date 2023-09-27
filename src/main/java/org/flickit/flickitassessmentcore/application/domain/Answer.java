@@ -17,6 +17,8 @@ public class Answer {
     @Nullable
     AnswerOption selectedOption;
 
+    private Boolean isNotApplicable;
+
     @Nullable
     public AnswerOptionImpact findImpactByMaturityLevel(MaturityLevel maturityLevel) {
         if (selectedOption == null)

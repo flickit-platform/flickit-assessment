@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -23,7 +22,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SubmitAnswerIsNotApplicableServiceTest {
 
-    @Spy
     @InjectMocks
     private SubmitAnswerIsNotApplicableService service;
 
@@ -45,14 +43,8 @@ class SubmitAnswerIsNotApplicableServiceTest {
         Long questionnaireId = 25L;
         Long questionId = 1L;
         Boolean isNotApplicable = Boolean.TRUE;
-        SubmitAnswerIsNotApplicableUseCase.Param param = new SubmitAnswerIsNotApplicableUseCase.Param(
-            assessmentResultId,
-            questionnaireId,
-            questionId,
-            isNotApplicable
-        );
-        when(loadAnswerIdAndIsNotApplicablePort.loadAnswerIdAndIsNotApplicable(assessmentResultId, questionId))
-            .thenReturn(Optional.empty());
+        var param = new SubmitAnswerIsNotApplicableUseCase.Param(assessmentResultId, questionnaireId, questionId, isNotApplicable);
+        when(loadAnswerIdAndIsNotApplicablePort.load(assessmentResultId, questionId)).thenReturn(Optional.empty());
 
         UUID savedAnswerId = UUID.randomUUID();
         when(saveAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
@@ -69,9 +61,7 @@ class SubmitAnswerIsNotApplicableServiceTest {
 
         verify(saveAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class));
-        verifyNoInteractions(
-            updateIsNotApplicablePort
-        );
+        verifyNoInteractions(updateIsNotApplicablePort);
     }
 
     @Test
@@ -81,62 +71,40 @@ class SubmitAnswerIsNotApplicableServiceTest {
         Long questionId = 1L;
         Boolean oldIsNotApplicable = Boolean.TRUE;
         Boolean newIsNotApplicable = Boolean.FALSE;
-        SubmitAnswerIsNotApplicableUseCase.Param param = new SubmitAnswerIsNotApplicableUseCase.Param(
-            assessmentResultId,
-            questionnaireId,
-            questionId,
-            newIsNotApplicable
-        );
+        var param = new SubmitAnswerIsNotApplicableUseCase.Param(assessmentResultId, questionnaireId, questionId, newIsNotApplicable);
         UUID existAnswerId = UUID.randomUUID();
-        Optional<Result> existAnswer = Optional.of(new Result(
-            existAnswerId,
-            oldIsNotApplicable
-        ));
+        Optional<Result> existAnswer = Optional.of(new Result(existAnswerId, oldIsNotApplicable));
         assertNotEquals(oldIsNotApplicable, newIsNotApplicable);
 
-        when(loadAnswerIdAndIsNotApplicablePort.loadAnswerIdAndIsNotApplicable(assessmentResultId, questionId)).thenReturn(existAnswer);
+        when(loadAnswerIdAndIsNotApplicablePort.load(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswerIsNotApplicable(param);
 
         ArgumentCaptor<UpdateAnswerIsNotApplicablePort.Param> updateParam = ArgumentCaptor.forClass(UpdateAnswerIsNotApplicablePort.Param.class);
-        verify(updateIsNotApplicablePort).updateAnswerIsNotApplicableAndRemoveOptionById(updateParam.capture());
+        verify(updateIsNotApplicablePort).update(updateParam.capture());
         assertEquals(existAnswerId, updateParam.getValue().id());
         assertEquals(newIsNotApplicable, updateParam.getValue().isNotApplicable());
 
-        verify(loadAnswerIdAndIsNotApplicablePort, times(1)).loadAnswerIdAndIsNotApplicable(assessmentResultId, questionId);
-        verify(updateIsNotApplicablePort, times(1)).updateAnswerIsNotApplicableAndRemoveOptionById(any(UpdateAnswerIsNotApplicablePort.Param.class));
+        verify(loadAnswerIdAndIsNotApplicablePort, times(1)).load(assessmentResultId, questionId);
+        verify(updateIsNotApplicablePort, times(1)).update(any(UpdateAnswerIsNotApplicablePort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResultId);
-        verifyNoInteractions(
-            saveAnswerPort
-        );
+        verifyNoInteractions(saveAnswerPort);
     }
 
     @Test
-    void submitAnswer_AnswerWithSameIsNotApplicableExist_DontInvalidateAssessmentResult() {
+    void submitAnswer_AnswerWithSameIsNotApplicableExist_DoNotInvalidateAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
         Long questionnaireId = 25L;
         Long questionId = 1L;
         Boolean sameIsNotApplicable = Boolean.TRUE;
-        SubmitAnswerIsNotApplicableUseCase.Param param = new SubmitAnswerIsNotApplicableUseCase.Param(
-            assessmentResultId,
-            questionnaireId,
-            questionId,
-            sameIsNotApplicable
-        );
+        var param = new SubmitAnswerIsNotApplicableUseCase.Param(assessmentResultId, questionnaireId, questionId, sameIsNotApplicable);
         UUID existAnswerId = UUID.randomUUID();
-        Optional<Result> existAnswer = Optional.of(new Result(
-            existAnswerId,
-            sameIsNotApplicable
-        ));
-        when(loadAnswerIdAndIsNotApplicablePort.loadAnswerIdAndIsNotApplicable(assessmentResultId, questionId)).thenReturn(existAnswer);
+        Optional<Result> existAnswer = Optional.of(new Result(existAnswerId, sameIsNotApplicable));
+        when(loadAnswerIdAndIsNotApplicablePort.load(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswerIsNotApplicable(param);
 
-        verify(loadAnswerIdAndIsNotApplicablePort, times(1)).loadAnswerIdAndIsNotApplicable(assessmentResultId, questionId);
-        verifyNoInteractions(
-            saveAnswerPort,
-            updateIsNotApplicablePort,
-            invalidateAssessmentResultPort
-        );
+        verify(loadAnswerIdAndIsNotApplicablePort, times(1)).load(assessmentResultId, questionId);
+        verifyNoInteractions(saveAnswerPort, updateIsNotApplicablePort, invalidateAssessmentResultPort);
     }
 }

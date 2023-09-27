@@ -15,18 +15,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SubmitAnswerRestController {
 
+
     private final SubmitAnswerUseCase useCase;
 
-    @PutMapping("/assessments/{assessmentId}/answer-question")
+    @PutMapping("/assessment-results/{assessmentResultId}/answer-question")
     public ResponseEntity<SubmitAnswerResponseDto> submitAnswer(@RequestBody SubmitAnswerRequestDto requestDto,
-                                                                @PathVariable("assessmentId") UUID assessmentId) {
-        SubmitAnswerResponseDto responseDto = toResponseDto(useCase.submitAnswer(toParam(requestDto, assessmentId)));
+                                                                @PathVariable("assessmentResultId") UUID assessmentResultId) {
+        SubmitAnswerResponseDto responseDto = toResponseDto(useCase.submitAnswer(toParam(requestDto, assessmentResultId)));
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    private SubmitAnswerUseCase.Param toParam(SubmitAnswerRequestDto requestDto, UUID assessmentId) {
+    private SubmitAnswerUseCase.Param toParam(SubmitAnswerRequestDto requestDto, UUID assessmentResultId) {
         return new SubmitAnswerUseCase.Param(
-            assessmentId,
+            assessmentResultId,
             requestDto.questionnaireId(),
             requestDto.questionId(),
             requestDto.answerOptionId()

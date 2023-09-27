@@ -28,7 +28,10 @@ public class AnswerPersistenceJpaAdapter implements
     LoadAnswerPort,
     LoadAnswersByQuestionnaireIdPort,
     GetQuestionnairesProgressPort,
-    CountAnswersByQuestionIdsPort {
+    CountAnswersByQuestionIdsPort,
+    LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort,
+    LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort,
+    UpdateAnswerIsNotApplicablePort{
 
     private final AnswerJpaRepository repository;
 
@@ -89,5 +92,22 @@ public class AnswerPersistenceJpaAdapter implements
 
         var progresses = repository.getQuestionnairesProgressByAssessmentResultId(assessmentResult.getId());
         return progresses.stream().map(p -> new QuestionnaireProgress(p.getQuestionnaireId(), p.getAnswerCount())).toList();
+    }
+
+    @Override
+    public Optional<LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort.Result> loadView(UUID assessmentResultId, Long questionId) {
+        return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
+            .map(x -> new LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort.Result(x.getId(), x.getAnswerOptionId(), x.getIsNotApplicable()));
+    }
+
+    @Override
+    public void update(UpdateAnswerIsNotApplicablePort.Param param) {
+        repository.updateIsNotApplicableAndRemoveOptionIdById(param.id(), param.isNotApplicable());
+    }
+
+    @Override
+    public Optional<LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort.Result> load(UUID assessmentResultId, Long questionId) {
+        return repository.findByAssessmentResultIdAndQuestionId_(assessmentResultId, questionId)
+            .map(x -> new LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort.Result(x.getId(), x.getIsNotApplicable()));
     }
 }

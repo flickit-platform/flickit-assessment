@@ -17,7 +17,7 @@ public class ErrorMessageKey {
     public static final String CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND = "crate-subjectvalue.assessmentResultId.notFound";
 
     public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND = "submit-answer.assessmentResultId.notFound";
-    public static final String SUBMIT_ANSWER_ASSESSMENT_ID_NOT_NULL = "submit-answer.assessmentId.notNull";
+    public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_NULL = "submit-answer.assessmentResultId.notNull";
     public static final String SUBMIT_ANSWER_QUESTIONNAIRE_ID_NOT_NULL = "submit-answer.questionnaireId.notNull";
     public static final String SUBMIT_ANSWER_QUESTION_ID_NOT_NULL = "submit-answer.questionId.notNull";
     public static final String SUBMIT_ANSWER_IS_NOT_APPLICABLE_NOT_NULL = "submit-answer.isNotApplicable.notNull";
