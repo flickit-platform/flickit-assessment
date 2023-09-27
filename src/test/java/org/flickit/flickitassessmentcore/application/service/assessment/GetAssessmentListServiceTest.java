@@ -105,7 +105,7 @@ class GetAssessmentListServiceTest {
 
         assertEquals(spaceIds, spaceIdsArgument.getValue());
         assertNull(kitIdArgument.getValue());
-        assertEquals(deletionTimeArgument.getValue(), 0L);
+        assertEquals(0L, deletionTimeArgument.getValue());
         assertEquals(20, sizeArgument.getValue());
         assertEquals(0, pageArgument.getValue());
 
