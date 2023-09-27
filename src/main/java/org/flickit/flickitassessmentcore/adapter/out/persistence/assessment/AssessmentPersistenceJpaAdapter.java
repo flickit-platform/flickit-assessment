@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
@@ -28,8 +27,7 @@ public class AssessmentPersistenceJpaAdapter implements
     GetAssessmentProgressPort,
     GetAssessmentPort,
     DeleteAssessmentPort,
-    CheckAssessmentExistencePort,
-    CheckAssessmentExistenceByEvidenceIdPort {
+    CheckAssessmentExistencePort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -79,9 +77,9 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public Assessment getAssessmentById(UUID assessmentId) {
-        return AssessmentMapper.mapToDomainModel(repository.findByIdAndDeletionTime(assessmentId, NOT_DELETED_DELETION_TIME)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND)));
+    public Optional<Assessment> getAssessmentById(UUID assessmentId) {
+        Optional<AssessmentJpaEntity> entity = repository.findByIdAndDeletionTime(assessmentId, NOT_DELETED_DELETION_TIME);
+        return entity.map(AssessmentMapper::mapToDomainModel);
     }
 
     @Override
@@ -92,11 +90,5 @@ public class AssessmentPersistenceJpaAdapter implements
     @Override
     public boolean existsById(UUID id) {
         return repository.existsByIdAndDeletionTime(id, NOT_DELETED_DELETION_TIME);
-    }
-
-    @Override
-    public boolean isAssessmentExistsByEvidenceId(UUID evidenceId) {
-        Optional<AssessmentJpaEntity> entity = repository.findByEvidenceIdAndDeletionTime(evidenceId, NOT_DELETED_DELETION_TIME);
-        return entity.isPresent();
     }
 }

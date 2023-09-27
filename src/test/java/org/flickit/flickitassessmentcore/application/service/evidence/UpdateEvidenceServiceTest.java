@@ -1,7 +1,9 @@
 package org.flickit.flickitassessmentcore.application.service.evidence;
 
+import org.flickit.flickitassessmentcore.application.domain.mother.AssessmentMother;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.UpdateEvidenceUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.CheckAssessmentExistenceByEvidenceIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.evidence.GetEvidencePort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.UpdateEvidencePort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.application.domain.mother.EvidenceMother.simpleEvidence;
@@ -28,7 +31,9 @@ class UpdateEvidenceServiceTest {
     private UpdateEvidencePort updateEvidencePort;
 
     @Mock
-    private CheckAssessmentExistenceByEvidenceIdPort checkAssessmentExistencePort;
+    private GetEvidencePort getEvidencePort;
+    @Mock
+    private GetAssessmentPort getAssessmentPort;
 
     @Test
     void testUpdateEvidence_ValidParam_UpdatedAndReturnsId() {
@@ -39,7 +44,8 @@ class UpdateEvidenceServiceTest {
         );
 
         var updateResult = new UpdateEvidencePort.Result(savedEvidence.getId());
-        when(checkAssessmentExistencePort.isAssessmentExistsByEvidenceId(any())).thenReturn(true);
+        when(getEvidencePort.getEvidenceById(any())).thenReturn(Optional.of(savedEvidence));
+        when(getAssessmentPort.getAssessmentById(any())).thenReturn(Optional.of(AssessmentMother.assessment()));
         when(updateEvidencePort.update(any())).thenReturn(updateResult);
 
         UpdateEvidenceUseCase.Result result = service.updateEvidence(param);
@@ -55,22 +61,43 @@ class UpdateEvidenceServiceTest {
     }
 
     @Test
-    void updateEvidence_InvalidAssessmentId_ThrowNotFoundException() {
+    void updateEvidence_InvalidEvidenceId_ThrowNotFoundException() {
         var savedEvidence = simpleEvidence();
         var param = new UpdateEvidenceUseCase.Param(
             savedEvidence.getId(),
             "new " + savedEvidence.getDescription()
         );
-
-        when(checkAssessmentExistencePort.isAssessmentExistsByEvidenceId(any())).thenReturn(false);
+        when(getEvidencePort.getEvidenceById(any())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> service.updateEvidence(param));
 
         ArgumentCaptor<UUID> evidenceIdParam = ArgumentCaptor.forClass(UUID.class);
-        verify(checkAssessmentExistencePort).isAssessmentExistsByEvidenceId(evidenceIdParam.capture());
-
+        verify(getEvidencePort).getEvidenceById(evidenceIdParam.capture());
         assertEquals(param.getId(), evidenceIdParam.getValue());
-        verify(checkAssessmentExistencePort, times(1)).isAssessmentExistsByEvidenceId(any());
+
+        verify(getEvidencePort, times(1)).getEvidenceById(any());
+        verify(getAssessmentPort, never()).getAssessmentById(any());
+        verify(updateEvidencePort, never()).update(any());
+    }
+
+    @Test
+    void updateEvidence_DeletedAssessment_ThrowNotFoundException() {
+        var savedEvidence = simpleEvidence();
+        var param = new UpdateEvidenceUseCase.Param(
+            savedEvidence.getId(),
+            "new " + savedEvidence.getDescription()
+        );
+        when(getEvidencePort.getEvidenceById(any())).thenReturn(Optional.of(savedEvidence));
+        when(getAssessmentPort.getAssessmentById(any())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> service.updateEvidence(param));
+
+        ArgumentCaptor<UUID> assessmentIdParam = ArgumentCaptor.forClass(UUID.class);
+        verify(getAssessmentPort).getAssessmentById(assessmentIdParam.capture());
+        assertEquals(savedEvidence.getAssessmentId(), assessmentIdParam.getValue());
+
+        verify(getEvidencePort, times(1)).getEvidenceById(any());
+        verify(getAssessmentPort, times(1)).getAssessmentById(any());
         verify(updateEvidencePort, never()).update(any());
     }
 
