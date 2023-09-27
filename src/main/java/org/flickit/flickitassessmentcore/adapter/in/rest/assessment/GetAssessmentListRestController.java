@@ -24,7 +24,7 @@ public class GetAssessmentListRestController {
     public ResponseEntity<PaginatedResponse<AssessmentListItem>> getAssessmentList(
         @RequestParam(value = "spaceIds", required = false) // validated in the use-case param
         List<Long> spaceIds,
-        @RequestParam(value = "assessmentKitId", required = false) Long kitId,
+        @RequestParam(value = "kitId", required = false) Long kitId,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page) {
         PaginatedResponse<AssessmentListItem> result = useCase.getAssessmentList(toParam(spaceIds, kitId, size, page));
