@@ -107,7 +107,7 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public Optional<LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort.Result> load(UUID assessmentResultId, Long questionId) {
-        return repository.findByAssessmentResultIdAndQuestionId_(assessmentResultId, questionId)
+        return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
             .map(x -> new LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort.Result(x.getId(), x.getIsNotApplicable()));
     }
 }
