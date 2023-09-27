@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -20,7 +19,8 @@ public class GetAssessmentListService implements GetAssessmentListUseCase {
     @Override
     public PaginatedResponse<AssessmentListItem> getAssessmentList(GetAssessmentListUseCase.Param param) {
         return loadAssessmentsBySpace.loadAssessments(
-            param.getSpaceId(),
+            param.getSpaceIds(),
+            param.getKitId(),
             NOT_DELETED_DELETION_TIME,
             param.getPage(),
             param.getSize()

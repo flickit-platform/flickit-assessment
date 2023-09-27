@@ -12,7 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import static org.flickit.flickitassessmentcore.adapter.in.rest.exception.api.ErrorCodes.INVALID_INPUT;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_LIST_SPACE_IDS_NOT_NULL;
 
 @RestControllerAdvice
 public class MissingServletRequestParameterExceptionHandler extends ResponseEntityExceptionHandler {
@@ -24,7 +24,7 @@ public class MissingServletRequestParameterExceptionHandler extends ResponseEnti
         HttpStatusCode status,
         WebRequest request) {
         if (ex.getParameterName().equals("spaceId")) {
-            String errorMessage = GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL;
+            String errorMessage = GET_ASSESSMENT_LIST_SPACE_IDS_NOT_NULL;
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorResponseDto(INVALID_INPUT, MessageBundle.message(errorMessage)));
         }

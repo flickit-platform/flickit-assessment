@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,8 +42,8 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentListItem> loadAssessments(Long spaceId, Long deletionTime, int page, int size) {
-        var pageResult = repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceId, deletionTime, PageRequest.of(page, size));
+    public PaginatedResponse<AssessmentListItem> loadAssessments(List<Long> spaceIds, Long kitId, Long deletionTime, int page, int size) {
+        var pageResult = repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceIds, kitId, deletionTime, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(AssessmentMapper::mapToAssessmentListItem)
             .toList();
