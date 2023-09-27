@@ -88,21 +88,24 @@ class GetAssessmentListServiceTest {
         when(loadAssessmentPort.loadAssessments(spaceIds, null, 0L, 0, 20))
             .thenReturn(paginatedRes);
 
-        var param = new GetAssessmentListUseCase.Param(spaceIds, null, 0L, 20, 0);
+        var param = new GetAssessmentListUseCase.Param(spaceIds, null, 20, 0);
         var assessments = service.getAssessmentList(param);
 
         ArgumentCaptor<List<Long>> spaceIdsArgument = ArgumentCaptor.forClass(List.class);
         ArgumentCaptor<Long> kitIdArgument = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<Long> deletionTimeArgument = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<Integer> sizeArgument = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<Integer> pageArgument = ArgumentCaptor.forClass(Integer.class);
         verify(loadAssessmentPort).loadAssessments(
             spaceIdsArgument.capture(),
             kitIdArgument.capture(),
+            deletionTimeArgument.capture(),
             pageArgument.capture(),
             sizeArgument.capture());
 
         assertEquals(spaceIds, spaceIdsArgument.getValue());
         assertNull(kitIdArgument.getValue());
+        assertEquals(deletionTimeArgument.getValue(), 0L);
         assertEquals(20, sizeArgument.getValue());
         assertEquals(0, pageArgument.getValue());
 
@@ -113,7 +116,7 @@ class GetAssessmentListServiceTest {
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
         assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
 
-        verify(loadAssessmentPort, times(1)).loadAssessments(any(), any(), anyInt(), anyInt());
+        verify(loadAssessmentPort, times(1)).loadAssessments(any(), any(), any(), anyInt(), anyInt());
     }
 
     @Test
@@ -135,7 +138,7 @@ class GetAssessmentListServiceTest {
 
         when(loadAssessmentPort.loadAssessments(spaceIds, kitId, 0L, 0, 20)).thenReturn(paginatedRes);
 
-        var param = new GetAssessmentListUseCase.Param(spaceIds, kitId, 0L, 20, 0);
+        var param = new GetAssessmentListUseCase.Param(spaceIds, kitId, 20, 0);
         var assessments = service.getAssessmentList(param);
 
         assertEquals(2, assessments.getItems().size());
