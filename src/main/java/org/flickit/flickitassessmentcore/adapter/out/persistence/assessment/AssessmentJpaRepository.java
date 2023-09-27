@@ -44,6 +44,8 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     Optional<AssessmentJpaEntity> findByIdAndDeletionTime(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
 
+    boolean existsByIdAndDeletionTime(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
+
     @Query("FROM AssessmentJpaEntity a " +
         "LEFT JOIN EvidenceJpaEntity e " +
         "ON a.id = e.assessmentId " +

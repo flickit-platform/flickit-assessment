@@ -91,8 +91,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public boolean existsById(UUID id) {
-        Optional<AssessmentJpaEntity> entity = repository.findByIdAndDeletionTime(id, NOT_DELETED_DELETION_TIME);
-        return entity.isPresent();
+        return repository.existsByIdAndDeletionTime(id, NOT_DELETED_DELETION_TIME);
     }
 
     @Override
