@@ -1,5 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +18,23 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     @Modifying
     @Query("UPDATE AnswerJpaEntity a SET a.answerOptionId=:answerOptionId WHERE a.id=:id")
     void updateAnswerOptionById(UUID id, Long answerOptionId);
+
+    List<AnswerJpaEntity> findByAssessmentResultIdAndAnswerOptionIdNotNull(UUID assessmentResultId);
+
+    Page<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIdAsc(UUID assessmentResultId, Long questionnaireId, Pageable pageable);
+
+    @Query("SELECT COUNT(a) as answerCount FROM AnswerJpaEntity a " +
+        "WHERE a.assessmentResult.id=:assessmentResultId AND a.questionId IN :questionIds AND a.answerOptionId IS NOT NULL")
+    int getCountByQuestionIds(UUID assessmentResultId, List<Long> questionIds);
+
+    @Query("SELECT COUNT(a) FROM AnswerJpaEntity a where a.assessmentResult.id=:assessmentResultId " +
+        "AND a.answerOptionId IS NOT NULL")
+    int getCountByAssessmentResultId(UUID assessmentResultId);
+
+    @Query("SELECT a.questionnaireId as questionnaireId, COUNT(a.questionnaireId) as answerCount FROM AnswerJpaEntity a " +
+        "where a.assessmentResult.id=:assessmentResultId AND a.answerOptionId IS NOT NULL " +
+        "GROUP BY a.questionnaireId")
+    List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(UUID assessmentResultId);
 
     @Modifying
     @Query("UPDATE AnswerJpaEntity a SET a.answerOptionId=NULL , a.isNotApplicable=:isNotApplicable WHERE a.id=:id")

@@ -1,8 +1,14 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.flickit.flickitassessmentcore.application.domain.Assessment;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentKit;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
-import org.flickit.flickitassessmentcore.domain.Assessment;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentMapper {
 
     static AssessmentJpaEntity mapCreateParamToJpaEntity(CreateAssessmentPort.Param param) {
@@ -10,24 +16,44 @@ public class AssessmentMapper {
             null,
             param.code(),
             param.title(),
-            param.creationTime(),
-            param.lastModificationDate(),
             param.assessmentKitId(),
             param.colorId(),
-            param.spaceId()
+            param.spaceId(),
+            param.creationTime(),
+            param.lastModificationTime()
         );
     }
 
-    public static Assessment mapToDomainModel(AssessmentJpaEntity assessmentEntity) {
+    public static Assessment mapToDomainModel(AssessmentJpaEntity entity) {
+        AssessmentKit kit = new AssessmentKit(entity.getAssessmentKitId(), null);
+        return mapToDomainModel(entity, kit);
+    }
+
+    public static Assessment mapToDomainModel(AssessmentJpaEntity entity, AssessmentKit kit) {
         return new Assessment(
-            assessmentEntity.getId(),
-            assessmentEntity.getCode(),
-            assessmentEntity.getTitle(),
-            assessmentEntity.getCreationTime(),
-            assessmentEntity.getLastModificationDate(),
-            assessmentEntity.getAssessmentKitId(),
-            assessmentEntity.getColorId(),
-            assessmentEntity.getSpaceId()
+            entity.getId(),
+            entity.getCode(),
+            entity.getTitle(),
+            kit,
+            entity.getColorId(),
+            entity.getSpaceId(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime()
         );
     }
+
+    public static AssessmentListItem mapToAssessmentListItem(AssessmentListItemView itemView) {
+        AssessmentJpaEntity assessmentEntity = itemView.getAssessment();
+        return new AssessmentListItem(
+            assessmentEntity.getId(),
+            assessmentEntity.getTitle(),
+            assessmentEntity.getAssessmentKitId(),
+            assessmentEntity.getSpaceId(),
+            AssessmentColor.valueOfById(assessmentEntity.getColorId()),
+            assessmentEntity.getLastModificationTime(),
+            itemView.getMaturityLevelId(),
+            itemView.getIsCalculateValid()
+        );
+    }
+
 }

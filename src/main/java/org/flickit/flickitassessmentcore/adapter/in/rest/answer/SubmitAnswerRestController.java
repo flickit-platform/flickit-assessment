@@ -4,26 +4,29 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 public class SubmitAnswerRestController {
 
     private final SubmitAnswerUseCase useCase;
 
-    @PutMapping("/assessment-results/{assessmentResultId}/answer-question")
+    @PutMapping("/assessments/{assessmentId}/answer-question")
     public ResponseEntity<SubmitAnswerResponseDto> submitAnswer(@RequestBody SubmitAnswerRequestDto requestDto,
-                                                                @PathVariable("assessmentResultId") UUID assessmentResultId) {
-        SubmitAnswerResponseDto responseDto = toResponseDto(useCase.submitAnswer(toParam(requestDto, assessmentResultId)));
+                                                                @PathVariable("assessmentId") UUID assessmentId) {
+        SubmitAnswerResponseDto responseDto = toResponseDto(useCase.submitAnswer(toParam(requestDto, assessmentId)));
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    private SubmitAnswerUseCase.Param toParam(SubmitAnswerRequestDto requestDto, UUID assessmentResultId) {
+    private SubmitAnswerUseCase.Param toParam(SubmitAnswerRequestDto requestDto, UUID assessmentId) {
         return new SubmitAnswerUseCase.Param(
-            assessmentResultId,
+            assessmentId,
             requestDto.questionnaireId(),
             requestDto.questionId(),
             requestDto.answerOptionId()

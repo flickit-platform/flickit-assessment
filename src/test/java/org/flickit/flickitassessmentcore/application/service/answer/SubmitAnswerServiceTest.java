@@ -1,12 +1,17 @@
 package org.flickit.flickitassessmentcore.application.service.answer;
 
+import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort.Result;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort.Result;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.service.exception.AnswerSubmissionNotAllowedException;
+import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -33,23 +38,33 @@ class SubmitAnswerServiceTest {
     private UpdateAnswerOptionPort updateAnswerPort;
 
     @Mock
+    private LoadAnswerPort loadAnswerPort;
+
+    @Mock
     private LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort loadExistAnswerViewPort;
 
     @Mock
     private InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
+    @Mock
+    private LoadAssessmentResultPort loadAssessmentResultPort;
+
     @Test
     void submitAnswer_AnswerNotExist_SavesAnswerAndInvalidatesAssessmentResult() {
+        UUID assessmentId = UUID.randomUUID();
         UUID assessmentResultId = UUID.randomUUID();
+        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId, null, null);
         Long questionnaireId = 25L;
         Long questionId = 1L;
         Long answerOptionId = 2L;
         SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
-            assessmentResultId,
+            assessmentId,
             questionnaireId,
             questionId,
             answerOptionId
         );
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(loadAnswerPort.loadAnswerIdAndOptionId(assessmentResultId, questionId)).thenReturn(Optional.empty());
         when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId))
             .thenReturn(Optional.empty());
 
@@ -110,13 +125,15 @@ class SubmitAnswerServiceTest {
 
     @Test
     void submitAnswer_AnswerWithDifferentAnswerOptionExist_UpdatesAnswerAndInvalidatesAssessmentResult() {
+        UUID assessmentId = UUID.randomUUID();
         UUID assessmentResultId = UUID.randomUUID();
+        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId, null, null);
         Long questionnaireId = 1L;
         Long questionId = 1L;
         Long newAnswerOptionId = 2L;
         Long oldAnswerOptionId = 3L;
         SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
-            assessmentResultId,
+            assessmentId,
             questionnaireId,
             questionId,
             newAnswerOptionId
@@ -129,6 +146,8 @@ class SubmitAnswerServiceTest {
         ));
         assertNotEquals(oldAnswerOptionId, newAnswerOptionId);
 
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(loadAnswerPort.loadAnswerIdAndOptionId(assessmentResultId, questionId)).thenReturn(existAnswer);
         when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswer(param);
@@ -138,6 +157,7 @@ class SubmitAnswerServiceTest {
         assertEquals(existAnswerId, updateParam.getValue().id());
         assertEquals(newAnswerOptionId, updateParam.getValue().answerOptionId());
 
+        verify(loadAnswerPort, times(1)).loadAnswerIdAndOptionId(assessmentResultId, questionId);
         verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
         verify(updateAnswerPort, times(1)).updateAnswerOptionById(any(UpdateAnswerOptionPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResultId);
@@ -148,12 +168,14 @@ class SubmitAnswerServiceTest {
 
     @Test
     void submitAnswer_AnswerWithSameAnswerOptionExist_DoesntInvalidateAssessmentResult() {
+        UUID assessmentId = UUID.randomUUID();
         UUID assessmentResultId = UUID.randomUUID();
+        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId, null, null);
         Long questionnaireId = 1L;
         Long questionId = 1L;
         Long sameAnswerOptionId = 2L;
         SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
-            assessmentResultId,
+            assessmentId,
             questionnaireId,
             questionId,
             sameAnswerOptionId
@@ -164,12 +186,40 @@ class SubmitAnswerServiceTest {
             sameAnswerOptionId,
             false
         ));
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(loadAnswerPort.loadAnswerIdAndOptionId(assessmentResultId, questionId)).thenReturn(existAnswer);
         when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswer(param);
 
+        verify(loadAnswerPort, times(1)).loadAnswerIdAndOptionId(assessmentResultId, questionId);
         verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
         verifyNoInteractions(
+            createAnswerPort,
+            updateAnswerPort,
+            invalidateAssessmentResultPort
+        );
+    }
+
+    @Test
+    void testSubmitAnswer_AssessmentResultNotFound_ThrowsException() {
+        UUID assessmentId = UUID.randomUUID();
+        Long questionnaireId = 1L;
+        Long questionId = 1L;
+        Long sameAnswerOptionId = 2L;
+        SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(
+            assessmentId,
+            questionnaireId,
+            questionId,
+            sameAnswerOptionId
+        );
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> service.submitAnswer(param));
+
+        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(assessmentId);
+        verifyNoInteractions(
+            loadAnswerPort,
             createAnswerPort,
             updateAnswerPort,
             invalidateAssessmentResultPort

@@ -17,7 +17,21 @@ public class FlickitPlatformRestProperties {
     private String baseUrl;
 
     @NotBlank
-    private String getSubjectIdsUrl = "/api/internal/assessment-kit/%d/assessment-subjects/";
+    private String getSubjectsUrl = "/api/internal/v1/assessment-kits/%d/subjects";
+
+    @NotBlank
+    private String getQuestionsUrl = "/api/internal/v1/assessment-kits/%d/questions?page=%d";
+
+    @NotBlank
+    private String getQuestionsBySubjectUrl = "/api/internal/v1/subjects/%d/questions";
+
+    @NotBlank
+    private String getMaturityLevelsUrl = "/api/internal/v1/assessment-kits/%d/maturity-levels";
+
+    @NotBlank
+    private String getAnswerOptionsUrl = "/api/internal/v1/answer-options?ids=%s";
+
+    private int getAnswerOptionIdsLimit = 100;
 
     @Valid
     private RestClientProps restClient = new RestClientProps();

@@ -11,4 +11,12 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="0.2-02" author="Mahnaz Khorsandi">
+        <addColumn tableName="fac_assessment_result">
+            <column name="last_modification_time" type="timestamp" defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
