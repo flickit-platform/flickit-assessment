@@ -17,7 +17,8 @@ public class GetAssessmentListService implements GetAssessmentListUseCase {
     @Override
     public PaginatedResponse<AssessmentListItem> getAssessmentList(GetAssessmentListUseCase.Param param) {
         return loadAssessmentsBySpace.loadAssessments(
-            param.getSpaceId(),
+            param.getSpaceIds(),
+            param.getKitId(),
             param.getPage(),
             param.getSize()
         );

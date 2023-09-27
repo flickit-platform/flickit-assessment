@@ -48,10 +48,12 @@ public class AssessmentMapper {
             assessmentEntity.getId(),
             assessmentEntity.getTitle(),
             assessmentEntity.getAssessmentKitId(),
+            assessmentEntity.getSpaceId(),
             AssessmentColor.valueOfById(assessmentEntity.getColorId()),
             assessmentEntity.getLastModificationTime(),
             itemView.getMaturityLevelId(),
             itemView.getIsCalculateValid()
         );
     }
+
 }
