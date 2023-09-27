@@ -18,10 +18,11 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         "FROM AssessmentJpaEntity a " +
         "LEFT JOIN AssessmentResultJpaEntity r " +
         "ON a.id = r.assessment.id " +
-        "WHERE a.spaceId=:spaceId AND " +
+        "WHERE a.spaceId IN :spaceIds AND " +
+        "(a.assessmentKitId=:kitId OR :kitId IS NULL) AND " +
         "r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id) " +
         "ORDER BY a.lastModificationTime DESC")
-    Page<AssessmentListItemView> findBySpaceIdOrderByLastModificationTimeDesc(long spaceId, Pageable pageable);
+    Page<AssessmentListItemView> findBySpaceIdOrderByLastModificationTimeDesc(List<Long> spaceIds, Long kitId, Pageable pageable);
 
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +

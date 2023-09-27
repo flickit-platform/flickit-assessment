@@ -37,11 +37,15 @@ public enum AssessmentColor {
             .orElse(null);
     }
 
-    public static AssessmentColor getDefault() {
-        return MIDNIGHT_GREEN;
+    public static int getValidId(Integer id) {
+        return AssessmentColor.isValidId(id) ? id : AssessmentColor.getDefault().getId();
     }
 
-    public static boolean isValidId(int id) {
-        return id > 0  && id < AssessmentColor.values().length + 1;
+    private static boolean isValidId(int id) {
+        return id > 0 && id < AssessmentColor.values().length + 1;
+    }
+
+    public static AssessmentColor getDefault() {
+        return MIDNIGHT_GREEN;
     }
 }

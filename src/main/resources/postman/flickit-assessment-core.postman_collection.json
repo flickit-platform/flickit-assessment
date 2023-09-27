@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "9f7ec93d-fe41-4dd5-8379-f61460fee9cd",
+		"_postman_id": "60b3ff78-3c18-458f-9708-86db42cfe804",
 		"name": "flickit-assessment-core",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "18899907"
+		"_exporter_id": "6692064"
 	},
 	"item": [
 		{
@@ -77,7 +77,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments?spaceId=1&page=0&size=10",
+					"raw": "{{base_url}}/{{api_path}}/assessments?spaceIds=1&kitId=138&page=0&size=10",
 					"host": [
 						"{{base_url}}"
 					],
@@ -87,8 +87,12 @@
 					],
 					"query": [
 						{
-							"key": "spaceId",
+							"key": "spaceIds",
 							"value": "1"
+						},
+						{
+							"key": "kitId",
+							"value": "138"
 						},
 						{
 							"key": "page",
@@ -98,6 +102,25 @@
 							"key": "size",
 							"value": "10"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Assessment",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment/3bfa613e-4e50-46a4-96aa-a061f104224e",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment",
+						"3bfa613e-4e50-46a4-96aa-a061f104224e"
 					]
 				}
 			},
@@ -427,26 +450,6 @@
 							"key": "id",
 							"value": "3d81a3bd-01e9-4462-b650-2796b408b07b"
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Assessment Space",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment/fcd18fef-850c-4a11-be43-039534a39039/space",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessment",
-						"fcd18fef-850c-4a11-be43-039534a39039",
-						"space"
 					]
 				}
 			},

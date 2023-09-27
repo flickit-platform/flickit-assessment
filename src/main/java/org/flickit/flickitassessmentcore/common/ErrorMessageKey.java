@@ -7,6 +7,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MAX = "create-assessment.title.size.max";
     public static final String CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL = "create-assessment.assessmentKitId.notNull";
     public static final String CREATE_ASSESSMENT_SPACE_ID_NOT_NULL = "create-assessment.spaceId.notNull";
+    public static final String CREATE_ASSESSMENT_COLOR_ID_NOT_NULL = "create-assessment.colorId.notNull";
     public static final String CREATE_ASSESSMENT_DUPLICATE_TITLE_AND_SPACE_ID = "create-assessment.duplicate.titleAndSpaceId";
 
     public static final String CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND = "create-assessmentresult.assessmentId.notFound";
@@ -20,7 +21,7 @@ public class ErrorMessageKey {
     public static final String SUBMIT_ANSWER_QUESTIONNAIRE_ID_NOT_NULL = "submit-answer.questionnaireId.notNull";
     public static final String SUBMIT_ANSWER_QUESTION_ID_NOT_NULL = "submit-answer.questionId.notNull";
 
-    public static final String GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL = "get-assessment-list.spaceId.notNull";
+    public static final String GET_ASSESSMENT_LIST_SPACE_IDS_NOT_NULL = "get-assessment-list.spaceId.notNullOrEmpty";
     public static final String GET_ASSESSMENT_LIST_SIZE_MIN = "get-assessment-list.size.min";
     public static final String GET_ASSESSMENT_LIST_SIZE_MAX = "get-assessment-list.size.max";
     public static final String GET_ASSESSMENT_LIST_PAGE_MIN = "get-assessment-list.page.min";
@@ -81,6 +82,9 @@ public class ErrorMessageKey {
     public static final String GET_SUBJECT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-subject-progress.assessment.id.notNull";
     public static final String GET_SUBJECT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND = "get-subject-progress.assessmentResultId.notFound";
     public static final String GET_SUBJECT_PROGRESS_SUBJECT_ID_NOT_NULL = "get-subject-progress.subject.id.notNull";
+
+    public static final String GET_ASSESSMENT_ASSESSMENT_ID_NOT_NULL = "get-assessment.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND = "get-assessment.assessmentId.notFound";
 
     public static final String GET_ASSESSMENT_SPACE_ASSESSMENT_ID_NOT_NULL = "get-assessment-space.assessmentId.notNull";
     public static final String GET_ASSESSMENT_SPACE_ASSESSMENT_ID_NOT_FOUND = "get-assessment-space.assessmentId.notFound";
