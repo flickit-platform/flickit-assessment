@@ -41,7 +41,7 @@ class GetAssessmentListUseCaseParamTest {
     }
 
     @Test
-    void testGetAssessmentList_MinSize_ErrorMessage() {
+    void testGetAssessmentList_PageSizeIsLessThanMin_ErrorMessage() {
         List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentListUseCase.Param(
@@ -54,7 +54,7 @@ class GetAssessmentListUseCaseParamTest {
     }
 
     @Test
-    void testGetAssessmentList_MaxSize_ErrorMessage() {
+    void testGetAssessmentList_PageSizeIsGreaterThanMax_ErrorMessage() {
         List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentListUseCase.Param(
@@ -67,7 +67,7 @@ class GetAssessmentListUseCaseParamTest {
     }
 
     @Test
-    void testGetAssessmentList_MinPage_ErrorMessage() {
+    void testGetAssessmentList_PageNumberIsLessThanMin_ErrorMessage() {
         List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentListUseCase.Param(
