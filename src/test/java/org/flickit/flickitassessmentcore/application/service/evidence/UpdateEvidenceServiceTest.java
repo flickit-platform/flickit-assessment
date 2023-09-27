@@ -1,8 +1,7 @@
 package org.flickit.flickitassessmentcore.application.service.evidence;
 
-import org.flickit.flickitassessmentcore.application.domain.mother.AssessmentMother;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.UpdateEvidenceUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.GetEvidencePort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.UpdateEvidencePort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
@@ -33,7 +32,7 @@ class UpdateEvidenceServiceTest {
     @Mock
     private GetEvidencePort getEvidencePort;
     @Mock
-    private GetAssessmentPort getAssessmentPort;
+    private CheckAssessmentExistencePort checkAssessmentExistencePort;
 
     @Test
     void testUpdateEvidence_ValidParam_UpdatedAndReturnsId() {
@@ -45,7 +44,7 @@ class UpdateEvidenceServiceTest {
 
         var updateResult = new UpdateEvidencePort.Result(savedEvidence.getId());
         when(getEvidencePort.getEvidenceById(any())).thenReturn(Optional.of(savedEvidence));
-        when(getAssessmentPort.getAssessmentById(any())).thenReturn(Optional.of(AssessmentMother.assessment()));
+        when(checkAssessmentExistencePort.existsById(any())).thenReturn(true);
         when(updateEvidencePort.update(any())).thenReturn(updateResult);
 
         UpdateEvidenceUseCase.Result result = service.updateEvidence(param);
@@ -76,7 +75,7 @@ class UpdateEvidenceServiceTest {
         assertEquals(param.getId(), evidenceIdParam.getValue());
 
         verify(getEvidencePort, times(1)).getEvidenceById(any());
-        verify(getAssessmentPort, never()).getAssessmentById(any());
+        verify(checkAssessmentExistencePort, never()).existsById(any());
         verify(updateEvidencePort, never()).update(any());
     }
 
@@ -88,16 +87,16 @@ class UpdateEvidenceServiceTest {
             "new " + savedEvidence.getDescription()
         );
         when(getEvidencePort.getEvidenceById(any())).thenReturn(Optional.of(savedEvidence));
-        when(getAssessmentPort.getAssessmentById(any())).thenReturn(Optional.empty());
+        when(checkAssessmentExistencePort.existsById(any())).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> service.updateEvidence(param));
 
         ArgumentCaptor<UUID> assessmentIdParam = ArgumentCaptor.forClass(UUID.class);
-        verify(getAssessmentPort).getAssessmentById(assessmentIdParam.capture());
+        verify(checkAssessmentExistencePort).existsById(assessmentIdParam.capture());
         assertEquals(savedEvidence.getAssessmentId(), assessmentIdParam.getValue());
 
         verify(getEvidencePort, times(1)).getEvidenceById(any());
-        verify(getAssessmentPort, times(1)).getAssessmentById(any());
+        verify(checkAssessmentExistencePort, times(1)).existsById(any());
         verify(updateEvidencePort, never()).update(any());
     }
 

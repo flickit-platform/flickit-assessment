@@ -3,7 +3,7 @@ package org.flickit.flickitassessmentcore.application.service.evidence;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.domain.Evidence;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.UpdateEvidenceUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.GetEvidencePort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.UpdateEvidencePort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
@@ -22,7 +22,7 @@ public class UpdateEvidenceService implements UpdateEvidenceUseCase {
 
     private final UpdateEvidencePort updateEvidencePort;
     private final GetEvidencePort getEvidencePort;
-    private final GetAssessmentPort getAssessmentPort;
+    private final CheckAssessmentExistencePort checkAssessmentExistencePort;
 
     @Override
     public Result updateEvidence(Param param) {
@@ -38,7 +38,7 @@ public class UpdateEvidenceService implements UpdateEvidenceUseCase {
     private void validateParam(Param param) {
         Evidence evidence = getEvidencePort.getEvidenceById(param.getId())
             .orElseThrow(()-> new ResourceNotFoundException(UPDATE_EVIDENCE_ID_NOT_FOUND));
-        if(getAssessmentPort.getAssessmentById(evidence.getAssessmentId()).isEmpty())
+        if (!checkAssessmentExistencePort.existsById(evidence.getAssessmentId()))
             throw new ResourceNotFoundException(UPDATE_EVIDENCE_ASSESSMENT_ID_NOT_FOUND);
     }
 }
