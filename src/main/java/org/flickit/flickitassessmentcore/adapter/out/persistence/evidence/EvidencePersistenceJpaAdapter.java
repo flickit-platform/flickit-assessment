@@ -1,18 +1,15 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.domain.Evidence;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
-import org.flickit.flickitassessmentcore.application.port.out.evidence.GetEvidencePort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencesByQuestionAndAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.UpdateEvidencePort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -20,8 +17,7 @@ import java.util.UUID;
 public class EvidencePersistenceJpaAdapter implements
     CreateEvidencePort,
     LoadEvidencesByQuestionAndAssessmentPort,
-    UpdateEvidencePort,
-    GetEvidencePort {
+    UpdateEvidencePort {
 
     private final EvidenceJpaRepository repository;
 
@@ -57,11 +53,5 @@ public class EvidencePersistenceJpaAdapter implements
             param.lastModificationTime()
         );
         return new UpdateEvidencePort.Result(param.id());
-    }
-
-    @Override
-    public Optional<Evidence> getEvidenceById(UUID id) {
-        Optional<EvidenceJpaEntity> entity = repository.findById(id);
-        return entity.map(EvidenceMapper::mapToDomainModel);
     }
 }

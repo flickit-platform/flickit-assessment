@@ -43,6 +43,4 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         "a.deletionTime = :deletionTime " +
         "WHERE a.id = :id")
     void setDeletionTimeById(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
-
-    boolean existsByIdAndDeletionTime(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
 }

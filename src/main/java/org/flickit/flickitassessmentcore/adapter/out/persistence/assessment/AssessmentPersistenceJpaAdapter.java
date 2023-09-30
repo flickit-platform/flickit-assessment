@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
@@ -90,6 +89,6 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public boolean existsById(UUID id) {
-        return repository.existsByIdAndDeletionTime(id, NOT_DELETED_DELETION_TIME);
+        return repository.existsById(id);
     }
 }
