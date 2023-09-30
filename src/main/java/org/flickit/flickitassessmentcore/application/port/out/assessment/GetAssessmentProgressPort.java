@@ -7,7 +7,7 @@ import java.util.UUID;
 public interface GetAssessmentProgressPort {
 
     /**
-     * @throws ResourceNotFoundException if no assessment found by the given id
+     * @throws ResourceNotFoundException if no assessment result found by the given id
      */
     Result getAssessmentProgressById(UUID assessmentId);
 

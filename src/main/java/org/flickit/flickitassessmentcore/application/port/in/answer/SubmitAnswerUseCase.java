@@ -13,7 +13,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 public interface SubmitAnswerUseCase {
 
     /**
-     * @throws ResourceNotFoundException if no assessment found by the given assessmentId
+     * @throws ResourceNotFoundException if no assessment result found by the given assessmentId
      */
     Result submitAnswer(Param param);
 
