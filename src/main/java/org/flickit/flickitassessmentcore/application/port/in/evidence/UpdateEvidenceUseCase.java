@@ -13,7 +13,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 public interface UpdateEvidenceUseCase {
 
-    Result updateEvidence(Param param);
+       Result updateEvidence(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

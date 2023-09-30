@@ -13,6 +13,7 @@ public interface CreateAssessmentPort {
                  Integer colorId,
                  Long spaceId,
                  LocalDateTime creationTime,
-                 LocalDateTime lastModificationTime) {
+                 LocalDateTime lastModificationTime,
+                 Long deletionTime) {
     }
 }

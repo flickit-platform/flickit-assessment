@@ -2,9 +2,10 @@ package org.flickit.flickitassessmentcore.application.port.out.assessment;
 
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface GetAssessmentPort {
 
-    Assessment getAssessmentById(UUID assessmentId);
+    Optional<Assessment> getAssessmentById(UUID assessmentId);
 }

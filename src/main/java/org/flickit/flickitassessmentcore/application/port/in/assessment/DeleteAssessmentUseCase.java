@@ -8,28 +8,25 @@ import org.flickit.flickitassessmentcore.common.SelfValidating;
 
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.DELETE_ASSESSMENT_ID_NOT_NULL;
 
-public interface GetAssessmentUseCase {
+public interface DeleteAssessmentUseCase {
 
     /**
      * @throws ResourceNotFoundException if no assessment found by the given id
      */
-    Result getAssessment(Param param);
+    void deleteAssessment(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_ASSESSMENT_ASSESSMENT_ID_NOT_NULL)
-        UUID assessmentId;
+        @NotNull(message = DELETE_ASSESSMENT_ID_NOT_NULL)
+        UUID id;
 
-        public Param(UUID assessmentId) {
-            this.assessmentId = assessmentId;
+        public Param(UUID id) {
+            this.id = id;
             this.validateSelf();
         }
-    }
-
-    record Result(UUID assessmentId, Long spaceId, Long kitId) {
     }
 }

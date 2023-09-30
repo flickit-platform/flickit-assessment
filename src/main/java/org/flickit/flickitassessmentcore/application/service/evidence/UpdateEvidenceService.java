@@ -24,5 +24,4 @@ public class UpdateEvidenceService implements UpdateEvidenceUseCase {
         );
         return new UpdateEvidenceUseCase.Result(updateEvidencePort.update(updateParam).id());
     }
-
 }
