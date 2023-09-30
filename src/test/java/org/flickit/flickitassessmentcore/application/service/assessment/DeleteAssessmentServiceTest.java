@@ -34,7 +34,7 @@ class DeleteAssessmentServiceTest {
     private CheckAssessmentExistencePort checkAssessmentExistencePort;
 
     @Test
-    void deleteAssessment_ValidAssessmentId_DeleteSuccessfully() {
+    void testDeleteAssessment_ValidAssessmentId_DeleteSuccessfully() {
         UUID id = UUID.randomUUID();
         DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(id);
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
@@ -55,7 +55,7 @@ class DeleteAssessmentServiceTest {
     }
 
     @Test
-    void deleteAssessment_InvalidAssessmentId_ThrowsException() {
+    void testDeleteAssessment_InvalidAssessmentId_ThrowsException() {
         UUID id = UUID.randomUUID();
         DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(id);
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(false);

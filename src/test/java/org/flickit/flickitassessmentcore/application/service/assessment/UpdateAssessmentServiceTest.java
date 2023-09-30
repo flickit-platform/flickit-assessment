@@ -76,7 +76,7 @@ class UpdateAssessmentServiceTest {
     }
 
     @Test
-    void updateAssessment_InvalidAssessmentId_ThrowNotFoundException() {
+    void testUpdateAssessment_InvalidAssessmentId_ThrowNotFoundException() {
         UUID id = UUID.randomUUID();
 
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(false);

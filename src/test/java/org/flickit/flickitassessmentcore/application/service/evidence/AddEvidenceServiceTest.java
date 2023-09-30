@@ -57,7 +57,7 @@ class AddEvidenceServiceTest {
     }
 
     @Test
-    void addEvidence_InvalidAssessmentId_ThrowNotFoundException() {
+    void testAddEvidence_InvalidAssessmentId_ThrowNotFoundException() {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
             1L,

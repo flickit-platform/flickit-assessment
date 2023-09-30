@@ -75,7 +75,7 @@ class GetEvidenceListServiceTest {
     }
 
     @Test
-    void getEvidenceList_InvalidAssessmentId_ThrowNotFoundException() {
+    void testGetEvidenceList_InvalidAssessmentId_ThrowNotFoundException() {
         UUID ASSESSMENT_ID = UUID.randomUUID();
         Param param = new Param(0L, ASSESSMENT_ID, 10, 0);
         when(checkAssessmentExistencePort.existsById(ASSESSMENT_ID)).thenReturn(false);
