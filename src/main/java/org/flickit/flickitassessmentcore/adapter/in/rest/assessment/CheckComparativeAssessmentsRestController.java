@@ -2,10 +2,10 @@ package org.flickit.flickitassessmentcore.adapter.in.rest.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CheckComparativeAssessmentsUseCase;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.CheckComparativeAssessmentsUseCase.AssessmentListItem;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CheckComparativeAssessmentsUseCase.ComparableAssessmentListItem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +18,7 @@ public class CheckComparativeAssessmentsRestController {
 
     private final CheckComparativeAssessmentsUseCase useCase;
 
-    @PutMapping("/compare/assessments")
+    @GetMapping("/assessments/check-compare")
     public ResponseEntity<CheckComparativeAssessmentsResponseDto> checkComparativeAssessments(@RequestParam("assessmentIds") List<UUID> assessmentIds) {
         var result = useCase.checkComparativeAssessments(toParam(assessmentIds));
         return new ResponseEntity<>(toResponse(result), HttpStatus.OK);
@@ -28,7 +28,7 @@ public class CheckComparativeAssessmentsRestController {
         return new CheckComparativeAssessmentsUseCase.Param(assessmentIds);
     }
 
-    private CheckComparativeAssessmentsResponseDto toResponse(List<AssessmentListItem> assessmentListItems) {
-        return new CheckComparativeAssessmentsResponseDto(assessmentListItems);
+    private CheckComparativeAssessmentsResponseDto toResponse(List<ComparableAssessmentListItem> comparableAssessmentListItems) {
+        return new CheckComparativeAssessmentsResponseDto(comparableAssessmentListItems);
     }
 }

@@ -34,9 +34,9 @@ class CheckComparativeAssessmentsServiceTest {
         var listItem3 = AssessmentMother.createComparativeAssessmentListItem(1L);
         var assessmentItemsList = List.of(listItem1, listItem2, listItem3);
         var assessmentIds = List.of(
-            listItem1.id(),
-            listItem2.id(),
-            listItem3.id()
+            listItem1.assessmentListItem().id(),
+            listItem2.assessmentListItem().id(),
+            listItem3.assessmentListItem().id()
         );
         when(loadAssessmentsPort.load(anyList())).thenReturn(assessmentItemsList);
 
@@ -54,9 +54,9 @@ class CheckComparativeAssessmentsServiceTest {
         var listItem3 = AssessmentMother.createComparativeAssessmentListItem(1L);
         var assessmentItemsList = List.of(listItem1, listItem2, listItem3);
         var assessmentIds = List.of(
-            listItem1.id(),
-            listItem2.id(),
-            listItem3.id()
+            listItem1.assessmentListItem().id(),
+            listItem2.assessmentListItem().id(),
+            listItem3.assessmentListItem().id()
         );
         when(loadAssessmentsPort.load(anyList())).thenReturn(assessmentItemsList);
 

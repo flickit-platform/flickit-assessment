@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,7 +12,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CHECK_COM
 
 public interface CheckComparativeAssessmentsUseCase {
 
-    List<AssessmentListItem> checkComparativeAssessments(Param param);
+    List<ComparableAssessmentListItem> checkComparativeAssessments(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -28,15 +27,8 @@ public interface CheckComparativeAssessmentsUseCase {
         }
     }
 
-    record AssessmentListItem(
-        UUID id,
-        String title,
-        Long assessmentKitId,
-        Long spaceId,
-        String colorCode,
-        LocalDateTime lastModificationTime,
-        Long maturityLevelId,
-        boolean isCalculateValid,
+    record ComparableAssessmentListItem(
+        GetAssessmentListUseCase.AssessmentListItem assessmentListItem,
         Progress progress
     ) {
     }

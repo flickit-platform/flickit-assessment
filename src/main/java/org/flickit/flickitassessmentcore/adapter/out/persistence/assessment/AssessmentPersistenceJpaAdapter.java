@@ -83,7 +83,7 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<CheckComparativeAssessmentsUseCase.AssessmentListItem> load(List<UUID> assessmentIds) {
+    public List<CheckComparativeAssessmentsUseCase.ComparableAssessmentListItem> load(List<UUID> assessmentIds) {
         List<AssessmentListItemView> assessmentJpaEntities = repository.findAllByIdOrderByLastModificationTimeDesc(assessmentIds);
         return assessmentJpaEntities.stream()
             .map(x -> AssessmentMapper.mapToComparativeAssessmentListItem(x,

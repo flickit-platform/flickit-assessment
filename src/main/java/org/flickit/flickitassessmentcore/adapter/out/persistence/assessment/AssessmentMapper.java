@@ -5,7 +5,8 @@ import lombok.NoArgsConstructor;
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentKit;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.CheckComparativeAssessmentsUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CheckComparativeAssessmentsUseCase.ComparableAssessmentListItem;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CheckComparativeAssessmentsUseCase.Progress;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CreateAssessmentPort;
 
@@ -57,20 +58,8 @@ public class AssessmentMapper {
         );
     }
 
-    public static CheckComparativeAssessmentsUseCase.AssessmentListItem mapToComparativeAssessmentListItem(
-        AssessmentListItemView itemView,
-        CheckComparativeAssessmentsUseCase.Progress progress) {
-        AssessmentJpaEntity assessmentEntity = itemView.getAssessment();
-        return new CheckComparativeAssessmentsUseCase.AssessmentListItem(
-            assessmentEntity.getId(),
-            assessmentEntity.getTitle(),
-            assessmentEntity.getAssessmentKitId(),
-            assessmentEntity.getSpaceId(),
-            AssessmentColor.valueOfById(assessmentEntity.getColorId()).getCode(),
-            assessmentEntity.getLastModificationTime(),
-            itemView.getMaturityLevelId(),
-            itemView.getIsCalculateValid(),
-            progress
-        );
+    public static ComparableAssessmentListItem mapToComparativeAssessmentListItem(AssessmentListItemView itemView, Progress progress) {
+        var assessmentListItem = mapToAssessmentListItem(itemView);
+        return new ComparableAssessmentListItem(assessmentListItem, progress);
     }
 }

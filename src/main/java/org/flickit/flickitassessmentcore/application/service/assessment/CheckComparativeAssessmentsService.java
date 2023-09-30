@@ -20,15 +20,15 @@ public class CheckComparativeAssessmentsService implements CheckComparativeAsses
     private final LoadAssessmentsPort loadAssessmentsPort;
 
     @Override
-    public List<AssessmentListItem> checkComparativeAssessments(Param param) {
+    public List<ComparableAssessmentListItem> checkComparativeAssessments(Param param) {
         var assessmentListItems = loadAssessmentsPort.load(param.getAssessmentIds());
         checkAssessmentsKits(assessmentListItems);
         return assessmentListItems;
     }
 
-    private void checkAssessmentsKits(List<AssessmentListItem> assessmentListItems) {
-        var uniqueKitIds = assessmentListItems.stream()
-            .map(AssessmentListItem::assessmentKitId)
+    private void checkAssessmentsKits(List<ComparableAssessmentListItem> comparableAssessmentListItems) {
+        var uniqueKitIds = comparableAssessmentListItems.stream()
+            .map(a -> a.assessmentListItem().assessmentKitId())
             .collect(Collectors.toSet());
         if (uniqueKitIds.size() > 1) {
             throw new AssessmentsNotComparableException(CHECK_COMPARATIVE_ASSESSMENTS_ASSESSMENTS_NOT_COMPARABLE);
