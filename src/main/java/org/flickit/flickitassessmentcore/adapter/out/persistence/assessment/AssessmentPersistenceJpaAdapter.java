@@ -79,7 +79,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public Optional<Assessment> getAssessmentById(UUID assessmentId) {
-        Optional<AssessmentJpaEntity> entity = repository.findByIdAndDeletionTime(assessmentId, NOT_DELETED_DELETION_TIME);
+        Optional<AssessmentJpaEntity> entity = repository.findById(assessmentId);
         return entity.map(AssessmentMapper::mapToDomainModel);
     }
 
