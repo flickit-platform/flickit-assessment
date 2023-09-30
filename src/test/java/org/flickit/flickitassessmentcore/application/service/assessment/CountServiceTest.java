@@ -38,9 +38,9 @@ class CountServiceTest {
             kitIdArgument.capture(), includeDeletedArgument.capture(), includeNotDeletedArgument.capture()
         );
 
-        assertEquals(kitIdArgument.getValue(), 1L);
-        assertEquals(includeDeletedArgument.getValue(), Boolean.TRUE);
-        assertEquals(includeNotDeletedArgument.getValue(), Boolean.TRUE);
+        assertEquals(1L, kitIdArgument.getValue());
+        assertEquals(Boolean.TRUE, includeDeletedArgument.getValue());
+        assertEquals(Boolean.TRUE, includeNotDeletedArgument.getValue());
     }
 
     @Test
