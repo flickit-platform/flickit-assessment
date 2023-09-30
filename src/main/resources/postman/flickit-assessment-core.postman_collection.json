@@ -473,6 +473,39 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Count Assessments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/counters?assessmentKitId=1&includeDeleted=true&includeNotDeleted=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"counters"
+					],
+					"query": [
+						{
+							"key": "assessmentKitId",
+							"value": "1"
+						},
+						{
+							"key": "includeDeleted",
+							"value": "true"
+						},
+						{
+							"key": "includeNotDeleted",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
