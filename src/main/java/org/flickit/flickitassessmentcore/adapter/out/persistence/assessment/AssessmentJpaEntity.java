@@ -47,6 +47,9 @@ public class AssessmentJpaEntity {
     @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 
+    @Column(name = "deletion_time", nullable = false)
+    private Long deletionTime;
+
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
         public static final String LAST_MODIFICATION_TIME = "lastModificationTime";

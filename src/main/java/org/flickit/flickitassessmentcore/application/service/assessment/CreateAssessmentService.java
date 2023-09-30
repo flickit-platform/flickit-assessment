@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.application.domain.Assessment.generateSlugCode;
 import static org.flickit.flickitassessmentcore.application.domain.AssessmentColor.getValidId;
+import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 
 @Service
 @Transactional
@@ -50,7 +51,8 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             getValidId(param.getColorId()),
             param.getSpaceId(),
             creationTime,
-            lastModificationTime
+            lastModificationTime,
+            NOT_DELETED_DELETION_TIME
         );
     }
 
@@ -58,7 +60,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         LocalDateTime lastModificationTime = LocalDateTime.now();
         CreateAssessmentResultPort.Param param = new CreateAssessmentResultPort.Param(assessmentId, lastModificationTime, false);
         UUID assessmentResultId = createAssessmentResultPort.persist(param);
-
 
         List<Subject> subjects = loadSubjectByAssessmentKitIdPort.loadByAssessmentKitId(assessmentKitId);
         List<Long> subjectIds = subjects.stream().map(Subject::getId).toList();

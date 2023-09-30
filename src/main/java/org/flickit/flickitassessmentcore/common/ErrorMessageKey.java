@@ -35,6 +35,7 @@ public class ErrorMessageKey {
     public static final String ADD_EVIDENCE_QUESTION_ID_NOT_NULL = "add-evidence.questionId.notNull";
 
     public static final String UPDATE_ASSESSMENT_ID_NOT_NULL = "update-assessment.id.notNull";
+    public static final String UPDATE_ASSESSMENT_ID_NOT_FOUND = "update-assessment.id.notFound";
     public static final String UPDATE_ASSESSMENT_TITLE_NOT_BLANK = "update-assessment.title.notBlank";
     public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MIN = "update-assessment.title.min";
     public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MAX = "update-assessment.title.max";
@@ -85,6 +86,9 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_ASSESSMENT_ID_NOT_NULL = "get-assessment.assessmentId.notNull";
     public static final String GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND = "get-assessment.assessmentId.notFound";
+
+    public static final String DELETE_ASSESSMENT_ID_NOT_NULL = "delete-assessment.id.notNull";
+    public static final String DELETE_ASSESSMENT_ID_NOT_FOUND = "delete-assessment.id.notFound";
 
     public static final String COUNT_ASSESSMENTS_ASSESSMENT_KIT_ID_NOT_NULL = "count-assessments.assessment.kit.id.notNull";
     public static final String COUNT_ASSESSMENTS_INCLUDE_DELETED_NOT_NULL = "count-assessments.include-deleted.notNull";

@@ -18,6 +18,7 @@ public class Assessment {
     private final long spaceId;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
+    private final long deletionTime;
 
     public static String generateSlugCode(String title) {
         return title

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
 import java.util.UUID;
@@ -13,6 +14,9 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 public interface UpdateAssessmentUseCase {
 
+    /**
+     * @throws ResourceNotFoundException if no assessment found by the given id
+     */
     Result updateAssessment(Param param);
 
     @Value
