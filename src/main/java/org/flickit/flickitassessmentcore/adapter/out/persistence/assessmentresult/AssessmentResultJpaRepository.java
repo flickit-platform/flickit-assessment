@@ -15,7 +15,7 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
     @Query("UPDATE AssessmentResultJpaEntity a SET a.isValid = false WHERE a.id = :id")
     void invalidateById(@Param(value = "id") UUID id);
 
-    Optional<AssessmentResultJpaEntity> findFirstByAssessment_IdAndAssessment_DeletionTimeOrderByLastModificationTimeDesc(UUID assessmentId, Long deletionTime);
+    Optional<AssessmentResultJpaEntity> findFirstByAssessment_IdOrderByLastModificationTimeDesc(UUID assessmentId);
 
     @Modifying
     @Query("UPDATE AssessmentResultJpaEntity a SET " +
