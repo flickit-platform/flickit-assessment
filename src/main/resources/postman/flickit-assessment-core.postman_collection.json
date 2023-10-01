@@ -127,6 +127,25 @@
 			"response": []
 		},
 		{
+			"name": "Delete Assessment",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"ff1b2ae3-92b7-437d-b321-539753b71608"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Assessment Colors",
 			"request": {
 				"method": "GET",

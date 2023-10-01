@@ -13,9 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +35,7 @@ class GetAssessmentServiceTest {
         Assessment assessment = AssessmentMother.assessment();
         UUID assessmentId = assessment.getId();
 
-        when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(assessment);
+        when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
 
         Result result = service.getAssessment(new Param(assessmentId));
 
@@ -53,7 +53,7 @@ class GetAssessmentServiceTest {
         UUID assessmentId = UUID.randomUUID();
 
         when(getAssessmentPort.getAssessmentById(assessmentId))
-            .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND));
+            .thenReturn(Optional.empty());
 
         Param param = new Param(assessmentId);
         assertThrows(ResourceNotFoundException.class, () -> service.getAssessment(param));
