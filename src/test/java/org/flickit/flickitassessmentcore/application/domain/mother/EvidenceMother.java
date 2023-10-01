@@ -20,16 +20,4 @@ public class EvidenceMother {
         );
     }
 
-    public static Evidence deletedEvidence() {
-        return new Evidence(
-            UUID.randomUUID(),
-            "description",
-            1L,
-            UUID.randomUUID(),
-            1L,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            System.currentTimeMillis()
-        );
-    }
 }

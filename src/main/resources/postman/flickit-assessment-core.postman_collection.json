@@ -480,30 +480,6 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/evidences?id=3d81a3bd-01e9-4462-b650-2796b408b07b",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"evidences"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "3d81a3bd-01e9-4462-b650-2796b408b07b"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Evidence",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
 					"raw": "{{base_url}}/{{api_path}}/evidences/9f9cd530-73a0-4adc-863a-4b455c9488e1",
 					"host": [
 						"{{base_url}}"
