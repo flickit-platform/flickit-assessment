@@ -473,6 +473,38 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Subject Progress",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/0f25d1bb-63aa-43e9-afcd-c362ba9871a2/subjects/57/progress",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"0f25d1bb-63aa-43e9-afcd-c362ba9871a2",
+						"subjects",
+						"57",
+						"progress"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
