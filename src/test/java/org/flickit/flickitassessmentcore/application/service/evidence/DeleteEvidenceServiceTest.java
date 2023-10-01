@@ -1,6 +1,5 @@
 package org.flickit.flickitassessmentcore.application.service.evidence;
 
-import org.flickit.flickitassessmentcore.application.domain.mother.EvidenceMother;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.DeleteEvidenceUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CheckEvidenceExistencePort;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.DeleteEvidencePort;
@@ -32,22 +31,22 @@ class DeleteEvidenceServiceTest {
 
     @Test
     void deleteEvidence_IdGiven_Delete() {
-        var evidence = EvidenceMother.deletedEvidence();
-        doNothing().when(deleteEvidencePort).setDeletionTimeById(eq(evidence.getId()), any());
-        when(checkEvidenceExistencePort.existsById(evidence.getId())).thenReturn(Boolean.TRUE);
-        service.deleteEvidence(new DeleteEvidenceUseCase.Param(evidence.getId()));
+        UUID evidenceId = UUID.randomUUID();
+        doNothing().when(deleteEvidencePort).setDeletionTimeById(eq(evidenceId), any());
+        when(checkEvidenceExistencePort.existsById(evidenceId)).thenReturn(Boolean.TRUE);
+        service.deleteEvidence(new DeleteEvidenceUseCase.Param(evidenceId));
 
         ArgumentCaptor<UUID> idDeletePortArgument = ArgumentCaptor.forClass(UUID.class);
         ArgumentCaptor<Long> deletionTimeDeletePortArgument = ArgumentCaptor.forClass(Long.class);
         verify(deleteEvidencePort).setDeletionTimeById(idDeletePortArgument.capture(),
             deletionTimeDeletePortArgument.capture());
 
-        assertEquals(evidence.getId(), idDeletePortArgument.getValue());
+        assertEquals(evidenceId, idDeletePortArgument.getValue());
 
         ArgumentCaptor<UUID> idCheckPortArgument = ArgumentCaptor.forClass(UUID.class);
         verify(checkEvidenceExistencePort).existsById(idCheckPortArgument.capture());
 
-        assertEquals(evidence.getId(), idCheckPortArgument.getValue());
+        assertEquals(evidenceId, idCheckPortArgument.getValue());
     }
 
     @Test
