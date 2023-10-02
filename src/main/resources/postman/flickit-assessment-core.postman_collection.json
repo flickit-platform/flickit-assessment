@@ -512,7 +512,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/counters?assessmentKitId=1&includeDeleted=true&includeNotDeleted=true",
+					"raw": "{{base_url}}/{{api_path}}/assessments/counters?assessmentKitId=1&deleted=true&notDeleted=true&total=true",
 					"host": [
 						"{{base_url}}"
 					],
@@ -527,11 +527,15 @@
 							"value": "1"
 						},
 						{
-							"key": "includeDeleted",
+							"key": "deleted",
 							"value": "true"
 						},
 						{
-							"key": "includeNotDeleted",
+							"key": "notDeleted",
+							"value": "true"
+						},
+						{
+							"key": "total",
 							"value": "true"
 						}
 					]

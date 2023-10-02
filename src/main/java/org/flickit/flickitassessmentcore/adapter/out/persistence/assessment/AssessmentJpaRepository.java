@@ -46,8 +46,18 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     @Query("SELECT COUNT(a) " +
         "FROM AssessmentJpaEntity a " +
+        "WHERE a.assessmentKitId=:assessmentKitId")
+    int countTotalAssessmentsByKitId(Long assessmentKitId);
+
+    @Query("SELECT COUNT(a) " +
+        "FROM AssessmentJpaEntity a " +
         "WHERE a.assessmentKitId=:assessmentKitId AND " +
-        "(a.deletionTime = 0 OR :includeNotDeleted = true) AND " +
-        "(a.deletionTime > 0 OR :includeDeleted = true)")
-    int countByKitId(Long assessmentKitId, Boolean includeDeleted, Boolean includeNotDeleted);
+        "(a.deletionTime > 0 AND :deleted = true)")
+    int countDeletedAssessmentsByKitId(Long assessmentKitId, Boolean deleted);
+
+    @Query("SELECT COUNT(a) " +
+        "FROM AssessmentJpaEntity a " +
+        "WHERE a.assessmentKitId=:assessmentKitId AND " +
+        "(a.deletionTime = 0 AND :notDeleted = true)")
+    int countNotDeletedAssessmentsByKitId(Long assessmentKitId, Boolean notDeleted);
 }

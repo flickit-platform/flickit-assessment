@@ -7,9 +7,9 @@ import org.flickit.flickitassessmentcore.common.SelfValidating;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
-public interface CountUseCase {
+public interface CountAssessmentsUseCase {
 
-    Result count(Param param);
+    Result countAssessments(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -18,21 +18,22 @@ public interface CountUseCase {
         @NotNull(message = COUNT_ASSESSMENTS_ASSESSMENT_KIT_ID_NOT_NULL)
         Long assessmentKitId;
 
-        @NotNull(message = COUNT_ASSESSMENTS_INCLUDE_DELETED_NOT_NULL)
-        Boolean includeDeleted;
+        Boolean deleted;
 
-        @NotNull(message = COUNT_ASSESSMENTS_INCLUDE_NOT_DELETED_NOT_NULL)
-        Boolean includeNotDeleted;
+        Boolean notDeleted;
 
-        public Param(Long assessmentKitId, Boolean includeDeleted, Boolean includeNotDeleted) {
+        Boolean total;
+
+        public Param(Long assessmentKitId, Boolean deleted, Boolean notDeleted, Boolean total) {
             this.assessmentKitId = assessmentKitId;
-            this.includeDeleted = includeDeleted;
-            this.includeNotDeleted = includeNotDeleted;
+            this.deleted = deleted;
+            this.notDeleted = notDeleted;
+            this.total = total;
             this.validateSelf();
         }
     }
 
-    record Result(int count) {
+    record Result(Integer totalCount, Integer deletedCount, Integer notDeletedCount) {
     }
 
 }

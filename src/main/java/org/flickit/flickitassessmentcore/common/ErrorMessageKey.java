@@ -92,6 +92,5 @@ public class ErrorMessageKey {
     public static final String DELETE_ASSESSMENT_ID_NOT_FOUND = "delete-assessment.id.notFound";
 
     public static final String COUNT_ASSESSMENTS_ASSESSMENT_KIT_ID_NOT_NULL = "count-assessments.assessment.kit.id.notNull";
-    public static final String COUNT_ASSESSMENTS_INCLUDE_DELETED_NOT_NULL = "count-assessments.include-deleted.notNull";
-    public static final String COUNT_ASSESSMENTS_INCLUDE_NOT_DELETED_NOT_NULL = "count-assessments.include-not-deleted.notNull";
+
 }

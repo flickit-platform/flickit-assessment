@@ -94,7 +94,19 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public int count(Long assessmentKitId, Boolean includeDeleted, Boolean includeNotDeleted) {
-        return repository.countByKitId(assessmentKitId, includeDeleted, includeNotDeleted);
+    public CountAssessmentsByKitPort.Result count(CountAssessmentsByKitPort.Param param) {
+        Integer totalCount = null;
+        Integer deletedCount = null;
+        Integer notDeletedCount = null;
+        if (param.total()) {
+            totalCount = repository.countTotalAssessmentsByKitId(param.assessmentKitId());
+        }
+        if (param.deleted()) {
+            deletedCount = repository.countDeletedAssessmentsByKitId(param.assessmentKitId(), param.deleted());
+        }
+        if (param.notDeleted()) {
+            notDeletedCount = repository.countNotDeletedAssessmentsByKitId(param.assessmentKitId(), param.notDeleted());
+        }
+        return new CountAssessmentsByKitPort.Result(totalCount, deletedCount, notDeletedCount);
     }
 }
