@@ -20,7 +20,8 @@ public class AssessmentMapper {
             param.colorId(),
             param.spaceId(),
             param.creationTime(),
-            param.lastModificationTime()
+            param.lastModificationTime(),
+            param.deletionTime()
         );
     }
 
@@ -38,7 +39,8 @@ public class AssessmentMapper {
             entity.getColorId(),
             entity.getSpaceId(),
             entity.getCreationTime(),
-            entity.getLastModificationTime()
+            entity.getLastModificationTime(),
+            entity.getDeletionTime()
         );
     }
 
@@ -48,10 +50,12 @@ public class AssessmentMapper {
             assessmentEntity.getId(),
             assessmentEntity.getTitle(),
             assessmentEntity.getAssessmentKitId(),
+            assessmentEntity.getSpaceId(),
             AssessmentColor.valueOfById(assessmentEntity.getColorId()),
             assessmentEntity.getLastModificationTime(),
             itemView.getMaturityLevelId(),
             itemView.getIsCalculateValid()
         );
     }
+
 }

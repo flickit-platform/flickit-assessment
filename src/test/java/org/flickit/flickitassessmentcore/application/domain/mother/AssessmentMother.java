@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.application.domain.mother;
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentKit;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -21,7 +22,22 @@ public class AssessmentMother {
             AssessmentColor.BLUE.getId(),
             1L,
             LocalDateTime.now(),
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            0L
+        );
+    }
+
+    public static AssessmentListItem assessmentListItem(Long spaceId, Long kitId) {
+        counter++;
+        return new AssessmentListItem(
+            UUID.randomUUID(),
+            "my-assessment-" + counter,
+            kitId,
+            spaceId,
+            AssessmentColor.BLUE,
+            LocalDateTime.now(),
+            1L,
+            Boolean.TRUE
         );
     }
 

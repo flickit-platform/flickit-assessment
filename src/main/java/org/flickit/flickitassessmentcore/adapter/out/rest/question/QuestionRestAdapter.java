@@ -1,6 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.out.rest.question;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.adapter.out.rest.api.DataItemsDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.PaginatedDataItemsDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.api.exception.FlickitPlatformRestException;
 import org.flickit.flickitassessmentcore.application.domain.Question;
@@ -82,14 +83,14 @@ public class QuestionRestAdapter implements LoadQuestionsBySubjectPort {
             url,
             HttpMethod.GET,
             requestEntity,
-            new ParameterizedTypeReference<List<QuestionDto>>() {
+            new ParameterizedTypeReference<DataItemsDto<QuestionDto>>() {
             }
         );
         if (!responseEntity.getStatusCode().is2xxSuccessful())
             throw new FlickitPlatformRestException(responseEntity.getStatusCode().value());
 
-        List<QuestionDto> responseEntityBody = responseEntity.getBody();
-        return responseEntityBody != null ? responseEntityBody.stream()
+        DataItemsDto<QuestionDto> responseEntityBody = responseEntity.getBody();
+        return responseEntityBody != null ? responseEntityBody.items().stream()
             .map(x -> new Question(x.id(), new ArrayList<>()))
             .toList() :
             List.of();

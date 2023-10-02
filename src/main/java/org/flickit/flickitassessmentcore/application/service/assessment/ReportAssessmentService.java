@@ -2,6 +2,7 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
 import org.flickit.flickitassessmentcore.application.domain.report.AssessmentReport;
@@ -60,7 +61,7 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
             assessment.getTitle(),
             assessmentResult.getMaturityLevel().getId(),
             assessmentResult.isValid(),
-            assessment.getColorId(),
+            AssessmentColor.valueOfById(assessment.getColorId()),
             assessment.getLastModificationTime()
         );
     }
