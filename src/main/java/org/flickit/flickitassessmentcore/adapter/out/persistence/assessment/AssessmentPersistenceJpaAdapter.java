@@ -99,14 +99,14 @@ public class AssessmentPersistenceJpaAdapter implements
         Integer deletedCount = null;
         Integer notDeletedCount = null;
         if (param.total() == Boolean.TRUE) {
-            totalCount = repository.countTotalAssessmentsByKitId(param.assessmentKitId());
+            totalCount = repository.countTotalByKitId(param.assessmentKitId());
         }
         if (param.deleted() == Boolean.TRUE) {
-            deletedCount = repository.countDeletedAssessmentsByKitId(param.assessmentKitId(), param.deleted());
+            deletedCount = repository.countDeletedByKitId(param.assessmentKitId());
         }
         if (param.notDeleted() == Boolean.TRUE) {
-            notDeletedCount = repository.countNotDeletedAssessmentsByKitId(param.assessmentKitId(), param.notDeleted());
+            notDeletedCount = repository.countNotDeletedByKitId(param.assessmentKitId());
         }
-        return new CountAssessmentsByKitPort.Result(totalCount, deletedCount, notDeletedCount);
+        return new CountAssessmentsPort.Result(totalCount, deletedCount, notDeletedCount);
     }
 }
