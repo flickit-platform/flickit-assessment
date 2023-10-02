@@ -2,6 +2,7 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import org.flickit.flickitassessmentcore.application.domain.*;
 import org.flickit.flickitassessmentcore.application.domain.mother.*;
+import org.flickit.flickitassessmentcore.application.domain.report.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.domain.report.TopAttribute;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CompareAssessmentsUseCase;
@@ -69,12 +70,15 @@ class CompareAssessmentsServiceTest {
 
 //        assert first assessment compare item attributes
         CompareAssessmentsUseCase.CompareListItem compareItem1 = compareListItems.get(0);
-        assertEquals(assessmentId1, compareItem1.id());
-        assertEquals(assessmentResult1.getAssessment().getTitle(), compareItem1.title());
-        assertEquals(kit.getId(), compareItem1.assessmentKitId());
-        assertEquals(assessmentResult1.getAssessment().getSpaceId(), compareItem1.spaceId());
-        assertEquals(assessmentResult1.getAssessment().getColorId(), compareItem1.color().getId());
-        assertEquals(assessmentResult1.getMaturityLevel().getId(), compareItem1.maturityLevelId());
+        AssessmentListItem assessment1 = compareItem1.assessment();
+        assertEquals(assessmentId1, assessment1.id());
+        assertEquals(assessmentResult1.getAssessment().getTitle(), assessment1.title());
+        assertEquals(kit.getId(), assessment1.assessmentKitId());
+        assertEquals(assessmentResult1.getAssessment().getSpaceId(), assessment1.spaceId());
+        assertEquals(assessmentResult1.getAssessment().getColorId(), assessment1.color().getId());
+        assertEquals(assessmentResult1.getAssessment().getLastModificationTime(), assessment1.lastModificationTime());
+        assertEquals(assessmentResult1.getMaturityLevel().getId(), assessment1.maturityLevelId());
+        assertEquals(assessmentResult1.isValid(), assessment1.isCalculateValid());
         assertEquals(assessmentResult1AnsweredQuestions, compareItem1.answeredQuestions());
 
 //        level of both attribute is more than mid-level, so they are strengths of assessment
@@ -101,12 +105,15 @@ class CompareAssessmentsServiceTest {
 
 //        assert second assessment compare item attributes
         CompareAssessmentsUseCase.CompareListItem compareItem2 = compareListItems.get(1);
-        assertEquals(assessmentId2, compareItem2.id());
-        assertEquals(assessmentResult2.getAssessment().getTitle(), compareItem2.title());
-        assertEquals(kit.getId(), compareItem2.assessmentKitId());
-        assertEquals(assessmentResult2.getAssessment().getSpaceId(), compareItem2.spaceId());
-        assertEquals(assessmentResult2.getAssessment().getColorId(), compareItem2.color().getId());
-        assertEquals(assessmentResult2.getMaturityLevel().getId(), compareItem2.maturityLevelId());
+        AssessmentListItem assessment2 = compareItem2.assessment();
+        assertEquals(assessmentId2, assessment2.id());
+        assertEquals(assessmentResult2.getAssessment().getTitle(), assessment2.title());
+        assertEquals(kit.getId(), assessment2.assessmentKitId());
+        assertEquals(assessmentResult2.getAssessment().getSpaceId(), assessment2.spaceId());
+        assertEquals(assessmentResult2.getAssessment().getColorId(), assessment2.color().getId());
+        assertEquals(assessmentResult2.getAssessment().getLastModificationTime(), assessment2.lastModificationTime());
+        assertEquals(assessmentResult2.getMaturityLevel().getId(), assessment2.maturityLevelId());
+        assertEquals(assessmentResult2.isValid(), assessment2.isCalculateValid());
         assertEquals(assessmentResult2AnsweredQuestions, compareItem2.answeredQuestions());
 
 //        level of first attribute is more than mid-level, so it is strength

@@ -2,6 +2,7 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.domain.*;
+import org.flickit.flickitassessmentcore.application.domain.report.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.domain.report.TopAttribute;
 import org.flickit.flickitassessmentcore.application.domain.report.TopAttributeResolver;
@@ -119,12 +120,15 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
     private CompareListItem createResult(AssessmentResult assessmentResult, List<TopAttribute> topStrengths, List<TopAttribute> topWeaknesses, int answersCount, List<SubjectReport> subjectsReport) {
         Assessment assessment = assessmentResult.getAssessment();
         return new CompareListItem(
-            assessment.getId(),
-            assessment.getTitle(),
-            assessment.getAssessmentKit().getId(),
-            assessment.getSpaceId(),
-            AssessmentColor.valueOfById(assessment.getColorId()),
-            assessmentResult.getMaturityLevel().getId(),
+            new AssessmentListItem(
+                assessment.getId(),
+                assessment.getTitle(),
+                assessment.getAssessmentKit().getId(),
+                assessment.getSpaceId(),
+                AssessmentColor.valueOfById(assessment.getColorId()),
+                assessment.getLastModificationTime(),
+                assessmentResult.getMaturityLevel().getId(),
+                assessmentResult.isValid()),
             answersCount,
             topStrengths,
             topWeaknesses,

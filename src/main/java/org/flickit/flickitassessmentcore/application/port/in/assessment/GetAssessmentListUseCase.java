@@ -5,13 +5,11 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
-import org.flickit.flickitassessmentcore.common.SelfValidating;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
+import org.flickit.flickitassessmentcore.application.domain.report.AssessmentListItem;
+import org.flickit.flickitassessmentcore.common.SelfValidating;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
@@ -42,17 +40,5 @@ public interface GetAssessmentListUseCase {
             this.page = page;
             this.validateSelf();
         }
-    }
-
-    record AssessmentListItem(
-        UUID id,
-        String title,
-        Long assessmentKitId,
-        Long spaceId,
-        AssessmentColor color,
-        LocalDateTime lastModificationTime,
-        Long maturityLevelId,
-        boolean isCalculateValid
-    ) {
     }
 }

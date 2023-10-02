@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.report.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.domain.report.TopAttribute;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
@@ -35,12 +35,7 @@ public interface CompareAssessmentsUseCase {
     }
 
     record CompareListItem(
-        UUID id,
-        String title,
-        Long assessmentKitId,
-        Long spaceId,
-        AssessmentColor color,
-        Long maturityLevelId,
+        AssessmentListItem assessment,
         Integer answeredQuestions,
         List<TopAttribute> topStrengths,
         List<TopAttribute> topWeaknesses,

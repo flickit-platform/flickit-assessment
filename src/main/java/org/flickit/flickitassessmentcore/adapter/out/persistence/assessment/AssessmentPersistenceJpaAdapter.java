@@ -5,7 +5,7 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJp
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
+import org.flickit.flickitassessmentcore.application.domain.report.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.*;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;

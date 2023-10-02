@@ -4,8 +4,8 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.Asse
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.domain.mother.AssessmentKitMother;
 import org.flickit.flickitassessmentcore.application.domain.mother.AssessmentMother;
+import org.flickit.flickitassessmentcore.application.domain.report.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
