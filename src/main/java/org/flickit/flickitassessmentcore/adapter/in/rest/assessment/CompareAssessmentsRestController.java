@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,13 +21,13 @@ public class CompareAssessmentsRestController {
     private final CompareAssessmentsUseCase useCase;
 
     @PostMapping("/assessments-compare")
-    public ResponseEntity<DataItems> compareAssessments(@RequestBody LinkedHashSet<UUID> assessmentIds) {
+    public ResponseEntity<DataItems> compareAssessments(@RequestBody List<UUID> assessmentIds) {
         var param = toParam(assessmentIds);
         var result = useCase.compareAssessments(param);
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 
-    private Param toParam(LinkedHashSet<UUID> assessmentIds) {
+    private Param toParam(List<UUID> assessmentIds) {
         return new Param(assessmentIds);
     }
 

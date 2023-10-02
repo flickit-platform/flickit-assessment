@@ -20,7 +20,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -64,7 +63,7 @@ class CompareAssessmentsServiceTest {
     void testCompareAssessments_ValidIds_ReturnCompareObjects() {
         createTwoAssessmentResult();
         doMocks();
-        var param = new Param(new LinkedHashSet<>(List.of(assessmentId1, assessmentId2)));
+        var param = new Param(List.of(assessmentId1, assessmentId2));
 
         var compareListItems = service.compareAssessments(param);
 

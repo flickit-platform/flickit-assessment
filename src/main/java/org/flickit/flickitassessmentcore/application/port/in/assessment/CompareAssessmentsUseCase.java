@@ -28,8 +28,8 @@ public interface CompareAssessmentsUseCase {
         @Size(max = 4, message = COMPARE_ASSESSMENTS_ASSESSMENT_IDS_SIZE_MAX)
         LinkedHashSet<UUID> assessmentIds;
 
-        public Param(LinkedHashSet<UUID> assessmentIds) {
-            this.assessmentIds = assessmentIds;
+        public Param(List<UUID> assessmentIds) {
+            this.assessmentIds = new LinkedHashSet<>(assessmentIds);
             this.validateSelf();
         }
     }
