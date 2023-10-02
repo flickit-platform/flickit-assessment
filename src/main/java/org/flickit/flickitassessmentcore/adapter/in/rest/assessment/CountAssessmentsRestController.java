@@ -3,7 +3,6 @@ package org.flickit.flickitassessmentcore.adapter.in.rest.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CountAssessmentsUseCase;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CountAssessmentsUseCase.Param;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.CountAssessmentsUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +18,9 @@ public class CountAssessmentsRestController {
     @GetMapping("/assessments/counters")
     public ResponseEntity<CountAssessmentsResponseDto> countAssessments(
         @RequestParam("assessmentKitId") Long assessmentKitId,
-        @RequestParam(value = "deleted", defaultValue = "false") Boolean deleted,
-        @RequestParam(value = "notDeleted", defaultValue = "false") Boolean notDeleted,
-        @RequestParam(value = "total", defaultValue = "false") Boolean total
+        @RequestParam(value = "deleted", required = false) Boolean deleted,
+        @RequestParam(value = "notDeleted", required = false) Boolean notDeleted,
+        @RequestParam(value = "total", required = false) Boolean total
     ) {
         var result = useCase.countAssessments(toParam(assessmentKitId, deleted, notDeleted, total));
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
@@ -31,7 +30,7 @@ public class CountAssessmentsRestController {
         return new Param(assessmentKitId, includeDeleted, includeNotDeleted, total);
     }
 
-    private CountAssessmentsResponseDto toResponseDto(Result result) {
+    private CountAssessmentsResponseDto toResponseDto(CountAssessmentsUseCase.Result result) {
         return new CountAssessmentsResponseDto(result.totalCount(), result.deletedCount(), result.notDeletedCount());
     }
 
