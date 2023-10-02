@@ -10,7 +10,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-class CountUseCaseParamTest {
+class CountAssessmentsUseCaseParamTest {
 
     @Test
     void testCountAssessments_AssessmentKitIdIsNull_ErrorMessage() {
