@@ -28,7 +28,7 @@ public class AssessmentPersistenceJpaAdapter implements
     GetAssessmentPort,
     DeleteAssessmentPort,
     CheckAssessmentExistencePort,
-    CountAssessmentsByKitPort {
+    CountAssessmentsPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -94,7 +94,7 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public CountAssessmentsByKitPort.Result count(CountAssessmentsByKitPort.Param param) {
+    public CountAssessmentsPort.Result countByKitId(CountAssessmentsPort.Param param) {
         Integer totalCount = null;
         Integer deletedCount = null;
         Integer notDeletedCount = null;

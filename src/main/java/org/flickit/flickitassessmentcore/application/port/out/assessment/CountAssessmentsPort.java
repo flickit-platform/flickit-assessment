@@ -1,8 +1,8 @@
 package org.flickit.flickitassessmentcore.application.port.out.assessment;
 
-public interface CountAssessmentsByKitPort {
+public interface CountAssessmentsPort {
 
-    Result count(Param param);
+    Result countByKitId(Param param);
 
     record Param(Long assessmentKitId, Boolean deleted, Boolean notDeleted, Boolean total) {}
 

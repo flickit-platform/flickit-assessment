@@ -21,13 +21,13 @@ class CountAssessmentsServiceTest {
     private CountAssessmentsService service;
 
     @Mock
-    private CountAssessmentsByKitPort countAssessmentsByKitPort;
+    private CountAssessmentsPort countAssessmentsPort;
 
     @Test
     void testCountAssessments_TrueInputs_ValidResult() {
-        var portParam = new CountAssessmentsByKitPort.Param(1L, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
-        var portResult = new CountAssessmentsByKitPort.Result(2, 1, 1);
-        when(countAssessmentsByKitPort.count(portParam)).thenReturn(portResult);
+        var portParam = new CountAssessmentsPort.Param(1L, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
+        var portResult = new CountAssessmentsPort.Result(2, 1, 1);
+        when(countAssessmentsPort.countByKitId(portParam)).thenReturn(portResult);
 
         var param = new CountAssessmentsUseCase.Param(1L, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
         var result = service.countAssessments(param);
@@ -36,8 +36,8 @@ class CountAssessmentsServiceTest {
         assertEquals(1, result.deletedCount());
         assertEquals(1, result.notDeletedCount());
 
-        ArgumentCaptor<CountAssessmentsByKitPort.Param> paramArgument = ArgumentCaptor.forClass(CountAssessmentsByKitPort.Param.class);
-        verify(countAssessmentsByKitPort).count(paramArgument.capture());
+        ArgumentCaptor<CountAssessmentsPort.Param> paramArgument = ArgumentCaptor.forClass(CountAssessmentsPort.Param.class);
+        verify(countAssessmentsPort).countByKitId(paramArgument.capture());
 
         assertEquals(1L, paramArgument.getValue().assessmentKitId());
         assertEquals(Boolean.TRUE, paramArgument.getValue().deleted());
@@ -47,9 +47,9 @@ class CountAssessmentsServiceTest {
 
     @Test
     void testCountAssessments_JustTrueNotDeleted_ValidResults() {
-        var portParam = new CountAssessmentsByKitPort.Param(1L, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
-        var portResult = new CountAssessmentsByKitPort.Result(null, null, 1);
-        when(countAssessmentsByKitPort.count(portParam)).thenReturn(portResult);
+        var portParam = new CountAssessmentsPort.Param(1L, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
+        var portResult = new CountAssessmentsPort.Result(null, null, 1);
+        when(countAssessmentsPort.countByKitId(portParam)).thenReturn(portResult);
 
         var param = new CountAssessmentsUseCase.Param(1L, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
         var result = service.countAssessments(param);
@@ -61,9 +61,9 @@ class CountAssessmentsServiceTest {
 
     @Test
     void testCountAssessments_JustTrueDeleted_ValidResults() {
-        var portParam = new CountAssessmentsByKitPort.Param(1L, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE);
-        var portResult = new CountAssessmentsByKitPort.Result(null, 1, null);
-        when(countAssessmentsByKitPort.count(portParam)).thenReturn(portResult);
+        var portParam = new CountAssessmentsPort.Param(1L, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE);
+        var portResult = new CountAssessmentsPort.Result(null, 1, null);
+        when(countAssessmentsPort.countByKitId(portParam)).thenReturn(portResult);
 
         var param = new CountAssessmentsUseCase.Param(1L, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE);
         var result = service.countAssessments(param);
@@ -75,9 +75,9 @@ class CountAssessmentsServiceTest {
 
     @Test
     void testCountAssessments_JustTrueTotal_ValidResults() {
-        var portParam = new CountAssessmentsByKitPort.Param(1L, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE);
-        var portResult = new CountAssessmentsByKitPort.Result(1, null, null);
-        when(countAssessmentsByKitPort.count(portParam)).thenReturn(portResult);
+        var portParam = new CountAssessmentsPort.Param(1L, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE);
+        var portResult = new CountAssessmentsPort.Result(1, null, null);
+        when(countAssessmentsPort.countByKitId(portParam)).thenReturn(portResult);
 
         var param = new CountAssessmentsUseCase.Param(1L, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE);
         var result = service.countAssessments(param);
