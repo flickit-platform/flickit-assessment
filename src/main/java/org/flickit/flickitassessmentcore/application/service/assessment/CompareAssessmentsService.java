@@ -10,7 +10,7 @@ import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAsse
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelsByKitPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
-import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoPort;
+import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoWithMaturityLevelsPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectsPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
     private final LoadAttributeValueListPort loadAttributeValueListPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final LoadSubjectsPort loadSubjectsPort;
-    private final LoadSubjectReportInfoPort loadSubjectReportInfoPort;
+    private final LoadSubjectReportInfoWithMaturityLevelsPort loadSubjectReportInfoPort;
 
     @Override
     public List<CompareListItem> compareAssessments(Param param) {
@@ -45,7 +45,8 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
             var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
                 .orElseThrow(() -> new ResourceNotFoundException(COMPARE_ASSESSMENTS_ASSESSMENT_RESULT_NOT_FOUND));
 
-            var topAttributeResolver = getTopAttributeResolver(assessmentResult);
+            var maturityLevels = loadMaturityLevelsByKitPort.loadByKitId(assessmentResult.getAssessment().getAssessmentKit().getId());
+            var topAttributeResolver = getTopAttributeResolver(assessmentResult, maturityLevels);
             var topStrengths = topAttributeResolver.getTopStrengths();
             var topWeaknesses = topAttributeResolver.getTopWeaknesses();
 
@@ -54,7 +55,7 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
             List<Long> subjectIds =  loadSubjectsPort.loadSubjectIdsByAssessmentId(assessmentId);
             List<SubjectReport> subjectsReport = new ArrayList<>();
             for (Long subjectId : subjectIds) {
-                SubjectReport subjectReport = buildSubjectReport(assessmentId, subjectId);
+                SubjectReport subjectReport = buildSubjectReport(assessmentId, subjectId, maturityLevels);
                 subjectsReport.add(subjectReport);
             }
 
@@ -65,9 +66,8 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
         return items;
     }
 
-    private SubjectReport buildSubjectReport(UUID assessmentId, Long subjectId) {
-        AssessmentResult assessmentRes = loadSubjectReportInfoPort.load(assessmentId, subjectId);
-        var maturityLevels = assessmentRes.getAssessment().getAssessmentKit().getMaturityLevels();
+    private SubjectReport buildSubjectReport(UUID assessmentId, Long subjectId, List<MaturityLevel> maturityLevels) {
+        AssessmentResult assessmentRes = loadSubjectReportInfoPort.loadWithMaturityLevels(assessmentId, subjectId, maturityLevels);
 
         var subjectValue = assessmentRes.getSubjectValues()
             .stream()
@@ -106,8 +106,7 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
             .toList();
     }
 
-    private TopAttributeResolver getTopAttributeResolver(AssessmentResult assessmentResult) {
-        var maturityLevels = loadMaturityLevelsByKitPort.loadByKitId(assessmentResult.getAssessment().getAssessmentKit().getId());
+    private TopAttributeResolver getTopAttributeResolver(AssessmentResult assessmentResult, List<MaturityLevel> maturityLevels) {
         Map<Long, MaturityLevel> maturityLevelsMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
 

@@ -10,7 +10,7 @@ import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAsse
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelsByKitPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
-import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoPort;
+import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoWithMaturityLevelsPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectsPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ class CompareAssessmentsServiceTest {
     @Mock
     private LoadSubjectsPort loadSubjectsPort;
     @Mock
-    private LoadSubjectReportInfoPort loadSubjectReportInfoPort;
+    private LoadSubjectReportInfoWithMaturityLevelsPort loadSubjectReportInfoPort;
 
     private UUID assessmentId1;
     private UUID assessmentId2;
@@ -205,6 +205,6 @@ class CompareAssessmentsServiceTest {
             else if (assessmentId.equals(assessmentId2))
                 return assessmentResult2;
             return null;
-        }).when(loadSubjectReportInfoPort).load(any(UUID.class), any());
+        }).when(loadSubjectReportInfoPort).loadWithMaturityLevels(any(UUID.class), any(), any());
     }
 }
