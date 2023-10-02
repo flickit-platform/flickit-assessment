@@ -27,7 +27,8 @@ public class AssessmentPersistenceJpaAdapter implements
     GetAssessmentProgressPort,
     GetAssessmentPort,
     DeleteAssessmentPort,
-    CheckAssessmentExistencePort {
+    CheckAssessmentExistencePort,
+    CountAssessmentsPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -90,5 +91,22 @@ public class AssessmentPersistenceJpaAdapter implements
     @Override
     public boolean existsById(UUID id) {
         return repository.existsById(id);
+    }
+
+    @Override
+    public CountAssessmentsPort.Result countByKitId(CountAssessmentsPort.Param param) {
+        Integer totalCount = null;
+        Integer deletedCount = null;
+        Integer notDeletedCount = null;
+        if (param.total() == Boolean.TRUE) {
+            totalCount = repository.countTotalByKitId(param.assessmentKitId());
+        }
+        if (param.deleted() == Boolean.TRUE) {
+            deletedCount = repository.countDeletedByKitId(param.assessmentKitId());
+        }
+        if (param.notDeleted() == Boolean.TRUE) {
+            notDeletedCount = repository.countNotDeletedByKitId(param.assessmentKitId());
+        }
+        return new CountAssessmentsPort.Result(totalCount, deletedCount, notDeletedCount);
     }
 }
