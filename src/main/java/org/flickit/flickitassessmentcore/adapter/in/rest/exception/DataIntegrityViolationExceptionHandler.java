@@ -26,7 +26,7 @@ public class DataIntegrityViolationExceptionHandler {
     private final Map<String, String> constraintToErrorMsg = new HashMap<>();
 
     {
-        constraintToErrorMsg.put("uq_fac_assessment_spaceid_code", CREATE_ASSESSMENT_DUPLICATE_TITLE_AND_SPACE_ID);
+        constraintToErrorMsg.put("uq_fac_assessment_spaceid_code_deletion_time", CREATE_ASSESSMENT_DUPLICATE_TITLE_AND_SPACE_ID);
         constraintToErrorMsg.put("fk_fac_assessmentresult_assessment", CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND);
         constraintToErrorMsg.put("fk_fac_qualityattributevalue_assessmentresult", CREATE_QUALITY_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND);
         constraintToErrorMsg.put("fk_fac_subjectvalue_assessmentresult", CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND);
