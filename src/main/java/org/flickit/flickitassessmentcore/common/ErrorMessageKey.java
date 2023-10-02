@@ -85,4 +85,9 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_ASSESSMENT_ID_NOT_NULL = "get-assessment.assessmentId.notNull";
     public static final String GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND = "get-assessment.assessmentId.notFound";
+
+    public static final String COMPARE_ASSESSMENTS_ASSESSMENT_IDS_NOT_NULL = "compare-assessments.assessmentIds.notNull";
+    public static final String COMPARE_ASSESSMENTS_ASSESSMENT_IDS_SIZE_MIN = "compare-assessments.assessmentIds.size-min";
+    public static final String COMPARE_ASSESSMENTS_ASSESSMENT_IDS_SIZE_MAX = "compare-assessments.assessmentIds.size-max";
+    public static final String COMPARE_ASSESSMENTS_ASSESSMENT_RESULT_NOT_FOUND = "compare-assessments.assessmentResult.notFound";
 }

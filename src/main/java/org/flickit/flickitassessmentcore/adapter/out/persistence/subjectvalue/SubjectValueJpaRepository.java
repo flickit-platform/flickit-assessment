@@ -20,4 +20,5 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
     void updateMaturityLevelById(@Param(value = "id") UUID id,
                                  @Param(value = "maturityLevelId") Long maturityLevelId);
 
+    List<SubjectValueJpaEntity> findByAssessmentResult_Assessment_Id(UUID assessmentId);
 }
