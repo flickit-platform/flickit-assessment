@@ -505,6 +505,30 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Compare Assessments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments-compare?assessmentIds=c19da21b-8fcc-4b29-a714-c3676c0d70cf,443d00eb-3445-49a9-95af-8b303b73ec70",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments-compare"
+					],
+					"query": [
+						{
+							"key": "assessmentIds",
+							"value": "c19da21b-8fcc-4b29-a714-c3676c0d70cf,443d00eb-3445-49a9-95af-8b303b73ec70"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
