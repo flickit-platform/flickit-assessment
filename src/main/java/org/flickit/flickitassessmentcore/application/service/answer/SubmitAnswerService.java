@@ -53,9 +53,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
                 return new CreateOrUpdateResponse(false, existAnswer.answerId());
             }).orElseGet(() -> {
                 UUID saveAnswerId = createAnswerPort.persist(toCreateParam(param));
-                if (param.getAnswerOptionId() != null && !param.getIsNotApplicable()) {
-                    return new CreateOrUpdateResponse(true, saveAnswerId);
-                } else if (param.getIsNotApplicable()) {
+                if (param.getAnswerOptionId() != null || param.getIsNotApplicable()) {
                     return new CreateOrUpdateResponse(true, saveAnswerId);
                 }
                 return new CreateOrUpdateResponse(false, saveAnswerId);
