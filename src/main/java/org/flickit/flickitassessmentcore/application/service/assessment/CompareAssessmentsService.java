@@ -13,6 +13,7 @@ import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.Load
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoWithMaturityLevelsPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectsPort;
+import org.flickit.flickitassessmentcore.application.service.exception.AssessmentsNotComparableException.AssessmentsNotComparableException;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.flickitassessmentcore.application.domain.MaturityLevel.middleLevel;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.COMPARE_ASSESSMENTS_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -42,33 +43,49 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
     @Override
     public List<CompareListItem> compareAssessments(Param param) {
         var items = new ArrayList<CompareListItem>();
+        var assessmentResults = new ArrayList<AssessmentResult>();
         for (UUID assessmentId : param.getAssessmentIds()) {
             var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
                 .orElseThrow(() -> new ResourceNotFoundException(COMPARE_ASSESSMENTS_ASSESSMENT_RESULT_NOT_FOUND));
+            assessmentResults.add(assessmentResult);
+        }
+        Long kitId = checkAssessmentsKits(assessmentResults);
+        var maturityLevels = loadMaturityLevelsByKitPort.loadByKitId(kitId);
 
-            var maturityLevels = loadMaturityLevelsByKitPort.loadByKitId(assessmentResult.getAssessment().getAssessmentKit().getId());
+        for (AssessmentResult assessmentResult : assessmentResults) {
             var topAttributeResolver = getTopAttributeResolver(assessmentResult, maturityLevels);
             var topStrengths = topAttributeResolver.getTopStrengths();
             var topWeaknesses = topAttributeResolver.getTopWeaknesses();
 
+            var assessmentId = assessmentResult.getAssessment().getId();
             var assessmentProgress = getAssessmentProgressPort.getAssessmentProgressById(assessmentId);
 
-            List<Long> subjectIds =  loadSubjectsPort.loadSubjectIdsByAssessmentId(assessmentId);
+            List<Long> subjectIds = loadSubjectsPort.loadSubjectIdsByAssessmentId(assessmentId);
             List<SubjectReport> subjectsReport = new ArrayList<>();
             for (Long subjectId : subjectIds) {
                 SubjectReport subjectReport = buildSubjectReport(assessmentId, subjectId, maturityLevels);
                 subjectsReport.add(subjectReport);
             }
 
-            CompareListItem item = createResult(assessmentResult, topStrengths, topWeaknesses, assessmentProgress.allAnswersCount(), subjectsReport);
+            var item = mapToResult(assessmentResult, topStrengths, topWeaknesses, assessmentProgress.allAnswersCount(), subjectsReport);
             items.add(item);
         }
 
         return items;
     }
 
+    private Long checkAssessmentsKits(List<AssessmentResult> comparableAssessmentListItems) {
+        var uniqueKitIds = comparableAssessmentListItems.stream()
+            .map(a -> a.getAssessment().getAssessmentKit().getId())
+            .collect(Collectors.toSet());
+        if (uniqueKitIds.size() > 1) {
+            throw new AssessmentsNotComparableException(COMPARE_ASSESSMENTS_ASSESSMENTS_NOT_COMPARABLE);
+        }
+        return (Long) uniqueKitIds.toArray()[0];
+    }
+
     private SubjectReport buildSubjectReport(UUID assessmentId, Long subjectId, List<MaturityLevel> maturityLevels) {
-        AssessmentResult assessmentRes = loadSubjectReportInfoPort.loadWithMaturityLevels(assessmentId, subjectId, maturityLevels);
+        var assessmentRes = loadSubjectReportInfoPort.loadWithMaturityLevels(assessmentId, subjectId, maturityLevels);
 
         var subjectValue = assessmentRes.getSubjectValues()
             .stream()
@@ -117,8 +134,8 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
         return new TopAttributeResolver(attributeValues, midLevelMaturity);
     }
 
-    private CompareListItem createResult(AssessmentResult assessmentResult, List<TopAttribute> topStrengths, List<TopAttribute> topWeaknesses, int answersCount, List<SubjectReport> subjectsReport) {
-        Assessment assessment = assessmentResult.getAssessment();
+    private CompareListItem mapToResult(AssessmentResult assessmentResult, List<TopAttribute> topStrengths, List<TopAttribute> topWeaknesses, int answersCount, List<SubjectReport> subjectsReport) {
+        var assessment = assessmentResult.getAssessment();
         return new CompareListItem(
             new AssessmentListItem(
                 assessment.getId(),

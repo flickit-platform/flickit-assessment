@@ -95,4 +95,5 @@ public class ErrorMessageKey {
     public static final String COMPARE_ASSESSMENTS_ASSESSMENT_IDS_SIZE_MIN = "compare-assessments.assessmentIds.size-min";
     public static final String COMPARE_ASSESSMENTS_ASSESSMENT_IDS_SIZE_MAX = "compare-assessments.assessmentIds.size-max";
     public static final String COMPARE_ASSESSMENTS_ASSESSMENT_RESULT_NOT_FOUND = "compare-assessments.assessmentResult.notFound";
+    public static final String COMPARE_ASSESSMENTS_ASSESSMENTS_NOT_COMPARABLE = "compare-assessments.assessments.notComparable";
 }

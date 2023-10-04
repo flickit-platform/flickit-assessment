@@ -7,8 +7,8 @@ import org.flickit.flickitassessmentcore.application.port.in.assessment.CompareA
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CompareAssessmentsUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -20,8 +20,8 @@ public class CompareAssessmentsRestController {
 
     private final CompareAssessmentsUseCase useCase;
 
-    @PostMapping("/assessments-compare")
-    public ResponseEntity<DataItems> compareAssessments(@RequestBody List<UUID> assessmentIds) {
+    @GetMapping("/assessments-compare")
+    public ResponseEntity<DataItems> compareAssessments(@RequestParam List<UUID> assessmentIds) {
         var param = toParam(assessmentIds);
         var result = useCase.compareAssessments(param);
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);

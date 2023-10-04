@@ -13,6 +13,7 @@ import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.Load
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoWithMaturityLevelsPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectsPort;
+import org.flickit.flickitassessmentcore.application.service.exception.AssessmentsNotComparableException.AssessmentsNotComparableException;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,11 +25,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.COMPARE_ASSESSMENTS_ASSESSMENTS_NOT_COMPARABLE;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CompareAssessmentsServiceTest {
@@ -130,6 +132,51 @@ class CompareAssessmentsServiceTest {
             )
         );
         assertEquals(List.of(subjectReport2), compareItem2.subjects());
+    }
+
+    @Test
+    void testCompareAssessments_AssessmentsWithTwoDifferentKits_ThrowException() {
+//        create two different kits
+        var kit1 = AssessmentKitMother.kit();
+        var kit2 = AssessmentKitMother.kit();
+
+//        create first assessment result
+        List<SubjectValue> subjectValues1 = List.of(
+            SubjectValueMother.withQAValuesAndMaturityLevel(qualityAttributeValues1, MaturityLevelMother.levelThree()));
+        var assessmentResult1 =
+            AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevelAndAssessmentKit(subjectValues1, MaturityLevelMother.levelThree(), kit1);
+
+//        create second assessment result
+        List<SubjectValue> subjectValues2 = List.of(
+            SubjectValueMother.withQAValuesAndMaturityLevelAndSubject(qualityAttributeValues2, MaturityLevelMother.levelTwo(), subject));
+        var assessmentResult2 =
+            AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevelAndAssessmentKit(subjectValues2, MaturityLevelMother.levelTwo(), kit2);
+
+        var assessmentId1 = assessmentResult1.getAssessment().getId();
+        var assessmentId2 = assessmentResult2.getAssessment().getId();
+        var param = new Param(List.of(assessmentId1, assessmentId2));
+
+//        do mocks
+        doAnswer(invocation -> {
+            UUID assessmentId = invocation.getArgument(0, UUID.class);
+            if (assessmentId.equals(assessmentId1))
+                return Optional.of(assessmentResult1);
+            else if (assessmentId.equals(assessmentId2))
+                return Optional.of(assessmentResult2);
+            return Optional.empty();
+        }).when(loadAssessmentResultPort).loadByAssessmentId(any(UUID.class));
+
+        var exception = assertThrows(AssessmentsNotComparableException.class, () -> service.compareAssessments(param));
+
+        assertEquals(COMPARE_ASSESSMENTS_ASSESSMENTS_NOT_COMPARABLE, exception.getMessage());
+        verifyNoInteractions(
+            loadMaturityLevelsByKitPort,
+            loadAttributeValueListPort,
+            getAssessmentProgressPort,
+            loadSubjectsPort,
+            loadSubjectReportInfoPort
+        );
+
     }
 
     private void createTwoAssessmentResult() {
