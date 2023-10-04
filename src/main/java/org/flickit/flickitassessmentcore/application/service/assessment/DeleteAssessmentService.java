@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.DELETE_ASSESSMENT_ID_NOT_FOUND;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class DeleteAssessmentService implements DeleteAssessmentUseCase {
 
     private final DeleteAssessmentPort deleteAssessmentPort;

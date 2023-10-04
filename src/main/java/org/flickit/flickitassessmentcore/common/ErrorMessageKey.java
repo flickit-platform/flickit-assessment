@@ -91,6 +91,8 @@ public class ErrorMessageKey {
     public static final String DELETE_ASSESSMENT_ID_NOT_NULL = "delete-assessment.id.notNull";
     public static final String DELETE_ASSESSMENT_ID_NOT_FOUND = "delete-assessment.id.notFound";
 
+    public static final String COUNT_ASSESSMENTS_ASSESSMENT_KIT_ID_NOT_NULL = "count-assessments.assessment.kit.id.notNull";
+
     public static final String COMPARE_ASSESSMENTS_ASSESSMENT_IDS_NOT_NULL = "compare-assessments.assessmentIds.notNull";
     public static final String COMPARE_ASSESSMENTS_ASSESSMENT_IDS_SIZE_MIN = "compare-assessments.assessmentIds.size-min";
     public static final String COMPARE_ASSESSMENTS_ASSESSMENT_IDS_SIZE_MAX = "compare-assessments.assessmentIds.size-max";
