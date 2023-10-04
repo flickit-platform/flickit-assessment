@@ -163,35 +163,35 @@
 			},
 			"response": []
 		},
-		{
-			"name": "Submit Answer",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"questionnaireId\": 1102,\n    \"questionId\": 2163,\n    \"answerOptionId\": 5494\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/da7e2a90-31a5-43ac-ab6b-93d43cd46a1b/answer-question",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessments",
-						"da7e2a90-31a5-43ac-ab6b-93d43cd46a1b",
-						"answer-question"
-					]
-				}
-			},
-			"response": []
-		},
+        {
+            "name": "Submit Answer",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"questionnaireId\": 1102,\n    \"questionId\": 2163,\n    \"answerOptionId\": 5494,\n    \"isNotApplicable\": false\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/{{api_path}}/assessment-results/29b21d1a-19a3-47fe-9c9f-1504d5bf4c56/answer-question",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "{{api_path}}",
+                        "assessment-results",
+                        "29b21d1a-19a3-47fe-9c9f-1504d5bf4c56",
+                        "answer-question"
+                    ]
+                }
+            },
+            "response": []
+        },
 		{
 			"name": "Add Evidence",
 			"protocolProfileBehavior": {
@@ -538,35 +538,6 @@
 							"key": "total",
 							"value": "true"
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Submit Answer Is Not Applicable",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"questionnaireId\": 1,\n    \"questionId\": 1,\n    \"isNotApplicable\": true\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-results/{{assessment_result_id}}/answer-is-not-applicable",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessment-results",
-						"{{assessment_result_id}}",
-						"answer-is-not-applicable"
 					]
 				}
 			},

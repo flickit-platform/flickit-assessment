@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerIsNotApplicablePort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.service.exception.AnswerSubmissionNotAllowedException;
@@ -22,6 +23,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
     private final CreateAnswerPort createAnswerPort;
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
+    private final UpdateAnswerIsNotApplicablePort updateAnswerIsNotApplicablePort;
     private final LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort loadExistAnswerViewPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
@@ -37,17 +39,25 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private CreateOrUpdateResponse createOrUpdate(Param param) {
         return loadExistAnswerViewPort.loadView(param.getAssessmentResultId(), param.getQuestionId())
             .map(existAnswer -> {
-                if (existAnswer.isNotApplicable())
+                if (existAnswer.isNotApplicable() && param.getAnswerOptionId() != null && param.getIsNotApplicable())
                     throw new AnswerSubmissionNotAllowedException(SUBMIT_ANSWER_ANSWER_IS_NOT_APPLICABLE_MESSAGE);
+                if (!Objects.equals(existAnswer.isNotApplicable(), param.getIsNotApplicable())) { // answer changed
+                    var answerOptionId = param.getIsNotApplicable() ? null : param.getAnswerOptionId();
+                    updateAnswerIsNotApplicablePort.update(toAnswerNotApplicableUpdateParam(existAnswer.answerId(), answerOptionId, param.getIsNotApplicable()));
+                    return new CreateOrUpdateResponse(true, existAnswer.answerId());
+                }
                 if (!Objects.equals(param.getAnswerOptionId(), existAnswer.answerOptionId())) { // answer changed
-                    updateAnswerOptionPort.updateAnswerOptionById(toUpdateParam(existAnswer.answerId(), param));
+                    updateAnswerOptionPort.updateAnswerOptionById(toAnswerOptionUpdateParam(existAnswer.answerId(), param));
                     return new CreateOrUpdateResponse(true, existAnswer.answerId());
                 }
                 return new CreateOrUpdateResponse(false, existAnswer.answerId());
             }).orElseGet(() -> {
                 UUID saveAnswerId = createAnswerPort.persist(toCreateParam(param));
-                if (param.getAnswerOptionId() != null)
+                if (param.getAnswerOptionId() != null && !param.getIsNotApplicable()) {
                     return new CreateOrUpdateResponse(true, saveAnswerId);
+                } else if (param.getIsNotApplicable()) {
+                    return new CreateOrUpdateResponse(true, saveAnswerId);
+                }
                 return new CreateOrUpdateResponse(false, saveAnswerId);
             });
     }
@@ -58,11 +68,15 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             param.getQuestionnaireId(),
             param.getQuestionId(),
             param.getAnswerOptionId(),
-            false
+            param.getIsNotApplicable()
         );
     }
 
-    private UpdateAnswerOptionPort.Param toUpdateParam(UUID id, Param param) {
+    private UpdateAnswerIsNotApplicablePort.Param toAnswerNotApplicableUpdateParam(UUID id, Long answerOptionId, Boolean isNotApplicable) {
+        return new UpdateAnswerIsNotApplicablePort.Param(id, answerOptionId, isNotApplicable);
+    }
+
+    private UpdateAnswerOptionPort.Param toAnswerOptionUpdateParam(UUID id, Param param) {
         return new UpdateAnswerOptionPort.Param(id, param.getAnswerOptionId());
     }
 

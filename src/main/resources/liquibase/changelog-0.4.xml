@@ -22,4 +22,10 @@
                              columnNames="space_id, code, deletion_time"
                              constraintName="uq_fac_assessment_spaceid_code_deletion_time"/>
     </changeSet>
+
+    <changeSet id="0.4-05" author="MKouhestani">
+        <addColumn tableName="fac_answer">
+            <column name="is_not_applicable" type="boolean"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

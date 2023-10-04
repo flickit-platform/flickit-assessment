@@ -102,7 +102,7 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateAnswerIsNotApplicablePort.Param param) {
-        repository.updateIsNotApplicableAndRemoveOptionIdById(param.id(), param.isNotApplicable());
+        repository.updateIsNotApplicableAndRemoveOptionIdById(param.id(), param.answerOptionId(), param.isNotApplicable());
     }
 
     @Override

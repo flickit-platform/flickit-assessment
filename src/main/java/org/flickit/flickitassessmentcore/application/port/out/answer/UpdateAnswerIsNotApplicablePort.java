@@ -5,6 +5,6 @@ import java.util.UUID;
 public interface UpdateAnswerIsNotApplicablePort {
     void update(Param param);
 
-    record Param(UUID id, Boolean isNotApplicable){
+    record Param(UUID id, Long answerOptionId, Boolean isNotApplicable){
     }
 }

@@ -30,7 +30,8 @@ public class SubmitAnswerRestController {
             assessmentResultId,
             requestDto.questionnaireId(),
             requestDto.questionId(),
-            requestDto.answerOptionId()
+            requestDto.answerOptionId(),
+            requestDto.isNotApplicable()
         );
     }
 

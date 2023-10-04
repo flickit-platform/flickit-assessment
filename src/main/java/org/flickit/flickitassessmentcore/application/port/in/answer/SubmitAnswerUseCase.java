@@ -3,7 +3,6 @@ package org.flickit.flickitassessmentcore.application.port.in.answer;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.flickit.flickitassessmentcore.application.service.exception.AnswerSubmissionNotAllowedException;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
@@ -14,7 +13,6 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 public interface SubmitAnswerUseCase {
 
     /**
-     * @throws ResourceNotFoundException if no assessment result found by the given assessmentId
      * @throws AnswerSubmissionNotAllowedException if an answer exists and is not applicable
      */
     Result submitAnswer(Param param);
@@ -34,11 +32,14 @@ public interface SubmitAnswerUseCase {
 
         Long answerOptionId;
 
-        public Param(UUID assessmentResultId, Long questionnaireId, Long questionId, Long answerOptionId) {
+        Boolean isNotApplicable;
+
+        public Param(UUID assessmentResultId, Long questionnaireId, Long questionId, Long answerOptionId, Boolean isNotApplicable) {
             this.assessmentResultId = assessmentResultId;
             this.questionnaireId = questionnaireId;
             this.questionId = questionId;
             this.answerOptionId = answerOptionId;
+            this.isNotApplicable = isNotApplicable;
             this.validateSelf();
         }
     }

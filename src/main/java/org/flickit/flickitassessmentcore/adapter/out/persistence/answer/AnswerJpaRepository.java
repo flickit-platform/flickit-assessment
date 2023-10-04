@@ -36,6 +36,6 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(UUID assessmentResultId);
 
     @Modifying
-    @Query("UPDATE AnswerJpaEntity a SET a.answerOptionId=NULL , a.isNotApplicable=:isNotApplicable WHERE a.id=:id")
-    void updateIsNotApplicableAndRemoveOptionIdById(UUID id, Boolean isNotApplicable);
+    @Query("UPDATE AnswerJpaEntity a SET a.answerOptionId=:answerOptionId , a.isNotApplicable=:isNotApplicable WHERE a.id=:id")
+    void updateIsNotApplicableAndRemoveOptionIdById(UUID id, Long answerOptionId, Boolean isNotApplicable);
 }

@@ -73,7 +73,6 @@
             <column name="assessment_result_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
-            <column name="is_not_applicable" type="boolean"/>
         </createTable>
     </changeSet>
 

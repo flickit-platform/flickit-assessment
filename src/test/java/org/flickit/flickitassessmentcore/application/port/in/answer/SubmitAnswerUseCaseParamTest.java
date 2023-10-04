@@ -15,25 +15,25 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class SubmitAnswerUseCaseParamTest {
 
     @Test
-    void submitAnswer_NullAssessmentResult_ErrorMessage() {
+    void testSubmitAnswer_NullAssessmentResult_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new SubmitAnswerUseCase.Param(null, 1L, 1L, 1L));
+            () -> new SubmitAnswerUseCase.Param(null, 1L, 1L, 1L, Boolean.FALSE));
         assertThat(throwable).hasMessage("assessmentResultId: " + SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_NULL);
     }
 
     @Test
-    void submitAnswer_NullQuestionnaireId_ErrorMessage() {
+    void testSubmitAnswer_NullQuestionnaireId_ErrorMessage() {
         var assessmentResult = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new SubmitAnswerUseCase.Param(assessmentResult, null, 1L, 1L));
+            () -> new SubmitAnswerUseCase.Param(assessmentResult, null, 1L, 1L, Boolean.FALSE));
         assertThat(throwable).hasMessage("questionnaireId: " + SUBMIT_ANSWER_QUESTIONNAIRE_ID_NOT_NULL);
     }
 
     @Test
-    void submitAnswer_NullQuestionId_ErrorMessage() {
+    void testSubmitAnswer_NullQuestionId_ErrorMessage() {
         var assessmentResult = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new SubmitAnswerUseCase.Param(assessmentResult, 1L, null, 1L));
+            () -> new SubmitAnswerUseCase.Param(assessmentResult, 1L, null, 1L, Boolean.FALSE));
         assertThat(throwable).hasMessage("questionId: " + SUBMIT_ANSWER_QUESTION_ID_NOT_NULL);
     }
 
