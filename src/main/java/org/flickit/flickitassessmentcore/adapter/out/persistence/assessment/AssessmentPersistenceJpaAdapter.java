@@ -13,9 +13,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
@@ -25,7 +25,10 @@ public class AssessmentPersistenceJpaAdapter implements
     LoadAssessmentListItemsBySpacePort,
     UpdateAssessmentPort,
     GetAssessmentProgressPort,
-    GetAssessmentPort {
+    GetAssessmentPort,
+    DeleteAssessmentPort,
+    CheckAssessmentExistencePort,
+    CountAssessmentsPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -39,8 +42,8 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentListItem> loadAssessments(List<Long> spaceIds, Long kitId, int page, int size) {
-        var pageResult = repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceIds, kitId, PageRequest.of(page, size));
+    public PaginatedResponse<AssessmentListItem> loadAssessments(List<Long> spaceIds, Long kitId, Long deletionTime, int page, int size) {
+        var pageResult = repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceIds, kitId, deletionTime, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(AssessmentMapper::mapToAssessmentListItem)
             .toList();
@@ -75,9 +78,35 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public Assessment getAssessmentById(UUID assessmentId) {
-        return AssessmentMapper.mapToDomainModel(repository.findById(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND)));
+    public Optional<Assessment> getAssessmentById(UUID assessmentId) {
+        Optional<AssessmentJpaEntity> entity = repository.findById(assessmentId);
+        return entity.map(AssessmentMapper::mapToDomainModel);
     }
 
+    @Override
+    public void setDeletionTimeById(UUID id, Long deletionTime) {
+        repository.setDeletionTimeById(id, deletionTime);
+    }
+
+    @Override
+    public boolean existsById(UUID id) {
+        return repository.existsById(id);
+    }
+
+    @Override
+    public CountAssessmentsPort.Result countByKitId(CountAssessmentsPort.Param param) {
+        Integer totalCount = null;
+        Integer deletedCount = null;
+        Integer notDeletedCount = null;
+        if (param.total() == Boolean.TRUE) {
+            totalCount = repository.countTotalByKitId(param.assessmentKitId());
+        }
+        if (param.deleted() == Boolean.TRUE) {
+            deletedCount = repository.countDeletedByKitId(param.assessmentKitId());
+        }
+        if (param.notDeleted() == Boolean.TRUE) {
+            notDeletedCount = repository.countNotDeletedByKitId(param.assessmentKitId());
+        }
+        return new CountAssessmentsPort.Result(totalCount, deletedCount, notDeletedCount);
+    }
 }

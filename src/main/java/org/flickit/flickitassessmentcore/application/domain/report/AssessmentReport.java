@@ -1,5 +1,7 @@
 package org.flickit.flickitassessmentcore.application.domain.report;
 
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +15,7 @@ public record AssessmentReport(AssessmentReportItem assessment,
                                        String title,
                                        Long maturityLevelId,
                                        boolean isCalculateValid,
-                                       int colorId,
+                                       AssessmentColor color,
                                        LocalDateTime lastModificationTime) {
     }
 

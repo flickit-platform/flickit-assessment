@@ -127,6 +127,25 @@
 			"response": []
 		},
 		{
+			"name": "Delete Assessment",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"ff1b2ae3-92b7-437d-b321-539753b71608"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Assessment Colors",
 			"request": {
 				"method": "GET",
@@ -449,6 +468,75 @@
 						{
 							"key": "id",
 							"value": "3d81a3bd-01e9-4462-b650-2796b408b07b"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Subject Progress",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/0f25d1bb-63aa-43e9-afcd-c362ba9871a2/subjects/57/progress",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"0f25d1bb-63aa-43e9-afcd-c362ba9871a2",
+						"subjects",
+						"57",
+						"progress"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Count Assessments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/counters?assessmentKitId=1&deleted=true&notDeleted=true&total=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"counters"
+					],
+					"query": [
+						{
+							"key": "assessmentKitId",
+							"value": "1"
+						},
+						{
+							"key": "deleted",
+							"value": "true"
+						},
+						{
+							"key": "notDeleted",
+							"value": "true"
+						},
+						{
+							"key": "total",
+							"value": "true"
 						}
 					]
 				}
