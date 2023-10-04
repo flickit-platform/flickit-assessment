@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.service.exception.AssessmentsNotComparableException;
+package org.flickit.flickitassessmentcore.application.service.exception;
 
 public class AssessmentsNotComparableException extends RuntimeException {
 

@@ -13,7 +13,7 @@ import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.Load
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoWithMaturityLevelsPort;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectsPort;
-import org.flickit.flickitassessmentcore.application.service.exception.AssessmentsNotComparableException.AssessmentsNotComparableException;
+import org.flickit.flickitassessmentcore.application.service.exception.AssessmentsNotComparableException;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

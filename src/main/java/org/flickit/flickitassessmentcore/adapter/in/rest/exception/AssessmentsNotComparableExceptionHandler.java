@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.exception;
 
 import org.flickit.flickitassessmentcore.adapter.in.rest.exception.api.ErrorResponseDto;
-import org.flickit.flickitassessmentcore.application.service.exception.AssessmentsNotComparableException.AssessmentsNotComparableException;
+import org.flickit.flickitassessmentcore.application.service.exception.AssessmentsNotComparableException;
 import org.flickit.flickitassessmentcore.common.MessageBundle;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
