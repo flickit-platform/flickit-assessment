@@ -58,8 +58,8 @@ class CompareAssessmentsServiceTest {
     private AssessmentResult assessmentResult2;
     private List<QualityAttributeValue> qualityAttributeValues1;
     private List<QualityAttributeValue> qualityAttributeValues2;
-    private int assessmentResult1AnsweredQuestions = 10;
-    private int assessmentResult2AnsweredQuestions = 10;
+    private final int assessmentResult1AnsweredQuestions = 10;
+    private final int assessmentResult2AnsweredQuestions = 10;
 
     @Test
     void testCompareAssessments_ValidIds_ReturnCompareObjects() {

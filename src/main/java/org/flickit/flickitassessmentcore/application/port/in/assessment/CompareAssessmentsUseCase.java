@@ -29,7 +29,7 @@ public interface CompareAssessmentsUseCase {
         LinkedHashSet<UUID> assessmentIds;
 
         public Param(List<UUID> assessmentIds) {
-            this.assessmentIds = new LinkedHashSet<>(assessmentIds);
+            this.assessmentIds = assessmentIds == null ? null : new LinkedHashSet<>(assessmentIds);
             this.validateSelf();
         }
     }

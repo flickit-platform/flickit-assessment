@@ -84,6 +84,16 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
         return (Long) uniqueKitIds.toArray()[0];
     }
 
+    private TopAttributeResolver getTopAttributeResolver(AssessmentResult assessmentResult, List<MaturityLevel> maturityLevels) {
+        Map<Long, MaturityLevel> maturityLevelsMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevel::getId, x -> x));
+
+        var attributeValues = loadAttributeValueListPort.loadAttributeValues(assessmentResult.getId(), maturityLevelsMap);
+
+        var midLevelMaturity = middleLevel(maturityLevels);
+        return new TopAttributeResolver(attributeValues, midLevelMaturity);
+    }
+
     private SubjectReport buildSubjectReport(UUID assessmentId, Long subjectId, List<MaturityLevel> maturityLevels) {
         var assessmentRes = loadSubjectReportInfoPort.loadWithMaturityLevels(assessmentId, subjectId, maturityLevels);
 
@@ -122,16 +132,6 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
         return attributeValues.stream()
             .map(x -> new SubjectReport.AttributeReportItem(x.getQualityAttribute().getId(), x.getMaturityLevel().getId()))
             .toList();
-    }
-
-    private TopAttributeResolver getTopAttributeResolver(AssessmentResult assessmentResult, List<MaturityLevel> maturityLevels) {
-        Map<Long, MaturityLevel> maturityLevelsMap = maturityLevels.stream()
-            .collect(toMap(MaturityLevel::getId, x -> x));
-
-        var attributeValues = loadAttributeValueListPort.loadAttributeValues(assessmentResult.getId(), maturityLevelsMap);
-
-        var midLevelMaturity = middleLevel(maturityLevels);
-        return new TopAttributeResolver(attributeValues, midLevelMaturity);
     }
 
     private CompareListItem mapToResult(AssessmentResult assessmentResult, List<TopAttribute> topStrengths, List<TopAttribute> topWeaknesses, int answersCount, List<SubjectReport> subjectsReport) {

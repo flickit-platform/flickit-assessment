@@ -4,6 +4,7 @@ package org.flickit.flickitassessmentcore.adapter.in.rest.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.domain.crud.DataItems;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CompareAssessmentsUseCase;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CompareAssessmentsUseCase.CompareListItem;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CompareAssessmentsUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,7 @@ public class CompareAssessmentsRestController {
 
     @GetMapping("/assessments-compare")
     public ResponseEntity<DataItems> compareAssessments(@RequestParam List<UUID> assessmentIds) {
-        var param = toParam(assessmentIds);
-        var result = useCase.compareAssessments(param);
+        var result = useCase.compareAssessments(toParam(assessmentIds));
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 
@@ -31,7 +31,7 @@ public class CompareAssessmentsRestController {
         return new Param(assessmentIds);
     }
 
-    private DataItems toResponseDto(List<CompareAssessmentsUseCase.CompareListItem> items) {
+    private DataItems toResponseDto(List<CompareListItem> items) {
         return new DataItems(items);
     }
 }
