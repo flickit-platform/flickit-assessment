@@ -58,8 +58,8 @@ class CompareAssessmentsServiceTest {
     private AssessmentResult assessmentResult2;
     private List<QualityAttributeValue> qualityAttributeValues1;
     private List<QualityAttributeValue> qualityAttributeValues2;
-    private final int assessmentResult1AnsweredQuestions = 10;
-    private final int assessmentResult2AnsweredQuestions = 10;
+    private final static int ASSESSMENT_RESULT_1_ANSWERED_QUESTIONS = 10;
+    private final static int ASSESSMENT_RESULT_2_ANSWERED_QUESTIONS = 10;
 
     @Test
     void testCompareAssessments_ValidIds_ReturnCompareObjects() {
@@ -80,7 +80,7 @@ class CompareAssessmentsServiceTest {
         assertEquals(assessmentResult1.getAssessment().getLastModificationTime(), assessment1.lastModificationTime());
         assertEquals(assessmentResult1.getMaturityLevel().getId(), assessment1.maturityLevelId());
         assertEquals(assessmentResult1.isValid(), assessment1.isCalculateValid());
-        assertEquals(assessmentResult1AnsweredQuestions, compareItem1.answeredQuestions());
+        assertEquals(ASSESSMENT_RESULT_1_ANSWERED_QUESTIONS, compareItem1.answeredQuestions());
 
 //        level of both attribute is more than mid-level, so they are strengths of assessment
         assertEquals(
@@ -115,7 +115,7 @@ class CompareAssessmentsServiceTest {
         assertEquals(assessmentResult2.getAssessment().getLastModificationTime(), assessment2.lastModificationTime());
         assertEquals(assessmentResult2.getMaturityLevel().getId(), assessment2.maturityLevelId());
         assertEquals(assessmentResult2.isValid(), assessment2.isCalculateValid());
-        assertEquals(assessmentResult2AnsweredQuestions, compareItem2.answeredQuestions());
+        assertEquals(ASSESSMENT_RESULT_2_ANSWERED_QUESTIONS, compareItem2.answeredQuestions());
 
 //        level of first attribute is more than mid-level, so it is strength
         assertEquals(List.of(new TopAttribute(qualityAttributeValues2.get(0).getQualityAttribute().getId())), compareItem2.topStrengths());
@@ -241,9 +241,9 @@ class CompareAssessmentsServiceTest {
         doAnswer(invocation -> {
             UUID assessmentResultId = invocation.getArgument(0, UUID.class);
             if (assessmentResultId.equals(assessmentId1))
-                return new GetAssessmentProgressPort.Result(assessmentResult1.getId(), assessmentResult1AnsweredQuestions);
+                return new GetAssessmentProgressPort.Result(assessmentResult1.getId(), ASSESSMENT_RESULT_1_ANSWERED_QUESTIONS);
             else if (assessmentResultId.equals(assessmentId2))
-                return new GetAssessmentProgressPort.Result(assessmentResult2.getId(), assessmentResult2AnsweredQuestions);
+                return new GetAssessmentProgressPort.Result(assessmentResult2.getId(), ASSESSMENT_RESULT_2_ANSWERED_QUESTIONS);
             throw new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND);
         }).when(getAssessmentProgressPort).getAssessmentProgressById(any(UUID.class));
 
