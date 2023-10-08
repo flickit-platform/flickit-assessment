@@ -21,21 +21,23 @@ class CompareAssessmentsUseCaseParamTest {
 
     @Test
     void testCompareAssessments_AssessmentIdsSizeIsLessThanMin_ErrorMessage() {
+        List<UUID> assessmentIds = List.of(UUID.randomUUID());
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CompareAssessmentsUseCase.Param(List.of(UUID.randomUUID())));
+            () -> new CompareAssessmentsUseCase.Param(assessmentIds));
         Assertions.assertThat(throwable).hasMessage("assessmentIds: " + COMPARE_ASSESSMENTS_ASSESSMENT_IDS_SIZE_MIN);
     }
 
     @Test
     void testCompareAssessments_AssessmentIdsSizeIsMoreThanMax_ErrorMessage() {
+        List<UUID> assessmentIds = List.of(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
+        );
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CompareAssessmentsUseCase.Param(List.of(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                UUID.randomUUID()
-                )));
+            () -> new CompareAssessmentsUseCase.Param(assessmentIds));
         Assertions.assertThat(throwable).hasMessage("assessmentIds: " + COMPARE_ASSESSMENTS_ASSESSMENT_IDS_SIZE_MAX);
     }
 }
