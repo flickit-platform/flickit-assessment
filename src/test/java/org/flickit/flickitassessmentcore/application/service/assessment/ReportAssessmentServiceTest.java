@@ -1,9 +1,6 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
-import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
-import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
-import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
-import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
+import org.flickit.flickitassessmentcore.application.domain.*;
 import org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother;
 import org.flickit.flickitassessmentcore.application.domain.report.AssessmentReport;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.ReportAssessmentUseCase;
@@ -68,7 +65,7 @@ class ReportAssessmentServiceTest {
         assertEquals(assessmentResult.getAssessment().getId(), assessmentReport.assessment().id());
         assertEquals(assessmentResult.getAssessment().getTitle(), assessmentReport.assessment().title());
         assertEquals(assessmentResult.getMaturityLevel().getId(), assessmentReport.assessment().maturityLevelId());
-        assertEquals(assessmentResult.getAssessment().getColorId(), assessmentReport.assessment().colorId());
+        assertEquals(assessmentResult.getAssessment().getColorId(), assessmentReport.assessment().color().getId());
         assertEquals(assessmentResult.isValid(), assessmentReport.assessment().isCalculateValid());
         assertEquals(assessmentResult.getAssessment().getLastModificationTime(), assessmentReport.assessment().lastModificationTime());
 
