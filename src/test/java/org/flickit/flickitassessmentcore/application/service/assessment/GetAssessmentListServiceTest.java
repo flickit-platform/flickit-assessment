@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
@@ -46,7 +47,7 @@ class GetAssessmentListServiceTest {
             "lastModificationTime",
             "DESC",
             2);
-        when(loadAssessmentPort.loadAssessments(spaceIds, null, 0L, 0, 10)).thenReturn(paginatedResponse);
+        when(loadAssessmentPort.loadAssessments(spaceIds, null, NOT_DELETED, 0, 10)).thenReturn(paginatedResponse);
 
         PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceIds, null, 10, 0));
         assertEquals(paginatedResponse, result);
@@ -63,7 +64,7 @@ class GetAssessmentListServiceTest {
             "lastModificationTime",
             "DESC",
             2);
-        when(loadAssessmentPort.loadAssessments(spaceIds, null, 0L, 0, 10)).thenReturn(paginatedResponse);
+        when(loadAssessmentPort.loadAssessments(spaceIds, null, NOT_DELETED, 0, 10)).thenReturn(paginatedResponse);
 
         PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceIds, null, 10, 0));
         assertEquals(paginatedResponse, result);
@@ -85,7 +86,7 @@ class GetAssessmentListServiceTest {
             2
         );
 
-        when(loadAssessmentPort.loadAssessments(spaceIds, null, 0L, 0, 20))
+        when(loadAssessmentPort.loadAssessments(spaceIds, null, NOT_DELETED, 0, 20))
             .thenReturn(paginatedRes);
 
         var param = new GetAssessmentListUseCase.Param(spaceIds, null, 20, 0);
@@ -93,19 +94,19 @@ class GetAssessmentListServiceTest {
 
         ArgumentCaptor<List<Long>> spaceIdsArgument = ArgumentCaptor.forClass(List.class);
         ArgumentCaptor<Long> kitIdArgument = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<Long> deletionTimeArgument = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<Boolean> deletedArgument = ArgumentCaptor.forClass(Boolean.class);
         ArgumentCaptor<Integer> sizeArgument = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<Integer> pageArgument = ArgumentCaptor.forClass(Integer.class);
         verify(loadAssessmentPort).loadAssessments(
             spaceIdsArgument.capture(),
             kitIdArgument.capture(),
-            deletionTimeArgument.capture(),
+            deletedArgument.capture(),
             pageArgument.capture(),
             sizeArgument.capture());
 
         assertEquals(spaceIds, spaceIdsArgument.getValue());
         assertNull(kitIdArgument.getValue());
-        assertEquals(0L, deletionTimeArgument.getValue());
+        assertEquals(NOT_DELETED, deletedArgument.getValue());
         assertEquals(20, sizeArgument.getValue());
         assertEquals(0, pageArgument.getValue());
 
@@ -116,7 +117,7 @@ class GetAssessmentListServiceTest {
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
         assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
 
-        verify(loadAssessmentPort, times(1)).loadAssessments(any(), any(), any(), anyInt(), anyInt());
+        verify(loadAssessmentPort, times(1)).loadAssessments(any(), any(), anyBoolean(), anyInt(), anyInt());
     }
 
     @Test
@@ -136,7 +137,7 @@ class GetAssessmentListServiceTest {
             2
         );
 
-        when(loadAssessmentPort.loadAssessments(spaceIds, kitId, 0L, 0, 20)).thenReturn(paginatedRes);
+        when(loadAssessmentPort.loadAssessments(spaceIds, kitId, NOT_DELETED, 0, 20)).thenReturn(paginatedRes);
 
         var param = new GetAssessmentListUseCase.Param(spaceIds, kitId, 20, 0);
         var assessments = service.getAssessmentList(param);

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface LoadAssessmentListItemsBySpacePort {
 
-    PaginatedResponse<AssessmentListItem> loadAssessments(List<Long> spaceIds, Long kitId, Long deletionTime, int page, int size);
+    PaginatedResponse<AssessmentListItem> loadAssessments(List<Long> spaceIds, Long kitId, boolean deleted, int page, int size);
 }

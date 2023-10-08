@@ -23,6 +23,6 @@ public class DeleteAssessmentService implements DeleteAssessmentUseCase {
         if (!checkAssessmentExistencePort.existsById(param.getId()))
             throw new ResourceNotFoundException(DELETE_ASSESSMENT_ID_NOT_FOUND);
         long deletionTime = System.currentTimeMillis();
-        deleteAssessmentPort.setDeletionTimeById(param.getId(), deletionTime);
+        deleteAssessmentPort.deleteById(param.getId(), deletionTime);
     }
 }

@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import static org.flickit.flickitassessmentcore.application.domain.Assessment.generateSlugCode;
 import static org.flickit.flickitassessmentcore.application.domain.AssessmentColor.getValidId;
+import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED;
 import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 
 @Service
@@ -52,7 +53,8 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             param.getSpaceId(),
             creationTime,
             lastModificationTime,
-            NOT_DELETED_DELETION_TIME
+            NOT_DELETED_DELETION_TIME,
+            NOT_DELETED
         );
     }
 

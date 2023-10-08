@@ -7,7 +7,7 @@ import org.flickit.flickitassessmentcore.application.port.out.assessment.LoadAss
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
+import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,7 +21,7 @@ public class GetAssessmentListService implements GetAssessmentListUseCase {
         return loadAssessmentsBySpace.loadAssessments(
             param.getSpaceIds(),
             param.getKitId(),
-            NOT_DELETED_DELETION_TIME,
+            NOT_DELETED,
             param.getPage(),
             param.getSize()
         );
