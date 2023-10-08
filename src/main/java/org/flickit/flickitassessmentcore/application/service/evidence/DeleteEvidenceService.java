@@ -22,7 +22,6 @@ public class DeleteEvidenceService implements DeleteEvidenceUseCase {
     public void deleteEvidence(Param param) {
         if (!checkEvidenceExistencePort.existsById(param.getId()))
             throw new ResourceNotFoundException(DELETE_EVIDENCE_EVIDENCE_NOT_FOUND);
-        long deletionTime = System.currentTimeMillis();
-        deleteEvidencePort.setDeletionTimeById(param.getId(), deletionTime);
+        deleteEvidencePort.deleteById(param.getId());
     }
 }

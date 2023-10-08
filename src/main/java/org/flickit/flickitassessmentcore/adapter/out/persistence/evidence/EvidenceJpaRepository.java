@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
 
-    Page<EvidenceJpaEntity> findByQuestionIdAndAssessmentIdAndDeletionTimeOrderByLastModificationTimeDesc(Long questionId, UUID assessmentId, long deletionTime, Pageable pageable);
+    Page<EvidenceJpaEntity> findByQuestionIdAndAssessmentIdAndDeletedOrderByLastModificationTimeDesc(Long questionId, UUID assessmentId, boolean deleted, Pageable pageable);
 
     @Modifying
     @Query("UPDATE EvidenceJpaEntity e SET " +
@@ -26,10 +26,10 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
 
     @Modifying
     @Query("UPDATE EvidenceJpaEntity e SET " +
-        "e.deletionTime = :deletionTime " +
+        "e.deleted = true " +
         "WHERE e.id = :id")
-    void setDeletionTimeById(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
+    void setDeletedTrue(@Param(value = "id") UUID id);
 
-    Optional<EvidenceJpaEntity> findByIdAndDeletionTime(@Param(value = "id") UUID id,
-                                                        @Param(value = "deletionTime") Long notDeletedDeletionTime);
+    Optional<EvidenceJpaEntity> findByIdAndDeleted(@Param(value = "id") UUID id,
+                                                        @Param(value = "deleted") boolean notDeleted);
 }

@@ -32,14 +32,12 @@ class DeleteEvidenceServiceTest {
     @Test
     void deleteEvidence_IdGiven_Delete() {
         UUID evidenceId = UUID.randomUUID();
-        doNothing().when(deleteEvidencePort).setDeletionTimeById(eq(evidenceId), any());
+        doNothing().when(deleteEvidencePort).deleteById(evidenceId);
         when(checkEvidenceExistencePort.existsById(evidenceId)).thenReturn(Boolean.TRUE);
         service.deleteEvidence(new DeleteEvidenceUseCase.Param(evidenceId));
 
         ArgumentCaptor<UUID> idDeletePortArgument = ArgumentCaptor.forClass(UUID.class);
-        ArgumentCaptor<Long> deletionTimeDeletePortArgument = ArgumentCaptor.forClass(Long.class);
-        verify(deleteEvidencePort).setDeletionTimeById(idDeletePortArgument.capture(),
-            deletionTimeDeletePortArgument.capture());
+        verify(deleteEvidencePort).deleteById(idDeletePortArgument.capture());
 
         assertEquals(evidenceId, idDeletePortArgument.getValue());
 

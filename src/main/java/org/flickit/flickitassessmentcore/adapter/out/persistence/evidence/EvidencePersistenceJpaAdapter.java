@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.application.service.constant.EvidenceConstants.NOT_DELETED_DELETION_TIME;
+import static org.flickit.flickitassessmentcore.application.service.constant.EvidenceConstants.NOT_DELETED;
 
 @Component
 @RequiredArgsConstructor
@@ -33,8 +33,8 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<EvidenceListItem> loadEvidencesByQuestionIdAndAssessmentId(Long questionId, UUID assessmentId, int page, int size) {
-        var pageResult = repository.findByQuestionIdAndAssessmentIdAndDeletionTimeOrderByLastModificationTimeDesc(
-            questionId, assessmentId, NOT_DELETED_DELETION_TIME, PageRequest.of(page, size)
+        var pageResult = repository.findByQuestionIdAndAssessmentIdAndDeletedOrderByLastModificationTimeDesc(
+            questionId, assessmentId, NOT_DELETED, PageRequest.of(page, size)
         );
         var items = pageResult.getContent().stream()
             .map(EvidenceMapper::toEvidenceListItem)
@@ -61,13 +61,13 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void setDeletionTimeById(UUID id, Long deletionTime) {
-        repository.setDeletionTimeById(id, deletionTime);
+    public void deleteById(UUID id) {
+        repository.setDeletedTrue(id);
     }
 
     @Override
     public boolean existsById(UUID id) {
-        Optional<EvidenceJpaEntity> entity = repository.findByIdAndDeletionTime(id, NOT_DELETED_DELETION_TIME);
-        return entity.isPresent();
+        Optional<EvidenceJpaEntity> entity = repository.findByIdAndDeleted(id, NOT_DELETED);
+        return entity.isPresent() && !entity.get().getDeleted();
     }
 }

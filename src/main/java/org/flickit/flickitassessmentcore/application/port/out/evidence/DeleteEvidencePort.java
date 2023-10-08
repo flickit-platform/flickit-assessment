@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public interface DeleteEvidencePort {
 
-    void setDeletionTimeById(UUID id, Long deletionTime);
+    void deleteById(UUID id);
 
 }

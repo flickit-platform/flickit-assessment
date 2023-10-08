@@ -42,8 +42,8 @@ public class EvidenceJpaEntity {
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
-    @Column(name = "deletion_time", nullable = false)
-    private Long deletionTime;
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted;
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {

@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
 
-import static org.flickit.flickitassessmentcore.application.service.constant.EvidenceConstants.NOT_DELETED_DELETION_TIME;
+import static org.flickit.flickitassessmentcore.application.service.constant.EvidenceConstants.NOT_DELETED;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvidenceMapper {
@@ -19,7 +19,7 @@ public class EvidenceMapper {
             param.createdById(),
             param.assessmentId(),
             param.questionId(),
-            NOT_DELETED_DELETION_TIME
+                NOT_DELETED
         );
     }
 
