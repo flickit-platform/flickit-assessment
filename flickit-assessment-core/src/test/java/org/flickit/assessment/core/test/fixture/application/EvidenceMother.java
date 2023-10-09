@@ -20,4 +20,14 @@ public class EvidenceMother {
         );
     }
 
+
+    public static EvidenceListItem evidenceListItem(UUID assessmentId) {
+        return new EvidenceListItem(
+            UUID.randomUUID(),
+            "description",
+            1L,
+            assessmentId,
+            LocalDateTime.now()
+        );
+    }
 }
