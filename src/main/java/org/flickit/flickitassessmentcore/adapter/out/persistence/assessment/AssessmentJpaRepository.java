@@ -45,6 +45,8 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         "WHERE a.id = :id")
     void setDeletedAndDeletionTimeById(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
 
+    boolean existsByIdAndDeleted(@Param(value = "id") UUID id, @Param(value = "deleted") boolean deleted);
+
     @Query("SELECT COUNT(a) " +
         "FROM AssessmentJpaEntity a " +
         "WHERE a.assessmentKitId = :assessmentKitId")

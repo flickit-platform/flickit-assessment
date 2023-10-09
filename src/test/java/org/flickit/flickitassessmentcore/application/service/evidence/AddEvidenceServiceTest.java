@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -38,7 +39,7 @@ class AddEvidenceServiceTest {
             1L
         );
         UUID expectedId = UUID.randomUUID();
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
+        when(checkAssessmentExistencePort.existsById(param.getAssessmentId(), NOT_DELETED)).thenReturn(true);
         when(createEvidencePort.persist(any(CreateEvidencePort.Param.class))).thenReturn(expectedId);
 
         AddEvidenceUseCase.Result result = service.addEvidence(param);
@@ -64,13 +65,15 @@ class AddEvidenceServiceTest {
             UUID.randomUUID(),
             1L
         );
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(false);
+        when(checkAssessmentExistencePort.existsById(param.getAssessmentId(), NOT_DELETED)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> service.addEvidence(param));
 
         ArgumentCaptor<UUID> assessmentIdParam = ArgumentCaptor.forClass(UUID.class);
-        verify(checkAssessmentExistencePort).existsById(assessmentIdParam.capture());
+        ArgumentCaptor<Boolean> deletedParam = ArgumentCaptor.forClass(Boolean.class);
+        verify(checkAssessmentExistencePort).existsById(assessmentIdParam.capture(), deletedParam.capture());
         assertEquals(param.getAssessmentId(), assessmentIdParam.getValue());
+        assertEquals(NOT_DELETED, deletedParam.getValue());
         verify(createEvidencePort, never()).persist(any());
     }
 }

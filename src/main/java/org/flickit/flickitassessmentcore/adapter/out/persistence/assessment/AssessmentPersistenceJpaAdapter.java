@@ -89,8 +89,8 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean existsById(UUID id) {
-        return repository.existsById(id);
+    public boolean existsById(UUID id, boolean deletion) {
+        return repository.existsByIdAndDeleted(id, deletion);
     }
 
     @Override

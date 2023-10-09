@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -34,7 +35,7 @@ class UpdateAssessmentServiceTest {
     void testUpdateAssessment_ValidParam_UpdatedAndReturnsId() {
         UUID id = UUID.randomUUID();
 
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
+        when(checkAssessmentExistencePort.existsById(id, NOT_DELETED)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
@@ -64,7 +65,7 @@ class UpdateAssessmentServiceTest {
             "title example",
             7
         );
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
+        when(checkAssessmentExistencePort.existsById(id, NOT_DELETED)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         service.updateAssessment(param);
@@ -79,7 +80,7 @@ class UpdateAssessmentServiceTest {
     void testUpdateAssessment_InvalidAssessmentId_ThrowNotFoundException() {
         UUID id = UUID.randomUUID();
 
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(false);
+        when(checkAssessmentExistencePort.existsById(id, NOT_DELETED)).thenReturn(false);
 
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
@@ -89,9 +90,11 @@ class UpdateAssessmentServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> service.updateAssessment(param));
 
         ArgumentCaptor<UUID> portIdParam = ArgumentCaptor.forClass(UUID.class);
-        verify(checkAssessmentExistencePort).existsById(portIdParam.capture());
+        ArgumentCaptor<Boolean> portDeletedParam = ArgumentCaptor.forClass(Boolean.class);
+        verify(checkAssessmentExistencePort).existsById(portIdParam.capture(), portDeletedParam.capture());
 
         assertEquals(param.getId(), portIdParam.getValue());
+        assertEquals(NOT_DELETED, portDeletedParam.getValue());
         verify(updateAssessmentPort, never()).update(any());
     }
 }

@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED;
 import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -37,7 +38,7 @@ class DeleteAssessmentServiceTest {
     void testDeleteAssessment_ValidAssessmentId_DeleteSuccessfully() {
         UUID id = UUID.randomUUID();
         DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(id);
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
+        when(checkAssessmentExistencePort.existsById(id, NOT_DELETED)).thenReturn(true);
         doNothing().when(deleteAssessmentPort).deleteById(any(), any());
 
         service.deleteAssessment(param);
@@ -50,7 +51,7 @@ class DeleteAssessmentServiceTest {
         assertThat(portDeletionTimeParam.getValue(), not(equalTo(NOT_DELETED_DELETION_TIME)));
         long now = System.currentTimeMillis();
         assertThat(portDeletionTimeParam.getValue(), lessThanOrEqualTo(now));
-        verify(checkAssessmentExistencePort, times(1)).existsById(any());
+        verify(checkAssessmentExistencePort, times(1)).existsById(any(), anyBoolean());
         verify(deleteAssessmentPort, times(1)).deleteById(any(), any());
     }
 
@@ -58,15 +59,17 @@ class DeleteAssessmentServiceTest {
     void testDeleteAssessment_InvalidAssessmentId_ThrowsException() {
         UUID id = UUID.randomUUID();
         DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(id);
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(false);
+        when(checkAssessmentExistencePort.existsById(id, NOT_DELETED)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> service.deleteAssessment(param));
 
         ArgumentCaptor<UUID> portIdParam = ArgumentCaptor.forClass(UUID.class);
-        verify(checkAssessmentExistencePort).existsById(portIdParam.capture());
+        ArgumentCaptor<Boolean> portDeletedParam = ArgumentCaptor.forClass(Boolean.class);
+        verify(checkAssessmentExistencePort).existsById(portIdParam.capture(), portDeletedParam.capture());
 
         assertEquals(id, portIdParam.getValue());
-        verify(checkAssessmentExistencePort, times(1)).existsById(any());
+        assertEquals(NOT_DELETED, portDeletedParam.getValue());
+        verify(checkAssessmentExistencePort, times(1)).existsById(any(), anyBoolean());
         verify(deleteAssessmentPort, never()).deleteById(any(), any());
     }
 }
