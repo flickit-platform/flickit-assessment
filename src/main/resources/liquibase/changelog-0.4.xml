@@ -30,4 +30,11 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="0.4-07" author="MKouhestani">
+        <update tableName="fac_assessment">
+            <column name="deleted" valueBoolean="true"/>
+            <where>fac_assessment.deletion_time > 0</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>

@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface CheckAssessmentExistencePort {
 
-    boolean existsById(UUID id, boolean deletion);
+    boolean existsById(UUID id);
 }

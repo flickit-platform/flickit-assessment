@@ -9,7 +9,6 @@ import org.flickit.flickitassessmentcore.application.service.exception.ResourceN
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND;
 
 @Service
@@ -22,7 +21,7 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
 
     @Override
     public PaginatedResponse<EvidenceListItem> getEvidenceList(GetEvidenceListUseCase.Param param) {
-        if (!checkAssessmentExistencePort.existsById(param.getAssessmentId(), NOT_DELETED))
+        if (!checkAssessmentExistencePort.existsById(param.getAssessmentId()))
             throw new ResourceNotFoundException(GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND);
         return loadEvidencesPort.loadEvidencesByQuestionIdAndAssessmentId(
             param.getQuestionId(),

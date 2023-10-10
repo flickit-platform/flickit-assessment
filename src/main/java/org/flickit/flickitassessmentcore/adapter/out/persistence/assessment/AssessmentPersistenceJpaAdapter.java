@@ -42,8 +42,8 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentListItem> loadAssessments(List<Long> spaceIds, Long kitId, boolean deleted, int page, int size) {
-        var pageResult = repository.findBySpaceIdOrderByLastModificationTimeDesc(spaceIds, kitId, deleted, PageRequest.of(page, size));
+    public PaginatedResponse<AssessmentListItem> loadAssessments(List<Long> spaceIds, Long kitId, int page, int size) {
+        var pageResult = repository.findBySpaceIdAndDeletedFalseOrderByLastModificationTimeDesc(spaceIds, kitId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(AssessmentMapper::mapToAssessmentListItem)
             .toList();
@@ -85,12 +85,12 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public void deleteById(UUID id, Long deletionTime) {
-        repository.setDeletedAndDeletionTimeById(id, deletionTime);
+        repository.delete(id, deletionTime);
     }
 
     @Override
-    public boolean existsById(UUID id, boolean deletion) {
-        return repository.existsByIdAndDeleted(id, deletion);
+    public boolean existsById(UUID id) {
+        return repository.existsByIdAndDeletedFalse(id);
     }
 
     @Override

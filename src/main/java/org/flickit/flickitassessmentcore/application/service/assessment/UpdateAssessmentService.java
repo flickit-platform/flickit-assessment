@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 
 import static org.flickit.flickitassessmentcore.application.domain.Assessment.generateSlugCode;
 import static org.flickit.flickitassessmentcore.application.domain.AssessmentColor.getValidId;
-import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.UPDATE_ASSESSMENT_ID_NOT_FOUND;
 
 @Service
@@ -25,7 +24,7 @@ public class UpdateAssessmentService implements UpdateAssessmentUseCase {
 
     @Override
     public Result updateAssessment(Param param) {
-        if (!checkAssessmentExistencePort.existsById(param.getId(), NOT_DELETED))
+        if (!checkAssessmentExistencePort.existsById(param.getId()))
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_ID_NOT_FOUND);
         String code = generateSlugCode(param.getTitle());
         LocalDateTime lastModificationTime = LocalDateTime.now();

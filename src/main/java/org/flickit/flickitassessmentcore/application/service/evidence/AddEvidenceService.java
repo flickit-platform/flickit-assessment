@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants.NOT_DELETED;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND;
 
 @Service
@@ -24,7 +23,7 @@ public class AddEvidenceService implements AddEvidenceUseCase {
 
     @Override
     public Result addEvidence(Param param) {
-        if (!checkAssessmentExistencePort.existsById(param.getAssessmentId(), NOT_DELETED))
+        if (!checkAssessmentExistencePort.existsById(param.getAssessmentId()))
             throw new ResourceNotFoundException(ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND);
         var createPortParam = toCreatePortParam(param);
         UUID id = createEvidencePort.persist(createPortParam);
