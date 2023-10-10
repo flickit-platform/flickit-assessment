@@ -542,6 +542,25 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Delete Evidence",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences/9f9cd530-73a0-4adc-863a-4b455c9488e1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences",
+						"9f9cd530-73a0-4adc-863a-4b455c9488e1"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [

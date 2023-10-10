@@ -4,7 +4,7 @@ import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedRespon
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.Param;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.CheckAssessmentExistencePort;
-import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencesByQuestionAndAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencesPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +28,7 @@ class GetEvidenceListServiceTest {
     @InjectMocks
     private GetEvidenceListService service;
     @Mock
-    private LoadEvidencesByQuestionAndAssessmentPort loadEvidencesPort;
+    private LoadEvidencesPort loadEvidencesPort;
 
     @Mock
     private CheckAssessmentExistencePort checkAssessmentExistencePort;
@@ -41,7 +41,7 @@ class GetEvidenceListServiceTest {
         UUID ASSESSMENT_ID = UUID.randomUUID();
 
         when(checkAssessmentExistencePort.existsById(ASSESSMENT_ID)).thenReturn(true);
-        when(loadEvidencesPort.loadEvidencesByQuestionIdAndAssessmentId(question1Id, ASSESSMENT_ID, 0, 10))
+        when(loadEvidencesPort.loadNotDeletedEvidences(question1Id, ASSESSMENT_ID, 0, 10))
             .thenReturn(new PaginatedResponse<>(
                 List.of(evidence1Q1, evidence2Q1),
                 0,
@@ -60,7 +60,7 @@ class GetEvidenceListServiceTest {
         Long QUESTION2_ID = 2L;
         UUID ASSESSMENT_ID = UUID.randomUUID();
         when(checkAssessmentExistencePort.existsById(ASSESSMENT_ID)).thenReturn(true);
-        when(loadEvidencesPort.loadEvidencesByQuestionIdAndAssessmentId(QUESTION2_ID, ASSESSMENT_ID, 0, 10))
+        when(loadEvidencesPort.loadNotDeletedEvidences(QUESTION2_ID, ASSESSMENT_ID, 0, 10))
             .thenReturn(new PaginatedResponse<>(
                 new ArrayList<>(),
                 0,
@@ -81,7 +81,7 @@ class GetEvidenceListServiceTest {
         when(checkAssessmentExistencePort.existsById(ASSESSMENT_ID)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> service.getEvidenceList(param));
-        verify(loadEvidencesPort, never()).loadEvidencesByQuestionIdAndAssessmentId(any(), any(), anyInt(), anyInt());
+        verify(loadEvidencesPort, never()).loadNotDeletedEvidences(any(), any(), anyInt(), anyInt());
     }
 
     private EvidenceListItem createEvidence() {
