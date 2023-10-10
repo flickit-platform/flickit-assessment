@@ -8,12 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
 
-    Page<EvidenceJpaEntity> findByQuestionIdAndAssessmentIdAndDeletedOrderByLastModificationTimeDesc(Long questionId, UUID assessmentId, boolean deleted, Pageable pageable);
+    Page<EvidenceJpaEntity> findByQuestionIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(
+        Long questionId, UUID assessmentId, Pageable pageable);
 
     @Modifying
     @Query("UPDATE EvidenceJpaEntity e SET " +
@@ -28,8 +28,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     @Query("UPDATE EvidenceJpaEntity e SET " +
         "e.deleted = true " +
         "WHERE e.id = :id")
-    void setDeletedTrue(@Param(value = "id") UUID id);
+    void delete(@Param(value = "id") UUID id);
 
-    Optional<EvidenceJpaEntity> findByIdAndDeleted(@Param(value = "id") UUID id,
-                                                        @Param(value = "deleted") boolean notDeleted);
+    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 }

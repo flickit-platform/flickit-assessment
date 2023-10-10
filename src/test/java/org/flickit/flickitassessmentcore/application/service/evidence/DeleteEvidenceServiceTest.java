@@ -30,7 +30,7 @@ class DeleteEvidenceServiceTest {
     private CheckEvidenceExistencePort checkEvidenceExistencePort;
 
     @Test
-    void deleteEvidence_IdGiven_Delete() {
+    void testDeleteEvidence_IdGiven_Delete() {
         UUID evidenceId = UUID.randomUUID();
         doNothing().when(deleteEvidencePort).deleteById(evidenceId);
         when(checkEvidenceExistencePort.existsById(evidenceId)).thenReturn(Boolean.TRUE);
@@ -48,7 +48,7 @@ class DeleteEvidenceServiceTest {
     }
 
     @Test
-    void deleteEvidence_IdGivenButEvidenceNotExist_ErrorMessage() {
+    void testDeleteEvidence_IdGivenButEvidenceNotExist_ErrorMessage() {
         UUID id = UUID.randomUUID();
         when(checkEvidenceExistencePort.existsById(id)).thenReturn(Boolean.FALSE);
         var param = new DeleteEvidenceUseCase.Param(id);

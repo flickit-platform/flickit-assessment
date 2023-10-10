@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DeleteEvidenceUseCaseParamTest {
 
     @Test
-    void deleteEvidence_IdIsNull_ErrorMessage() {
+    void testDeleteEvidence_IdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteEvidenceUseCase.Param(null));
         assertThat(throwable).hasMessage("id: " + DELETE_EVIDENCE_EVIDENCE_ID_NOT_NULL);
