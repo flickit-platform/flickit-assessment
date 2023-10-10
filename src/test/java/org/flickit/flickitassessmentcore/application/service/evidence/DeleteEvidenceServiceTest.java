@@ -24,8 +24,10 @@ class DeleteEvidenceServiceTest {
 
     @InjectMocks
     private DeleteEvidenceService service;
+
     @Mock
     private DeleteEvidencePort deleteEvidencePort;
+
     @Mock
     private CheckEvidenceExistencePort checkEvidenceExistencePort;
 
