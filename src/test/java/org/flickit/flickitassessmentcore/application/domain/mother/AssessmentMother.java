@@ -22,7 +22,8 @@ public class AssessmentMother {
             1L,
             LocalDateTime.now(),
             LocalDateTime.now(),
-            0L
+            0L,
+            false
         );
     }
 
