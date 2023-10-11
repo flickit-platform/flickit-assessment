@@ -46,7 +46,7 @@ class GetAssessmentListServiceTest {
             "lastModificationTime",
             "DESC",
             2);
-        when(loadAssessmentPort.loadAssessments(spaceIds, null, 0, 10)).thenReturn(paginatedResponse);
+        when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, null, 0, 10)).thenReturn(paginatedResponse);
 
         PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceIds, null, 10, 0));
         assertEquals(paginatedResponse, result);
@@ -63,7 +63,7 @@ class GetAssessmentListServiceTest {
             "lastModificationTime",
             "DESC",
             2);
-        when(loadAssessmentPort.loadAssessments(spaceIds, null, 0, 10)).thenReturn(paginatedResponse);
+        when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, null, 0, 10)).thenReturn(paginatedResponse);
 
         PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceIds, null, 10, 0));
         assertEquals(paginatedResponse, result);
@@ -85,7 +85,7 @@ class GetAssessmentListServiceTest {
             2
         );
 
-        when(loadAssessmentPort.loadAssessments(spaceIds, null, 0, 20))
+        when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, null, 0, 20))
             .thenReturn(paginatedRes);
 
         var param = new GetAssessmentListUseCase.Param(spaceIds, null, 20, 0);
@@ -95,7 +95,7 @@ class GetAssessmentListServiceTest {
         ArgumentCaptor<Long> kitIdArgument = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<Integer> sizeArgument = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<Integer> pageArgument = ArgumentCaptor.forClass(Integer.class);
-        verify(loadAssessmentPort).loadAssessments(
+        verify(loadAssessmentPort).loadNotDeletedAssessments(
             spaceIdsArgument.capture(),
             kitIdArgument.capture(),
             pageArgument.capture(),
@@ -113,7 +113,7 @@ class GetAssessmentListServiceTest {
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
         assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
 
-        verify(loadAssessmentPort, times(1)).loadAssessments(any(), any(), anyInt(), anyInt());
+        verify(loadAssessmentPort, times(1)).loadNotDeletedAssessments(any(), any(), anyInt(), anyInt());
     }
 
     @Test
@@ -133,7 +133,7 @@ class GetAssessmentListServiceTest {
             2
         );
 
-        when(loadAssessmentPort.loadAssessments(spaceIds, kitId, 0, 20)).thenReturn(paginatedRes);
+        when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, kitId, 0, 20)).thenReturn(paginatedRes);
 
         var param = new GetAssessmentListUseCase.Param(spaceIds, kitId, 20, 0);
         var assessments = service.getAssessmentList(param);
