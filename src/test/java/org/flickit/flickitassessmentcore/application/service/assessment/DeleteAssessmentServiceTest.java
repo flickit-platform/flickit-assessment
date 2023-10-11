@@ -38,20 +38,20 @@ class DeleteAssessmentServiceTest {
         UUID id = UUID.randomUUID();
         DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(id);
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
-        doNothing().when(deleteAssessmentPort).setDeletionTimeById(any(), any());
+        doNothing().when(deleteAssessmentPort).deleteById(any(), any());
 
         service.deleteAssessment(param);
 
         ArgumentCaptor<UUID> portIdParam = ArgumentCaptor.forClass(UUID.class);
         ArgumentCaptor<Long> portDeletionTimeParam = ArgumentCaptor.forClass(Long.class);
-        verify(deleteAssessmentPort).setDeletionTimeById(portIdParam.capture(), portDeletionTimeParam.capture());
+        verify(deleteAssessmentPort).deleteById(portIdParam.capture(), portDeletionTimeParam.capture());
 
         assertEquals(id, portIdParam.getValue());
         assertThat(portDeletionTimeParam.getValue(), not(equalTo(NOT_DELETED_DELETION_TIME)));
         long now = System.currentTimeMillis();
         assertThat(portDeletionTimeParam.getValue(), lessThanOrEqualTo(now));
         verify(checkAssessmentExistencePort, times(1)).existsById(any());
-        verify(deleteAssessmentPort, times(1)).setDeletionTimeById(any(), any());
+        verify(deleteAssessmentPort, times(1)).deleteById(any(), any());
     }
 
     @Test
@@ -67,6 +67,6 @@ class DeleteAssessmentServiceTest {
 
         assertEquals(id, portIdParam.getValue());
         verify(checkAssessmentExistencePort, times(1)).existsById(any());
-        verify(deleteAssessmentPort, never()).setDeletionTimeById(any(), any());
+        verify(deleteAssessmentPort, never()).deleteById(any(), any());
     }
 }

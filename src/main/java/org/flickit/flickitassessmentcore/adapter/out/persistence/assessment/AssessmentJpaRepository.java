@@ -18,11 +18,11 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         "LEFT JOIN AssessmentResultJpaEntity r " +
         "ON a.id = r.assessment.id " +
         "WHERE a.spaceId IN :spaceIds AND " +
-        "a.deletionTime=:deletionTime AND " +
+        "a.deleted=false AND " +
         "(a.assessmentKitId=:kitId OR :kitId IS NULL) AND " +
         "r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id) " +
         "ORDER BY a.lastModificationTime DESC")
-    Page<AssessmentListItemView> findBySpaceIdOrderByLastModificationTimeDesc(List<Long> spaceIds, Long kitId, long deletionTime, Pageable pageable);
+    Page<AssessmentListItemView> findBySpaceIdAndDeletedFalseOrderByLastModificationTimeDesc(List<Long> spaceIds, Long kitId, Pageable pageable);
 
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +
@@ -40,9 +40,12 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +
-        "a.deletionTime = :deletionTime " +
+        "a.deletionTime = :deletionTime, " +
+        "a.deleted = true " +
         "WHERE a.id = :id")
-    void setDeletionTimeById(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
+    void delete(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
+
+    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
     @Query("SELECT COUNT(a) " +
         "FROM AssessmentJpaEntity a " +
@@ -51,11 +54,11 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     @Query("SELECT COUNT(a) " +
         "FROM AssessmentJpaEntity a " +
-        "WHERE a.assessmentKitId = :assessmentKitId AND a.deletionTime > 0")
+        "WHERE a.assessmentKitId = :assessmentKitId AND a.deleted = true")
     int countDeletedByKitId(Long assessmentKitId);
 
     @Query("SELECT COUNT(a) " +
         "FROM AssessmentJpaEntity a " +
-        "WHERE a.assessmentKitId = :assessmentKitId AND a.deletionTime = 0")
+        "WHERE a.assessmentKitId = :assessmentKitId AND a.deleted = false")
     int countNotDeletedByKitId(Long assessmentKitId);
 }

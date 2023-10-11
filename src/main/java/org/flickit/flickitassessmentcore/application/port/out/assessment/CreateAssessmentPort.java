@@ -14,6 +14,7 @@ public interface CreateAssessmentPort {
                  Long spaceId,
                  LocalDateTime creationTime,
                  LocalDateTime lastModificationTime,
-                 Long deletionTime) {
+                 Long deletionTime,
+                 boolean deleted) {
     }
 }

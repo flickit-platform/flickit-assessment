@@ -25,6 +25,10 @@ public class GetAssessmentRestController {
     }
 
     private GetAssessmentResponseDto toResponse(Result result) {
-        return new GetAssessmentResponseDto(result.assessmentId(), result.spaceId(), result.kitId());
+        return new GetAssessmentResponseDto(
+            result.assessmentId(),
+            result.assessmentTitle(),
+            result.spaceId(),
+            result.kitId());
     }
 }

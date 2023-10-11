@@ -5,8 +5,8 @@ import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenc
 
 import java.util.UUID;
 
-public interface LoadEvidencesByQuestionAndAssessmentPort {
+public interface LoadEvidencesPort {
 
-    PaginatedResponse<EvidenceListItem> loadEvidencesByQuestionIdAndAssessmentId(Long questionId, UUID assessmentId, int page, int size);
+    PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size);
 
 }
