@@ -12,7 +12,8 @@ import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
 
-    Page<EvidenceJpaEntity> findByQuestionIdAndAssessmentIdOrderByLastModificationTimeDesc(Long questionId, UUID assessmentId, Pageable pageable);
+    Page<EvidenceJpaEntity> findByQuestionIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(
+        Long questionId, UUID assessmentId, Pageable pageable);
 
     @Modifying
     @Query("UPDATE EvidenceJpaEntity e SET " +
@@ -22,4 +23,12 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     void update(@Param(value = "id") UUID id,
                 @Param(value = "description") String description,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Modifying
+    @Query("UPDATE EvidenceJpaEntity e SET " +
+        "e.deleted = true " +
+        "WHERE e.id = :id")
+    void delete(@Param(value = "id") UUID id);
+
+    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 }
