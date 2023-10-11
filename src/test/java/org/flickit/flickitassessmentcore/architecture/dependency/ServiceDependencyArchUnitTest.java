@@ -1,0 +1,25 @@
+package org.flickit.flickitassessmentcore.architecture.dependency;
+
+import com.tngtech.archunit.junit.AnalyzeClasses;
+import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.lang.ArchRule;
+
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitTestConstants.*;
+
+@AnalyzeClasses(packages = {
+    APPLICATION_SERVICE_FULL_PACKAGE,
+})
+public class ServiceDependencyArchUnitTest {
+
+    @ArchTest
+    static final ArchRule services_should_access_domain_models_and_ports =
+        classes()
+            .that()
+            .resideInAPackage(APPLICATION_SERVICE)
+            .and()
+            .haveSimpleNameNotContaining(SERVICE_TEST)
+            .should()
+            .onlyDependOnClassesThat()
+            .resideInAnyPackage(APPLICATION_PORT_IN, APPLICATION_PORT_OUT, APPLICATION_DOMAIN, APPLICATION_SERVICE, JAVA, SLF4J, SPRING_FRAMEWORK);
+}
