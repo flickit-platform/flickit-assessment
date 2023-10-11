@@ -23,6 +23,7 @@ public class GetAssessmentService implements GetAssessmentUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND));
         return new Result(
             assessment.getId(),
+            assessment.getTitle(),
             assessment.getSpaceId(),
             assessment.getAssessmentKit().getId());
     }
