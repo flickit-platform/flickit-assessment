@@ -43,6 +43,7 @@ class GetAssessmentServiceTest {
         verify(getAssessmentPort).getAssessmentById(assessmentIdArgument.capture());
 
         assertEquals(assessmentId, assessmentIdArgument.getValue());
+        assertEquals(assessment.getTitle(), result.assessmentTitle());
         assertEquals(assessment.getSpaceId(), result.spaceId());
         assertEquals(assessment.getAssessmentKit().getId(), result.kitId());
         verify(getAssessmentPort, times(1)).getAssessmentById(any());
