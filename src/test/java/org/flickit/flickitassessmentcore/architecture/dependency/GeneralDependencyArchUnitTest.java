@@ -16,7 +16,7 @@ import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitT
     APPLICATION_PORT_OUT_FULL_PACKAGE,
     APPLICATION_SERVICE_FULL_PACKAGE,
 })
-public class DependencyArchUnitTest {
+public class GeneralDependencyArchUnitTest {
 
     @ArchTest
     static final ArchRule no_accesses_to_upper_package = NO_CLASSES_SHOULD_DEPEND_UPPER_PACKAGES;
