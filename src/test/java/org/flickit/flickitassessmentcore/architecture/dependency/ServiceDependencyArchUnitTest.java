@@ -1,5 +1,6 @@
 package org.flickit.flickitassessmentcore.architecture.dependency;
 
+import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -9,7 +10,7 @@ import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitT
 
 @AnalyzeClasses(packages = {
     APPLICATION_SERVICE_FULL_PACKAGE,
-})
+}, importOptions = ImportOption.DoNotIncludeTests.class)
 public class ServiceDependencyArchUnitTest {
 
     @ArchTest
@@ -17,8 +18,6 @@ public class ServiceDependencyArchUnitTest {
         classes()
             .that()
             .resideInAPackage(APPLICATION_SERVICE)
-            .and()
-            .haveSimpleNameNotContaining(SERVICE_TEST)
             .should()
             .onlyDependOnClassesThat()
             .resideInAnyPackage(APPLICATION_PORT_IN, APPLICATION_PORT_OUT, APPLICATION_DOMAIN, APPLICATION_SERVICE, JAVA, SLF4J, SPRING_FRAMEWORK);
