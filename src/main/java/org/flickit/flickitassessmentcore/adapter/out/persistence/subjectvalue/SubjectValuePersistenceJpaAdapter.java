@@ -14,7 +14,8 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_SU
 
 @Component
 @RequiredArgsConstructor
-public class SubjectValuePersistenceJpaAdapter implements CreateSubjectValuePort {
+public class SubjectValuePersistenceJpaAdapter implements
+    CreateSubjectValuePort {
 
     private final SubjectValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
