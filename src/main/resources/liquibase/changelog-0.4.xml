@@ -23,9 +23,26 @@
                              constraintName="uq_fac_assessment_spaceid_code_deletion_time"/>
     </changeSet>
 
-    <changeSet id="0.4-05" author="MKouhestani">
-        <addColumn tableName="fac_answer">
-            <column name="is_not_applicable" type="boolean"/>
+    <changeSet id="0.4-04" author="MKouhestani">
+        <addColumn tableName="fac_evidence">
+            <column name="deleted" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="0.4-05" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_assessment">
+            <column name="deleted" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.4-06" author="MKouhestani">
+        <update tableName="fac_assessment">
+            <column name="deleted" valueBoolean="true"/>
+            <where>fac_assessment.deletion_time > 0</where>
+        </update>
     </changeSet>
 </databaseChangeLog>

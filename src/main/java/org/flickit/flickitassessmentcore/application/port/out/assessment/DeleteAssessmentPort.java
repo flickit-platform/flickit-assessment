@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface DeleteAssessmentPort {
 
-    void setDeletionTimeById(UUID id, Long deletionTime);
+    void deleteById(UUID id, Long deletionTime);
 }
