@@ -2,6 +2,7 @@ package org.flickit.flickitassessmentcore.architecture.dependency;
 
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaClass;
+import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -15,7 +16,7 @@ import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitT
     APPLICATION_PORT_IN_FULL_PACKAGE,
     APPLICATION_PORT_OUT_FULL_PACKAGE,
     APPLICATION_SERVICE_FULL_PACKAGE,
-})
+}, importOptions = ImportOption.DoNotIncludeTests.class)
 public class GeneralDependencyArchUnitTest {
 
     @ArchTest

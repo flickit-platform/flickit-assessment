@@ -1,5 +1,6 @@
 package org.flickit.flickitassessmentcore.architecture.dependency;
 
+import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -8,9 +9,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitTestConstants.*;
 
-@AnalyzeClasses(packages = {
-    ADAPTER_FULL_PACKAGE
-})
+@AnalyzeClasses(packages = {ADAPTER_FULL_PACKAGE}, importOptions = ImportOption.DoNotIncludeTests.class)
 public class AdaptersDependencyArchUnitTest {
 
     @ArchTest

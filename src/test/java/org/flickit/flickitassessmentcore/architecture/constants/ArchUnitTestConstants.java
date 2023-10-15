@@ -24,13 +24,9 @@ public class ArchUnitTestConstants {
     public final static String COMMON = "..common..";
 
     // Libraries
-    public final static String JAVA_UTIL = "java.util..";
-    public final static String JAVA_LANG = "java.lang..";
-    public final static String JAVA_TIME = "java.time..";
     public final static String JAVA = "java..";
     public final static String SPRING_FRAMEWORK = "org.springframework..";
     public final static String JAKARTA_VALIDATION_CONSTRAINTS = "..jakarta.validation.constraints..";
-    public final static String JAKARTA_ANNOTATION = "..jakarta.annotation..";
     public final static String SLF4J = "org.slf4j..";
 
     // Suffix
@@ -38,7 +34,5 @@ public class ArchUnitTestConstants {
     public final static String PERSISTENCE_JPA_ADAPTER_SUFFIX = "PersistenceJpaAdapter";
     public final static String REST_ADAPTER_SUFFIX = "RestAdapter";
     public final static String EXCEPTION_HANDLER_SUFFIX = "ExceptionHandler";
-    public final static String USE_CASE_PARAM_TEST_SUFFIX = "UseCaseParamTest";
-    public final static String SERVICE_TEST = "ServiceTest";
 
 }

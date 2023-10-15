@@ -1,5 +1,6 @@
 package org.flickit.flickitassessmentcore.architecture.dependency;
 
+import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -11,7 +12,7 @@ import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitT
 @AnalyzeClasses(packages = {
     APPLICATION_PORT_IN_FULL_PACKAGE,
     APPLICATION_PORT_OUT_FULL_PACKAGE
-})
+}, importOptions = ImportOption.DoNotIncludeTests.class)
 public class PortDependencyArchUnitTest {
 
     @ArchTest
@@ -19,8 +20,6 @@ public class PortDependencyArchUnitTest {
         classes()
             .that()
             .resideInAPackage(APPLICATION_PORT_IN)
-            .and()
-            .haveSimpleNameNotContaining(USE_CASE_PARAM_TEST_SUFFIX)
             .should()
             .onlyDependOnClassesThat()
             .resideInAnyPackage(APPLICATION_PORT_IN, APPLICATION_DOMAIN, COMMON, JAVA, JAKARTA_VALIDATION_CONSTRAINTS);
@@ -30,8 +29,6 @@ public class PortDependencyArchUnitTest {
         noClasses()
             .that()
             .resideInAPackage(APPLICATION_PORT_IN)
-            .and()
-            .haveSimpleNameNotContaining(USE_CASE_PARAM_TEST_SUFFIX)
             .should()
             .onlyDependOnClassesThat()
             .resideInAnyPackage(ADAPTER, APPLICATION_PORT_OUT, APPLICATION_SERVICE);
