@@ -3,18 +3,14 @@ package org.flickit.flickitassessmentcore.application.service.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerIsNotApplicablePort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerViewByAssessmentResultAndQuestionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.service.exception.AnswerSubmissionNotAllowedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.UUID;
-
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ANSWER_IS_NOT_APPLICABLE_MESSAGE;
 
 @Service
 @Transactional
@@ -22,62 +18,47 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_AN
 public class SubmitAnswerService implements SubmitAnswerUseCase {
 
     private final CreateAnswerPort createAnswerPort;
-    private final UpdateAnswerOptionPort updateAnswerOptionPort;
-    private final UpdateAnswerIsNotApplicablePort updateAnswerIsNotApplicablePort;
-    private final LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort loadExistAnswerViewPort;
+    private final UpdateAnswerPort updateAnswerPort;
+    private final LoadAnswerViewByAssessmentResultAndQuestionPort loadAnswerViewPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
     @Override
     public Result submitAnswer(Param param) {
-        var response = createOrUpdate(param);
-        if (response.hasChanged()) {
+        var loadedAnswer = loadAnswerViewPort.loadView(param.getAssessmentResultId(), param.getQuestionId());
+        var answerOptionId = param.getIsNotApplicable() ? null : param.getAnswerOptionId();
+        if (loadedAnswer.isEmpty()) {
+            UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, answerOptionId));
+            invalidateAssessmentResultPort.invalidateById(param.getAssessmentResultId());
+            return new Result(savedAnswerId);
+        }
+        if (hasNotApplicableChanged(param.getIsNotApplicable(), loadedAnswer.get().isNotApplicable())
+            || hasAnswerChanged(answerOptionId, loadedAnswer.get().answerOptionId())) {
+            updateAnswerPort.update(toUpdateAnswerParam(answerOptionId, param.getIsNotApplicable()));
             invalidateAssessmentResultPort.invalidateById(param.getAssessmentResultId());
         }
-        return new Result(response.answerId());
+        return new Result(loadedAnswer.get().answerId());
     }
 
-    private CreateOrUpdateResponse createOrUpdate(Param param) {
-        return loadExistAnswerViewPort.loadView(param.getAssessmentResultId(), param.getQuestionId())
-            .map(existAnswer -> {
-                if (existAnswer.isNotApplicable() && param.getAnswerOptionId() != null && param.getIsNotApplicable())
-                    throw new AnswerSubmissionNotAllowedException(SUBMIT_ANSWER_ANSWER_IS_NOT_APPLICABLE_MESSAGE);
-                if (!Objects.equals(existAnswer.isNotApplicable(), param.getIsNotApplicable())) { // answer changed
-                    var answerOptionId = param.getIsNotApplicable() ? null : param.getAnswerOptionId();
-                    updateAnswerIsNotApplicablePort.update(toAnswerNotApplicableUpdateParam(existAnswer.answerId(), answerOptionId, param.getIsNotApplicable()));
-                    return new CreateOrUpdateResponse(true, existAnswer.answerId());
-                }
-                if (!Objects.equals(param.getAnswerOptionId(), existAnswer.answerOptionId())) { // answer changed
-                    updateAnswerOptionPort.updateAnswerOptionById(toAnswerOptionUpdateParam(existAnswer.answerId(), param));
-                    return new CreateOrUpdateResponse(true, existAnswer.answerId());
-                }
-                return new CreateOrUpdateResponse(false, existAnswer.answerId());
-            }).orElseGet(() -> {
-                UUID saveAnswerId = createAnswerPort.persist(toCreateParam(param));
-                if (param.getAnswerOptionId() != null || param.getIsNotApplicable()) {
-                    return new CreateOrUpdateResponse(true, saveAnswerId);
-                }
-                return new CreateOrUpdateResponse(false, saveAnswerId);
-            });
-    }
-
-    private CreateAnswerPort.Param toCreateParam(Param param) {
+    private CreateAnswerPort.Param toCreateParam(Param param, Long answerOptionId) {
         return new CreateAnswerPort.Param(
             param.getAssessmentResultId(),
             param.getQuestionnaireId(),
             param.getQuestionId(),
-            param.getAnswerOptionId(),
+            answerOptionId,
             param.getIsNotApplicable()
         );
     }
 
-    private UpdateAnswerIsNotApplicablePort.Param toAnswerNotApplicableUpdateParam(UUID id, Long answerOptionId, Boolean isNotApplicable) {
-        return new UpdateAnswerIsNotApplicablePort.Param(id, answerOptionId, isNotApplicable);
+    private boolean hasNotApplicableChanged(Boolean isNotApplicable, Boolean loadedIsNotApplicable) {
+        return isNotApplicable != loadedIsNotApplicable;
     }
 
-    private UpdateAnswerOptionPort.Param toAnswerOptionUpdateParam(UUID id, Param param) {
-        return new UpdateAnswerOptionPort.Param(id, param.getAnswerOptionId());
+    private boolean hasAnswerChanged(Long answerOptionId, Long loadedAnswerOptionId) {
+        return !Objects.equals(answerOptionId, loadedAnswerOptionId);
     }
 
-    record CreateOrUpdateResponse(boolean hasChanged, UUID answerId) {
+    private UpdateAnswerPort.Param toUpdateAnswerParam(Long answerOptionId, Boolean isNotApplicable) {
+        return new UpdateAnswerPort.Param(answerOptionId, isNotApplicable);
     }
+
 }

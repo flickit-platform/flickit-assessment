@@ -15,9 +15,9 @@ public class Answer {
     private final UUID id;
 
     @Nullable
-    AnswerOption selectedOption;
+    private final AnswerOption selectedOption;
 
-    private Boolean isNotApplicable;
+    private final Boolean isNotApplicable;
 
     @Nullable
     public AnswerOptionImpact findImpactByMaturityLevel(MaturityLevel maturityLevel) {

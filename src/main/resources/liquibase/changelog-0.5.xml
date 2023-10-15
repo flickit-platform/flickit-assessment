@@ -4,9 +4,10 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <include file="classpath:liquibase/changelog-0.1.xml"/>
-    <include file="classpath:liquibase/changelog-0.2.xml"/>
-    <include file="classpath:liquibase/changelog-0.4.xml"/>
-    <include file="classpath:liquibase/changelog-0.5.xml"/>
+    <changeSet id="0.5-01" author="MKouhestani">
+        <addColumn tableName="fac_answer">
+            <column name="is_not_applicable" type="boolean"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

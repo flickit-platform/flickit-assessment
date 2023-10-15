@@ -2,11 +2,8 @@ package org.flickit.flickitassessmentcore.application.service.answer;
 
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort.Result;
-import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerIsNotApplicablePort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.*;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerViewByAssessmentResultAndQuestionPort.Result;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.service.exception.AnswerSubmissionNotAllowedException;
 import org.junit.jupiter.api.Test;
@@ -34,13 +31,10 @@ class SubmitAnswerServiceTest {
     private CreateAnswerPort createAnswerPort;
 
     @Mock
-    private UpdateAnswerOptionPort updateAnswerPort;
+    private UpdateAnswerPort updateAnswerPort;
 
     @Mock
-    private UpdateAnswerIsNotApplicablePort updateIsNotApplicablePort;
-
-    @Mock
-    private LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort loadExistAnswerViewPort;
+    private LoadAnswerViewByAssessmentResultAndQuestionPort loadExistAnswerViewPort;
 
     @Mock
     private InvalidateAssessmentResultPort invalidateAssessmentResultPort;
@@ -118,13 +112,7 @@ class SubmitAnswerServiceTest {
 
         service.submitAnswer(param);
 
-        ArgumentCaptor<UpdateAnswerOptionPort.Param> updateParam = ArgumentCaptor.forClass(UpdateAnswerOptionPort.Param.class);
-        verify(updateAnswerPort).updateAnswerOptionById(updateParam.capture());
-        assertEquals(existAnswerId, updateParam.getValue().id());
-        assertEquals(newAnswerOptionId, updateParam.getValue().answerOptionId());
-
         verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
-        verify(updateAnswerPort, times(1)).updateAnswerOptionById(any(UpdateAnswerOptionPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResultId);
         verifyNoInteractions(createAnswerPort);
     }
@@ -170,7 +158,6 @@ class SubmitAnswerServiceTest {
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class));
-        verifyNoInteractions(updateIsNotApplicablePort);
     }
 
     @Test
@@ -183,20 +170,11 @@ class SubmitAnswerServiceTest {
         Long newAnswerOptionId = 2L;
         Boolean isNotApplicable = Boolean.TRUE;
         var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, isNotApplicable);
-        var answer = new LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort.Result(answerId, newAnswerOptionId, Boolean.FALSE);
+        var answer = new LoadAnswerViewByAssessmentResultAndQuestionPort.Result(answerId, newAnswerOptionId, Boolean.FALSE);
         when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(Optional.of(answer));
-
-        doNothing().when(updateIsNotApplicablePort).update(any(UpdateAnswerIsNotApplicablePort.Param.class));
 
         service.submitAnswer(param);
 
-        ArgumentCaptor<UpdateAnswerIsNotApplicablePort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerIsNotApplicablePort.Param.class);
-        verify(updateIsNotApplicablePort).update(updateAnswerParam.capture());
-        assertEquals(answerId, updateAnswerParam.getValue().id());
-        assertNull(updateAnswerParam.getValue().answerOptionId());
-        assertEquals(isNotApplicable, updateAnswerParam.getValue().isNotApplicable());
-
-        verify(updateIsNotApplicablePort, times(1)).update(any(UpdateAnswerIsNotApplicablePort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class));
         verifyNoInteractions(createAnswerPort);
     }
@@ -245,7 +223,6 @@ class SubmitAnswerServiceTest {
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class));
-        verifyNoInteractions(updateIsNotApplicablePort);
     }
 
     @Test
@@ -258,20 +235,14 @@ class SubmitAnswerServiceTest {
         Boolean newIsNotApplicable = Boolean.FALSE;
         var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, newIsNotApplicable);
         UUID existAnswerId = UUID.randomUUID();
-        var existAnswer = Optional.of(new LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort.Result(existAnswerId, answerOptionId, oldIsNotApplicable));
+        var existAnswer = Optional.of(new LoadAnswerViewByAssessmentResultAndQuestionPort.Result(existAnswerId, answerOptionId, oldIsNotApplicable));
         assertNotEquals(oldIsNotApplicable, newIsNotApplicable);
 
         when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswer(param);
 
-        ArgumentCaptor<UpdateAnswerIsNotApplicablePort.Param> updateParam = ArgumentCaptor.forClass(UpdateAnswerIsNotApplicablePort.Param.class);
-        verify(updateIsNotApplicablePort).update(updateParam.capture());
-        assertEquals(existAnswerId, updateParam.getValue().id());
-        assertEquals(newIsNotApplicable, updateParam.getValue().isNotApplicable());
-
         verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
-        verify(updateIsNotApplicablePort, times(1)).update(any(UpdateAnswerIsNotApplicablePort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResultId);
         verifyNoInteractions(createAnswerPort);
     }
@@ -285,12 +256,11 @@ class SubmitAnswerServiceTest {
         Boolean sameIsNotApplicable = Boolean.TRUE;
         var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, sameIsNotApplicable);
         UUID existAnswerId = UUID.randomUUID();
-        var existAnswer = Optional.of(new LoadSubmitAnswerExistAnswerViewByAssessmentResultAndQuestionPort.Result(existAnswerId, answerOptionId, sameIsNotApplicable));
+        var existAnswer = Optional.of(new LoadAnswerViewByAssessmentResultAndQuestionPort.Result(existAnswerId, answerOptionId, sameIsNotApplicable));
         when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswer(param);
 
         verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
-        verifyNoInteractions(createAnswerPort, updateIsNotApplicablePort, invalidateAssessmentResultPort);
     }
 }
