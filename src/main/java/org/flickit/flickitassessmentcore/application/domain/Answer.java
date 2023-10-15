@@ -9,7 +9,6 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-@AllArgsConstructor
 public class Answer {
 
     private final UUID id;
