@@ -4,7 +4,6 @@ import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentKit;
 import org.flickit.flickitassessmentcore.application.domain.crud.AssessmentListItem;
-import org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -54,7 +53,8 @@ public class AssessmentMother {
             1L,
             LocalDateTime.now(),
             LocalDateTime.now(),
-            AssessmentConstants.NOT_DELETED_DELETION_TIME
+            0L,
+            false
         );
     }
 }
