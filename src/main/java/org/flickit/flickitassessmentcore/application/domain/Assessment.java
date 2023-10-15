@@ -19,6 +19,7 @@ public class Assessment {
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
     private final long deletionTime;
+    private final boolean deleted;
 
     public static String generateSlugCode(String title) {
         return title

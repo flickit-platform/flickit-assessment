@@ -16,4 +16,5 @@ public class Evidence {
     private final long questionId;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
+    private final boolean deleted;
 }

@@ -52,7 +52,8 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             param.getSpaceId(),
             creationTime,
             lastModificationTime,
-            NOT_DELETED_DELETION_TIME
+            NOT_DELETED_DELETION_TIME,
+            false
         );
     }
 

@@ -21,7 +21,8 @@ public class AssessmentMapper {
             param.spaceId(),
             param.creationTime(),
             param.lastModificationTime(),
-            param.deletionTime()
+            param.deletionTime(),
+            param.deleted()
         );
     }
 
@@ -40,7 +41,8 @@ public class AssessmentMapper {
             entity.getSpaceId(),
             entity.getCreationTime(),
             entity.getLastModificationTime(),
-            entity.getDeletionTime()
+            entity.getDeletionTime(),
+            entity.isDeleted()
         );
     }
 

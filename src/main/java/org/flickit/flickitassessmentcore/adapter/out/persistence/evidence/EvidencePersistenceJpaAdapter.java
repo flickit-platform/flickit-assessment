@@ -3,9 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.evidence;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
-import org.flickit.flickitassessmentcore.application.port.out.evidence.CreateEvidencePort;
-import org.flickit.flickitassessmentcore.application.port.out.evidence.LoadEvidencesByQuestionAndAssessmentPort;
-import org.flickit.flickitassessmentcore.application.port.out.evidence.UpdateEvidencePort;
+import org.flickit.flickitassessmentcore.application.port.out.evidence.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -16,8 +14,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EvidencePersistenceJpaAdapter implements
     CreateEvidencePort,
-    LoadEvidencesByQuestionAndAssessmentPort,
-    UpdateEvidencePort {
+    LoadEvidencesPort,
+    UpdateEvidencePort,
+    DeleteEvidencePort,
+    CheckEvidenceExistencePort {
 
     private final EvidenceJpaRepository repository;
 
@@ -29,8 +29,10 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<EvidenceListItem> loadEvidencesByQuestionIdAndAssessmentId(Long questionId, UUID assessmentId, int page, int size) {
-        var pageResult = repository.findByQuestionIdAndAssessmentIdOrderByLastModificationTimeDesc(questionId, assessmentId, PageRequest.of(page, size));
+    public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size) {
+        var pageResult = repository.findByQuestionIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(
+            questionId, assessmentId, PageRequest.of(page, size)
+        );
         var items = pageResult.getContent().stream()
             .map(EvidenceMapper::toEvidenceListItem)
             .toList();
@@ -53,5 +55,15 @@ public class EvidencePersistenceJpaAdapter implements
             param.lastModificationTime()
         );
         return new UpdateEvidencePort.Result(param.id());
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        repository.delete(id);
+    }
+
+    @Override
+    public boolean existsById(UUID id) {
+        return repository.existsByIdAndDeletedFalse(id);
     }
 }

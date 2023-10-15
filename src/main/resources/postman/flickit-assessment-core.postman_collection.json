@@ -113,7 +113,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment/3bfa613e-4e50-46a4-96aa-a061f104224e",
+					"raw": "{{base_url}}/{{api_path}}/assessments/3bfa613e-4e50-46a4-96aa-a061f104224e",
 					"host": [
 						"{{base_url}}"
 					],
@@ -544,12 +544,31 @@
 			"response": []
 		},
 		{
+			"name": "Delete Evidence",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences/9f9cd530-73a0-4adc-863a-4b455c9488e1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences",
+						"9f9cd530-73a0-4adc-863a-4b455c9488e1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Compare Assessments",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments-compare?assessmentIds=c19da21b-8fcc-4b29-a714-c3676c0d70cf,443d00eb-3445-49a9-95af-8b303b73ec70",
+					"raw": "{{base_url}}/{{api_path}}/assessments/compare?assessmentIds=c19da21b-8fcc-4b29-a714-c3676c0d70cf,443d00eb-3445-49a9-95af-8b303b73ec70",
 					"host": [
 						"{{base_url}}"
 					],
