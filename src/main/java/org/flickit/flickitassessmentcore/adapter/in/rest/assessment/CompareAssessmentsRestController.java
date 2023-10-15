@@ -21,7 +21,7 @@ public class CompareAssessmentsRestController {
 
     private final CompareAssessmentsUseCase useCase;
 
-    @GetMapping("/assessments-compare")
+    @GetMapping("/assessments/compare")
     public ResponseEntity<DataItems> compareAssessments(@RequestParam List<UUID> assessmentIds) {
         var result = useCase.compareAssessments(toParam(assessmentIds));
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
