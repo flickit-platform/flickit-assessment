@@ -11,8 +11,6 @@ import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAsse
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelsByKitPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
-import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoWithMaturityLevelsPort;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectsPort;
 import org.flickit.flickitassessmentcore.application.service.exception.AssessmentsNotComparableException;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -45,10 +43,6 @@ class CompareAssessmentsServiceTest {
     private LoadAttributeValueListPort loadAttributeValueListPort;
     @Mock
     private GetAssessmentProgressPort getAssessmentProgressPort;
-    @Mock
-    private LoadSubjectsPort loadSubjectsPort;
-    @Mock
-    private LoadSubjectReportInfoWithMaturityLevelsPort loadSubjectReportInfoPort;
 
     private UUID assessmentId1;
     private UUID assessmentId2;
@@ -90,19 +84,6 @@ class CompareAssessmentsServiceTest {
             )
             , compareItem1.topStrengths());
         assertEquals(List.of(), compareItem1.topWeaknesses());
-        SubjectReport subjectReport = new SubjectReport(
-            new SubjectReport.SubjectReportItem(subject.getId(), (long) MaturityLevelMother.LEVEL_THREE_ID, true),
-            List.of(
-                new TopAttribute(qualityAttributeValues1.get(0).getQualityAttribute().getId()),
-                new TopAttribute(qualityAttributeValues1.get(1).getQualityAttribute().getId())
-            ),
-            List.of(),
-            List.of(
-                new SubjectReport.AttributeReportItem(qualityAttributeValues1.get(0).getQualityAttribute().getId(), (long) MaturityLevelMother.LEVEL_THREE_ID),
-                new SubjectReport.AttributeReportItem(qualityAttributeValues1.get(1).getQualityAttribute().getId(), (long) MaturityLevelMother.LEVEL_THREE_ID)
-            )
-        );
-        assertEquals(List.of(subjectReport), compareItem1.subjects());
 
 //        assert second assessment compare item attributes
         CompareAssessmentsUseCase.CompareListItem compareItem2 = compareListItems.get(1);
@@ -131,7 +112,6 @@ class CompareAssessmentsServiceTest {
                 new SubjectReport.AttributeReportItem(qualityAttributeValues2.get(1).getQualityAttribute().getId(), (long) MaturityLevelMother.LEVEL_ONE_ID)
             )
         );
-        assertEquals(List.of(subjectReport2), compareItem2.subjects());
     }
 
     @Test
@@ -172,9 +152,7 @@ class CompareAssessmentsServiceTest {
         verifyNoInteractions(
             loadMaturityLevelsByKitPort,
             loadAttributeValueListPort,
-            getAssessmentProgressPort,
-            loadSubjectsPort,
-            loadSubjectReportInfoPort
+            getAssessmentProgressPort
         );
 
     }
@@ -246,18 +224,5 @@ class CompareAssessmentsServiceTest {
                 return new GetAssessmentProgressPort.Result(assessmentResult2.getId(), ASSESSMENT_RESULT_2_ANSWERED_QUESTIONS);
             throw new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND);
         }).when(getAssessmentProgressPort).getAssessmentProgressById(any(UUID.class));
-
-//        Mock loadSubjectsPort
-        when(loadSubjectsPort.loadSubjectIdsByAssessmentId(any())).thenReturn(List.of(subject.getId()));
-
-//        Mock loadSubjectReportInfoPort
-        doAnswer(invocation -> {
-            UUID assessmentId = invocation.getArgument(0, UUID.class);
-            if (assessmentId.equals(assessmentId1))
-                return assessmentResult1;
-            else if (assessmentId.equals(assessmentId2))
-                return assessmentResult2;
-            return null;
-        }).when(loadSubjectReportInfoPort).loadWithMaturityLevels(any(UUID.class), any(), any());
     }
 }

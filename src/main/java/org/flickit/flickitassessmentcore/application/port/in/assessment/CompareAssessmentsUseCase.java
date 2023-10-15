@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.application.domain.crud.AssessmentListItem;
-import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.domain.report.TopAttribute;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
@@ -38,8 +37,7 @@ public interface CompareAssessmentsUseCase {
         AssessmentListItem assessment,
         Integer answeredQuestions,
         List<TopAttribute> topStrengths,
-        List<TopAttribute> topWeaknesses,
-        List<SubjectReport> subjects
+        List<TopAttribute> topWeaknesses
     ) {
     }
 }

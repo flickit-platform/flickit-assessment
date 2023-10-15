@@ -1,9 +1,10 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.domain.*;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
+import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
 import org.flickit.flickitassessmentcore.application.domain.crud.AssessmentListItem;
-import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.domain.report.TopAttribute;
 import org.flickit.flickitassessmentcore.application.domain.report.TopAttributeResolver;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CompareAssessmentsUseCase;
@@ -11,8 +12,6 @@ import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAsse
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.maturitylevel.LoadMaturityLevelsByKitPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
-import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoWithMaturityLevelsPort;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectsPort;
 import org.flickit.flickitassessmentcore.application.service.exception.AssessmentsNotComparableException;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,8 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.flickitassessmentcore.application.domain.MaturityLevel.middleLevel;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.COMPARE_ASSESSMENTS_ASSESSMENTS_NOT_COMPARABLE;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.COMPARE_ASSESSMENTS_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,8 +37,6 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
     private final LoadMaturityLevelsByKitPort loadMaturityLevelsByKitPort;
     private final LoadAttributeValueListPort loadAttributeValueListPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
-    private final LoadSubjectsPort loadSubjectsPort;
-    private final LoadSubjectReportInfoWithMaturityLevelsPort loadSubjectReportInfoPort;
 
     @Override
     public List<CompareListItem> compareAssessments(Param param) {
@@ -60,14 +58,7 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
             var assessmentId = assessmentResult.getAssessment().getId();
             var assessmentProgress = getAssessmentProgressPort.getAssessmentProgressById(assessmentId);
 
-            List<Long> subjectIds = loadSubjectsPort.loadSubjectIdsByAssessmentId(assessmentId);
-            List<SubjectReport> subjectsReport = new ArrayList<>();
-            for (Long subjectId : subjectIds) {
-                SubjectReport subjectReport = buildSubjectReport(assessmentId, subjectId, maturityLevels);
-                subjectsReport.add(subjectReport);
-            }
-
-            var item = mapToResult(assessmentResult, topStrengths, topWeaknesses, assessmentProgress.allAnswersCount(), subjectsReport);
+            var item = mapToResult(assessmentResult, topStrengths, topWeaknesses, assessmentProgress.allAnswersCount());
             items.add(item);
         }
 
@@ -94,47 +85,7 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
         return new TopAttributeResolver(attributeValues, midLevelMaturity);
     }
 
-    private SubjectReport buildSubjectReport(UUID assessmentId, Long subjectId, List<MaturityLevel> maturityLevels) {
-        var assessmentRes = loadSubjectReportInfoPort.loadWithMaturityLevels(assessmentId, subjectId, maturityLevels);
-
-        var subjectValue = assessmentRes.getSubjectValues()
-            .stream()
-            .filter(s -> s.getSubject().getId() == subjectId)
-            .findAny()
-            .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
-
-        var attributeValues = subjectValue.getQualityAttributeValues();
-
-        var subjectReportItem = buildSubject(subjectValue, assessmentRes.isValid());
-        var attributeReportItems = buildAttributes(attributeValues);
-
-        var midLevelMaturity = middleLevel(maturityLevels);
-        TopAttributeResolver topAttributeResolver = new TopAttributeResolver(attributeValues, midLevelMaturity);
-        var topStrengths = topAttributeResolver.getTopStrengths();
-        var topWeaknesses = topAttributeResolver.getTopWeaknesses();
-
-        return new SubjectReport(
-            subjectReportItem,
-            topStrengths,
-            topWeaknesses,
-            attributeReportItems);
-    }
-
-    private SubjectReport.SubjectReportItem buildSubject(SubjectValue subjectValue, boolean isCalculateValid) {
-        return new SubjectReport.SubjectReportItem(
-            subjectValue.getSubject().getId(),
-            subjectValue.getMaturityLevel().getId(),
-            isCalculateValid
-        );
-    }
-
-    private List<SubjectReport.AttributeReportItem> buildAttributes(List<QualityAttributeValue> attributeValues) {
-        return attributeValues.stream()
-            .map(x -> new SubjectReport.AttributeReportItem(x.getQualityAttribute().getId(), x.getMaturityLevel().getId()))
-            .toList();
-    }
-
-    private CompareListItem mapToResult(AssessmentResult assessmentResult, List<TopAttribute> topStrengths, List<TopAttribute> topWeaknesses, int answersCount, List<SubjectReport> subjectsReport) {
+    private CompareListItem mapToResult(AssessmentResult assessmentResult, List<TopAttribute> topStrengths, List<TopAttribute> topWeaknesses, int answersCount) {
         var assessment = assessmentResult.getAssessment();
         return new CompareListItem(
             new AssessmentListItem(
@@ -148,8 +99,7 @@ public class CompareAssessmentsService implements CompareAssessmentsUseCase {
                 assessmentResult.isValid()),
             answersCount,
             topStrengths,
-            topWeaknesses,
-            subjectsReport
+            topWeaknesses
         );
     }
 }

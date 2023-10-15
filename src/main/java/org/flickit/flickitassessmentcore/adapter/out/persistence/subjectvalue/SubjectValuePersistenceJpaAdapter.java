@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.flickitassessmentcore.application.port.out.subjectvalue.LoadSubjectsPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +14,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_SU
 
 @Component
 @RequiredArgsConstructor
-public class SubjectValuePersistenceJpaAdapter implements
-    CreateSubjectValuePort,
-    LoadSubjectsPort {
+public class SubjectValuePersistenceJpaAdapter implements CreateSubjectValuePort {
 
     private final SubjectValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -34,11 +31,5 @@ public class SubjectValuePersistenceJpaAdapter implements
         }).toList();
 
         repository.saveAll(entities);
-    }
-
-    @Override
-    public List<Long> loadSubjectIdsByAssessmentId(UUID assessmentId) {
-        return repository.findByAssessmentResult_Assessment_Id(assessmentId).stream()
-            .map(SubjectValueJpaEntity::getSubjectId).toList();
     }
 }

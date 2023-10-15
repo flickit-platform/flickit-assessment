@@ -10,7 +10,6 @@ import org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel.Maturity
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.flickitassessmentcore.application.domain.*;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoPort;
-import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoWithMaturityLevelsPort;
 import org.flickit.flickitassessmentcore.application.service.exception.CalculateNotValidException;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
@@ -27,9 +26,7 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 @Slf4j
 @Component
 @AllArgsConstructor
-public class LoadSubjectReportInfoAdapter implements
-    LoadSubjectReportInfoPort,
-    LoadSubjectReportInfoWithMaturityLevelsPort {
+public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
@@ -72,43 +69,6 @@ public class LoadSubjectReportInfoAdapter implements
             buildAssessment(assessmentResultEntity.getAssessment(), maturityLevels),
             List.of(subjectValue),
             findMaturityLevelById(maturityLevels, assessmentResultEntity.getMaturityLevelId()),
-            assessmentResultEntity.getIsValid(),
-            assessmentResultEntity.getLastModificationTime());
-    }
-
-    @Override
-    public AssessmentResult loadWithMaturityLevels(UUID assessmentId, Long subjectId, List<MaturityLevel> maturityLevels) {
-
-        var assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND));
-
-        UUID assessmentResultId = assessmentResultEntity.getId();
-        Long kitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
-
-        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsValid())) {
-            log.warn("The calculated result is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultId);
-            throw new CalculateNotValidException(REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_VALID);
-        }
-
-        var svEntity = subjectValueRepo.findBySubjectIdAndAssessmentResult_Id(subjectId, assessmentResultId)
-            .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
-
-        Map<Long, MaturityLevel> maturityLevelsMap = maturityLevels
-            .stream()
-            .collect(toMap(MaturityLevel::getId, x -> x));
-
-        var attributeValues = buildAttributeValues(maturityLevelsMap, assessmentResultId, kitId, subjectId);
-        SubjectValue subjectValue = new SubjectValue(svEntity.getId(),
-            new Subject(svEntity.getSubjectId()),
-            attributeValues,
-            findMaturityLevelById(maturityLevelsMap, svEntity.getMaturityLevelId())
-        );
-
-        return new AssessmentResult(
-            assessmentResultId,
-            buildAssessment(assessmentResultEntity.getAssessment(), maturityLevelsMap),
-            List.of(subjectValue),
-            findMaturityLevelById(maturityLevelsMap, assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getIsValid(),
             assessmentResultEntity.getLastModificationTime());
     }
