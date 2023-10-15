@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.domain.report;
+package org.flickit.flickitassessmentcore.application.domain.crud;
 
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 

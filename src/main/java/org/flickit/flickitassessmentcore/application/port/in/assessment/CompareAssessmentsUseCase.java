@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.flickitassessmentcore.application.domain.report.AssessmentListItem;
+import org.flickit.flickitassessmentcore.application.domain.crud.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.domain.report.TopAttribute;
 import org.flickit.flickitassessmentcore.common.SelfValidating;

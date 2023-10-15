@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.application.port.out.assessment;
 
+import org.flickit.flickitassessmentcore.application.domain.crud.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
-import org.flickit.flickitassessmentcore.application.domain.report.AssessmentListItem;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@ package org.flickit.flickitassessmentcore.application.domain.mother;
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentKit;
-import org.flickit.flickitassessmentcore.application.domain.report.AssessmentListItem;
+import org.flickit.flickitassessmentcore.application.domain.crud.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.service.constant.AssessmentConstants;
 
 import java.time.LocalDateTime;

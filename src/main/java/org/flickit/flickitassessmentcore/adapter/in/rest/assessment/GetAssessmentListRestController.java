@@ -1,8 +1,8 @@
 package org.flickit.flickitassessmentcore.adapter.in.rest.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.application.domain.crud.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
-import org.flickit.flickitassessmentcore.application.domain.report.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentListUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -2,7 +2,7 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.domain.*;
-import org.flickit.flickitassessmentcore.application.domain.report.AssessmentListItem;
+import org.flickit.flickitassessmentcore.application.domain.crud.AssessmentListItem;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.domain.report.TopAttribute;
 import org.flickit.flickitassessmentcore.application.domain.report.TopAttributeResolver;
