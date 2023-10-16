@@ -39,4 +39,8 @@ public class AnswerMother {
             AnswerOptionImpactMother.onLevelFive(1))),
             Boolean.FALSE);
     }
+
+    public static Answer answer(AnswerOption option, Boolean isNotApplicable) {
+        return new Answer(UUID.randomUUID(), option, isNotApplicable);
+    }
 }

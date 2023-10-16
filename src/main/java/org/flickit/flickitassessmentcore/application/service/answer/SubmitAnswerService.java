@@ -6,17 +6,22 @@ import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswe
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class SubmitAnswerService implements SubmitAnswerUseCase {
 
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final CreateAnswerPort createAnswerPort;
     private final LoadAnswerPort loadAnswerPort;
     private final UpdateAnswerPort updateAnswerPort;
@@ -24,29 +29,32 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
     @Override
     public Result submitAnswer(Param param) {
-        var loadedAnswer = loadAnswerPort.load(param.getAssessmentResultId(), param.getQuestionId());
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
+        var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = param.getIsNotApplicable() ? null : param.getAnswerOptionId();
         if (loadedAnswer.isEmpty()) {
-            return saveAnswer(param, answerOptionId);
+            return saveAnswer(param, assessmentResult.getId(), answerOptionId);
         }
-        if (hasNotApplicableChanged(param.getIsNotApplicable(), loadedAnswer.get().isNotApplicable())
-            || hasAnswerChanged(answerOptionId, loadedAnswer.get().answerOptionId())) {
-            updateAnswer(param, loadedAnswer.get().answerId(), answerOptionId);
+        var loadedAnswerOptionId = loadedAnswer.get().getSelectedOption() == null ? null :  loadedAnswer.get().getSelectedOption().getId();
+        if (hasNotApplicableChanged(param.getIsNotApplicable(), loadedAnswer.get().getIsNotApplicable())
+            || hasAnswerChanged(answerOptionId, loadedAnswerOptionId)) {
+            updateAnswer(assessmentResult.getId(), loadedAnswer.get().getId(), answerOptionId, param.getIsNotApplicable());
         }
-        return new Result(loadedAnswer.get().answerId());
+        return new Result(loadedAnswer.get().getId());
     }
 
-    private Result saveAnswer(Param param, Long answerOptionId) {
-        UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, answerOptionId));
+    private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId) {
+        UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId));
         if (answerOptionId != null || param.getIsNotApplicable()) {
-            invalidateAssessmentResultPort.invalidateById(param.getAssessmentResultId());
+            invalidateAssessmentResultPort.invalidateById(assessmentResultId);
         }
         return new Result(savedAnswerId);
     }
 
-    private CreateAnswerPort.Param toCreateParam(Param param, Long answerOptionId) {
+    private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId) {
         return new CreateAnswerPort.Param(
-            param.getAssessmentResultId(),
+            assessmentResultId,
             param.getQuestionnaireId(),
             param.getQuestionId(),
             answerOptionId,
@@ -62,9 +70,9 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return !Objects.equals(answerOptionId, loadedAnswerOptionId);
     }
 
-    private void updateAnswer(Param param, UUID loadedAnswerId, Long answerOptionId) {
-        updateAnswerPort.update(toUpdateAnswerParam(loadedAnswerId, answerOptionId, param.getIsNotApplicable()));
-        invalidateAssessmentResultPort.invalidateById(param.getAssessmentResultId());
+    private void updateAnswer(UUID assessmentResultId, UUID loadedAnswerId, Long answerOptionId, boolean isNotApplicable) {
+        updateAnswerPort.update(toUpdateAnswerParam(loadedAnswerId, answerOptionId, isNotApplicable));
+        invalidateAssessmentResultPort.invalidateById(assessmentResultId);
     }
 
     private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId, Long answerOptionId, Boolean isNotApplicable) {

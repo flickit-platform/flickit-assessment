@@ -18,16 +18,16 @@ public class SubmitAnswerRestController {
 
     private final SubmitAnswerUseCase useCase;
 
-    @PutMapping("/assessment-results/{assessmentResultId}/answer-question")
-    public ResponseEntity<SubmitAnswerResponseDto> submitAnswer(@PathVariable("assessmentResultId") UUID assessmentResultId,
+    @PutMapping("/assessments/{assessmentId}/answer-question")
+    public ResponseEntity<SubmitAnswerResponseDto> submitAnswer(@PathVariable("assessmentId") UUID assessmentId,
                                                                 @RequestBody SubmitAnswerRequestDto requestDto) {
-        SubmitAnswerResponseDto responseDto = toResponseDto(useCase.submitAnswer(toParam(assessmentResultId, requestDto)));
+        SubmitAnswerResponseDto responseDto = toResponseDto(useCase.submitAnswer(toParam(assessmentId, requestDto)));
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    private SubmitAnswerUseCase.Param toParam(UUID assessmentResultId, SubmitAnswerRequestDto requestDto) {
+    private SubmitAnswerUseCase.Param toParam(UUID assessmentId, SubmitAnswerRequestDto requestDto) {
         return new SubmitAnswerUseCase.Param(
-            assessmentResultId,
+            assessmentId,
             requestDto.questionnaireId(),
             requestDto.questionId(),
             requestDto.answerOptionId(),
