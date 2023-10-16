@@ -55,7 +55,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private boolean hasNotApplicableChanged(Boolean isNotApplicable, Boolean loadedIsNotApplicable) {
-        return isNotApplicable != loadedIsNotApplicable;
+        return !Objects.equals(isNotApplicable, loadedIsNotApplicable);
     }
 
     private boolean hasAnswerChanged(Long answerOptionId, Long loadedAnswerOptionId) {
