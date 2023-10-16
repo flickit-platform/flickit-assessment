@@ -24,12 +24,10 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class AnswerPersistenceJpaAdapter implements
     CreateAnswerPort,
-    LoadAnswerPort,
     LoadAnswersByQuestionnaireIdPort,
     GetQuestionnairesProgressPort,
     CountAnswersByQuestionIdsPort,
-    LoadAnswerViewByAssessmentResultAndQuestionPort,
-    LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort,
+    LoadAnswerPort,
     UpdateAnswerPort {
 
     private final AnswerJpaRepository repository;
@@ -44,12 +42,6 @@ public class AnswerPersistenceJpaAdapter implements
         unsavedEntity.setAssessmentResult(assessmentResult);
         AnswerJpaEntity entity = repository.save(unsavedEntity);
         return entity.getId();
-    }
-
-    @Override
-    public Optional<LoadAnswerPort.Result> loadAnswerIdAndOptionId(UUID assessmentResultId, Long questionId) {
-        return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
-            .map(x -> new LoadAnswerPort.Result(x.getId(), x.getAnswerOptionId()));
     }
 
     @Override
@@ -89,19 +81,13 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<LoadAnswerViewByAssessmentResultAndQuestionPort.Result> loadView(UUID assessmentResultId, Long questionId) {
+    public Optional<LoadAnswerPort.Result> load(UUID assessmentResultId, Long questionId) {
         return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
-            .map(x -> new LoadAnswerViewByAssessmentResultAndQuestionPort.Result(x.getId(), x.getAnswerOptionId(), x.getIsNotApplicable()));
-    }
-
-    @Override
-    public Optional<LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort.Result> load(UUID assessmentResultId, Long questionId) {
-        return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
-            .map(x -> new LoadAnswerIdAndIsNotApplicableByAssessmentResultAndQuestionPort.Result(x.getId(), x.getIsNotApplicable()));
+            .map(x -> new LoadAnswerPort.Result(x.getId(), x.getAnswerOptionId(), x.getIsNotApplicable()));
     }
 
     @Override
     public void update(UpdateAnswerPort.Param param) {
-        repository.saveByAnswerOptionIdAndIsNotApplicable(param.answerOptionId(), param.isNotApplicable());
+        repository.updateByAnswerOptionIdAndIsNotApplicable(param.answerId(), param.answerOptionId(), param.isNotApplicable());
     }
 }

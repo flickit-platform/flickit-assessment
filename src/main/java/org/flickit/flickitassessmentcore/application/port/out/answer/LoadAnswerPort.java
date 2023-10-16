@@ -5,8 +5,8 @@ import java.util.UUID;
 
 public interface LoadAnswerPort {
 
-    Optional<Result> loadAnswerIdAndOptionId(UUID assessmentResultId, Long questionId);
+    Optional<Result> load(UUID assessmentResultId, Long questionId);
 
-    record Result(UUID answerId, Long answerOptionId) {
+    record Result(UUID answerId, Long answerOptionId, Boolean isNotApplicable) {
     }
 }

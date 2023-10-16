@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -30,5 +31,10 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         "GROUP BY a.questionnaireId")
     List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(UUID assessmentResultId);
 
-    void saveByAnswerOptionIdAndIsNotApplicable(Long answerOptionId, boolean notApplicable);
+    @Modifying
+    @Query("UPDATE AnswerJpaEntity a SET " +
+        "a.answerOptionId = :answerOptionId, " +
+        "a.isNotApplicable = :isNotApplicable " +
+        "WHERE a.id = :answerId")
+    void updateByAnswerOptionIdAndIsNotApplicable(UUID answerId, Long answerOptionId, boolean isNotApplicable);
 }

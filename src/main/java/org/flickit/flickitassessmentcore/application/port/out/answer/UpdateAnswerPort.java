@@ -1,9 +1,11 @@
 package org.flickit.flickitassessmentcore.application.port.out.answer;
 
+import java.util.UUID;
+
 public interface UpdateAnswerPort {
 
     void update(Param param);
 
-    record Param(Long answerOptionId, boolean isNotApplicable) {
+    record Param(UUID answerId, Long answerOptionId, boolean isNotApplicable) {
     }
 }

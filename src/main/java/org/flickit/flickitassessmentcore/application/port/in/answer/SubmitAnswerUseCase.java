@@ -3,7 +3,6 @@ package org.flickit.flickitassessmentcore.application.port.in.answer;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.flickitassessmentcore.application.service.exception.AnswerSubmissionNotAllowedException;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
 import java.util.UUID;
@@ -12,9 +11,6 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 
 public interface SubmitAnswerUseCase {
 
-    /**
-     * @throws AnswerSubmissionNotAllowedException if an answer exists and is not applicable
-     */
     Result submitAnswer(Param param);
 
     @Value

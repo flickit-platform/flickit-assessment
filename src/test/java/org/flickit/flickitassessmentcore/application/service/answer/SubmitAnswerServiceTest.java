@@ -1,12 +1,11 @@
 package org.flickit.flickitassessmentcore.application.service.answer;
 
-import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.answer.*;
-import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerViewByAssessmentResultAndQuestionPort.Result;
+import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort.Result;
+import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
-import org.flickit.flickitassessmentcore.application.service.exception.AnswerSubmissionNotAllowedException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -17,9 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ANSWER_IS_NOT_APPLICABLE_MESSAGE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,22 +33,22 @@ class SubmitAnswerServiceTest {
     private UpdateAnswerPort updateAnswerPort;
 
     @Mock
-    private LoadAnswerViewByAssessmentResultAndQuestionPort loadExistAnswerViewPort;
+    private LoadAnswerPort loadExistAnswerViewPort;
 
     @Mock
     private InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
 
-    @Disabled
     @Test
-    void testSubmitAnswer_AnswerNotExist_SavesSelectedAnswerOptionIdAndInvalidatesAssessmentResult() {
+    void testSubmitAnswer_AnswerNotExistAndOptionIdIsNotNull_SavesAnswerAndInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
         Long questionnaireId = 25L;
         Long questionId = 1L;
         Long answerOptionId = 2L;
-        var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, Boolean.FALSE);
+        Boolean isNotApplicable = Boolean.FALSE;
+        var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, isNotApplicable);
 
-        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(Optional.empty());
+        when(loadExistAnswerViewPort.load(assessmentResultId, questionId)).thenReturn(Optional.empty());
 
         UUID savedAnswerId = UUID.randomUUID();
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
@@ -63,23 +61,23 @@ class SubmitAnswerServiceTest {
         assertEquals(questionnaireId, saveAnswerParam.getValue().questionnaireId());
         assertEquals(questionId, saveAnswerParam.getValue().questionId());
         assertEquals(answerOptionId, saveAnswerParam.getValue().answerOptionId());
-        assertEquals(false, saveAnswerParam.getValue().isNotApplicable());
+        assertEquals(isNotApplicable.booleanValue(), saveAnswerParam.getValue().isNotApplicable());
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResultId);
         verifyNoInteractions(updateAnswerPort);
     }
 
-    @Disabled
     @Test
-    void testSubmitAnswer_AnswerNotExistAndOptionIdIsNull_SavesAnswerAndDoesntInvalidatesAssessmentResult() {
+    void testSubmitAnswer_AnswerNotExistAndOptionIdIsNull_SavesAnswerAndDoesNotInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
         Long questionnaireId = 25L;
         Long questionId = 1L;
         Long answerOptionId = null;
-        SubmitAnswerUseCase.Param param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, Boolean.FALSE);
+        Boolean isNotApplicable = Boolean.FALSE;
+        var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, isNotApplicable);
 
-        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(Optional.empty());
+        when(loadExistAnswerViewPort.load(assessmentResultId, questionId)).thenReturn(Optional.empty());
 
         UUID savedAnswerId = UUID.randomUUID();
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
@@ -92,63 +90,21 @@ class SubmitAnswerServiceTest {
         assertEquals(questionnaireId, saveAnswerParam.getValue().questionnaireId());
         assertEquals(questionId, saveAnswerParam.getValue().questionId());
         assertEquals(answerOptionId, saveAnswerParam.getValue().answerOptionId());
-        assertEquals(false, saveAnswerParam.getValue().isNotApplicable());
+        assertEquals(isNotApplicable.booleanValue(), saveAnswerParam.getValue().isNotApplicable());
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verifyNoInteractions(invalidateAssessmentResultPort, updateAnswerPort);
     }
 
-    @Disabled
     @Test
-    void testSubmitAnswer_AnswerWithDifferentAnswerOptionExist_UpdatesAnswerAndInvalidatesAssessmentResult() {
-        UUID assessmentResultId = UUID.randomUUID();
-        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId, null, null);
-        Long questionnaireId = 1L;
-        Long questionId = 1L;
-        Long newAnswerOptionId = 2L;
-        Long oldAnswerOptionId = 3L;
-        var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, newAnswerOptionId, Boolean.FALSE);
-        UUID existAnswerId = UUID.randomUUID();
-        Optional<Result> existAnswer = Optional.of(new Result(existAnswerId, oldAnswerOptionId, false));
-        assertNotEquals(oldAnswerOptionId, newAnswerOptionId);
-
-        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
-
-        service.submitAnswer(param);
-
-        verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResultId);
-        verifyNoInteractions(createAnswerPort);
-    }
-
-    @Disabled
-    @Test
-    void testSubmitAnswer_AnswerWithSameAnswerOptionExist_DoesNotInvalidateAssessmentResult() {
-        UUID assessmentResultId = UUID.randomUUID();
-        Long questionnaireId = 1L;
-        Long questionId = 1L;
-        Long sameAnswerOptionId = 2L;
-        var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, sameAnswerOptionId, Boolean.FALSE);
-        UUID existAnswerId = UUID.randomUUID();
-        Optional<Result> existAnswer = Optional.of(new Result(existAnswerId, sameAnswerOptionId, false));
-        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
-
-        service.submitAnswer(param);
-
-        verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
-        verifyNoInteractions(createAnswerPort, updateAnswerPort, invalidateAssessmentResultPort);
-    }
-
-    @Disabled
-    @Test
-    void testSubmitAnswer_AnswerNotExist_SavesNotApplicableAnswerEvenWithSelectedAnswerOptionIdAndInvalidatesAssessmentResult() {
+    void testSubmitAnswer_AnswerNotExistsAndIsNotApplicableTrue_SavesAnswerAndInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
         Long questionnaireId = 25L;
         Long questionId = 1L;
         Long answerOptionId = 1L;
         Boolean isNotApplicable = Boolean.TRUE;
         var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, isNotApplicable);
-        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(Optional.empty());
+        when(loadExistAnswerViewPort.load(assessmentResultId, questionId)).thenReturn(Optional.empty());
 
         UUID savedAnswerId = UUID.randomUUID();
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
@@ -164,11 +120,33 @@ class SubmitAnswerServiceTest {
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class));
+        verifyNoInteractions(updateAnswerPort);
     }
 
-    @Disabled
     @Test
-    void testSubmitAnswer_AnswerExists_SavesNotApplicableAnswerEvenWithSelectedAnswerOptionIdAndInvalidatesAssessmentResult() {
+    void testSubmitAnswer_AnswerExistsAnswerOptionChanged_UpdatesAnswerAndInvalidatesAssessmentResult() {
+        UUID assessmentResultId = UUID.randomUUID();
+        Long questionnaireId = 1L;
+        Long questionId = 1L;
+        Long newAnswerOptionId = 2L;
+        Long oldAnswerOptionId = 3L;
+        Boolean isNotApplicable = Boolean.FALSE;
+        var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, newAnswerOptionId, isNotApplicable);
+
+        UUID existAnswerId = UUID.randomUUID();
+        var existAnswer = Optional.of(new Result(existAnswerId, oldAnswerOptionId, isNotApplicable));
+        when(loadExistAnswerViewPort.load(assessmentResultId, questionId)).thenReturn(existAnswer);
+
+        service.submitAnswer(param);
+
+        verify(loadExistAnswerViewPort, times(1)).load(assessmentResultId, questionId);
+        verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResultId);
+        verifyNoInteractions(createAnswerPort);
+    }
+
+    @Test
+    void testSubmitAnswer_AnswerExistsAndIsNotApplicableTrue_SavesAndInvalidatesAssessmentResult() {
         UUID answerId = UUID.randomUUID();
         UUID assessmentResultId = UUID.randomUUID();
         Long questionnaireId = 25L;
@@ -177,66 +155,46 @@ class SubmitAnswerServiceTest {
         Long newAnswerOptionId = 2L;
         Boolean isNotApplicable = Boolean.TRUE;
         var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, isNotApplicable);
-        var answer = new LoadAnswerViewByAssessmentResultAndQuestionPort.Result(answerId, newAnswerOptionId, Boolean.FALSE);
-        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(Optional.of(answer));
+        var answer = new LoadAnswerPort.Result(answerId, newAnswerOptionId, Boolean.FALSE);
+        when(loadExistAnswerViewPort.load(assessmentResultId, questionId)).thenReturn(Optional.of(answer));
+
+        var updateParam = new UpdateAnswerPort.Param(answerId, null, isNotApplicable);
+        doNothing().when(updateAnswerPort).update(updateParam);
 
         service.submitAnswer(param);
 
+        ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
+        verify(updateAnswerPort).update(updateAnswerParam.capture());
+        assertEquals(answerId, updateAnswerParam.getValue().answerId());
+        assertNull(updateAnswerParam.getValue().answerOptionId());
+        assertEquals(isNotApplicable, updateAnswerParam.getValue().isNotApplicable());
+
+        verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class));
         verifyNoInteractions(createAnswerPort);
     }
 
-    @Disabled
     @Test
-    void testSubmitAnswer_NotApplicableAnswerExist_ThrowsException() {
+    void testSubmitAnswer_AnswerWithSameAnswerOption_DoNotInvalidateAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
-        Long questionnaireId = 25L;
+        Long questionnaireId = 1L;
         Long questionId = 1L;
-        Long optionId = 2L;
-        var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, optionId, Boolean.TRUE);
+        Long sameAnswerOptionId = 2L;
+        Boolean isNotApplicable = Boolean.FALSE;
+        var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, sameAnswerOptionId, isNotApplicable);
+
         UUID existAnswerId = UUID.randomUUID();
-        Optional<Result> existAnswer = Optional.of(new Result(existAnswerId, null, Boolean.TRUE));
-
-        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
-
-        var throwable = assertThrows(AnswerSubmissionNotAllowedException.class, () -> service.submitAnswer(param));
-        assertThat(throwable).hasMessage(SUBMIT_ANSWER_ANSWER_IS_NOT_APPLICABLE_MESSAGE);
-
-        verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
-        verifyNoInteractions(createAnswerPort, updateAnswerPort, invalidateAssessmentResultPort);
-    }
-
-    @Disabled
-    @Test
-    void testSubmitAnswer_AnswerNotExist_SavesNotApplicableAnswerAndInvalidatesAssessmentResult() {
-        UUID assessmentResultId = UUID.randomUUID();
-        Long questionnaireId = 25L;
-        Long questionId = 1L;
-        Long answerOptionId = null;
-        Boolean isNotApplicable = Boolean.TRUE;
-        var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, isNotApplicable);
-        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(Optional.empty());
-
-        UUID savedAnswerId = UUID.randomUUID();
-        when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
+        var existAnswer = Optional.of(new Result(existAnswerId, sameAnswerOptionId, isNotApplicable));
+        when(loadExistAnswerViewPort.load(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswer(param);
 
-        ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
-        verify(createAnswerPort).persist(saveAnswerParam.capture());
-        assertEquals(assessmentResultId, saveAnswerParam.getValue().assessmentResultId());
-        assertEquals(questionnaireId, saveAnswerParam.getValue().questionnaireId());
-        assertEquals(questionId, saveAnswerParam.getValue().questionId());
-        assertNull(saveAnswerParam.getValue().answerOptionId());
-        assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
-
-        verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class));
+        verify(loadExistAnswerViewPort, times(1)).load(assessmentResultId, questionId);
+        verifyNoInteractions(createAnswerPort, updateAnswerPort, invalidateAssessmentResultPort);
     }
 
-    @Disabled
     @Test
-    void testSubmitAnswer_AnswerWithDifferentApplicableExist_UpdatesAnswerAndInvalidatesAssessmentResult() {
+    void testSubmitAnswer_AnswerExistsNotApplicableChanged_UpdatesAnswerAndInvalidatesAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
         Long questionnaireId = 25L;
         Long questionId = 1L;
@@ -244,34 +202,44 @@ class SubmitAnswerServiceTest {
         Boolean oldIsNotApplicable = Boolean.TRUE;
         Boolean newIsNotApplicable = Boolean.FALSE;
         var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, newIsNotApplicable);
-        UUID existAnswerId = UUID.randomUUID();
-        var existAnswer = Optional.of(new LoadAnswerViewByAssessmentResultAndQuestionPort.Result(existAnswerId, answerOptionId, oldIsNotApplicable));
-        assertNotEquals(oldIsNotApplicable, newIsNotApplicable);
 
-        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
+        UUID existAnswerId = UUID.randomUUID();
+        var existAnswer = Optional.of(new LoadAnswerPort.Result(existAnswerId, answerOptionId, oldIsNotApplicable));
+        when(loadExistAnswerViewPort.load(assessmentResultId, questionId)).thenReturn(existAnswer);
+
+        var updateParam = new UpdateAnswerPort.Param(existAnswerId, answerOptionId, newIsNotApplicable);
+        doNothing().when(updateAnswerPort).update(updateParam);
 
         service.submitAnswer(param);
 
-        verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
+        ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
+        verify(updateAnswerPort).update(updateAnswerParam.capture());
+        assertEquals(existAnswerId, updateAnswerParam.getValue().answerId());
+        assertNull(updateAnswerParam.getValue().answerOptionId());
+        assertEquals(newIsNotApplicable, updateAnswerParam.getValue().isNotApplicable());
+
+        verify(loadExistAnswerViewPort, times(1)).load(assessmentResultId, questionId);
+        verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResultId);
         verifyNoInteractions(createAnswerPort);
     }
 
-    @Disabled
     @Test
-    void testSubmitAnswer_AnswerWithSameIsNotApplicableExist_DoNotInvalidateAssessmentResult() {
+    void testSubmitAnswer_AnswerWithSameIsNotApplicableExists_DoNotInvalidateAssessmentResult() {
         UUID assessmentResultId = UUID.randomUUID();
         Long questionnaireId = 25L;
         Long questionId = 1L;
         Long answerOptionId = null;
         Boolean sameIsNotApplicable = Boolean.TRUE;
         var param = new SubmitAnswerUseCase.Param(assessmentResultId, questionnaireId, questionId, answerOptionId, sameIsNotApplicable);
+
         UUID existAnswerId = UUID.randomUUID();
-        var existAnswer = Optional.of(new LoadAnswerViewByAssessmentResultAndQuestionPort.Result(existAnswerId, answerOptionId, sameIsNotApplicable));
-        when(loadExistAnswerViewPort.loadView(assessmentResultId, questionId)).thenReturn(existAnswer);
+        var existAnswer = Optional.of(new LoadAnswerPort.Result(existAnswerId, answerOptionId, sameIsNotApplicable));
+        when(loadExistAnswerViewPort.load(assessmentResultId, questionId)).thenReturn(existAnswer);
 
         service.submitAnswer(param);
 
-        verify(loadExistAnswerViewPort, times(1)).loadView(assessmentResultId, questionId);
+        verify(loadExistAnswerViewPort, times(1)).load(assessmentResultId, questionId);
+        verifyNoInteractions(createAnswerPort, updateAnswerPort, invalidateAssessmentResultPort);
     }
 }
