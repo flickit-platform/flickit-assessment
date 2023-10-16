@@ -1,11 +1,11 @@
 package org.flickit.flickitassessmentcore.application.port.in.assessment;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.AssertTrue;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.flickitassessmentcore.common.SelfValidating;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.COUNT_ASSESSMENTS_KIT_ID_AND_SPACE_ID_NOT_NULL;
 
 public interface CountAssessmentsUseCase {
 
@@ -15,17 +15,20 @@ public interface CountAssessmentsUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = COUNT_ASSESSMENTS_ASSESSMENT_KIT_ID_NOT_NULL)
         Long assessmentKitId;
+        Long spaceId;
+        boolean deleted;
+        boolean notDeleted;
+        boolean total;
 
-        Boolean deleted;
+        @AssertTrue(message = COUNT_ASSESSMENTS_KIT_ID_AND_SPACE_ID_NOT_NULL)
+        private boolean isKitIdAndSpaceIdNotNull() {
+            return !(assessmentKitId == null && spaceId == null);
+        }
 
-        Boolean notDeleted;
-
-        Boolean total;
-
-        public Param(Long assessmentKitId, Boolean deleted, Boolean notDeleted, Boolean total) {
+        public Param(Long assessmentKitId, Long spaceId, boolean deleted, boolean notDeleted, boolean total) {
             this.assessmentKitId = assessmentKitId;
+            this.spaceId = spaceId;
             this.deleted = deleted;
             this.notDeleted = notDeleted;
             this.total = total;

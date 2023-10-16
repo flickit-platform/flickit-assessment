@@ -113,7 +113,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/3bfa613e-4e50-46a4-96aa-a061f104224e",
+					"raw": "{{base_url}}/{{api_path}}/assessment/3bfa613e-4e50-46a4-96aa-a061f104224e",
 					"host": [
 						"{{base_url}}"
 					],
@@ -512,7 +512,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/counters?assessmentKitId=1&deleted=true&notDeleted=true&total=true",
+					"raw": "{{base_url}}/{{api_path}}/assessments/counters?spaceId=2&deleted=true&notDeleted=true&total=true",
 					"host": [
 						"{{base_url}}"
 					],
@@ -524,7 +524,12 @@
 					"query": [
 						{
 							"key": "assessmentKitId",
-							"value": "1"
+							"value": "131",
+							"disabled": true
+						},
+						{
+							"key": "spaceId",
+							"value": "2"
 						},
 						{
 							"key": "deleted",
