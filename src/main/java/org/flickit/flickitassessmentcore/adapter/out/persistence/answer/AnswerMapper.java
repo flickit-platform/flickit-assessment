@@ -28,7 +28,7 @@ public class AnswerMapper {
             answer.getId(),
             answer.getQuestionId(),
             answer.getAnswerOptionId(),
-            Boolean.FALSE
+            answer.getIsNotApplicable()
         );
     }
 
