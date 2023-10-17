@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class SubmitAnswerUseCaseParamTest {
 
     @Test
-    void testSubmitAnswer_NullAssessmentId_ErrorMessage() {
+    void testSubmitAnswer_assessmentIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new SubmitAnswerUseCase.Param(null, 1L, 1L, 1L, Boolean.FALSE));
         assertThat(throwable).hasMessage("assessmentId: " + SUBMIT_ANSWER_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testSubmitAnswer_NullQuestionnaireId_ErrorMessage() {
+    void testSubmitAnswer_questionnaireIdIsNull_ErrorMessage() {
         var assessmentResult = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new SubmitAnswerUseCase.Param(assessmentResult, null, 1L, 1L, Boolean.FALSE));
@@ -30,7 +30,7 @@ class SubmitAnswerUseCaseParamTest {
     }
 
     @Test
-    void testSubmitAnswer_NullQuestionId_ErrorMessage() {
+    void testSubmitAnswer_questionIdIsNull_ErrorMessage() {
         var assessmentResult = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new SubmitAnswerUseCase.Param(assessmentResult, 1L, null, 1L, Boolean.FALSE));

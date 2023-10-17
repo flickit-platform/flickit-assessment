@@ -89,6 +89,6 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateAnswerPort.Param param) {
-        repository.updateByAnswerOptionIdAndIsNotApplicable(param.answerId(), param.answerOptionId(), param.isNotApplicable());
+        repository.update(param.answerId(), param.answerOptionId(), param.isNotApplicable());
     }
 }

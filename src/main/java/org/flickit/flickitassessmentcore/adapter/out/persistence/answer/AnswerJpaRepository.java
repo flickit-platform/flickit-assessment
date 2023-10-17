@@ -36,5 +36,5 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         "a.answerOptionId = :answerOptionId, " +
         "a.isNotApplicable = :isNotApplicable " +
         "WHERE a.id = :answerId")
-    void updateByAnswerOptionIdAndIsNotApplicable(UUID answerId, Long answerOptionId, boolean isNotApplicable);
+    void update(UUID answerId, Long answerOptionId, boolean isNotApplicable);
 }
