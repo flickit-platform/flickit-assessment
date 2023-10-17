@@ -163,35 +163,35 @@
 			},
 			"response": []
 		},
-		{
-			"name": "Submit Answer",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"questionnaireId\": 1102,\n    \"questionId\": 2163,\n    \"answerOptionId\": 5494\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/da7e2a90-31a5-43ac-ab6b-93d43cd46a1b/answer-question",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessments",
-						"da7e2a90-31a5-43ac-ab6b-93d43cd46a1b",
-						"answer-question"
-					]
-				}
-			},
-			"response": []
-		},
+        {
+          "name": "Submit Answer",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"questionnaireId\": 1102,\n    \"questionId\": 2163,\n    \"answerOptionId\": 5494,\n    \"isNotApplicable\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/assessments/bbb78486-c0a1-4b98-9b8a-588f3a5ce0d9/answer-question",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "assessments",
+                "bbb78486-c0a1-4b98-9b8a-588f3a5ce0d9",
+                "answer-question"
+              ]
+            }
+          },
+          "response": []
+        },
 		{
 			"name": "Add Evidence",
 			"protocolProfileBehavior": {

@@ -14,6 +14,7 @@ public interface CreateAnswerPort {
     record Param(UUID assessmentResultId,
                  Long questionnaireId,
                  Long questionId,
-                 Long answerOptionId) {
+                 Long answerOptionId,
+                 Boolean isNotApplicable) {
     }
 }

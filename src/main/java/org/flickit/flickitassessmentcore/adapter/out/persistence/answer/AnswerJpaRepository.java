@@ -12,11 +12,7 @@ import java.util.UUID;
 
 public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID> {
 
-    Optional<AnswerIdAndOptionIdView> findByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId);
-
-    @Modifying
-    @Query("UPDATE AnswerJpaEntity a SET a.answerOptionId=:answerOptionId WHERE a.id=:id")
-    void updateAnswerOptionById(UUID id, Long answerOptionId);
+    Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId);
 
     List<AnswerJpaEntity> findByAssessmentResultIdAndAnswerOptionIdNotNull(UUID assessmentResultId);
 
@@ -34,4 +30,11 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         "where a.assessmentResult.id=:assessmentResultId AND a.answerOptionId IS NOT NULL " +
         "GROUP BY a.questionnaireId")
     List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(UUID assessmentResultId);
+
+    @Modifying
+    @Query("UPDATE AnswerJpaEntity a SET " +
+        "a.answerOptionId = :answerOptionId, " +
+        "a.isNotApplicable = :isNotApplicable " +
+        "WHERE a.id = :answerId")
+    void update(UUID answerId, Long answerOptionId, boolean isNotApplicable);
 }

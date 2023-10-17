@@ -9,13 +9,14 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-@AllArgsConstructor
 public class Answer {
 
     private final UUID id;
 
     @Nullable
-    AnswerOption selectedOption;
+    private final AnswerOption selectedOption;
+
+    private final Boolean isNotApplicable;
 
     @Nullable
     public AnswerOptionImpact findImpactByMaturityLevel(MaturityLevel maturityLevel) {
