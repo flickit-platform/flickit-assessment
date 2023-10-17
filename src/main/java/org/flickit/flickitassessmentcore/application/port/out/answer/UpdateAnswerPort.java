@@ -6,6 +6,6 @@ public interface UpdateAnswerPort {
 
     void update(Param param);
 
-    record Param(UUID answerId, Long answerOptionId, boolean isNotApplicable) {
+    record Param(UUID answerId, Long answerOptionId, Boolean isNotApplicable) {
     }
 }
