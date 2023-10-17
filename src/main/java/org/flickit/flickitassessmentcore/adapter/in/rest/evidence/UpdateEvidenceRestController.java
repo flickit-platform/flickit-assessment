@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.evidence.UpdateEvidenceUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -17,10 +17,9 @@ public class UpdateEvidenceRestController {
 
     private final UpdateEvidenceUseCase useCase;
 
-    @PutMapping("/evidences")
-    public ResponseEntity<UpdateEvidenceResponseDto> updateEvidence(
-        @RequestParam UUID id,
-        @RequestBody UpdateEvidenceRequestDto request) {
+    @PutMapping("/evidences/{id}")
+    public ResponseEntity<UpdateEvidenceResponseDto> updateEvidence(@PathVariable("id") UUID id,
+                                                                    @RequestBody UpdateEvidenceRequestDto request) {
         UpdateEvidenceUseCase.Result result = useCase.updateEvidence(toParam(id, request));
         return new ResponseEntity<>(toResponse(result), HttpStatus.OK);
     }
