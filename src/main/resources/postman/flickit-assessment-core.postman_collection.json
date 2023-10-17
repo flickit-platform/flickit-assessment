@@ -163,35 +163,35 @@
 			},
 			"response": []
 		},
-        {
-          "name": "Submit Answer",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"questionnaireId\": 1102,\n    \"questionId\": 2163,\n    \"answerOptionId\": 5494,\n    \"isNotApplicable\": false\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/{{api_path}}/assessments/bbb78486-c0a1-4b98-9b8a-588f3a5ce0d9/answer-question",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "{{api_path}}",
-                "assessments",
-                "bbb78486-c0a1-4b98-9b8a-588f3a5ce0d9",
-                "answer-question"
-              ]
-            }
-          },
-          "response": []
-        },
+		{
+			"name": "Submit Answer",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"questionnaireId\": 1102,\n    \"questionId\": 2163,\n    \"answerOptionId\": 5494,\n    \"isNotApplicable\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/bbb78486-c0a1-4b98-9b8a-588f3a5ce0d9/answer-question",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"bbb78486-c0a1-4b98-9b8a-588f3a5ce0d9",
+						"answer-question"
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "Add Evidence",
 			"protocolProfileBehavior": {
@@ -456,19 +456,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/evidences?id=3d81a3bd-01e9-4462-b650-2796b408b07b",
+					"raw": "{{base_url}}/{{api_path}}/evidences/34a20577-70f7-44f3-a3b3-d7059abced43",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"evidences"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "3d81a3bd-01e9-4462-b650-2796b408b07b"
-						}
+						"evidences",
+						"34a20577-70f7-44f3-a3b3-d7059abced43"
 					]
 				}
 			},
