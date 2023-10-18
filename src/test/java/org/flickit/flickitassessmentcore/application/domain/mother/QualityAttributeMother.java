@@ -13,8 +13,12 @@ public class QualityAttributeMother {
         return new QualityAttribute(id++, 1, null);
     }
 
-    public static QualityAttribute withQuestions(List<Question> questions){
+    public static QualityAttribute withQuestions(List<Question> questions) {
         return new QualityAttribute(id++, 1, questions);
+    }
+
+    public static QualityAttribute withQuestionsAndWeight(List<Question> questions, int weight) {
+        return new QualityAttribute(id++, weight, questions);
     }
 
     public static QualityAttribute withQuestionsOnLevel23(int weight) {
