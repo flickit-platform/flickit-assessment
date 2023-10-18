@@ -40,14 +40,16 @@ class QualityAttributeValueTest {
             QuestionMother.withImpactsOnLevel23(),
             QuestionMother.withImpactsOnLevel23(),
             QuestionMother.withImpactsOnLevel23(),
-            QuestionMother.withImpactsOnLevel23());
+            QuestionMother.withImpactsOnLevel23(),
+            QuestionMother.withImpactsOnLevel45());
 
         List<Answer> answers = List.of(
             AnswerMother.fullScoreOnLevels23(),
             AnswerMother.fullScoreOnLevels23(),
             AnswerMother.fullScoreOnLevels23(),
             AnswerMother.fullScoreOnLevels23(),
-            AnswerMother.fullScoreOnLevels23());
+            AnswerMother.fullScoreOnLevels23(),
+            AnswerMother.noScoreOnLevel4());
 
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
@@ -88,14 +90,16 @@ class QualityAttributeValueTest {
             QuestionMother.withImpactsOnLevel24(),
             QuestionMother.withImpactsOnLevel24(),
             QuestionMother.withImpactsOnLevel24(),
-            QuestionMother.withImpactsOnLevel24());
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel45());
 
         List<Answer> answers = List.of(
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
-            AnswerMother.fullScoreOnLevels24());
+            AnswerMother.fullScoreOnLevels24(),
+            AnswerMother.noScoreOnLevel5());
 
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);

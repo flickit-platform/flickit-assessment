@@ -1,9 +1,6 @@
 package org.flickit.flickitassessmentcore.application.domain.mother;
 
-import org.flickit.flickitassessmentcore.application.domain.Answer;
-import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
-import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
-import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
+import org.flickit.flickitassessmentcore.application.domain.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,28 +12,47 @@ public class QualityAttributeValueMother {
     }
 
     public static QualityAttributeValue toBeCalcAsLevelThreeWithWeight(int weight) {
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel23(),
+            QuestionMother.withImpactsOnLevel23(),
+            QuestionMother.withImpactsOnLevel23(),
+            QuestionMother.withImpactsOnLevel23(),
+            QuestionMother.withImpactsOnLevel23(),
+            QuestionMother.withImpactsOnLevel45());
+
         List<Answer> answers = List.of(
             AnswerMother.fullScoreOnLevels23(),
             AnswerMother.fullScoreOnLevels23(),
             AnswerMother.fullScoreOnLevels23(),
             AnswerMother.fullScoreOnLevels23(),
-            AnswerMother.fullScoreOnLevels23());
+            AnswerMother.fullScoreOnLevels23(),
+            AnswerMother.noScoreOnLevel4());
 
         return new QualityAttributeValue(UUID.randomUUID(),
-            QualityAttributeMother.withQuestionsOnLevel23(weight),
+            QualityAttributeMother.withQuestionsAndWeight(questions, weight),
             answers);
     }
 
     public static QualityAttributeValue toBeCalcAsLevelFourWithWeight(int weight) {
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel45());
+
         List<Answer> answers = List.of(
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
-            AnswerMother.fullScoreOnLevels24());
+            AnswerMother.fullScoreOnLevels24(),
+            AnswerMother.noScoreOnLevel5());
+
 
         return new QualityAttributeValue(UUID.randomUUID(),
-            QualityAttributeMother.withQuestionsOnLevel24(weight),
+            QualityAttributeMother.withQuestionsAndWeight(questions, weight),
             answers);
     }
 
