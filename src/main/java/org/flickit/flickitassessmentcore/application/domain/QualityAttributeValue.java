@@ -66,29 +66,23 @@ public class QualityAttributeValue {
             .sorted(comparingInt(MaturityLevel::getLevel))
             .toList();
 
-        MaturityLevel maxPossibleMaturityLevel = null;
-        for (MaturityLevel ml : sortedMaturityLevels)
-            maxPossibleMaturityLevel = percentScore.containsKey(ml.getId()) ? ml : maxPossibleMaturityLevel;
-
         MaturityLevel result = null;
         for (MaturityLevel ml : sortedMaturityLevels) {
-            List<LevelCompetence> levelCompetences = ml.getLevelCompetences();
-            if (levelCompetences.isEmpty()) {
-                result = ml;
-                continue;
-            }
-            boolean allCompetencesMatched = levelCompetences.stream()
-                .allMatch(levelCompetence -> {
-                    Long mlId = levelCompetence.getMaturityLevelId();
-                    return !percentScore.containsKey(mlId) || percentScore.get(mlId) >= levelCompetence.getValue();
-                });
-
-            if (allCompetencesMatched && maxPossibleMaturityLevel != null && maxPossibleMaturityLevel.getLevel() >= ml.getLevel())
-                result = ml;
-            else
+            if (!passLevel(percentScore, ml))
                 break;
+            result = ml;
         }
         return result;
+    }
+
+    private boolean passLevel(Map<Long, Double> percentScore, MaturityLevel ml) {
+        List<LevelCompetence> levelCompetences = ml.getLevelCompetences();
+
+        return levelCompetences.isEmpty() || levelCompetences.stream()
+            .allMatch(levelCompetence -> {
+                Long mlId = levelCompetence.getMaturityLevelId();
+                return !percentScore.containsKey(mlId) || percentScore.get(mlId) >= levelCompetence.getValue();
+            });
     }
 
     private record MaturityLevelScore(MaturityLevel maturityLevel, double score) {

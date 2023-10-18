@@ -26,6 +26,18 @@ public class AnswerMother {
             Boolean.FALSE);
     }
 
+    public static Answer noScoreOnLevel4() {
+        return new Answer(UUID.randomUUID(), AnswerOptionMother.withImpacts(List.of(
+            AnswerOptionImpactMother.onLevelFour(0))),
+            Boolean.FALSE);
+    }
+
+    public static Answer noScoreOnLevel5() {
+        return new Answer(UUID.randomUUID(), AnswerOptionMother.withImpacts(List.of(
+            AnswerOptionImpactMother.onLevelFive(0))),
+            Boolean.FALSE);
+    }
+
     public static Answer fullScoreOnLevels34() {
         return new Answer(UUID.randomUUID(), AnswerOptionMother.withImpacts(List.of(
             AnswerOptionImpactMother.onLevelThree(1),
