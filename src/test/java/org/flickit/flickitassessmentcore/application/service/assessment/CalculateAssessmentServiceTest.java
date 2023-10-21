@@ -35,7 +35,7 @@ class CalculateAssessmentServiceTest {
     private UpdateCalculatedResultPort updateCalculatedResultPort;
 
     @Test
-    void testCalculateMaturityLevel() {
+    void testCalculateMaturityLevel_ValidInput_ValidResults() {
         List<QualityAttributeValue> s1QualityAttributeValues = List.of(
             QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
             QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),

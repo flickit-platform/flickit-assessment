@@ -121,10 +121,14 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         for (QualityAttributeValueJpaEntity qavEntity : context.allQualityAttributeValueEntities) {
             List<Question> impactfulQuestions = questionsWithImpact(qavEntity.getQualityAttributeId(), context);
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
+            List<Question> impactfulApplicableQuestions = impactfulQuestions.stream()
+                .filter(question -> impactfulAnswers.stream()
+                    .anyMatch(answer -> answer.getSelectedOption().getQuestionId() == question.getId()))
+                .toList();
             QualityAttribute qualityAttribute = new QualityAttribute(
                 qavEntity.getQualityAttributeId(),
                 context.qaIdToWeightMap.get(qavEntity.getQualityAttributeId()),
-                impactfulQuestions
+                impactfulApplicableQuestions
             );
 
             QualityAttributeValue qualityAttributeValue = new QualityAttributeValue(qavEntity.getId(), qualityAttribute, impactfulAnswers);
