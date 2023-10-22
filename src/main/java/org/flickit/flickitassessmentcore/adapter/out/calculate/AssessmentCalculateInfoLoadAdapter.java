@@ -125,6 +125,9 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                 .filter(question -> impactfulAnswers.stream()
                     .anyMatch(answer -> answer.getSelectedOption().getQuestionId() == question.getId()))
                 .toList();
+            if (impactfulApplicableQuestions.isEmpty()) {
+                continue;
+            }
             QualityAttribute qualityAttribute = new QualityAttribute(
                 qavEntity.getQualityAttributeId(),
                 context.qaIdToWeightMap.get(qavEntity.getQualityAttributeId()),
@@ -183,7 +186,11 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             SubjectDto dto = context.subjectIdToDto.get(svEntity.getSubjectId());
             List<QualityAttributeValue> qavList = dto.qualityAttributes().stream()
                 .map(q -> qualityAttrIdToValue.get(q.id()))
+                .filter(Objects::nonNull)
                 .toList();
+            if (qavList.isEmpty()) {
+                continue;
+            }
             subjectValues.add(new SubjectValue(svEntity.getId(), dto.dtoToDomain(), qavList));
         }
         return subjectValues;

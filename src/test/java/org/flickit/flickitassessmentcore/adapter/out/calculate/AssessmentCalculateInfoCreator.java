@@ -7,12 +7,12 @@ import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattribut
 import org.flickit.flickitassessmentcore.adapter.out.persistence.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.answeroptionimpact.AnswerOptionImpactDto;
+import org.flickit.flickitassessmentcore.adapter.out.rest.levelcompetence.LevelCompetenceDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.maturitylevel.MaturityLevelDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.qualityattribute.QualityAttributeDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.questionimpact.QuestionImpactDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectDto;
-import org.flickit.flickitassessmentcore.application.domain.AnswerOptionImpact;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentColor;
 
 import java.time.LocalDateTime;
@@ -31,13 +31,14 @@ public class AssessmentCalculateInfoCreator {
     private static long qualityAttributeId = 134L;
     private static long questionImpactId = 134L;
     private static long answerOptionImpactId = 134L;
+    private static long levelCompetenceId = 134L;
 
-    public static AssessmentResultJpaEntity validSimpleAssessmentResultEntity(Long maturityLevelId) {
+    public static AssessmentResultJpaEntity validSimpleAssessmentResultEntity(Long maturityLevelId, Boolean isValid) {
         return new AssessmentResultJpaEntity(
             UUID.randomUUID(),
             assessmentEntityWithKit(),
             maturityLevelId,
-            Boolean.TRUE,
+            isValid,
             LocalDateTime.now()
         );
     }
@@ -92,22 +93,21 @@ public class AssessmentCalculateInfoCreator {
         );
     }
 
-    public static QuestionDto createQuestionDto(Long questionId) {
+    public static QuestionDto createQuestionDto(Long questionId, Long maturityLevelId, Long... qavIds) {
         return new QuestionDto(
             questionId,
-            List.of(
-                createQuestionImpactDto(questionId, 4L),
-                createQuestionImpactDto(questionId, 5L)
-            )
+            Arrays.stream(qavIds)
+                .map(qavId -> createQuestionImpactDto(maturityLevelId, qavId))
+                .toList()
         );
     }
 
-    public static QuestionImpactDto createQuestionImpactDto(Long maturityLevelId, Long questionId) {
+    public static QuestionImpactDto createQuestionImpactDto(Long maturityLevelId, Long qualityAttributeId) {
         return new QuestionImpactDto(
             questionImpactId++,
-            1,
+            maturityLevelId.intValue(),
             maturityLevelId,
-            questionId
+            qualityAttributeId
         );
     }
 
@@ -122,20 +122,20 @@ public class AssessmentCalculateInfoCreator {
         );
     }
 
-    public static AnswerOptionDto createAnswerOptionDto(Long answerOptionId, Long questionId, QuestionImpactDto questionImpactDto) {
+    public static AnswerOptionDto createAnswerOptionDto(Long answerOptionId, Long questionId, List<QuestionImpactDto> questionImpactDtos) {
         return new AnswerOptionDto(
             answerOptionId,
             questionId,
-            List.of(
-                createAnswerOptionImpactDto(questionImpactDto)
-            )
+            questionImpactDtos.stream()
+                .map(qi -> createAnswerOptionImpactDto(qi))
+                .toList()
         );
     }
 
     public static AnswerOptionImpactDto createAnswerOptionImpactDto(QuestionImpactDto questionImpactDto) {
         return new AnswerOptionImpactDto(
             answerOptionImpactId++,
-            1D,
+            1.0,
             questionImpactDto
         );
     }
@@ -144,8 +144,17 @@ public class AssessmentCalculateInfoCreator {
         return new MaturityLevelDto(
             maturityLevelId,
             maturityLevelId.intValue(),
-            new ArrayList<>()
+            createCompetences(maturityLevelId)
         );
+    }
+
+    private static List<LevelCompetenceDto> createCompetences(Long maturityLevelId) {
+        List<LevelCompetenceDto> levelCompetenceDtos = new ArrayList<>();
+        for (int i = 0; i < maturityLevelId - 1; i++) {
+            var levelCompetenceDto = new LevelCompetenceDto(levelCompetenceId++, (i + 1) * 10, Long.valueOf(i));
+            levelCompetenceDtos.add(levelCompetenceDto);
+        }
+        return levelCompetenceDtos;
     }
 
 }
