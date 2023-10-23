@@ -1,5 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.calculate;
 
+import lombok.NoArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
@@ -155,6 +156,17 @@ public class AssessmentCalculateInfoCreator {
             levelCompetenceDtos.add(levelCompetenceDto);
         }
         return levelCompetenceDtos;
+    }
+
+    record Context(
+        AssessmentResultJpaEntity assessmentResultEntity,
+        List<SubjectValueJpaEntity> subjectValues,
+        List<QualityAttributeValueJpaEntity> qualityAttributeValues,
+        List<SubjectDto> subjectDtos,
+        List<QuestionDto> questionDtos,
+        List<AnswerJpaEntity> answerEntities,
+        List<AnswerOptionDto> answerOptionDtos
+    ) {
     }
 
 }
