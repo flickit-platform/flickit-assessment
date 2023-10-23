@@ -32,7 +32,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
-        var answerOptionId = param.getIsNotApplicable() ? null : param.getAnswerOptionId();
+        var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
         if (loadedAnswer.isEmpty()) {
             return saveAnswer(param, assessmentResult.getId(), answerOptionId);
         }
@@ -46,7 +46,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
     private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId) {
         UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId));
-        if (answerOptionId != null || param.getIsNotApplicable()) {
+        if (answerOptionId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId);
         }
         return new Result(savedAnswerId);
@@ -70,7 +70,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return !Objects.equals(answerOptionId, loadedAnswerOptionId);
     }
 
-    private void updateAnswer(UUID assessmentResultId, UUID loadedAnswerId, Long answerOptionId, boolean isNotApplicable) {
+    private void updateAnswer(UUID assessmentResultId, UUID loadedAnswerId, Long answerOptionId, Boolean isNotApplicable) {
         updateAnswerPort.update(toUpdateAnswerParam(loadedAnswerId, answerOptionId, isNotApplicable));
         invalidateAssessmentResultPort.invalidateById(assessmentResultId);
     }
