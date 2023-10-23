@@ -43,7 +43,7 @@ public class AdaptersDependencyArchUnitTest {
             .haveSimpleNameEndingWith(PERSISTENCE_JPA_ADAPTER_SUFFIX)
             .should()
             .dependOnClassesThat()
-            .resideInAnyPackage(ADAPTER_OUT_PERSISTENCE, APPLICATION_PORT_IN);
+            .resideInAnyPackage(ADAPTER_OUT_PERSISTENCE, APPLICATION_PORT_IN, APPLICATION_PORT_OUT);
 
     @ArchTest
     static final ArchRule classes_in_adapter_out_rest_should_port_out_and_domain_model =
