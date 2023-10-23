@@ -80,8 +80,8 @@ class AssessmentCalculateInfoLoadAdapterTest {
         List<SubjectDto> subjectDtos = List.of(subjectDto1, subjectDto2, subjectDto3);
 
         var questionDto1 = createQuestionDto(1L, MATURITY_LEVEL_OF_TWO, qav1.getQualityAttributeId(), qav2.getQualityAttributeId());
-        var questionDto2 = createQuestionDto(2L, MATURITY_LEVEL_OF_FOUR, qav3.getQualityAttributeId(), qav4.getQualityAttributeId());
-        var questionDto3 = createQuestionDto(3L, MATURITY_LEVEL_OF_ONE, qav5.getQualityAttributeId(), qav6.getQualityAttributeId());
+        var questionDto2 = createQuestionDto(2L, MATURITY_LEVEL_OF_ONE, qav3.getQualityAttributeId(), qav4.getQualityAttributeId());
+        var questionDto3 = createQuestionDto(3L, MATURITY_LEVEL_OF_FIVE, qav5.getQualityAttributeId(), qav6.getQualityAttributeId());
         List<QuestionDto> questionDtos = List.of(questionDto1, questionDto2, questionDto3);
 
         var answerEntity1 = answerEntityWithAnswerOptionAndIsNotApplicable(assessmentResultEntity, questionDto1.id(), 3L, Boolean.FALSE);
@@ -97,7 +97,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             var answerEntity3 = answerEntityWithAnswerOptionAndIsNotApplicable(assessmentResultEntity, questionDto3.id(), 2L, Boolean.FALSE);
             answerEntities.add(answerEntity3);
 
-            var answerOptionDto3 = createAnswerOptionDto(2L, questionDto3.id(), questionDto3.questionImpacts());
+            var answerOptionDto3 = createAnswerOptionDto(2L, questionDto3.id(), List.of(createQuestionImpactDto(MATURITY_LEVEL_OF_ONE, qav1.getQualityAttributeId())));
             answerOptionDtos.add(answerOptionDto3);
         }
 
@@ -123,9 +123,10 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
         assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
         assertEquals(context.assessmentResultEntity().getAssessment().getId(), loadedAssessmentResult.getAssessment().getId());
+        assertEquals(context.subjectValues().size(), loadedAssessmentResult.getSubjectValues().size());
 
         var calculatedMaturityLevel = loadedAssessmentResult.calculate();
-        assertEquals(2, calculatedMaturityLevel.getId());
+        assertEquals(4, calculatedMaturityLevel.getId());
     }
 
     @Test
@@ -139,9 +140,10 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
         assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
         assertEquals(context.assessmentResultEntity().getAssessment().getId(), loadedAssessmentResult.getAssessment().getId());
+        assertEquals(context.subjectValues().size() - 1, loadedAssessmentResult.getSubjectValues().size());
 
         var calculatedMaturityLevel = loadedAssessmentResult.calculate();
-        assertEquals(3, calculatedMaturityLevel.getId());
+        assertEquals(4, calculatedMaturityLevel.getId());
     }
 
     private void doMocks(Context context) {
