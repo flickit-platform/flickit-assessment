@@ -24,7 +24,7 @@ public class QualityAttributeValue {
     @Setter
     MaturityLevel maturityLevel;
 
-    public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
+    public void calculate(List<MaturityLevel> maturityLevels) {
         Map<Long, Double> totalScore = calcTotalScore(maturityLevels);
         Map<Long, Double> gainedScore = calcGainedScore(maturityLevels);
         Map<Long, Double> percentScore = calcPercent(totalScore, gainedScore);
@@ -33,7 +33,7 @@ public class QualityAttributeValue {
             MaturityScore maturityScore = new MaturityScore(maturityLevelId, percentScore.get(maturityLevelId));
             maturityScores.add(maturityScore);
         });
-        return findGainedMaturityLevel(percentScore, maturityLevels);
+        maturityLevel = findGainedMaturityLevel(percentScore, maturityLevels);
     }
 
     private Map<Long, Double> calcTotalScore(List<MaturityLevel> maturityLevels) {
