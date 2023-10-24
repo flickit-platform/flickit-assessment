@@ -121,17 +121,10 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         for (QualityAttributeValueJpaEntity qavEntity : context.allQualityAttributeValueEntities) {
             List<Question> impactfulQuestions = questionsWithImpact(qavEntity.getQualityAttributeId(), context);
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            List<Question> impactfulApplicableQuestions = impactfulQuestions.stream()
-                .filter(question -> impactfulAnswers.stream()
-                    .anyMatch(answer -> answer.getQuestionId() == question.getId()))
-                .toList();
-            if (impactfulApplicableQuestions.isEmpty()) {
-                continue;
-            }
             QualityAttribute qualityAttribute = new QualityAttribute(
                 qavEntity.getQualityAttributeId(),
                 context.qaIdToWeightMap.get(qavEntity.getQualityAttributeId()),
-                impactfulApplicableQuestions
+                impactfulQuestions
             );
 
             QualityAttributeValue qualityAttributeValue = new QualityAttributeValue(qavEntity.getId(), qualityAttribute, impactfulAnswers);
@@ -168,7 +161,6 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .collect(toMap(AnswerOptionDto::id, x -> x));
         return context.allAnswerEntities.stream()
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
-            .filter(a -> a.getIsNotApplicable() != Boolean.TRUE) // It can be False or Null
             .map(entity -> {
                 AnswerOptionDto optionDto = idToAnswerOptionDto.get(entity.getAnswerOptionId());
                 AnswerOption answerOption = optionDto != null ? optionDto.dtoToDomain() : null;

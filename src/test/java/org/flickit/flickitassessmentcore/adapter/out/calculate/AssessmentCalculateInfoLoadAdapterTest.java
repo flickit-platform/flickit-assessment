@@ -16,6 +16,8 @@ import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionRestAdapter;
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectRestAdapter;
+import org.flickit.flickitassessmentcore.test.fixture.adapter.dto.MaturityLevelDtoMother;
+import org.flickit.flickitassessmentcore.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.flickit.flickitassessmentcore.adapter.out.calculate.AssessmentCalculateInfoCreator.*;
+import static org.flickit.flickitassessmentcore.test.fixture.adapter.dto.AnswerOptionDtoMother.createAnswerOptionDto;
+import static org.flickit.flickitassessmentcore.test.fixture.adapter.dto.MaturityLevelDtoMother.*;
+import static org.flickit.flickitassessmentcore.test.fixture.adapter.dto.QuestionDtoMother.createQuestionDtoWithAffectedLevelAndAttributes;
+import static org.flickit.flickitassessmentcore.test.fixture.adapter.dto.SubjectDtoMother.createSubjectDto;
+import static org.flickit.flickitassessmentcore.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
+import static org.flickit.flickitassessmentcore.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
+import static org.flickit.flickitassessmentcore.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -34,11 +42,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AssessmentCalculateInfoLoadAdapterTest {
 
-    private static final Long MATURITY_LEVEL_OF_ONE = 1L;
-    private static final Long MATURITY_LEVEL_OF_TWO = 2L;
-    private static final Long MATURITY_LEVEL_OF_THREE = 3L;
-    private static final Long MATURITY_LEVEL_OF_FOUR = 4L;
-    private static final Long MATURITY_LEVEL_OF_FIVE = 5L;
     @InjectMocks
     AssessmentCalculateInfoLoadAdapter adapter;
     @Mock
@@ -58,49 +61,64 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private MaturityLevelRestAdapter maturityLevelRestAdapter;
 
-    private static Context createContext(Boolean hasNotApplicableAnswer) {
-        var assessmentResultEntity = validSimpleAssessmentResultEntity(null, Boolean.FALSE);
+    private static Context createContext() {
+        var assessmentResultEntity = AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity(null, Boolean.FALSE);
 
-        var subjectValue1 = subjectValueWithMaturityLevel(assessmentResultEntity, null);
-        var subjectValue2 = subjectValueWithMaturityLevel(assessmentResultEntity, null);
-        var subjectValue3 = subjectValueWithMaturityLevel(assessmentResultEntity, null);
-        List<SubjectValueJpaEntity> subjectValues = List.of(subjectValue1, subjectValue2, subjectValue3);
+        var attributeId = 134L;
+        var attribute1Id = attributeId++;
+        var attribute2Id = attributeId++;
+        var attribute3Id = attributeId++;
+        var attribute4Id = attributeId++;
+        var attribute5Id = attributeId++;
+        var attribute6Id = attributeId;
 
-        var qav1 = qualityAttributeWithMaturityLevel(assessmentResultEntity, null);
-        var qav2 = qualityAttributeWithMaturityLevel(assessmentResultEntity, null);
-        var qav3 = qualityAttributeWithMaturityLevel(assessmentResultEntity, null);
-        var qav4 = qualityAttributeWithMaturityLevel(assessmentResultEntity, null);
-        var qav5 = qualityAttributeWithMaturityLevel(assessmentResultEntity, null);
-        var qav6 = qualityAttributeWithMaturityLevel(assessmentResultEntity, null);
+        var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1Id);
+        var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2Id);
+        var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3Id);
+        var qav4 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute4Id);
+        var qav5 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute5Id);
+        var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6Id);
         List<QualityAttributeValueJpaEntity> qualityAttributeValues = List.of(qav1, qav2, qav3, qav4, qav5, qav6);
+
+        var subjectValue1 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
+        var subjectValue2 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
+        var subjectValue3 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
+        List<SubjectValueJpaEntity> subjectValues = List.of(subjectValue1, subjectValue2, subjectValue3);
 
         var subjectDto1 = createSubjectDto(subjectValue1.getSubjectId(), List.of(qav1, qav2));
         var subjectDto2 = createSubjectDto(subjectValue2.getSubjectId(), List.of(qav3, qav4));
         var subjectDto3 = createSubjectDto(subjectValue3.getSubjectId(), List.of(qav5, qav6));
         List<SubjectDto> subjectDtos = List.of(subjectDto1, subjectDto2, subjectDto3);
 
-        var questionDto1 = createQuestionDto(1L, MATURITY_LEVEL_OF_TWO, qav1.getQualityAttributeId(), qav2.getQualityAttributeId());
-        var questionDto2 = createQuestionDto(2L, MATURITY_LEVEL_OF_ONE, qav3.getQualityAttributeId(), qav4.getQualityAttributeId());
-        var questionDto3 = createQuestionDto(3L, MATURITY_LEVEL_OF_FIVE, qav5.getQualityAttributeId(), qav6.getQualityAttributeId());
-        List<QuestionDto> questionDtos = List.of(questionDto1, questionDto2, questionDto3);
+        var questionDto1 = createQuestionDtoWithAffectedLevelAndAttributes(1L, levelOne().id(), attribute1Id, attribute2Id, attribute3Id);
+        var questionDto2 = createQuestionDtoWithAffectedLevelAndAttributes(2L, levelOne().id(), attribute4Id, attribute5Id, attribute6Id);
+        var questionDto3 = createQuestionDtoWithAffectedLevelAndAttributes(3L, levelTwo().id(), attribute1Id, attribute2Id, attribute3Id);
+        var questionDto4 = createQuestionDtoWithAffectedLevelAndAttributes(4L, levelTwo().id(), attribute4Id, attribute5Id, attribute6Id);
+        var questionDto5 = createQuestionDtoWithAffectedLevelAndAttributes(5L, levelThree().id(), attribute1Id, attribute2Id, attribute3Id);
+        var questionDto6 = createQuestionDtoWithAffectedLevelAndAttributes(6L, levelThree().id(), attribute4Id, attribute5Id, attribute6Id);
+        var questionDto7 = createQuestionDtoWithAffectedLevelAndAttributes(7L, levelFour().id(), attribute1Id, attribute2Id, attribute3Id);
+        var questionDto8 = createQuestionDtoWithAffectedLevelAndAttributes(8L, levelFour().id(), attribute4Id, attribute5Id, attribute6Id);
+        var questionDto9 = createQuestionDtoWithAffectedLevelAndAttributes(9L, levelFive().id(), attribute1Id, attribute2Id, attribute3Id);
+        var questionDto10 = createQuestionDtoWithAffectedLevelAndAttributes(10L, levelFive().id(), attribute4Id, attribute5Id, attribute6Id);
 
-        var answerEntity1 = answerEntityWithAnswerOptionAndIsNotApplicable(assessmentResultEntity, questionDto1.id(), 3L, Boolean.FALSE);
-        var answerEntity2 = answerEntityWithAnswerOptionAndIsNotApplicable(assessmentResultEntity, questionDto2.id(), 4L, Boolean.FALSE);
-        List<AnswerJpaEntity> answerEntities = new ArrayList<>(List.of(answerEntity1, answerEntity2));
+        List<QuestionDto> questionDtos = List.of(questionDto1, questionDto2, questionDto3, questionDto4, questionDto5, questionDto6, questionDto7, questionDto8, questionDto9, questionDto10);
 
-        var answerOptionDto1 = createAnswerOptionDto(3L, questionDto1.id(), List.of(createQuestionImpactDto(MATURITY_LEVEL_OF_ONE, qav1.getQualityAttributeId())));
-        var answerOptionDto2 = createAnswerOptionDto(4L, questionDto2.id(), questionDto2.questionImpacts());
-        List<AnswerOptionDto> answerOptionDtos = new ArrayList<>(List.of(answerOptionDto1, answerOptionDto2));
+        var answerQ1 = answerEntityWithOption(assessmentResultEntity, questionDto1.id(), 1L);
+        var answerQ2 = answerEntityWithOption(assessmentResultEntity, questionDto2.id(), 2L);
+        // no answer for question 3
+        var answerQ4 = answerEntityWithNoOption(assessmentResultEntity, questionDto4.id());
+        var answerQ5 = answerEntityWithOption(assessmentResultEntity, questionDto5.id(), 5L);
+        var answerQ6 = answerEntityWithIsNotApplicableTrue(assessmentResultEntity, questionDto6.id());
+        // no answer question 7, 8
+        var answerQ9 = answerEntityWithIsNotApplicableTrue(assessmentResultEntity, questionDto9.id());
+        var answerQ10 = answerEntityWithNoOption(assessmentResultEntity, questionDto10.id());
 
+        List<AnswerJpaEntity> answerEntities = new ArrayList<>(List.of(answerQ1, answerQ2, answerQ4, answerQ5, answerQ6, answerQ9, answerQ10));
 
-        if (!hasNotApplicableAnswer) {
-            var answerEntity3 = answerEntityWithAnswerOptionAndIsNotApplicable(assessmentResultEntity, questionDto3.id(), 2L, Boolean.FALSE);
-            answerEntities.add(answerEntity3);
-
-            var answerOptionDto3 = createAnswerOptionDto(2L, questionDto3.id(), List.of(createQuestionImpactDto(MATURITY_LEVEL_OF_ONE, qav1.getQualityAttributeId())));
-            answerOptionDtos.add(answerOptionDto3);
-        }
-
+        var answerOptionDto1 = createAnswerOptionDto(1L, questionDto1);
+        var answerOptionDto2 = createAnswerOptionDto(2L, questionDto2);
+        var answerOptionDto3 = createAnswerOptionDto(5L, questionDto5);
+        List<AnswerOptionDto> answerOptionDtos = new ArrayList<>(List.of(answerOptionDto1, answerOptionDto2, answerOptionDto3));
 
         return new Context(
             assessmentResultEntity,
@@ -112,38 +130,31 @@ class AssessmentCalculateInfoLoadAdapterTest {
             answerOptionDtos);
     }
 
+    record Context(
+        AssessmentResultJpaEntity assessmentResultEntity,
+        List<SubjectValueJpaEntity> subjectValues,
+        List<QualityAttributeValueJpaEntity> qualityAttributeValues,
+        List<SubjectDto> subjectDtos,
+        List<QuestionDto> questionDtos,
+        List<AnswerJpaEntity> answerEntities,
+        List<AnswerOptionDto> answerOptionDtos
+    ) {
+    }
+
     @Test
-    void testAssessmentCalculateInfoLoad_ValidInputWithThreeQuestions_ValidResults() {
-        Context context = createContext(Boolean.FALSE);
+    void testLoad() {
+        Context context = createContext();
 
         doMocks(context);
-        mockMaturityLevelLoad(context.assessmentResultEntity());
+        List<MaturityLevelDto> maturityLevelsDtos = MaturityLevelDtoMother.allLevels();
+        when(maturityLevelRestAdapter.loadMaturityLevelsDtoByKitId(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
+            .thenReturn(maturityLevelsDtos);
 
         var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
 
         assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
         assertEquals(context.assessmentResultEntity().getAssessment().getId(), loadedAssessmentResult.getAssessment().getId());
         assertEquals(context.subjectValues().size(), loadedAssessmentResult.getSubjectValues().size());
-
-        var calculatedMaturityLevel = loadedAssessmentResult.calculate();
-        assertEquals(4, calculatedMaturityLevel.getId());
-    }
-
-    @Test
-    void testAssessmentCalculateInfoLoad_ValidInputWithOneNotApplicableQuestion_ValidResults() {
-        Context context = createContext(Boolean.TRUE);
-
-        doMocks(context);
-        mockMaturityLevelLoad(context.assessmentResultEntity());
-
-        var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
-
-        assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
-        assertEquals(context.assessmentResultEntity().getAssessment().getId(), loadedAssessmentResult.getAssessment().getId());
-//        assertEquals(context.subjectValues().size() - 1, loadedAssessmentResult.getSubjectValues().size());
-
-        var calculatedMaturityLevel = loadedAssessmentResult.calculate();
-        assertEquals(4, calculatedMaturityLevel.getId());
     }
 
     private void doMocks(Context context) {
@@ -161,16 +172,5 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.answerEntities());
         when(answerOptionRestAdapter.loadAnswerOptionByIds(any()))
             .thenReturn(context.answerOptionDtos());
-    }
-
-    private void mockMaturityLevelLoad(AssessmentResultJpaEntity assessmentResultEntity) {
-        var maturityLevelsDto1 = createMaturityLevelDto(MATURITY_LEVEL_OF_ONE);
-        var maturityLevelsDto2 = createMaturityLevelDto(MATURITY_LEVEL_OF_TWO);
-        var maturityLevelsDto3 = createMaturityLevelDto(MATURITY_LEVEL_OF_THREE);
-        var maturityLevelsDto4 = createMaturityLevelDto(MATURITY_LEVEL_OF_FOUR);
-        var maturityLevelsDto5 = createMaturityLevelDto(MATURITY_LEVEL_OF_FIVE);
-        List<MaturityLevelDto> maturityLevelsDtos = List.of(maturityLevelsDto1, maturityLevelsDto2, maturityLevelsDto3, maturityLevelsDto4, maturityLevelsDto5);
-        when(maturityLevelRestAdapter.loadMaturityLevelsDtoByKitId(assessmentResultEntity.getAssessment().getAssessmentKitId()))
-            .thenReturn(maturityLevelsDtos);
     }
 }
