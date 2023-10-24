@@ -21,7 +21,7 @@ public class SubjectValue {
     MaturityLevel maturityLevel;
 
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
-        calculateQualityAttributeValuesAndSetMaturityLevel(maturityLevels);
+        calculateAttributeValues(maturityLevels);
         int weightedMeanLevel = calculateWeightedMeanOfQualityAttributeValues();
         return maturityLevels.stream()
             .filter(m -> m.getLevel() == weightedMeanLevel)
@@ -29,7 +29,7 @@ public class SubjectValue {
             .orElseThrow(IllegalStateException::new);
     }
 
-    private void calculateQualityAttributeValuesAndSetMaturityLevel(List<MaturityLevel> maturityLevels) {
+    private void calculateAttributeValues(List<MaturityLevel> maturityLevels) {
         qualityAttributeValues.forEach(x -> {
             MaturityLevel calcResult = x.calculate(maturityLevels);
             x.setMaturityLevel(calcResult);
