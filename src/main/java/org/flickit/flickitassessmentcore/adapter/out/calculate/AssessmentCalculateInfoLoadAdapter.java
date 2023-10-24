@@ -83,7 +83,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         List<QuestionDto> allQuestionsDto = questionRestAdapter.loadByAssessmentKitId(assessmentKitId);
 
         // load all answers submitted with this assessmentResult
-        List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultIdAndAnswerOptionIdNotNull(assessmentResultId);
+        List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
 
         /*
         based on answers, extract all selected options
@@ -123,7 +123,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
             List<Question> impactfulApplicableQuestions = impactfulQuestions.stream()
                 .filter(question -> impactfulAnswers.stream()
-                    .anyMatch(answer -> answer.getSelectedOption().getQuestionId() == question.getId()))
+                    .anyMatch(answer -> answer.getQuestionId() == question.getId()))
                 .toList();
             if (impactfulApplicableQuestions.isEmpty()) {
                 continue;
@@ -168,9 +168,11 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .collect(toMap(AnswerOptionDto::id, x -> x));
         return context.allAnswerEntities.stream()
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
+            .filter(a -> a.getIsNotApplicable() != Boolean.TRUE) // It can be False or Null
             .map(entity -> {
                 AnswerOptionDto optionDto = idToAnswerOptionDto.get(entity.getAnswerOptionId());
-                return new Answer(entity.getId(), optionDto.dtoToDomain(), entity.getIsNotApplicable());
+                AnswerOption answerOption = optionDto != null ? optionDto.dtoToDomain() : null;
+                return new Answer(entity.getId(), answerOption, entity.getQuestionId(), entity.getIsNotApplicable());
             }).toList();
     }
 

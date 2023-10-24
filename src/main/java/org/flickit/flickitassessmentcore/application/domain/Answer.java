@@ -1,7 +1,6 @@
 package org.flickit.flickitassessmentcore.application.domain;
 
 import jakarta.annotation.Nullable;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +14,8 @@ public class Answer {
 
     @Nullable
     private final AnswerOption selectedOption;
+
+    private final Long questionId;
 
     private final Boolean isNotApplicable;
 

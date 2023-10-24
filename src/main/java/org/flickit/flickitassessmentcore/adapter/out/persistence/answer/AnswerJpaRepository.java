@@ -14,7 +14,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId);
 
-    List<AnswerJpaEntity> findByAssessmentResultIdAndAnswerOptionIdNotNull(UUID assessmentResultId);
+    List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
     Page<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIdAsc(UUID assessmentResultId, Long questionnaireId, Pageable pageable);
 
