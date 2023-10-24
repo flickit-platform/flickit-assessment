@@ -2,12 +2,12 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.attributematur
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaEntity;
-import org.hibernate.annotations.GenericGenerator;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
+@IdClass(AttributeMaturityScoreJpaEntity.EntityId.class)
 @Table(name = "fac_attribute_maturity_score")
 @Getter
 @Setter
@@ -18,19 +18,16 @@ import java.util.UUID;
 public class AttributeMaturityScoreJpaEntity {
 
     @Id
-    @EqualsAndHashCode.Include
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    @Column(name = "attribute_value_id", nullable = false)
+    private UUID attributeValueId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "quality_attribute_value_id", referencedColumnName = "id", nullable = false)
-    private QualityAttributeValueJpaEntity attributeValue;
-
+    @Id
     @Column(name = "maturity_level_id", nullable = false)
     private Long maturityLevelId;
 
     @Column(name = "score")
     private Double score;
+
+    public record EntityId(UUID attributeValueId, Long maturityLevelId) implements Serializable {
+    }
 }
