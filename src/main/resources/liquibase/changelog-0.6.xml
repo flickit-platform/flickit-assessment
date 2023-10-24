@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.6-01" author="Mahdi Rezazadeh">
+        <createTable tableName="fac_attribute_maturity_score">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_attribute_maturity_score"/>
+            </column>
+            <column name="quality_attribute_value_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="maturity_level_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score" type="DOUBLE PRECISION">
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.6-02" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fac_attribute_maturity_score"
+                                 baseColumnNames="quality_attribute_value_id"
+                                 referencedTableName="fac_quality_attribute_value"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_maturityscore_attributevalue"
+        />
+    </changeSet>
+
+    <changeSet id="0.6-03" author="Mahdi Rezazadeh">
+        <update tableName="fac_assessment_result">
+            <column name="is_valid" value="false"/>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

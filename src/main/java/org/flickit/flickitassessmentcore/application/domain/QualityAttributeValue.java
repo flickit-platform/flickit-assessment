@@ -19,6 +19,7 @@ public class QualityAttributeValue {
     private final UUID id;
     private final QualityAttribute qualityAttribute;
     private final List<Answer> answers;
+    private Set<MaturityScore> maturityScores = new HashSet<>();
 
     @Setter
     private Set<MaturityScore> scores;
@@ -30,6 +31,11 @@ public class QualityAttributeValue {
         Map<Long, Double> totalScore = calcTotalScore(maturityLevels);
         Map<Long, Double> gainedScore = calcGainedScore(maturityLevels);
         Map<Long, Double> percentScore = calcPercent(totalScore, gainedScore);
+        maturityLevels.forEach(ml -> {
+            long maturityLevelId = ml.getId();
+            MaturityScore maturityScore = new MaturityScore(maturityLevelId, percentScore.get(maturityLevelId));
+            maturityScores.add(maturityScore);
+        });
         return findGainedMaturityLevel(percentScore, maturityLevels);
     }
 

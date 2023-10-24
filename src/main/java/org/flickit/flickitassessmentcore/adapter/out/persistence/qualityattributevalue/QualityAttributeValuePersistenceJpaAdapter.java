@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattribu
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.attributematurityscore.AttributeMaturityScoreMapper;
 import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.CREATE_QUALITY_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
@@ -48,7 +50,9 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
                 x.getId(),
                 new QualityAttribute(x.getQualityAttributeId(), 1, null),
                 null,
-                null,
+                x.getMaturityScores().stream()
+                    .map(AttributeMaturityScoreMapper::mapToDomain)
+                    .collect(Collectors.toSet()),
                 maturityLevels.get(x.getMaturityLevelId())
             ))
             .toList();

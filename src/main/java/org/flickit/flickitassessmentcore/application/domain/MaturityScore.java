@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 public class MaturityScore {
 
     @EqualsAndHashCode.Include
-    private final Long maturityLevelId;
+    private final long maturityLevelId;
 
     private final Double score;
 }
