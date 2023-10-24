@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.application.domain;
 
-import org.flickit.flickitassessmentcore.application.domain.mother.*;
+import org.flickit.flickitassessmentcore.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -99,7 +99,33 @@ class QualityAttributeValueTest {
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
-            AnswerMother.noScoreOnLevel5());
+            AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5());
+
+        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
+            QualityAttributeMother.withQuestions(questions), answers);
+
+        MaturityLevel maturityLevel = qav.calculate(MaturityLevelMother.allLevels());
+
+        assertEquals(MaturityLevelMother.levelFour().getLevel(), maturityLevel.getLevel());
+    }
+
+    @Test
+    void calculate_withQuestionImpactfulOnLevel24AndMarkedAsNotApplicable() {
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel45());
+
+        List<Answer> answers = List.of(
+            AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.get(0).getId()),
+            AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.get(1).getId()),
+            AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.get(2).getId()),
+            AnswerMother.fullScoreOnLevels24(),
+            AnswerMother.fullScoreOnLevels24(),
+            AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5());
 
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);

@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.domain.mother;
+package org.flickit.flickitassessmentcore.test.fixture.application;
 
 import org.flickit.flickitassessmentcore.application.domain.Answer;
 import org.flickit.flickitassessmentcore.application.domain.AnswerOption;
@@ -41,8 +41,9 @@ public class AnswerMother {
             Boolean.FALSE);
     }
 
-    public static Answer noScoreOnLevel5() {
+    public static Answer fullScoreOnLevel4AndNoScoreOnLevel5() {
         AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
+            AnswerOptionImpactMother.onLevelFour(1),
             AnswerOptionImpactMother.onLevelFive(0)));
         return new Answer(UUID.randomUUID(),
             selectedOption,
@@ -70,8 +71,22 @@ public class AnswerMother {
             Boolean.FALSE);
     }
 
-    public static Answer answer(AnswerOption option, Boolean isNotApplicable) {
-        Long questionId = option != null ? option.getQuestionId() :  1L;
-        return new Answer(UUID.randomUUID(), option, questionId, isNotApplicable);
+    public static Answer answerWithNullNotApplicable(AnswerOption option) {
+        Long questionId = option != null ? option.getQuestionId() : 1L;
+        return new Answer(UUID.randomUUID(), option, questionId, null);
+    }
+
+    public static Answer answerWithNotApplicableFalse(AnswerOption option) {
+        Long questionId = option != null ? option.getQuestionId() : 1L;
+        return new Answer(UUID.randomUUID(), option, questionId, Boolean.FALSE);
+    }
+
+    public static Answer answerWithNotApplicableTrue(AnswerOption option) {
+        Long questionId = option != null ? option.getQuestionId() : 1L;
+        return new Answer(UUID.randomUUID(), option, questionId, Boolean.TRUE);
+    }
+
+    public static Answer answerWithQuestionIdAndNotApplicableTrue(long questionId) {
+        return new Answer(UUID.randomUUID(), null, questionId, Boolean.TRUE);
     }
 }

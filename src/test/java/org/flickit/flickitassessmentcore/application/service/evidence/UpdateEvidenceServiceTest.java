@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.flickit.flickitassessmentcore.application.domain.mother.EvidenceMother.simpleEvidence;
+import static org.flickit.flickitassessmentcore.test.fixture.application.EvidenceMother.simpleEvidence;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;

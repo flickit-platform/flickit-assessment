@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.domain.mother;
+package org.flickit.flickitassessmentcore.test.fixture.application;
 
 import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
 import org.flickit.flickitassessmentcore.application.domain.Question;

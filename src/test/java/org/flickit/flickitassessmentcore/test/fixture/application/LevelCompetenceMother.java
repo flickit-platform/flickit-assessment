@@ -1,9 +1,9 @@
-package org.flickit.flickitassessmentcore.application.domain.mother;
+package org.flickit.flickitassessmentcore.test.fixture.application;
 
 
 import org.flickit.flickitassessmentcore.application.domain.LevelCompetence;
 
-import static org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother.*;
+import static org.flickit.flickitassessmentcore.test.fixture.application.MaturityLevelMother.*;
 
 public class LevelCompetenceMother {
 

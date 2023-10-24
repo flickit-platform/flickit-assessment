@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.application.domain.mother;
+package org.flickit.flickitassessmentcore.test.fixture.application;
 
 import org.flickit.flickitassessmentcore.application.domain.*;
 
@@ -48,7 +48,7 @@ public class QualityAttributeValueMother {
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
-            AnswerMother.noScoreOnLevel5());
+            AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5());
 
 
         return new QualityAttributeValue(UUID.randomUUID(),

@@ -1,11 +1,11 @@
 package org.flickit.flickitassessmentcore.application.domain;
 
-import org.flickit.flickitassessmentcore.application.domain.mother.AnswerMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.AnswerOptionImpactMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.AnswerOptionMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.AnswerMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.AnswerOptionImpactMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.AnswerOptionMother;
 import org.junit.jupiter.api.Test;
 
-import static org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother.*;
+import static org.flickit.flickitassessmentcore.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AnswerTest {
