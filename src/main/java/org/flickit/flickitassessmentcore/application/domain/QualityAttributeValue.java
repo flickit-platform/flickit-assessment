@@ -21,6 +21,9 @@ public class QualityAttributeValue {
     private final List<Answer> answers;
 
     @Setter
+    private Set<MaturityScore> scores;
+
+    @Setter
     MaturityLevel maturityLevel;
 
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {

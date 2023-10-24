@@ -66,7 +66,7 @@ public class ReportSubjectService implements ReportSubjectUseCase {
 
     private List<AttributeReportItem> buildAttributes(List<QualityAttributeValue> attributeValues) {
         return attributeValues.stream()
-            .map(x -> new AttributeReportItem(x.getQualityAttribute().getId(), x.getMaturityLevel().getId()))
+            .map(x -> new AttributeReportItem(x.getQualityAttribute().getId(), x.getScores()))
             .toList();
     }
 }
