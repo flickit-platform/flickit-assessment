@@ -15,6 +15,6 @@ public record SubjectReport(SubjectReportItem subject,
                                     boolean isCalculateValid) {
     }
 
-    public record AttributeReportItem(Long id, Set<MaturityScore> maturityScores) {
+    public record AttributeReportItem(Long id, Long maturityLevelId, Set<MaturityScore> maturityScores) {
     }
 }

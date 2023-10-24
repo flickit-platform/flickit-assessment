@@ -22,9 +22,6 @@ public class QualityAttributeValue {
     private Set<MaturityScore> maturityScores = new HashSet<>();
 
     @Setter
-    private Set<MaturityScore> scores;
-
-    @Setter
     MaturityLevel maturityLevel;
 
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
