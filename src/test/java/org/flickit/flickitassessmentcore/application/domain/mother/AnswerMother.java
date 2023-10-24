@@ -71,6 +71,7 @@ public class AnswerMother {
     }
 
     public static Answer answer(AnswerOption option, Boolean isNotApplicable) {
-        return new Answer(UUID.randomUUID(), option, option.getQuestionId(), isNotApplicable);
+        Long questionId = option != null ? option.getQuestionId() :  1L;
+        return new Answer(UUID.randomUUID(), option, questionId, isNotApplicable);
     }
 }
