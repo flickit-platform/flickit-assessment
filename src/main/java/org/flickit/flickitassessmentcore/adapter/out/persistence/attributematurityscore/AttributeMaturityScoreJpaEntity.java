@@ -28,6 +28,9 @@ public class AttributeMaturityScoreJpaEntity {
     @Column(name = "score")
     private Double score;
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class EntityId implements Serializable {
         private UUID attributeValueId;
         private Long maturityLevelId;
