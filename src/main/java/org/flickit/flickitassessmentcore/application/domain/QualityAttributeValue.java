@@ -3,7 +3,6 @@ package org.flickit.flickitassessmentcore.application.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -20,9 +19,7 @@ public class QualityAttributeValue {
     private final QualityAttribute qualityAttribute;
     private final List<Answer> answers;
     private Set<MaturityScore> maturityScores = new HashSet<>();
-
-    @Setter
-    MaturityLevel maturityLevel;
+    private MaturityLevel maturityLevel;
 
     public void calculate(List<MaturityLevel> maturityLevels) {
         Map<Long, Double> totalScore = calcTotalScore(maturityLevels);
