@@ -33,7 +33,8 @@ public class AssessmentPersistenceJpaAdapter implements
     GetAssessmentPort,
     DeleteAssessmentPort,
     CheckAssessmentExistencePort,
-    CountAssessmentsPort {
+    CountAssessmentsPort,
+    UpdateAssessmentByIdPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -133,4 +134,8 @@ public class AssessmentPersistenceJpaAdapter implements
         return (r, cq, cb) -> cb.equal(r.get("deleted"), deleted);
     }
 
+    @Override
+    public void updateById(UpdateAssessmentByIdPort.Param param) {
+        repository.updateById(param.id(), param.lastModificationTime());
+    }
 }

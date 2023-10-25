@@ -2,6 +2,7 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CalculateAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentByIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
@@ -18,6 +19,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
     private final LoadCalculateInfoPort loadCalculateInfoPort;
     private final UpdateCalculatedResultPort updateCalculatedResultPort;
+    private final UpdateAssessmentByIdPort updateAssessmentByIdPort;
 
     @Override
     public Result calculateMaturityLevel(Param param) {
@@ -29,6 +31,12 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         assessmentResult.setLastModificationTime(LocalDateTime.now());
 
         updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
+
+        UpdateAssessmentByIdPort.Param updateAssessmentById = new UpdateAssessmentByIdPort.Param(
+            param.getAssessmentId(),
+            assessmentResult.getLastModificationTime());
+        updateAssessmentByIdPort.updateById(updateAssessmentById);
+
 
         return new Result(calcResult);
     }
