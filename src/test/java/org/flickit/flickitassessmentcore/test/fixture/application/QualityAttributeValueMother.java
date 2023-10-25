@@ -5,6 +5,8 @@ import org.flickit.flickitassessmentcore.application.domain.*;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.application.domain.mother.MaturityScoreMother.maturityScoresOnAllLevels;
+
 public class QualityAttributeValueMother {
 
     public static QualityAttributeValue toBeCalcWithQAAndAnswers(QualityAttribute qualityAttribute, List<Answer> answers) {
@@ -57,12 +59,11 @@ public class QualityAttributeValueMother {
     }
 
     public static QualityAttributeValue withAttributeAndMaturityLevel(QualityAttribute attribute, MaturityLevel maturityLevel) {
-        QualityAttributeValue attributeValue = new QualityAttributeValue(
+        return new QualityAttributeValue(
             UUID.randomUUID(),
             attribute,
-            null);
-
-        attributeValue.setMaturityLevel(maturityLevel);
-        return attributeValue;
+            null,
+            maturityScoresOnAllLevels(),
+            maturityLevel);
     }
 }

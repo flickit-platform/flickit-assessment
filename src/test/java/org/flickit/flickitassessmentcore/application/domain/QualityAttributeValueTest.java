@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother.allLevels;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class QualityAttributeValueTest {
@@ -28,9 +29,9 @@ class QualityAttributeValueTest {
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
 
-        qav.calculate(MaturityLevelMother.allLevels());
+        qav.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelFive().getLevel(), qav.maturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelFive().getLevel(), qav.getMaturityLevel().getLevel());
     }
 
     @Test
@@ -54,9 +55,9 @@ class QualityAttributeValueTest {
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
 
-        qav.calculate(MaturityLevelMother.allLevels());
+        qav.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelThree().getLevel(), qav.maturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelThree().getLevel(), qav.getMaturityLevel().getLevel());
     }
 
     @Test
@@ -78,9 +79,16 @@ class QualityAttributeValueTest {
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
 
-        qav.calculate(MaturityLevelMother.allLevels());
+        qav.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelFive().getLevel(), qav.maturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelFive().getLevel(), qav.getMaturityLevel().getLevel());
+        assertEquals(allLevels().size(), qav.getMaturityScores().size());
+
+        List<MaturityScore> matchingScores = qav.getMaturityScores().stream()
+            .filter(score -> allLevels().stream()
+                .anyMatch(level -> level.getId() == score.getMaturityLevelId()))
+            .toList();
+        assertEquals(allLevels().size(), matchingScores.size());
     }
 
     @Test
@@ -130,8 +138,8 @@ class QualityAttributeValueTest {
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
 
-        qav.calculate(MaturityLevelMother.allLevels());
+        qav.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelFour().getLevel(), qav.maturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelFour().getLevel(), qav.getMaturityLevel().getLevel());
     }
 }
