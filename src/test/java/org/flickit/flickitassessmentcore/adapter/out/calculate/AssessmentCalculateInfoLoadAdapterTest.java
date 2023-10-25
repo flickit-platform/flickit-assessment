@@ -107,19 +107,19 @@ class AssessmentCalculateInfoLoadAdapterTest {
     }
 
     private static void assertSubjectValues(List<SubjectValueJpaEntity> subjectValueEntities, List<SubjectValue> resultSubjectValues) {
-        subjectValueEntities.forEach(entity -> {
+        subjectValueEntities.forEach(entity ->
             resultSubjectValues.stream()
                 .filter(sv -> sv.getId() == entity.getId())
                 .findFirst()
                 .ifPresentOrElse(
                     sv -> assertEquals(entity.getSubjectId(), sv.getSubject().getId()),
                     Assertions::fail
-                );
-        });
+                )
+        );
     }
 
     private static void assertAttributeValues(List<QualityAttributeValueJpaEntity> attributeValueJpaEntities, List<QualityAttributeValue> resultAttributeValues) {
-        attributeValueJpaEntities.forEach(entity -> {
+        attributeValueJpaEntities.forEach(entity ->
             resultAttributeValues.stream()
                 .filter(av -> av.getId() == entity.getId())
                 .findFirst()
@@ -130,14 +130,14 @@ class AssessmentCalculateInfoLoadAdapterTest {
                         assertEquals(5, av.getQualityAttribute().getQuestions().size());
                     },
                     Assertions::fail
-                );
-        });
+                )
+        );
     }
 
     private static void assertAnswers(List<AnswerJpaEntity> answerEntities, List<Answer> loadedAnswers) {
         assertEquals(answerEntities.size(), loadedAnswers.size());
 
-        answerEntities.forEach(entity -> {
+        answerEntities.forEach(entity ->
             loadedAnswers.stream()
                 .filter(a -> a.getId() == entity.getId())
                 .findFirst()
@@ -153,9 +153,8 @@ class AssessmentCalculateInfoLoadAdapterTest {
                         assertEquals(entity.getIsNotApplicable(), a.getIsNotApplicable());
                     },
                     Assertions::fail
-                );
-        });
-
+                )
+        );
     }
 
     private static Context createContext() {
