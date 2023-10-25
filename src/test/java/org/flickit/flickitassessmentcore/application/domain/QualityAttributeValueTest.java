@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother.allLevels;
+import static org.flickit.flickitassessmentcore.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class QualityAttributeValueTest {
@@ -112,9 +112,9 @@ class QualityAttributeValueTest {
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
 
-        qav.calculate(MaturityLevelMother.allLevels());
+        qav.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelFour().getLevel(), qav.maturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelFour().getLevel(), qav.getMaturityLevel().getLevel());
     }
 
     @Test

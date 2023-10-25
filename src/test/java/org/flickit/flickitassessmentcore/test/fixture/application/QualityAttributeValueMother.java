@@ -5,7 +5,7 @@ import org.flickit.flickitassessmentcore.application.domain.*;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.application.domain.mother.MaturityScoreMother.maturityScoresOnAllLevels;
+import static org.flickit.flickitassessmentcore.test.fixture.application.MaturityScoreMother.maturityScoresOnAllLevels;
 
 public class QualityAttributeValueMother {
 
