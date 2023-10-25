@@ -36,14 +36,14 @@ public class QualityAttributeValue {
         return maturityLevels.stream()
             .flatMap(ml ->
                 qualityAttribute.getQuestions().stream()
-                    .filter(question -> !markedAsNotApplicable(question.getId()))
+                    .filter(question -> !isMarkedAsNotApplicable(question.getId()))
                     .map(question -> question.findImpactByMaturityLevel(ml))
                     .filter(Objects::nonNull)
                     .map(impact -> new MaturityLevelScore(ml, impact.getWeight()))
             ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
     }
 
-    private boolean markedAsNotApplicable(Long questionId) {
+    private boolean isMarkedAsNotApplicable(Long questionId) {
         return answers.stream()
             .anyMatch(answer -> answer.getQuestionId().equals(questionId) && Boolean.TRUE.equals(answer.getIsNotApplicable()));
     }
