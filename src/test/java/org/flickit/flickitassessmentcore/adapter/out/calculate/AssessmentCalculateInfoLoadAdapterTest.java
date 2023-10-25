@@ -2,6 +2,7 @@ package org.flickit.flickitassessmentcore.adapter.out.calculate;
 
 import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaRepository;
+import org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaEntity;
@@ -17,10 +18,12 @@ import org.flickit.flickitassessmentcore.adapter.out.rest.question.QuestionRestA
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectDto;
 import org.flickit.flickitassessmentcore.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.flickitassessmentcore.application.domain.Answer;
+import org.flickit.flickitassessmentcore.application.domain.Assessment;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
 import org.flickit.flickitassessmentcore.test.fixture.adapter.dto.MaturityLevelDtoMother;
 import org.flickit.flickitassessmentcore.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,6 +33,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.flickit.flickitassessmentcore.test.fixture.adapter.dto.AnswerOptionDtoMother.createAnswerOptionDto;
 import static org.flickit.flickitassessmentcore.test.fixture.adapter.dto.MaturityLevelDtoMother.*;
@@ -38,8 +43,7 @@ import static org.flickit.flickitassessmentcore.test.fixture.adapter.dto.Subject
 import static org.flickit.flickitassessmentcore.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
 import static org.flickit.flickitassessmentcore.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
 import static org.flickit.flickitassessmentcore.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -64,6 +68,95 @@ class AssessmentCalculateInfoLoadAdapterTest {
     private AnswerOptionRestAdapter answerOptionRestAdapter;
     @Mock
     private MaturityLevelRestAdapter maturityLevelRestAdapter;
+
+    @Test
+    void testLoad() {
+        Context context = createContext();
+
+        doMocks(context);
+        List<MaturityLevelDto> maturityLevelsDtos = MaturityLevelDtoMother.allLevels();
+        when(maturityLevelRestAdapter.loadMaturityLevelsDtoByKitId(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
+            .thenReturn(maturityLevelsDtos);
+
+        var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
+
+        assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
+
+        assertAssessment(context.assessmentResultEntity().getAssessment(), loadedAssessmentResult.getAssessment());
+
+        assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues());
+
+        var resultAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
+            .flatMap(sv -> sv.getQualityAttributeValues().stream())
+            .toList();
+        assertAttributeValues(context.qualityAttributeValues, resultAttributeValues);
+
+        List<Answer> answers = new ArrayList<>(resultAttributeValues.stream()
+            .flatMap(qav -> qav.getAnswers().stream())
+            .collect(Collectors.toMap(Answer::getId, Function.identity(), (a, b) -> a))
+            .values());
+
+        assertAnswers(context.answerEntities, answers);
+
+    }
+
+    private static void assertAssessment(AssessmentJpaEntity assessmentEntity, Assessment resultAssessment) {
+        assertEquals(assessmentEntity.getId(), resultAssessment.getId());
+        assertEquals(assessmentEntity.getAssessmentKitId(), resultAssessment.getAssessmentKit().getId());
+        assertEquals(allLevels().size(), resultAssessment.getAssessmentKit().getMaturityLevels().size());
+    }
+
+    private static void assertSubjectValues(List<SubjectValueJpaEntity> subjectValueEntities, List<SubjectValue> resultSubjectValues) {
+        subjectValueEntities.forEach(entity -> {
+            resultSubjectValues.stream()
+                .filter(sv -> sv.getId() == entity.getId())
+                .findFirst()
+                .ifPresentOrElse(
+                    sv -> assertEquals(entity.getSubjectId(), sv.getSubject().getId()),
+                    Assertions::fail
+                );
+        });
+    }
+
+    private static void assertAttributeValues(List<QualityAttributeValueJpaEntity> attributeValueJpaEntities, List<QualityAttributeValue> resultAttributeValues) {
+        attributeValueJpaEntities.forEach(entity -> {
+            resultAttributeValues.stream()
+                .filter(av -> av.getId() == entity.getId())
+                .findFirst()
+                .ifPresentOrElse(
+                    av -> {
+                        assertNotNull(av.getQualityAttribute());
+                        assertNotNull(av.getQualityAttribute().getQuestions());
+                        assertEquals(5, av.getQualityAttribute().getQuestions().size());
+                    },
+                    Assertions::fail
+                );
+        });
+    }
+
+    private static void assertAnswers(List<AnswerJpaEntity> answerEntities, List<Answer> loadedAnswers) {
+        assertEquals(answerEntities.size(), loadedAnswers.size());
+
+        answerEntities.forEach(entity -> {
+            loadedAnswers.stream()
+                .filter(a -> a.getId() == entity.getId())
+                .findFirst()
+                .ifPresentOrElse(
+                    a -> {
+                        assertEquals(entity.getQuestionId(), a.getQuestionId());
+                        if (entity.getAnswerOptionId() == null)
+                            assertNull(a.getSelectedOption());
+                        else {
+                            assertNotNull(a.getSelectedOption());
+                            assertEquals(entity.getAnswerOptionId(), a.getSelectedOption().getId());
+                        }
+                        assertEquals(entity.getIsNotApplicable(), a.getIsNotApplicable());
+                    },
+                    Assertions::fail
+                );
+        });
+
+    }
 
     private static Context createContext() {
         var assessmentResultEntity = AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity(null, Boolean.FALSE);
@@ -132,64 +225,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
             questionDtos,
             answerEntities,
             answerOptionDtos);
-    }
-
-    @Test
-    void testLoad() {
-        Context context = createContext();
-
-        doMocks(context);
-        List<MaturityLevelDto> maturityLevelsDtos = MaturityLevelDtoMother.allLevels();
-        when(maturityLevelRestAdapter.loadMaturityLevelsDtoByKitId(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
-            .thenReturn(maturityLevelsDtos);
-
-        var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
-
-        assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
-
-        assertEquals(context.assessmentResultEntity().getAssessment().getId(), loadedAssessmentResult.getAssessment().getId());
-
-        var loadedSubjectValues = loadedAssessmentResult.getSubjectValues().stream()
-            .map(SubjectValue::getId)
-            .toList();
-        assertTrue(context.subjectValues.stream()
-            .map(SubjectValueJpaEntity::getId)
-            .allMatch(loadedSubjectValues::contains));
-
-        var loadedSubjects = loadedAssessmentResult.getSubjectValues().stream()
-            .map(sv -> sv.getSubject().getId())
-            .toList();
-        assertTrue(context.subjectDtos.stream()
-            .map(SubjectDto::id)
-            .allMatch(loadedSubjects::contains));
-
-        var loadedQualityAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
-            .flatMap(sv -> sv.getQualityAttributeValues().stream())
-            .toList();
-        assertTrue(context.qualityAttributeValues.stream()
-            .map(QualityAttributeValueJpaEntity::getId)
-            .allMatch(qav -> loadedQualityAttributeValues.stream()
-                .map(QualityAttributeValue::getId)
-                .toList()
-                .contains(qav)));
-
-        var loadedAnswers = loadedQualityAttributeValues.stream()
-            .flatMap(qav -> qav.getAnswers().stream())
-            .toList();
-        assertTrue(context.answerEntities.stream()
-            .map(AnswerJpaEntity::getId)
-            .allMatch(a -> loadedAnswers.stream()
-                .map(Answer::getId)
-                .toList()
-                .contains(a)));
-
-        var loadedQuestions = loadedAnswers.stream()
-            .map(Answer::getQuestionId)
-            .toList();
-        assertTrue(context.answerEntities.stream()
-            .map(AnswerJpaEntity::getQuestionId)
-            .allMatch(loadedQuestions::contains));
-
     }
 
     private void doMocks(Context context) {
