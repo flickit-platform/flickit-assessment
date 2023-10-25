@@ -7,6 +7,7 @@ import org.flickit.flickitassessmentcore.application.domain.mother.AssessmentRes
 import org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeValueMother;
 import org.flickit.flickitassessmentcore.application.domain.mother.SubjectValueMother;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CalculateAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentByIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,9 @@ class CalculateAssessmentServiceTest {
 
     @Mock
     private UpdateCalculatedResultPort updateCalculatedResultPort;
+
+    @Mock
+    private UpdateAssessmentByIdPort updateAssessmentByIdPort;
 
     @Test
     void testCalculateMaturityLevel() {
@@ -62,6 +66,7 @@ class CalculateAssessmentServiceTest {
 
         CalculateAssessmentUseCase.Result result = service.calculateMaturityLevel(param);
         verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
+        verify(updateAssessmentByIdPort, times(1)).updateById(any(UpdateAssessmentByIdPort.Param.class));
 
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
