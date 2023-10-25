@@ -2,10 +2,15 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.attributematur
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface AttributeMaturityScoreJpaRepository extends JpaRepository<AttributeMaturityScoreJpaEntity, UUID> {
+public interface AttributeMaturityScoreJpaRepository extends
+    JpaRepository<AttributeMaturityScoreJpaEntity, AttributeMaturityScoreJpaEntity.EntityId> {
 
-    Optional<AttributeMaturityScoreJpaEntity> findByAttributeValue_IdAndMaturityLevelId(UUID id, long maturityLevelId);
+    Optional<AttributeMaturityScoreJpaEntity> findByAttributeValueIdAndMaturityLevelId(UUID attributeValueId, long maturityLevelId);
+
+    List<AttributeMaturityScoreJpaEntity> findByAttributeValueIdIn(Collection<UUID> attributeValueIds);
 }

@@ -3,10 +3,8 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattribu
 import jakarta.persistence.*;
 import lombok.*;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.attributematurityscore.AttributeMaturityScoreJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -35,7 +33,4 @@ public class QualityAttributeValueJpaEntity {
 
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
-
-    @OneToMany(mappedBy = "attributeValue")
-    private Set<AttributeMaturityScoreJpaEntity> maturityScores;
 }
