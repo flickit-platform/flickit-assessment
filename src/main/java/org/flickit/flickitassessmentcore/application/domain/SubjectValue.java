@@ -21,19 +21,13 @@ public class SubjectValue {
     MaturityLevel maturityLevel;
 
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
-        calculateAttributeValues(maturityLevels);
+        qualityAttributeValues.forEach(x -> x.calculate(maturityLevels));
+
         int weightedMeanLevel = calculateWeightedMeanOfQualityAttributeValues();
         return maturityLevels.stream()
             .filter(m -> m.getLevel() == weightedMeanLevel)
             .findAny()
             .orElseThrow(IllegalStateException::new);
-    }
-
-    private void calculateAttributeValues(List<MaturityLevel> maturityLevels) {
-        qualityAttributeValues.forEach(x -> {
-            MaturityLevel calcResult = x.calculate(maturityLevels);
-            x.setMaturityLevel(calcResult);
-        });
     }
 
     private int calculateWeightedMeanOfQualityAttributeValues() {

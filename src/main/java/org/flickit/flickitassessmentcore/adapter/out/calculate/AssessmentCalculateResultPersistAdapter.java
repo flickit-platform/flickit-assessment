@@ -18,7 +18,7 @@ public class AssessmentCalculateResultPersistAdapter implements UpdateCalculated
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
-    private final QualityAttributeValueJpaRepository qualityAttributeValueRepo;
+    private final QualityAttributeValueJpaRepository attributeValueRepo;
     private final AttributeMaturityScorePersistenceJpaAdapter attributeMaturityScoreAdapter;
 
     @Override
@@ -33,10 +33,10 @@ public class AssessmentCalculateResultPersistAdapter implements UpdateCalculated
 
         subjectValues.stream()
             .flatMap(x -> x.getQualityAttributeValues().stream())
-            .forEach(q -> {
-                qualityAttributeValueRepo.updateMaturityLevelById(q.getId(), q.getMaturityLevel().getId());
-                q.getMaturityScores().forEach(maturityScore ->
-                    attributeMaturityScoreAdapter.saveOrUpdate(q.getId(), maturityScore)
+            .forEach(qav -> {
+                attributeValueRepo.updateMaturityLevelById(qav.getId(), qav.getMaturityLevel().getId());
+                qav.getMaturityScores().forEach(maturityScore ->
+                    attributeMaturityScoreAdapter.saveOrUpdate(qav.getId(), maturityScore)
                 );
             });
     }

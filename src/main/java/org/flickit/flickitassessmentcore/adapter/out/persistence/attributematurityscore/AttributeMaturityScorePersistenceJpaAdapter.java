@@ -1,7 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.attributematurityscore;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.flickitassessmentcore.application.domain.MaturityScore;
 import org.springframework.stereotype.Component;
 
@@ -12,19 +11,16 @@ import java.util.UUID;
 public class AttributeMaturityScorePersistenceJpaAdapter {
 
     private final AttributeMaturityScoreJpaRepository repository;
-    private final QualityAttributeValueJpaRepository qualityAttributeValueRepo;
 
-    public void saveOrUpdate(UUID qualityAttributeValueId, MaturityScore s) {
-        var savedEntity = repository.findByAttributeValue_IdAndMaturityLevelId(qualityAttributeValueId, s.getMaturityLevelId());
-        if (savedEntity.isPresent()) {
-            var entity = savedEntity.get();
-            entity.setScore(s.getScore());
+    public void saveOrUpdate(UUID attributeValueId, MaturityScore score) {
+        var existingEntity = repository.findByAttributeValueIdAndMaturityLevelId(attributeValueId, score.getMaturityLevelId());
+        existingEntity.ifPresentOrElse(x -> {
+            x.setScore(score.getScore());
+            repository.save(x);
+        }, () -> {
+            AttributeMaturityScoreJpaEntity entity =
+                new AttributeMaturityScoreJpaEntity(attributeValueId, score.getMaturityLevelId(), score.getScore());
             repository.save(entity);
-        }
-        else {
-            var qualityAttributeValue = qualityAttributeValueRepo.findById(qualityAttributeValueId).get();
-            var entity = new AttributeMaturityScoreJpaEntity(null, qualityAttributeValue, s.getMaturityLevelId(), s.getScore());
-            repository.save(entity);
-        }
+        });
     }
 }
