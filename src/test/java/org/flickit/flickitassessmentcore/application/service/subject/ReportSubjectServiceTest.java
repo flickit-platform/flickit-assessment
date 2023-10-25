@@ -76,6 +76,9 @@ class ReportSubjectServiceTest {
         assertEquals(assessmentResult.isValid(), subjectReport.subject().isCalculateValid());
 
         assertEquals(qaValues.size(), subjectReport.attributes().size());
+        for (SubjectReport.AttributeReportItem attribute : subjectReport.attributes()) {
+            assertEquals(allLevels().size(), attribute.maturityScores().size());
+        }
 
         assertNotNull(subjectReport.topStrengths());
         assertEquals(3, subjectReport.topStrengths().size());
