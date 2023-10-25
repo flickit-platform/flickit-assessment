@@ -28,9 +28,9 @@ class QualityAttributeValueTest {
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
 
-        MaturityLevel maturityLevel = qav.calculate(MaturityLevelMother.allLevels());
+        qav.calculate(MaturityLevelMother.allLevels());
 
-        assertEquals(MaturityLevelMother.levelFive().getLevel(), maturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelFive().getLevel(), qav.maturityLevel.getLevel());
     }
 
     @Test
@@ -54,9 +54,9 @@ class QualityAttributeValueTest {
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
 
-        MaturityLevel maturityLevel = qav.calculate(MaturityLevelMother.allLevels());
+        qav.calculate(MaturityLevelMother.allLevels());
 
-        assertEquals(MaturityLevelMother.levelThree().getLevel(), maturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelThree().getLevel(), qav.maturityLevel.getLevel());
     }
 
     @Test
@@ -78,9 +78,9 @@ class QualityAttributeValueTest {
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
 
-        MaturityLevel maturityLevel = qav.calculate(MaturityLevelMother.allLevels());
+        qav.calculate(MaturityLevelMother.allLevels());
 
-        assertEquals(MaturityLevelMother.levelFive().getLevel(), maturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelFive().getLevel(), qav.maturityLevel.getLevel());
     }
 
     @Test
@@ -130,8 +130,8 @@ class QualityAttributeValueTest {
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
 
-        MaturityLevel maturityLevel = qav.calculate(MaturityLevelMother.allLevels());
+        qav.calculate(MaturityLevelMother.allLevels());
 
-        assertEquals(MaturityLevelMother.levelFour().getLevel(), maturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelFour().getLevel(), qav.maturityLevel.getLevel());
     }
 }
