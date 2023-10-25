@@ -104,9 +104,9 @@ class QualityAttributeValueTest {
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
 
-        MaturityLevel maturityLevel = qav.calculate(MaturityLevelMother.allLevels());
+        qav.calculate(MaturityLevelMother.allLevels());
 
-        assertEquals(MaturityLevelMother.levelFour().getLevel(), maturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelFour().getLevel(), qav.maturityLevel.getLevel());
     }
 
     @Test

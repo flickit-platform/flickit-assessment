@@ -149,7 +149,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
         assertEquals(context.assessmentResultEntity().getAssessment().getId(), loadedAssessmentResult.getAssessment().getId());
 
-/*        var loadedSubjectValues = loadedAssessmentResult.getSubjectValues().stream()
+        var loadedSubjectValues = loadedAssessmentResult.getSubjectValues().stream()
             .map(SubjectValue::getId)
             .toList();
         assertTrue(context.subjectValues.stream()
@@ -188,7 +188,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .toList();
         assertTrue(context.answerEntities.stream()
             .map(AnswerJpaEntity::getQuestionId)
-            .allMatch(loadedQuestions::contains));*/
+            .allMatch(loadedQuestions::contains));
 
     }
 
