@@ -1,11 +1,14 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
-import org.flickit.flickitassessmentcore.application.domain.*;
-import org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother;
+import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
+import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
+import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
+import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
 import org.flickit.flickitassessmentcore.application.domain.report.AssessmentReport;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.flickitassessmentcore.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
+import org.flickit.flickitassessmentcore.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,11 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.flickitassessmentcore.application.domain.mother.AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel;
-import static org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother.*;
-import static org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeMother.simpleAttribute;
-import static org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeValueMother.withAttributeAndMaturityLevel;
-import static org.flickit.flickitassessmentcore.application.domain.mother.SubjectValueMother.withQAValuesAndMaturityLevel;
+import static org.flickit.flickitassessmentcore.test.fixture.application.AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel;
+import static org.flickit.flickitassessmentcore.test.fixture.application.MaturityLevelMother.*;
+import static org.flickit.flickitassessmentcore.test.fixture.application.QualityAttributeMother.simpleAttribute;
+import static org.flickit.flickitassessmentcore.test.fixture.application.QualityAttributeValueMother.withAttributeAndMaturityLevel;
+import static org.flickit.flickitassessmentcore.test.fixture.application.SubjectValueMother.withQAValuesAndMaturityLevel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;

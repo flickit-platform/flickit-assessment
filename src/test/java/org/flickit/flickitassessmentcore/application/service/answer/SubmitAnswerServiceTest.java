@@ -3,15 +3,15 @@ package org.flickit.flickitassessmentcore.application.service.answer;
 import org.flickit.flickitassessmentcore.application.domain.Answer;
 import org.flickit.flickitassessmentcore.application.domain.AnswerOption;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
-import org.flickit.flickitassessmentcore.application.domain.mother.AnswerMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.AnswerOptionMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.AssessmentResultMother;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.flickitassessmentcore.test.fixture.application.AnswerMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.AnswerOptionMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -136,7 +136,7 @@ class SubmitAnswerServiceTest {
         Boolean isNotApplicable = Boolean.FALSE;
         Long newAnswerOptionId = AnswerOptionMother.optionTwo().getId();
         AnswerOption oldAnswerOption = AnswerOptionMother.optionOne();
-        Answer existAnswer = AnswerMother.answer(oldAnswerOption, isNotApplicable);
+        Answer existAnswer = AnswerMother.answerWithNotApplicableFalse(oldAnswerOption);
 
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadExistAnswerViewPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
@@ -161,7 +161,7 @@ class SubmitAnswerServiceTest {
         AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         Boolean isNotApplicable = Boolean.TRUE;
         AnswerOption oldAnswerOption = AnswerOptionMother.optionOne();
-        Answer existAnswer = AnswerMother.answer(oldAnswerOption, isNotApplicable);
+        Answer existAnswer = AnswerMother.answerWithNotApplicableTrue(oldAnswerOption);
 
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadExistAnswerViewPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
@@ -186,14 +186,13 @@ class SubmitAnswerServiceTest {
     @Test
     void testSubmitAnswer_AnswerWithSameAnswerOption_DoNotInvalidateAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
-        Boolean isNotApplicable = Boolean.FALSE;
         AnswerOption sameAnswerOption = AnswerOptionMother.optionTwo();
-        Answer existAnswer = AnswerMother.answer(sameAnswerOption, isNotApplicable);
+        Answer existAnswer = AnswerMother.answerWithNullNotApplicable(sameAnswerOption);
 
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadExistAnswerViewPort.load(assessmentResult.getId(), QUESTIONNAIRE_ID)).thenReturn(Optional.of(existAnswer));
 
-        var param = new SubmitAnswerUseCase.Param(assessmentResult.getId(), QUESTIONNAIRE_ID, QUESTIONNAIRE_ID, sameAnswerOption.getId(), isNotApplicable);
+        var param = new SubmitAnswerUseCase.Param(assessmentResult.getId(), QUESTIONNAIRE_ID, QUESTIONNAIRE_ID, sameAnswerOption.getId(), null);
         service.submitAnswer(param);
 
         verify(loadExistAnswerViewPort, times(1)).load(assessmentResult.getId(), QUESTIONNAIRE_ID);
@@ -203,10 +202,9 @@ class SubmitAnswerServiceTest {
     @Test
     void testSubmitAnswer_AnswerExistsNotApplicableChanged_UpdatesAnswerAndInvalidatesAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
-        Boolean oldIsNotApplicable = Boolean.TRUE;
         Boolean newIsNotApplicable = Boolean.FALSE;
         AnswerOption answerOption = AnswerOptionMother.optionOne();
-        Answer existAnswer = AnswerMother.answer(answerOption, oldIsNotApplicable);
+        Answer existAnswer = AnswerMother.answerWithNotApplicableTrue(answerOption);
 
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadExistAnswerViewPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
@@ -232,13 +230,12 @@ class SubmitAnswerServiceTest {
     @Test
     void testSubmitAnswer_AnswerWithSameIsNotApplicableExists_DoNotInvalidateAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
-        Boolean sameIsNotApplicable = Boolean.TRUE;
-        Answer existAnswer = AnswerMother.answer(null, sameIsNotApplicable);
+        Answer existAnswer = AnswerMother.answerWithNotApplicableTrue(null);
 
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadExistAnswerViewPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
-        var param = new SubmitAnswerUseCase.Param(assessmentResult.getId(), QUESTIONNAIRE_ID, QUESTION_ID, null, sameIsNotApplicable);
+        var param = new SubmitAnswerUseCase.Param(assessmentResult.getId(), QUESTIONNAIRE_ID, QUESTION_ID, null, Boolean.TRUE);
         service.submitAnswer(param);
 
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(any());
