@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID> {
+public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID>, JpaSpecificationExecutor<AssessmentJpaEntity> {
 
     @Query("SELECT a as assessment, r.maturityLevelId as maturityLevelId, r.isValid as isCalculateValid " +
         "FROM AssessmentJpaEntity a " +
@@ -47,18 +48,12 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
-    @Query("SELECT COUNT(a) " +
-        "FROM AssessmentJpaEntity a " +
-        "WHERE a.assessmentKitId = :assessmentKitId")
-    int countTotalByKitId(Long assessmentKitId);
-
-    @Query("SELECT COUNT(a) " +
-        "FROM AssessmentJpaEntity a " +
-        "WHERE a.assessmentKitId = :assessmentKitId AND a.deleted = true")
-    int countDeletedByKitId(Long assessmentKitId);
-
-    @Query("SELECT COUNT(a) " +
-        "FROM AssessmentJpaEntity a " +
-        "WHERE a.assessmentKitId = :assessmentKitId AND a.deleted = false")
-    int countNotDeletedByKitId(Long assessmentKitId);
+    @Modifying
+    @Query("UPDATE AssessmentJpaEntity a SET " +
+        "a.lastModificationTime = :lastModificationTime " +
+        "WHERE a.id = :id")
+    void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime);
 }
+
+
+
