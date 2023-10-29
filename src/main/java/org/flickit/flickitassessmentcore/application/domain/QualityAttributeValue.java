@@ -3,7 +3,6 @@ package org.flickit.flickitassessmentcore.application.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -19,15 +18,19 @@ public class QualityAttributeValue {
     private final UUID id;
     private final QualityAttribute qualityAttribute;
     private final List<Answer> answers;
+    private Set<MaturityScore> maturityScores = new HashSet<>();
+    private MaturityLevel maturityLevel;
 
-    @Setter
-    MaturityLevel maturityLevel;
-
-    public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
+    public void calculate(List<MaturityLevel> maturityLevels) {
         Map<Long, Double> totalScore = calcTotalScore(maturityLevels);
         Map<Long, Double> gainedScore = calcGainedScore(maturityLevels);
         Map<Long, Double> percentScore = calcPercent(totalScore, gainedScore);
-        return findGainedMaturityLevel(percentScore, maturityLevels);
+        maturityLevels.forEach(ml -> {
+            long maturityLevelId = ml.getId();
+            MaturityScore maturityScore = new MaturityScore(maturityLevelId, percentScore.get(maturityLevelId));
+            maturityScores.add(maturityScore);
+        });
+        maturityLevel = findGainedMaturityLevel(percentScore, maturityLevels);
     }
 
     private Map<Long, Double> calcTotalScore(List<MaturityLevel> maturityLevels) {
@@ -36,16 +39,23 @@ public class QualityAttributeValue {
         return maturityLevels.stream()
             .flatMap(ml ->
                 qualityAttribute.getQuestions().stream()
+                    .filter(question -> !isMarkedAsNotApplicable(question.getId()))
                     .map(question -> question.findImpactByMaturityLevel(ml))
                     .filter(Objects::nonNull)
                     .map(impact -> new MaturityLevelScore(ml, impact.getWeight()))
             ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
     }
 
+    private boolean isMarkedAsNotApplicable(Long questionId) {
+        return answers.stream()
+            .anyMatch(answer -> answer.getQuestionId().equals(questionId) && Boolean.TRUE.equals(answer.getIsNotApplicable()));
+    }
+
     private Map<Long, Double> calcGainedScore(List<MaturityLevel> maturityLevels) {
         return maturityLevels.stream()
             .flatMap(ml ->
                 answers.stream()
+                    .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
                     .map(answer -> answer.findImpactByMaturityLevel(ml))
                     .filter(Objects::nonNull)
                     .map(impact -> new MaturityLevelScore(ml, impact.calculateScore()))
@@ -66,29 +76,23 @@ public class QualityAttributeValue {
             .sorted(comparingInt(MaturityLevel::getLevel))
             .toList();
 
-        MaturityLevel maxPossibleMaturityLevel = null;
-        for (MaturityLevel ml : sortedMaturityLevels)
-            maxPossibleMaturityLevel = percentScore.containsKey(ml.getId()) ? ml : maxPossibleMaturityLevel;
-
         MaturityLevel result = null;
         for (MaturityLevel ml : sortedMaturityLevels) {
-            List<LevelCompetence> levelCompetences = ml.getLevelCompetences();
-            if (levelCompetences.isEmpty()) {
-                result = ml;
-                continue;
-            }
-            boolean allCompetencesMatched = levelCompetences.stream()
-                .allMatch(levelCompetence -> {
-                    Long mlId = levelCompetence.getMaturityLevelId();
-                    return !percentScore.containsKey(mlId) || percentScore.get(mlId) >= levelCompetence.getValue();
-                });
-
-            if (allCompetencesMatched && maxPossibleMaturityLevel != null && maxPossibleMaturityLevel.getLevel() >= ml.getLevel())
-                result = ml;
-            else
+            if (!passLevel(percentScore, ml))
                 break;
+            result = ml;
         }
         return result;
+    }
+
+    private boolean passLevel(Map<Long, Double> percentScore, MaturityLevel ml) {
+        List<LevelCompetence> levelCompetences = ml.getLevelCompetences();
+
+        return levelCompetences.isEmpty() || levelCompetences.stream()
+            .allMatch(levelCompetence -> {
+                Long mlId = levelCompetence.getMaturityLevelId();
+                return !percentScore.containsKey(mlId) || percentScore.get(mlId) >= levelCompetence.getValue();
+            });
     }
 
     private record MaturityLevelScore(MaturityLevel maturityLevel, double score) {

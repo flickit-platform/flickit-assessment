@@ -1,5 +1,6 @@
 package org.flickit.flickitassessmentcore.adapter.out.persistence.assessment;
 
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.answer.AnswerJpaRepository;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
@@ -10,13 +11,18 @@ import org.flickit.flickitassessmentcore.application.port.out.assessment.*;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity.Fields.ASSESSMENT_KIT_ID;
+import static org.flickit.flickitassessmentcore.adapter.out.persistence.assessment.AssessmentJpaEntity.Fields.SPACE_ID;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Component
 @RequiredArgsConstructor
@@ -58,7 +64,7 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public UpdateAssessmentPort.Result update(UpdateAssessmentPort.Param param) {
+    public UpdateAssessmentPort.Result update(UpdateAssessmentPort.AllParam param) {
         repository.update(
             param.id(),
             param.title(),
@@ -94,19 +100,42 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public CountAssessmentsPort.Result countByKitId(CountAssessmentsPort.Param param) {
+    public CountAssessmentsPort.Result count(CountAssessmentsPort.Param param) {
         Integer totalCount = null;
         Integer deletedCount = null;
         Integer notDeletedCount = null;
-        if (param.total() == Boolean.TRUE) {
-            totalCount = repository.countTotalByKitId(param.assessmentKitId());
+
+        Specification<AssessmentJpaEntity> baseCondition = (r, cq, cb) -> {
+            Predicate p = cb.and();
+            if (param.kitId() != null)
+                p = cb.and(cb.equal(r.get(ASSESSMENT_KIT_ID), param.kitId()), p);
+            if (param.spaceId() != null)
+                p = cb.and(cb.equal(r.get(SPACE_ID), param.spaceId()), p);
+            return p;
+        };
+
+        if (param.deleted()) {
+            deletedCount = (int) repository.count(where(baseCondition).and(deletedCondition(true)));
         }
-        if (param.deleted() == Boolean.TRUE) {
-            deletedCount = repository.countDeletedByKitId(param.assessmentKitId());
+        if (param.notDeleted()) {
+            notDeletedCount = (int) repository.count(where(baseCondition).and(deletedCondition(false)));
         }
-        if (param.notDeleted() == Boolean.TRUE) {
-            notDeletedCount = repository.countNotDeletedByKitId(param.assessmentKitId());
+        if (param.total()) {
+            if (param.deleted() && param.notDeleted())
+                totalCount = deletedCount + notDeletedCount;
+            else
+                totalCount = (int) repository.count(where(baseCondition));
         }
+
         return new CountAssessmentsPort.Result(totalCount, deletedCount, notDeletedCount);
+    }
+
+    private static Specification<AssessmentJpaEntity> deletedCondition(boolean deleted) {
+        return (r, cq, cb) -> cb.equal(r.get("deleted"), deleted);
+    }
+
+    @Override
+    public void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime) {
+        repository.updateLastModificationTime(id, lastModificationTime);
     }
 }

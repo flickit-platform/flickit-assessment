@@ -1,7 +1,7 @@
 package org.flickit.flickitassessmentcore.application.domain;
 
-import org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.QuestionMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.MaturityLevelMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

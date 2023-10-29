@@ -1,8 +1,8 @@
 package org.flickit.flickitassessmentcore.application.domain;
 
-import org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeValueMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.SubjectValueMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.MaturityLevelMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.QualityAttributeValueMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.SubjectValueMother;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

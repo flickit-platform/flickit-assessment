@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CreateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.answer.LoadAnswerPort;
-import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerOptionPort;
+import org.flickit.flickitassessmentcore.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
@@ -14,57 +14,69 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND;
+import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class SubmitAnswerService implements SubmitAnswerUseCase {
 
-    private final CreateAnswerPort createAnswerPort;
-    private final UpdateAnswerOptionPort updateAnswerOptionPort;
-    private final LoadAnswerPort loadAnswerPort;
-    private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final CreateAnswerPort createAnswerPort;
+    private final LoadAnswerPort loadAnswerPort;
+    private final UpdateAnswerPort updateAnswerPort;
+    private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
     @Override
     public Result submitAnswer(Param param) {
-        UUID assessmentResultId = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND)).getId();
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
+        var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
+        var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
+        if (loadedAnswer.isEmpty()) {
+            return saveAnswer(param, assessmentResult.getId(), answerOptionId);
+        }
+        var loadedAnswerOptionId = loadedAnswer.get().getSelectedOption() == null ? null :  loadedAnswer.get().getSelectedOption().getId();
+        if (hasNotApplicableChanged(param.getIsNotApplicable(), loadedAnswer.get().getIsNotApplicable())
+            || hasAnswerChanged(answerOptionId, loadedAnswerOptionId)) {
+            updateAnswer(assessmentResult.getId(), loadedAnswer.get().getId(), answerOptionId, param.getIsNotApplicable());
+        }
+        return new Result(loadedAnswer.get().getId());
+    }
 
-        CreateOrUpdateResponse response = createOrUpdate(param, assessmentResultId);
-        if (response.hasChanged())
+    private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId) {
+        UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId));
+        if (answerOptionId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId);
-        return new Result(response.answerId());
+        }
+        return new Result(savedAnswerId);
     }
 
-    private CreateOrUpdateResponse createOrUpdate(Param param, UUID assessmentResultId) {
-        return loadAnswerPort.loadAnswerIdAndOptionId(assessmentResultId, param.getQuestionId())
-            .map(existAnswer -> {
-                if (!Objects.equals(param.getAnswerOptionId(), existAnswer.answerOptionId())) { // answer changed
-                    updateAnswerOptionPort.updateAnswerOptionById(toUpdateParam(existAnswer.answerId(), param));
-                    return new CreateOrUpdateResponse(true, existAnswer.answerId());
-                }
-                return new CreateOrUpdateResponse(false, existAnswer.answerId());
-            }).orElseGet(() -> {
-                UUID saveAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId));
-                return new CreateOrUpdateResponse(true, saveAnswerId);
-            });
-    }
-
-    private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId) {
+    private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId) {
         return new CreateAnswerPort.Param(
             assessmentResultId,
             param.getQuestionnaireId(),
             param.getQuestionId(),
-            param.getAnswerOptionId()
+            answerOptionId,
+            param.getIsNotApplicable()
         );
     }
 
-    private UpdateAnswerOptionPort.Param toUpdateParam(UUID id, Param param) {
-        return new UpdateAnswerOptionPort.Param(id, param.getAnswerOptionId());
+    private boolean hasNotApplicableChanged(Boolean isNotApplicable, Boolean loadedIsNotApplicable) {
+        return !Objects.equals(isNotApplicable, loadedIsNotApplicable);
     }
 
-    record CreateOrUpdateResponse(boolean hasChanged, UUID answerId) {
+    private boolean hasAnswerChanged(Long answerOptionId, Long loadedAnswerOptionId) {
+        return !Objects.equals(answerOptionId, loadedAnswerOptionId);
     }
+
+    private void updateAnswer(UUID assessmentResultId, UUID loadedAnswerId, Long answerOptionId, Boolean isNotApplicable) {
+        updateAnswerPort.update(toUpdateAnswerParam(loadedAnswerId, answerOptionId, isNotApplicable));
+        invalidateAssessmentResultPort.invalidateById(assessmentResultId);
+    }
+
+    private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId, Long answerOptionId, Boolean isNotApplicable) {
+        return new UpdateAnswerPort.Param(answerId, answerOptionId, isNotApplicable);
+    }
+
 }

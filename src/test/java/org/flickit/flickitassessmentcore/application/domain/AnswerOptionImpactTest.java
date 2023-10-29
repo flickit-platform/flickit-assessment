@@ -1,6 +1,6 @@
 package org.flickit.flickitassessmentcore.application.domain;
 
-import org.flickit.flickitassessmentcore.application.domain.mother.AnswerOptionImpactMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.AnswerOptionImpactMother;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

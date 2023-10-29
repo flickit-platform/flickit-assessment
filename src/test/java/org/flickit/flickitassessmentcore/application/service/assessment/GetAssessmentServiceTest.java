@@ -1,11 +1,11 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import org.flickit.flickitassessmentcore.application.domain.Assessment;
-import org.flickit.flickitassessmentcore.application.domain.mother.AssessmentMother;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentUseCase.Param;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.GetAssessmentUseCase.Result;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.flickitassessmentcore.application.service.exception.ResourceNotFoundException;
+import org.flickit.flickitassessmentcore.test.fixture.application.AssessmentMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

@@ -3,6 +3,7 @@ package org.flickit.flickitassessmentcore.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.flickitassessmentcore.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.flickitassessmentcore.application.domain.Answer;
 import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
 import org.flickit.flickitassessmentcore.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.flickit.flickitassessmentcore.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.QuestionnaireProgress;
@@ -24,11 +25,11 @@ import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class AnswerPersistenceJpaAdapter implements
     CreateAnswerPort,
-    UpdateAnswerOptionPort,
-    LoadAnswerPort,
     LoadAnswersByQuestionnaireIdPort,
     GetQuestionnairesProgressPort,
-    CountAnswersByQuestionIdsPort {
+    CountAnswersByQuestionIdsPort,
+    LoadAnswerPort,
+    UpdateAnswerPort {
 
     private final AnswerJpaRepository repository;
 
@@ -38,21 +39,10 @@ public class AnswerPersistenceJpaAdapter implements
     public UUID persist(CreateAnswerPort.Param param) {
         AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param);
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepo.findById(param.assessmentResultId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
         unsavedEntity.setAssessmentResult(assessmentResult);
         AnswerJpaEntity entity = repository.save(unsavedEntity);
         return entity.getId();
-    }
-
-    @Override
-    public void updateAnswerOptionById(UpdateAnswerOptionPort.Param param) {
-        repository.updateAnswerOptionById(param.id(), param.answerOptionId());
-    }
-
-    @Override
-    public Optional<LoadAnswerPort.Result> loadAnswerIdAndOptionId(UUID assessmentResultId, Long questionId) {
-        return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
-            .map(x -> new LoadAnswerPort.Result(x.getId(), x.getAnswerOptionId()));
     }
 
     @Override
@@ -89,5 +79,16 @@ public class AnswerPersistenceJpaAdapter implements
 
         var progresses = repository.getQuestionnairesProgressByAssessmentResultId(assessmentResult.getId());
         return progresses.stream().map(p -> new QuestionnaireProgress(p.getQuestionnaireId(), p.getAnswerCount())).toList();
+    }
+
+    @Override
+    public Optional<Answer> load(UUID assessmentResultId, Long questionId) {
+        return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
+            .map(AnswerMapper::mapToDomainModel);
+    }
+
+    @Override
+    public void update(UpdateAnswerPort.Param param) {
+        repository.update(param.answerId(), param.answerOptionId(), param.isNotApplicable());
     }
 }
