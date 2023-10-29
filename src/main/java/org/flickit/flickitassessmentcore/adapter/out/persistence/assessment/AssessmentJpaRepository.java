@@ -52,7 +52,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     @Query("UPDATE AssessmentJpaEntity a SET " +
         "a.lastModificationTime = :lastModificationTime " +
         "WHERE a.id = :id")
-    void updateById(UUID id, LocalDateTime lastModificationTime);
+    void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime);
 }
 
 

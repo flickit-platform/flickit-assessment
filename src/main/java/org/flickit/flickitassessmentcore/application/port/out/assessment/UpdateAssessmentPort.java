@@ -5,13 +5,15 @@ import java.util.UUID;
 
 public interface UpdateAssessmentPort {
 
-    Result update(Param param);
+    Result update(AllParam param);
 
-    record Param(UUID id,
-                 String title,
-                 String code,
-                 Integer colorId,
-                 LocalDateTime lastModificationTime) {}
+    void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime);
+
+    record AllParam(UUID id,
+                    String title,
+                    String code,
+                    Integer colorId,
+                    LocalDateTime lastModificationTime) {}
 
     record Result(UUID id) {}
 }

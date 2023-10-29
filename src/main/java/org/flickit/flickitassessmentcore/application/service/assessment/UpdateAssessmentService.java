@@ -28,7 +28,7 @@ public class UpdateAssessmentService implements UpdateAssessmentUseCase {
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_ID_NOT_FOUND);
         String code = generateSlugCode(param.getTitle());
         LocalDateTime lastModificationTime = LocalDateTime.now();
-        UpdateAssessmentPort.Param updateParam = new UpdateAssessmentPort.Param(
+        UpdateAssessmentPort.AllParam updateParam = new UpdateAssessmentPort.AllParam(
             param.getId(),
             param.getTitle(),
             code,

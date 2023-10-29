@@ -4,7 +4,7 @@ import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CalculateAssessmentUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentByIdPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.flickitassessmentcore.test.fixture.application.AssessmentResultMother;
@@ -36,7 +36,7 @@ class CalculateAssessmentServiceTest {
     private UpdateCalculatedResultPort updateCalculatedResultPort;
 
     @Mock
-    private UpdateAssessmentByIdPort updateAssessmentByIdPort;
+    private UpdateAssessmentPort updateAssessmentPort;
 
     @Test
     void testCalculateMaturityLevel_ValidInput_ValidResults() {
@@ -66,7 +66,7 @@ class CalculateAssessmentServiceTest {
 
         CalculateAssessmentUseCase.Result result = service.calculateMaturityLevel(param);
         verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
-        verify(updateAssessmentByIdPort, times(1)).updateById(any(UpdateAssessmentByIdPort.Param.class));
+        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
