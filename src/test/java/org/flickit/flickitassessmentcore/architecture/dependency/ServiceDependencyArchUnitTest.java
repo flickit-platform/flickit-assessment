@@ -14,7 +14,7 @@ import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitT
 public class ServiceDependencyArchUnitTest {
 
     @ArchTest
-    static final ArchRule services_should_access_domain_models_and_ports =
+    static final ArchRule services_should_depend_domain_models_and_ports =
         classes()
             .that()
             .resideInAPackage(APPLICATION_SERVICE)

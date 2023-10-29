@@ -32,6 +32,7 @@ public class ArchUnitTestConstants {
     // Suffix
     public final static String REST_CONTROLLER_SUFFIX = "RestController";
     public final static String PERSISTENCE_JPA_ADAPTER_SUFFIX = "PersistenceJpaAdapter";
+    public final static String ADAPTER_SUFFIX = "Adapter";
     public final static String REST_ADAPTER_SUFFIX = "RestAdapter";
     public final static String EXCEPTION_HANDLER_SUFFIX = "ExceptionHandler";
 

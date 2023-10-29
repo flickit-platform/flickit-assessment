@@ -26,13 +26,11 @@ public class GeneralDependencyArchUnitTest {
     static final ArchRule architecture_layers_check =
         onionArchitecture()
             .adapter(REST_CONTROLLER_SUFFIX, ADAPTER_IN_REST)
-            .adapter(PERSISTENCE_JPA_ADAPTER_SUFFIX, ADAPTER_OUT_PERSISTENCE)
+            .adapter(ADAPTER_SUFFIX, ADAPTER_OUT)
             .domainModels(APPLICATION_DOMAIN)
             .domainServices(APPLICATION_SERVICE)
             .ignoreDependency(
-                JavaClass.Predicates.resideInAnyPackage(
-                    ADAPTER_OUT_CALCULATE,
-                    ADAPTER_OUT_REPORT,
+                JavaClass.Predicates.resideInAPackage(
                     ADAPTER_IN_REST_EXCEPTION),
                 DescribedPredicate.alwaysTrue())
             .withOptionalLayers(true);

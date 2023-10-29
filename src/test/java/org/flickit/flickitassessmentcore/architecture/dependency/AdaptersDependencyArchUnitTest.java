@@ -13,7 +13,7 @@ import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitT
 public class AdaptersDependencyArchUnitTest {
 
     @ArchTest
-    static final ArchRule controllers_should_access_usecases =
+    static final ArchRule controllers_should_depend_usecases =
         classes()
             .that()
             .resideInAPackage(ADAPTER_IN_REST)
@@ -24,7 +24,7 @@ public class AdaptersDependencyArchUnitTest {
             .resideInAnyPackage(ADAPTER_IN_REST, APPLICATION_PORT_IN, APPLICATION_DOMAIN);
 
     @ArchTest
-    static final ArchRule controllers_should_not_access_other_classes_than_usecases =
+    static final ArchRule controllers_should_not_depend_other_classes_than_usecases =
         noClasses()
             .that()
             .resideInAPackage(ADAPTER_IN_REST)
@@ -35,7 +35,7 @@ public class AdaptersDependencyArchUnitTest {
             .resideInAnyPackage(ADAPTER_OUT, APPLICATION_PORT_OUT, APPLICATION_SERVICE);
 
     @ArchTest
-    static final ArchRule persistence_adapter_should_access_adapter_out_persistence_and_usecases =
+    static final ArchRule persistence_adapter_should_depend_adapter_out_persistence_and_usecases =
         classes()
             .that()
             .resideInAPackage(ADAPTER_OUT_PERSISTENCE)
@@ -46,7 +46,7 @@ public class AdaptersDependencyArchUnitTest {
             .resideInAnyPackage(ADAPTER_OUT_PERSISTENCE, APPLICATION_PORT_IN, APPLICATION_PORT_OUT);
 
     @ArchTest
-    static final ArchRule classes_in_adapter_out_rest_should_port_out_and_domain_model =
+    static final ArchRule classes_in_adapter_out_rest_should_depend_port_out_and_domain_model =
         classes()
             .that()
             .resideInAPackage(ADAPTER_OUT_REST)
