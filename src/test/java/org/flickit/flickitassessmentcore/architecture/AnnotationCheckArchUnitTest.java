@@ -33,7 +33,8 @@ public class AnnotationCheckArchUnitTest {
             .resideInAPackage(ADAPTER_IN_REST)
             .and()
             .haveSimpleNameEndingWith(REST_CONTROLLER_SUFFIX)
-            .should(beAnnotatedWith(RestController.class));
+            .should()
+            .beAnnotatedWith(RestController.class);
 
     @ArchTest
     private final ArchRule check_service_annotation =
@@ -53,7 +54,8 @@ public class AnnotationCheckArchUnitTest {
             .resideInAPackage(ADAPTER_OUT_PERSISTENCE)
             .and()
             .haveSimpleNameEndingWith(PERSISTENCE_JPA_ADAPTER_SUFFIX)
-            .should(beAnnotatedWith(Component.class));
+            .should()
+            .beAnnotatedWith(Component.class);
 
     @ArchTest
     private final ArchRule check_entity_annotation =
@@ -71,7 +73,8 @@ public class AnnotationCheckArchUnitTest {
             .resideInAnyPackage(ADAPTER_OUT_CALCULATE, ADAPTER_OUT_REPORT)
             .and()
             .haveSimpleNameEndingWith(ADAPTER_SUFFIX)
-            .should(beAnnotatedWith(Component.class));
+            .should()
+            .beAnnotatedWith(Component.class);
 
     @ArchTest
     private final ArchRule check_rest_adapter_annotation =
@@ -91,7 +94,8 @@ public class AnnotationCheckArchUnitTest {
             .haveSimpleNameEndingWith(SERVICE_TEST)
             .and()
             .haveSimpleNameNotContaining(COLOR_SERVICE)
-            .should(beAnnotatedWith(ExtendWith.class));
+            .should()
+            .beAnnotatedWith(ExtendWith.class);
 
     @ArchTest
     private final ArchRule check_usecase_param_test_annotation =
@@ -100,7 +104,8 @@ public class AnnotationCheckArchUnitTest {
             .resideInAnyPackage(APPLICATION_PORT_IN)
             .and()
             .haveSimpleNameEndingWith(USE_CASE_PARAM_TEST_SUFFIX)
-            .should(beAnnotatedWith(ExtendWith.class));
+            .should()
+            .beAnnotatedWith(ExtendWith.class);
 
     private ArchCondition<JavaClass> beAnnotatedWith(Class<? extends Annotation>... annotationTypes) {
         String annotationDescription = Arrays.stream(annotationTypes).map(a -> "@" + a.getSimpleName()).collect(Collectors.joining(" "));
