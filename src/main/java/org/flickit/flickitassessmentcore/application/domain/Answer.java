@@ -1,7 +1,6 @@
 package org.flickit.flickitassessmentcore.application.domain;
 
 import jakarta.annotation.Nullable;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -9,13 +8,16 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-@AllArgsConstructor
 public class Answer {
 
     private final UUID id;
 
     @Nullable
-    AnswerOption selectedOption;
+    private final AnswerOption selectedOption;
+
+    private final Long questionId;
+
+    private final Boolean isNotApplicable;
 
     @Nullable
     public AnswerOptionImpact findImpactByMaturityLevel(MaturityLevel maturityLevel) {

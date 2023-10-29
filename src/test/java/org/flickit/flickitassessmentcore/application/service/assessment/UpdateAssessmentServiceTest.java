@@ -45,7 +45,7 @@ class UpdateAssessmentServiceTest {
         UUID resultId = service.updateAssessment(param).id();
         assertEquals(id, resultId);
 
-        ArgumentCaptor<UpdateAssessmentPort.Param> updatePortParam = ArgumentCaptor.forClass(UpdateAssessmentPort.Param.class);
+        ArgumentCaptor<UpdateAssessmentPort.AllParam> updatePortParam = ArgumentCaptor.forClass(UpdateAssessmentPort.AllParam.class);
         verify(updateAssessmentPort).update(updatePortParam.capture());
 
         assertEquals(param.getId(), updatePortParam.getValue().id());
@@ -69,7 +69,7 @@ class UpdateAssessmentServiceTest {
 
         service.updateAssessment(param);
 
-        ArgumentCaptor<UpdateAssessmentPort.Param> updatePortParam = ArgumentCaptor.forClass(UpdateAssessmentPort.Param.class);
+        ArgumentCaptor<UpdateAssessmentPort.AllParam> updatePortParam = ArgumentCaptor.forClass(UpdateAssessmentPort.AllParam.class);
         verify(updateAssessmentPort).update(updatePortParam.capture());
 
         assertEquals(AssessmentColor.getDefault().getId(), updatePortParam.getValue().colorId());
