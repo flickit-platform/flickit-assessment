@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,7 +64,7 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public UpdateAssessmentPort.Result update(UpdateAssessmentPort.Param param) {
+    public UpdateAssessmentPort.Result update(UpdateAssessmentPort.AllParam param) {
         repository.update(
             param.id(),
             param.title(),
@@ -133,4 +134,8 @@ public class AssessmentPersistenceJpaAdapter implements
         return (r, cq, cb) -> cb.equal(r.get("deleted"), deleted);
     }
 
+    @Override
+    public void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime) {
+        repository.updateLastModificationTime(id, lastModificationTime);
+    }
 }

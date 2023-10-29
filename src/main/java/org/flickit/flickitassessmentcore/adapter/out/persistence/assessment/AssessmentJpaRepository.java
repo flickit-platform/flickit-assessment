@@ -47,6 +47,12 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     void delete(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
+
+    @Modifying
+    @Query("UPDATE AssessmentJpaEntity a SET " +
+        "a.lastModificationTime = :lastModificationTime " +
+        "WHERE a.id = :id")
+    void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime);
 }
 
 
