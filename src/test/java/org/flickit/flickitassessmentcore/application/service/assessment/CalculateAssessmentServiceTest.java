@@ -3,13 +3,13 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
-import org.flickit.flickitassessmentcore.application.domain.mother.AssessmentResultMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeValueMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.SubjectValueMother;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CalculateAssessmentUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentByIdPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculatedResultPort;
+import org.flickit.flickitassessmentcore.test.fixture.application.AssessmentResultMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.QualityAttributeValueMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.SubjectValueMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,7 +39,7 @@ class CalculateAssessmentServiceTest {
     private UpdateAssessmentByIdPort updateAssessmentByIdPort;
 
     @Test
-    void testCalculateMaturityLevel() {
+    void testCalculateMaturityLevel_ValidInput_ValidResults() {
         List<QualityAttributeValue> s1QualityAttributeValues = List.of(
             QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
             QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),

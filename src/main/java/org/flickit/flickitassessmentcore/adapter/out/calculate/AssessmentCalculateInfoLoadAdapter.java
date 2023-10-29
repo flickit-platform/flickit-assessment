@@ -83,7 +83,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         List<QuestionDto> allQuestionsDto = questionRestAdapter.loadByAssessmentKitId(assessmentKitId);
 
         // load all answers submitted with this assessmentResult
-        List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultIdAndAnswerOptionIdNotNull(assessmentResultId);
+        List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
 
         /*
         based on answers, extract all selected options
@@ -163,7 +163,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
             .map(entity -> {
                 AnswerOptionDto optionDto = idToAnswerOptionDto.get(entity.getAnswerOptionId());
-                return new Answer(entity.getId(), optionDto.dtoToDomain(), entity.getIsNotApplicable());
+                AnswerOption answerOption = optionDto != null ? optionDto.dtoToDomain() : null;
+                return new Answer(entity.getId(), answerOption, entity.getQuestionId(), entity.getIsNotApplicable());
             }).toList();
     }
 
@@ -179,7 +180,11 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             SubjectDto dto = context.subjectIdToDto.get(svEntity.getSubjectId());
             List<QualityAttributeValue> qavList = dto.qualityAttributes().stream()
                 .map(q -> qualityAttrIdToValue.get(q.id()))
+                .filter(Objects::nonNull)
                 .toList();
+            if (qavList.isEmpty()) {
+                continue;
+            }
             subjectValues.add(new SubjectValue(svEntity.getId(), dto.dtoToDomain(), qavList));
         }
         return subjectValues;

@@ -38,6 +38,7 @@ public class AnswerMapper {
         return new Answer(
             answer.getId(),
             answerOption,
+            answer.getQuestionId(),
             answer.getIsNotApplicable()
         );
     }

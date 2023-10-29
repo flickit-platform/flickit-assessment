@@ -1,9 +1,11 @@
-package org.flickit.flickitassessmentcore.application.domain.mother;
+package org.flickit.flickitassessmentcore.test.fixture.application;
 
 import org.flickit.flickitassessmentcore.application.domain.*;
 
 import java.util.List;
 import java.util.UUID;
+
+import static org.flickit.flickitassessmentcore.test.fixture.application.MaturityScoreMother.maturityScoresOnAllLevels;
 
 public class QualityAttributeValueMother {
 
@@ -48,7 +50,7 @@ public class QualityAttributeValueMother {
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevels24(),
-            AnswerMother.noScoreOnLevel5());
+            AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5());
 
 
         return new QualityAttributeValue(UUID.randomUUID(),
@@ -57,12 +59,11 @@ public class QualityAttributeValueMother {
     }
 
     public static QualityAttributeValue withAttributeAndMaturityLevel(QualityAttribute attribute, MaturityLevel maturityLevel) {
-        QualityAttributeValue attributeValue = new QualityAttributeValue(
+        return new QualityAttributeValue(
             UUID.randomUUID(),
             attribute,
-            null);
-
-        attributeValue.setMaturityLevel(maturityLevel);
-        return attributeValue;
+            null,
+            maturityScoresOnAllLevels(),
+            maturityLevel);
     }
 }

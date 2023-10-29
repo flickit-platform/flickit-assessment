@@ -3,7 +3,6 @@ package org.flickit.flickitassessmentcore.application.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -20,9 +19,7 @@ public class QualityAttributeValue {
     private final QualityAttribute qualityAttribute;
     private final List<Answer> answers;
     private Set<MaturityScore> maturityScores = new HashSet<>();
-
-    @Setter
-    MaturityLevel maturityLevel;
+    private MaturityLevel maturityLevel;
 
     public void calculate(List<MaturityLevel> maturityLevels) {
         Map<Long, Double> totalScore = calcTotalScore(maturityLevels);
@@ -42,16 +39,23 @@ public class QualityAttributeValue {
         return maturityLevels.stream()
             .flatMap(ml ->
                 qualityAttribute.getQuestions().stream()
+                    .filter(question -> !isMarkedAsNotApplicable(question.getId()))
                     .map(question -> question.findImpactByMaturityLevel(ml))
                     .filter(Objects::nonNull)
                     .map(impact -> new MaturityLevelScore(ml, impact.getWeight()))
             ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
     }
 
+    private boolean isMarkedAsNotApplicable(Long questionId) {
+        return answers.stream()
+            .anyMatch(answer -> answer.getQuestionId().equals(questionId) && Boolean.TRUE.equals(answer.getIsNotApplicable()));
+    }
+
     private Map<Long, Double> calcGainedScore(List<MaturityLevel> maturityLevels) {
         return maturityLevels.stream()
             .flatMap(ml ->
                 answers.stream()
+                    .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
                     .map(answer -> answer.findImpactByMaturityLevel(ml))
                     .filter(Objects::nonNull)
                     .map(impact -> new MaturityLevelScore(ml, impact.calculateScore()))
