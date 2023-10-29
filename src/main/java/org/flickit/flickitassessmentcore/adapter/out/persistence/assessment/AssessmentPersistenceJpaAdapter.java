@@ -64,7 +64,7 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public UpdateAssessmentPort.Result update(AllParam param) {
+    public UpdateAssessmentPort.Result update(UpdateAssessmentPort.AllParam param) {
         repository.update(
             param.id(),
             param.title(),
