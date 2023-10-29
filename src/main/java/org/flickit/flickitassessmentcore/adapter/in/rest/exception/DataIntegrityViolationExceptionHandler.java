@@ -30,7 +30,7 @@ public class DataIntegrityViolationExceptionHandler {
         constraintToErrorMsg.put("fk_fac_assessmentresult_assessment", CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND);
         constraintToErrorMsg.put("fk_fac_qualityattributevalue_assessmentresult", CREATE_QUALITY_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND);
         constraintToErrorMsg.put("fk_fac_subjectvalue_assessmentresult", CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND);
-        constraintToErrorMsg.put("fk_fac_answer_assessmentresult", SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND);
+        constraintToErrorMsg.put("fk_fac_answer_assessmentresult", SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND);
         constraintToErrorMsg.put("fk_fac_evidence_assessment", ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND);
     }
 

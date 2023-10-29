@@ -3,12 +3,13 @@ package org.flickit.flickitassessmentcore.application.service.assessment;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
-import org.flickit.flickitassessmentcore.application.domain.mother.AssessmentResultMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeValueMother;
-import org.flickit.flickitassessmentcore.application.domain.mother.SubjectValueMother;
 import org.flickit.flickitassessmentcore.application.port.in.assessment.CalculateAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculatedResultPort;
+import org.flickit.flickitassessmentcore.test.fixture.application.AssessmentResultMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.QualityAttributeValueMother;
+import org.flickit.flickitassessmentcore.test.fixture.application.SubjectValueMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,8 +35,11 @@ class CalculateAssessmentServiceTest {
     @Mock
     private UpdateCalculatedResultPort updateCalculatedResultPort;
 
+    @Mock
+    private UpdateAssessmentPort updateAssessmentPort;
+
     @Test
-    void testCalculateMaturityLevel() {
+    void testCalculateMaturityLevel_ValidInput_ValidResults() {
         List<QualityAttributeValue> s1QualityAttributeValues = List.of(
             QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
             QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
@@ -62,6 +66,7 @@ class CalculateAssessmentServiceTest {
 
         CalculateAssessmentUseCase.Result result = service.calculateMaturityLevel(param);
         verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
+        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
         assertNotNull(result);
         assertNotNull(result.maturityLevel());

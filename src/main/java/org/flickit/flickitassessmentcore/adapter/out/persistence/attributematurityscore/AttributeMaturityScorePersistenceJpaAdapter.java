@@ -1,0 +1,26 @@
+package org.flickit.flickitassessmentcore.adapter.out.persistence.attributematurityscore;
+
+import lombok.RequiredArgsConstructor;
+import org.flickit.flickitassessmentcore.application.domain.MaturityScore;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+
+@Component
+@RequiredArgsConstructor
+public class AttributeMaturityScorePersistenceJpaAdapter {
+
+    private final AttributeMaturityScoreJpaRepository repository;
+
+    public void saveOrUpdate(UUID attributeValueId, MaturityScore score) {
+        var existingEntity = repository.findByAttributeValueIdAndMaturityLevelId(attributeValueId, score.getMaturityLevelId());
+        existingEntity.ifPresentOrElse(x -> {
+            x.setScore(score.getScore());
+            repository.save(x);
+        }, () -> {
+            AttributeMaturityScoreJpaEntity entity =
+                new AttributeMaturityScoreJpaEntity(attributeValueId, score.getMaturityLevelId(), score.getScore());
+            repository.save(entity);
+        });
+    }
+}
