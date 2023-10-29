@@ -17,17 +17,18 @@ public class CountAssessmentsRestController {
 
     @GetMapping("/assessments/counters")
     public ResponseEntity<CountAssessmentsResponseDto> countAssessments(
-        @RequestParam("assessmentKitId") Long assessmentKitId,
-        @RequestParam(value = "deleted", required = false) Boolean deleted,
-        @RequestParam(value = "notDeleted", required = false) Boolean notDeleted,
-        @RequestParam(value = "total", required = false) Boolean total
+        @RequestParam(value = "assessmentKitId", required = false) Long assessmentKitId,
+        @RequestParam(value = "spaceId", required = false) Long spaceId,
+        @RequestParam(value = "deleted", required = false) boolean deleted,
+        @RequestParam(value = "notDeleted", required = false) boolean notDeleted,
+        @RequestParam(value = "total", required = false) boolean total
     ) {
-        var result = useCase.countAssessments(toParam(assessmentKitId, deleted, notDeleted, total));
+        var result = useCase.countAssessments(toParam(assessmentKitId, spaceId, deleted, notDeleted, total));
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 
-    private Param toParam(Long assessmentKitId, Boolean includeDeleted, Boolean includeNotDeleted, Boolean total) {
-        return new Param(assessmentKitId, includeDeleted, includeNotDeleted, total);
+    private Param toParam(Long assessmentKitId, Long spaceId, boolean deleted, boolean notDeleted, boolean total) {
+        return new Param(assessmentKitId, spaceId, deleted, notDeleted, total);
     }
 
     private CountAssessmentsResponseDto toResponseDto(CountAssessmentsUseCase.Result result) {

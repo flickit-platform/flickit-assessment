@@ -2,6 +2,7 @@ package org.flickit.flickitassessmentcore.application.service.subject;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.flickitassessmentcore.application.domain.MaturityScore;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
@@ -13,8 +14,12 @@ import org.flickit.flickitassessmentcore.application.service.exception.ResourceN
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toCollection;
 import static org.flickit.flickitassessmentcore.application.domain.MaturityLevel.middleLevel;
 import static org.flickit.flickitassessmentcore.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND;
 
@@ -66,7 +71,13 @@ public class ReportSubjectService implements ReportSubjectUseCase {
 
     private List<AttributeReportItem> buildAttributes(List<QualityAttributeValue> attributeValues) {
         return attributeValues.stream()
-            .map(x -> new AttributeReportItem(x.getQualityAttribute().getId(), x.getMaturityLevel().getId()))
+            .map(x -> new AttributeReportItem(
+                x.getQualityAttribute().getId(),
+                x.getMaturityLevel().getId(),
+                x.getMaturityScores().stream()
+                    .sorted(Comparator.comparingLong(MaturityScore::getMaturityLevelId))
+                    .collect(toCollection(LinkedHashSet::new))
+            ))
             .toList();
     }
 }

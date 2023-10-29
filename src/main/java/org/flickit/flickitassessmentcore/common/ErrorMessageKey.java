@@ -16,7 +16,7 @@ public class ErrorMessageKey {
 
     public static final String CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND = "crate-subjectvalue.assessmentResultId.notFound";
 
-    public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_ID_NOT_FOUND = "submit-answer.assessmentResultId.notFound";
+    public static final String SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND = "submit-answer.assessmentResult.notFound";
     public static final String SUBMIT_ANSWER_ASSESSMENT_ID_NOT_NULL = "submit-answer.assessmentId.notNull";
     public static final String SUBMIT_ANSWER_QUESTIONNAIRE_ID_NOT_NULL = "submit-answer.questionnaireId.notNull";
     public static final String SUBMIT_ANSWER_QUESTION_ID_NOT_NULL = "submit-answer.questionId.notNull";
@@ -91,7 +91,7 @@ public class ErrorMessageKey {
     public static final String DELETE_ASSESSMENT_ID_NOT_NULL = "delete-assessment.id.notNull";
     public static final String DELETE_ASSESSMENT_ID_NOT_FOUND = "delete-assessment.id.notFound";
 
-    public static final String COUNT_ASSESSMENTS_ASSESSMENT_KIT_ID_NOT_NULL = "count-assessments.assessment.kit.id.notNull";
+    public static final String COUNT_ASSESSMENTS_KIT_ID_AND_SPACE_ID_NOT_NULL = "count-assessments.assessment.kit.id.and.space.id.notNull";
 
     public static final String DELETE_EVIDENCE_EVIDENCE_NOT_FOUND = "delete-evidence.id.notFound";
     public static final String DELETE_EVIDENCE_EVIDENCE_ID_NOT_NULL = "delete-evidence.id.notNull";
