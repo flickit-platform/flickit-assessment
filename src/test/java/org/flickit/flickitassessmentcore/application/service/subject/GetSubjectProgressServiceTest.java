@@ -1,11 +1,11 @@
 package org.flickit.flickitassessmentcore.application.service.subject;
 
 import org.flickit.flickitassessmentcore.application.domain.Question;
-import org.flickit.flickitassessmentcore.application.domain.mother.*;
 import org.flickit.flickitassessmentcore.application.port.in.subject.GetSubjectProgressUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.answer.CountAnswersByQuestionIdsPort;
 import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.flickitassessmentcore.application.port.out.question.LoadQuestionsBySubjectPort;
+import org.flickit.flickitassessmentcore.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

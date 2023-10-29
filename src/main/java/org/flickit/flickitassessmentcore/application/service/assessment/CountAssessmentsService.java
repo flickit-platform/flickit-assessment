@@ -15,8 +15,13 @@ public class CountAssessmentsService implements CountAssessmentsUseCase {
 
     @Override
     public Result countAssessments(Param param) {
-        var portParam = new CountAssessmentsPort.Param(param.getAssessmentKitId(), param.getDeleted(), param.getNotDeleted(), param.getTotal());
-        var portResult = countAssessmentsPort.countByKitId(portParam);
+        var portParam = new CountAssessmentsPort.Param(
+            param.getAssessmentKitId(),
+            param.getSpaceId(),
+            param.isDeleted(),
+            param.isNotDeleted(),
+            param.isTotal());
+        var portResult = countAssessmentsPort.count(portParam);
         return new Result(portResult.totalCount(), portResult.deletedCount(), portResult.notDeletedCount());
     }
 }

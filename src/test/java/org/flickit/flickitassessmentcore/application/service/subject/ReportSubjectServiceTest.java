@@ -4,10 +4,10 @@ import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttribute;
 import org.flickit.flickitassessmentcore.application.domain.QualityAttributeValue;
 import org.flickit.flickitassessmentcore.application.domain.SubjectValue;
-import org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother;
 import org.flickit.flickitassessmentcore.application.domain.report.SubjectReport;
 import org.flickit.flickitassessmentcore.application.port.in.subject.ReportSubjectUseCase;
 import org.flickit.flickitassessmentcore.application.port.out.subject.LoadSubjectReportInfoPort;
+import org.flickit.flickitassessmentcore.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,11 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.flickit.flickitassessmentcore.application.domain.mother.AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel;
-import static org.flickit.flickitassessmentcore.application.domain.mother.MaturityLevelMother.*;
-import static org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeMother.simpleAttribute;
-import static org.flickit.flickitassessmentcore.application.domain.mother.QualityAttributeValueMother.withAttributeAndMaturityLevel;
-import static org.flickit.flickitassessmentcore.application.domain.mother.SubjectValueMother.withQAValuesAndMaturityLevelAndSubjectWithQAs;
+import static org.flickit.flickitassessmentcore.test.fixture.application.AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel;
+import static org.flickit.flickitassessmentcore.test.fixture.application.MaturityLevelMother.*;
+import static org.flickit.flickitassessmentcore.test.fixture.application.QualityAttributeMother.simpleAttribute;
+import static org.flickit.flickitassessmentcore.test.fixture.application.QualityAttributeValueMother.withAttributeAndMaturityLevel;
+import static org.flickit.flickitassessmentcore.test.fixture.application.SubjectValueMother.withQAValuesAndMaturityLevelAndSubjectWithQAs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -76,6 +76,9 @@ class ReportSubjectServiceTest {
         assertEquals(assessmentResult.isValid(), subjectReport.subject().isCalculateValid());
 
         assertEquals(qaValues.size(), subjectReport.attributes().size());
+        for (SubjectReport.AttributeReportItem attribute : subjectReport.attributes()) {
+            assertEquals(allLevels().size(), attribute.maturityScores().size());
+        }
 
         assertNotNull(subjectReport.topStrengths());
         assertEquals(3, subjectReport.topStrengths().size());

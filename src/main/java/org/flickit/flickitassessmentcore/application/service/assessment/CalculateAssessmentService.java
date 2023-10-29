@@ -1,11 +1,12 @@
 package org.flickit.flickitassessmentcore.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.flickitassessmentcore.application.port.in.assessment.CalculateAssessmentUseCase;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
-import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.flickitassessmentcore.application.domain.AssessmentResult;
 import org.flickit.flickitassessmentcore.application.domain.MaturityLevel;
+import org.flickit.flickitassessmentcore.application.port.in.assessment.CalculateAssessmentUseCase;
+import org.flickit.flickitassessmentcore.application.port.out.assessment.UpdateAssessmentPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.LoadCalculateInfoPort;
+import org.flickit.flickitassessmentcore.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
     private final LoadCalculateInfoPort loadCalculateInfoPort;
     private final UpdateCalculatedResultPort updateCalculatedResultPort;
+    private final UpdateAssessmentPort updateAssessmentPort;
 
     @Override
     public Result calculateMaturityLevel(Param param) {
@@ -29,6 +31,9 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         assessmentResult.setLastModificationTime(LocalDateTime.now());
 
         updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
+
+        updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
+
 
         return new Result(calcResult);
     }
