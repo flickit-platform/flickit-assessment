@@ -20,6 +20,7 @@
 		<module>flickit-assessment-core</module>
 		<module>flickit-assessment-kit</module>
 		<module>flickit-assessment-data</module>
+		<module>flickit-assessment-server</module>
 	</modules>
 
 	<properties>
@@ -48,6 +49,11 @@
 			<dependency>
 				<groupId>org.flickit</groupId>
 				<artifactId>flickit-assessment-data</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.flickit</groupId>
+				<artifactId>flickit-assessment-server</artifactId>
 				<version>${revision}</version>
 			</dependency>
 		</dependencies>
