@@ -12,17 +12,46 @@
 
 	<groupId>org.flickit</groupId>
 	<artifactId>flickit-assessment</artifactId>
-	<version>0.7.0-SNAPSHOT</version>
+	<version>${revision}</version>
+	<packaging>pom</packaging>
 	<name>flickit-assessment</name>
 
+	<modules>
+		<module>flickit-assessment-core</module>
+		<module>flickit-assessment-kit</module>
+		<module>flickit-assessment-data</module>
+	</modules>
+
 	<properties>
+		<revision>0.7.0-SNAPSHOT</revision>
 		<sonar.organization>avansoft</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<java.version>17</java.version>
 		<jib-maven-plugin.version>3.3.1</jib-maven-plugin.version>
+		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
 		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.flickit</groupId>
+				<artifactId>flickit-assessment-core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.flickit</groupId>
+				<artifactId>flickit-assessment-kit</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.flickit</groupId>
+				<artifactId>flickit-assessment-data</artifactId>
+				<version>${revision}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -117,6 +146,31 @@
 						<image>ghcr.io/avansoft/flickit-assessment-core/jdk:17.0.7</image>
 					</from>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>${flatten-maven-plugin.version}</version>
+				<configuration>
+					<updatePomFile>true</updatePomFile>
+					<flattenMode>resolveCiFriendliesOnly</flattenMode>
+				</configuration>
+				<executions>
+					<execution>
+						<id>flatten</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>flatten.clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
