@@ -14,7 +14,7 @@
 		<appender-ref ref="CONSOLE" />
 	</root>
 
-	<logger name="org.flickit.flickitassessmentcore" level="info" additivity="false">
+	<logger name="org.flickit.assessment" level="info" additivity="false">
         <appender-ref ref="CONSOLE" />
     </logger>
 
