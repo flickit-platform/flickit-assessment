@@ -1,13 +1,13 @@
-package org.flickit.assessment.server;
+package org.flickit.assessment;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FlickitAssessmentCoreApplication {
+public class FlickitAssessmentApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(FlickitAssessmentCoreApplication.class, args);
+        SpringApplication.run(FlickitAssessmentApplication.class, args);
     }
 
 }
