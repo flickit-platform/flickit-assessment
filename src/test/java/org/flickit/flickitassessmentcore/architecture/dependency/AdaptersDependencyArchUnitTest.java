@@ -1,59 +1,74 @@
 package org.flickit.flickitassessmentcore.architecture.dependency;
 
 import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.core.importer.Location;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import com.tngtech.archunit.lang.conditions.ArchConditions;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
+import static com.tngtech.archunit.lang.conditions.ArchConditions.*;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = {ADAPTER_FULL_PACKAGE}, importOptions = ImportOption.DoNotIncludeTests.class)
 public class AdaptersDependencyArchUnitTest {
 
     @ArchTest
-    static final ArchRule controllers_should_depend_usecases =
-        classes()
-            .that()
-            .resideInAPackage(ADAPTER_IN_REST)
-            .and()
-            .haveSimpleNameEndingWith(REST_CONTROLLER_SUFFIX)
-            .should()
-            .dependOnClassesThat()
-            .resideInAnyPackage(ADAPTER_IN_REST, APPLICATION_PORT_IN, APPLICATION_DOMAIN);
-
-    @ArchTest
-    static final ArchRule controllers_should_not_depend_other_classes_than_usecases =
+    static final ArchRule controllers_should_not_depend_other_other_adapters_and_out_ports_and_services =
         noClasses()
             .that()
             .resideInAPackage(ADAPTER_IN_REST)
             .and()
             .haveSimpleNameNotContaining(EXCEPTION_HANDLER_SUFFIX)
             .should()
-            .onlyDependOnClassesThat()
-            .resideInAnyPackage(ADAPTER_OUT, APPLICATION_PORT_OUT, APPLICATION_SERVICE);
+            .dependOnClassesThat()
+            .resideInAnyPackage(
+                ADAPTER_OUT,
+                APPLICATION_PORT_OUT,
+                APPLICATION_SERVICE);
 
     @ArchTest
-    static final ArchRule persistence_adapter_should_depend_adapter_out_persistence_and_usecases =
-        classes()
+    static final ArchRule persistence_adapters_should_not_depend_adapters_and_services =
+        noClasses()
             .that()
             .resideInAPackage(ADAPTER_OUT_PERSISTENCE)
             .and()
             .haveSimpleNameEndingWith(PERSISTENCE_JPA_ADAPTER_SUFFIX)
             .should()
             .dependOnClassesThat()
-            .resideInAnyPackage(ADAPTER_OUT_PERSISTENCE, APPLICATION_PORT_IN, APPLICATION_PORT_OUT);
+            .resideInAnyPackage(
+                ADAPTER_IN_REST,
+                ADAPTER_OUT_REST,
+                ADAPTER_OUT_CALCULATE,
+                ADAPTER_OUT_REPORT,
+                "..application.service.answer..",
+                "..application.service.assessment..",
+                "..application.service.assessmentcolor..",
+                "..application.service.constant..",
+                "..application.service.evidence..",
+                "..application.service.questionnaire..",
+                "..application.service.subject.."
+            );
 
     @ArchTest
-    static final ArchRule classes_in_adapter_out_rest_should_depend_port_out_and_domain_model =
-        classes()
+    static final ArchRule rest_out_adapters_should_not_depend_adapters_and_services_and_usecases =
+        noClasses()
             .that()
             .resideInAPackage(ADAPTER_OUT_REST)
             .and()
             .haveSimpleNameEndingWith(REST_ADAPTER_SUFFIX)
             .should()
             .dependOnClassesThat()
-            .resideInAnyPackage(APPLICATION_PORT_OUT, APPLICATION_DOMAIN, SPRING_FRAMEWORK);
+            .resideInAnyPackage(
+                ADAPTER_IN_REST,
+                ADAPTER_OUT_PERSISTENCE,
+                ADAPTER_OUT_CALCULATE,
+                ADAPTER_OUT_REPORT,
+                APPLICATION_SERVICE,
+                APPLICATION_PORT_IN
+            );
 
 }

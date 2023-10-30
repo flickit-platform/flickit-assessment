@@ -7,6 +7,7 @@ public class ArchUnitTestConstants {
     public final static String APPLICATION_PORT_IN_FULL_PACKAGE = "org.flickit.flickitassessmentcore.application.port.in";
     public final static String APPLICATION_PORT_OUT_FULL_PACKAGE = "org.flickit.flickitassessmentcore.application.port.out";
     public final static String APPLICATION_SERVICE_FULL_PACKAGE = "org.flickit.flickitassessmentcore.application.service";
+    public final static String APPLICATION_DOMAIN_FULL_PACKAGE = "org.flickit.flickitassessmentcore.application.domain";
 
     // Package
     public final static String ADAPTER_IN_REST = "..adapter.in.rest..";
