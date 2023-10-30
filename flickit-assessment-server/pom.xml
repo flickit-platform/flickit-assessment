@@ -33,6 +33,20 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                    <container>
+                        <entrypoint>
+                            <arg>/bin/bash</arg>
+                            <arg>-c</arg>
+                            <arg>java $JAVA_OPTS -cp /app/resources:/app/classes:/app/libs/* org.flickit.assessment.FlickitAssessmentApplication</arg>
+                        </entrypoint>
+                    </container>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
