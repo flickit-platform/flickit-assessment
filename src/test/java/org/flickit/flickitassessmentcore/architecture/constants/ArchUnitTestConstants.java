@@ -2,6 +2,8 @@ package org.flickit.flickitassessmentcore.architecture.constants;
 
 public class ArchUnitTestConstants {
 
+    public static final String PROJECT_ARTIFACT_ID = "org.flickit.flickitassessmentcore";
+
     // Full Package
     public final static String ADAPTER_FULL_PACKAGE = "org.flickit.flickitassessmentcore.adapter";
     public final static String APPLICATION_PORT_IN_FULL_PACKAGE = "org.flickit.flickitassessmentcore.application.port.in";
