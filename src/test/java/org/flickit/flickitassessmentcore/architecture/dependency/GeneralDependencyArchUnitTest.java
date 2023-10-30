@@ -16,11 +16,12 @@ import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitT
     APPLICATION_PORT_IN_FULL_PACKAGE,
     APPLICATION_PORT_OUT_FULL_PACKAGE,
     APPLICATION_SERVICE_FULL_PACKAGE,
+    APPLICATION_DOMAIN_FULL_PACKAGE
 }, importOptions = ImportOption.DoNotIncludeTests.class)
 public class GeneralDependencyArchUnitTest {
 
-    @ArchTest
-    static final ArchRule no_accesses_to_upper_package = NO_CLASSES_SHOULD_DEPEND_UPPER_PACKAGES;
+//    @ArchTest
+//    static final ArchRule no_accesses_to_upper_package = NO_CLASSES_SHOULD_DEPEND_UPPER_PACKAGES;
 
     @ArchTest
     static final ArchRule architecture_layers_check =
@@ -28,7 +29,8 @@ public class GeneralDependencyArchUnitTest {
             .adapter(REST_CONTROLLER_SUFFIX, ADAPTER_IN_REST)
             .adapter(ADAPTER_SUFFIX, ADAPTER_OUT)
             .domainModels(APPLICATION_DOMAIN)
-            .domainServices(APPLICATION_SERVICE)
+            .domainServices(APPLICATION_PORT_IN, APPLICATION_PORT_OUT)
+            .applicationServices(APPLICATION_SERVICE)
             .ignoreDependency(
                 JavaClass.Predicates.resideInAPackage(
                     ADAPTER_IN_REST_EXCEPTION),

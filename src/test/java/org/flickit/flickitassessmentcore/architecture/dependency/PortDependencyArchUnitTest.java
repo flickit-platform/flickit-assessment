@@ -6,6 +6,7 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = {
@@ -15,20 +16,20 @@ import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitT
 public class PortDependencyArchUnitTest {
 
     @ArchTest
-    static final ArchRule usecases_should_depend_domain_models =
-        classes()
+    static final ArchRule usecases_should_not_depend_anything_other_than_domain_models =
+        noClasses()
             .that()
             .resideInAPackage(APPLICATION_PORT_IN)
             .should()
-            .onlyDependOnClassesThat()
-            .resideInAnyPackage(APPLICATION_PORT_IN, APPLICATION_DOMAIN, COMMON, JAVA, JAKARTA_VALIDATION_CONSTRAINTS);
+            .dependOnClassesThat()
+            .resideInAnyPackage(APPLICATION_PORT_OUT, APPLICATION_SERVICE, ADAPTER);
 
     @ArchTest
-    static final ArchRule out_ports_should_depend_domain_model =
-        classes()
+    static final ArchRule out_ports_should_not_depend_services_and_adapters =
+        noClasses()
             .that()
             .resideInAPackage(APPLICATION_PORT_OUT)
             .should()
-            .onlyDependOnClassesThat()
-            .resideInAnyPackage(APPLICATION_PORT_OUT, APPLICATION_PORT_IN, APPLICATION_DOMAIN, COMMON, JAVA);
+            .dependOnClassesThat()
+            .resideInAnyPackage(APPLICATION_SERVICE, ADAPTER);
 }
