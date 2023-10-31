@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.application.port.out.assessment;
 
-import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 
 import java.util.UUID;
 

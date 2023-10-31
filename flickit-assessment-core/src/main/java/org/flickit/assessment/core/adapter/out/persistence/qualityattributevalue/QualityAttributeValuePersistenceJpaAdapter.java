@@ -12,7 +12,7 @@ import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.QualityAttributeValue;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
-import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

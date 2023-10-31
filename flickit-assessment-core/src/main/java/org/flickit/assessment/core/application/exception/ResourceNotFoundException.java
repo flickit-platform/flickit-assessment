@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.exception;
+package org.flickit.assessment.core.application.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 
