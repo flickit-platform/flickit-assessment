@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.adapter.in.rest.exception;
 
 import org.flickit.assessment.core.adapter.in.rest.exception.api.ErrorResponseDto;
-import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.common.MessageBundle;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

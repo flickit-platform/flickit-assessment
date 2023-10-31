@@ -39,17 +39,11 @@ public class AdaptersDependencyArchUnitTest {
                 ADAPTER_OUT_REST,
                 ADAPTER_OUT_CALCULATE,
                 ADAPTER_OUT_REPORT,
-                "..application.service.answer..",
-                "..application.service.assessment..",
-                "..application.service.assessmentcolor..",
-                "..application.service.constant..",
-                "..application.service.evidence..",
-                "..application.service.questionnaire..",
-                "..application.service.subject.."
+                APPLICATION_SERVICE
             );
 
     @ArchTest
-    static final ArchRule rest_out_adapters_should_not_depend_adapters_and_services_and_usecases =
+    static final ArchRule rest_out_adapters_should_not_depend_adapters_and_services_and_useCases =
         noClasses()
             .that()
             .resideInAPackage(ADAPTER_OUT_REST)

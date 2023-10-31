@@ -15,7 +15,7 @@ import static org.flickit.assessment.core.architecture.constants.ArchUnitTestCon
 public class PortDependencyArchUnitTest {
 
     @ArchTest
-    static final ArchRule usecases_should_not_depend_anything_other_than_domain_models =
+    static final ArchRule useCases_should_not_depend_anything_other_than_domain_models =
         noClasses()
             .that()
             .resideInAPackage(APPLICATION_PORT_IN)

@@ -19,9 +19,6 @@ import static org.flickit.assessment.core.architecture.constants.ArchUnitTestCon
 }, importOptions = ImportOption.DoNotIncludeTests.class)
 public class GeneralDependencyArchUnitTest {
 
-//    @ArchTest
-//    static final ArchRule no_accesses_to_upper_package = NO_CLASSES_SHOULD_DEPEND_UPPER_PACKAGES;
-
     @ArchTest
     static final ArchRule architecture_layers_check =
         onionArchitecture()
