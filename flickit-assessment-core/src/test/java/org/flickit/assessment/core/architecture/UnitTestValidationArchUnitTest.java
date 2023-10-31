@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.architecture;
+package org.flickit.assessment.core.architecture;
 
 import com.tngtech.archunit.core.domain.JavaMethod;
 import com.tngtech.archunit.core.domain.JavaMethodCall;
@@ -12,7 +12,7 @@ import com.tngtech.archunit.lang.SimpleConditionEvent;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
-import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitTestConstants.*;
+import static org.flickit.assessment.core.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = PROJECT_ARTIFACT_ID, importOptions = ImportOption.OnlyIncludeTests.class)
 public class UnitTestValidationArchUnitTest {

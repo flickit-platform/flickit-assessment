@@ -5,7 +5,7 @@ public class ArchUnitTestConstants {
     public static final String PROJECT_ARTIFACT_ID = "org.flickit.assessment.core";
 
     // Package
-    public final static String APPLICATION = "..flickitassessmentcore.application..";
+    public final static String APPLICATION = "..assessment.core.application..";
     public final static String ADAPTER_OUT = "..adapter.out..";
     public final static String TEST_FIXTURE = "..test.fixture..";
 
