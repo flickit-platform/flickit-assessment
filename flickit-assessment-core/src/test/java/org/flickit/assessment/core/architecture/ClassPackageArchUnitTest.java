@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.architecture;
+package org.flickit.assessment.core.architecture;
 
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -6,7 +6,7 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitTestConstants.*;
+import static org.flickit.assessment.core.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = {PROJECT_ARTIFACT_ID}, importOptions = ImportOption.DoNotIncludeTests.class)
 public class ClassPackageArchUnitTest {
@@ -42,7 +42,7 @@ public class ClassPackageArchUnitTest {
             .resideInAPackage(APPLICATION_SERVICE);
 
     @ArchTest
-    private final ArchRule usecase_should_be_in_application_port_in =
+    private final ArchRule useCase_should_be_in_application_port_in =
         classes()
             .that()
             .haveSimpleNameEndingWith(USE_CASE_SUFFIX)
