@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.architecture;
+package org.flickit.assessment.core.architecture;
 
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitTestConstants.*;
+import static org.flickit.assessment.core.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = PROJECT_ARTIFACT_ID)
 public class AnnotationCheckArchUnitTest {
 
     @ArchTest
-    private final ArchRule check_controllers_annotation =
+    private final ArchRule check_controller_annotation =
         classes()
             .that()
             .resideInAPackage(ADAPTER_IN_REST)
@@ -98,7 +98,7 @@ public class AnnotationCheckArchUnitTest {
             .beAnnotatedWith(ExtendWith.class);
 
     @ArchTest
-    private final ArchRule check_usecase_param_test_annotation =
+    private final ArchRule check_useCase_param_test_annotation =
         classes()
             .that()
             .resideInAnyPackage(APPLICATION_PORT_IN)
