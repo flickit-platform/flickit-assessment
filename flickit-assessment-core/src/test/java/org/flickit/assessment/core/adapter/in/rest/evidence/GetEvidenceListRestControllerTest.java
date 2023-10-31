@@ -24,11 +24,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = GetEvidenceListRestController.class)
 class GetEvidenceListRestControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private GetEvidenceListUseCase useCase;
+
+    GetEvidenceListRestControllerTest(MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
+    }
 
     @Test
     void testGetEvidenceList() throws Exception {
