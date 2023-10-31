@@ -1,9 +1,9 @@
-package org.flickit.flickitassessmentcore.adapter.in.rest.evidence;
+package org.flickit.assessment.core.adapter.in.rest.evidence;
 
-import org.flickit.flickitassessmentcore.adapter.out.persistence.evidence.EvidenceJpaEntity;
-import org.flickit.flickitassessmentcore.application.domain.crud.PaginatedResponse;
-import org.flickit.flickitassessmentcore.application.domain.mother.EvidenceMother;
-import org.flickit.flickitassessmentcore.application.port.in.evidence.GetEvidenceListUseCase;
+import org.flickit.assessment.core.adapter.out.persistence.evidence.EvidenceJpaEntity;
+import org.flickit.assessment.core.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
+import org.flickit.assessment.core.test.fixture.application.EvidenceMother;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
