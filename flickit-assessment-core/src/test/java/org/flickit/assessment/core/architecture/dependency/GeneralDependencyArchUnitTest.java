@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.architecture.dependency;
+package org.flickit.assessment.core.architecture.dependency;
 
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaClass;
@@ -8,8 +8,7 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
 import static com.tngtech.archunit.library.Architectures.onionArchitecture;
-import static com.tngtech.archunit.library.DependencyRules.NO_CLASSES_SHOULD_DEPEND_UPPER_PACKAGES;
-import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitTestConstants.*;
+import static org.flickit.assessment.core.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = {
     ADAPTER_FULL_PACKAGE,

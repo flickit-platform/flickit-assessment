@@ -1,17 +1,12 @@
-package org.flickit.flickitassessmentcore.architecture.dependency;
+package org.flickit.assessment.core.architecture.dependency;
 
 import com.tngtech.archunit.core.importer.ImportOption;
-import com.tngtech.archunit.core.importer.Location;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
-import com.tngtech.archunit.lang.conditions.ArchConditions;
 
-import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
-import static com.tngtech.archunit.lang.conditions.ArchConditions.*;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
-import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
-import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitTestConstants.*;
+import static org.flickit.assessment.core.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = {ADAPTER_FULL_PACKAGE}, importOptions = ImportOption.DoNotIncludeTests.class)
 public class AdaptersDependencyArchUnitTest {
