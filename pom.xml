@@ -2,24 +2,69 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.0.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>org.flickit</groupId>
-	<artifactId>flickit-assessment-core</artifactId>
-	<version>0.7.0-SNAPSHOT</version>
-	<name>flickit-assessment-core</name>
+	<artifactId>flickit-assessment</artifactId>
+	<version>${revision}</version>
+	<packaging>pom</packaging>
+	<name>flickit-assessment</name>
+
+	<modules>
+		<module>flickit-assessment-core</module>
+		<module>flickit-assessment-kit</module>
+		<module>flickit-assessment-data</module>
+		<module>flickit-assessment-server</module>
+	</modules>
+
 	<properties>
+		<revision>0.7.0-SNAPSHOT</revision>
+
+		<java.version>17</java.version>
+		<spring-boot.version>3.0.6</spring-boot.version>
+
+		<archunit.version>1.1.0</archunit.version>
+
+		<jib-maven-plugin.version>3.3.1</jib-maven-plugin.version>
+		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
+
 		<sonar.organization>avansoft</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<java.version>17</java.version>
-		<jib-maven-plugin.version>3.3.1</jib-maven-plugin.version>
-		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.flickit</groupId>
+				<artifactId>flickit-assessment-core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.flickit</groupId>
+				<artifactId>flickit-assessment-kit</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.flickit</groupId>
+				<artifactId>flickit-assessment-data</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.flickit</groupId>
+				<artifactId>flickit-assessment-server</artifactId>
+				<version>${revision}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -70,13 +115,13 @@
         <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit</artifactId>
-            <version>1.1.0</version>
+            <version>${archunit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5</artifactId>
-            <version>1.1.0</version>
+            <version>${archunit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -85,22 +130,11 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
 				<version>${jib-maven-plugin.version}</version>
 				<configuration>
+					<skip>true</skip>
 					<container>
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
 						<labels>
@@ -113,6 +147,31 @@
 						<image>ghcr.io/avansoft/flickit-assessment-core/jdk:17.0.7</image>
 					</from>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>${flatten-maven-plugin.version}</version>
+				<configuration>
+					<updatePomFile>true</updatePomFile>
+					<flattenMode>resolveCiFriendliesOnly</flattenMode>
+				</configuration>
+				<executions>
+					<execution>
+						<id>flatten</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>flatten.clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
