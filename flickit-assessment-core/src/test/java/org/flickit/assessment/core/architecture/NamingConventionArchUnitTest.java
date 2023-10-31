@@ -1,4 +1,4 @@
-package org.flickit.flickitassessmentcore.architecture;
+package org.flickit.assessment.core.architecture;
 
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -6,7 +6,7 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static org.flickit.flickitassessmentcore.architecture.constants.ArchUnitTestConstants.*;
+import static org.flickit.assessment.core.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = {ADAPTER_FULL_PACKAGE, APPLICATION_FULL_PACKAGE}, importOptions = DoNotIncludeTests.class)
 public class NamingConventionArchUnitTest {
@@ -34,7 +34,7 @@ public class NamingConventionArchUnitTest {
             .haveSimpleNameEndingWith(ADAPTER_SUFFIX);
 
     @ArchTest
-    static ArchRule usecases_should_be_suffixed =
+    static ArchRule useCases_should_be_suffixed =
         classes()
             .that()
             .resideInAPackage(APPLICATION_PORT_IN)
