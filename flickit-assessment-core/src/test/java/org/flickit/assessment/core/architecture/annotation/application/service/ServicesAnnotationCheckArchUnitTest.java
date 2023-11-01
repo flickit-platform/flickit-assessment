@@ -41,7 +41,7 @@ public class ServicesAnnotationCheckArchUnitTest {
             .that()
             .resideInAnyPackage(APPLICATION_SERVICE)
             .and()
-            .haveSimpleNameEndingWith(SERVICE_TEST)
+            .haveSimpleNameEndingWith(SERVICE_TEST_SUFFIX)
             .and()
             .haveNameNotMatching(ENUM_SERVICE_TEST)
             .should()
