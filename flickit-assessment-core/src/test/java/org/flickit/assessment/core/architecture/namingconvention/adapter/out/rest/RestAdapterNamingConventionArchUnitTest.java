@@ -13,7 +13,7 @@ import static org.flickit.assessment.core.architecture.constants.ArchUnitTestCon
 public class RestAdapterNamingConventionArchUnitTest {
 
     @ArchTest
-    static ArchRule report_adapters_should_be_suffixed_with_Adapter =
+    static ArchRule rest_adapters_should_be_suffixed_with_Adapter =
         classes()
             .that()
             .resideInAnyPackage(ADAPTER_OUT_REST)

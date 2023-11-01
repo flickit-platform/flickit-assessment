@@ -29,7 +29,8 @@ public class ArchUnitTestConstants {
     public final static String APPLICATION_PORT_IN = "..application.port.in..";
     public final static String APPLICATION_PORT_OUT = "..application.port.out..";
     public final static String APPLICATION_SERVICE_CONSTANT = "..application.service.constant..";
-    public final static String APPLICATION_SERVICE_EXCEPTION = "..application.service.exception..";
+    public final static String APPLICATION = "..assessment.core.application..";
+    public final static String TEST_FIXTURE = "..test.fixture..";
 
     // Suffix
     public final static String REST_CONTROLLER_SUFFIX = "RestController";
@@ -46,9 +47,12 @@ public class ArchUnitTestConstants {
     public final static String SERVICE_SUFFIX = "Service";
     public final static String ENUM_SERVICE = "(.*)(GetAssessmentColorsService|GetConfidenceLevelsService)";
     public final static String ENUM_SERVICE_TEST = "(.*)(GetAssessmentColorsServiceTest|GetConfidenceLevelsServiceTest)";
-    public final static String ERROR_CODES = "ErrorCodes";
     public final static String USE_CASE_SUFFIX = "UseCase";
     public final static String PORT_SUFFIX = "Port";
+    public static final String TEST_CLASS_SUFFIX = "Test";
+    public static final String MOTHER_SUFFIX = "Mother";
+    public static final String NOT_ARCH_UNIT_TEST_OR_MOTHER = "(.*)(ArchUnitTest|Mother)";
+    public static final String TEST_METHOD_SUFFIX = "test";
 
 
 }
