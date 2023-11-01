@@ -15,12 +15,10 @@ import static org.flickit.assessment.core.architecture.constants.ArchUnitTestCon
 public class PersistenceJpaAdapterClassPackageArchUnitTest {
 
     @ArchTest
-    private final ArchRule repository_and_mapper_should_be_in_adapter_out_persistence =
+    private final ArchRule repository_should_be_in_adapter_out_persistence =
         classes()
             .that()
             .haveSimpleNameEndingWith(REPOSITORY_SUFFIX)
-            .or()
-            .haveSimpleNameEndingWith(MAPPER_SUFFIX)
             .should()
             .resideInAPackage(ADAPTER_OUT_PERSISTENCE);
 
@@ -35,7 +33,7 @@ public class PersistenceJpaAdapterClassPackageArchUnitTest {
             .resideInAPackage(ADAPTER_OUT_PERSISTENCE);
 
     @ArchTest
-    private final ArchRule entity_and_mapper_should_be_in_adapter_out_persistence =
+    private final ArchRule entity_should_be_in_adapter_out_persistence =
         classes()
             .that()
             .haveSimpleNameEndingWith(ENTITY_SUFFIX)
