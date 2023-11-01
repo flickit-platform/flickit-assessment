@@ -124,7 +124,6 @@
             <version>${archunit.version}</version>
             <scope>test</scope>
         </dependency>
-
 	</dependencies>
 
 	<build>

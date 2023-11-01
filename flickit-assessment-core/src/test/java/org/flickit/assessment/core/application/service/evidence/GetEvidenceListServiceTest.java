@@ -5,7 +5,7 @@ import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListU
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesPort;
-import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

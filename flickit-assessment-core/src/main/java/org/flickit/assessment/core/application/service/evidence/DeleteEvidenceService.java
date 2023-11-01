@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.port.in.evidence.DeleteEvidenceUseCase;
 import org.flickit.assessment.core.application.port.out.evidence.CheckEvidenceExistencePort;
 import org.flickit.assessment.core.application.port.out.evidence.DeleteEvidencePort;
-import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
