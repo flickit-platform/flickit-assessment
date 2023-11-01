@@ -13,6 +13,7 @@ public class ArchUnitTestConstants {
     public final static String APPLICATION_SERVICE_FULL_PACKAGE = "org.flickit.assessment.core.application.service";
     public final static String APPLICATION_DOMAIN_FULL_PACKAGE = "org.flickit.assessment.core.application.domain";
     public final static String ADAPTER_IN_REST_FULL_PACKAGE = "org.flickit.assessment.core.adapter.in.rest";
+    public final static String APPLICATION_FULL_PACKAGE = "org.flickit.assessment.core.application";
 
     // Package
     public final static String ADAPTER_IN_REST = "..adapter.in.rest..";
@@ -27,9 +28,14 @@ public class ArchUnitTestConstants {
     public final static String ADAPTER_IN_REST_EXCEPTION = "..adapter.in.rest.exception..";
     public final static String APPLICATION_PORT_IN = "..application.port.in..";
     public final static String APPLICATION_PORT_OUT = "..application.port.out..";
+    public final static String APPLICATION_SERVICE_CONSTANT = "..application.service.constant..";
+    public final static String APPLICATION = "..assessment.core.application..";
+    public final static String TEST_FIXTURE = "..test.fixture..";
 
     // Suffix
     public final static String REST_CONTROLLER_SUFFIX = "RestController";
+    public final static String RESPONSE_DTO_SUFFIX = "ResponseDto";
+    public final static String REQUEST_DTO_SUFFIX = "RequestDto";
     public final static String PERSISTENCE_JPA_ADAPTER_SUFFIX = "PersistenceJpaAdapter";
     public final static String ADAPTER_SUFFIX = "Adapter";
     public final static String REST_ADAPTER_SUFFIX = "RestAdapter";
@@ -45,6 +51,11 @@ public class ArchUnitTestConstants {
     public final static String REPOSITORY_SUFFIX = "JpaRepository";
     public final static String USE_CASE_SUFFIX = "UseCase";
     public final static String PORT_SUFFIX = "Port";
+    public static final String TEST_CLASS_SUFFIX = "Test";
+    public static final String MOTHER_SUFFIX = "Mother";
+    public static final String NOT_ARCH_UNIT_TEST_OR_MOTHER = "(.*)(ArchUnitTest|Mother)";
+    public static final String TEST_METHOD_SUFFIX = "test";
+
     public final static String VIEW_OR_REPOSITORY_SUFFIX = "(.*)(View|Repository)";
 
 }
