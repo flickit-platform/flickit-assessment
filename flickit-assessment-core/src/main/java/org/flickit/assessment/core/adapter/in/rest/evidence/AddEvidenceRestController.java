@@ -21,7 +21,7 @@ public class AddEvidenceRestController {
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.CREATED);
     }
 
-    public Param toParam(AddEvidenceRequestDto requestDto) {
+    private Param toParam(AddEvidenceRequestDto requestDto) {
         return new AddEvidenceUseCase.Param(
             requestDto.description(),
             requestDto.createdById(),
