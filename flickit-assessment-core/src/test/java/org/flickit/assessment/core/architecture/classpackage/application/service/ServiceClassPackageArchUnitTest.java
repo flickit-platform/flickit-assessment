@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.architecture.annotation.application.service;
+package org.flickit.assessment.core.architecture.classpackage.application.service;
 
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
@@ -10,41 +10,43 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static org.flickit.assessment.core.architecture.constants.ArchUnitTestConstants.*;
 
-@AnalyzeClasses(packages = APPLICATION_SERVICE_FULL_PACKAGE)
-public class ServicesAnnotationCheckArchUnitTest {
+@AnalyzeClasses(packages = {APPLICATION_SERVICE_FULL_PACKAGE})
+public class ServiceClassPackageArchUnitTest {
 
     @ArchTest
-    private final ArchRule services_should_be_annotated_with_Service =
+    private final ArchRule all_services_should_be_in_application_service =
         classes()
             .that()
-            .resideInAPackage(APPLICATION_SERVICE)
-            .and()
             .haveSimpleNameEndingWith(SERVICE_SUFFIX)
+            .and()
+            .areAnnotatedWith(Service.class)
             .should()
-            .beAnnotatedWith(Service.class);
+            .resideInAPackage(APPLICATION_SERVICE);
 
     @ArchTest
-    private final ArchRule services_should_be_annotated_with_Transactional =
+    private final ArchRule service_should_be_in_application_service =
         classes()
             .that()
-            .resideInAPackage(APPLICATION_SERVICE)
-            .and()
             .haveSimpleNameEndingWith(SERVICE_SUFFIX)
             .and()
             .haveNameNotMatching(ENUM_SERVICE)
+            .and()
+            .areAnnotatedWith(Service.class)
+            .and()
+            .areAnnotatedWith(Transactional.class)
             .should()
-            .beAnnotatedWith(Transactional.class);
+            .resideInAPackage(APPLICATION_SERVICE);
 
     @ArchTest
-    private final ArchRule service_tests_should_be_annotated_with_ExtendWith =
+    private final ArchRule service_test_should_be_in_application_service =
         classes()
             .that()
-            .resideInAnyPackage(APPLICATION_SERVICE)
-            .and()
             .haveSimpleNameEndingWith(SERVICE_TEST_SUFFIX)
             .and()
-            .haveNameNotMatching(ENUM_SERVICE_TEST)
+            .haveNameNotMatching(ENUM_SERVICE)
+            .and()
+            .areAnnotatedWith(ExtendWith.class)
             .should()
-            .beAnnotatedWith(ExtendWith.class);
+            .resideInAPackage(APPLICATION_SERVICE);
 
 }
