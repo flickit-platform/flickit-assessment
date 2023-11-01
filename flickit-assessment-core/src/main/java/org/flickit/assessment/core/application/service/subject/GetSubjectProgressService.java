@@ -6,7 +6,7 @@ import org.flickit.assessment.core.application.port.in.subject.GetSubjectProgres
 import org.flickit.assessment.core.application.port.out.answer.CountAnswersByQuestionIdsPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsBySubjectPort;
-import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
