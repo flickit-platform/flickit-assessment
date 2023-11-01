@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.assessment.core.application.port.out.assessment.*;
-import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;

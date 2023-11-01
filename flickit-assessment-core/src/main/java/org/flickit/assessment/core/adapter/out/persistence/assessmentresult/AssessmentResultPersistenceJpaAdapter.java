@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

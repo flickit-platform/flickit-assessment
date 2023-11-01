@@ -21,7 +21,7 @@ import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
-import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

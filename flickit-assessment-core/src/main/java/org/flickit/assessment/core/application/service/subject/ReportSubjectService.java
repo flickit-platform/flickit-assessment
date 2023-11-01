@@ -10,14 +10,13 @@ import org.flickit.assessment.core.application.domain.report.SubjectReport.Attri
 import org.flickit.assessment.core.application.domain.report.TopAttributeResolver;
 import org.flickit.assessment.core.application.port.in.subject.ReportSubjectUseCase;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
-import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toCollection;
 import static org.flickit.assessment.core.application.domain.MaturityLevel.middleLevel;
