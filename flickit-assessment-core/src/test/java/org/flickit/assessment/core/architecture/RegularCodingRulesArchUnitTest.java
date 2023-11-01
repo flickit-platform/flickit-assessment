@@ -20,7 +20,7 @@ public class RegularCodingRulesArchUnitTest {
     private final ArchRule no_java_util_logging = NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING;
 
     @ArchTest
-    private final ArchRule no_jodatime = NO_CLASSES_SHOULD_USE_JODATIME;
+    private final ArchRule no_jodaTime = NO_CLASSES_SHOULD_USE_JODATIME;
 
     @ArchTest
     private final ArchRule no_field_injection = NO_CLASSES_SHOULD_USE_FIELD_INJECTION;

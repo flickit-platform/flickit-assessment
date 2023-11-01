@@ -561,7 +561,25 @@
 				}
 			},
 			"response": []
-		}
+		},
+        {
+          "name": "Get Confidence Level List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/confidence-levels",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "confidence-levels"
+              ]
+            }
+          },
+          "response": []
+        }
 	],
 	"variable": [
 		{

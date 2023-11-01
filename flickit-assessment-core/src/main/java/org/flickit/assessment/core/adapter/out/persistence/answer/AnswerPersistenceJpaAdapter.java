@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCa
 import org.flickit.assessment.core.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.QuestionnaireProgress;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.core.application.port.out.questionnaire.GetQuestionnairesProgressPort;
-import org.flickit.assessment.core.application.service.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
