@@ -5,6 +5,5 @@ import org.flickit.assessment.core.application.port.in.confidencelevel.GetConfid
 import java.util.List;
 
 public record GetConfidenceLevelsResponseDto(
-    ConfidenceLevelItem defaultConfidenceLevelItem,
-    List<ConfidenceLevelItem> confidenceLevels) {
+    ConfidenceLevelItem defaultConfidenceLevel, List<ConfidenceLevelItem> confidenceLevels) {
 }

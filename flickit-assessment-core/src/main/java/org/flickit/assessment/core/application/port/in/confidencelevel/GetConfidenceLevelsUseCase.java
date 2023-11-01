@@ -7,8 +7,8 @@ public interface GetConfidenceLevelsUseCase {
     Result getConfidenceLevels();
 
     record Result(
-        ConfidenceLevelItem defaultConfidenceLevelItem,
-        List<ConfidenceLevelItem> confidenceLevelItems) {}
+        ConfidenceLevelItem defaultConfidenceLevel,
+        List<ConfidenceLevelItem> confidenceLevels) {}
 
     record ConfidenceLevelItem(int id, String title) {
     }

@@ -13,9 +13,11 @@ public class GetConfidenceLevelsService implements GetConfidenceLevelsUseCase {
     public Result getConfidenceLevels() {
         var defaultConfidenceLevel = ConfidenceLevel.getDefault();
         var defaultConfidenceLevelItem = new ConfidenceLevelItem(defaultConfidenceLevel.getId(), defaultConfidenceLevel.getTitle());
+
         var confidenceLevelItems = Arrays.stream(ConfidenceLevel.values())
             .map(cl -> new ConfidenceLevelItem(cl.getId(), cl.getTitle()))
             .toList();
+
         return new Result(defaultConfidenceLevelItem, confidenceLevelItems);
     }
 }

@@ -22,7 +22,7 @@ public class GetConfidenceLevelsRestController {
     }
 
     private GetConfidenceLevelsResponseDto toResponseDto(Result response) {
-        return new GetConfidenceLevelsResponseDto(response.defaultConfidenceLevelItem(), response.confidenceLevelItems());
+        return new GetConfidenceLevelsResponseDto(response.defaultConfidenceLevel(), response.confidenceLevels());
     }
 
 }
