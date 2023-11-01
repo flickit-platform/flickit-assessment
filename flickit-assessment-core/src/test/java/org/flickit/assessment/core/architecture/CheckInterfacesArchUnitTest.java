@@ -30,14 +30,6 @@ public class CheckInterfacesArchUnitTest {
             .beInterfaces();
 
     @ArchTest
-    static final ArchRule no_service_related_interface_should_be_placed_in_service_packages =
-        noClasses()
-            .that()
-            .resideInAPackage(APPLICATION_SERVICE)
-            .should()
-            .beInterfaces();
-
-    @ArchTest
     static final ArchRule service_should_not_be_interface =
         noClasses()
             .that()
@@ -52,6 +44,15 @@ public class CheckInterfacesArchUnitTest {
             .haveSimpleNameEndingWith(PERSISTENCE_JPA_ADAPTER_SUFFIX)
             .should()
             .beInterfaces();
+
+    @ArchTest
+    static final ArchRule useCases_should_have_one_implementation =
+        classes()
+            .that()
+            .areTopLevelClasses()
+            .and()
+            .resideInAnyPackage(APPLICATION_PORT_IN)
+            .should(haveAUniqueImplementation());
 
 
     private static ArchCondition<JavaClass> haveAUniqueImplementation() {
