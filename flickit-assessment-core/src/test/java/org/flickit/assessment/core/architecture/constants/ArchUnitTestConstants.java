@@ -55,7 +55,6 @@ public class ArchUnitTestConstants {
     public static final String MOTHER_SUFFIX = "Mother";
     public static final String NOT_ARCH_UNIT_TEST_OR_MOTHER = "(.*)(ArchUnitTest|Mother)";
     public static final String TEST_METHOD_SUFFIX = "test";
-
     public final static String VIEW_OR_REPOSITORY_SUFFIX = "(.*)(View|Repository)";
 
 }

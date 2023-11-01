@@ -38,23 +38,20 @@ public class CheckInterfacesArchUnitTest {
             .beInterfaces();
 
     @ArchTest
-    static final ArchRule no_persistence_related_interface_should_be_placed_in_persistence_packages =
+    static final ArchRule service_should_not_be_interface =
         noClasses()
             .that()
-            .resideInAPackage(ADAPTER_OUT_PERSISTENCE)
-            .and()
-            .haveNameNotMatching(VIEW_OR_REPOSITORY_SUFFIX)
+            .haveSimpleNameEndingWith(SERVICE_SUFFIX)
             .should()
             .beInterfaces();
 
     @ArchTest
-    static final ArchRule useCases_should_have_one_implementation =
-        classes()
+    static final ArchRule persistence_adapter_should_not_be_interface =
+        noClasses()
             .that()
-            .areTopLevelClasses()
-            .and()
-            .resideInAnyPackage(APPLICATION_PORT_IN)
-            .should(haveAUniqueImplementation());
+            .haveSimpleNameEndingWith(PERSISTENCE_JPA_ADAPTER_SUFFIX)
+            .should()
+            .beInterfaces();
 
 
     private static ArchCondition<JavaClass> haveAUniqueImplementation() {
