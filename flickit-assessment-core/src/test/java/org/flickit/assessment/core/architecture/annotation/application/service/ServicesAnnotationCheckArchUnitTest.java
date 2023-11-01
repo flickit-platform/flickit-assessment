@@ -31,7 +31,7 @@ public class ServicesAnnotationCheckArchUnitTest {
             .and()
             .haveSimpleNameEndingWith(SERVICE_SUFFIX)
             .and()
-            .haveSimpleNameNotContaining(COLOR_SERVICE)
+            .haveNameNotMatching(ENUM_SERVICE)
             .should()
             .beAnnotatedWith(Transactional.class);
 
@@ -43,7 +43,7 @@ public class ServicesAnnotationCheckArchUnitTest {
             .and()
             .haveSimpleNameEndingWith(SERVICE_TEST)
             .and()
-            .haveSimpleNameNotContaining(COLOR_SERVICE)
+            .haveNameNotMatching(ENUM_SERVICE_TEST)
             .should()
             .beAnnotatedWith(ExtendWith.class);
 
