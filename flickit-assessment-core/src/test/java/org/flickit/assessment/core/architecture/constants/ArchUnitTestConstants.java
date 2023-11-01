@@ -33,7 +33,6 @@ public class ArchUnitTestConstants {
     public final static String PERSISTENCE_JPA_ADAPTER_SUFFIX = "PersistenceJpaAdapter";
     public final static String ADAPTER_SUFFIX = "Adapter";
     public final static String REST_ADAPTER_SUFFIX = "RestAdapter";
-    public final static String REPORT_INFO_ADAPTOR_SUFFIX = "ReportInfoAdapter";
     public final static String EXCEPTION_HANDLER_SUFFIX = "ExceptionHandler";
     public final static String LIST_USE_CASE_SUFFIX = "ListUseCase";
     public final static String JPA_ENTITY_SUFFIX = "JpaEntity";
@@ -44,18 +43,8 @@ public class ArchUnitTestConstants {
     public final static String ENUM_SERVICE_TEST = "(.*)(GetAssessmentColorsServiceTest|GetConfidenceLevelsServiceTest)";
     public final static String ENTITY_SUFFIX = "JpaEntity";
     public final static String REPOSITORY_SUFFIX = "JpaRepository";
-    public final static String MAPPER_SUFFIX = "Mapper";
     public final static String USE_CASE_SUFFIX = "UseCase";
-    public final static String USE_CASE_TEST_SUFFIX = "UseCaseParamTest";
     public final static String PORT_SUFFIX = "Port";
-
-    // Package
-    public final static String ADAPTER_OUT_PERSISTENCE = "..adapter.out.persistence..";
-    public final static String APPLICATION_SERVICE = "..application.service..";
-    public final static String APPLICATION_PORT_IN = "..application.port.in..";
-    public final static String APPLICATION_PORT_OUT = "..application.port.out..";
-
-    // Suffix
     public final static String VIEW_OR_REPOSITORY_SUFFIX = "(.*)(View|Repository)";
 
 }
