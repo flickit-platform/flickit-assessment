@@ -29,7 +29,6 @@ public class AnswerMapper {
             answer.getId(),
             answer.getQuestionId(),
             answer.getAnswerOptionId(),
-            answer.getConfidenceLevelId(),
             answer.getIsNotApplicable()
         );
     }

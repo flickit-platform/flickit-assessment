@@ -46,7 +46,6 @@ public interface GetAnswerListUseCase {
         UUID id,
         Long questionId,
         Long answerOptionId,
-        Integer confidenceLevelId,
         Boolean isNotApplicable){
     }
 }
