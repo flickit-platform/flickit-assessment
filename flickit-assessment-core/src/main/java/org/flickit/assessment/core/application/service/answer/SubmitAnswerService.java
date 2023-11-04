@@ -33,31 +33,34 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
+        var confidenceLevelId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getConfidenceLevelId();
         if (loadedAnswer.isEmpty()) {
-            return saveAnswer(param, assessmentResult.getId(), answerOptionId);
+            return saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId);
         }
-        var loadedAnswerOptionId = loadedAnswer.get().getSelectedOption() == null ? null :  loadedAnswer.get().getSelectedOption().getId();
+        var loadedAnswerOptionId = loadedAnswer.get().getSelectedOption() == null ? null : loadedAnswer.get().getSelectedOption().getId();
         if (hasNotApplicableChanged(param.getIsNotApplicable(), loadedAnswer.get().getIsNotApplicable())
-            || hasAnswerChanged(answerOptionId, loadedAnswerOptionId)) {
-            updateAnswer(assessmentResult.getId(), loadedAnswer.get().getId(), answerOptionId, param.getIsNotApplicable());
+            || hasAnswerChanged(answerOptionId, loadedAnswerOptionId)
+            || hasConfidenceLevelChanged(confidenceLevelId, loadedAnswer.get().getConfidenceLevelId())) {
+            updateAnswer(assessmentResult.getId(), loadedAnswer.get().getId(), answerOptionId, confidenceLevelId, param.getIsNotApplicable());
         }
         return new Result(loadedAnswer.get().getId());
     }
 
-    private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId) {
-        UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId));
-        if (answerOptionId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
+    private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
+        UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId));
+        if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId);
         }
         return new Result(savedAnswerId);
     }
 
-    private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId) {
+    private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
         return new CreateAnswerPort.Param(
             assessmentResultId,
             param.getQuestionnaireId(),
             param.getQuestionId(),
             answerOptionId,
+            confidenceLevelId,
             param.getIsNotApplicable()
         );
     }
@@ -70,13 +73,17 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return !Objects.equals(answerOptionId, loadedAnswerOptionId);
     }
 
-    private void updateAnswer(UUID assessmentResultId, UUID loadedAnswerId, Long answerOptionId, Boolean isNotApplicable) {
-        updateAnswerPort.update(toUpdateAnswerParam(loadedAnswerId, answerOptionId, isNotApplicable));
+    private boolean hasConfidenceLevelChanged(Integer confidenceLevelId, Integer loadedConfidenceLevelId) {
+        return !Objects.equals(confidenceLevelId, loadedConfidenceLevelId);
+    }
+
+    private void updateAnswer(UUID assessmentResultId, UUID loadedAnswerId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable) {
+        updateAnswerPort.update(toUpdateAnswerParam(loadedAnswerId, answerOptionId, confidenceLevelId, isNotApplicable));
         invalidateAssessmentResultPort.invalidateById(assessmentResultId);
     }
 
-    private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId, Long answerOptionId, Boolean isNotApplicable) {
-        return new UpdateAnswerPort.Param(answerId, answerOptionId, isNotApplicable);
+    private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable) {
+        return new UpdateAnswerPort.Param(answerId, answerOptionId, confidenceLevelId, isNotApplicable);
     }
 
 }

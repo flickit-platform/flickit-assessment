@@ -38,6 +38,9 @@ public class AnswerJpaEntity {
     @Column(name = "answer_option_id")
     private Long answerOptionId;
 
+    @Column(name = "confidence_level_id")
+    private Integer confidenceLevelId;
+
     @Column(name = "is_not_applicable")
     private Boolean isNotApplicable;
 

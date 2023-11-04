@@ -31,6 +31,7 @@ public class SubmitAnswerRestController {
             requestDto.questionnaireId(),
             requestDto.questionId(),
             requestDto.answerOptionId(),
+            requestDto.confidenceLevelId(),
             requestDto.isNotApplicable()
         );
     }

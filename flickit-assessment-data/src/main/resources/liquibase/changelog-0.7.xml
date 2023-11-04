@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.7-01" author="MKouhestani">
+        <addColumn tableName="fac_answer">
+            <column name="confidence_level_id" type="tinyint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-02" author="MKouhestani">
+        <update tableName="fac_answer">
+            <column name="confidence_level_id" valueNumeric="1"/>
+            <where>fac_answer.is_not_applicable != true</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>
