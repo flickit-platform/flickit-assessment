@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.subjectvalue;
+package org.flickit.assessment.data.jpa.subjectvalue;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

@@ -6,6 +6,7 @@ import org.flickit.assessment.core.adapter.out.persistence.assessment.Assessment
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
 
 import java.util.ArrayList;
 

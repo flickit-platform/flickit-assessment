@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.test.fixture.adapter.jpa;
 
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueJpaEntity;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaEntity;
 
 import java.util.UUID;
 

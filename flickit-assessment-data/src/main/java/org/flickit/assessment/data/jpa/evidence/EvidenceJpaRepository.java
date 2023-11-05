@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.evidence;
+package org.flickit.assessment.data.jpa.evidence;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

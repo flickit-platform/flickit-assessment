@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.assessment;
+package org.flickit.assessment.data.jpa.assessment;
 
 public interface AssessmentListItemView {
 
