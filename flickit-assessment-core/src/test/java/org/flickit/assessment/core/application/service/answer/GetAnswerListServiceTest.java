@@ -40,8 +40,8 @@ class GetAnswerListServiceTest {
         GetAnswerListUseCase.Param param = new GetAnswerListUseCase.Param(assessmentId, questionnaireId, size, page);
 
         List<AnswerListItem> answerItems = Arrays.asList(
-            new AnswerListItem(UUID.randomUUID(), 1L, 1L, ConfidenceLevel.getDefault().getId(), Boolean.FALSE),
-            new AnswerListItem(UUID.randomUUID(), 1L, 1L, ConfidenceLevel.getDefault().getId(), Boolean.FALSE)
+            new AnswerListItem(UUID.randomUUID(), 1L, 1L, ConfidenceLevel.getDefault(), Boolean.FALSE),
+            new AnswerListItem(UUID.randomUUID(), 1L, 1L, ConfidenceLevel.getDefault(), Boolean.FALSE)
         );
         PaginatedResponse<AnswerListItem> mockResult = new PaginatedResponse<>(answerItems, page, size, null, null, 2);
         when(loadAnswersPort.loadAnswersByQuestionnaireId(any())).thenReturn(mockResult);
