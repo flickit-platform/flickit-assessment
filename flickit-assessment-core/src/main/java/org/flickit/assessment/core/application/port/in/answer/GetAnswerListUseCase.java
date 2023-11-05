@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.common.SelfValidating;
 
@@ -46,7 +47,7 @@ public interface GetAnswerListUseCase {
         UUID id,
         Long questionId,
         Long answerOptionId,
-        Integer confidenceLevelId,
+        ConfidenceLevel confidenceLevel,
         Boolean isNotApplicable){
     }
 }
