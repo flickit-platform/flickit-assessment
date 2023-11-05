@@ -17,4 +17,16 @@
         </update>
     </changeSet>
 
+    <changeSet id="0.7-03" author="MKouhestani">
+        <renameColumn tableName="fac_assessment_result"
+                      oldColumnName="is_valid"
+                      newColumnName="is_calculate_valid"/>
+    </changeSet>
+
+    <changeSet id="0.7-04" author="MKouhestani">
+        <addColumn tableName="fac_assessment_result">
+            <column name="is_confidence_valid" type="boolean" defaultValueBoolean="false"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

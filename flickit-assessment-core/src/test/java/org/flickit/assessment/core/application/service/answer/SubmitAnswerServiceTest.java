@@ -76,7 +76,7 @@ class SubmitAnswerServiceTest {
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId());
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.FALSE);
         verifyNoInteractions(updateAnswerPort);
     }
 
@@ -130,7 +130,7 @@ class SubmitAnswerServiceTest {
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class));
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class), eq(Boolean.FALSE), eq(Boolean.FALSE));
         verifyNoInteractions(updateAnswerPort);
     }
 
@@ -157,7 +157,7 @@ class SubmitAnswerServiceTest {
 
         verify(loadExistAnswerViewPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId());
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.TRUE);
         verifyNoInteractions(createAnswerPort);
     }
 
@@ -166,7 +166,7 @@ class SubmitAnswerServiceTest {
         AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         Boolean isNotApplicable = Boolean.TRUE;
         AnswerOption oldAnswerOption = AnswerOptionMother.optionOne();
-        Answer existAnswer = AnswerMother.answerWithNotApplicableTrue(oldAnswerOption);
+        Answer existAnswer = AnswerMother.answerWithNotApplicableFalse(oldAnswerOption);
 
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadExistAnswerViewPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
@@ -185,7 +185,7 @@ class SubmitAnswerServiceTest {
         assertEquals(isNotApplicable, updateAnswerParam.getValue().isNotApplicable());
 
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class));
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class), eq(Boolean.FALSE), eq(Boolean.TRUE));
         verifyNoInteractions(createAnswerPort);
     }
 
@@ -230,7 +230,7 @@ class SubmitAnswerServiceTest {
 
         verify(loadExistAnswerViewPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId());
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.TRUE);
         verifyNoInteractions(createAnswerPort);
     }
 
@@ -273,7 +273,7 @@ class SubmitAnswerServiceTest {
 
         verify(loadExistAnswerViewPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId());
+        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.TRUE, Boolean.FALSE);
         verifyNoInteractions(createAnswerPort);
     }
 }

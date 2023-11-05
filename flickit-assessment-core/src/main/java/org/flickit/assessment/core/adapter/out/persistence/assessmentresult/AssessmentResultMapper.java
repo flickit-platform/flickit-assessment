@@ -18,7 +18,8 @@ public class AssessmentResultMapper {
             null,
             null,
             null,
-            param.isValid(),
+            param.isCalculateValid(),
+            Boolean.TRUE, // TODO: Must be valued correctly
             param.lastModificationTime()
         );
     }
@@ -29,7 +30,8 @@ public class AssessmentResultMapper {
             AssessmentMapper.mapToDomainModel(entity.getAssessment()),
             new ArrayList<>(),
             entity.getMaturityLevelId() == null ? null : new MaturityLevel(entity.getMaturityLevelId(), 0, new ArrayList<>()),
-            entity.getIsValid(),
+            entity.getIsCalculateValid(),
+            entity.getIsConfidenceValid(),
             entity.getLastModificationTime()
         );
     }

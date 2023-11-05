@@ -45,7 +45,7 @@ public class ReportSubjectService implements ReportSubjectUseCase {
 
         var attributeValues = subjectValue.getQualityAttributeValues();
 
-        var subjectReportItem = buildSubject(subjectValue, assessmentResult.isValid());
+        var subjectReportItem = buildSubject(subjectValue, assessmentResult.isCalculateValid());
         var attributeReportItems = buildAttributes(attributeValues);
 
         var midLevelMaturity = middleLevel(maturityLevels);
