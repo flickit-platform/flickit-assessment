@@ -9,13 +9,13 @@ import static org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentJpa
 
 public class AssessmentResultJpaEntityMother {
 
-    public static AssessmentResultJpaEntity validSimpleAssessmentResultEntity(Long maturityLevelId, Boolean isCalculateValid) {
+    public static AssessmentResultJpaEntity validSimpleAssessmentResultEntity(Long maturityLevelId, Boolean isCalculateValid, Boolean isConfidenceValid) {
         return new AssessmentResultJpaEntity(
             UUID.randomUUID(),
             assessmentEntityWithKit(),
             maturityLevelId,
             isCalculateValid,
-            Boolean.FALSE, // TODO: Must be valued correctly
+            isConfidenceValid,
             LocalDateTime.now()
         );
     }

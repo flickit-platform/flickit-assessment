@@ -19,7 +19,7 @@ public class AssessmentResultMapper {
             null,
             null,
             param.isCalculateValid(),
-            Boolean.TRUE, // TODO: Must be valued correctly
+            param.isConfidenceValid(),
             param.lastModificationTime()
         );
     }
