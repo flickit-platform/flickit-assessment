@@ -43,12 +43,12 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var loadedAnswerOptionId = loadedAnswer.get().getSelectedOption() == null ? null : loadedAnswer.get().getSelectedOption().getId();
 
         var isNotApplicableChanged = !Objects.equals(param.getIsNotApplicable(), loadedAnswer.get().getIsNotApplicable());
-        var isAnswerChanged = Objects.equals(Boolean.TRUE, param.getIsNotApplicable()) ? Boolean.FALSE : !Objects.equals(answerOptionId, loadedAnswerOptionId);
+        var isAnswerOptionChanged = Objects.equals(Boolean.TRUE, param.getIsNotApplicable()) ? Boolean.FALSE : !Objects.equals(answerOptionId, loadedAnswerOptionId);
         var isConfidenceLevelChanged = Objects.equals(Boolean.TRUE, param.getIsNotApplicable()) ? Boolean.FALSE : !Objects.equals(confidenceLevelId, loadedAnswer.get().getConfidenceLevelId());
 
-        if (isNotApplicableChanged || isAnswerChanged || isConfidenceLevelChanged) {
+        if (isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged) {
             var updateParam = toUpdateAnswerParam(loadedAnswer.get().getId(), answerOptionId, confidenceLevelId, param.getIsNotApplicable());
-            var isCalculateValid = !isAnswerChanged && !isNotApplicableChanged;
+            var isCalculateValid = !isAnswerOptionChanged && !isNotApplicableChanged;
             updateAnswer(assessmentResult.getId(), updateParam, isCalculateValid, !isConfidenceLevelChanged);
         }
 
