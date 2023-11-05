@@ -27,7 +27,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
         MaturityLevel calcResult = assessmentResult.calculate();
         assessmentResult.setMaturityLevel(calcResult);
-        assessmentResult.setValid(true);
+        assessmentResult.setCalculateValid(true);
         assessmentResult.setLastModificationTime(LocalDateTime.now());
 
         updateCalculatedResultPort.updateCalculatedResult(assessmentResult);

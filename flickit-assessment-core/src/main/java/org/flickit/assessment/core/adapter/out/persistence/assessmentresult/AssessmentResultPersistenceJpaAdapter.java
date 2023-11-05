@@ -27,8 +27,8 @@ public class AssessmentResultPersistenceJpaAdapter implements
     private final AssessmentJpaRepository assessmentRepo;
 
     @Override
-    public void invalidateById(UUID assessmentResultId) {
-        repo.invalidateById(assessmentResultId);
+    public void invalidateById(UUID assessmentResultId, Boolean isCalculateValid, Boolean isConfidenceValid) {
+        repo.invalidateById(assessmentResultId, isCalculateValid, isConfidenceValid);
     }
 
     @Override

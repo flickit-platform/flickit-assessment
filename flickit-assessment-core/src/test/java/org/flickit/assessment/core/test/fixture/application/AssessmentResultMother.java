@@ -16,14 +16,14 @@ public class AssessmentResultMother {
 
     public static AssessmentResult validResultWithSubjectValuesAndMaturityLevel(List<SubjectValue> subjectValues, MaturityLevel maturityLevel) {
         AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessment(), subjectValues);
-        assessmentResult.setValid(true);
+        assessmentResult.setCalculateValid(true);
         assessmentResult.setMaturityLevel(maturityLevel);
         return assessmentResult;
     }
 
     public static AssessmentResult validResultWithJustAnId() {
         AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), null, new ArrayList<>());
-        assessmentResult.setValid(true);
+        assessmentResult.setCalculateValid(true);
         return assessmentResult;
     }
 }

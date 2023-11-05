@@ -158,7 +158,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
     }
 
     private static Context createContext() {
-        var assessmentResultEntity = AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity(null, Boolean.FALSE);
+        var assessmentResultEntity = AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity(null, Boolean.FALSE, Boolean.FALSE);
 
         var attributeId = 134L;
         var attribute1Id = attributeId++;

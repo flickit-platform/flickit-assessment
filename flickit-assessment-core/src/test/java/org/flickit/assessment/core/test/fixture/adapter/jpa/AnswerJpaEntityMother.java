@@ -2,6 +2,7 @@ package org.flickit.assessment.core.test.fixture.adapter.jpa;
 
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerJpaEntity;
 import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ public class AnswerJpaEntityMother {
             1L,
             questionId,
             answerOptionId,
+            ConfidenceLevel.getDefault().getId(),
             null
         );
     }
@@ -25,6 +27,7 @@ public class AnswerJpaEntityMother {
             1L,
             questionId,
             null,
+            ConfidenceLevel.getDefault().getId(),
             null
         );
     }
@@ -36,6 +39,7 @@ public class AnswerJpaEntityMother {
             1L,
             questionId,
             null,
+            ConfidenceLevel.getDefault().getId(),
             Boolean.TRUE
         );
     }

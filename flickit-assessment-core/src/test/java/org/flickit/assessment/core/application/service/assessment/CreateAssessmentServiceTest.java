@@ -96,7 +96,7 @@ class CreateAssessmentServiceTest {
 
         assertEquals(assessmentId, createPortParam.getValue().assessmentId());
         assertNotNull(createPortParam.getValue().lastModificationTime());
-        assertFalse(createPortParam.getValue().isValid());
+        assertFalse(createPortParam.getValue().isCalculateValid());
     }
 
     @Test

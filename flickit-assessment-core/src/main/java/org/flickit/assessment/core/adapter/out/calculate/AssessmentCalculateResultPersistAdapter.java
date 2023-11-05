@@ -25,7 +25,7 @@ public class AssessmentCalculateResultPersistAdapter implements UpdateCalculated
     public void updateCalculatedResult(AssessmentResult assessmentResult) {
         assessmentResultRepo.updateAfterCalculate(assessmentResult.getId(),
             assessmentResult.getMaturityLevel().getId(),
-            assessmentResult.isValid(),
+            assessmentResult.isCalculateValid(),
             assessmentResult.getLastModificationTime());
 
         List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();

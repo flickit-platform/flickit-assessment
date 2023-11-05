@@ -164,7 +164,12 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .map(entity -> {
                 AnswerOptionDto optionDto = idToAnswerOptionDto.get(entity.getAnswerOptionId());
                 AnswerOption answerOption = optionDto != null ? optionDto.dtoToDomain() : null;
-                return new Answer(entity.getId(), answerOption, entity.getQuestionId(), entity.getIsNotApplicable());
+                return new Answer(
+                    entity.getId(),
+                    answerOption,
+                    entity.getQuestionId(),
+                    entity.getConfidenceLevelId(),
+                    entity.getIsNotApplicable());
             }).toList();
     }
 

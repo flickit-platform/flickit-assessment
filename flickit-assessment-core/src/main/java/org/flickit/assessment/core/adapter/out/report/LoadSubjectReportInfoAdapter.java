@@ -45,7 +45,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
         UUID assessmentResultId = assessmentResultEntity.getId();
         Long kitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
 
-        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsValid())) {
+        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsCalculateValid())) {
             log.warn("The calculated result is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultId);
             throw new CalculateNotValidException(REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_VALID);
         }
@@ -69,7 +69,8 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             buildAssessment(assessmentResultEntity.getAssessment(), maturityLevels),
             List.of(subjectValue),
             findMaturityLevelById(maturityLevels, assessmentResultEntity.getMaturityLevelId()),
-            assessmentResultEntity.getIsValid(),
+            assessmentResultEntity.getIsCalculateValid(),
+            assessmentResultEntity.getIsConfidenceValid(),
             assessmentResultEntity.getLastModificationTime());
     }
 

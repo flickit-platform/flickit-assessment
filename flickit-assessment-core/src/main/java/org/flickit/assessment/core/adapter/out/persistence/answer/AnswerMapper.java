@@ -19,6 +19,7 @@ public class AnswerMapper {
             param.questionnaireId(),
             param.questionId(),
             param.answerOptionId(),
+            param.confidenceLevelId(),
             param.isNotApplicable()
         );
     }
@@ -39,6 +40,7 @@ public class AnswerMapper {
             answer.getId(),
             answerOption,
             answer.getQuestionId(),
+            answer.getConfidenceLevelId(),
             answer.getIsNotApplicable()
         );
     }

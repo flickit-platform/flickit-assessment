@@ -38,7 +38,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsValid())) {
+        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsCalculateValid())) {
             log.warn("The calculated result is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultEntity.getId());
             throw new CalculateNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
         }
@@ -56,7 +56,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             buildAssessment(assessmentResultEntity.getAssessment(), maturityLevels),
             subjectValues,
             findMaturityLevelById(maturityLevels, assessmentResultEntity.getMaturityLevelId()),
-            assessmentResultEntity.getIsValid(),
+            assessmentResultEntity.getIsCalculateValid(),
+            assessmentResultEntity.getIsConfidenceValid(),
             assessmentResultEntity.getLastModificationTime());
     }
 

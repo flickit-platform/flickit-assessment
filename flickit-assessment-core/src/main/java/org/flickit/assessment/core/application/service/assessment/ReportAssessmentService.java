@@ -60,7 +60,7 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
             assessment.getId(),
             assessment.getTitle(),
             assessmentResult.getMaturityLevel().getId(),
-            assessmentResult.isValid(),
+            assessmentResult.isCalculateValid(),
             AssessmentColor.valueOfById(assessment.getColorId()),
             assessment.getLastModificationTime()
         );

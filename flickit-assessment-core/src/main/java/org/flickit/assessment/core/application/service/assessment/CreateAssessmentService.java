@@ -59,7 +59,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private void createAssessmentResult(UUID assessmentId, Long assessmentKitId) {
         LocalDateTime lastModificationTime = LocalDateTime.now();
-        CreateAssessmentResultPort.Param param = new CreateAssessmentResultPort.Param(assessmentId, lastModificationTime, false);
+        CreateAssessmentResultPort.Param param = new CreateAssessmentResultPort.Param(assessmentId, lastModificationTime, false, false);
         UUID assessmentResultId = createAssessmentResultPort.persist(param);
 
         List<Subject> subjects = loadSubjectByAssessmentKitIdPort.loadByAssessmentKitId(assessmentKitId);

@@ -15,6 +15,7 @@ public interface CreateAnswerPort {
                  Long questionnaireId,
                  Long questionId,
                  Long answerOptionId,
+                 Integer confidenceLevelId,
                  Boolean isNotApplicable) {
     }
 }
