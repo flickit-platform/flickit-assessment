@@ -44,7 +44,7 @@ public class SubjectValue {
     }
 
     public double calculate() {
-        qualityAttributeValues.forEach(x -> x.calculate());
+        qualityAttributeValues.forEach(QualityAttributeValue::calculate);
         return calculateWeightedMeanOfQualityAttributeConfidenceLevels();
     }
 

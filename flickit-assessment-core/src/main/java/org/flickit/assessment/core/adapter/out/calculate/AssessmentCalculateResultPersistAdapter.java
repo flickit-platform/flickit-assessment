@@ -57,8 +57,6 @@ public class AssessmentCalculateResultPersistAdapter implements
 
         subjectValues.stream()
             .flatMap(x -> x.getQualityAttributeValues().stream())
-            .forEach(qav -> {
-                attributeValueRepo.updateConfidenceLevelById(qav.getId(), qav.getConfidenceLevelValue());
-            });
+            .forEach(qav -> attributeValueRepo.updateConfidenceLevelById(qav.getId(), qav.getConfidenceLevelValue()));
     }
 }

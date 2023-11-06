@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.util.Assert;
 
 import java.util.*;

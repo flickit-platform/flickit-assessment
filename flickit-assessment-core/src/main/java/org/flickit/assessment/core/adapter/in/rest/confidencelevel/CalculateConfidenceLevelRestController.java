@@ -6,7 +6,6 @@ import org.flickit.assessment.core.application.port.in.confidencelevel.Calculate
 import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
