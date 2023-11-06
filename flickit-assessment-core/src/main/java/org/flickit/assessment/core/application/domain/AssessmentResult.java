@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.mutable.MutableDouble;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,9 @@ public class AssessmentResult {
 
     @Setter
     MaturityLevel maturityLevel;
+
+    @Setter
+    double confidenceLevelValue;
 
     @Setter
     boolean isCalculateValid;
@@ -62,7 +66,28 @@ public class AssessmentResult {
     }
 
     public double calculateConfidenceLevel() {
-        return 0.0;
+        calculateSubjectValuesAndSetConfidenceLevelValue();
+        double weightedMeanLevel = calculateWeightedMeanOfQualityAttributeConfidenceLevelValues();
+        return weightedMeanLevel;
+    }
+
+    private void calculateSubjectValuesAndSetConfidenceLevelValue() {
+        subjectValues.forEach(x -> {
+            double calcResult = x.calculate();
+            x.setConfidenceLevelValue(calcResult);
+        });
+    }
+
+    private double calculateWeightedMeanOfQualityAttributeConfidenceLevelValues() {
+        MutableDouble weightedSum = new MutableDouble();
+        MutableDouble sum = new MutableDouble();
+        subjectValues.stream()
+            .flatMap(x -> x.getQualityAttributeValues().stream())
+            .forEach(x -> {
+                weightedSum.add(x.getWeightedConfidenceLevel());
+                sum.add(x.getQualityAttribute().getWeight());
+            });
+        return weightedSum.getValue() / sum.getValue();
     }
 
 }

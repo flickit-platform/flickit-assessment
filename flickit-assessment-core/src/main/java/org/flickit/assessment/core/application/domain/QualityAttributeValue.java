@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -20,6 +21,7 @@ public class QualityAttributeValue {
     private final List<Answer> answers;
     private Set<MaturityScore> maturityScores = new HashSet<>();
     private MaturityLevel maturityLevel;
+    double confidenceLevelValue;
 
     public void calculate(List<MaturityLevel> maturityLevels) {
         Map<Long, Double> totalScore = calcTotalScore(maturityLevels);
@@ -101,5 +103,34 @@ public class QualityAttributeValue {
     public int getWeightedLevel() {
         Assert.notNull(maturityLevel, () -> "maturityLevel should not be null");
         return maturityLevel.getLevel() * qualityAttribute.getWeight();
+    }
+
+    public void calculate() {
+        double totalScore = calcTotalScore();
+        double gainedScore = calcGainedScore();
+        this.confidenceLevelValue = gainedScore / totalScore;
+    }
+
+    private double calcTotalScore() {
+        if (qualityAttribute.getQuestions() == null)
+            return 0;
+        return qualityAttribute.getQuestions().stream()
+            .filter(question -> !isMarkedAsNotApplicable(question.getId()))
+            .flatMap(question -> question.getImpacts().stream())
+            .filter(Objects::nonNull)
+            .mapToDouble(QuestionImpact::getWeight)
+            .sum();
+    }
+
+    private double calcGainedScore() {
+        return answers.stream()
+            .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
+            .flatMap(answer -> answer.getSelectedOption().getImpacts().stream())
+            .mapToDouble(AnswerOptionImpact::calculateScore)
+            .sum();
+    }
+
+    public double getWeightedConfidenceLevel() {
+        return confidenceLevelValue * qualityAttribute.getWeight();
     }
 }

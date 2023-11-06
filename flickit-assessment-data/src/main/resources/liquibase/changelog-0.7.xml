@@ -29,4 +29,22 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.7-05" author="MKouhestani">
+        <addColumn tableName="fac_assessment_result">
+            <column name="confidence_level_value" type="double precision"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-06" author="MKouhestani">
+        <addColumn tableName="fac_subject_value">
+            <column name="confidence_level_value" type="double precision"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-07" author="MKouhestani">
+        <addColumn tableName="fac_quality_attribute_value">
+            <column name="confidence_level_value" type="double precision"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

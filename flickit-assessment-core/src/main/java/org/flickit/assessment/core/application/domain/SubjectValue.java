@@ -20,6 +20,9 @@ public class SubjectValue {
     @Setter
     MaturityLevel maturityLevel;
 
+    @Setter
+    double confidenceLevelValue;
+
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
         qualityAttributeValues.forEach(x -> x.calculate(maturityLevels));
 
@@ -38,6 +41,21 @@ public class SubjectValue {
             sum += qav.getQualityAttribute().getWeight();
         }
         return (int) Math.round((double) weightedSum / sum);
+    }
+
+    public double calculate() {
+        qualityAttributeValues.forEach(x -> x.calculate());
+        return calculateWeightedMeanOfQualityAttributeConfidenceLevelValues();
+    }
+
+    private double calculateWeightedMeanOfQualityAttributeConfidenceLevelValues() {
+        double weightedSum = 0;
+        double sum = 0;
+        for (QualityAttributeValue qav : qualityAttributeValues) {
+            weightedSum += qav.getWeightedConfidenceLevel();
+            sum += qav.getQualityAttribute().getWeight();
+        }
+        return weightedSum / sum;
     }
 
 }
