@@ -61,4 +61,8 @@ public class AssessmentResult {
         return (int) Math.round((double) weightedSum.getValue() / sum.getValue());
     }
 
+    public double calculateConfidenceLevel() {
+        return 0.0;
+    }
+
 }

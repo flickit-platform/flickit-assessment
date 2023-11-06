@@ -95,4 +95,7 @@ public class ErrorMessageKey {
 
     public static final String DELETE_EVIDENCE_EVIDENCE_NOT_FOUND = "delete-evidence.id.notFound";
     public static final String DELETE_EVIDENCE_EVIDENCE_ID_NOT_NULL = "delete-evidence.id.notNull";
+
+    public static final String CALCULATE_CONFIDENCE_LEVEL_ASSESSMENT_ID_NOT_NULL = "calculate-confidence-level.assessment.id.notNull";
+    public static final String CALCULATE_CONFIDENCE_LEVEL_ASSESSMENT_RESULT_NOT_FOUND = "calculate-confidence-level.assessmentResult.notFount";
 }
