@@ -117,7 +117,7 @@ public class QualityAttributeValue {
             .filter(question -> !isMarkedAsNotApplicable(question.getId()))
             .flatMap(question -> question.getImpacts().stream())
             .filter(Objects::nonNull)
-            .mapToDouble(QuestionImpact::getWeight)
+            .mapToDouble(questionImpact -> questionImpact.getWeight() * ConfidenceLevel.getMaxLevel().getId())
             .sum();
     }
 
@@ -125,7 +125,7 @@ public class QualityAttributeValue {
         return answers.stream()
             .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
             .mapToDouble(answer -> answer.getSelectedOption().getImpacts().stream()
-                .mapToDouble(answerOptionImpact -> answerOptionImpact.calculateScore() * answer.getConfidenceLevelId())
+                .mapToDouble(answerOptionImpact -> answerOptionImpact.getQuestionImpact().getWeight() * answer.getConfidenceLevelId())
                 .sum())
             .sum();
     }
