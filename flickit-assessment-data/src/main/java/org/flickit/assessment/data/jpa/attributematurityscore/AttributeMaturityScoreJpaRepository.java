@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.attributematurityscore;
+package org.flickit.assessment.data.jpa.attributematurityscore;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,8 +1,8 @@
-package org.flickit.assessment.core.adapter.out.persistence.assessmentresult;
+package org.flickit.assessment.data.jpa.assessmentresult;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentJpaEntity;
+import org.flickit.assessment.data.jpa.assessment.AssessmentJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;

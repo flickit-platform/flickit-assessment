@@ -7,6 +7,7 @@ import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
+import org.flickit.assessment.data.jpa.answer.AnswerJpaEntity;
 
 import java.util.ArrayList;
 

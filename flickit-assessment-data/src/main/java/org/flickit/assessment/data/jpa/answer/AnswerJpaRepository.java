@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.answer;
+package org.flickit.assessment.data.jpa.answer;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

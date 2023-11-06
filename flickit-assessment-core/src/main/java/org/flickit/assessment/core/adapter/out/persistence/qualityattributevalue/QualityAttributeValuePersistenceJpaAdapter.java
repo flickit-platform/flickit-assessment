@@ -1,18 +1,20 @@
 package org.flickit.assessment.core.adapter.out.persistence.qualityattributevalue;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.core.adapter.out.persistence.attributematurityscore.AttributeMaturityScoreJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.attributematurityscore.AttributeMaturityScoreJpaRepository;
 import org.flickit.assessment.core.adapter.out.persistence.attributematurityscore.AttributeMaturityScoreMapper;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.MaturityScore;
 import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.QualityAttributeValue;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
-import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.attributematurityscore.AttributeMaturityScoreJpaEntity;
+import org.flickit.assessment.data.jpa.attributematurityscore.AttributeMaturityScoreJpaRepository;
+import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
