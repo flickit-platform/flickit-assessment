@@ -64,6 +64,7 @@ public class QualityAttributeValueMother {
             attribute,
             null,
             maturityScoresOnAllLevels(),
-            maturityLevel);
+            maturityLevel,
+            1.0);
     }
 }

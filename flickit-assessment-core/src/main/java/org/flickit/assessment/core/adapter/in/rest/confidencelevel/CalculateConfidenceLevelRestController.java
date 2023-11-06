@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -18,7 +19,7 @@ public class CalculateConfidenceLevelRestController {
 
     private final CalculateConfidenceLevelUseCase useCase;
 
-    @GetMapping("/assessments/{assessmentId}/calculate-confidence-level")
+    @PostMapping("/assessments/{assessmentId}/calculate-confidence-level")
     public ResponseEntity<CalculateConfidenceLevelResponseDto> calculate(@PathVariable("assessmentId") UUID assessmentId) {
         var response = useCase.calculate(toParam(assessmentId));
         var responseDto = toResponseDto(response);

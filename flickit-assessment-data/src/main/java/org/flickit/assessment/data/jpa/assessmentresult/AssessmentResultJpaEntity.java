@@ -32,7 +32,7 @@ public class AssessmentResultJpaEntity {
     private Long maturityLevelId;
 
     @Column(name = "confidence_level_value")
-    private double confidenceLevelValue;
+    private Double confidenceLevelValue;
 
     @Column(name = "is_calculate_valid")
     private Boolean isCalculateValid;

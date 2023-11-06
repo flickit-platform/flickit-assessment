@@ -24,7 +24,7 @@ public class AssessmentResult {
     MaturityLevel maturityLevel;
 
     @Setter
-    double confidenceLevelValue;
+    Double confidenceLevelValue;
 
     @Setter
     boolean isCalculateValid;
@@ -67,8 +67,7 @@ public class AssessmentResult {
 
     public double calculateConfidenceLevel() {
         calculateSubjectValuesAndSetConfidenceLevelValue();
-        double weightedMeanLevel = calculateWeightedMeanOfQualityAttributeConfidenceLevelValues();
-        return weightedMeanLevel;
+        return calculateWeightedMeanOfQualityAttributeConfidenceLevels();
     }
 
     private void calculateSubjectValuesAndSetConfidenceLevelValue() {
@@ -78,7 +77,7 @@ public class AssessmentResult {
         });
     }
 
-    private double calculateWeightedMeanOfQualityAttributeConfidenceLevelValues() {
+    private double calculateWeightedMeanOfQualityAttributeConfidenceLevels() {
         MutableDouble weightedSum = new MutableDouble();
         MutableDouble sum = new MutableDouble();
         subjectValues.stream()

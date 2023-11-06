@@ -12,6 +12,7 @@ public class SubjectValueMapper {
             null,
             null,
             subjectId,
+            null,
             null
         );
     }

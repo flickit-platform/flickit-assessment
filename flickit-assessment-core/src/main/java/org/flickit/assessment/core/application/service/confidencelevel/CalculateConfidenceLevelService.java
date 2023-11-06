@@ -5,7 +5,7 @@ import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidenceLevelResultPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class CalculateConfidenceLevelService implements CalculateConfidenceLevelUseCase {
 
     private final LoadCalculateInfoPort loadCalculateInfoPort;
-    private final UpdateCalculatedResultPort updateCalculatedResultPort;
+    private final UpdateCalculatedConfidenceLevelResultPort updateCalculatedConfidenceLevelResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
 
     @Override
@@ -26,10 +26,11 @@ public class CalculateConfidenceLevelService implements CalculateConfidenceLevel
 
         double confidenceLevel = assessmentResult.calculateConfidenceLevel();
 
-        assessmentResult.setConfidenceValid(Boolean.FALSE);
+        assessmentResult.setConfidenceLevelValue(confidenceLevel);
+        assessmentResult.setConfidenceValid(Boolean.TRUE);
         assessmentResult.setLastModificationTime(LocalDateTime.now());
 
-        updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
+        updateCalculatedConfidenceLevelResultPort.updateCalculatedConfidenceLevelResult(assessmentResult);
 
         updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
 

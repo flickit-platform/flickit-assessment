@@ -61,7 +61,8 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
         SubjectValue subjectValue = new SubjectValue(svEntity.getId(),
             new Subject(svEntity.getSubjectId()),
             attributeValues,
-            findMaturityLevelById(maturityLevels, svEntity.getMaturityLevelId())
+            findMaturityLevelById(maturityLevels, svEntity.getMaturityLevelId()),
+            svEntity.getConfidenceLevelValue()
         );
 
         return new AssessmentResult(
@@ -69,6 +70,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             buildAssessment(assessmentResultEntity.getAssessment(), maturityLevels),
             List.of(subjectValue),
             findMaturityLevelById(maturityLevels, assessmentResultEntity.getMaturityLevelId()),
+            assessmentResultEntity.getConfidenceLevelValue(),
             assessmentResultEntity.getIsCalculateValid(),
             assessmentResultEntity.getIsConfidenceValid(),
             assessmentResultEntity.getLastModificationTime());

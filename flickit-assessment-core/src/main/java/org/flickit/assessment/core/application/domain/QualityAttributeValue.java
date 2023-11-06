@@ -21,7 +21,7 @@ public class QualityAttributeValue {
     private final List<Answer> answers;
     private Set<MaturityScore> maturityScores = new HashSet<>();
     private MaturityLevel maturityLevel;
-    double confidenceLevelValue;
+    private Double confidenceLevelValue;
 
     public void calculate(List<MaturityLevel> maturityLevels) {
         Map<Long, Double> totalScore = calcTotalScore(maturityLevels);
@@ -125,8 +125,9 @@ public class QualityAttributeValue {
     private double calcGainedScore() {
         return answers.stream()
             .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
-            .flatMap(answer -> answer.getSelectedOption().getImpacts().stream())
-            .mapToDouble(AnswerOptionImpact::calculateScore)
+            .mapToDouble(answer -> answer.getSelectedOption().getImpacts().stream()
+                .mapToDouble(answerOptionImpact -> answerOptionImpact.getQuestionImpact().getWeight() * answer.getConfidenceLevelId())
+                .sum())
             .sum();
     }
 
