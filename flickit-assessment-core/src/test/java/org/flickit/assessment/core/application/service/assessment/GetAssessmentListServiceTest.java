@@ -1,12 +1,12 @@
 package org.flickit.assessment.core.application.service.assessment;
 
-import org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.core.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
+import org.flickit.assessment.data.jpa.assessment.AssessmentJpaEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

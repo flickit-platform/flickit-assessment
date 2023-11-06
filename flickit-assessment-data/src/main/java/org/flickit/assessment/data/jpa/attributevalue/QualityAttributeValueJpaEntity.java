@@ -1,21 +1,21 @@
-package org.flickit.assessment.core.adapter.out.persistence.subjectvalue;
+package org.flickit.assessment.data.jpa.attributevalue;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
 @Entity
-@Table(name = "fac_subject_value")
+@Table(name = "fac_quality_attribute_value")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class SubjectValueJpaEntity {
+public class QualityAttributeValueJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -28,8 +28,8 @@ public class SubjectValueJpaEntity {
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 
-    @Column(name = "subject_id", nullable = false)
-    private Long subjectId;
+    @Column(name = "quality_attribute_id", nullable = false)
+    private Long qualityAttributeId;
 
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;

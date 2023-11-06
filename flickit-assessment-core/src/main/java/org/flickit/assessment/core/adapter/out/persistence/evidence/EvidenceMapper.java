@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
+import org.flickit.assessment.data.jpa.evidence.EvidenceJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvidenceMapper {

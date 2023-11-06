@@ -1,13 +1,13 @@
 package org.flickit.assessment.core.adapter.out.calculate;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.core.adapter.out.persistence.attributematurityscore.AttributeMaturityScorePersistenceJpaAdapter;
-import org.flickit.assessment.core.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaRepository;
-import org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

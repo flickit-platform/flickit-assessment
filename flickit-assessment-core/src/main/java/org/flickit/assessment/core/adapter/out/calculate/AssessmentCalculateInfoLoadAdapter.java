@@ -1,15 +1,6 @@
 package org.flickit.assessment.core.adapter.out.calculate;
 
 import lombok.AllArgsConstructor;
-import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerJpaRepository;
-import org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.core.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaRepository;
-import org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelDto;
@@ -20,8 +11,17 @@ import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
+import org.flickit.assessment.data.jpa.answer.AnswerJpaEntity;
+import org.flickit.assessment.data.jpa.answer.AnswerJpaRepository;
+import org.flickit.assessment.data.jpa.assessment.AssessmentJpaEntity;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaEntity;
+import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
