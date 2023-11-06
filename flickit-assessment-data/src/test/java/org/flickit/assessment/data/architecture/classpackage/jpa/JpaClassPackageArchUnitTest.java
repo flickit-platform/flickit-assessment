@@ -11,10 +11,10 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static org.flickit.assessment.data.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = {JPA_FULL_PACKAGE}, importOptions = ImportOption.DoNotIncludeTests.class)
-public class PersistenceJpaAdapterClassPackageArchUnitTest {
+public class JpaClassPackageArchUnitTest {
 
     @ArchTest
-    private final ArchRule repository_should_be_in_adapter_out_persistence =
+    private final ArchRule repository_should_be_in_data_jpa =
         classes()
             .that()
             .haveSimpleNameEndingWith(REPOSITORY_SUFFIX)
@@ -22,10 +22,10 @@ public class PersistenceJpaAdapterClassPackageArchUnitTest {
             .resideInAPackage(JPA);
 
     @ArchTest
-    private final ArchRule entity_should_be_in_adapter_out_persistence =
+    private final ArchRule entity_should_be_in_data_jpa =
         classes()
             .that()
-            .haveSimpleNameEndingWith(ENTITY_SUFFIX)
+            .haveSimpleNameEndingWith(JPA_ENTITY_SUFFIX)
             .and()
             .areAnnotatedWith(Entity.class)
             .and()

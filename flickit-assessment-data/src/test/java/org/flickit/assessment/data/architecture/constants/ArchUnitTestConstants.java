@@ -10,7 +10,6 @@ public class ArchUnitTestConstants {
 
     // Suffix
     public final static String JPA_ENTITY_SUFFIX = "JpaEntity";
-    public final static String ENTITY_SUFFIX = "JpaEntity";
     public final static String REPOSITORY_SUFFIX = "JpaRepository";
 
 }

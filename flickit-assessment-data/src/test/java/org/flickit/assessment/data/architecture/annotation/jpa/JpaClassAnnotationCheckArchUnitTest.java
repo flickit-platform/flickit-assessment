@@ -10,7 +10,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static org.flickit.assessment.data.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = JPA_FULL_PACKAGE)
-public class PersistenceJpaAdaptersAnnotationCheckArchUnitTest {
+public class JpaClassAnnotationCheckArchUnitTest {
 
     @ArchTest
     private final ArchRule entities_should_be_annotated_with_Entity =
