@@ -35,7 +35,7 @@ class QualityAttributeValueTest {
     }
 
     @Test
-    void calculate_onlyImpactOnLevels23() {
+    void testCalculate_onlyImpactOnLevels23() {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel23(),
             QuestionMother.withImpactsOnLevel23(),
@@ -61,7 +61,7 @@ class QualityAttributeValueTest {
     }
 
     @Test
-    void calculate_onlyImpactOnLevels45() {
+    void testCalculate_onlyImpactOnLevels45() {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel45(),
             QuestionMother.withImpactsOnLevel45(),
@@ -92,7 +92,7 @@ class QualityAttributeValueTest {
     }
 
     @Test
-    void calculate_onlyImpactOnLevels24() {
+    void testCalculate_onlyImpactOnLevels24() {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel24(),
             QuestionMother.withImpactsOnLevel24(),
@@ -118,7 +118,7 @@ class QualityAttributeValueTest {
     }
 
     @Test
-    void calculate_withQuestionImpactfulOnLevel24AndMarkedAsNotApplicable() {
+    void testCalculate_withQuestionImpactfulOnLevel24AndMarkedAsNotApplicable() {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel24(),
             QuestionMother.withImpactsOnLevel24(),

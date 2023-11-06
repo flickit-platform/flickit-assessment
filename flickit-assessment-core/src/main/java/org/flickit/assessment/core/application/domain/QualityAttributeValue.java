@@ -125,7 +125,7 @@ public class QualityAttributeValue {
         return answers.stream()
             .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
             .mapToDouble(answer -> answer.getSelectedOption().getImpacts().stream()
-                .mapToDouble(answerOptionImpact -> answerOptionImpact.getQuestionImpact().getWeight() * answer.getConfidenceLevelId())
+                .mapToDouble(answerOptionImpact -> answerOptionImpact.calculateScore() * answer.getConfidenceLevelId())
                 .sum())
             .sum();
     }

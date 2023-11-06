@@ -67,4 +67,39 @@ public class QualityAttributeValueMother {
             maturityLevel,
             1.0);
     }
+
+    public static QualityAttributeValue toBeCalcAsConfidenceLevelFourWithWeight(int weight) {
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel23(),
+            QuestionMother.withImpactsOnLevel23(),
+            QuestionMother.withImpactsOnLevel23(),
+            QuestionMother.withImpactsOnLevel23(),
+            QuestionMother.withImpactsOnLevel45());
+
+        List<Answer> answers = List.of(
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()));
+
+        return new QualityAttributeValue(UUID.randomUUID(),
+            QualityAttributeMother.withQuestionsAndWeight(questions, weight),
+            answers);
+    }
+
+    public static QualityAttributeValue toBeCalcAsConfidenceLevelFourLimitedQuestionWithWeight(int weight) {
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel24(),
+            QuestionMother.withImpactsOnLevel45());
+
+        List<Answer> answers = List.of(
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()));
+
+        return new QualityAttributeValue(UUID.randomUUID(),
+            QualityAttributeMother.withQuestionsAndWeight(questions, weight),
+            answers);
+    }
 }

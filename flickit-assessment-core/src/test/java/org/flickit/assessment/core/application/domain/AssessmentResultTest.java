@@ -33,7 +33,7 @@ class AssessmentResultTest {
     }
 
     @Test
-    void calculate_withDifferentWeightsAndLevels() {
+    void testCalculate_withDifferentWeightsAndLevels() {
         List<SubjectValue> subjectValues = new ArrayList<>();
         subjectValues.add(SubjectValueMother.withQAValues(List.of(
             QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(1),
@@ -50,4 +50,37 @@ class AssessmentResultTest {
 
         assertEquals(MaturityLevelMother.levelThree().getLevel(), assessmentMaturityLevel.getLevel());
     }
+
+    @Test
+    void testCalculateConfidenceLevel_withOneSample() {
+        List<SubjectValue> subjectValues = new ArrayList<>();
+        subjectValues.add(SubjectValueMother.withQAValues(List.of(
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelFourLimitedQuestionWithWeight(1)
+        )));
+
+        AssessmentResult assessmentResult = AssessmentResultMother.invalidResultWithSubjectValues(subjectValues);
+
+        double calculateConfidenceLevel = assessmentResult.calculateConfidenceLevel();
+
+        assertEquals(2.0, calculateConfidenceLevel);
+    }
+
+    @Test
+    void testCalculateConfidenceLevel_withSameWeights() {
+        List<SubjectValue> subjectValues = new ArrayList<>();
+        subjectValues.add(SubjectValueMother.withQAValues(List.of(
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelFourWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelFourWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelFourWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelFourWithWeight(1),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelFourWithWeight(1)
+        )));
+
+        AssessmentResult assessmentResult = AssessmentResultMother.invalidResultWithSubjectValues(subjectValues);
+
+        double calculateConfidenceLevel = assessmentResult.calculateConfidenceLevel();
+
+        assertEquals(1.6666666666666667, calculateConfidenceLevel);
+    }
+
 }

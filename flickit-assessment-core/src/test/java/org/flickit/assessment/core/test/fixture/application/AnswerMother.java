@@ -20,7 +20,7 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
-            ConfidenceLevel.getDefault().getId(),
+            ConfidenceLevel.COMPLETELY_UNSURE.getId(),
             Boolean.FALSE);
     }
 
@@ -31,7 +31,7 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
-            ConfidenceLevel.getDefault().getId(),
+            ConfidenceLevel.SOMEWHAT_UNSURE.getId(),
             Boolean.FALSE);
     }
 
@@ -41,7 +41,7 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
-            ConfidenceLevel.getDefault().getId(),
+            ConfidenceLevel.FAIRLY_SURE.getId(),
             Boolean.FALSE);
     }
 
@@ -52,7 +52,7 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
-            ConfidenceLevel.getDefault().getId(),
+            ConfidenceLevel.FAIRLY_SURE.getId(),
             Boolean.FALSE);
     }
 
@@ -63,7 +63,7 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
-            ConfidenceLevel.getDefault().getId(),
+            ConfidenceLevel.FAIRLY_SURE.getId(),
             Boolean.FALSE);
     }
 
@@ -74,7 +74,7 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
-            ConfidenceLevel.getDefault().getId(),
+            ConfidenceLevel.COMPLETELY_SURE.getId(),
             Boolean.FALSE);
     }
 
@@ -97,4 +97,15 @@ public class AnswerMother {
     public static Answer answerWithQuestionIdAndNotApplicableTrue(long questionId) {
         return new Answer(UUID.randomUUID(), null, questionId, ConfidenceLevel.getDefault().getId(), Boolean.TRUE);
     }
+
+    public static Answer answerWithConfidenceLevel(int confidenceLevelId) {
+        AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
+            AnswerOptionImpactMother.onLevelFive(1)));
+        return new Answer(UUID.randomUUID(),
+            selectedOption,
+            selectedOption.getQuestionId(),
+            confidenceLevelId,
+            Boolean.FALSE);
+    }
+
 }
