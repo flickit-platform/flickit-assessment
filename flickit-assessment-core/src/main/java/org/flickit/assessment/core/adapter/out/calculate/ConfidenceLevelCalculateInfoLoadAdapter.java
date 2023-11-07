@@ -42,11 +42,9 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
     private final SubjectRestAdapter subjectRestAdapter;
     private final QuestionRestAdapter questionRestAdapter;
-    private final AnswerOptionRestAdapter answerOptionRestAdapter;
 
     record Context(List<QuestionDto> allQuestionsDto,
                    List<AnswerJpaEntity> allAnswerEntities,
-                   List<AnswerOptionDto> allAnswerOptionsDto,
                    List<QualityAttributeValueJpaEntity> allQualityAttributeValueEntities,
                    List<SubjectValueJpaEntity> subjectValueEntities,
                    Map<Long, SubjectDto> subjectIdToDto,
@@ -89,11 +87,9 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         and load all those answerOptions with their impacts
         */
         List<Long> allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
-        List<AnswerOptionDto> allAnswerOptionsDto = answerOptionRestAdapter.loadAnswerOptionByIds(allAnswerOptionIds);
 
         Context context = new Context(allQuestionsDto,
             allAnswerEntities,
-            allAnswerOptionsDto,
             allQualityAttributeValueEntities,
             subjectValueEntities,
             subjectIdToDto,
@@ -156,13 +152,11 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         Set<Long> impactfulQuestionIds = impactfulQuestions.stream()
             .map(Question::getId)
             .collect(toSet());
-        Map<Long, AnswerOptionDto> idToAnswerOptionDto = context.allAnswerOptionsDto.stream()
-            .collect(toMap(AnswerOptionDto::id, x -> x));
+
         return context.allAnswerEntities.stream()
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
             .map(entity -> {
-                AnswerOptionDto optionDto = idToAnswerOptionDto.get(entity.getAnswerOptionId());
-                AnswerOption answerOption = optionDto != null ? optionDto.dtoToDomain() : null;
+                AnswerOption answerOption = new AnswerOption(entity.getAnswerOptionId(), entity.getQuestionId(), null);
                 return new Answer(
                     entity.getId(),
                     answerOption,
