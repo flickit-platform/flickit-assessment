@@ -5,6 +5,11 @@
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
     <changeSet id="0.7-001" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="account_space"/>
+            </not>
+        </preConditions>
         <createTable tableName="account_space">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_space_pkey"/>
@@ -31,6 +36,11 @@
     </changeSet>
 
     <changeSet id="0.7-002" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="account_user"/>
+            </not>
+        </preConditions>
         <createTable tableName="account_user">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_user_pkey"/>
@@ -63,6 +73,11 @@
     </changeSet>
 
     <changeSet id="0.7-003" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="account_user_groups"/>
+            </not>
+        </preConditions>
         <createTable tableName="account_user_groups">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_user_groups_pkey"/>
@@ -77,6 +92,11 @@
     </changeSet>
 
     <changeSet id="0.7-004" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="account_user_user_permissions"/>
+            </not>
+        </preConditions>
         <createTable tableName="account_user_user_permissions">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_user_user_permissions_pkey"/>
@@ -91,6 +111,11 @@
     </changeSet>
 
     <changeSet id="0.7-005" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="account_useraccess"/>
+            </not>
+        </preConditions>
         <createTable tableName="account_useraccess">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_useraccess_pkey"/>
@@ -105,6 +130,11 @@
     </changeSet>
 
     <changeSet id="0.7-006" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="auth_group"/>
+            </not>
+        </preConditions>
         <createTable tableName="auth_group">
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="auth_group_pkey"/>
@@ -116,6 +146,11 @@
     </changeSet>
 
     <changeSet id="0.7-007" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="auth_group_permissions"/>
+            </not>
+        </preConditions>
         <createTable tableName="auth_group_permissions">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="auth_group_permissions_pkey"/>
@@ -130,6 +165,11 @@
     </changeSet>
 
     <changeSet id="0.7-008" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="auth_permission"/>
+            </not>
+        </preConditions>
         <createTable tableName="auth_permission">
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="auth_permission_pkey"/>
@@ -147,6 +187,11 @@
     </changeSet>
 
     <changeSet id="0.7-009" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_answertemplate"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_answertemplate">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_answertemplate_pkey"/>
@@ -167,6 +212,11 @@
     </changeSet>
 
     <changeSet id="0.7-010" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_assessmentkit"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_assessmentkit">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_assessmentprofile_pkey"/>
@@ -197,6 +247,11 @@
     </changeSet>
 
     <changeSet id="0.7-011" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_assessmentsubject"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_assessmentsubject">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_assessmentsubject_pkey"/>
@@ -226,6 +281,11 @@
     </changeSet>
 
     <changeSet id="0.7-012" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_assessmentsubject_questionnaires"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_assessmentsubject_questionnaires">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"
@@ -241,6 +301,11 @@
     </changeSet>
 
     <changeSet id="0.7-013" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_expertgroup"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_expertgroup">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_expertgroup_pkey"/>
@@ -263,6 +328,11 @@
     </changeSet>
 
     <changeSet id="0.7-014" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_expertgroupaccess"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_expertgroupaccess">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_expertgroupaccess_pkey"/>
@@ -277,6 +347,11 @@
     </changeSet>
 
     <changeSet id="0.7-015" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_levelcompetence"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_levelcompetence">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_levelcompetence_pkey"/>
@@ -290,6 +365,11 @@
     </changeSet>
 
     <changeSet id="0.7-016" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_maturitylevel"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_maturitylevel">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_maturitylevel_pkey"/>
@@ -307,6 +387,11 @@
     </changeSet>
 
     <changeSet id="0.7-017" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_question"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_question">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_metric_pkey"/>
@@ -332,6 +417,11 @@
     </changeSet>
 
     <changeSet id="0.7-018" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_questionimpact"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_questionimpact">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_metricimpact_pkey"/>
@@ -351,6 +441,11 @@
     </changeSet>
 
     <changeSet id="0.7-019" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_optionvalue"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_optionvalue">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_optionvalue_pkey"/>
@@ -368,6 +463,11 @@
     </changeSet>
 
     <changeSet id="0.7-020" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_assessmentkitlike"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_assessmentkitlike">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profilelike_pkey"/>
@@ -382,6 +482,11 @@
     </changeSet>
 
     <changeSet id="0.7-021" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_assessmentkittag"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_assessmentkittag">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profiletag_pkey"/>
@@ -396,6 +501,11 @@
     </changeSet>
 
     <changeSet id="0.7-022" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_assessmentkittag_assessmentkits"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_assessmentkittag_assessmentkits">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profiletag_profiles_pkey"/>
@@ -410,6 +520,11 @@
     </changeSet>
 
     <changeSet id="0.7-023" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_qualityattribute"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_qualityattribute">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_qualityattribute_pkey"/>
@@ -440,6 +555,11 @@
     </changeSet>
 
     <changeSet id="0.7-024" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_questionnaire"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_questionnaire">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_questionnaire_pkey"/>
@@ -469,6 +589,11 @@
     </changeSet>
 
     <changeSet id="0.7-025" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="django_admin_log"/>
+            </not>
+        </preConditions>
         <createTable tableName="django_admin_log">
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_admin_log_pkey"/>
@@ -494,6 +619,11 @@
     </changeSet>
 
     <changeSet id="0.7-026" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="django_redirect"/>
+            </not>
+        </preConditions>
         <createTable tableName="django_redirect">
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_redirect_pkey"/>
@@ -511,6 +641,11 @@
     </changeSet>
 
     <changeSet id="0.7-027" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="django_session"/>
+            </not>
+        </preConditions>
         <createTable tableName="django_session">
             <column name="session_key" type="VARCHAR(40)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_session_pkey"/>
@@ -525,6 +660,11 @@
     </changeSet>
 
     <changeSet id="0.7-028" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="django_site"/>
+            </not>
+        </preConditions>
         <createTable tableName="django_site">
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_site_pkey"/>
@@ -539,6 +679,11 @@
     </changeSet>
 
     <changeSet id="0.7-029" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="baseinfo_assessmentkitdsl"/>
+            </not>
+        </preConditions>
         <createTable tableName="baseinfo_assessmentkitdsl">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profiledsl_pkey"/>
@@ -551,6 +696,11 @@
     </changeSet>
 
     <changeSet id="0.7-030" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="django_content_type"/>
+            </not>
+        </preConditions>
         <createTable tableName="django_content_type">
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_content_type_pkey"/>
@@ -1030,6 +1180,11 @@
     </changeSet>
 
     <changeSet id="0.7-109" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="django_migrations"/>
+            </not>
+        </preConditions>
         <createTable tableName="django_migrations">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_migrations_pkey"/>
