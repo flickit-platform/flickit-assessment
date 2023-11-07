@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.in.rest.confidencelevel;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase;
-import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase.ConfidenceLevelResult;
+import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase.Result;
 import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public class CalculateConfidenceLevelRestController {
         return new Param(assessmentId);
     }
 
-    private CalculateConfidenceLevelResponseDto toResponseDto(ConfidenceLevelResult response) {
+    private CalculateConfidenceLevelResponseDto toResponseDto(Result response) {
         return new CalculateConfidenceLevelResponseDto(response);
     }
 

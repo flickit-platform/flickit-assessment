@@ -98,12 +98,12 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(), null, questionId, ConfidenceLevel.getDefault().getId(), Boolean.TRUE);
     }
 
-    public static Answer answerWithConfidenceLevel(int confidenceLevelId) {
+    public static Answer answerWithConfidenceLevel(int confidenceLevelId, Long questionId) {
         AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
             AnswerOptionImpactMother.onLevelFive(1)));
         return new Answer(UUID.randomUUID(),
             selectedOption,
-            selectedOption.getQuestionId(),
+            questionId,
             confidenceLevelId,
             Boolean.FALSE);
     }

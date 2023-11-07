@@ -68,38 +68,25 @@ public class QualityAttributeValueMother {
             1.0);
     }
 
-    public static QualityAttributeValue toBeCalcAsConfidenceLevelFourWithWeight(int weight) {
-        List<Question> questions = List.of(
-            QuestionMother.withImpactsOnLevel24(),
-            QuestionMother.withImpactsOnLevel23(),
-            QuestionMother.withImpactsOnLevel23(),
-            QuestionMother.withImpactsOnLevel23(),
-            QuestionMother.withImpactsOnLevel23(),
-            QuestionMother.withImpactsOnLevel45());
+    public static QualityAttributeValue toBeCalcAsConfidenceLevelWithWeight(int weight, int confidenceLevelId) {
+        Question q1 = QuestionMother.withImpactsOnLevel24();
+        Question q2 = QuestionMother.withImpactsOnLevel23();
+        Question q3 = QuestionMother.withImpactsOnLevel23();
+        Question q4 = QuestionMother.withImpactsOnLevel23();
+        Question q5 = QuestionMother.withImpactsOnLevel23();
+        Question q6 = QuestionMother.withImpactsOnLevel45();
+        List<Question> questions = List.of(q1, q2, q3, q4, q5, q6);
 
         List<Answer> answers = List.of(
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()));
+            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q1.getId()),
+            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q2.getId()),
+            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q3.getId()),
+            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q4.getId()),
+            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q5.getId()));
 
         return new QualityAttributeValue(UUID.randomUUID(),
             QualityAttributeMother.withQuestionsAndWeight(questions, weight),
             answers);
     }
 
-    public static QualityAttributeValue toBeCalcAsConfidenceLevelFourLimitedQuestionWithWeight(int weight) {
-        List<Question> questions = List.of(
-            QuestionMother.withImpactsOnLevel24(),
-            QuestionMother.withImpactsOnLevel45());
-
-        List<Answer> answers = List.of(
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId()));
-
-        return new QualityAttributeValue(UUID.randomUUID(),
-            QualityAttributeMother.withQuestionsAndWeight(questions, weight),
-            answers);
-    }
 }

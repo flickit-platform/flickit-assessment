@@ -142,4 +142,28 @@ class QualityAttributeValueTest {
 
         assertEquals(MaturityLevelMother.levelFour().getLevel(), qav.getMaturityLevel().getLevel());
     }
+
+    @Test
+    void testCalculateConfidenceLevel_fullScore() {
+        Question q1 = QuestionMother.withImpactsOnLevel23();
+        Question q2 = QuestionMother.withImpactsOnLevel23();
+        Question q3 = QuestionMother.withImpactsOnLevel34();
+        Question q4 = QuestionMother.withImpactsOnLevel45();
+        Question q5 = QuestionMother.withImpactsOnLevel45();
+        List<Question> questions = List.of(q1, q2, q3, q4, q5);
+
+        List<Answer> answers = List.of(
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q1.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q2.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q3.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q4.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q5.getId()));
+
+        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
+            QualityAttributeMother.withQuestions(questions), answers);
+
+        qav.calculateConfidence();
+
+        assertEquals(100.0, qav.getConfidenceLevelValue());
+    }
 }

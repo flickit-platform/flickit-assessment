@@ -11,7 +11,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_CONFI
 
 public interface CalculateConfidenceLevelUseCase {
 
-    ConfidenceLevelResult calculate(Param param);
+    Result calculate(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -26,5 +26,5 @@ public interface CalculateConfidenceLevelUseCase {
         }
     }
 
-    record ConfidenceLevelResult(double value) {}
+    record Result(double confidenceValue) {}
 }

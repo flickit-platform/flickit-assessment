@@ -21,7 +21,7 @@ public class CalculateConfidenceLevelService implements CalculateConfidenceLevel
     private final UpdateAssessmentPort updateAssessmentPort;
 
     @Override
-    public ConfidenceLevelResult calculate(Param param) {
+    public Result calculate(Param param) {
         AssessmentResult assessmentResult = loadCalculateInfoPort.load(param.getAssessmentId());
 
         double confidenceLevel = assessmentResult.calculateConfidenceLevel();
@@ -34,6 +34,6 @@ public class CalculateConfidenceLevelService implements CalculateConfidenceLevel
 
         updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
 
-        return new ConfidenceLevelResult(confidenceLevel);
+        return new Result(confidenceLevel);
     }
 }

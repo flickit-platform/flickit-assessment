@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.util.Assert;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
@@ -104,29 +105,43 @@ public class QualityAttributeValue {
         return maturityLevel.getLevel() * qualityAttribute.getWeight();
     }
 
-    public void calculate() {
-        double totalScore = calcTotalScore();
-        double gainedScore = calcGainedScore();
-        this.confidenceLevelValue = gainedScore / totalScore;
+    public void calculateConfidence() {
+        var answeredQuestions = findAnsweredQuestions();
+        double totalScore = calcConfidenceTotalScore(answeredQuestions);
+        double gainedScore = calcConfidenceGainedScore(answeredQuestions);
+        this.confidenceLevelValue = (gainedScore / totalScore) * 100;
     }
 
-    private double calcTotalScore() {
-        if (qualityAttribute.getQuestions() == null)
-            return 0;
+    private Map<Long, Double> findAnsweredQuestions() {
         return qualityAttribute.getQuestions().stream()
             .filter(question -> !isMarkedAsNotApplicable(question.getId()))
-            .flatMap(question -> question.getImpacts().stream())
-            .filter(Objects::nonNull)
-            .mapToDouble(questionImpact -> questionImpact.getWeight() * ConfidenceLevel.getMaxLevel().getId())
+            .filter(question -> answers.stream()
+                .anyMatch(answer -> answer.getQuestionId().equals(question.getId())))
+            .collect(Collectors.toMap(question -> question.getId(), question -> calculateQuestionWeight(question)));
+    }
+
+    private static Double calculateQuestionWeight(Question question) {
+        if (question.getImpacts() == null || question.getImpacts().isEmpty()) {
+            return null;
+        }
+        double sum = question.getImpacts().stream()
+            .mapToDouble(QuestionImpact::getWeight)
+            .sum();
+        return sum / question.getImpacts().size();
+    }
+
+    private double calcConfidenceTotalScore(Map<Long, Double> answeredQuestions) {
+        if (qualityAttribute.getQuestions() == null)
+            return 0;
+        return answeredQuestions.keySet().stream()
+            .mapToDouble(question -> answeredQuestions.get(question) * ConfidenceLevel.getMaxLevel().getId())
             .sum();
     }
 
-    private double calcGainedScore() {
+    private double calcConfidenceGainedScore(Map<Long, Double> answeredQuestions) {
         return answers.stream()
             .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
-            .mapToDouble(answer -> answer.getSelectedOption().getImpacts().stream()
-                .mapToDouble(answerOptionImpact -> answerOptionImpact.getQuestionImpact().getWeight() * answer.getConfidenceLevelId())
-                .sum())
+            .mapToDouble(answer -> answeredQuestions.get(answer.getQuestionId()) * answer.getConfidenceLevelId())
             .sum();
     }
 

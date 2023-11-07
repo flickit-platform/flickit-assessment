@@ -43,8 +43,8 @@ public class SubjectValue {
         return (int) Math.round((double) weightedSum / sum);
     }
 
-    public double calculate() {
-        qualityAttributeValues.forEach(QualityAttributeValue::calculate);
+    public double calculateConfidence() {
+        qualityAttributeValues.forEach(QualityAttributeValue::calculateConfidence);
         return calculateWeightedMeanOfQualityAttributeConfidenceLevels();
     }
 

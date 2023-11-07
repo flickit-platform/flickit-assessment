@@ -72,7 +72,7 @@ public class AssessmentResult {
 
     private void calculateSubjectValuesAndSetConfidenceLevelValue() {
         subjectValues.forEach(x -> {
-            double calcResult = x.calculate();
+            double calcResult = x.calculateConfidence();
             x.setConfidenceLevelValue(calcResult);
         });
     }

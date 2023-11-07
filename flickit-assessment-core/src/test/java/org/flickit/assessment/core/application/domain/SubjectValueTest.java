@@ -46,21 +46,35 @@ class SubjectValueTest {
     }
 
     @Test
-    void testCalculateConfidenceLevel_withSameWeights() {
-
+    void testCalculateConfidenceLevel_withSameWeightsAndConfidenceLevels() {
         List<QualityAttributeValue> qualityAttributeValues = List.of(
-            QualityAttributeValueMother.toBeCalcAsConfidenceLevelFourWithWeight(1),
-            QualityAttributeValueMother.toBeCalcAsConfidenceLevelFourWithWeight(1),
-            QualityAttributeValueMother.toBeCalcAsConfidenceLevelFourWithWeight(1),
-            QualityAttributeValueMother.toBeCalcAsConfidenceLevelFourWithWeight(1),
-            QualityAttributeValueMother.toBeCalcAsConfidenceLevelFourWithWeight(1));
-
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()));
 
         SubjectValue subjectValue = SubjectValueMother.withQAValues(qualityAttributeValues);
 
-        double calculatedConfidenceValue = subjectValue.calculate();
+        double calculatedConfidenceValue = subjectValue.calculateConfidence();
 
-//        assertEquals(1.6666666666666667, calculatedConfidenceValue);
+        assertEquals(80.0, calculatedConfidenceValue);
+    }
+
+    @Test
+    void testCalculateConfidenceLevel_withDifferentWeightsAndConfidenceLevels() {
+        List<QualityAttributeValue> qualityAttributeValues = List.of(
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.COMPLETELY_UNSURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.FAIRLY_UNSURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.FAIRLY_SURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(5, ConfidenceLevel.COMPLETELY_SURE.getId()));
+
+        SubjectValue subjectValue = SubjectValueMother.withQAValues(qualityAttributeValues);
+
+        double calculatedConfidenceValue = subjectValue.calculateConfidence();
+
+        assertEquals(73.333333333333333, calculatedConfidenceValue);
     }
 
 }

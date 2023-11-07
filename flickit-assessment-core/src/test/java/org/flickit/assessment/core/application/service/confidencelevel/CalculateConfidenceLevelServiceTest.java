@@ -1,9 +1,10 @@
 package org.flickit.assessment.core.application.service.confidencelevel;
 
 import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.QualityAttributeValue;
 import org.flickit.assessment.core.application.domain.SubjectValue;
-import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase.ConfidenceLevelResult;
+import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase.Result;
 import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
@@ -42,15 +43,15 @@ class CalculateConfidenceLevelServiceTest {
     @Test
     void testCalculateConfidenceLevel_ValidInput_ValidResults() {
         List<QualityAttributeValue> s1QualityAttributeValues = List.of(
-            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
-            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
-            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(3),
-            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(3)
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_SURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.COMPLETELY_SURE.getId())
         );
 
         List<QualityAttributeValue> s2QualityAttributeValues = List.of(
-            QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(4),
-            QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1)
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.COMPLETELY_SURE.getId())
         );
 
         List<SubjectValue> subjectValues = List.of(
@@ -65,11 +66,11 @@ class CalculateConfidenceLevelServiceTest {
 
         when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
 
-        ConfidenceLevelResult result = service.calculate(param);
+        Result result = service.calculate(param);
         verify(updateCalculatedConfidenceLevelResultPort, times(1)).updateCalculatedConfidenceLevelResult(any(AssessmentResult.class));
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
         assertNotNull(result);
-        assertEquals(0.44666666666666666, result.value());
+        assertEquals(70.666666666666666, result.confidenceValue());
     }
 }
