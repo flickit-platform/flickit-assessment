@@ -1646,6 +1646,12 @@
     </changeSet>
 
     <changeSet id="0.7-110" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="account_space_owner_id_9c7e98ca_fk_account_user_id"
+                                            foreignKeyTableName="account_space"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="account_space"
                                  constraintName="account_space_owner_id_9c7e98ca_fk_account_user_id" deferrable="true"
                                  initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1653,6 +1659,12 @@
     </changeSet>
 
     <changeSet id="0.7-111" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="account_user_current_space_id_6c9d3ec4_fk_account_space_id"
+                                            foreignKeyTableName="account_user"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="current_space_id" baseTableName="account_user"
                                  constraintName="account_user_current_space_id_6c9d3ec4_fk_account_space_id"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1660,6 +1672,12 @@
     </changeSet>
 
     <changeSet id="0.7-112" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="account_user_default_space_id_521ee201_fk_account_space_id"
+                                            foreignKeyTableName="account_user"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="default_space_id" baseTableName="account_user"
                                  constraintName="account_user_default_space_id_521ee201_fk_account_space_id"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1667,6 +1685,12 @@
     </changeSet>
 
     <changeSet id="0.7-113" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="account_user_groups_group_id_6c71f749_fk_auth_group_id"
+                                            foreignKeyTableName="account_user_groups"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="account_user_groups"
                                  constraintName="account_user_groups_group_id_6c71f749_fk_auth_group_id"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1674,6 +1698,12 @@
     </changeSet>
 
     <changeSet id="0.7-114" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="account_user_groups_user_id_14345e7b_fk_account_user_id"
+                                            foreignKeyTableName="account_user_groups"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="account_user_groups"
                                  constraintName="account_user_groups_user_id_14345e7b_fk_account_user_id"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1681,6 +1711,12 @@
     </changeSet>
 
     <changeSet id="0.7-115" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="account_user_user_pe_user_id_cc42d270_fk_account_u"
+                                            foreignKeyTableName="account_user_user_permissions"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="account_user_user_permissions"
                                  constraintName="account_user_user_pe_user_id_cc42d270_fk_account_u" deferrable="true"
                                  initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1688,6 +1724,12 @@
     </changeSet>
 
     <changeSet id="0.7-116" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="account_useraccess_space_id_c683395f_fk_account_space_id"
+                                            foreignKeyTableName="account_useraccess"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="space_id" baseTableName="account_useraccess"
                                  constraintName="account_useraccess_space_id_c683395f_fk_account_space_id"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1695,6 +1737,12 @@
     </changeSet>
 
     <changeSet id="0.7-117" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="account_useraccess_user_id_abb729d3_fk_account_user_id"
+                                            foreignKeyTableName="account_useraccess"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="account_useraccess"
                                  constraintName="account_useraccess_user_id_abb729d3_fk_account_user_id"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1702,6 +1750,12 @@
     </changeSet>
 
     <changeSet id="0.7-118" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="auth_group_permissio_permission_id_84c5c92e_fk_auth_perm"
+                                            foreignKeyTableName="auth_group_permissions"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="auth_group_permissions"
                                  constraintName="auth_group_permissio_permission_id_84c5c92e_fk_auth_perm"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1709,6 +1763,12 @@
     </changeSet>
 
     <changeSet id="0.7-119" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="auth_group_permissions_group_id_b120cbf9_fk_auth_group_id"
+                                            foreignKeyTableName="auth_group_permissions"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="auth_group_permissions"
                                  constraintName="auth_group_permissions_group_id_b120cbf9_fk_auth_group_id"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1716,6 +1776,12 @@
     </changeSet>
 
     <changeSet id="0.7-120" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="auth_permission_content_type_id_2f476e4b_fk_django_co"
+                                            foreignKeyTableName="auth_permission"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="content_type_id" baseTableName="auth_permission"
                                  constraintName="auth_permission_content_type_id_2f476e4b_fk_django_co"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1723,6 +1789,12 @@
     </changeSet>
 
     <changeSet id="0.7-121" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="baseinfo_answertempl_question_id_a97a9c98_fk_baseinfo_"
+                                            foreignKeyTableName="baseinfo_answertemplate"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="baseinfo_answertemplate"
                                  constraintName="baseinfo_answertempl_question_id_a97a9c98_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1730,6 +1802,13 @@
     </changeSet>
 
     <changeSet id="0.7-122" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_assessmentk_assessment_kit_id_8df595c8_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_assessmentkitlike"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_assessmentkitlike"
                                  constraintName="baseinfo_assessmentk_assessment_kit_id_8df595c8_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1738,6 +1817,13 @@
     </changeSet>
 
     <changeSet id="0.7-123" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_assessmentk_assessment_kit_id_cc73eda8_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_assessmentkitdsl"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_assessmentkitdsl"
                                  constraintName="baseinfo_assessmentk_assessment_kit_id_cc73eda8_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1746,6 +1832,13 @@
     </changeSet>
 
     <changeSet id="0.7-124" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_assessmentk_assessmentkittag_id_522032fd_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_assessmentkittag_assessmentkits"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="assessmentkittag_id"
                                  baseTableName="baseinfo_assessmentkittag_assessmentkits"
                                  constraintName="baseinfo_assessmentk_assessmentkittag_id_522032fd_fk_baseinfo_"
@@ -1755,6 +1848,12 @@
     </changeSet>
 
     <changeSet id="0.7-125" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="baseinfo_assessmentp_expert_group_id_96b76a1e_fk_baseinfo_"
+                                            foreignKeyTableName="baseinfo_assessmentkit"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="expert_group_id" baseTableName="baseinfo_assessmentkit"
                                  constraintName="baseinfo_assessmentp_expert_group_id_96b76a1e_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1762,6 +1861,13 @@
     </changeSet>
 
     <changeSet id="0.7-126" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_assessments_assessment_kit_id_10688a7c_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_assessmentsubject"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_assessmentsubject"
                                  constraintName="baseinfo_assessments_assessment_kit_id_10688a7c_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1770,6 +1876,13 @@
     </changeSet>
 
     <changeSet id="0.7-127" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_assessments_assessmentsubject_id_bcd42f10_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_assessmentsubject_questionnaires"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="assessmentsubject_id"
                                  baseTableName="baseinfo_assessmentsubject_questionnaires"
                                  constraintName="baseinfo_assessments_assessmentsubject_id_bcd42f10_fk_baseinfo_"
@@ -1779,6 +1892,12 @@
     </changeSet>
 
     <changeSet id="0.7-128" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="baseinfo_assessments_questionnaire_id_536a240c_fk_baseinfo_"
+                                            foreignKeyTableName="baseinfo_assessmentsubject_questionnaires"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="questionnaire_id"
                                  baseTableName="baseinfo_assessmentsubject_questionnaires"
                                  constraintName="baseinfo_assessments_questionnaire_id_536a240c_fk_baseinfo_"
@@ -1788,6 +1907,12 @@
     </changeSet>
 
     <changeSet id="0.7-129" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="baseinfo_expertgroup_expert_group_id_2839af9e_fk_baseinfo_"
+                                            foreignKeyTableName="baseinfo_expertgroupaccess"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="expert_group_id" baseTableName="baseinfo_expertgroupaccess"
                                  constraintName="baseinfo_expertgroup_expert_group_id_2839af9e_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1795,6 +1920,12 @@
     </changeSet>
 
     <changeSet id="0.7-130" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="baseinfo_expertgroup_owner_id_84de2f0a_fk_account_user_id"
+                                            foreignKeyTableName="baseinfo_expertgroup"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="baseinfo_expertgroup"
                                  constraintName="baseinfo_expertgroup_owner_id_84de2f0a_fk_account_user_id"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1802,6 +1933,13 @@
     </changeSet>
 
     <changeSet id="0.7-131" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_expertgroupaccess_user_id_3c79acf7_fk_account_user_id"
+                        foreignKeyTableName="baseinfo_expertgroupaccess"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="baseinfo_expertgroupaccess"
                                  constraintName="baseinfo_expertgroupaccess_user_id_3c79acf7_fk_account_user_id"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1809,6 +1947,13 @@
     </changeSet>
 
     <changeSet id="0.7-132" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_levelcompet_maturity_level_compe_4b983b5e_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_levelcompetence"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="maturity_level_competence_id" baseTableName="baseinfo_levelcompetence"
                                  constraintName="baseinfo_levelcompet_maturity_level_compe_4b983b5e_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1817,6 +1962,13 @@
     </changeSet>
 
     <changeSet id="0.7-133" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_levelcompet_maturity_level_id_12668b43_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_levelcompetence"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="maturity_level_id" baseTableName="baseinfo_levelcompetence"
                                  constraintName="baseinfo_levelcompet_maturity_level_id_12668b43_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1825,6 +1977,13 @@
     </changeSet>
 
     <changeSet id="0.7-134" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_maturitylev_assessment_kit_id_85eefbac_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_maturitylevel"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_maturitylevel"
                                  constraintName="baseinfo_maturitylev_assessment_kit_id_85eefbac_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1833,6 +1992,12 @@
     </changeSet>
 
     <changeSet id="0.7-135" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="baseinfo_metric_questionnaire_id_f46e8ef0_fk_baseinfo_"
+                                            foreignKeyTableName="baseinfo_question"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="questionnaire_id" baseTableName="baseinfo_question"
                                  constraintName="baseinfo_metric_questionnaire_id_f46e8ef0_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1841,6 +2006,13 @@
     </changeSet>
 
     <changeSet id="0.7-136" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_metricimpac_maturity_level_id_2e671bcd_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_questionimpact"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="maturity_level_id" baseTableName="baseinfo_questionimpact"
                                  constraintName="baseinfo_metricimpac_maturity_level_id_2e671bcd_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1849,6 +2021,13 @@
     </changeSet>
 
     <changeSet id="0.7-137" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_metricimpac_quality_attribute_id_ba3b116a_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_questionimpact"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="quality_attribute_id" baseTableName="baseinfo_questionimpact"
                                  constraintName="baseinfo_metricimpac_quality_attribute_id_ba3b116a_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1857,6 +2036,12 @@
     </changeSet>
 
     <changeSet id="0.7-138" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="baseinfo_optionvalue_option_id_4140fe5d_fk_baseinfo_"
+                                            foreignKeyTableName="baseinfo_optionvalue"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="option_id" baseTableName="baseinfo_optionvalue"
                                  constraintName="baseinfo_optionvalue_option_id_4140fe5d_fk_baseinfo_" deferrable="true"
                                  initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1865,6 +2050,13 @@
     </changeSet>
 
     <changeSet id="0.7-139" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_optionvalue_question_impact_id_b03bbb16_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_optionvalue"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="question_impact_id" baseTableName="baseinfo_optionvalue"
                                  constraintName="baseinfo_optionvalue_question_impact_id_b03bbb16_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1873,6 +2065,12 @@
     </changeSet>
 
     <changeSet id="0.7-140" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="baseinfo_profilelike_user_id_b5659e71_fk_account_user_id"
+                                            foreignKeyTableName="baseinfo_assessmentkitlike"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="baseinfo_assessmentkitlike"
                                  constraintName="baseinfo_profilelike_user_id_b5659e71_fk_account_user_id"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1880,6 +2078,12 @@
     </changeSet>
 
     <changeSet id="0.7-141" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="baseinfo_profiletag__assessmentkit_id_511ef243_fk_baseinfo_"
+                                            foreignKeyTableName="baseinfo_assessmentkittag_assessmentkits"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="assessmentkit_id"
                                  baseTableName="baseinfo_assessmentkittag_assessmentkits"
                                  constraintName="baseinfo_profiletag__assessmentkit_id_511ef243_fk_baseinfo_"
@@ -1889,6 +2093,13 @@
     </changeSet>
 
     <changeSet id="0.7-142" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_qualityattr_assessment_subject_i_4b599516_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_qualityattribute"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="assessment_subject_id" baseTableName="baseinfo_qualityattribute"
                                  constraintName="baseinfo_qualityattr_assessment_subject_i_4b599516_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1897,6 +2108,12 @@
     </changeSet>
 
     <changeSet id="0.7-143" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="baseinfo_questionimp_question_id_dcbc7a6f_fk_baseinfo_"
+                                            foreignKeyTableName="baseinfo_questionimpact"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="baseinfo_questionimpact"
                                  constraintName="baseinfo_questionimp_question_id_dcbc7a6f_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1904,6 +2121,13 @@
     </changeSet>
 
     <changeSet id="0.7-144" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists
+                        foreignKeyName="baseinfo_questionnai_assessment_kit_id_5799de65_fk_baseinfo_"
+                        foreignKeyTableName="baseinfo_questionnaire"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_questionnaire"
                                  constraintName="baseinfo_questionnai_assessment_kit_id_5799de65_fk_baseinfo_"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1912,6 +2136,12 @@
     </changeSet>
 
     <changeSet id="0.7-145" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="django_admin_log_content_type_id_c4bce8eb_fk_django_co"
+                                            foreignKeyTableName="django_admin_log"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="content_type_id" baseTableName="django_admin_log"
                                  constraintName="django_admin_log_content_type_id_c4bce8eb_fk_django_co"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1919,6 +2149,12 @@
     </changeSet>
 
     <changeSet id="0.7-146" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="django_admin_log_user_id_c564eba6_fk_account_user_id"
+                                            foreignKeyTableName="django_admin_log"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="django_admin_log"
                                  constraintName="django_admin_log_user_id_c564eba6_fk_account_user_id" deferrable="true"
                                  initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
@@ -1926,6 +2162,12 @@
     </changeSet>
 
     <changeSet id="0.7-147" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="django_redirect_site_id_c3e37341_fk_django_site_id"
+                                            foreignKeyTableName="django_redirect"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="site_id" baseTableName="django_redirect"
                                  constraintName="django_redirect_site_id_c3e37341_fk_django_site_id" deferrable="true"
                                  initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
