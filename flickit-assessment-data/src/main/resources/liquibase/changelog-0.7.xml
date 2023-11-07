@@ -1,0 +1,1335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.7-001" author="Mahdi Rezazadeh">
+        <createTable tableName="account_space">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="account_space_pkey"/>
+            </column>
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_default_space" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-002" author="Mahdi Rezazadeh">
+        <createTable tableName="account_user">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="account_user_pkey"/>
+            </column>
+            <column name="password" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_login" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="is_superuser" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_staff" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(254)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_space_id" type="BIGINT"/>
+            <column name="display_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bio" type="VARCHAR(400)"/>
+            <column name="linkedin" type="VARCHAR(200)"/>
+            <column name="picture" type="VARCHAR(100)"/>
+            <column name="default_space_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-003" author="Mahdi Rezazadeh">
+        <createTable tableName="account_user_groups">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="account_user_groups_pkey"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-004" author="Mahdi Rezazadeh">
+        <createTable tableName="account_user_user_permissions">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="account_user_user_permissions_pkey"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-005" author="Mahdi Rezazadeh">
+        <createTable tableName="account_useraccess">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="account_useraccess_pkey"/>
+            </column>
+            <column name="space_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+            <column name="invite_email" type="VARCHAR(254)"/>
+            <column name="invite_expiration_date" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-006" author="Mahdi Rezazadeh">
+        <createTable tableName="auth_group">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="auth_group_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-007" author="Mahdi Rezazadeh">
+        <createTable tableName="auth_group_permissions">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="auth_group_permissions_pkey"/>
+            </column>
+            <column name="group_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-008" author="Mahdi Rezazadeh">
+        <createTable tableName="auth_permission">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="auth_permission_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content_type_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="codename" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-009" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_answertemplate">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_answertemplate_pkey"/>
+            </column>
+            <column name="caption" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="index" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-010" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_assessmentkit">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_assessmentprofile_pkey"/>
+            </column>
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="summary" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expert_group_id" type="BIGINT"/>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="about" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-011" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_assessmentsubject">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_assessmentsubject_pkey"/>
+            </column>
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_kit_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="index" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-012" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_assessmentsubject_questionnaires">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="baseinfo_assessmentsubject_questionnaires_pkey"/>
+            </column>
+            <column name="assessmentsubject_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="questionnaire_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-013" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_expertgroup">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_expertgroup_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="about" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="picture" type="VARCHAR(100)"/>
+            <column name="website" type="VARCHAR(200)"/>
+            <column name="owner_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bio" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-014" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_expertgroupaccess">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_expertgroupaccess_pkey"/>
+            </column>
+            <column name="expert_group_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+            <column name="invite_email" type="VARCHAR(254)"/>
+            <column name="invite_expiration_date" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-015" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_levelcompetence">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_levelcompetence_pkey"/>
+            </column>
+            <column name="maturity_level_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="maturity_level_competence_id" type="BIGINT"/>
+            <column name="value" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-016" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_maturitylevel">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_maturitylevel_pkey"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_kit_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-017" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_question">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_metric_pkey"/>
+            </column>
+            <column name="title" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="index" type="INTEGER"/>
+            <column name="questionnaire_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="may_not_be_applicable" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-018" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_questionimpact">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_metricimpact_pkey"/>
+            </column>
+            <column name="level" type="INTEGER"/>
+            <column name="question_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quality_attribute_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weight" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="maturity_level_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-019" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_optionvalue">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_optionvalue_pkey"/>
+            </column>
+            <column name="value" type="numeric(3, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_impact_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="option_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-020" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_assessmentkitlike">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profilelike_pkey"/>
+            </column>
+            <column name="assessment_kit_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-021" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_assessmentkittag">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profiletag_pkey"/>
+            </column>
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-022" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_assessmentkittag_assessmentkits">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profiletag_profiles_pkey"/>
+            </column>
+            <column name="assessmentkittag_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessmentkit_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-023" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_qualityattribute">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_qualityattribute_pkey"/>
+            </column>
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_subject_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="index" type="INTEGER"/>
+            <column name="weight" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-024" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_questionnaire">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_questionnaire_pkey"/>
+            </column>
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="index" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_kit_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-025" author="Mahdi Rezazadeh">
+        <createTable tableName="django_admin_log">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="django_admin_log_pkey"/>
+            </column>
+            <column name="action_time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="object_id" type="TEXT"/>
+            <column name="object_repr" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_flag" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="change_message" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content_type_id" type="INTEGER"/>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-026" author="Mahdi Rezazadeh">
+        <createTable tableName="django_redirect">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="django_redirect_pkey"/>
+            </column>
+            <column name="site_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="old_path" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="new_path" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-027" author="Mahdi Rezazadeh">
+        <createTable tableName="django_session">
+            <column name="session_key" type="VARCHAR(40)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="django_session_pkey"/>
+            </column>
+            <column name="session_data" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expire_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-028" author="Mahdi Rezazadeh">
+        <createTable tableName="django_site">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="django_site_pkey"/>
+            </column>
+            <column name="domain" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-029" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_assessmentkitdsl">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profiledsl_pkey"/>
+            </column>
+            <column name="dsl_file" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_kit_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-030" author="Mahdi Rezazadeh">
+        <createTable tableName="django_content_type">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="django_content_type_pkey"/>
+            </column>
+            <column name="app_label" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="model" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-031" author="Mahdi Rezazadeh">
+        <createIndex indexName="account_space_owner_id_9c7e98ca" tableName="account_space">
+            <column name="owner_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-032" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="code" constraintName="account_space_code_cc3cf1de_uniq"
+                             tableName="account_space"/>
+    </changeSet>
+
+    <changeSet id="0.7-033" author="Mahdi Rezazadeh">
+        <createIndex indexName="account_user_default_space_id_521ee201" tableName="account_user">
+            <column name="current_space_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-034" author="Mahdi Rezazadeh">
+        <createIndex indexName="account_user_email_0bd7c421_like" tableName="account_user">
+            <column name="email"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-035" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="default_space_id" constraintName="account_user_default_space_id_key"
+                             tableName="account_user"/>
+    </changeSet>
+
+    <changeSet id="0.7-036" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="email" constraintName="account_user_email_key" tableName="account_user"/>
+    </changeSet>
+
+    <changeSet id="0.7-037" author="Mahdi Rezazadeh">
+        <createIndex indexName="account_user_groups_group_id_6c71f749" tableName="account_user_groups">
+            <column name="group_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-038" author="Mahdi Rezazadeh">
+        <createIndex indexName="account_user_groups_user_id_14345e7b" tableName="account_user_groups">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-039" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="user_id, group_id"
+                             constraintName="account_user_groups_user_id_group_id_4d09af3e_uniq"
+                             tableName="account_user_groups"/>
+    </changeSet>
+
+    <changeSet id="0.7-040" author="Mahdi Rezazadeh">
+        <createIndex indexName="account_user_user_permissions_permission_id_66c44191"
+                     tableName="account_user_user_permissions">
+            <column name="permission_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-041" author="Mahdi Rezazadeh">
+        <createIndex indexName="account_user_user_permissions_user_id_cc42d270"
+                     tableName="account_user_user_permissions">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-042" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="user_id, permission_id"
+                             constraintName="account_user_user_permis_user_id_permission_id_48bdd28b_uniq"
+                             tableName="account_user_user_permissions"/>
+    </changeSet>
+
+    <changeSet id="0.7-043" author="Mahdi Rezazadeh">
+        <createIndex indexName="account_useraccess_space_id_c683395f" tableName="account_useraccess">
+            <column name="space_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-044" author="Mahdi Rezazadeh">
+        <createIndex indexName="account_useraccess_user_id_abb729d3" tableName="account_useraccess">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-045" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="space_id, user_id"
+                             constraintName="account_useraccess_space_id_user_id_a6d00ca9_uniq"
+                             tableName="account_useraccess"/>
+    </changeSet>
+
+    <changeSet id="0.7-046" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="name" constraintName="auth_group_name_key" tableName="auth_group"/>
+    </changeSet>
+
+    <changeSet id="0.7-047" author="Mahdi Rezazadeh">
+        <createIndex indexName="auth_group_permissions_group_id_b120cbf9" tableName="auth_group_permissions">
+            <column name="group_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-048" author="Mahdi Rezazadeh">
+        <createIndex indexName="auth_group_permissions_permission_id_84c5c92e" tableName="auth_group_permissions">
+            <column name="permission_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-049" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="group_id, permission_id"
+                             constraintName="auth_group_permissions_group_id_permission_id_0cd325b0_uniq"
+                             tableName="auth_group_permissions"/>
+    </changeSet>
+
+    <changeSet id="0.7-050" author="Mahdi Rezazadeh">
+        <createIndex indexName="auth_permission_content_type_id_2f476e4b" tableName="auth_permission">
+            <column name="content_type_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-051" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="content_type_id, codename"
+                             constraintName="auth_permission_content_type_id_codename_01ab375a_uniq"
+                             tableName="auth_permission"/>
+    </changeSet>
+
+    <changeSet id="0.7-052" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_answertemplate_metric_id_ffc07327" tableName="baseinfo_answertemplate">
+            <column name="question_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-053" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="index, question_id"
+                             constraintName="baseinfo_answertemplate_index_metric_id_9f834dee_uniq"
+                             tableName="baseinfo_answertemplate"/>
+    </changeSet>
+
+    <changeSet id="0.7-054" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_assessmentprofile_expert_group_id_96b76a1e" tableName="baseinfo_assessmentkit">
+            <column name="expert_group_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-055" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_assessmentprofile_title_0279319f_like" tableName="baseinfo_assessmentkit">
+            <column name="title"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-056" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="code" constraintName="baseinfo_assessmentprofile_code_5a9ff625_uniq"
+                             tableName="baseinfo_assessmentkit"/>
+    </changeSet>
+
+    <changeSet id="0.7-057" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="title" constraintName="baseinfo_assessmentprofile_title_0279319f_uniq"
+                             tableName="baseinfo_assessmentkit"/>
+    </changeSet>
+
+    <changeSet id="0.7-058" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_assessmentsubject_assessment_profile_id_a819278e"
+                     tableName="baseinfo_assessmentsubject">
+            <column name="assessment_kit_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-059" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="index, assessment_kit_id"
+                             constraintName="baseinfo_assessmentsubje_index_assessment_profile_bd210cc8_uniq"
+                             tableName="baseinfo_assessmentsubject"/>
+    </changeSet>
+
+    <changeSet id="0.7-060" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="title, assessment_kit_id"
+                             constraintName="baseinfo_assessmentsubje_title_assessment_profile_b703b977_uniq"
+                             tableName="baseinfo_assessmentsubject"/>
+    </changeSet>
+
+    <changeSet id="0.7-061" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="code" constraintName="baseinfo_assessmentsubject_code_a19bcda2_uniq"
+                             tableName="baseinfo_assessmentsubject"/>
+    </changeSet>
+
+    <changeSet id="0.7-062" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_assessmentsubject_assessmentsubject_id_bcd42f10"
+                     tableName="baseinfo_assessmentsubject_questionnaires">
+            <column name="assessmentsubject_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-063" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_assessmentsubject_questionnaire_id_536a240c"
+                     tableName="baseinfo_assessmentsubject_questionnaires">
+            <column name="questionnaire_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-064" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessmentsubject_id, questionnaire_id"
+                             constraintName="baseinfo_assessmentsubje_assessmentsubject_id_que_cc480566_uniq"
+                             tableName="baseinfo_assessmentsubject_questionnaires"/>
+    </changeSet>
+
+    <changeSet id="0.7-065" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_expertgroup_owner_id_84de2f0a" tableName="baseinfo_expertgroup">
+            <column name="owner_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-066" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="name" constraintName="baseinfo_expertgroup_name_key"
+                             tableName="baseinfo_expertgroup"/>
+    </changeSet>
+
+    <changeSet id="0.7-067" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_expertgroupaccess_expert_group_id_2839af9e"
+                     tableName="baseinfo_expertgroupaccess">
+            <column name="expert_group_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-068" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_expertgroupaccess_user_id_3c79acf7" tableName="baseinfo_expertgroupaccess">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-069" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="expert_group_id, user_id"
+                             constraintName="baseinfo_expertgroupacce_expert_group_id_user_id_284bccaf_uniq"
+                             tableName="baseinfo_expertgroupaccess"/>
+    </changeSet>
+
+    <changeSet id="0.7-070" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_levelcompetence_maturity_level_competence_id_4b983b5e"
+                     tableName="baseinfo_levelcompetence">
+            <column name="maturity_level_competence_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-071" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_levelcompetence_maturity_level_id_12668b43"
+                     tableName="baseinfo_levelcompetence">
+            <column name="maturity_level_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-072" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_maturitylevel_profile_id_d76ad9d9" tableName="baseinfo_maturitylevel">
+            <column name="assessment_kit_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-073" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="title, assessment_kit_id"
+                             constraintName="baseinfo_maturitylevel_title_profile_id_2682c3b0_uniq"
+                             tableName="baseinfo_maturitylevel"/>
+    </changeSet>
+
+    <changeSet id="0.7-074" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="value, assessment_kit_id"
+                             constraintName="baseinfo_maturitylevel_value_profile_id_ddb3a964_uniq"
+                             tableName="baseinfo_maturitylevel"/>
+    </changeSet>
+
+    <changeSet id="0.7-075" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_metric_questionnaire_id_f46e8ef0" tableName="baseinfo_question">
+            <column name="questionnaire_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-076" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_metricimpact_maturity_level_id_2e671bcd" tableName="baseinfo_questionimpact">
+            <column name="maturity_level_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-077" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_metricimpact_metric_id_2143facf" tableName="baseinfo_questionimpact">
+            <column name="question_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-078" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_metricimpact_quality_attribute_id_ba3b116a"
+                     tableName="baseinfo_questionimpact">
+            <column name="quality_attribute_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-079" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_optionvalue_metric_impact_id_d2f8c449" tableName="baseinfo_optionvalue">
+            <column name="question_impact_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-080" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_optionvalue_option_id_4140fe5d" tableName="baseinfo_optionvalue">
+            <column name="option_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-081" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_profilelike_profile_id_18609ce6" tableName="baseinfo_assessmentkitlike">
+            <column name="assessment_kit_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-082" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_profilelike_user_id_b5659e71" tableName="baseinfo_assessmentkitlike">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-083" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_profiletag_code_4987a4c6_like" tableName="baseinfo_assessmentkittag">
+            <column name="code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-084" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_profiletag_title_b2cd9f8a_like" tableName="baseinfo_assessmentkittag">
+            <column name="title"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-085" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="code" constraintName="baseinfo_profiletag_code_4987a4c6_uniq"
+                             tableName="baseinfo_assessmentkittag"/>
+    </changeSet>
+
+    <changeSet id="0.7-086" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="title" constraintName="baseinfo_profiletag_title_b2cd9f8a_uniq"
+                             tableName="baseinfo_assessmentkittag"/>
+    </changeSet>
+
+    <changeSet id="0.7-087" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_profiletag_profiles_assessmentprofile_id_6e7f869d"
+                     tableName="baseinfo_assessmentkittag_assessmentkits">
+            <column name="assessmentkit_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-088" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_profiletag_profiles_profiletag_id_8f543ce6"
+                     tableName="baseinfo_assessmentkittag_assessmentkits">
+            <column name="assessmentkittag_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-089" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessmentkittag_id, assessmentkit_id"
+                             constraintName="baseinfo_profiletag_prof_profiletag_id_assessment_cb566b60_uniq"
+                             tableName="baseinfo_assessmentkittag_assessmentkits"/>
+    </changeSet>
+
+    <changeSet id="0.7-090" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_qualityattribute_assessment_subject_id_4b599516"
+                     tableName="baseinfo_qualityattribute">
+            <column name="assessment_subject_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-091" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_qualityattribute_code_fc2b6cd0_like" tableName="baseinfo_qualityattribute">
+            <column name="code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-092" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="title, assessment_subject_id"
+                             constraintName="baseinfo_qualityattribut_title_assessment_subject_4a82494c_uniq"
+                             tableName="baseinfo_qualityattribute"/>
+    </changeSet>
+
+    <changeSet id="0.7-093" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="code" constraintName="baseinfo_qualityattribute_code_fc2b6cd0_uniq"
+                             tableName="baseinfo_qualityattribute"/>
+    </changeSet>
+
+    <changeSet id="0.7-094" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_questionnaire_assessment_profile_id_04db6823"
+                     tableName="baseinfo_questionnaire">
+            <column name="assessment_kit_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-095" author="Mahdi Rezazadeh">
+        <createIndex indexName="baseinfo_questionnaire_code_04aa0ba7_like" tableName="baseinfo_questionnaire">
+            <column name="code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-096" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="code" constraintName="baseinfo_questionnaire_code_04aa0ba7_uniq"
+                             tableName="baseinfo_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.7-097" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="index, assessment_kit_id"
+                             constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"
+                             tableName="baseinfo_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.7-098" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="title, assessment_kit_id"
+                             constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"
+                             tableName="baseinfo_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.7-099" author="Mahdi Rezazadeh">
+        <createIndex indexName="django_admin_log_content_type_id_c4bce8eb" tableName="django_admin_log">
+            <column name="content_type_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-100" author="Mahdi Rezazadeh">
+        <createIndex indexName="django_admin_log_user_id_c564eba6" tableName="django_admin_log">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-101" author="Mahdi Rezazadeh">
+        <createIndex indexName="django_redirect_old_path_c6cc94d3" tableName="django_redirect">
+            <column name="old_path"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-102" author="Mahdi Rezazadeh">
+        <createIndex indexName="django_redirect_site_id_c3e37341" tableName="django_redirect">
+            <column name="site_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-103" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="site_id, old_path"
+                             constraintName="django_redirect_site_id_old_path_ac5dd16b_uniq"
+                             tableName="django_redirect"/>
+    </changeSet>
+
+    <changeSet id="0.7-104" author="Mahdi Rezazadeh">
+        <createIndex indexName="django_session_expire_date_a5c62663" tableName="django_session">
+            <column name="expire_date"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-105" author="Mahdi Rezazadeh">
+        <createIndex indexName="django_site_domain_a2e37b91_like" tableName="django_site">
+            <column name="domain"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="0.7-106" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="domain" constraintName="django_site_domain_a2e37b91_uniq"
+                             tableName="django_site"/>
+    </changeSet>
+
+    <changeSet id="0.7-107" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_kit_id" constraintName="baseinfo_profiledsl_profile_id_key"
+                             tableName="baseinfo_assessmentkitdsl"/>
+    </changeSet>
+
+    <changeSet id="0.7-108" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="app_label, model"
+                             constraintName="django_content_type_app_label_model_76bd3d3b_uniq"
+                             tableName="django_content_type"/>
+    </changeSet>
+
+    <changeSet id="0.7-109" author="Mahdi Rezazadeh">
+        <createTable tableName="django_migrations">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="django_migrations_pkey"/>
+            </column>
+            <column name="app" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="applied" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.7-110" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="account_space"
+                                 constraintName="account_space_owner_id_9c7e98ca_fk_account_user_id" deferrable="true"
+                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-111" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="current_space_id" baseTableName="account_user"
+                                 constraintName="account_user_current_space_id_6c9d3ec4_fk_account_space_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_space" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-112" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="default_space_id" baseTableName="account_user"
+                                 constraintName="account_user_default_space_id_521ee201_fk_account_space_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_space" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-113" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="account_user_groups"
+                                 constraintName="account_user_groups_group_id_6c71f749_fk_auth_group_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="auth_group" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-114" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="account_user_groups"
+                                 constraintName="account_user_groups_user_id_14345e7b_fk_account_user_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-115" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="account_user_user_permissions"
+                                 constraintName="account_user_user_pe_user_id_cc42d270_fk_account_u" deferrable="true"
+                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-116" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="space_id" baseTableName="account_useraccess"
+                                 constraintName="account_useraccess_space_id_c683395f_fk_account_space_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_space" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-117" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="account_useraccess"
+                                 constraintName="account_useraccess_user_id_abb729d3_fk_account_user_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-118" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="auth_group_permissions"
+                                 constraintName="auth_group_permissio_permission_id_84c5c92e_fk_auth_perm"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="auth_permission" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-119" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="auth_group_permissions"
+                                 constraintName="auth_group_permissions_group_id_b120cbf9_fk_auth_group_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="auth_group" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-120" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="content_type_id" baseTableName="auth_permission"
+                                 constraintName="auth_permission_content_type_id_2f476e4b_fk_django_co"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="django_content_type" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-121" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="baseinfo_answertemplate"
+                                 constraintName="baseinfo_answertempl_question_id_a97a9c98_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_question" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-122" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_assessmentkitlike"
+                                 constraintName="baseinfo_assessmentk_assessment_kit_id_8df595c8_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_assessmentkit"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-123" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_assessmentkitdsl"
+                                 constraintName="baseinfo_assessmentk_assessment_kit_id_cc73eda8_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_assessmentkit"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-124" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="assessmentkittag_id"
+                                 baseTableName="baseinfo_assessmentkittag_assessmentkits"
+                                 constraintName="baseinfo_assessmentk_assessmentkittag_id_522032fd_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_assessmentkittag"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-125" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="expert_group_id" baseTableName="baseinfo_assessmentkit"
+                                 constraintName="baseinfo_assessmentp_expert_group_id_96b76a1e_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_expertgroup" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-126" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_assessmentsubject"
+                                 constraintName="baseinfo_assessments_assessment_kit_id_10688a7c_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_assessmentkit"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-127" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="assessmentsubject_id"
+                                 baseTableName="baseinfo_assessmentsubject_questionnaires"
+                                 constraintName="baseinfo_assessments_assessmentsubject_id_bcd42f10_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_assessmentsubject"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-128" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="questionnaire_id"
+                                 baseTableName="baseinfo_assessmentsubject_questionnaires"
+                                 constraintName="baseinfo_assessments_questionnaire_id_536a240c_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_questionnaire"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-129" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="expert_group_id" baseTableName="baseinfo_expertgroupaccess"
+                                 constraintName="baseinfo_expertgroup_expert_group_id_2839af9e_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_expertgroup" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-130" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="baseinfo_expertgroup"
+                                 constraintName="baseinfo_expertgroup_owner_id_84de2f0a_fk_account_user_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-131" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="baseinfo_expertgroupaccess"
+                                 constraintName="baseinfo_expertgroupaccess_user_id_3c79acf7_fk_account_user_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-132" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="maturity_level_competence_id" baseTableName="baseinfo_levelcompetence"
+                                 constraintName="baseinfo_levelcompet_maturity_level_compe_4b983b5e_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_maturitylevel"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-133" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="maturity_level_id" baseTableName="baseinfo_levelcompetence"
+                                 constraintName="baseinfo_levelcompet_maturity_level_id_12668b43_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_maturitylevel"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-134" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_maturitylevel"
+                                 constraintName="baseinfo_maturitylev_assessment_kit_id_85eefbac_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_assessmentkit"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-135" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="questionnaire_id" baseTableName="baseinfo_question"
+                                 constraintName="baseinfo_metric_questionnaire_id_f46e8ef0_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_questionnaire"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-136" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="maturity_level_id" baseTableName="baseinfo_questionimpact"
+                                 constraintName="baseinfo_metricimpac_maturity_level_id_2e671bcd_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_maturitylevel"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-137" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="quality_attribute_id" baseTableName="baseinfo_questionimpact"
+                                 constraintName="baseinfo_metricimpac_quality_attribute_id_ba3b116a_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_qualityattribute"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-138" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="option_id" baseTableName="baseinfo_optionvalue"
+                                 constraintName="baseinfo_optionvalue_option_id_4140fe5d_fk_baseinfo_" deferrable="true"
+                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_answertemplate"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-139" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="question_impact_id" baseTableName="baseinfo_optionvalue"
+                                 constraintName="baseinfo_optionvalue_question_impact_id_b03bbb16_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_questionimpact"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-140" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="baseinfo_assessmentkitlike"
+                                 constraintName="baseinfo_profilelike_user_id_b5659e71_fk_account_user_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-141" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="assessmentkit_id"
+                                 baseTableName="baseinfo_assessmentkittag_assessmentkits"
+                                 constraintName="baseinfo_profiletag__assessmentkit_id_511ef243_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_assessmentkit"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-142" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="assessment_subject_id" baseTableName="baseinfo_qualityattribute"
+                                 constraintName="baseinfo_qualityattr_assessment_subject_i_4b599516_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_assessmentsubject"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-143" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="baseinfo_questionimpact"
+                                 constraintName="baseinfo_questionimp_question_id_dcbc7a6f_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_question" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-144" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_questionnaire"
+                                 constraintName="baseinfo_questionnai_assessment_kit_id_5799de65_fk_baseinfo_"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_assessmentkit"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-145" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="content_type_id" baseTableName="django_admin_log"
+                                 constraintName="django_admin_log_content_type_id_c4bce8eb_fk_django_co"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="django_content_type" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-146" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="django_admin_log"
+                                 constraintName="django_admin_log_user_id_c564eba6_fk_account_user_id" deferrable="true"
+                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-147" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="site_id" baseTableName="django_redirect"
+                                 constraintName="django_redirect_site_id_c3e37341_fk_django_site_id" deferrable="true"
+                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="django_site" validate="true"/>
+    </changeSet>
+</databaseChangeLog>
