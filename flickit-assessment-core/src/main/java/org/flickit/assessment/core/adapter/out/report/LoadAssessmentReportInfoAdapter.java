@@ -2,16 +2,16 @@ package org.flickit.assessment.core.adapter.out.report;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.exception.CalculateNotValidException;
 import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.data.jpa.assessment.AssessmentJpaEntity;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaEntity;
+import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsValid())) {
+        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsCalculateValid())) {
             log.warn("The calculated result is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultEntity.getId());
             throw new CalculateNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
         }
@@ -56,7 +56,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             buildAssessment(assessmentResultEntity.getAssessment(), maturityLevels),
             subjectValues,
             findMaturityLevelById(maturityLevels, assessmentResultEntity.getMaturityLevelId()),
-            assessmentResultEntity.getIsValid(),
+            assessmentResultEntity.getIsCalculateValid(),
+            assessmentResultEntity.getIsConfidenceValid(),
             assessmentResultEntity.getLastModificationTime());
     }
 

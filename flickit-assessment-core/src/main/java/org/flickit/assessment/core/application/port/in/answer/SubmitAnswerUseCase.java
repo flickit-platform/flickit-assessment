@@ -28,13 +28,16 @@ public interface SubmitAnswerUseCase {
 
         Long answerOptionId;
 
+        Integer confidenceLevelId;
+
         Boolean isNotApplicable;
 
-        public Param(UUID assessmentId, Long questionnaireId, Long questionId, Long answerOptionId, Boolean isNotApplicable) {
+        public Param(UUID assessmentId, Long questionnaireId, Long questionId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable) {
             this.assessmentId = assessmentId;
             this.questionnaireId = questionnaireId;
             this.questionId = questionId;
             this.answerOptionId = answerOptionId;
+            this.confidenceLevelId = confidenceLevelId;
             this.isNotApplicable = isNotApplicable;
             this.validateSelf();
         }

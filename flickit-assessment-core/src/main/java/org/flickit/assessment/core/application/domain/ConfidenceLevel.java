@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Getter
@@ -12,17 +13,19 @@ import java.util.stream.Stream;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ConfidenceLevel {
 
-    COMPLETELY_UNSURE,
-    FAIRLY_UNSURE,
-    SOMEWHAT_UNSURE,
-    FAIRLY_SURE,
-    COMPLETELY_SURE;
+    COMPLETELY_UNSURE("Completely unsure"),
+    FAIRLY_UNSURE("Fairly unsure"),
+    SOMEWHAT_UNSURE("Somewhat unsure"),
+    FAIRLY_SURE("Fairly sure"),
+    COMPLETELY_SURE("Completely sure");
 
-    public static ConfidenceLevel valueOfById(int id) {
+    private final String title;
+
+    public static ConfidenceLevel valueOfById(Integer id) {
         return Stream.of(ConfidenceLevel.values())
-            .filter(x -> x.getId() == id)
+            .filter(x -> Objects.equals(x.getId(), id))
             .findAny()
-            .orElse(null);
+            .orElse(getDefault());
     }
 
     public static int getValidId(Integer id) {
@@ -41,8 +44,7 @@ public enum ConfidenceLevel {
         return ordinal() + 1;
     }
 
-    @JsonIgnore
     public String getTitle() {
-        return name().replace('_', ' ').toLowerCase();
+        return this.title;
     }
 }

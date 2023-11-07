@@ -1,8 +1,8 @@
-package org.flickit.assessment.core.adapter.out.persistence.answer;
+package org.flickit.assessment.data.jpa.answer;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
@@ -37,6 +37,9 @@ public class AnswerJpaEntity {
 
     @Column(name = "answer_option_id")
     private Long answerOptionId;
+
+    @Column(name = "confidence_level_id")
+    private Integer confidenceLevelId;
 
     @Column(name = "is_not_applicable")
     private Boolean isNotApplicable;

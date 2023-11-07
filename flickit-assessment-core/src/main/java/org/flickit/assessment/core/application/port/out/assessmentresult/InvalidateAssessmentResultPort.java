@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface InvalidateAssessmentResultPort {
 
-    void invalidateById(UUID assessmentResultId);
+    void invalidateById(UUID assessmentResultId, Boolean isCalculateValid, Boolean isConfidenceValid);
 }

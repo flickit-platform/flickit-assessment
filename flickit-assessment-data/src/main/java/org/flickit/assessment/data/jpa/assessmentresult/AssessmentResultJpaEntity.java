@@ -1,8 +1,8 @@
-package org.flickit.assessment.core.adapter.out.persistence.assessmentresult;
+package org.flickit.assessment.data.jpa.assessmentresult;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentJpaEntity;
+import org.flickit.assessment.data.jpa.assessment.AssessmentJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
@@ -31,8 +31,11 @@ public class AssessmentResultJpaEntity {
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
 
-    @Column(name = "is_valid")
-    private Boolean isValid;
+    @Column(name = "is_calculate_valid")
+    private Boolean isCalculateValid;
+
+    @Column(name = "is_confidence_valid")
+    private Boolean isConfidenceValid;
 
     @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;

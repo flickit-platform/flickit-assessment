@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.answer;
+package org.flickit.assessment.data.jpa.answer;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +35,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     @Modifying
     @Query("UPDATE AnswerJpaEntity a SET " +
         "a.answerOptionId = :answerOptionId, " +
+        "a.confidenceLevelId = :confidenceLevelId, " +
         "a.isNotApplicable = :isNotApplicable " +
         "WHERE a.id = :answerId")
-    void update(UUID answerId, Long answerOptionId, Boolean isNotApplicable);
+    void update(UUID answerId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable);
 }

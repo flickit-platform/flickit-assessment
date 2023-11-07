@@ -2,6 +2,7 @@ package org.flickit.assessment.core.test.fixture.application;
 
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerOption;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 
 import java.util.List;
 import java.util.UUID;
@@ -9,7 +10,7 @@ import java.util.UUID;
 public class AnswerMother {
 
     public static Answer answer(AnswerOption option) {
-        return new Answer(UUID.randomUUID(), option, option.getQuestionId(), Boolean.FALSE);
+        return new Answer(UUID.randomUUID(), option, option.getQuestionId(), ConfidenceLevel.getDefault().getId(), Boolean.FALSE);
     }
 
     public static Answer fullScoreOnLevels23() {
@@ -19,6 +20,7 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
+            ConfidenceLevel.getDefault().getId(),
             Boolean.FALSE);
     }
 
@@ -29,6 +31,7 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
+            ConfidenceLevel.getDefault().getId(),
             Boolean.FALSE);
     }
 
@@ -38,6 +41,7 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
+            ConfidenceLevel.getDefault().getId(),
             Boolean.FALSE);
     }
 
@@ -48,6 +52,7 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
+            ConfidenceLevel.getDefault().getId(),
             Boolean.FALSE);
     }
 
@@ -58,6 +63,7 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
+            ConfidenceLevel.getDefault().getId(),
             Boolean.FALSE);
     }
 
@@ -68,25 +74,27 @@ public class AnswerMother {
         return new Answer(UUID.randomUUID(),
             selectedOption,
             selectedOption.getQuestionId(),
+            ConfidenceLevel.getDefault().getId(),
             Boolean.FALSE);
     }
 
     public static Answer answerWithNullNotApplicable(AnswerOption option) {
         Long questionId = option != null ? option.getQuestionId() : 1L;
-        return new Answer(UUID.randomUUID(), option, questionId, null);
+        return new Answer(UUID.randomUUID(), option, questionId, ConfidenceLevel.getDefault().getId(), null);
     }
 
     public static Answer answerWithNotApplicableFalse(AnswerOption option) {
         Long questionId = option != null ? option.getQuestionId() : 1L;
-        return new Answer(UUID.randomUUID(), option, questionId, Boolean.FALSE);
+        return new Answer(UUID.randomUUID(), option, questionId, ConfidenceLevel.getDefault().getId(), Boolean.FALSE);
     }
 
     public static Answer answerWithNotApplicableTrue(AnswerOption option) {
         Long questionId = option != null ? option.getQuestionId() : 1L;
-        return new Answer(UUID.randomUUID(), option, questionId, Boolean.TRUE);
+        Integer confidenceLevelId = option != null ? ConfidenceLevel.getDefault().getId() : null;
+        return new Answer(UUID.randomUUID(), option, questionId, confidenceLevelId, Boolean.TRUE);
     }
 
     public static Answer answerWithQuestionIdAndNotApplicableTrue(long questionId) {
-        return new Answer(UUID.randomUUID(), null, questionId, Boolean.TRUE);
+        return new Answer(UUID.randomUUID(), null, questionId, ConfidenceLevel.getDefault().getId(), Boolean.TRUE);
     }
 }

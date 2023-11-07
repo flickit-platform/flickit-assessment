@@ -23,7 +23,10 @@ public class AssessmentResult {
     MaturityLevel maturityLevel;
 
     @Setter
-    boolean isValid;
+    boolean isCalculateValid;
+
+    @Setter
+    boolean isConfidenceValid;
 
     @Setter
     LocalDateTime lastModificationTime;

@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.assessment;
+package org.flickit.assessment.data.jpa.assessment;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID>, JpaSpecificationExecutor<AssessmentJpaEntity> {
 
-    @Query("SELECT a as assessment, r.maturityLevelId as maturityLevelId, r.isValid as isCalculateValid " +
+    @Query("SELECT a as assessment, r.maturityLevelId as maturityLevelId, r.isCalculateValid as isCalculateValid " +
         "FROM AssessmentJpaEntity a " +
         "LEFT JOIN AssessmentResultJpaEntity r " +
         "ON a.id = r.assessment.id " +

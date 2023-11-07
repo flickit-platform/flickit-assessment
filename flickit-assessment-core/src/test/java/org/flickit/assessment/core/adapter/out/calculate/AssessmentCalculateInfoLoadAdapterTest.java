@@ -1,14 +1,5 @@
 package org.flickit.assessment.core.adapter.out.calculate;
 
-import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerJpaRepository;
-import org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.core.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.qualityattributevalue.QualityAttributeValueJpaRepository;
-import org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelDto;
@@ -23,6 +14,15 @@ import org.flickit.assessment.core.application.domain.QualityAttributeValue;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.test.fixture.adapter.dto.MaturityLevelDtoMother;
 import org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother;
+import org.flickit.assessment.data.jpa.answer.AnswerJpaEntity;
+import org.flickit.assessment.data.jpa.answer.AnswerJpaRepository;
+import org.flickit.assessment.data.jpa.assessment.AssessmentJpaEntity;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaEntity;
+import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -158,7 +158,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
     }
 
     private static Context createContext() {
-        var assessmentResultEntity = AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity(null, Boolean.FALSE);
+        var assessmentResultEntity = AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity(null, Boolean.FALSE, Boolean.FALSE);
 
         var attributeId = 134L;
         var attribute1Id = attributeId++;

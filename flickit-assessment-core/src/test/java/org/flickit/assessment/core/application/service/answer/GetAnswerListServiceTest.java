@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.answer;
 
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
@@ -39,8 +40,8 @@ class GetAnswerListServiceTest {
         GetAnswerListUseCase.Param param = new GetAnswerListUseCase.Param(assessmentId, questionnaireId, size, page);
 
         List<AnswerListItem> answerItems = Arrays.asList(
-            new AnswerListItem(UUID.randomUUID(), 1L, 1L, Boolean.FALSE),
-            new AnswerListItem(UUID.randomUUID(), 1L, 1L, Boolean.FALSE)
+            new AnswerListItem(UUID.randomUUID(), 1L, 1L, ConfidenceLevel.getDefault(), Boolean.FALSE),
+            new AnswerListItem(UUID.randomUUID(), 1L, 1L, ConfidenceLevel.getDefault(), Boolean.FALSE)
         );
         PaginatedResponse<AnswerListItem> mockResult = new PaginatedResponse<>(answerItems, page, size, null, null, 2);
         when(loadAnswersPort.loadAnswersByQuestionnaireId(any())).thenReturn(mockResult);

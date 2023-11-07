@@ -17,6 +17,8 @@ public class Answer {
 
     private final Long questionId;
 
+    private final Integer confidenceLevelId;
+
     private final Boolean isNotApplicable;
 
     @Nullable

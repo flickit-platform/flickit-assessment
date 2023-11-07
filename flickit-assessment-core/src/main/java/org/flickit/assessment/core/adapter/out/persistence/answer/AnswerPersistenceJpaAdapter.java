@@ -1,15 +1,17 @@
 package org.flickit.assessment.core.adapter.out.persistence.answer;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.QuestionnaireProgress;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.core.application.port.out.questionnaire.GetQuestionnairesProgressPort;
-import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.answer.AnswerJpaEntity;
+import org.flickit.assessment.data.jpa.answer.AnswerJpaRepository;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -89,6 +91,6 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateAnswerPort.Param param) {
-        repository.update(param.answerId(), param.answerOptionId(), param.isNotApplicable());
+        repository.update(param.answerId(), param.answerOptionId(), param.confidenceLevelId(), param.isNotApplicable());
     }
 }
