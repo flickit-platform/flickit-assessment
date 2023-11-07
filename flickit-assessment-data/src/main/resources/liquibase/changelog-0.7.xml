@@ -726,6 +726,12 @@
     </changeSet>
 
     <changeSet id="0.7-032" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="account_space_code_cc3cf1de_uniq"
+                             tableName="account_space"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="code" constraintName="account_space_code_cc3cf1de_uniq"
                              tableName="account_space"/>
     </changeSet>
@@ -753,11 +759,23 @@
     </changeSet>
 
     <changeSet id="0.7-035" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="account_user_default_space_id_key"
+                             tableName="account_user"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="default_space_id" constraintName="account_user_default_space_id_key"
                              tableName="account_user"/>
     </changeSet>
 
     <changeSet id="0.7-036" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="account_user_email_key"
+                                        tableName="account_user"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="email" constraintName="account_user_email_key" tableName="account_user"/>
     </changeSet>
 
@@ -784,6 +802,12 @@
     </changeSet>
 
     <changeSet id="0.7-039" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="account_user_groups_user_id_group_id_4d09af3e_uniq"
+                             tableName="account_user_groups"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="user_id, group_id"
                              constraintName="account_user_groups_user_id_group_id_4d09af3e_uniq"
                              tableName="account_user_groups"/>
@@ -816,6 +840,12 @@
     </changeSet>
 
     <changeSet id="0.7-042" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="account_user_user_permis_user_id_permission_id_48bdd28b_uniq"
+                             tableName="account_user_user_permissions"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="user_id, permission_id"
                              constraintName="account_user_user_permis_user_id_permission_id_48bdd28b_uniq"
                              tableName="account_user_user_permissions"/>
@@ -844,12 +874,24 @@
     </changeSet>
 
     <changeSet id="0.7-045" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="account_useraccess_space_id_user_id_a6d00ca9_uniq"
+                             tableName="account_useraccess"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="space_id, user_id"
                              constraintName="account_useraccess_space_id_user_id_a6d00ca9_uniq"
                              tableName="account_useraccess"/>
     </changeSet>
 
     <changeSet id="0.7-046" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="auth_group_name_key"
+                                        tableName="auth_group"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="name" constraintName="auth_group_name_key" tableName="auth_group"/>
     </changeSet>
 
@@ -877,6 +919,12 @@
     </changeSet>
 
     <changeSet id="0.7-049" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="auth_group_permissions_group_id_permission_id_0cd325b0_uniq"
+                             tableName="auth_group_permissions"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="group_id, permission_id"
                              constraintName="auth_group_permissions_group_id_permission_id_0cd325b0_uniq"
                              tableName="auth_group_permissions"/>
@@ -894,6 +942,12 @@
     </changeSet>
 
     <changeSet id="0.7-051" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="auth_permission_content_type_id_codename_01ab375a_uniq"
+                             tableName="auth_permission"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="content_type_id, codename"
                              constraintName="auth_permission_content_type_id_codename_01ab375a_uniq"
                              tableName="auth_permission"/>
@@ -912,6 +966,12 @@
     </changeSet>
 
     <changeSet id="0.7-053" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_answertemplate_index_metric_id_9f834dee_uniq"
+                             tableName="baseinfo_answertemplate"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="index, question_id"
                              constraintName="baseinfo_answertemplate_index_metric_id_9f834dee_uniq"
                              tableName="baseinfo_answertemplate"/>
@@ -942,11 +1002,23 @@
     </changeSet>
 
     <changeSet id="0.7-056" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_assessmentprofile_code_5a9ff625_uniq"
+                             tableName="baseinfo_assessmentkit"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="code" constraintName="baseinfo_assessmentprofile_code_5a9ff625_uniq"
                              tableName="baseinfo_assessmentkit"/>
     </changeSet>
 
     <changeSet id="0.7-057" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_assessmentprofile_title_0279319f_uniq"
+                             tableName="baseinfo_assessmentkit"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="title" constraintName="baseinfo_assessmentprofile_title_0279319f_uniq"
                              tableName="baseinfo_assessmentkit"/>
     </changeSet>
@@ -965,18 +1037,36 @@
     </changeSet>
 
     <changeSet id="0.7-059" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_assessmentsubje_index_assessment_profile_bd210cc8_uniq"
+                             tableName="baseinfo_assessmentsubject"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="index, assessment_kit_id"
                              constraintName="baseinfo_assessmentsubje_index_assessment_profile_bd210cc8_uniq"
                              tableName="baseinfo_assessmentsubject"/>
     </changeSet>
 
     <changeSet id="0.7-060" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_assessmentsubje_title_assessment_profile_b703b977_uniq"
+                             tableName="baseinfo_assessmentsubject"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="title, assessment_kit_id"
                              constraintName="baseinfo_assessmentsubje_title_assessment_profile_b703b977_uniq"
                              tableName="baseinfo_assessmentsubject"/>
     </changeSet>
 
     <changeSet id="0.7-061" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_assessmentsubject_code_a19bcda2_uniq"
+                             tableName="baseinfo_assessmentsubject"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="code" constraintName="baseinfo_assessmentsubject_code_a19bcda2_uniq"
                              tableName="baseinfo_assessmentsubject"/>
     </changeSet>
@@ -1008,6 +1098,12 @@
     </changeSet>
 
     <changeSet id="0.7-064" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_assessmentsubje_assessmentsubject_id_que_cc480566_uniq"
+                             tableName="baseinfo_assessmentsubject_questionnaires"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="assessmentsubject_id, questionnaire_id"
                              constraintName="baseinfo_assessmentsubje_assessmentsubject_id_que_cc480566_uniq"
                              tableName="baseinfo_assessmentsubject_questionnaires"/>
@@ -1025,6 +1121,12 @@
     </changeSet>
 
     <changeSet id="0.7-066" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_expertgroup_name_key"
+                             tableName="baseinfo_expertgroup"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="name" constraintName="baseinfo_expertgroup_name_key"
                              tableName="baseinfo_expertgroup"/>
     </changeSet>
@@ -1055,6 +1157,12 @@
     </changeSet>
 
     <changeSet id="0.7-069" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_expertgroupacce_expert_group_id_user_id_284bccaf_uniq"
+                             tableName="baseinfo_expertgroupaccess"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="expert_group_id, user_id"
                              constraintName="baseinfo_expertgroupacce_expert_group_id_user_id_284bccaf_uniq"
                              tableName="baseinfo_expertgroupaccess"/>
@@ -1098,12 +1206,24 @@
     </changeSet>
 
     <changeSet id="0.7-073" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_maturitylevel_title_profile_id_2682c3b0_uniq"
+                             tableName="baseinfo_maturitylevel"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="title, assessment_kit_id"
                              constraintName="baseinfo_maturitylevel_title_profile_id_2682c3b0_uniq"
                              tableName="baseinfo_maturitylevel"/>
     </changeSet>
 
     <changeSet id="0.7-074" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_maturitylevel_value_profile_id_ddb3a964_uniq"
+                             tableName="baseinfo_maturitylevel"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="value, assessment_kit_id"
                              constraintName="baseinfo_maturitylevel_value_profile_id_ddb3a964_uniq"
                              tableName="baseinfo_maturitylevel"/>
@@ -1225,11 +1345,23 @@
     </changeSet>
 
     <changeSet id="0.7-085" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_profiletag_code_4987a4c6_uniq"
+                             tableName="baseinfo_assessmentkittag"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="code" constraintName="baseinfo_profiletag_code_4987a4c6_uniq"
                              tableName="baseinfo_assessmentkittag"/>
     </changeSet>
 
     <changeSet id="0.7-086" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_profiletag_title_b2cd9f8a_uniq"
+                             tableName="baseinfo_assessmentkittag"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="title" constraintName="baseinfo_profiletag_title_b2cd9f8a_uniq"
                              tableName="baseinfo_assessmentkittag"/>
     </changeSet>
@@ -1261,6 +1393,12 @@
     </changeSet>
 
     <changeSet id="0.7-089" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_profiletag_prof_profiletag_id_assessment_cb566b60_uniq"
+                             tableName="baseinfo_assessmentkittag_assessmentkits"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="assessmentkittag_id, assessmentkit_id"
                              constraintName="baseinfo_profiletag_prof_profiletag_id_assessment_cb566b60_uniq"
                              tableName="baseinfo_assessmentkittag_assessmentkits"/>
@@ -1292,12 +1430,24 @@
     </changeSet>
 
     <changeSet id="0.7-092" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_qualityattribut_title_assessment_subject_4a82494c_uniq"
+                             tableName="baseinfo_qualityattribute"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="title, assessment_subject_id"
                              constraintName="baseinfo_qualityattribut_title_assessment_subject_4a82494c_uniq"
                              tableName="baseinfo_qualityattribute"/>
     </changeSet>
 
     <changeSet id="0.7-093" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_qualityattribute_code_fc2b6cd0_uniq"
+                             tableName="baseinfo_qualityattribute"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="code" constraintName="baseinfo_qualityattribute_code_fc2b6cd0_uniq"
                              tableName="baseinfo_qualityattribute"/>
     </changeSet>
@@ -1327,17 +1477,35 @@
     </changeSet>
 
     <changeSet id="0.7-096" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_questionnaire_code_04aa0ba7_uniq"
+                             tableName="baseinfo_questionnaire"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="code" constraintName="baseinfo_questionnaire_code_04aa0ba7_uniq"
                              tableName="baseinfo_questionnaire"/>
     </changeSet>
 
     <changeSet id="0.7-097" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"
+                             tableName="baseinfo_questionnaire"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="index, assessment_kit_id"
                              constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"
                              tableName="baseinfo_questionnaire"/>
     </changeSet>
 
     <changeSet id="0.7-098" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"
+                             tableName="baseinfo_questionnaire"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="title, assessment_kit_id"
                              constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"
                              tableName="baseinfo_questionnaire"/>
@@ -1388,6 +1556,12 @@
     </changeSet>
 
     <changeSet id="0.7-103" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="django_redirect_site_id_old_path_ac5dd16b_uniq"
+                             tableName="django_redirect"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="site_id, old_path"
                              constraintName="django_redirect_site_id_old_path_ac5dd16b_uniq"
                              tableName="django_redirect"/>
@@ -1416,16 +1590,34 @@
     </changeSet>
 
     <changeSet id="0.7-106" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="django_site_domain_a2e37b91_uniq"
+                             tableName="django_site"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="domain" constraintName="django_site_domain_a2e37b91_uniq"
                              tableName="django_site"/>
     </changeSet>
 
     <changeSet id="0.7-107" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="baseinfo_profiledsl_profile_id_key"
+                             tableName="baseinfo_assessmentkitdsl"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="assessment_kit_id" constraintName="baseinfo_profiledsl_profile_id_key"
                              tableName="baseinfo_assessmentkitdsl"/>
     </changeSet>
 
     <changeSet id="0.7-108" author="Mahdi Rezazadeh">
+        <preConditions>
+            <not>
+                <uniqueConstraintExists constraintName="django_content_type_app_label_model_76bd3d3b_uniq"
+                             tableName="django_content_type"/>
+            </not>
+        </preConditions>
         <addUniqueConstraint columnNames="app_label, model"
                              constraintName="django_content_type_app_label_model_76bd3d3b_uniq"
                              tableName="django_content_type"/>
