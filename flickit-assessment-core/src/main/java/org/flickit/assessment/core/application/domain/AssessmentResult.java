@@ -82,6 +82,7 @@ public class AssessmentResult {
         MutableDouble sum = new MutableDouble();
         subjectValues.stream()
             .flatMap(x -> x.getQualityAttributeValues().stream())
+            .filter(x -> !x.getConfidenceLevelValue().isNaN())
             .forEach(x -> {
                 weightedSum.add(x.getWeightedConfidenceLevel());
                 sum.add(x.getQualityAttribute().getWeight());

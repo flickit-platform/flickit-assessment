@@ -7,8 +7,8 @@ import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase.Result;
 import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidenceLevelResultPort;
+import org.flickit.assessment.core.application.port.out.confidencelevel.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
@@ -32,7 +32,7 @@ class CalculateConfidenceLevelServiceTest {
     private CalculateConfidenceLevelService service;
 
     @Mock
-    private LoadCalculateInfoPort loadCalculateInfoPort;
+    private LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
 
     @Mock
     private UpdateCalculatedConfidenceLevelResultPort updateCalculatedConfidenceLevelResultPort;
@@ -64,7 +64,7 @@ class CalculateConfidenceLevelServiceTest {
 
         Param param = new Param(assessmentResult.getAssessment().getId());
 
-        when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
+        when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
 
         Result result = service.calculate(param);
         verify(updateCalculatedConfidenceLevelResultPort, times(1)).updateCalculatedConfidenceLevelResult(any(AssessmentResult.class));

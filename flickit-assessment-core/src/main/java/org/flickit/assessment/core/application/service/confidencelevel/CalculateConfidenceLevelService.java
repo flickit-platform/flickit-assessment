@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidenceLevelResultPort;
+import org.flickit.assessment.core.application.port.out.confidencelevel.LoadConfidenceLevelCalculateInfoPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,13 +16,13 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class CalculateConfidenceLevelService implements CalculateConfidenceLevelUseCase {
 
-    private final LoadCalculateInfoPort loadCalculateInfoPort;
+    private final LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
     private final UpdateCalculatedConfidenceLevelResultPort updateCalculatedConfidenceLevelResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
 
     @Override
     public Result calculate(Param param) {
-        AssessmentResult assessmentResult = loadCalculateInfoPort.load(param.getAssessmentId());
+        AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(param.getAssessmentId());
 
         double confidenceLevel = assessmentResult.calculateConfidenceLevel();
 

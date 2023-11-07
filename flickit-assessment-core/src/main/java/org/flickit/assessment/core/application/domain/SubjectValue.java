@@ -52,8 +52,10 @@ public class SubjectValue {
         double weightedSum = 0;
         double sum = 0;
         for (QualityAttributeValue qav : qualityAttributeValues) {
-            weightedSum += qav.getWeightedConfidenceLevel();
-            sum += qav.getQualityAttribute().getWeight();
+            if (!qav.getConfidenceLevelValue().isNaN()) {
+                weightedSum += qav.getWeightedConfidenceLevel();
+                sum += qav.getQualityAttribute().getWeight();
+            }
         }
         return weightedSum / sum;
     }
