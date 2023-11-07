@@ -11,25 +11,25 @@
             </not>
         </preConditions>
         <createTable tableName="account_space">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_space_pkey"/>
             </column>
-            <column name="code" type="VARCHAR(50)">
+            <column name="code" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="title" type="VARCHAR(100)">
+            <column name="title" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+            <column name="last_modification_date" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="owner_id" type="BIGINT">
+            <column name="owner_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="is_default_space" type="BOOLEAN">
+            <column name="is_default_space" type="boolean">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -42,33 +42,33 @@
             </not>
         </preConditions>
         <createTable tableName="account_user">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_user_pkey"/>
             </column>
-            <column name="password" type="VARCHAR(128)">
+            <column name="password" type="varchar(128)">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_login" type="TIMESTAMP WITH TIME ZONE"/>
-            <column name="is_superuser" type="BOOLEAN">
+            <column name="last_login" type="${datetime_with_time_zone_type}"/>
+            <column name="is_superuser" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="is_staff" type="BOOLEAN">
+            <column name="is_staff" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="is_active" type="BOOLEAN">
+            <column name="is_active" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="email" type="VARCHAR(254)">
+            <column name="email" type="varchar(254)">
                 <constraints nullable="false"/>
             </column>
-            <column name="current_space_id" type="BIGINT"/>
-            <column name="display_name" type="VARCHAR(255)">
+            <column name="current_space_id" type="bigint"/>
+            <column name="display_name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="bio" type="VARCHAR(400)"/>
-            <column name="linkedin" type="VARCHAR(200)"/>
-            <column name="picture" type="VARCHAR(100)"/>
-            <column name="default_space_id" type="BIGINT"/>
+            <column name="bio" type="varchar(400)"/>
+            <column name="linkedin" type="varchar(200)"/>
+            <column name="picture" type="varchar(100)"/>
+            <column name="default_space_id" type="bigint"/>
         </createTable>
     </changeSet>
 
@@ -79,13 +79,13 @@
             </not>
         </preConditions>
         <createTable tableName="account_user_groups">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_user_groups_pkey"/>
             </column>
-            <column name="user_id" type="BIGINT">
+            <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="group_id" type="INTEGER">
+            <column name="group_id" type="int">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -98,13 +98,13 @@
             </not>
         </preConditions>
         <createTable tableName="account_user_user_permissions">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_user_user_permissions_pkey"/>
             </column>
-            <column name="user_id" type="BIGINT">
+            <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="permission_id" type="INTEGER">
+            <column name="permission_id" type="int">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -117,15 +117,15 @@
             </not>
         </preConditions>
         <createTable tableName="account_useraccess">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_useraccess_pkey"/>
             </column>
-            <column name="space_id" type="BIGINT">
+            <column name="space_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="BIGINT"/>
-            <column name="invite_email" type="VARCHAR(254)"/>
-            <column name="invite_expiration_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="user_id" type="bigint"/>
+            <column name="invite_email" type="varchar(254)"/>
+            <column name="invite_expiration_date" type="${datetime_with_time_zone_type}"/>
         </createTable>
     </changeSet>
 
@@ -136,10 +136,10 @@
             </not>
         </preConditions>
         <createTable tableName="auth_group">
-            <column autoIncrement="true" name="id" type="INTEGER">
+            <column autoIncrement="true" name="id" type="int">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="auth_group_pkey"/>
             </column>
-            <column name="name" type="VARCHAR(150)">
+            <column name="name" type="varchar(150)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -152,13 +152,13 @@
             </not>
         </preConditions>
         <createTable tableName="auth_group_permissions">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="auth_group_permissions_pkey"/>
             </column>
-            <column name="group_id" type="INTEGER">
+            <column name="group_id" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="permission_id" type="INTEGER">
+            <column name="permission_id" type="int">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -171,16 +171,16 @@
             </not>
         </preConditions>
         <createTable tableName="auth_permission">
-            <column autoIncrement="true" name="id" type="INTEGER">
+            <column autoIncrement="true" name="id" type="int">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="auth_permission_pkey"/>
             </column>
-            <column name="name" type="VARCHAR(255)">
+            <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="content_type_id" type="INTEGER">
+            <column name="content_type_id" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="codename" type="VARCHAR(100)">
+            <column name="codename" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -193,19 +193,19 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_answertemplate">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_answertemplate_pkey"/>
             </column>
-            <column name="caption" type="VARCHAR(255)">
+            <column name="caption" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="value" type="SMALLINT">
+            <column name="value" type="tinyint">
                 <constraints nullable="false"/>
             </column>
-            <column name="question_id" type="BIGINT">
+            <column name="question_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="index" type="INTEGER">
+            <column name="index" type="int">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -218,29 +218,29 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_assessmentkit">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_assessmentprofile_pkey"/>
             </column>
-            <column name="code" type="VARCHAR(50)">
+            <column name="code" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="title" type="VARCHAR(100)">
+            <column name="title" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="summary" type="TEXT">
+            <column name="summary" type="clob">
                 <constraints nullable="false"/>
             </column>
-            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+            <column name="last_modification_date" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="expert_group_id" type="BIGINT"/>
-            <column name="is_active" type="BOOLEAN">
+            <column name="expert_group_id" type="bigint"/>
+            <column name="is_active" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="about" type="TEXT">
+            <column name="about" type="clob">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -253,28 +253,28 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_assessmentsubject">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_assessmentsubject_pkey"/>
             </column>
-            <column name="code" type="VARCHAR(50)">
+            <column name="code" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="title" type="VARCHAR(100)">
+            <column name="title" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="TEXT">
+            <column name="description" type="clob">
                 <constraints nullable="false"/>
             </column>
-            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+            <column name="last_modification_date" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="assessment_kit_id" type="BIGINT">
+            <column name="assessment_kit_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="index" type="INTEGER">
+            <column name="index" type="int">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -287,14 +287,14 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_assessmentsubject_questionnaires">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true"
                              primaryKeyName="baseinfo_assessmentsubject_questionnaires_pkey"/>
             </column>
-            <column name="assessmentsubject_id" type="BIGINT">
+            <column name="assessmentsubject_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="questionnaire_id" type="BIGINT">
+            <column name="questionnaire_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -307,21 +307,21 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_expertgroup">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_expertgroup_pkey"/>
             </column>
-            <column name="name" type="VARCHAR(100)">
+            <column name="name" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="about" type="TEXT">
+            <column name="about" type="clob">
                 <constraints nullable="false"/>
             </column>
-            <column name="picture" type="VARCHAR(100)"/>
-            <column name="website" type="VARCHAR(200)"/>
-            <column name="owner_id" type="BIGINT">
+            <column name="picture" type="varchar(100)"/>
+            <column name="website" type="varchar(200)"/>
+            <column name="owner_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="bio" type="VARCHAR(200)">
+            <column name="bio" type="varchar(200)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -334,15 +334,15 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_expertgroupaccess">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_expertgroupaccess_pkey"/>
             </column>
-            <column name="expert_group_id" type="BIGINT">
+            <column name="expert_group_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="BIGINT"/>
-            <column name="invite_email" type="VARCHAR(254)"/>
-            <column name="invite_expiration_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="user_id" type="bigint"/>
+            <column name="invite_email" type="varchar(254)"/>
+            <column name="invite_expiration_date" type="${datetime_with_time_zone_type}"/>
         </createTable>
     </changeSet>
 
@@ -353,14 +353,14 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_levelcompetence">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_levelcompetence_pkey"/>
             </column>
-            <column name="maturity_level_id" type="BIGINT">
+            <column name="maturity_level_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="maturity_level_competence_id" type="BIGINT"/>
-            <column name="value" type="INTEGER"/>
+            <column name="maturity_level_competence_id" type="bigint"/>
+            <column name="value" type="int"/>
         </createTable>
     </changeSet>
 
@@ -371,16 +371,16 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_maturitylevel">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_maturitylevel_pkey"/>
             </column>
-            <column name="title" type="VARCHAR(100)">
+            <column name="title" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="value" type="SMALLINT">
+            <column name="value" type="tinyint">
                 <constraints nullable="false"/>
             </column>
-            <column name="assessment_kit_id" type="BIGINT">
+            <column name="assessment_kit_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -393,24 +393,24 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_question">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_metric_pkey"/>
             </column>
-            <column name="title" type="TEXT">
+            <column name="title" type="clob">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="TEXT"/>
-            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+            <column name="description" type="clob"/>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+            <column name="last_modification_date" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="index" type="INTEGER"/>
-            <column name="questionnaire_id" type="BIGINT">
+            <column name="index" type="int"/>
+            <column name="questionnaire_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="may_not_be_applicable" type="BOOLEAN">
+            <column name="may_not_be_applicable" type="boolean">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -423,20 +423,20 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_questionimpact">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_metricimpact_pkey"/>
             </column>
-            <column name="level" type="INTEGER"/>
-            <column name="question_id" type="BIGINT">
+            <column name="level" type="int"/>
+            <column name="question_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="quality_attribute_id" type="BIGINT">
+            <column name="quality_attribute_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="weight" type="INTEGER">
+            <column name="weight" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="maturity_level_id" type="BIGINT"/>
+            <column name="maturity_level_id" type="bigint"/>
         </createTable>
     </changeSet>
 
@@ -447,16 +447,16 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_optionvalue">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_optionvalue_pkey"/>
             </column>
-            <column name="value" type="numeric(3, 2)">
+            <column name="value" type="number(3, 2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="question_impact_id" type="BIGINT">
+            <column name="question_impact_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="option_id" type="BIGINT">
+            <column name="option_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -469,13 +469,13 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_assessmentkitlike">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profilelike_pkey"/>
             </column>
-            <column name="assessment_kit_id" type="BIGINT">
+            <column name="assessment_kit_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="BIGINT">
+            <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -488,13 +488,13 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_assessmentkittag">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profiletag_pkey"/>
             </column>
-            <column name="code" type="VARCHAR(50)">
+            <column name="code" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="title" type="VARCHAR(100)">
+            <column name="title" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -507,13 +507,13 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_assessmentkittag_assessmentkits">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profiletag_profiles_pkey"/>
             </column>
-            <column name="assessmentkittag_id" type="BIGINT">
+            <column name="assessmentkittag_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="assessmentkit_id" type="BIGINT">
+            <column name="assessmentkit_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -526,29 +526,29 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_qualityattribute">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_qualityattribute_pkey"/>
             </column>
-            <column name="code" type="VARCHAR(50)">
+            <column name="code" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="title" type="VARCHAR(100)">
+            <column name="title" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="TEXT">
+            <column name="description" type="clob">
                 <constraints nullable="false"/>
             </column>
-            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+            <column name="last_modification_date" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="assessment_subject_id" type="BIGINT">
+            <column name="assessment_subject_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="index" type="INTEGER"/>
-            <column name="weight" type="INTEGER">
+            <column name="index" type="int"/>
+            <column name="weight" type="int">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -561,28 +561,28 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_questionnaire">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_questionnaire_pkey"/>
             </column>
-            <column name="code" type="VARCHAR(50)">
+            <column name="code" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="title" type="VARCHAR(100)">
+            <column name="title" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="TEXT">
+            <column name="description" type="clob">
                 <constraints nullable="false"/>
             </column>
-            <column name="creation_time" type="TIMESTAMP WITH TIME ZONE">
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_modification_date" type="TIMESTAMP WITH TIME ZONE">
+            <column name="last_modification_date" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="index" type="INTEGER">
+            <column name="index" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="assessment_kit_id" type="BIGINT">
+            <column name="assessment_kit_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -595,24 +595,24 @@
             </not>
         </preConditions>
         <createTable tableName="django_admin_log">
-            <column autoIncrement="true" name="id" type="INTEGER">
+            <column autoIncrement="true" name="id" type="int">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_admin_log_pkey"/>
             </column>
-            <column name="action_time" type="TIMESTAMP WITH TIME ZONE">
+            <column name="action_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="object_id" type="TEXT"/>
-            <column name="object_repr" type="VARCHAR(200)">
+            <column name="object_id" type="clob"/>
+            <column name="object_repr" type="varchar(200)">
                 <constraints nullable="false"/>
             </column>
-            <column name="action_flag" type="SMALLINT">
+            <column name="action_flag" type="tinyint">
                 <constraints nullable="false"/>
             </column>
-            <column name="change_message" type="TEXT">
+            <column name="change_message" type="clob">
                 <constraints nullable="false"/>
             </column>
-            <column name="content_type_id" type="INTEGER"/>
-            <column name="user_id" type="BIGINT">
+            <column name="content_type_id" type="int"/>
+            <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -625,16 +625,16 @@
             </not>
         </preConditions>
         <createTable tableName="django_redirect">
-            <column autoIncrement="true" name="id" type="INTEGER">
+            <column autoIncrement="true" name="id" type="int">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_redirect_pkey"/>
             </column>
-            <column name="site_id" type="INTEGER">
+            <column name="site_id" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="old_path" type="VARCHAR(200)">
+            <column name="old_path" type="varchar(200)">
                 <constraints nullable="false"/>
             </column>
-            <column name="new_path" type="VARCHAR(200)">
+            <column name="new_path" type="varchar(200)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -647,13 +647,13 @@
             </not>
         </preConditions>
         <createTable tableName="django_session">
-            <column name="session_key" type="VARCHAR(40)">
+            <column name="session_key" type="varchar(40)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_session_pkey"/>
             </column>
-            <column name="session_data" type="TEXT">
+            <column name="session_data" type="clob">
                 <constraints nullable="false"/>
             </column>
-            <column name="expire_date" type="TIMESTAMP WITH TIME ZONE">
+            <column name="expire_date" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -666,13 +666,13 @@
             </not>
         </preConditions>
         <createTable tableName="django_site">
-            <column autoIncrement="true" name="id" type="INTEGER">
+            <column autoIncrement="true" name="id" type="int">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_site_pkey"/>
             </column>
-            <column name="domain" type="VARCHAR(100)">
+            <column name="domain" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="name" type="VARCHAR(50)">
+            <column name="name" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -685,13 +685,13 @@
             </not>
         </preConditions>
         <createTable tableName="baseinfo_assessmentkitdsl">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="baseinfo_profiledsl_pkey"/>
             </column>
-            <column name="dsl_file" type="VARCHAR(100)">
+            <column name="dsl_file" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="assessment_kit_id" type="BIGINT"/>
+            <column name="assessment_kit_id" type="bigint"/>
         </createTable>
     </changeSet>
 
@@ -702,13 +702,13 @@
             </not>
         </preConditions>
         <createTable tableName="django_content_type">
-            <column autoIncrement="true" name="id" type="INTEGER">
+            <column autoIncrement="true" name="id" type="int">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_content_type_pkey"/>
             </column>
-            <column name="app_label" type="VARCHAR(100)">
+            <column name="app_label" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="model" type="VARCHAR(100)">
+            <column name="model" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -1630,16 +1630,16 @@
             </not>
         </preConditions>
         <createTable tableName="django_migrations">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="django_migrations_pkey"/>
             </column>
-            <column name="app" type="VARCHAR(255)">
+            <column name="app" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="name" type="VARCHAR(255)">
+            <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="applied" type="TIMESTAMP WITH TIME ZONE">
+            <column name="applied" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
         </createTable>
