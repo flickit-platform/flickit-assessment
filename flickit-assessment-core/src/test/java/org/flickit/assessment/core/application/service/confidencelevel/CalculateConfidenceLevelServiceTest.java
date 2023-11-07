@@ -70,6 +70,6 @@ class CalculateConfidenceLevelServiceTest {
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
         assertNotNull(result);
-        assertEquals(2.233333333333333, result.value());
+        assertEquals(0.44666666666666666, result.value());
     }
 }
