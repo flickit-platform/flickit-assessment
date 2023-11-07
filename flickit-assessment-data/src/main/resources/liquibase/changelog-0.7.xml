@@ -715,7 +715,7 @@
     </changeSet>
 
     <changeSet id="0.7-031" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="account_space" indexName="account_space_owner_id_9c7e98ca"/>
             </not>
@@ -726,7 +726,7 @@
     </changeSet>
 
     <changeSet id="0.7-032" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="account_space_code_cc3cf1de_uniq"
                              tableName="account_space"/>
@@ -737,7 +737,7 @@
     </changeSet>
 
     <changeSet id="0.7-033" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="account_user" indexName="account_user_default_space_id_521ee201"/>
             </not>
@@ -748,7 +748,7 @@
     </changeSet>
 
     <changeSet id="0.7-034" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="account_user" indexName="account_user_email_0bd7c421_like"/>
             </not>
@@ -759,7 +759,7 @@
     </changeSet>
 
     <changeSet id="0.7-035" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="account_user_default_space_id_key"
                              tableName="account_user"/>
@@ -770,7 +770,7 @@
     </changeSet>
 
     <changeSet id="0.7-036" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="account_user_email_key"
                                         tableName="account_user"/>
@@ -780,7 +780,7 @@
     </changeSet>
 
     <changeSet id="0.7-037" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="account_user_groups" indexName="account_user_groups_group_id_6c71f749"/>
             </not>
@@ -791,7 +791,7 @@
     </changeSet>
 
     <changeSet id="0.7-038" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="account_user_groups" indexName="account_user_groups_user_id_14345e7b"/>
             </not>
@@ -802,7 +802,7 @@
     </changeSet>
 
     <changeSet id="0.7-039" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="account_user_groups_user_id_group_id_4d09af3e_uniq"
                              tableName="account_user_groups"/>
@@ -814,7 +814,7 @@
     </changeSet>
 
     <changeSet id="0.7-040" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="account_user_user_permissions"
                              indexName="account_user_user_permissions_permission_id_66c44191"/>
@@ -827,7 +827,7 @@
     </changeSet>
 
     <changeSet id="0.7-041" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="account_user_user_permissions"
                              indexName="account_user_user_permissions_user_id_cc42d270"/>
@@ -840,7 +840,7 @@
     </changeSet>
 
     <changeSet id="0.7-042" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="account_user_user_permis_user_id_permission_id_48bdd28b_uniq"
                              tableName="account_user_user_permissions"/>
@@ -852,7 +852,7 @@
     </changeSet>
 
     <changeSet id="0.7-043" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="account_useraccess" indexName="account_useraccess_space_id_c683395f"/>
             </not>
@@ -863,7 +863,7 @@
     </changeSet>
 
     <changeSet id="0.7-044" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="account_useraccess" indexName="account_useraccess_user_id_abb729d3"/>
             </not>
@@ -874,7 +874,7 @@
     </changeSet>
 
     <changeSet id="0.7-045" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="account_useraccess_space_id_user_id_a6d00ca9_uniq"
                              tableName="account_useraccess"/>
@@ -886,7 +886,7 @@
     </changeSet>
 
     <changeSet id="0.7-046" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="auth_group_name_key"
                                         tableName="auth_group"/>
@@ -896,7 +896,7 @@
     </changeSet>
 
     <changeSet id="0.7-047" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="auth_group_permissions" indexName="auth_group_permissions_group_id_b120cbf9"/>
             </not>
@@ -907,7 +907,7 @@
     </changeSet>
 
     <changeSet id="0.7-048" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="auth_group_permissions"
                              indexName="auth_group_permissions_permission_id_84c5c92e"/>
@@ -919,7 +919,7 @@
     </changeSet>
 
     <changeSet id="0.7-049" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="auth_group_permissions_group_id_permission_id_0cd325b0_uniq"
                              tableName="auth_group_permissions"/>
@@ -931,7 +931,7 @@
     </changeSet>
 
     <changeSet id="0.7-050" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="auth_permission" indexName="auth_permission_content_type_id_2f476e4b"/>
             </not>
@@ -942,7 +942,7 @@
     </changeSet>
 
     <changeSet id="0.7-051" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="auth_permission_content_type_id_codename_01ab375a_uniq"
                              tableName="auth_permission"/>
@@ -954,7 +954,7 @@
     </changeSet>
 
     <changeSet id="0.7-052" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_answertemplate"
                              indexName="baseinfo_answertemplate_metric_id_ffc07327"/>
@@ -966,7 +966,7 @@
     </changeSet>
 
     <changeSet id="0.7-053" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_answertemplate_index_metric_id_9f834dee_uniq"
                              tableName="baseinfo_answertemplate"/>
@@ -978,7 +978,7 @@
     </changeSet>
 
     <changeSet id="0.7-054" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_assessmentkit"
                              indexName="baseinfo_assessmentprofile_expert_group_id_96b76a1e"/>
@@ -990,7 +990,7 @@
     </changeSet>
 
     <changeSet id="0.7-055" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_assessmentkit"
                              indexName="baseinfo_assessmentprofile_title_0279319f_like"/>
@@ -1002,7 +1002,7 @@
     </changeSet>
 
     <changeSet id="0.7-056" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_assessmentprofile_code_5a9ff625_uniq"
                              tableName="baseinfo_assessmentkit"/>
@@ -1013,7 +1013,7 @@
     </changeSet>
 
     <changeSet id="0.7-057" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_assessmentprofile_title_0279319f_uniq"
                              tableName="baseinfo_assessmentkit"/>
@@ -1024,7 +1024,7 @@
     </changeSet>
 
     <changeSet id="0.7-058" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_assessmentsubject"
                              indexName="baseinfo_assessmentsubject_assessment_profile_id_a819278e"/>
@@ -1037,7 +1037,7 @@
     </changeSet>
 
     <changeSet id="0.7-059" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_assessmentsubje_index_assessment_profile_bd210cc8_uniq"
                              tableName="baseinfo_assessmentsubject"/>
@@ -1049,7 +1049,7 @@
     </changeSet>
 
     <changeSet id="0.7-060" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_assessmentsubje_title_assessment_profile_b703b977_uniq"
                              tableName="baseinfo_assessmentsubject"/>
@@ -1061,7 +1061,7 @@
     </changeSet>
 
     <changeSet id="0.7-061" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_assessmentsubject_code_a19bcda2_uniq"
                              tableName="baseinfo_assessmentsubject"/>
@@ -1072,7 +1072,7 @@
     </changeSet>
 
     <changeSet id="0.7-062" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_assessmentsubject_questionnaires"
                              indexName="baseinfo_assessmentsubject_assessmentsubject_id_bcd42f10"/>
@@ -1085,7 +1085,7 @@
     </changeSet>
 
     <changeSet id="0.7-063" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_assessmentsubject_questionnaires"
                              indexName="baseinfo_assessmentsubject_questionnaire_id_536a240c"/>
@@ -1098,7 +1098,7 @@
     </changeSet>
 
     <changeSet id="0.7-064" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_assessmentsubje_assessmentsubject_id_que_cc480566_uniq"
                              tableName="baseinfo_assessmentsubject_questionnaires"/>
@@ -1110,7 +1110,7 @@
     </changeSet>
 
     <changeSet id="0.7-065" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_expertgroup" indexName="baseinfo_expertgroup_owner_id_84de2f0a"/>
             </not>
@@ -1121,7 +1121,7 @@
     </changeSet>
 
     <changeSet id="0.7-066" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_expertgroup_name_key"
                              tableName="baseinfo_expertgroup"/>
@@ -1132,7 +1132,7 @@
     </changeSet>
 
     <changeSet id="0.7-067" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_expertgroupaccess"
                              indexName="baseinfo_expertgroupaccess_expert_group_id_2839af9e"/>
@@ -1145,7 +1145,7 @@
     </changeSet>
 
     <changeSet id="0.7-068" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_expertgroupaccess"
                              indexName="baseinfo_expertgroupaccess_user_id_3c79acf7"/>
@@ -1157,7 +1157,7 @@
     </changeSet>
 
     <changeSet id="0.7-069" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_expertgroupacce_expert_group_id_user_id_284bccaf_uniq"
                              tableName="baseinfo_expertgroupaccess"/>
@@ -1169,7 +1169,7 @@
     </changeSet>
 
     <changeSet id="0.7-070" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_levelcompetence"
                              indexName="baseinfo_levelcompetence_maturity_level_competence_id_4b983b5e"/>
@@ -1182,7 +1182,7 @@
     </changeSet>
 
     <changeSet id="0.7-071" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_levelcompetence"
                              indexName="baseinfo_levelcompetence_maturity_level_id_12668b43"/>
@@ -1195,7 +1195,7 @@
     </changeSet>
 
     <changeSet id="0.7-072" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_maturitylevel" indexName="baseinfo_maturitylevel_profile_id_d76ad9d9"/>
             </not>
@@ -1206,7 +1206,7 @@
     </changeSet>
 
     <changeSet id="0.7-073" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_maturitylevel_title_profile_id_2682c3b0_uniq"
                              tableName="baseinfo_maturitylevel"/>
@@ -1218,7 +1218,7 @@
     </changeSet>
 
     <changeSet id="0.7-074" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_maturitylevel_value_profile_id_ddb3a964_uniq"
                              tableName="baseinfo_maturitylevel"/>
@@ -1230,7 +1230,7 @@
     </changeSet>
 
     <changeSet id="0.7-075" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_question" indexName="baseinfo_metric_questionnaire_id_f46e8ef0"/>
             </not>
@@ -1241,7 +1241,7 @@
     </changeSet>
 
     <changeSet id="0.7-076" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_questionimpact"
                              indexName="baseinfo_metricimpact_maturity_level_id_2e671bcd"/>
@@ -1253,7 +1253,7 @@
     </changeSet>
 
     <changeSet id="0.7-077" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_questionimpact" indexName="baseinfo_metricimpact_metric_id_2143facf"/>
             </not>
@@ -1264,7 +1264,7 @@
     </changeSet>
 
     <changeSet id="0.7-078" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_questionimpact"
                              indexName="baseinfo_metricimpact_quality_attribute_id_ba3b116a"/>
@@ -1277,7 +1277,7 @@
     </changeSet>
 
     <changeSet id="0.7-079" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_optionvalue"
                              indexName="baseinfo_optionvalue_metric_impact_id_d2f8c449"/>
@@ -1289,7 +1289,7 @@
     </changeSet>
 
     <changeSet id="0.7-080" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_optionvalue" indexName="baseinfo_optionvalue_option_id_4140fe5d"/>
             </not>
@@ -1300,7 +1300,7 @@
     </changeSet>
 
     <changeSet id="0.7-081" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_assessmentkitlike"
                              indexName="baseinfo_profilelike_profile_id_18609ce6"/>
@@ -1312,7 +1312,7 @@
     </changeSet>
 
     <changeSet id="0.7-082" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_assessmentkitlike" indexName="baseinfo_profilelike_user_id_b5659e71"/>
             </not>
@@ -1323,7 +1323,7 @@
     </changeSet>
 
     <changeSet id="0.7-083" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_assessmentkittag" indexName="baseinfo_profiletag_code_4987a4c6_like"/>
             </not>
@@ -1334,7 +1334,7 @@
     </changeSet>
 
     <changeSet id="0.7-084" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_assessmentkittag" indexName="baseinfo_profiletag_title_b2cd9f8a_like"/>
             </not>
@@ -1345,7 +1345,7 @@
     </changeSet>
 
     <changeSet id="0.7-085" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_profiletag_code_4987a4c6_uniq"
                              tableName="baseinfo_assessmentkittag"/>
@@ -1356,7 +1356,7 @@
     </changeSet>
 
     <changeSet id="0.7-086" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_profiletag_title_b2cd9f8a_uniq"
                              tableName="baseinfo_assessmentkittag"/>
@@ -1367,7 +1367,7 @@
     </changeSet>
 
     <changeSet id="0.7-087" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_assessmentkittag_assessmentkits"
                              indexName="baseinfo_profiletag_profiles_assessmentprofile_id_6e7f869d"/>
@@ -1380,7 +1380,7 @@
     </changeSet>
 
     <changeSet id="0.7-088" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_assessmentkittag_assessmentkits"
                              indexName="baseinfo_profiletag_profiles_profiletag_id_8f543ce6"/>
@@ -1393,7 +1393,7 @@
     </changeSet>
 
     <changeSet id="0.7-089" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_profiletag_prof_profiletag_id_assessment_cb566b60_uniq"
                              tableName="baseinfo_assessmentkittag_assessmentkits"/>
@@ -1405,7 +1405,7 @@
     </changeSet>
 
     <changeSet id="0.7-090" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_qualityattribute"
                              indexName="baseinfo_qualityattribute_assessment_subject_id_4b599516"/>
@@ -1418,7 +1418,7 @@
     </changeSet>
 
     <changeSet id="0.7-091" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_qualityattribute"
                              indexName="baseinfo_qualityattribute_code_fc2b6cd0_like"/>
@@ -1430,7 +1430,7 @@
     </changeSet>
 
     <changeSet id="0.7-092" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_qualityattribut_title_assessment_subject_4a82494c_uniq"
                              tableName="baseinfo_qualityattribute"/>
@@ -1442,7 +1442,7 @@
     </changeSet>
 
     <changeSet id="0.7-093" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_qualityattribute_code_fc2b6cd0_uniq"
                              tableName="baseinfo_qualityattribute"/>
@@ -1453,7 +1453,7 @@
     </changeSet>
 
     <changeSet id="0.7-094" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_questionnaire"
                              indexName="baseinfo_questionnaire_assessment_profile_id_04db6823"/>
@@ -1466,7 +1466,7 @@
     </changeSet>
 
     <changeSet id="0.7-095" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="baseinfo_questionnaire" indexName="baseinfo_questionnaire_code_04aa0ba7_like"/>
             </not>
@@ -1477,7 +1477,7 @@
     </changeSet>
 
     <changeSet id="0.7-096" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_questionnaire_code_04aa0ba7_uniq"
                              tableName="baseinfo_questionnaire"/>
@@ -1488,7 +1488,7 @@
     </changeSet>
 
     <changeSet id="0.7-097" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"
                              tableName="baseinfo_questionnaire"/>
@@ -1500,7 +1500,7 @@
     </changeSet>
 
     <changeSet id="0.7-098" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"
                              tableName="baseinfo_questionnaire"/>
@@ -1512,7 +1512,7 @@
     </changeSet>
 
     <changeSet id="0.7-099" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="django_admin_log" indexName="django_admin_log_content_type_id_c4bce8eb"/>
             </not>
@@ -1523,7 +1523,7 @@
     </changeSet>
 
     <changeSet id="0.7-100" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="django_admin_log" indexName="django_admin_log_user_id_c564eba6"/>
             </not>
@@ -1534,7 +1534,7 @@
     </changeSet>
 
     <changeSet id="0.7-101" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="django_redirect" indexName="django_redirect_old_path_c6cc94d3"/>
             </not>
@@ -1545,7 +1545,7 @@
     </changeSet>
 
     <changeSet id="0.7-102" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="django_redirect" indexName="django_redirect_site_id_c3e37341"/>
             </not>
@@ -1556,7 +1556,7 @@
     </changeSet>
 
     <changeSet id="0.7-103" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="django_redirect_site_id_old_path_ac5dd16b_uniq"
                              tableName="django_redirect"/>
@@ -1568,7 +1568,7 @@
     </changeSet>
 
     <changeSet id="0.7-104" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="django_session" indexName="django_session_expire_date_a5c62663"/>
             </not>
@@ -1579,7 +1579,7 @@
     </changeSet>
 
     <changeSet id="0.7-105" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists tableName="django_site" indexName="django_site_domain_a2e37b91_like"/>
             </not>
@@ -1590,7 +1590,7 @@
     </changeSet>
 
     <changeSet id="0.7-106" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="django_site_domain_a2e37b91_uniq"
                              tableName="django_site"/>
@@ -1601,7 +1601,7 @@
     </changeSet>
 
     <changeSet id="0.7-107" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="baseinfo_profiledsl_profile_id_key"
                              tableName="baseinfo_assessmentkitdsl"/>
@@ -1612,7 +1612,7 @@
     </changeSet>
 
     <changeSet id="0.7-108" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <uniqueConstraintExists constraintName="django_content_type_app_label_model_76bd3d3b_uniq"
                              tableName="django_content_type"/>
@@ -1646,7 +1646,7 @@
     </changeSet>
 
     <changeSet id="0.7-110" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="account_space_owner_id_9c7e98ca_fk_account_user_id"
                                             foreignKeyTableName="account_space"/>
@@ -1659,7 +1659,7 @@
     </changeSet>
 
     <changeSet id="0.7-111" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="account_user_current_space_id_6c9d3ec4_fk_account_space_id"
                                             foreignKeyTableName="account_user"/>
@@ -1672,7 +1672,7 @@
     </changeSet>
 
     <changeSet id="0.7-112" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="account_user_default_space_id_521ee201_fk_account_space_id"
                                             foreignKeyTableName="account_user"/>
@@ -1685,7 +1685,7 @@
     </changeSet>
 
     <changeSet id="0.7-113" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="account_user_groups_group_id_6c71f749_fk_auth_group_id"
                                             foreignKeyTableName="account_user_groups"/>
@@ -1698,7 +1698,7 @@
     </changeSet>
 
     <changeSet id="0.7-114" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="account_user_groups_user_id_14345e7b_fk_account_user_id"
                                             foreignKeyTableName="account_user_groups"/>
@@ -1711,7 +1711,7 @@
     </changeSet>
 
     <changeSet id="0.7-115" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="account_user_user_pe_user_id_cc42d270_fk_account_u"
                                             foreignKeyTableName="account_user_user_permissions"/>
@@ -1724,7 +1724,7 @@
     </changeSet>
 
     <changeSet id="0.7-116" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="account_useraccess_space_id_c683395f_fk_account_space_id"
                                             foreignKeyTableName="account_useraccess"/>
@@ -1737,7 +1737,7 @@
     </changeSet>
 
     <changeSet id="0.7-117" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="account_useraccess_user_id_abb729d3_fk_account_user_id"
                                             foreignKeyTableName="account_useraccess"/>
@@ -1750,7 +1750,7 @@
     </changeSet>
 
     <changeSet id="0.7-118" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="auth_group_permissio_permission_id_84c5c92e_fk_auth_perm"
                                             foreignKeyTableName="auth_group_permissions"/>
@@ -1763,7 +1763,7 @@
     </changeSet>
 
     <changeSet id="0.7-119" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="auth_group_permissions_group_id_b120cbf9_fk_auth_group_id"
                                             foreignKeyTableName="auth_group_permissions"/>
@@ -1776,7 +1776,7 @@
     </changeSet>
 
     <changeSet id="0.7-120" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="auth_permission_content_type_id_2f476e4b_fk_django_co"
                                             foreignKeyTableName="auth_permission"/>
@@ -1789,7 +1789,7 @@
     </changeSet>
 
     <changeSet id="0.7-121" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="baseinfo_answertempl_question_id_a97a9c98_fk_baseinfo_"
                                             foreignKeyTableName="baseinfo_answertemplate"/>
@@ -1802,7 +1802,7 @@
     </changeSet>
 
     <changeSet id="0.7-122" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_assessmentk_assessment_kit_id_8df595c8_fk_baseinfo_"
@@ -1817,7 +1817,7 @@
     </changeSet>
 
     <changeSet id="0.7-123" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_assessmentk_assessment_kit_id_cc73eda8_fk_baseinfo_"
@@ -1832,7 +1832,7 @@
     </changeSet>
 
     <changeSet id="0.7-124" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_assessmentk_assessmentkittag_id_522032fd_fk_baseinfo_"
@@ -1848,7 +1848,7 @@
     </changeSet>
 
     <changeSet id="0.7-125" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="baseinfo_assessmentp_expert_group_id_96b76a1e_fk_baseinfo_"
                                             foreignKeyTableName="baseinfo_assessmentkit"/>
@@ -1861,7 +1861,7 @@
     </changeSet>
 
     <changeSet id="0.7-126" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_assessments_assessment_kit_id_10688a7c_fk_baseinfo_"
@@ -1876,7 +1876,7 @@
     </changeSet>
 
     <changeSet id="0.7-127" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_assessments_assessmentsubject_id_bcd42f10_fk_baseinfo_"
@@ -1892,7 +1892,7 @@
     </changeSet>
 
     <changeSet id="0.7-128" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="baseinfo_assessments_questionnaire_id_536a240c_fk_baseinfo_"
                                             foreignKeyTableName="baseinfo_assessmentsubject_questionnaires"/>
@@ -1907,7 +1907,7 @@
     </changeSet>
 
     <changeSet id="0.7-129" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="baseinfo_expertgroup_expert_group_id_2839af9e_fk_baseinfo_"
                                             foreignKeyTableName="baseinfo_expertgroupaccess"/>
@@ -1920,7 +1920,7 @@
     </changeSet>
 
     <changeSet id="0.7-130" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="baseinfo_expertgroup_owner_id_84de2f0a_fk_account_user_id"
                                             foreignKeyTableName="baseinfo_expertgroup"/>
@@ -1933,7 +1933,7 @@
     </changeSet>
 
     <changeSet id="0.7-131" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_expertgroupaccess_user_id_3c79acf7_fk_account_user_id"
@@ -1947,7 +1947,7 @@
     </changeSet>
 
     <changeSet id="0.7-132" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_levelcompet_maturity_level_compe_4b983b5e_fk_baseinfo_"
@@ -1962,7 +1962,7 @@
     </changeSet>
 
     <changeSet id="0.7-133" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_levelcompet_maturity_level_id_12668b43_fk_baseinfo_"
@@ -1977,7 +1977,7 @@
     </changeSet>
 
     <changeSet id="0.7-134" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_maturitylev_assessment_kit_id_85eefbac_fk_baseinfo_"
@@ -1992,7 +1992,7 @@
     </changeSet>
 
     <changeSet id="0.7-135" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="baseinfo_metric_questionnaire_id_f46e8ef0_fk_baseinfo_"
                                             foreignKeyTableName="baseinfo_question"/>
@@ -2006,7 +2006,7 @@
     </changeSet>
 
     <changeSet id="0.7-136" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_metricimpac_maturity_level_id_2e671bcd_fk_baseinfo_"
@@ -2021,7 +2021,7 @@
     </changeSet>
 
     <changeSet id="0.7-137" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_metricimpac_quality_attribute_id_ba3b116a_fk_baseinfo_"
@@ -2036,7 +2036,7 @@
     </changeSet>
 
     <changeSet id="0.7-138" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="baseinfo_optionvalue_option_id_4140fe5d_fk_baseinfo_"
                                             foreignKeyTableName="baseinfo_optionvalue"/>
@@ -2050,7 +2050,7 @@
     </changeSet>
 
     <changeSet id="0.7-139" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_optionvalue_question_impact_id_b03bbb16_fk_baseinfo_"
@@ -2065,7 +2065,7 @@
     </changeSet>
 
     <changeSet id="0.7-140" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="baseinfo_profilelike_user_id_b5659e71_fk_account_user_id"
                                             foreignKeyTableName="baseinfo_assessmentkitlike"/>
@@ -2078,7 +2078,7 @@
     </changeSet>
 
     <changeSet id="0.7-141" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="baseinfo_profiletag__assessmentkit_id_511ef243_fk_baseinfo_"
                                             foreignKeyTableName="baseinfo_assessmentkittag_assessmentkits"/>
@@ -2093,7 +2093,7 @@
     </changeSet>
 
     <changeSet id="0.7-142" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_qualityattr_assessment_subject_i_4b599516_fk_baseinfo_"
@@ -2108,7 +2108,7 @@
     </changeSet>
 
     <changeSet id="0.7-143" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="baseinfo_questionimp_question_id_dcbc7a6f_fk_baseinfo_"
                                             foreignKeyTableName="baseinfo_questionimpact"/>
@@ -2121,7 +2121,7 @@
     </changeSet>
 
     <changeSet id="0.7-144" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists
                         foreignKeyName="baseinfo_questionnai_assessment_kit_id_5799de65_fk_baseinfo_"
@@ -2136,7 +2136,7 @@
     </changeSet>
 
     <changeSet id="0.7-145" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="django_admin_log_content_type_id_c4bce8eb_fk_django_co"
                                             foreignKeyTableName="django_admin_log"/>
@@ -2149,7 +2149,7 @@
     </changeSet>
 
     <changeSet id="0.7-146" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="django_admin_log_user_id_c564eba6_fk_account_user_id"
                                             foreignKeyTableName="django_admin_log"/>
@@ -2162,7 +2162,7 @@
     </changeSet>
 
     <changeSet id="0.7-147" author="Mahdi Rezazadeh">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <foreignKeyConstraintExists foreignKeyName="django_redirect_site_id_c3e37341_fk_django_site_id"
                                             foreignKeyTableName="django_redirect"/>
