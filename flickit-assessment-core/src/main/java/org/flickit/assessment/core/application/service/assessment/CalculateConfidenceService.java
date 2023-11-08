@@ -24,7 +24,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
     public Result calculate(Param param) {
         AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(param.getAssessmentId());
 
-        double confidenceLevel = assessmentResult.calculateConfidenceValue();
+        Double confidenceLevel = assessmentResult.calculateConfidenceValue();
 
         assessmentResult.setConfidenceValue(confidenceLevel);
         assessmentResult.setConfidenceValid(Boolean.TRUE);

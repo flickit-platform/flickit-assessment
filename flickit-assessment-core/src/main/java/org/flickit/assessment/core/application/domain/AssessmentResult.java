@@ -65,19 +65,19 @@ public class AssessmentResult {
         return (int) Math.round((double) weightedSum.getValue() / sum.getValue());
     }
 
-    public double calculateConfidenceValue() {
+    public Double calculateConfidenceValue() {
         calculateSubjectValuesAndSetConfidenceValue();
         return calculateWeightedMeanOfAttributeConfidenceValues();
     }
 
     private void calculateSubjectValuesAndSetConfidenceValue() {
         subjectValues.forEach(x -> {
-            double calcResult = x.calculateConfidenceValue();
+            Double calcResult = x.calculateConfidenceValue();
             x.setConfidenceValue(calcResult);
         });
     }
 
-    private double calculateWeightedMeanOfAttributeConfidenceValues() {
+    private Double calculateWeightedMeanOfAttributeConfidenceValues() {
         MutableDouble weightedSum = new MutableDouble();
         MutableDouble sum = new MutableDouble();
         subjectValues.stream()
@@ -87,7 +87,7 @@ public class AssessmentResult {
                 weightedSum.add(x.getWeightedConfidenceValue());
                 sum.add(x.getQualityAttribute().getWeight());
             });
-        return weightedSum.getValue() / sum.getValue();
+        return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
     }
 
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.mutable.MutableDouble;
 
 import java.util.List;
 import java.util.UUID;
@@ -43,21 +44,21 @@ public class SubjectValue {
         return (int) Math.round((double) weightedSum / sum);
     }
 
-    public double calculateConfidenceValue() {
+    public Double calculateConfidenceValue() {
         qualityAttributeValues.forEach(QualityAttributeValue::calculateConfidenceValue);
         return calculateWeightedMeanOfAttributeConfidenceValues();
     }
 
-    private double calculateWeightedMeanOfAttributeConfidenceValues() {
-        double weightedSum = 0;
-        double sum = 0;
+    private Double calculateWeightedMeanOfAttributeConfidenceValues() {
+        MutableDouble weightedSum = new MutableDouble();
+        MutableDouble sum = new MutableDouble();
         for (QualityAttributeValue qav : qualityAttributeValues) {
             if (qav.getConfidenceValue() != null) {
-                weightedSum += qav.getWeightedConfidenceValue();
-                sum += qav.getQualityAttribute().getWeight();
+                weightedSum.add(qav.getWeightedConfidenceValue());
+                sum.add(qav.getQualityAttribute().getWeight());
             }
         }
-        return weightedSum / sum;
+        return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
     }
 
 }
