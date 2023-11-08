@@ -2198,4 +2198,441 @@
                                  initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="django_site" validate="true"/>
     </changeSet>
+
+
+    <changeSet id="0.7-152" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="account_space"
+                                  constraintName="account_space_owner_id_9c7e98ca_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-153" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="account_useraccess"
+                                  constraintName="account_useraccess_user_id_abb729d3_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-154" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="baseinfo_expertgroupaccess"
+                                  constraintName="baseinfo_expertgroupaccess_user_id_3c79acf7_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-155" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="account_user_groups"
+                                  constraintName="account_user_groups_user_id_14345e7b_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-156" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="django_admin_log"
+                                  constraintName="django_admin_log_user_id_c564eba6_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-157" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="baseinfo_assessmentkitlike"
+                                  constraintName="baseinfo_profilelike_user_id_b5659e71_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-158" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="account_user_user_permissions"
+                                  constraintName="account_user_user_pe_user_id_cc42d270_fk_account_u"/>
+    </changeSet>
+
+    <changeSet id="0.7-159" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="baseinfo_expertgroup"
+                                  constraintName="baseinfo_expertgroup_owner_id_84de2f0a_fk_account_user_id"/>
+    </changeSet>
+
+
+    <changeSet id="0.7-160" author="Mahdi Rezazadeh">
+        <dropIndex tableName="account_space" indexName="account_space_owner_id_9c7e98ca"/>
+    </changeSet>
+
+    <changeSet id="0.7-161" author="Mahdi Rezazadeh">
+        <dropIndex tableName="account_useraccess" indexName="account_useraccess_user_id_abb729d3"/>
+    </changeSet>
+
+    <changeSet id="0.7-162" author="Mahdi Rezazadeh">
+        <dropIndex tableName="baseinfo_expertgroupaccess" indexName="baseinfo_expertgroupaccess_user_id_3c79acf7"/>
+    </changeSet>
+
+    <changeSet id="0.7-163" author="Mahdi Rezazadeh">
+        <dropIndex tableName="account_user_groups" indexName="account_user_groups_user_id_14345e7b"/>
+    </changeSet>
+
+    <changeSet id="0.7-164" author="Mahdi Rezazadeh">
+        <dropIndex tableName="baseinfo_assessmentkitlike" indexName="baseinfo_profilelike_user_id_b5659e71"/>
+    </changeSet>
+
+    <changeSet id="0.7-165" author="Mahdi Rezazadeh">
+        <dropIndex tableName="account_user_user_permissions"
+                   indexName="account_user_user_permissions_user_id_cc42d270"/>
+    </changeSet>
+
+    <changeSet id="0.7-166" author="Mahdi Rezazadeh">
+        <dropIndex tableName="baseinfo_expertgroup" indexName="baseinfo_expertgroup_owner_id_84de2f0a"/>
+    </changeSet>
+
+    <changeSet id="0.7-167" author="Mahdi Rezazadeh">
+        <dropIndex tableName="django_admin_log" indexName="django_admin_log_user_id_c564eba6"/>
+    </changeSet>
+
+
+    <changeSet id="0.7-168" author="Mahdi Rezazadeh">
+        <addColumn tableName="account_user">
+            <column name="new_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-169" author="Mahdi Rezazadeh">
+        <sql>
+            UPDATE account_user
+            SET new_id = CAST(LPAD(TO_HEX(id), 32, '0') AS UUID);
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.7-170" author="Mahdi Rezazadeh">
+        <dropColumn tableName="account_user">
+            <column name="id"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.7-171" author="Mahdi Rezazadeh">
+        <renameColumn tableName="account_user" newColumnName="id" oldColumnName="new_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-172" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="account_user" columnName="id"/>
+    </changeSet>
+
+    <changeSet id="0.7-173" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="account_user" columnNames="id"/>
+    </changeSet>
+
+
+    <changeSet id="0.7-174" author="Mahdi Rezazadeh">
+        <addColumn tableName="account_space">
+            <column name="new_owner_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-175" author="Mahdi Rezazadeh">
+        <sql>
+            UPDATE account_space
+            SET new_owner_id = CAST(LPAD(TO_HEX(owner_id), 32, '0') AS UUID);
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.7-176" author="Mahdi Rezazadeh">
+        <dropColumn tableName="account_space">
+            <column name="owner_id"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.7-177" author="Mahdi Rezazadeh">
+        <renameColumn tableName="account_space" newColumnName="owner_id" oldColumnName="new_owner_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-178" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="account_space" columnName="owner_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-179" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="account_space"
+                                 constraintName="account_space_owner_id_9c7e98ca_fk_account_user_id" deferrable="true"
+                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-180" author="Mahdi Rezazadeh">
+        <createIndex tableName="account_space" indexName="account_space_owner_id_9c7e98ca">
+            <column name="owner_id"/>
+        </createIndex>
+    </changeSet>
+
+
+    <changeSet id="0.7-181" author="Mahdi Rezazadeh">
+        <addColumn tableName="account_useraccess">
+            <column name="new_user_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-182" author="Mahdi Rezazadeh">
+        <sql>
+            UPDATE account_useraccess
+            SET new_user_id = CAST(LPAD(TO_HEX(user_id), 32, '0') AS UUID);
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.7-183" author="Mahdi Rezazadeh">
+        <dropColumn tableName="account_useraccess">
+            <column name="user_id"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.7-184" author="Mahdi Rezazadeh">
+        <renameColumn tableName="account_useraccess" newColumnName="user_id" oldColumnName="new_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-185" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="account_useraccess" columnName="user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-186" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="account_useraccess"
+                                 constraintName="account_useraccess_user_id_abb729d3_fk_account_user_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-187" author="Mahdi Rezazadeh">
+        <createIndex tableName="account_useraccess" indexName="account_useraccess_user_id_abb729d3">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+
+    <changeSet id="0.7-188" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_expertgroupaccess">
+            <column name="new_user_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-189" author="Mahdi Rezazadeh">
+        <sql>
+            UPDATE baseinfo_expertgroupaccess
+            SET new_user_id = CAST(LPAD(TO_HEX(user_id), 32, '0') AS UUID);
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.7-190" author="Mahdi Rezazadeh">
+        <dropColumn tableName="baseinfo_expertgroupaccess">
+            <column name="user_id"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.7-191" author="Mahdi Rezazadeh">
+        <renameColumn tableName="baseinfo_expertgroupaccess" newColumnName="user_id" oldColumnName="new_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-192" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_expertgroupaccess" columnName="user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-193" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="baseinfo_expertgroupaccess"
+                                 constraintName="baseinfo_expertgroupaccess_user_id_3c79acf7_fk_account_user_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-194" author="Mahdi Rezazadeh">
+        <createIndex tableName="baseinfo_expertgroupaccess" indexName="baseinfo_expertgroupaccess_user_id_3c79acf7">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+
+    <changeSet id="0.7-195" author="Mahdi Rezazadeh">
+        <addColumn tableName="account_user_groups">
+            <column name="new_user_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-196" author="Mahdi Rezazadeh">
+        <sql>
+            UPDATE account_user_groups
+            SET new_user_id = CAST(LPAD(TO_HEX(user_id), 32, '0') AS UUID);
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.7-197" author="Mahdi Rezazadeh">
+        <dropColumn tableName="account_user_groups">
+            <column name="user_id"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.7-198" author="Mahdi Rezazadeh">
+        <renameColumn tableName="account_user_groups" newColumnName="user_id" oldColumnName="new_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-199" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="account_user_groups" columnName="user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-200" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="account_user_groups"
+                                 constraintName="account_user_groups_user_id_14345e7b_fk_account_user_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-201" author="Mahdi Rezazadeh">
+        <createIndex tableName="account_user_groups" indexName="account_user_groups_user_id_14345e7b">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+
+    <changeSet id="0.7-202" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_assessmentkitlike">
+            <column name="new_user_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-203" author="Mahdi Rezazadeh">
+        <sql>
+            UPDATE baseinfo_assessmentkitlike
+            SET new_user_id = CAST(LPAD(TO_HEX(user_id), 32, '0') AS UUID);
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.7-204" author="Mahdi Rezazadeh">
+        <dropColumn tableName="baseinfo_assessmentkitlike">
+            <column name="user_id"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.7-205" author="Mahdi Rezazadeh">
+        <renameColumn tableName="baseinfo_assessmentkitlike" newColumnName="user_id" oldColumnName="new_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-206" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_assessmentkitlike" columnName="user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-207" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="baseinfo_assessmentkitlike"
+                                 constraintName="baseinfo_profilelike_user_id_b5659e71_fk_account_user_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-208" author="Mahdi Rezazadeh">
+        <createIndex tableName="baseinfo_assessmentkitlike" indexName="baseinfo_profilelike_user_id_b5659e71">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+
+    <changeSet id="0.7-209" author="Mahdi Rezazadeh">
+        <addColumn tableName="account_user_user_permissions">
+            <column name="new_user_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-210" author="Mahdi Rezazadeh">
+        <sql>
+            UPDATE account_user_user_permissions
+            SET new_user_id = CAST(LPAD(TO_HEX(user_id), 32, '0') AS UUID);
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.7-211" author="Mahdi Rezazadeh">
+        <dropColumn tableName="account_user_user_permissions">
+            <column name="user_id"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.7-212" author="Mahdi Rezazadeh">
+        <renameColumn tableName="account_user_user_permissions" newColumnName="user_id" oldColumnName="new_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-213" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="account_user_user_permissions" columnName="user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-214" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="account_user_user_permissions"
+                                 constraintName="account_user_user_pe_user_id_cc42d270_fk_account_u" deferrable="true"
+                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-215" author="Mahdi Rezazadeh">
+        <createIndex tableName="account_user_user_permissions"
+                     indexName="account_user_user_permissions_user_id_cc42d270">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+
+    <changeSet id="0.7-216" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_expertgroup">
+            <column name="new_owner_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-217" author="Mahdi Rezazadeh">
+        <sql>
+            UPDATE baseinfo_expertgroup
+            SET new_owner_id = CAST(LPAD(TO_HEX(owner_id), 32, '0') AS UUID);
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.7-218" author="Mahdi Rezazadeh">
+        <dropColumn tableName="baseinfo_expertgroup">
+            <column name="owner_id"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.7-219" author="Mahdi Rezazadeh">
+        <renameColumn tableName="baseinfo_expertgroup" newColumnName="owner_id" oldColumnName="new_owner_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-220" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_expertgroup" columnName="owner_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-221" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="baseinfo_expertgroup"
+                                 constraintName="baseinfo_expertgroup_owner_id_84de2f0a_fk_account_user_id"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-222" author="Mahdi Rezazadeh">
+        <createIndex tableName="baseinfo_expertgroup" indexName="baseinfo_expertgroup_owner_id_84de2f0a">
+            <column name="owner_id"/>
+        </createIndex>
+    </changeSet>
+
+
+    <changeSet id="0.7-223" author="Mahdi Rezazadeh">
+        <addColumn tableName="django_admin_log">
+            <column name="new_user_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-224" author="Mahdi Rezazadeh">
+        <sql>
+            UPDATE django_admin_log
+            SET new_user_id = CAST(LPAD(TO_HEX(user_id), 32, '0') AS UUID);
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.7-225" author="Mahdi Rezazadeh">
+        <dropColumn tableName="django_admin_log">
+            <column name="user_id"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.7-226" author="Mahdi Rezazadeh">
+        <renameColumn tableName="django_admin_log" newColumnName="user_id" oldColumnName="new_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-227" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="django_admin_log" columnName="user_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-228" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="django_admin_log"
+                                 constraintName="django_admin_log_user_id_c564eba6_fk_account_user_id" deferrable="true"
+                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.7-229" author="Mahdi Rezazadeh">
+        <createIndex tableName="django_admin_log" indexName="django_admin_log_user_id_c564eba6">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>
