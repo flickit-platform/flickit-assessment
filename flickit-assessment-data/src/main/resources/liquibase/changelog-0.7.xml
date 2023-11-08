@@ -2198,19 +2198,19 @@
                                  initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="django_site" validate="true"/>
     </changeSet>
-    <changeSet id="0.7-05" author="MKouhestani">
+    <changeSet id="0.7-152" author="MKouhestani">
         <addColumn tableName="fac_assessment_result">
             <column name="confidence_value" type="double precision"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.7-06" author="MKouhestani">
+    <changeSet id="0.7-153" author="MKouhestani">
         <addColumn tableName="fac_subject_value">
             <column name="confidence_value" type="double precision"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.7-07" author="MKouhestani">
+    <changeSet id="0.7-154" author="MKouhestani">
         <addColumn tableName="fac_quality_attribute_value">
             <column name="confidence_value" type="double precision"/>
         </addColumn>
