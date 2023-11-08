@@ -31,6 +31,9 @@ public class AssessmentResultJpaEntity {
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
 
+    @Column(name = "confidence_value")
+    private Double confidenceValue;
+
     @Column(name = "is_calculate_valid")
     private Boolean isCalculateValid;
 

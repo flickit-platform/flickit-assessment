@@ -14,6 +14,7 @@ public class AssessmentResultJpaEntityMother {
             UUID.randomUUID(),
             assessmentEntityWithKit(),
             maturityLevelId,
+            1.0,
             isCalculateValid,
             isConfidenceValid,
             LocalDateTime.now()

@@ -20,4 +20,9 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
     void updateMaturityLevelById(@Param(value = "id") UUID id,
                                  @Param(value = "maturityLevelId") Long maturityLevelId);
 
+    @Modifying
+    @Query("update SubjectValueJpaEntity a set a.confidenceValue = :confidenceValue where a.id = :id")
+    void updateConfidenceValuelById(@Param(value = "id") UUID id,
+                                    @Param(value = "confidenceValue") Double confidenceValue);
+
 }

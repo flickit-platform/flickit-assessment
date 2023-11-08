@@ -33,4 +33,7 @@ public class QualityAttributeValueJpaEntity {
 
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
+
+    @Column(name = "confidence_value")
+    private Double confidenceValue;
 }

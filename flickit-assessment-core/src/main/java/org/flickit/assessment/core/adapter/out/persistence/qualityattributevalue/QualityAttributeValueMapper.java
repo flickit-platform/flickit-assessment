@@ -12,6 +12,7 @@ public class QualityAttributeValueMapper {
             null,
             null,
             qualityAttributeId,
+            null,
             null
         );
     }

@@ -14,6 +14,7 @@ public class SubjectValueJpaEntityMother {
             UUID.randomUUID(),
             assessmentResultJpaEntity,
             subjectId++,
+            null,
             null
         );
     }

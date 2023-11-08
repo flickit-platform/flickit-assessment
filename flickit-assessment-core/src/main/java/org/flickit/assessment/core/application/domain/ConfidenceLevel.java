@@ -40,6 +40,10 @@ public enum ConfidenceLevel {
         return COMPLETELY_UNSURE;
     }
 
+    public static ConfidenceLevel getMaxLevel() {
+        return ConfidenceLevel.COMPLETELY_SURE;
+    }
+
     public int getId() {
         return ordinal() + 1;
     }

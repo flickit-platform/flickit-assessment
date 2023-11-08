@@ -12,6 +12,7 @@ public class AttributeValueJpaEntityMother {
             UUID.randomUUID(),
             assessmentResultJpaEntity,
             attributeId,
+            null,
             null
         );
     }
