@@ -2635,4 +2635,32 @@
         </createIndex>
     </changeSet>
 
+
+    <changeSet id="0.7-230" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_evidence">
+            <column name="new_created_by_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-231" author="Mahdi Rezazadeh">
+        <sql>
+            UPDATE fac_evidence
+            SET new_created_by_id = CAST(LPAD(TO_HEX(created_by_id), 32, '0') AS UUID);
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.7-232" author="Mahdi Rezazadeh">
+        <dropColumn tableName="fac_evidence">
+            <column name="created_by_id"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.7-233" author="Mahdi Rezazadeh">
+        <renameColumn tableName="fac_evidence" newColumnName="created_by_id" oldColumnName="new_created_by_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-234" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="fac_evidence" columnName="created_by_id"/>
+    </changeSet>
+
 </databaseChangeLog>
