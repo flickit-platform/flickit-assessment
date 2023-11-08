@@ -56,7 +56,7 @@ class SubjectValueTest {
 
         SubjectValue subjectValue = SubjectValueMother.withQAValues(qualityAttributeValues);
 
-        double calculatedConfidenceValue = subjectValue.calculateConfidence();
+        double calculatedConfidenceValue = subjectValue.calculateConfidenceValue();
 
         assertEquals(80.0, calculatedConfidenceValue);
     }
@@ -72,7 +72,7 @@ class SubjectValueTest {
 
         SubjectValue subjectValue = SubjectValueMother.withQAValues(qualityAttributeValues);
 
-        double calculatedConfidenceValue = subjectValue.calculateConfidence();
+        double calculatedConfidenceValue = subjectValue.calculateConfidenceValue();
 
         assertEquals(73.333333333333333, calculatedConfidenceValue);
     }

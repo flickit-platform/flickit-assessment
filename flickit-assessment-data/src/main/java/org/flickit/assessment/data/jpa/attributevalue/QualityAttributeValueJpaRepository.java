@@ -19,7 +19,7 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
 
     @Modifying
     @Query("update QualityAttributeValueJpaEntity a set a.confidenceValue = :confidenceValue where a.id = :id")
-    void updateConfidenceLevelById(@Param(value = "id") UUID id,
-                                 @Param(value = "confidenceValue") Double confidenceValue);
+    void updateConfidenceValueById(@Param(value = "id") UUID id,
+                                   @Param(value = "confidenceValue") Double confidenceValue);
 
 }

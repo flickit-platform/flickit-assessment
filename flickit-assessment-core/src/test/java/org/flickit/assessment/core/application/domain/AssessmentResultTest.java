@@ -64,7 +64,7 @@ class AssessmentResultTest {
 
         AssessmentResult assessmentResult = AssessmentResultMother.invalidResultWithSubjectValues(subjectValues);
 
-        double calculateConfidenceLevel = assessmentResult.calculateConfidenceLevel();
+        double calculateConfidenceLevel = assessmentResult.calculateConfidenceValue();
 
         assertEquals(80.0, calculateConfidenceLevel);
     }
@@ -82,7 +82,7 @@ class AssessmentResultTest {
 
         AssessmentResult assessmentResult = AssessmentResultMother.invalidResultWithSubjectValues(subjectValues);
 
-        double calculateConfidenceLevel = assessmentResult.calculateConfidenceLevel();
+        double calculateConfidenceLevel = assessmentResult.calculateConfidenceValue();
 
         assertEquals(73.333333333333333, calculateConfidenceLevel);
     }

@@ -43,8 +43,8 @@ public class SubjectValue {
         return (int) Math.round((double) weightedSum / sum);
     }
 
-    public double calculateConfidence() {
-        qualityAttributeValues.forEach(QualityAttributeValue::calculateConfidence);
+    public double calculateConfidenceValue() {
+        qualityAttributeValues.forEach(QualityAttributeValue::calculateConfidenceValue);
         return calculateWeightedMeanOfAttributeConfidenceValues();
     }
 
@@ -53,7 +53,7 @@ public class SubjectValue {
         double sum = 0;
         for (QualityAttributeValue qav : qualityAttributeValues) {
             if (qav.getConfidenceValue() != null) {
-                weightedSum += qav.getWeightedConfidenceLevel();
+                weightedSum += qav.getWeightedConfidenceValue();
                 sum += qav.getQualityAttribute().getWeight();
             }
         }

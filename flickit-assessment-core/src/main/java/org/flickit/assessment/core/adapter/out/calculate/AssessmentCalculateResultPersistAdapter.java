@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.adapter.out.persistence.attributematurityscore.AttributeMaturityScorePersistenceJpaAdapter;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectValue;
-import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidenceLevelResultPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaRepository;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AssessmentCalculateResultPersistAdapter implements
     UpdateCalculatedResultPort,
-    UpdateCalculatedConfidenceLevelResultPort {
+    UpdateCalculatedConfidencePort {
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
@@ -45,7 +45,7 @@ public class AssessmentCalculateResultPersistAdapter implements
     }
 
     @Override
-    public void updateCalculatedConfidenceLevelResult(AssessmentResult assessmentResult) {
+    public void updateCalculatedConfidence(AssessmentResult assessmentResult) {
         assessmentResultRepo.updateAfterCalculateConfidence(
             assessmentResult.getId(),
             assessmentResult.getConfidenceValue(),
@@ -53,10 +53,10 @@ public class AssessmentCalculateResultPersistAdapter implements
             assessmentResult.getLastModificationTime());
 
         List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
-        subjectValues.forEach(s -> subjectValueRepo.updateConfidenceLevelById(s.getId(), s.getConfidenceValue()));
+        subjectValues.forEach(s -> subjectValueRepo.updateConfidenceValuelById(s.getId(), s.getConfidenceValue()));
 
         subjectValues.stream()
             .flatMap(x -> x.getQualityAttributeValues().stream())
-            .forEach(qav -> attributeValueRepo.updateConfidenceLevelById(qav.getId(), qav.getConfidenceValue()));
+            .forEach(qav -> attributeValueRepo.updateConfidenceValueById(qav.getId(), qav.getConfidenceValue()));
     }
 }

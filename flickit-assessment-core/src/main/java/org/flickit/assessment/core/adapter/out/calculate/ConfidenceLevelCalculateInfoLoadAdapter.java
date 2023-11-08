@@ -58,8 +58,8 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
          load all subjectValue and attributeValue entities
          that are already saved with this assessmentResult
          */
-        List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
-        List<QualityAttributeValueJpaEntity> allQualityAttributeValueEntities = attributeValueRepo.findByAssessmentResultId(assessmentResultId);
+        var subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
+        var allAttributeValueEntities = attributeValueRepo.findByAssessmentResultId(assessmentResultId);
 
         /*
         load all subjects and their related attributes (by assessmentKit)
@@ -73,14 +73,14 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             .collect(toMap(SubjectDto::id, x -> x));
 
         // load all questions with their impacts (by assessmentKit)
-        List<QuestionDto> allQuestionsDto = questionRestAdapter.loadByAssessmentKitId(assessmentKitId);
+        var allQuestionsDto = questionRestAdapter.loadByAssessmentKitId(assessmentKitId);
 
         // load all answers submitted with this assessmentResult
-        List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
+        var allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
 
         Context context = new Context(allQuestionsDto,
             allAnswerEntities,
-            allQualityAttributeValueEntities,
+            allAttributeValueEntities,
             subjectValueEntities,
             subjectIdToDto,
             qaIdToWeightMap);
@@ -106,27 +106,27 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         for (QualityAttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
             List<Question> impactfulQuestions = questionsWithImpact(qavEntity.getQualityAttributeId(), context);
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            QualityAttribute qualityAttribute = new QualityAttribute(
+            QualityAttribute attribute = new QualityAttribute(
                 qavEntity.getQualityAttributeId(),
                 context.attributeIdToWeightMap.get(qavEntity.getQualityAttributeId()),
                 impactfulQuestions
             );
 
-            QualityAttributeValue qualityAttributeValue = new QualityAttributeValue(qavEntity.getId(), qualityAttribute, impactfulAnswers);
+            var attributeValue = new QualityAttributeValue(qavEntity.getId(), attribute, impactfulAnswers);
 
-            attributeIdToValueMap.put(qualityAttribute.getId(), qualityAttributeValue);
+            attributeIdToValueMap.put(attribute.getId(), attributeValue);
         }
         return attributeIdToValueMap;
     }
 
     /**
-     * @param qualityAttributeId id of intended attribute to extract its impactful questions
+     * @param attributeId id of intended attribute to extract its impactful questions
      * @param context all previously loaded data
      * @return list of questions with at least one impact on the given attribute
      */
-    private List<Question> questionsWithImpact(Long qualityAttributeId, Context context) {
+    private List<Question> questionsWithImpact(Long attributeId, Context context) {
         return context.allQuestionsDto.stream()
-            .filter(q -> q.questionImpacts().stream().anyMatch(f -> f.qualityAttributeId().equals(qualityAttributeId)))
+            .filter(q -> q.questionImpacts().stream().anyMatch(f -> f.qualityAttributeId().equals(attributeId)))
             .map(QuestionDto::dtoToDomain)
             .toList();
     }
@@ -158,16 +158,16 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
     /**
      * build subjectValues domain with all information needed for calculate their maturity levels
-     * @param qualityAttrIdToValue map of attributeIds to their corresponding value
+     * @param attributeIdToValueMap map of attributeIds to their corresponding value
      * @param context all previously loaded data
      * @return list of subjectValues
      */
-    private static List<SubjectValue> buildSubjectValues(Map<Long, QualityAttributeValue> qualityAttrIdToValue, Context context) {
+    private static List<SubjectValue> buildSubjectValues(Map<Long, QualityAttributeValue> attributeIdToValueMap, Context context) {
         List<SubjectValue> subjectValues = new ArrayList<>();
         for (SubjectValueJpaEntity svEntity : context.subjectValueEntities) {
             SubjectDto dto = context.subjectIdToDto.get(svEntity.getSubjectId());
             List<QualityAttributeValue> qavList = dto.qualityAttributes().stream()
-                .map(q -> qualityAttrIdToValue.get(q.id()))
+                .map(q -> attributeIdToValueMap.get(q.id()))
                 .filter(Objects::nonNull)
                 .toList();
             if (qavList.isEmpty()) {

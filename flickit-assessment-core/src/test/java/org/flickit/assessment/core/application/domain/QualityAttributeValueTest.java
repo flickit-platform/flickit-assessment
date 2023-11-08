@@ -162,7 +162,7 @@ class QualityAttributeValueTest {
         QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
             QualityAttributeMother.withQuestions(questions), answers);
 
-        qav.calculateConfidence();
+        qav.calculateConfidenceValue();
 
         assertEquals(100.0, qav.getConfidenceValue());
     }

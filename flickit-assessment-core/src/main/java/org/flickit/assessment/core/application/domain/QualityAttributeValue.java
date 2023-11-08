@@ -105,7 +105,7 @@ public class QualityAttributeValue {
         return maturityLevel.getLevel() * qualityAttribute.getWeight();
     }
 
-    public void calculateConfidence() {
+    public void calculateConfidenceValue() {
         var questionIdToWeightMap = findAnsweredQuestions();
         if (questionIdToWeightMap == null || questionIdToWeightMap.isEmpty()) {
             this.confidenceValue = null;
@@ -152,7 +152,7 @@ public class QualityAttributeValue {
             .sum();
     }
 
-    public double getWeightedConfidenceLevel() {
+    public double getWeightedConfidenceValue() {
         return confidenceValue * qualityAttribute.getWeight();
     }
 }
