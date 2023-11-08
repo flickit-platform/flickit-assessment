@@ -4,7 +4,6 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <property name="double_type" value="double" dbms="!postgres"/>
-    <property name="double_type" value="double precision" dbms="postgres"/>
+    <property name="datetime_with_time_zone_type" value="timestamp with time zone" dbms="postgresql"/>
 
 </databaseChangeLog>

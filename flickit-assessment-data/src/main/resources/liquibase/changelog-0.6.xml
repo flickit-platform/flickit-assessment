@@ -12,7 +12,7 @@
             <column name="maturity_level_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="score" type="${double_type}" />
+            <column name="score" type="double" />
         </createTable>
     </changeSet>
 
