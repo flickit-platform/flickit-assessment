@@ -128,10 +128,10 @@ public class QualityAttributeValue {
             .collect(Collectors.toMap(Question::getId, QualityAttributeValue::calculateQuestionWeight));
     }
 
-    private static Double calculateQuestionWeight(Question question) {
+    private static double calculateQuestionWeight(Question question) {
         Assert.notNull(question.getImpacts(), () -> "Question impacts must not be null.");
         Assert.notEmpty(question.getImpacts(), () -> "Question impacts must not be empty.");
-        Double sum = question.getImpacts().stream()
+        double sum = question.getImpacts().stream()
             .mapToDouble(QuestionImpact::getWeight)
             .sum();
         return sum / question.getImpacts().size();
