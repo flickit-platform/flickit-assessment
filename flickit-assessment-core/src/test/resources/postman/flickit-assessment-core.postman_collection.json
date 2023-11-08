@@ -580,7 +580,7 @@
           },
           "response": []
         }, {
-        "name": "Calculate Confidence Level Score",
+        "name": "Calculate Confidence",
         "request": {
           "method": "POST",
           "header": [],

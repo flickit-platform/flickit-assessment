@@ -164,6 +164,6 @@ class QualityAttributeValueTest {
 
         qav.calculateConfidence();
 
-        assertEquals(100.0, qav.getConfidenceLevelValue());
+        assertEquals(100.0, qav.getConfidenceValue());
     }
 }

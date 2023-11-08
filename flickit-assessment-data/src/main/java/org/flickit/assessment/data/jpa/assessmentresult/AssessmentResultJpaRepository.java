@@ -35,13 +35,13 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
 
     @Modifying
     @Query("UPDATE AssessmentResultJpaEntity a SET " +
-        "a.confidenceLevelValue = :confidenceLevelValue, " +
+        "a.confidenceValue = :confidenceValue, " +
         "a.isConfidenceValid = :isConfidenceValid, " +
         "a.lastModificationTime = :lastModificationTime " +
         "WHERE a.id = :id")
-    void updateAfterCalculateConfidenceLevel(@Param(value = "id") UUID id,
-                              @Param(value = "confidenceLevelValue") Double confidenceLevelValue,
-                              @Param(value = "isConfidenceValid") boolean isConfidenceValid,
-                              @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
+    void updateAfterCalculateConfidence(@Param(value = "id") UUID id,
+                                        @Param(value = "confidenceValue") Double confidenceValue,
+                                        @Param(value = "isConfidenceValid") boolean isConfidenceValid,
+                                        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
 
 }

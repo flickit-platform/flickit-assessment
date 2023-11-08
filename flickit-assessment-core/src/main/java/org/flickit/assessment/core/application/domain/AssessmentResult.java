@@ -24,7 +24,7 @@ public class AssessmentResult {
     MaturityLevel maturityLevel;
 
     @Setter
-    Double confidenceLevelValue;
+    Double confidenceValue;
 
     @Setter
     boolean isCalculateValid;
@@ -66,14 +66,14 @@ public class AssessmentResult {
     }
 
     public double calculateConfidenceLevel() {
-        calculateSubjectValuesAndSetConfidenceLevelValue();
+        calculateSubjectValuesAndSetConfidenceValue();
         return calculateWeightedMeanOfQualityAttributeConfidenceLevels();
     }
 
-    private void calculateSubjectValuesAndSetConfidenceLevelValue() {
+    private void calculateSubjectValuesAndSetConfidenceValue() {
         subjectValues.forEach(x -> {
             double calcResult = x.calculateConfidence();
-            x.setConfidenceLevelValue(calcResult);
+            x.setConfidenceValue(calcResult);
         });
     }
 
@@ -82,7 +82,7 @@ public class AssessmentResult {
         MutableDouble sum = new MutableDouble();
         subjectValues.stream()
             .flatMap(x -> x.getQualityAttributeValues().stream())
-            .filter(x -> !x.getConfidenceLevelValue().isNaN())
+            .filter(x -> x.getConfidenceValue() != null)
             .forEach(x -> {
                 weightedSum.add(x.getWeightedConfidenceLevel());
                 sum.add(x.getQualityAttribute().getWeight());

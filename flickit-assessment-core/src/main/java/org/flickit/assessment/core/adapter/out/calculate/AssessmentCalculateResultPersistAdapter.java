@@ -46,17 +46,17 @@ public class AssessmentCalculateResultPersistAdapter implements
 
     @Override
     public void updateCalculatedConfidenceLevelResult(AssessmentResult assessmentResult) {
-        assessmentResultRepo.updateAfterCalculateConfidenceLevel(
+        assessmentResultRepo.updateAfterCalculateConfidence(
             assessmentResult.getId(),
-            assessmentResult.getConfidenceLevelValue(),
+            assessmentResult.getConfidenceValue(),
             assessmentResult.isConfidenceValid(),
             assessmentResult.getLastModificationTime());
 
         List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
-        subjectValues.forEach(s -> subjectValueRepo.updateConfidenceLevelById(s.getId(), s.getConfidenceLevelValue()));
+        subjectValues.forEach(s -> subjectValueRepo.updateConfidenceLevelById(s.getId(), s.getConfidenceValue()));
 
         subjectValues.stream()
             .flatMap(x -> x.getQualityAttributeValues().stream())
-            .forEach(qav -> attributeValueRepo.updateConfidenceLevelById(qav.getId(), qav.getConfidenceLevelValue()));
+            .forEach(qav -> attributeValueRepo.updateConfidenceLevelById(qav.getId(), qav.getConfidenceValue()));
     }
 }

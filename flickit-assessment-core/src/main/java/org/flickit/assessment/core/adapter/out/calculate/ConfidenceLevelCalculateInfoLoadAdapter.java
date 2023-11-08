@@ -1,10 +1,6 @@
 package org.flickit.assessment.core.adapter.out.calculate;
 
 import lombok.AllArgsConstructor;
-import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
-import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
-import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelDto;
-import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.qualityattribute.QualityAttributeDto;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
@@ -12,7 +8,7 @@ import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.port.out.confidencelevel.LoadConfidenceLevelCalculateInfoPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.data.jpa.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.assessment.AssessmentJpaEntity;
@@ -29,7 +25,7 @@ import java.util.*;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
 @AllArgsConstructor
@@ -37,7 +33,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final AnswerJpaRepository answerRepo;
-    private final QualityAttributeValueJpaRepository qualityAttrValueRepo;
+    private final QualityAttributeValueJpaRepository attributeValueRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
 
     private final SubjectRestAdapter subjectRestAdapter;
@@ -45,16 +41,16 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
     record Context(List<QuestionDto> allQuestionsDto,
                    List<AnswerJpaEntity> allAnswerEntities,
-                   List<QualityAttributeValueJpaEntity> allQualityAttributeValueEntities,
+                   List<QualityAttributeValueJpaEntity> allAttributeValueEntities,
                    List<SubjectValueJpaEntity> subjectValueEntities,
                    Map<Long, SubjectDto> subjectIdToDto,
-                   Map<Long, Integer> qaIdToWeightMap) {
+                   Map<Long, Integer> attributeIdToWeightMap) {
     }
 
     @Override
     public AssessmentResult load(UUID assessmentId) {
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND));
         UUID assessmentResultId = assessmentResultEntity.getId();
         Long assessmentKitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
 
@@ -63,7 +59,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
          that are already saved with this assessmentResult
          */
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
-        List<QualityAttributeValueJpaEntity> allQualityAttributeValueEntities = qualityAttrValueRepo.findByAssessmentResultId(assessmentResultId);
+        List<QualityAttributeValueJpaEntity> allQualityAttributeValueEntities = attributeValueRepo.findByAssessmentResultId(assessmentResultId);
 
         /*
         load all subjects and their related attributes (by assessmentKit)
@@ -82,12 +78,6 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         // load all answers submitted with this assessmentResult
         List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
 
-        /*
-        based on answers, extract all selected options
-        and load all those answerOptions with their impacts
-        */
-        List<Long> allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
-
         Context context = new Context(allQuestionsDto,
             allAnswerEntities,
             allQualityAttributeValueEntities,
@@ -95,9 +85,9 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             subjectIdToDto,
             qaIdToWeightMap);
 
-        Map<Long, QualityAttributeValue> qualityAttrIdToValue = buildQualityAttributeValues(context);
+        Map<Long, QualityAttributeValue> attributeIdToValueMap = buildAttributeValues(context);
 
-        List<SubjectValue> subjectValues = buildSubjectValues(qualityAttrIdToValue, context);
+        List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValueMap, context);
 
         return new AssessmentResult(
             assessmentResultId,
@@ -111,22 +101,22 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * @param context all previously loaded data
      * @return a map of each attributeId to it's corresponding attributeValue
      */
-    private Map<Long, QualityAttributeValue> buildQualityAttributeValues(Context context) {
-        Map<Long, QualityAttributeValue> qualityAttrIdToValue = new HashMap<>();
-        for (QualityAttributeValueJpaEntity qavEntity : context.allQualityAttributeValueEntities) {
+    private Map<Long, QualityAttributeValue> buildAttributeValues(Context context) {
+        Map<Long, QualityAttributeValue> attributeIdToValueMap = new HashMap<>();
+        for (QualityAttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
             List<Question> impactfulQuestions = questionsWithImpact(qavEntity.getQualityAttributeId(), context);
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
             QualityAttribute qualityAttribute = new QualityAttribute(
                 qavEntity.getQualityAttributeId(),
-                context.qaIdToWeightMap.get(qavEntity.getQualityAttributeId()),
+                context.attributeIdToWeightMap.get(qavEntity.getQualityAttributeId()),
                 impactfulQuestions
             );
 
             QualityAttributeValue qualityAttributeValue = new QualityAttributeValue(qavEntity.getId(), qualityAttribute, impactfulAnswers);
 
-            qualityAttrIdToValue.put(qualityAttribute.getId(), qualityAttributeValue);
+            attributeIdToValueMap.put(qualityAttribute.getId(), qualityAttributeValue);
         }
-        return qualityAttrIdToValue;
+        return attributeIdToValueMap;
     }
 
     /**

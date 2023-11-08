@@ -65,7 +65,7 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
                 null,
                 toMaturityScore(attributeIdToScores, x),
                 maturityLevels.get(x.getMaturityLevelId()),
-                x.getConfidenceLevelValue()
+                x.getConfidenceValue()
             ))
             .toList();
     }

@@ -34,6 +34,6 @@ public class SubjectValueJpaEntity {
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
 
-    @Column(name = "confidence_level_value")
-    private Double confidenceLevelValue;
+    @Column(name = "confidence_value")
+    private Double confidenceValue;
 }

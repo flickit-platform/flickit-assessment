@@ -1,14 +1,14 @@
-package org.flickit.assessment.core.application.service.confidencelevel;
+package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.QualityAttributeValue;
 import org.flickit.assessment.core.application.domain.SubjectValue;
-import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase.Result;
-import org.flickit.assessment.core.application.port.in.confidencelevel.CalculateConfidenceLevelUseCase.Param;
+import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase.Result;
+import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidenceLevelResultPort;
-import org.flickit.assessment.core.application.port.out.confidencelevel.LoadConfidenceLevelCalculateInfoPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
@@ -26,10 +26,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CalculateConfidenceLevelServiceTest {
+class CalculateConfidenceServiceTest {
 
     @InjectMocks
-    private CalculateConfidenceLevelService service;
+    private CalculateConfidenceService service;
 
     @Mock
     private LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;

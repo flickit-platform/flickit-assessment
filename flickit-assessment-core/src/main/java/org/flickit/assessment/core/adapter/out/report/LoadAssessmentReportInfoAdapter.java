@@ -56,7 +56,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             buildAssessment(assessmentResultEntity.getAssessment(), maturityLevels),
             subjectValues,
             findMaturityLevelById(maturityLevels, assessmentResultEntity.getMaturityLevelId()),
-            assessmentResultEntity.getConfidenceLevelValue(),
+            assessmentResultEntity.getConfidenceValue(),
             assessmentResultEntity.getIsCalculateValid(),
             assessmentResultEntity.getIsConfidenceValid(),
             assessmentResultEntity.getLastModificationTime());
@@ -70,7 +70,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                     new Subject(x.getSubjectId()),
                     null,
                     findMaturityLevelById(maturityLevels, x.getMaturityLevelId()),
-                    x.getConfidenceLevelValue())
+                    x.getConfidenceValue())
             ).toList();
     }
 

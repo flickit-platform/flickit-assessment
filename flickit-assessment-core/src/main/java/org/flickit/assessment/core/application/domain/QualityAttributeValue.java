@@ -21,7 +21,7 @@ public class QualityAttributeValue {
     private final List<Answer> answers;
     private Set<MaturityScore> maturityScores = new HashSet<>();
     private MaturityLevel maturityLevel;
-    private Double confidenceLevelValue;
+    private Double confidenceValue;
 
     public void calculate(List<MaturityLevel> maturityLevels) {
         Map<Long, Double> totalScore = calcTotalScore(maturityLevels);
@@ -106,46 +106,53 @@ public class QualityAttributeValue {
     }
 
     public void calculateConfidence() {
-        var answeredQuestions = findAnsweredQuestions();
-        double totalScore = calcConfidenceTotalScore(answeredQuestions);
-        double gainedScore = calcConfidenceGainedScore(answeredQuestions);
-        this.confidenceLevelValue = (gainedScore / totalScore) * 100;
+        var questionIdToWeightMap = findAnsweredQuestions();
+        if (questionIdToWeightMap == null || questionIdToWeightMap.isEmpty()) {
+            this.confidenceValue = null;
+            return;
+        }
+        double totalScore = calcConfidenceTotalScore(questionIdToWeightMap);
+        double gainedScore = calcConfidenceGainedScore(questionIdToWeightMap);
+        this.confidenceValue = (gainedScore / totalScore) * 100;
     }
 
     private Map<Long, Double> findAnsweredQuestions() {
+        if (qualityAttribute.getQuestions() == null)
+            return Collections.emptyMap();
         return qualityAttribute.getQuestions().stream()
             .filter(question -> !isMarkedAsNotApplicable(question.getId()))
             .filter(question -> answers.stream()
+                .filter(answer -> answer.getSelectedOption() != null)
                 .anyMatch(answer -> answer.getQuestionId().equals(question.getId())))
-            .collect(Collectors.toMap(question -> question.getId(), question -> calculateQuestionWeight(question)));
+            .collect(Collectors.toMap(Question::getId, QualityAttributeValue::calculateQuestionWeight));
     }
 
     private static Double calculateQuestionWeight(Question question) {
-        if (question.getImpacts() == null || question.getImpacts().isEmpty()) {
-            return null;
-        }
+        Assert.notNull(question.getImpacts(), () -> "Question impacts must not be null.");
+        Assert.notEmpty(question.getImpacts(), () -> "Question impacts must not be empty.");
         double sum = question.getImpacts().stream()
             .mapToDouble(QuestionImpact::getWeight)
             .sum();
         return sum / question.getImpacts().size();
     }
 
-    private double calcConfidenceTotalScore(Map<Long, Double> answeredQuestions) {
-        if (qualityAttribute.getQuestions() == null)
-            return 0;
-        return answeredQuestions.keySet().stream()
-            .mapToDouble(question -> answeredQuestions.get(question) * ConfidenceLevel.getMaxLevel().getId())
+    private double calcConfidenceTotalScore(Map<Long, Double> questionIdToWeightMap) {
+        return questionIdToWeightMap.keySet().stream()
+            .mapToDouble(question -> {
+                double questionWeight = questionIdToWeightMap.get(question);
+                return questionWeight * ConfidenceLevel.getMaxLevel().getId();
+            })
             .sum();
     }
 
-    private double calcConfidenceGainedScore(Map<Long, Double> answeredQuestions) {
+    private double calcConfidenceGainedScore(Map<Long, Double> questionIdToWeightMap) {
         return answers.stream()
-            .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
-            .mapToDouble(answer -> answeredQuestions.get(answer.getQuestionId()) * answer.getConfidenceLevelId())
+            .filter(answer ->  Boolean.FALSE.equals(answer.getIsNotApplicable()) || answer.getSelectedOption() == null)
+            .mapToDouble(answer -> questionIdToWeightMap.get(answer.getQuestionId()) * answer.getConfidenceLevelId())
             .sum();
     }
 
     public double getWeightedConfidenceLevel() {
-        return confidenceLevelValue * qualityAttribute.getWeight();
+        return confidenceValue * qualityAttribute.getWeight();
     }
 }
