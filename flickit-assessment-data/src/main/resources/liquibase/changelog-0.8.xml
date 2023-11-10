@@ -141,7 +141,7 @@
     <changeSet id="0.8-28" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="account_space"
                                  constraintName="account_space_owner_id_9c7e98ca_fk_account_user_id" deferrable="true"
-                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="CASCADE"
                                  referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
     </changeSet>
 
@@ -182,7 +182,7 @@
     <changeSet id="0.8-35" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="account_useraccess"
                                  constraintName="account_useraccess_user_id_abb729d3_fk_account_user_id"
-                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="CASCADE"
                                  referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
     </changeSet>
 
@@ -223,7 +223,7 @@
     <changeSet id="0.8-42" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="baseinfo_expertgroupaccess"
                                  constraintName="baseinfo_expertgroupaccess_user_id_3c79acf7_fk_account_user_id"
-                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="CASCADE"
                                  referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
     </changeSet>
 
@@ -305,7 +305,7 @@
     <changeSet id="0.8-56" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="baseinfo_assessmentkitlike"
                                  constraintName="baseinfo_profilelike_user_id_b5659e71_fk_account_user_id"
-                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="CASCADE"
                                  referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
     </changeSet>
 
@@ -346,7 +346,7 @@
     <changeSet id="0.8-63" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="account_user_user_permissions"
                                  constraintName="account_user_user_pe_user_id_cc42d270_fk_account_u" deferrable="true"
-                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 initiallyDeferred="true" onDelete="NO ACTION" onUpdate="CASCADE"
                                  referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
     </changeSet>
 
@@ -388,7 +388,7 @@
     <changeSet id="0.8-70" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="baseinfo_expertgroup"
                                  constraintName="baseinfo_expertgroup_owner_id_84de2f0a_fk_account_user_id"
-                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="CASCADE"
                                  referencedColumnNames="id" referencedTableName="account_user" validate="true"/>
     </changeSet>
 
