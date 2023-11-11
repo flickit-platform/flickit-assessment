@@ -20,6 +20,6 @@ public record SubjectReport(SubjectReportItem subject,
     public record AttributeReportItem(Long id,
                                       Long maturityLevelId,
                                       Set<MaturityScore> maturityScores,
-                                      Double confidenceLevel) {
+                                      Double confidenceValue) {
     }
 }
