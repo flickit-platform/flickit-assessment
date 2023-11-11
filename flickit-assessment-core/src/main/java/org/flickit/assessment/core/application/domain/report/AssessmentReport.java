@@ -14,7 +14,9 @@ public record AssessmentReport(AssessmentReportItem assessment,
     public record AssessmentReportItem(UUID id,
                                        String title,
                                        Long maturityLevelId,
+                                       Double confidenceValue,
                                        boolean isCalculateValid,
+                                       boolean isConfidenceValid,
                                        AssessmentColor color,
                                        LocalDateTime lastModificationTime) {
     }
