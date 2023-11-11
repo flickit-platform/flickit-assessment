@@ -12,14 +12,9 @@ public record SubjectReport(SubjectReportItem subject,
 
     public record SubjectReportItem(Long id,
                                     Long maturityLevelId,
-                                    Double confidenceValue,
-                                    boolean isCalculateValid,
-                                    boolean isConfidenceValid) {
+                                    boolean isCalculateValid) {
     }
 
-    public record AttributeReportItem(Long id,
-                                      Long maturityLevelId,
-                                      Set<MaturityScore> maturityScores,
-                                      Double confidenceValue) {
+    public record AttributeReportItem(Long id, Long maturityLevelId, Set<MaturityScore> maturityScores) {
     }
 }
