@@ -2229,4 +2229,37 @@
         </update>
     </changeSet>
 
+    <changeSet id="0.7-157" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint constraintName="baseinfo_assessmentsubject_code_a19bcda2_uniq"
+                              tableName="baseinfo_assessmentsubject"/>
+    </changeSet>
+
+    <changeSet id="0.7-158" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_kit_id, code"
+                             constraintName="baseinfo_assessmentsubject_code_a19bcda2_uniq"
+                             tableName="baseinfo_assessmentsubject"/>
+    </changeSet>
+
+    <changeSet id="0.7-159" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint constraintName="baseinfo_qualityattribute_code_fc2b6cd0_uniq"
+                              tableName="baseinfo_qualityattribute"/>
+    </changeSet>
+
+    <changeSet id="0.7-160" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_subject_id, code"
+                             constraintName="baseinfo_qualityattribute_code_fc2b6cd0_uniq"
+                             tableName="baseinfo_qualityattribute"/>
+    </changeSet>
+
+    <changeSet id="0.7-161" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint constraintName="baseinfo_questionnaire_code_04aa0ba7_uniq"
+                              tableName="baseinfo_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.7-162" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_kit_id, code"
+                             constraintName="baseinfo_questionnaire_code_04aa0ba7_uniq"
+                             tableName="baseinfo_questionnaire"/>
+    </changeSet>
+
 </databaseChangeLog>
