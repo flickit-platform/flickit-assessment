@@ -98,4 +98,7 @@ public class ErrorMessageKey {
 
     public static final String CALCULATE_CONFIDENCE_ASSESSMENT_ID_NOT_NULL = "calculate-confidence.assessment.id.notNull";
     public static final String CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND = "calculate-confidence.assessmentResult.notFount";
+
+    public static final String EDIT_KIT_KIT_ID_NOT_NULL = "edit-kit.kitId.notNull";
+    public static final String EDIT_KIT_CONTENT_NOT_NULL = "edit-kit.content.notNull";
 }
