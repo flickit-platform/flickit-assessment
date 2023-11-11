@@ -18,9 +18,9 @@ public class EditKitRestController {
     private final EditKitUseCase useCase;
 
     @PutMapping("assessment-kits/dsl/{kitId}")
-    public ResponseEntity editKit(@PathVariable("kitId") UUID kitId, @RequestBody String content) {
+    public ResponseEntity<Void> editKit(@PathVariable("kitId") UUID kitId, @RequestBody String content) {
         useCase.edit(toParam(kitId, content));
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private EditKitUseCase.Param toParam(UUID kitId, String content) {
