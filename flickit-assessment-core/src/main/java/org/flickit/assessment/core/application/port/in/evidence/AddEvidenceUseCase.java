@@ -29,7 +29,7 @@ public interface AddEvidenceUseCase {
         String description;
 
         @NotNull(message = ADD_EVIDENCE_CREATED_BY_ID_NOT_NULL)
-        Long createdById;
+        UUID createdById;
 
         @NotNull(message = ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
@@ -37,7 +37,7 @@ public interface AddEvidenceUseCase {
         @NotNull(message = ADD_EVIDENCE_QUESTION_ID_NOT_NULL)
         Long questionId;
 
-        public Param(String description, Long createdById, UUID assessmentId, Long questionId) {
+        public Param(String description, UUID createdById, UUID assessmentId, Long questionId) {
             this.description = description;
             this.createdById = createdById;
             this.assessmentId = assessmentId;

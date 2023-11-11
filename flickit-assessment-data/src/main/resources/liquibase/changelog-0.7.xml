@@ -2198,4 +2198,5 @@
                                  initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="django_site" validate="true"/>
     </changeSet>
+
 </databaseChangeLog>
