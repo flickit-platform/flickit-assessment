@@ -45,7 +45,7 @@ public class ReportSubjectService implements ReportSubjectUseCase {
 
         var attributeValues = subjectValue.getQualityAttributeValues();
 
-        var subjectReportItem = buildSubject(subjectValue, assessmentResult.isCalculateValid(), assessmentResult.isConfidenceValid());
+        var subjectReportItem = buildSubject(subjectValue, assessmentResult.isCalculateValid());
         var attributeReportItems = buildAttributes(attributeValues);
 
         var midLevelMaturity = middleLevel(maturityLevels);
@@ -60,13 +60,11 @@ public class ReportSubjectService implements ReportSubjectUseCase {
             attributeReportItems);
     }
 
-    private SubjectReport.SubjectReportItem buildSubject(SubjectValue subjectValue, boolean isCalculateValid, boolean isConfidenceValid) {
+    private SubjectReport.SubjectReportItem buildSubject(SubjectValue subjectValue, boolean isCalculateValid) {
         return new SubjectReport.SubjectReportItem(
             subjectValue.getSubject().getId(),
             subjectValue.getMaturityLevel().getId(),
-            subjectValue.getConfidenceValue(),
-            isCalculateValid,
-            isConfidenceValid
+            isCalculateValid
         );
     }
 
@@ -77,8 +75,7 @@ public class ReportSubjectService implements ReportSubjectUseCase {
                 x.getMaturityLevel().getId(),
                 x.getMaturityScores().stream()
                     .sorted(Comparator.comparingLong(MaturityScore::getMaturityLevelId))
-                    .collect(toCollection(LinkedHashSet::new)),
-                x.getConfidenceValue()
+                    .collect(toCollection(LinkedHashSet::new))
             ))
             .toList();
     }
