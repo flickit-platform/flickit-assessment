@@ -46,7 +46,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
         if (!Boolean.TRUE.equals(assessmentResultEntity.getIsConfidenceValid())) {
             log.warn("The calculated confidence value is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultEntity.getId());
-            throw new ConfidenceCalculationNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_CONFIDENCE_VALUE_NOT_VALID);
+            throw new ConfidenceCalculationNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
         }
 
         UUID assessmentResultId = assessmentResultEntity.getId();
