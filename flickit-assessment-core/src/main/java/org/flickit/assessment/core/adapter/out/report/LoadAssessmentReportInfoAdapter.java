@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.exception.CalculateNotValidException;
-import org.flickit.assessment.core.application.exception.ConfidenceCalculationNotValidException;
 import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.data.jpa.assessment.AssessmentJpaEntity;
@@ -42,11 +41,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         if (!Boolean.TRUE.equals(assessmentResultEntity.getIsCalculateValid())) {
             log.warn("The calculated result is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultEntity.getId());
             throw new CalculateNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
-        }
-
-        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsConfidenceValid())) {
-            log.warn("The calculated confidence value is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultEntity.getId());
-            throw new ConfidenceCalculationNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
         }
 
         UUID assessmentResultId = assessmentResultEntity.getId();
