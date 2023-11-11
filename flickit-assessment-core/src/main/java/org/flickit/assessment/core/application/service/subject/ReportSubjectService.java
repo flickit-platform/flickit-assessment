@@ -77,7 +77,8 @@ public class ReportSubjectService implements ReportSubjectUseCase {
                 x.getMaturityLevel().getId(),
                 x.getMaturityScores().stream()
                     .sorted(Comparator.comparingLong(MaturityScore::getMaturityLevelId))
-                    .collect(toCollection(LinkedHashSet::new))
+                    .collect(toCollection(LinkedHashSet::new)),
+                x.getConfidenceValue()
             ))
             .toList();
     }

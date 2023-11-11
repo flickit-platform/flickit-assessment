@@ -17,6 +17,9 @@ public record SubjectReport(SubjectReportItem subject,
                                     boolean isConfidenceValid) {
     }
 
-    public record AttributeReportItem(Long id, Long maturityLevelId, Set<MaturityScore> maturityScores) {
+    public record AttributeReportItem(Long id,
+                                      Long maturityLevelId,
+                                      Set<MaturityScore> maturityScores,
+                                      Double confidenceLevel) {
     }
 }
