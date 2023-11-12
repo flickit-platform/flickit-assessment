@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 @RestController
 @RequiredArgsConstructor
 public class EditKitRestController {
@@ -18,12 +16,12 @@ public class EditKitRestController {
     private final EditKitUseCase useCase;
 
     @PutMapping("assessment-kits/dsl/{kitId}")
-    public ResponseEntity<Void> editKit(@PathVariable("kitId") UUID kitId, @RequestBody String content) {
+    public ResponseEntity<Void> editKit(@PathVariable("kitId") Long kitId, @RequestBody String content) {
         useCase.edit(toParam(kitId, content));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private EditKitUseCase.Param toParam(UUID kitId, String content) {
+    private EditKitUseCase.Param toParam(Long kitId, String content) {
         return new EditKitUseCase.Param(kitId, content);
     }
 }

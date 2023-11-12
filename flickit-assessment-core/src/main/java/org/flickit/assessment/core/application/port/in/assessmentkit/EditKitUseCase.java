@@ -6,8 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.core.common.SelfValidating;
 
-import java.util.UUID;
-
 import static org.flickit.assessment.core.common.ErrorMessageKey.EDIT_KIT_CONTENT_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.EDIT_KIT_KIT_ID_NOT_NULL;
 
@@ -20,12 +18,12 @@ public interface EditKitUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = EDIT_KIT_KIT_ID_NOT_NULL)
-        UUID kitId;
+        Long kitId;
 
         @NotBlank(message = EDIT_KIT_CONTENT_NOT_NULL)
         String content;
 
-        public Param(UUID kitId, String content) {
+        public Param(Long kitId, String content) {
             this.kitId = kitId;
             this.content = content;
             this.validateSelf();
