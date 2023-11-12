@@ -114,7 +114,7 @@ jobs:
 
   build-and-push-migration-image:
     needs: [ sonar ]
-    name: deploy latest image
+    name: deploy migration image
     runs-on: ubuntu-latest
     if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/migration') ||
       github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
@@ -148,8 +148,8 @@ jobs:
         run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}":migration ${{ env.JIB_CMD }}
 
   darkube-deploy-latest:
-    needs: [ build-and-push-latest-image ]
-    name: darkube deploy latest
+    needs: [ build-and-push-migration-image ]
+    name: darkube deploy migration
     container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
     runs-on: ubuntu-latest
     if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/migration') ||
