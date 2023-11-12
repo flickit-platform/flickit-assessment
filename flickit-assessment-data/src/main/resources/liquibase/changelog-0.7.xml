@@ -2229,4 +2229,65 @@
         </update>
     </changeSet>
 
+    <changeSet id="0.7-163" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_maturitylevel">
+            <column name="code" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-164" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_maturitylevel">
+            <column name="code" valueComputed="title"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.7-165" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_maturitylevel" columnName="code"/>
+    </changeSet>
+
+    <changeSet id="0.7-166" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_kit_id, code"
+                             constraintName="baseinfo_maturitylevel_code_kit_id_uniq"
+                             tableName="baseinfo_maturitylevel"/>
+    </changeSet>
+
+    <changeSet id="0.7-167" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_question">
+            <column name="assessment_kit_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-168" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_question">
+            <column name="assessment_kit_id"
+                    valueComputed="(SELECT q.assessment_kit_id FROM baseinfo_questionnaire q where q.id = questionnaire_id)"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.7-169" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_question" columnName="assessment_kit_id"/>
+    </changeSet>
+
+    <changeSet id="0.7-170" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_question">
+            <column name="code" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-171" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_question">
+            <column name="code" valueComputed="CONCAT('q', id)"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.7-172" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_question" columnName="code"/>
+    </changeSet>
+
+    <changeSet id="0.7-173" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_kit_id, code"
+                             constraintName="baseinfo_question_code_kit_id_uniq"
+                             tableName="baseinfo_question"/>
+    </changeSet>
+
 </databaseChangeLog>
