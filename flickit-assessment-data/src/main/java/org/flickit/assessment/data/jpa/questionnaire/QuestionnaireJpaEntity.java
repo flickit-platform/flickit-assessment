@@ -30,10 +30,10 @@ public class QuestionnaireJpaEntity {
     private String description;
 
     @Column(name = "creation_time", nullable = false)
-    private LocalDateTime creation_time;
+    private LocalDateTime creationTime;
 
     @Column(name = "last_modification_date", nullable = false)
-    private LocalDateTime last_modification_date;
+    private LocalDateTime lastModificationDate;
 
     @Column(name = "index", nullable = false)
     private Integer index;
