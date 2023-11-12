@@ -4,7 +4,7 @@ import org.flickit.assessment.kit.domain.Attribute;
 
 import java.util.List;
 
-public interface LoadAttributesByQuestionIdPort {
+public interface LoadAssessmentKitAttributeModelsBySubjectPort {
 
-    List<Attribute> load(Long questionId);
+    List<Attribute> load(Long subjectId);
 }
