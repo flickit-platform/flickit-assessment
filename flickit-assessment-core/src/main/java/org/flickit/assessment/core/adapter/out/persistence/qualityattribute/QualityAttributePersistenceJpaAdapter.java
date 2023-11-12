@@ -16,7 +16,7 @@ public class QualityAttributePersistenceJpaAdapter implements LoadAssessmentKitA
 
     @Override
     public List<Attribute> load(Long subjectId) {
-        var qualityAttributeJpaEntities = repository.loadByAssessmentSubjectId(subjectId);
+        var qualityAttributeJpaEntities = repository.findBySubjectId(subjectId);
         return qualityAttributeJpaEntities.stream()
             .map(QualityAttributeMapper::mapToKitDomainModel)
             .toList();

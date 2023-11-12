@@ -16,7 +16,7 @@ public class QuestionPersistenceJpaAdapter implements LoadAssessmentKitQuestionM
 
     @Override
     public List<Question> load(long questionnaireId) {
-        var questionJpaEntities = repository.loadByQuestionnaireId(questionnaireId);
+        var questionJpaEntities = repository.findByQuestionnaireId(questionnaireId);
         return questionJpaEntities.stream()
             .map(QuestionMapper::mapToKitDomainModel)
             .toList();

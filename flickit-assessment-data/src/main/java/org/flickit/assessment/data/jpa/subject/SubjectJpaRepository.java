@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Long> {
 
-    List<SubjectJpaEntity> loadByAssessmentKitId(Long assessmentKitId);
+    List<SubjectJpaEntity> findByAssessmentKitId(Long assessmentKitId);
 }

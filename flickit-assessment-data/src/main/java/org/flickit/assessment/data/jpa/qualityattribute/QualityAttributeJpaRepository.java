@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface QualityAttributeJpaRepository extends JpaRepository<QualityAttributeJpaEntity, Long> {
 
-    List<QualityAttributeJpaEntity> loadByAssessmentSubjectId(Long assessmentSubjectId);
+    List<QualityAttributeJpaEntity> findBySubjectId(Long subjectId);
 }

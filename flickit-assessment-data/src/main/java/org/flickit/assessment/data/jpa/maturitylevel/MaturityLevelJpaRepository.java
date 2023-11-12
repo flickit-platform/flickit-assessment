@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, Long> {
 
-    List<MaturityLevelJpaEntity> loadByAssessmentKitId(Long assessmentKitId);
+    List<MaturityLevelJpaEntity> findByAssessmentKitId(Long assessmentKitId);
 }

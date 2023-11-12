@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, Long> {
 
-    List<QuestionJpaEntity> loadByQuestionnaireId(Long questionnaireId);
+    List<QuestionJpaEntity> findByQuestionnaireId(Long questionnaireId);
 }

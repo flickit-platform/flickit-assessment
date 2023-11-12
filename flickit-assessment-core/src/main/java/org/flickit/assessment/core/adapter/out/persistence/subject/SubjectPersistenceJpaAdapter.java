@@ -16,7 +16,7 @@ public class SubjectPersistenceJpaAdapter implements LoadAssessmentKitSubjectMod
 
     @Override
     public List<Subject> load(Long assessmentKitId) {
-        var subjectJpaEntities = repository.loadByAssessmentKitId(assessmentKitId);
+        var subjectJpaEntities = repository.findByAssessmentKitId(assessmentKitId);
         return subjectJpaEntities.stream()
             .map(SubjectMapper::mapToKitDomainModel)
             .toList();
