@@ -17,7 +17,7 @@ public class UpdateKitByDslRestController {
 
     @PutMapping("assessment-kits/{kitId}/update-by-dsl")
     public ResponseEntity<Void> editKit(@PathVariable("kitId") Long kitId, @RequestBody String dslContent) {
-        useCase.edit(toParam(kitId, dslContent));
+        useCase.update(toParam(kitId, dslContent));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

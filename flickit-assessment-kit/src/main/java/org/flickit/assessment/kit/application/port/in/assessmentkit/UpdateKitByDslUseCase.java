@@ -11,7 +11,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DS
 
 public interface UpdateKitByDslUseCase {
 
-    void edit(Param param);
+    void update(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
