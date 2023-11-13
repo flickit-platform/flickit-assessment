@@ -14,5 +14,5 @@ public class RestClientProps {
     private Duration connectTimeout = Duration.ofSeconds(5);
 
     @NotNull
-    private Duration readTimeout = Duration.ofSeconds(5);
+    private Duration readTimeout = Duration.ofSeconds(10);
 }
