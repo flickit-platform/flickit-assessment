@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.8-1" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint constraintName="baseinfo_assessmentsubject_code_a19bcda2_uniq"
+                              tableName="baseinfo_assessmentsubject"/>
+    </changeSet>
+
+    <changeSet id="0.8-2" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_kit_id, code"
+                             constraintName="baseinfo_assessmentsubject_code_a19bcda2_uniq"
+                             tableName="baseinfo_assessmentsubject"/>
+    </changeSet>
+
+    <changeSet id="0.8-3" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint constraintName="baseinfo_qualityattribute_code_fc2b6cd0_uniq"
+                              tableName="baseinfo_qualityattribute"/>
+    </changeSet>
+
+    <changeSet id="0.8-4" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_subject_id, code"
+                             constraintName="baseinfo_qualityattribute_code_fc2b6cd0_uniq"
+                             tableName="baseinfo_qualityattribute"/>
+    </changeSet>
+
+    <changeSet id="0.8-5" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint constraintName="baseinfo_questionnaire_code_04aa0ba7_uniq"
+                              tableName="baseinfo_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.8-6" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_kit_id, code"
+                             constraintName="baseinfo_questionnaire_code_04aa0ba7_uniq"
+                             tableName="baseinfo_questionnaire"/>
+    </changeSet>
+
+</databaseChangeLog>
