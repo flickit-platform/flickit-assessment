@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface LoadAssessmentKitMaturityLevelModelsByKitPort {
 
-    List<MaturityLevel> load(Long assessmentKitId);
+    List<MaturityLevel> loadByKitId(Long assessmentKitId);
 }

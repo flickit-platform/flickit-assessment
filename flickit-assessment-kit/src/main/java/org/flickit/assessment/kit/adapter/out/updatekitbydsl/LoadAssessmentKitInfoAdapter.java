@@ -20,7 +20,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
 
     @Override
     public AssessmentKit load(Long kitId) {
-        List<MaturityLevel> levels = loadAssessmentKitMaturityLevelModelsByKitPort.load(kitId);
+        List<MaturityLevel> levels = loadAssessmentKitMaturityLevelModelsByKitPort.loadByKitId(kitId);
         setLevelIndexes(levels);
         setLevelCompetences(levels);
 

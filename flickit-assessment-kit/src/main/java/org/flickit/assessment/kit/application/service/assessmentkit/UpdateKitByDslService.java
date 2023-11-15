@@ -25,7 +25,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DS
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class EditKitService implements UpdateKitByDslUseCase {
+public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
     private final LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
     private final CreateMaturityLevelPort createMaturityLevelPort;
@@ -41,7 +41,7 @@ public class EditKitService implements UpdateKitByDslUseCase {
         AssessmentKit kitModel = parseJson(param.getDslContent());
 
         if (kitModel != null) {
-            checkLevel(param.getKitId(), loadedKit.getLevels(), kitModel.getLevels());
+            checkLevel(param.getKitId(), loadedKit.getMaturityLevels(), kitModel.getMaturityLevels());
         }
     }
 
@@ -128,9 +128,9 @@ public class EditKitService implements UpdateKitByDslUseCase {
                 loadedCompetences.keySet().forEach(
                     loadedCompetence -> {
                         if (newCompetence.equals(loadedCompetence) &&
-                            !newCompetences.get(newCompetence).equals(loadedCompetences.get(loadedCompetence))) {
+                            !newCompetences.get(newCompetence).equals(loadedCompetences.get(loadedCompetence)))
                             updateLevelCompetencePort.update(loadedLevelId, newCompetence, newCompetences.get(newCompetence));
-                        }
+
                     }
                 );
             }

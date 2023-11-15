@@ -26,7 +26,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     private final AssessmentKitJpaRepository kitRepository;
 
     @Override
-    public List<MaturityLevel> load(Long assessmentKitId) {
+    public List<MaturityLevel> loadByKitId(Long assessmentKitId) {
         var maturityLevelJpaEntities = repository.findByAssessmentKitId(assessmentKitId);
         return maturityLevelJpaEntities.stream()
             .map(MaturityLevelMapper::mapToKitDomainModel)

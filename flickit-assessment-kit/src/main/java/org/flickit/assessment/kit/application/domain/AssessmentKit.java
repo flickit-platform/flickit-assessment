@@ -9,7 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AssessmentKit {
 
-    private List<MaturityLevel> levels;
+    private List<MaturityLevel> maturityLevels;
 
     private boolean hasError;
 }
