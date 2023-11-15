@@ -20,10 +20,10 @@ public class EditKitService implements UpdateKitByDslUseCase {
     private final LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
 
     @Override
-    public void edit(Param param) {
+    public void update(Param param) {
         AssessmentKit loadedKit = loadAssessmentKitInfoPort.load(param.getKitId());
-
         AssessmentKit kitModel = parseJson(param.getDslContent());
+
         if (kitModel != null) {
 
         }

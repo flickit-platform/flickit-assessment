@@ -11,7 +11,7 @@ import org.flickit.assessment.data.jpa.maturitylevel.MaturityLevelJpaEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class MaturityLevelCompetenceJpaEntity {
+public class LevelCompetenceJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -24,7 +24,7 @@ public class MaturityLevelCompetenceJpaEntity {
 
     @ManyToOne
     @JoinColumn(name = "maturity_level_competence_id", referencedColumnName = "id")
-    private MaturityLevelCompetenceJpaEntity maturityLevelCompetence;
+    private LevelCompetenceJpaEntity levelCompetence;
 
     @Column(name = "value")
     private Integer value;
