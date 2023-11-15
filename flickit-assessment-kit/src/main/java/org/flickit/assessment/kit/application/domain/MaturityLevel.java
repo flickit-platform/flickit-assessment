@@ -11,7 +11,7 @@ import java.util.Map;
 @Getter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class Level {
+public class MaturityLevel {
 
     @JsonIgnore
     private final Long id;

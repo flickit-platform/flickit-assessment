@@ -35,7 +35,7 @@ public class AssessmentKitJpaEntity {
     private LocalDateTime creationTime;
 
     @Column(name = "last_modification_date", nullable = false)
-    private LocalDateTime lastModificationDate;
+    private LocalDateTime lastModificationTime;
 
     @Column(name = "expert_group_id")
     private Integer expertGroupId;

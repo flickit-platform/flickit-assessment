@@ -24,7 +24,7 @@ public class LevelCompetenceJpaEntity {
 
     @ManyToOne
     @JoinColumn(name = "maturity_level_competence_id", referencedColumnName = "id")
-    private LevelCompetenceJpaEntity levelCompetence;
+    private MaturityLevelJpaEntity levelCompetence;
 
     @Column(name = "value")
     private Integer value;
