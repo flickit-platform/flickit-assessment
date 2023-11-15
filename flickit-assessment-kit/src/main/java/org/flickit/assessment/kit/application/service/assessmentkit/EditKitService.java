@@ -127,10 +127,9 @@ public class EditKitService implements UpdateKitByDslUseCase {
             newCompetence -> {
                 loadedCompetences.keySet().forEach(
                     loadedCompetence -> {
-                        if (newCompetence.equals(loadedCompetence)) {
-                            if (!newCompetences.get(newCompetence).equals(loadedCompetences.get(loadedCompetence))) {
-                                updateLevelCompetencePort.update(loadedLevelId, newCompetence, newCompetences.get(newCompetence));
-                            }
+                        if (newCompetence.equals(loadedCompetence) &&
+                            !newCompetences.get(newCompetence).equals(loadedCompetences.get(loadedCompetence))) {
+                            updateLevelCompetencePort.update(loadedLevelId, newCompetence, newCompetences.get(newCompetence));
                         }
                     }
                 );

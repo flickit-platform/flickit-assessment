@@ -39,11 +39,11 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public Long persist(String LevelCompetenceTitle, Integer value, String maturityLevelTitle) {
+    public Long persist(String levelCompetenceTitle, Integer value, String maturityLevelTitle) {
         LevelCompetenceJpaEntity entity = new LevelCompetenceJpaEntity(
             null,
             maturityLevelJpaRepository.findByTitle(maturityLevelTitle),
-            maturityLevelJpaRepository.findByTitle(LevelCompetenceTitle),
+            maturityLevelJpaRepository.findByTitle(levelCompetenceTitle),
             value
         );
         return repository.save(entity).getId();
