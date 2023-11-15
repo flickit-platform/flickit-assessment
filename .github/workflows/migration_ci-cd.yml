@@ -1,0 +1,114 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - 'migration'
+  pull_request:
+    branches:
+      - '*'
+env:
+  POSTGRES_USER: rootuser
+  POSTGRES_PASSWORD: changeme
+  POSTGRES_DB: assessment-core
+  SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/assessment-core
+  SPRING_DATASOURCE_USERNAME: rootuser
+  SPRING_DATASOURCE_PASSWORD: changeme
+  REGISTRY: ghcr.io
+  IMAGE_NAME: avansoft/flickit-assessment
+  JIB_OPT: -Djib.httpTimeout=240000 -Dmaven.test.skip=true
+  JIB_CMD: clean install jib:build
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: adopt
+
+      - name: Build with Maven
+        run: mvn clean compile
+
+  test:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: adopt
+
+      - name: Run Tests
+        run: mvn test
+
+  build-and-push-migration-image:
+    needs: [ test ]
+    name: deploy migration image
+    runs-on: ubuntu-latest
+    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/migration') ||
+      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        id: vars
+
+      - name: Set output
+        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+
+      - name: login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: avansoft
+          password: ${{ secrets.GH_PACKAGES_TOKEN }}
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: adopt
+
+      - name: Build and push image
+        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}":migration ${{ env.JIB_CMD }}
+
+  darkube-deploy-latest:
+    needs: [ build-and-push-migration-image ]
+    name: darkube deploy migration
+    container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
+    runs-on: ubuntu-latest
+    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/migration') ||
+      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+    steps:
+      - name: Run script
+        run: darkube deploy --ref main --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "migration" --job-id "$GITHUB_RUN_ID" --stateless-app true
+        env:
+          DARKUBE_DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_MIGRATION }}
+          DARKUBE_APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_MIGRATION }}
