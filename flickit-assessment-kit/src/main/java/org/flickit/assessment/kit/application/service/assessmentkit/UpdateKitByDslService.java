@@ -124,16 +124,15 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
     private void updateLevelCompetence(Long loadedLevelId, Map<String, Integer> newCompetences, Map<String, Integer> loadedCompetences) {
         newCompetences.keySet().forEach(
-            newCompetence -> {
+            newCompetence ->
                 loadedCompetences.keySet().forEach(
                     loadedCompetence -> {
                         if (newCompetence.equals(loadedCompetence) &&
-                            !newCompetences.get(newCompetence).equals(loadedCompetences.get(loadedCompetence)))
+                            !newCompetences.get(newCompetence).equals(loadedCompetences.get(loadedCompetence))) {
                             updateLevelCompetencePort.update(loadedLevelId, newCompetence, newCompetences.get(newCompetence));
-
+                        }
                     }
-                );
-            }
+                )
         );
     }
 

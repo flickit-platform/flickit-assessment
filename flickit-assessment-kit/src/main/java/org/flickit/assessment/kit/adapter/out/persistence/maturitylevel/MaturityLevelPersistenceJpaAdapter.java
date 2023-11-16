@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
@@ -12,7 +11,6 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMatur
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
