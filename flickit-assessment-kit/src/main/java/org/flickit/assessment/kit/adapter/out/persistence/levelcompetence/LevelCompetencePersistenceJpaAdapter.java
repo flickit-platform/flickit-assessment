@@ -28,7 +28,7 @@ public class LevelCompetencePersistenceJpaAdapter implements
     public Map<String, Integer> loadByMaturityLevelId(Long maturityLevelId) {
         var levelCompetences = repository.findByMaturityLevelId(maturityLevelId);
         return levelCompetences.stream()
-            .collect(Collectors.toMap(entity -> entity.getMaturityLevel().getTitle(),
+            .collect(Collectors.toMap(entity -> entity.getLevelCompetence().getTitle(),
                 LevelCompetenceJpaEntity::getValue));
     }
 

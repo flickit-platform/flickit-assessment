@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 
 @Entity
-@Table(name = "baseinfo_questionnaire")
+@Table(name = "baseinfo_maturitylevel")
 @Getter
 @Setter
 @NoArgsConstructor

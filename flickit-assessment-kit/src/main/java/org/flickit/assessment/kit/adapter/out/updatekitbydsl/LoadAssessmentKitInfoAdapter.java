@@ -5,9 +5,10 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.LoadLevelCompetenceAsMapByMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAssessmentKitMaturityLevelModelsByKitPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -15,12 +16,12 @@ import java.util.List;
 @AllArgsConstructor
 public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
 
-    private final LoadAssessmentKitMaturityLevelModelsByKitPort loadAssessmentKitMaturityLevelModelsByKitPort;
+    private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
     private final LoadLevelCompetenceAsMapByMaturityLevelPort loadLevelCompetenceAsMapByMaturityLevelPort;
 
     @Override
     public AssessmentKit load(Long kitId) {
-        List<MaturityLevel> levels = loadAssessmentKitMaturityLevelModelsByKitPort.loadByKitId(kitId);
+        List<MaturityLevel> levels = new ArrayList<>(loadMaturityLevelByKitPort.loadByKitId(kitId));
         setLevelIndexes(levels);
         setLevelCompetences(levels);
 
