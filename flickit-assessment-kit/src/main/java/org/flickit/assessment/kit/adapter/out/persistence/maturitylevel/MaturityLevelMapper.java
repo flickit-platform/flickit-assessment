@@ -19,12 +19,12 @@ public class MaturityLevelMapper {
         );
     }
 
-    public static MaturityLevelJpaEntity mapToJpaEntity(MaturityLevel level, AssessmentKitJpaEntity kitEntity) {
+    public static MaturityLevelJpaEntity mapToJpaEntity(MaturityLevel level, Long kitId) {
         return new MaturityLevelJpaEntity(
             null,
             level.getTitle(),
             level.getValue(),
-            kitEntity
+            kitId
         );
     }
 }

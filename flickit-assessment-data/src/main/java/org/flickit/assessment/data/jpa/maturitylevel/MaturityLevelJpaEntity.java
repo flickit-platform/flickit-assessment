@@ -1,8 +1,10 @@
 package org.flickit.assessment.data.jpa.maturitylevel;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.flickit.assessment.data.jpa.assessmentkit.AssessmentKitJpaEntity;
 
 @Entity
 @Table(name = "baseinfo_questionnaire")
@@ -24,7 +26,6 @@ public class MaturityLevelJpaEntity {
     @Column(name = "value", nullable = false)
     private Integer value;
 
-    @ManyToOne
-    @JoinColumn(name = "assessment_kit_id", referencedColumnName = "id")
-    private AssessmentKitJpaEntity assessmentKit;
+    @Column(name = "assessment_kit_id")
+    private Long assessmentKitId;
 }

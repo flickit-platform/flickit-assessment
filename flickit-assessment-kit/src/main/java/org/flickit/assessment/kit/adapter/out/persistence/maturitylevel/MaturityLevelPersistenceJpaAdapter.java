@@ -35,8 +35,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public void persist(MaturityLevel level, Long kitId) {
-        Optional<AssessmentKitJpaEntity> kitJpaEntity = kitRepository.findById(kitId);
-        repository.save(MaturityLevelMapper.mapToJpaEntity(level, kitJpaEntity.get()));
+        repository.save(MaturityLevelMapper.mapToJpaEntity(level, kitId));
     }
 
     @Override
