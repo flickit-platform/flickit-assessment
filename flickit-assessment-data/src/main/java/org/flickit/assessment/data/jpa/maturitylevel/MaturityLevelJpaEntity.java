@@ -1,10 +1,8 @@
 package org.flickit.assessment.data.jpa.maturitylevel;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "baseinfo_maturitylevel")
@@ -17,6 +15,7 @@ public class MaturityLevelJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_maturitylevel_id_seq")
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 

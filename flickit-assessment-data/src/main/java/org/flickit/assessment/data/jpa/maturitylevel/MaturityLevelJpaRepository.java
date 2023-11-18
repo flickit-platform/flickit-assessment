@@ -18,5 +18,5 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
     void update(@Param(value = "title") String title,
                 @Param(value = "value") int value);
 
-    MaturityLevelJpaEntity findByTitle(String title);
+    MaturityLevelJpaEntity findByTitleAndAssessmentKitId(String title, Long assessmentKitId);
 }

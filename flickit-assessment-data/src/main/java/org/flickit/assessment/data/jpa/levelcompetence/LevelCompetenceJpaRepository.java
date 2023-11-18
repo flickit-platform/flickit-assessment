@@ -18,8 +18,8 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
 
     @Modifying
     @Query("UPDATE LevelCompetenceJpaEntity l SET " +
-        "l.levelCompetence.id = :competenceId, " +
         "l.value = :value " +
-        "WHERE l.id = :id")
-    void update(Long id, Long competenceId, Integer value);
+        "WHERE l.maturityLevel.id = :maturityLevelId " +
+        "AND l.levelCompetence.id = :competenceId")
+    void update(Long maturityLevelId, Long competenceId, Integer value);
 }
