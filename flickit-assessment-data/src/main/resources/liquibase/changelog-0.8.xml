@@ -4,45 +4,45 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.8-7" author="Mahdi Rezazadeh">
+    <changeSet id="0.8-10" author="Mahdi Rezazadeh">
         <addColumn tableName="baseinfo_maturitylevel">
             <column name="code" type="varchar(50)"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.8-8" author="Mahdi Rezazadeh">
+    <changeSet id="0.8-11" author="Mahdi Rezazadeh">
         <update tableName="baseinfo_maturitylevel">
-            <column name="code" valueComputed="title"/>
+            <column name="code" valueComputed="REGEXP_REPLACE(title, '[^a-zA-Z0-9]', '', 'g')"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.8-9" author="Mahdi Rezazadeh">
+    <changeSet id="0.8-12" author="Mahdi Rezazadeh">
         <addNotNullConstraint tableName="baseinfo_maturitylevel" columnName="code"/>
     </changeSet>
 
-    <changeSet id="0.8-10" author="Mahdi Rezazadeh">
+    <changeSet id="0.8-13" author="Mahdi Rezazadeh">
         <addUniqueConstraint columnNames="assessment_kit_id, code"
                              constraintName="baseinfo_maturitylevel_code_kit_id_uniq"
                              tableName="baseinfo_maturitylevel"/>
     </changeSet>
 
-    <changeSet id="0.8-11" author="Mahdi Rezazadeh">
+    <changeSet id="0.8-14" author="Mahdi Rezazadeh">
         <addColumn tableName="baseinfo_question">
             <column name="code" type="varchar(50)"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.8-12" author="Mahdi Rezazadeh">
+    <changeSet id="0.8-15" author="Mahdi Rezazadeh">
         <update tableName="baseinfo_question">
             <column name="code" valueComputed="CONCAT('q', index)"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.8-13" author="Mahdi Rezazadeh">
+    <changeSet id="0.8-16" author="Mahdi Rezazadeh">
         <addNotNullConstraint tableName="baseinfo_question" columnName="code"/>
     </changeSet>
 
-    <changeSet id="0.8-14" author="Mahdi Rezazadeh">
+    <changeSet id="0.8-17" author="Mahdi Rezazadeh">
         <addUniqueConstraint columnNames="questionnaire_id, code"
                              constraintName="baseinfo_question_code_questionnaire_id_uniq"
                              tableName="baseinfo_question"/>
