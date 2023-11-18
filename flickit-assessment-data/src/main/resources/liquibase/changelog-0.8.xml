@@ -34,7 +34,7 @@
 
     <changeSet id="0.8-12" author="Mahdi Rezazadeh">
         <update tableName="baseinfo_question">
-            <column name="code" valueComputed="CONCAT('q', id)"/>
+            <column name="code" valueComputed="CONCAT('q', index)"/>
         </update>
     </changeSet>
 
