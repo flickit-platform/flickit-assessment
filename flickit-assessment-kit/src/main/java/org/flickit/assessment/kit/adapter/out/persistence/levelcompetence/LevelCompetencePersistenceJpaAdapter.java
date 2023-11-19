@@ -33,27 +33,27 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void delete(String competenceLevelTitle, Long maturityLevelId) {
-        Long competenceLevelId = maturityLevelJpaRepository.findByTitle(competenceLevelTitle).getId();
+    public void delete(String competenceLevelTitle, Long maturityLevelId, Long kitId) {
+        Long competenceLevelId = maturityLevelJpaRepository.findByTitleAndAssessmentKitId(competenceLevelTitle, kitId).getId();
         repository.delete(competenceLevelId, maturityLevelId);
     }
 
     @Override
-    public Long persist(String levelCompetenceTitle, Integer value, String maturityLevelTitle) {
+    public Long persist(String levelCompetenceTitle, Integer value, String maturityLevelTitle, Long kitId) {
         LevelCompetenceJpaEntity entity = new LevelCompetenceJpaEntity(
             null,
-            maturityLevelJpaRepository.findByTitle(maturityLevelTitle),
-            maturityLevelJpaRepository.findByTitle(levelCompetenceTitle),
+            maturityLevelJpaRepository.findByTitleAndAssessmentKitId(maturityLevelTitle, kitId),
+            maturityLevelJpaRepository.findByTitleAndAssessmentKitId(levelCompetenceTitle, kitId),
             value
         );
         return repository.save(entity).getId();
     }
 
     @Override
-    public void update(Long competenceId, String competenceTitle, Integer value) {
+    public void update(Long competenceId, String competenceTitle, Integer value, Long kitId) {
         repository.update(
             competenceId,
-            maturityLevelJpaRepository.findByTitle(competenceTitle).getId(),
+            maturityLevelJpaRepository.findByTitleAndAssessmentKitId(competenceTitle, kitId).getId(),
             value);
     }
 }

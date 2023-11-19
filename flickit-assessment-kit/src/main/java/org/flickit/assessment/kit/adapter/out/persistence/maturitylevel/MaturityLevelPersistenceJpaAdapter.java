@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
@@ -21,7 +20,6 @@ public class MaturityLevelPersistenceJpaAdapter implements
     UpdateMaturityLevelPort {
 
     private final MaturityLevelJpaRepository repository;
-    private final AssessmentKitJpaRepository kitRepository;
 
     @Override
     public List<MaturityLevel> loadByKitId(Long assessmentKitId) {
@@ -43,6 +41,6 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public void update(Param param) {
-        repository.update(param.title(), param.value());
+        repository.update(param.title(), param.code(), param.value());
     }
 }

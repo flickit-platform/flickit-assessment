@@ -26,8 +26,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
         setLevelCompetences(levels);
 
         return new AssessmentKit(
-            levels,
-            Boolean.FALSE
+            levels
         );
     }
 

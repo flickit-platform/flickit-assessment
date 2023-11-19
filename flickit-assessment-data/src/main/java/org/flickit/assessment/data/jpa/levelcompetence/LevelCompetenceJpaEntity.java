@@ -15,6 +15,7 @@ public class LevelCompetenceJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_levelcompetence_id_seq")
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 

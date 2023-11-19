@@ -11,5 +11,4 @@ public class AssessmentKit {
 
     private List<MaturityLevel> maturityLevels;
 
-    private boolean hasError;
 }
