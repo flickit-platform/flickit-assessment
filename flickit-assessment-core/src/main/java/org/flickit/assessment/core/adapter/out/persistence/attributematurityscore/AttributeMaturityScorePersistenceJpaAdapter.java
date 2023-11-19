@@ -2,8 +2,8 @@ package org.flickit.assessment.core.adapter.out.persistence.attributematuritysco
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.MaturityScore;
-import org.flickit.assessment.data.jpa.attributematurityscore.AttributeMaturityScoreJpaEntity;
-import org.flickit.assessment.data.jpa.attributematurityscore.AttributeMaturityScoreJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;

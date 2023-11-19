@@ -6,7 +6,7 @@ import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentL
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
-import org.flickit.assessment.data.jpa.assessment.AssessmentJpaEntity;
+import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

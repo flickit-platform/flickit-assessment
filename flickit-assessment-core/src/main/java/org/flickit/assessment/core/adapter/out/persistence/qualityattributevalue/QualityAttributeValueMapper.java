@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.qualityattributevalu
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QualityAttributeValueMapper {
