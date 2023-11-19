@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.maturitylevel;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "baseinfo_maturitylevel")

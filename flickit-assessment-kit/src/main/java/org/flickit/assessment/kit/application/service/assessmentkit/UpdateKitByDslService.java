@@ -69,7 +69,9 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
                     Map<String, Integer> newCompetences = newLevel.getCompetencesCodeToValueMap();
                     Map<String, Integer> loadedCompetences = loadedLevel.getLevelCompetence();
-                    deleteLevelCompetence(loadedLevel.getId(), loadedCompetences, newCompetences, kitId);
+                    if (loadedCompetences != null) {
+                        deleteLevelCompetence(loadedLevel.getId(), loadedCompetences, newCompetences, kitId);
+                    }
                     if (newCompetences != null) {
                         createLevelCompetence(newLevel.getCode(), newCompetences, loadedCompetences, kitId);
                         updateLevelCompetence(loadedLevel.getId(), newCompetences, loadedCompetences, kitId);
@@ -140,9 +142,7 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
             .filter(competence -> newCompetences.keySet().stream()
                 .noneMatch(newCompetence -> newCompetence.equals(competence)))
             .toList();
-        mustBeDeletedCompetences.forEach(competenceLevelTitle -> {
-            deleteLevelCompetence(loadedLevelId, kitId, competenceLevelTitle);
-        });
+        mustBeDeletedCompetences.forEach(competenceLevelTitle -> deleteLevelCompetence(loadedLevelId, kitId, competenceLevelTitle));
     }
 
     private void deleteLevelCompetence(Long loadedLevelId, Long kitId, String competenceLevelTitle) {
