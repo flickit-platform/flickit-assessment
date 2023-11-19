@@ -109,10 +109,12 @@ class UpdateKitByDslServiceTest {
 
     @Test
     @SneakyThrows
-    @Disabled
+    @Disabled("It will be enabled after update method fixation.")
     void testUpdateKitByDsl_MaturityLevelUpdated_UpdateInDatabase() {
         Long kitId = 1L;
-        when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(AssessmentKitMother.kitWithFiveLevels());
+        AssessmentKit assessmentKit = AssessmentKitMother.kitWithFiveLevels();
+        assessmentKit.getMaturityLevels().get(4).setIndex(6);
+        when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(assessmentKit);
         var updateParam = new UpdateMaturityLevelPort.Param(LEVEL_FIVE_CODE, LEVEL_FIVE_CODE, 5, 5);
         doNothing().when(updateMaturityLevelPort).update(updateParam);
 

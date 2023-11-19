@@ -11,7 +11,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DS
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateKitByDslUseCaseParamTest {
+class UpdateKitByDslUseCaseParamTest {
 
     @Test
     void testUpdateKitByDsl_kitIdIsNull_ErrorMessage() {
