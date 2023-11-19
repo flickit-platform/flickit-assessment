@@ -9,6 +9,7 @@ import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.exception.NotValidKitContentException;
+import org.flickit.assessment.kit.application.exception.NotValidMaturityLevelException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
@@ -20,10 +21,12 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMatur
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_DSL_CONTENT_NOT_VALID;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_MATURITY_LEVEL_NOT_VALID;
 
 @Slf4j
 @Service
@@ -60,13 +63,12 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
     private void checkLevel(Long kitId, List<MaturityLevel> loadedLevels, List<MaturityLevelDslModel> levelModels) {
         deleteMaturityLevel(loadedLevels, levelModels, kitId);
-        createMaturityLevel(kitId, loadedLevels, levelModels);
+        createMaturityLevel(loadedLevels, levelModels, kitId);
+        updateMaturityLevel(loadedLevels, levelModels);
 
         for (MaturityLevelDslModel newLevel : levelModels) {
             for (MaturityLevel loadedLevel : loadedLevels) {
                 if (newLevel.getCode().equals(loadedLevel.getCode())) {
-//                    updateMaturityLevel(newLevel, loadedLevel);
-
                     Map<String, Integer> newCompetences = newLevel.getCompetencesCodeToValueMap();
                     Map<String, Integer> loadedCompetences = loadedLevel.getLevelCompetence();
                     if (loadedCompetences != null) {
@@ -89,13 +91,13 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
             .toList();
         mustBeDeletedLevels.forEach(level -> {
             level.getLevelCompetence().keySet()
-                    .forEach(levelCompetence -> deleteLevelCompetence(level.getId(), kitId, levelCompetence));
+                .forEach(levelCompetence -> deleteLevelCompetence(level.getId(), kitId, levelCompetence));
             deleteMaturityLevelPort.delete(level.getId());
             log.warn("Maturity Level with id [{}] and title [{}] is deleted.", level.getId(), level.getTitle());
         });
     }
 
-    private void createMaturityLevel(Long kitId, List<MaturityLevel> loadedLevels, List<MaturityLevelDslModel> levelModels) {
+    private void createMaturityLevel(List<MaturityLevel> loadedLevels, List<MaturityLevelDslModel> levelModels, Long kitId) {
         List<MaturityLevelDslModel> newLevels = levelModels.stream()
             .filter(level -> loadedLevels.stream()
                 .noneMatch(loadedLevel -> loadedLevel.getCode().equals(level.getCode())))
@@ -118,23 +120,38 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
         );
     }
 
-    private void updateMaturityLevel(MaturityLevelDslModel newLevel, MaturityLevel loadedLevel) {
-        if (isChanged(newLevel, loadedLevel)) {
-            var updateParam = new UpdateMaturityLevelPort.Param(
-                newLevel.getCode(),
-                newLevel.getTitle(),
-                newLevel.getIndex(),
-                newLevel.getValue()
-            );
-            updateMaturityLevelPort.update(updateParam);
-            log.warn("Maturity Level with title [{}] is updated.", newLevel.getTitle());
+    private void updateMaturityLevel(List<MaturityLevel> loadedLevels, List<MaturityLevelDslModel> levelModels) {
+        for (MaturityLevelDslModel newLevel : levelModels) {
+            var matchedLevels = new ArrayList<>();
+            for (MaturityLevel loadedLevel : loadedLevels) {
+                if (newLevel.getTitle().equals(loadedLevel.getTitle())
+                    && newLevel.getCode().equals(loadedLevel.getCode())
+                    && newLevel.getValue().equals(loadedLevel.getValue())) {
+                    continue;
+                }
+                if (newLevel.getTitle().equals(loadedLevel.getTitle())
+                    || newLevel.getCode().equals(loadedLevel.getCode())
+                    || newLevel.getValue().equals(loadedLevel.getValue())) {
+                    matchedLevels.add(newLevel);
+                }
+            }
+            if (matchedLevels.size() > 1) {
+                throw new NotValidMaturityLevelException(UPDATE_KIT_BY_DSL_MATURITY_LEVEL_NOT_VALID);
+            }
+            if (matchedLevels.size() == 1) {
+                var updateParam = new UpdateMaturityLevelPort.Param(
+                    newLevel.getCode(),
+                    newLevel.getTitle(),
+                    newLevel.getIndex(),
+                    newLevel.getValue()
+                );
+                updateMaturityLevelPort.update(updateParam);
+                log.warn("A maturity Level with code [{}], title [{}] and value [{}] is updated.",
+                    newLevel.getCode(),
+                    newLevel.getTitle(),
+                    newLevel.getValue());
+            }
         }
-    }
-
-    private boolean isChanged(MaturityLevelDslModel newLevel, MaturityLevel loadedLevel) {
-        return !newLevel.getTitle().equals(loadedLevel.getTitle())
-            || newLevel.getValue() != loadedLevel.getValue()
-            || newLevel.getIndex() != loadedLevel.getIndex();
     }
 
     private void deleteLevelCompetence(Long loadedLevelId, Map<String, Integer> loadedCompetences, Map<String, Integer> newCompetences, Long kitId) {

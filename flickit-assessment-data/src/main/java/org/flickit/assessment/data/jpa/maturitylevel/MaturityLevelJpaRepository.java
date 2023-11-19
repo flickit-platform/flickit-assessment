@@ -13,9 +13,12 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
 
     @Modifying
     @Query("UPDATE MaturityLevelJpaEntity m SET " +
-        "m.value = :value " +
-        "WHERE m.title = :title ")
+        "m.value = :value, " +
+        "m.title = :title, " +
+        "m.code = :code " +
+        "WHERE m.title = :title OR m.code = :code OR m.value = :value ")
     void update(@Param(value = "title") String title,
+                @Param(value = "code") String code,
                 @Param(value = "value") int value);
 
     MaturityLevelJpaEntity findByTitleAndAssessmentKitId(String title, Long assessmentKitId);

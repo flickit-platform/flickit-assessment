@@ -18,6 +18,9 @@ public class MaturityLevelJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(name = "code", length = 50)
+    private String code;
+
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 

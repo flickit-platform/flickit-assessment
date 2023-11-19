@@ -11,6 +11,10 @@ public class AssessmentKitMother {
     public static AssessmentKit kitWithFiveLevels() {
         return new AssessmentKit(MaturityLevelMother.fiveLevels());
     }
+
+    public static AssessmentKit kitWithFiveLevelsWithLevelFiveValue(int value) {
+        return new AssessmentKit(MaturityLevelMother.fiveLevelsWithLevelFiveValue(value));
+    }
     public static AssessmentKit kitWithSixLevels() {
         return new AssessmentKit(MaturityLevelMother.sixLevels());
     }

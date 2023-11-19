@@ -24,11 +24,15 @@ public class MaturityLevelMother {
     }
 
     public static List<MaturityLevel> fiveLevels() {
-        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive());
+        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive(5));
+    }
+
+    public static List<MaturityLevel> fiveLevelsWithLevelFiveValue(int value) {
+        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive(value));
     }
 
     public static List<MaturityLevel> sixLevels() {
-        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive(), levelSix());
+        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive(5), levelSix());
     }
 
     public static MaturityLevel levelOne() {
@@ -71,7 +75,7 @@ public class MaturityLevelMother {
             4);
     }
 
-    public static MaturityLevel levelFive() {
+    public static MaturityLevel levelFive(int value) {
         return new MaturityLevel(
             LEVEL_FIVE_ID,
             LEVEL_FIVE_CODE,
@@ -79,7 +83,7 @@ public class MaturityLevelMother {
             null,
             5,
             LevelCompetenceMother.levelCompetenceForLevelFive(),
-            5);
+            value);
     }
 
     public static MaturityLevel levelSix() {

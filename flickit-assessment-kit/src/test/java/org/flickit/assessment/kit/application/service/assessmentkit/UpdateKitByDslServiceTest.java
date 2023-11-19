@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import lombok.SneakyThrows;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.exception.NotValidMaturityLevelException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
@@ -12,7 +13,6 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMatur
 import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -23,14 +23,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_MATURITY_LEVEL_NOT_VALID;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateKitByDslServiceTest {
 
     public static final String FILE = "src/test/resources/dsl.json";
+    public static final String ERROR_FILE = "src/test/resources/dsl_with_error.json";
 
     @InjectMocks
     private UpdateKitByDslService service;
@@ -109,12 +113,9 @@ class UpdateKitByDslServiceTest {
 
     @Test
     @SneakyThrows
-    @Disabled("It will be enabled after update method fixation.")
     void testUpdateKitByDsl_MaturityLevelUpdated_UpdateInDatabase() {
         Long kitId = 1L;
-        AssessmentKit assessmentKit = AssessmentKitMother.kitWithFiveLevels();
-        assessmentKit.getMaturityLevels().get(4).setIndex(6);
-        when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(assessmentKit);
+        when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(AssessmentKitMother.kitWithFiveLevelsWithLevelFiveValue(6));
         var updateParam = new UpdateMaturityLevelPort.Param(LEVEL_FIVE_CODE, LEVEL_FIVE_CODE, 5, 5);
         doNothing().when(updateMaturityLevelPort).update(updateParam);
 
@@ -133,6 +134,26 @@ class UpdateKitByDslServiceTest {
 
         verify(loadAssessmentKitInfoPort, times(1)).load(kitId);
         verifyNoInteractions(createMaturityLevelPort, createLevelCompetencePort, deleteMaturityLevelPort, deleteLevelCompetencePort, updateLevelCompetencePort);
+    }
+
+    @Test
+    @SneakyThrows
+    void testUpdateKitByDsl_MaturityLevelUpdatedToExistingValue_ErrorMessage() {
+        Long kitId = 1L;
+        when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(AssessmentKitMother.kitWithFiveLevels());
+
+        String dslContent = new String(Files.readAllBytes(Paths.get(ERROR_FILE)));
+        var param = new UpdateKitByDslUseCase.Param(kitId, dslContent);
+        var throwable = assertThrows(NotValidMaturityLevelException.class, () -> service.update(param));
+        assertThat(throwable).hasMessage(UPDATE_KIT_BY_DSL_MATURITY_LEVEL_NOT_VALID);
+
+        verify(loadAssessmentKitInfoPort, times(1)).load(kitId);
+        verifyNoInteractions(createMaturityLevelPort,
+            createLevelCompetencePort,
+            deleteMaturityLevelPort,
+            deleteLevelCompetencePort,
+            updateMaturityLevelPort,
+            updateLevelCompetencePort);
     }
 
     @Test
