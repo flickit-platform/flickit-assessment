@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.test.fixture.adapter.jpa;
 
-import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 
 import java.util.UUID;
 

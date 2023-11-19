@@ -3,7 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.attributematuritysco
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.MaturityScore;
-import org.flickit.assessment.data.jpa.attributematurityscore.AttributeMaturityScoreJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AttributeMaturityScoreMapper {

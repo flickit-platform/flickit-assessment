@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.subjectvalue;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SubjectValueMapper {

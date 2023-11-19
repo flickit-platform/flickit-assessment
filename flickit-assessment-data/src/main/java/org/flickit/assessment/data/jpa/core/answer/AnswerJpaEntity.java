@@ -1,8 +1,8 @@
-package org.flickit.assessment.data.jpa.answer;
+package org.flickit.assessment.data.jpa.core.answer;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
