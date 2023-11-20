@@ -5,6 +5,7 @@ import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEnt
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
+import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.LoadLevelCompetencesByMaturityLevelPort;
@@ -12,6 +13,8 @@ import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLev
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static org.flickit.assessment.kit.common.ErrorMessageKey.FIND_MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -33,7 +36,7 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void delete(Long effectiveLevelId, Long maturityLevelId, Long kitId) {
+    public void delete(Long effectiveLevelId, Long maturityLevelId) {
         repository.delete(effectiveLevelId, maturityLevelId);
     }
 
@@ -49,7 +52,18 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(Long competenceId, Long effectiveLevelId, Integer value, Long kitId) {
+    public Long persist(Long affectedLevelId, Long effectiveLevelId, int value) {
+        LevelCompetenceJpaEntity entity = new LevelCompetenceJpaEntity(
+            null,
+            maturityLevelJpaRepository.findById(affectedLevelId).orElseThrow(() -> new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND)),
+            maturityLevelJpaRepository.findById(effectiveLevelId).orElseThrow(() -> new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND)),
+            value
+        );
+        return repository.save(entity).getId();
+    }
+
+    @Override
+    public void update(Long competenceId, Long effectiveLevelId, Integer value) {
         repository.update(
             competenceId,
             effectiveLevelId,
