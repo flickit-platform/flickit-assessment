@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import static org.flickit.assessment.kit.adapter.in.rest.exception.api.ErrorCodes.INVALID_DSL_CONTENT;
 
 @RestControllerAdvice
-public class ResourceNotFoundExceptionHandler {
+public class KitResourceNotFoundExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(ResourceNotFoundException.class)
