@@ -1,7 +1,5 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
@@ -10,7 +8,6 @@ import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.exception.NotValidKitChangesException;
-import org.flickit.assessment.kit.application.exception.NotValidKitContentException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
@@ -20,13 +17,13 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMatur
 import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByTitlePort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
+import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_DSL_CONTENT_NOT_VALID;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_KIT_CHANGE_NOT_VALID;
 
 @Slf4j
@@ -34,6 +31,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DS
 @Transactional
 @RequiredArgsConstructor
 public class UpdateKitByDslService implements UpdateKitByDslUseCase {
+
+    private final DslTranslator dslTranslator;
 
     private final LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
     private final DeleteMaturityLevelPort deleteMaturityLevelPort;
@@ -47,7 +46,7 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
     @Override
     public void update(Param param) {
         AssessmentKit loadedKit = loadAssessmentKitInfoPort.load(param.getKitId());
-        AssessmentKitDslModel kitModel = parseJson(param.getDslContent());
+        AssessmentKitDslModel kitModel = dslTranslator.parseJson(param.getDslContent());
 
         if (!isChangesAcceptable(kitModel, loadedKit)) {
             throw new NotValidKitChangesException(UPDATE_KIT_BY_DSL_KIT_CHANGE_NOT_VALID);
@@ -55,15 +54,6 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
         if (kitModel != null) {
             checkMaturityLevel(param.getKitId(), loadedKit.getMaturityLevels(), kitModel.getMaturityLevels());
-        }
-    }
-
-    private AssessmentKitDslModel parseJson(String content) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(content, AssessmentKitDslModel.class);
-        } catch (JsonProcessingException e) {
-            throw new NotValidKitContentException(UPDATE_KIT_BY_DSL_DSL_CONTENT_NOT_VALID);
         }
     }
 
