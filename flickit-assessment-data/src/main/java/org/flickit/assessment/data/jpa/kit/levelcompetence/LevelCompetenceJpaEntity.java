@@ -1,8 +1,8 @@
-package org.flickit.assessment.data.jpa.levelcompetence;
+package org.flickit.assessment.data.jpa.kit.levelcompetence;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.maturitylevel.MaturityLevelJpaEntity;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 
 @Entity
 @Table(name = "baseinfo_levelcompetence")

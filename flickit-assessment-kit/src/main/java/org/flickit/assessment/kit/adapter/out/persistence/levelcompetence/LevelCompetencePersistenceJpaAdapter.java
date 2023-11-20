@@ -1,9 +1,9 @@
 package org.flickit.assessment.kit.adapter.out.persistence.levelcompetence;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.levelcompetence.LevelCompetenceJpaEntity;
-import org.flickit.assessment.data.jpa.levelcompetence.LevelCompetenceJpaRepository;
-import org.flickit.assessment.data.jpa.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
+import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;

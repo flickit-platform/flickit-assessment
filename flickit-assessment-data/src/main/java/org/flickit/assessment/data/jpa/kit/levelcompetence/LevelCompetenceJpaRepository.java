@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.levelcompetence;
+package org.flickit.assessment.data.jpa.kit.levelcompetence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

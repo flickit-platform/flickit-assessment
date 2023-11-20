@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.maturitylevel;
+package org.flickit.assessment.data.jpa.kit.maturitylevel;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.maturitylevel;
+package org.flickit.assessment.data.jpa.kit.maturitylevel;
 
 import jakarta.persistence.*;
 import lombok.*;

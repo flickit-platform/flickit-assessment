@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.assessmentkit;
+package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
