@@ -99,4 +99,25 @@
                              tableName="baseinfo_question"/>
     </changeSet>
 
+    <changeSet id="0.8-18" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_maturitylevel">
+            <column name="index" type="tinyint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.8-19" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_maturitylevel">
+            <column name="index" valueComputed="subquery.index
+                FROM (
+                SELECT id,
+                       ROW_NUMBER() OVER (PARTITION BY assessment_kit_id ORDER BY id) as index FROM baseinfo_maturitylevel
+            ) as subquery
+            WHERE baseinfo_maturitylevel.id = subquery.id;"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.8-20" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_maturitylevel" columnName="index"/>
+    </changeSet>
+
 </databaseChangeLog>

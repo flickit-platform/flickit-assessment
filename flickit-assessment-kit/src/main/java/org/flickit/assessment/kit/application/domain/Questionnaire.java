@@ -8,18 +8,14 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public class AssessmentKit {
+public class Questionnaire {
 
     private final long id;
     private final String code;
     private final String title;
-    private final String summary;
-    private final String about;
+    private final int index;
+    private final String description;
+    private final List<Question> questions;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
-    private final boolean published;
-    private final long expertGroupId;
-    private final List<Subject> subjects;
-    private final List<MaturityLevel> maturityLevels;
-    private final List<Questionnaire> questionnaires;
 }

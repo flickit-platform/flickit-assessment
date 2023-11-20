@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.assessment;
+package org.flickit.assessment.data.jpa.core.assessment;
 
 import jakarta.persistence.*;
 import lombok.*;
