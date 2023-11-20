@@ -8,5 +8,6 @@ import lombok.RequiredArgsConstructor;
 public class MaturityLevelCompetence {
 
     private final long effectiveLevelId;
+    private final String effectiveLevelCode;
     private final int value;
 }
