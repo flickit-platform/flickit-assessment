@@ -1,48 +1,52 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.*;
 
 public class LevelCompetenceMother {
 
-    public static Map<String, Integer> levelCompetenceForLevelTwo() {
-        Map<String, Integer> levelCompetences = new HashMap<>();
-        levelCompetences.put(MaturityLevelMother.LEVEL_TWO_CODE, 60);
+    public static List<MaturityLevelCompetence> levelCompetenceForLevelTwo() {
+        List<MaturityLevelCompetence> levelCompetences = new ArrayList<>();
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_TWO_ID, 60));
         return levelCompetences;
     }
 
-    public static Map<String, Integer> levelCompetenceForLevelThree() {
-        Map<String, Integer> levelCompetences = new HashMap<>();
-        levelCompetences.put(MaturityLevelMother.LEVEL_TWO_CODE, 75);
-        levelCompetences.put(MaturityLevelMother.LEVEL_THREE_CODE, 60);
+    public static List<MaturityLevelCompetence> levelCompetenceForLevelThree() {
+        List<MaturityLevelCompetence> levelCompetences = new ArrayList<>();
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_TWO_ID, 75));
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_THREE_ID, 60));
         return levelCompetences;
     }
 
-    public static Map<String, Integer> levelCompetenceForLevelFour() {
-        Map<String, Integer> levelCompetences = new HashMap<>();
-        levelCompetences.put(MaturityLevelMother.LEVEL_TWO_CODE, 85);
-        levelCompetences.put(MaturityLevelMother.LEVEL_THREE_CODE, 75);
-        levelCompetences.put(MaturityLevelMother.LEVEL_FOUR_CODE, 60);
+    public static List<MaturityLevelCompetence> levelCompetenceForLevelFour() {
+        List<MaturityLevelCompetence> levelCompetences = new ArrayList<>();
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_TWO_ID, 85));
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_THREE_ID, 75));
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_FOUR_ID, 60));
         return levelCompetences;
     }
 
-    public static Map<String, Integer> levelCompetenceForLevelFive() {
-        Map<String, Integer> levelCompetences = new HashMap<>();
-        levelCompetences.put(MaturityLevelMother.LEVEL_TWO_CODE, 95);
-        levelCompetences.put(MaturityLevelMother.LEVEL_THREE_CODE, 85);
-        levelCompetences.put(MaturityLevelMother.LEVEL_FOUR_CODE, 75);
-        levelCompetences.put(MaturityLevelMother.LEVEL_FIVE_CODE, 60);
+    public static List<MaturityLevelCompetence> levelCompetenceForLevelFive() {
+        List<MaturityLevelCompetence> levelCompetences = new ArrayList<>();
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_TWO_ID, 95));
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_THREE_ID, 85));
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_FOUR_ID, 75));
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_FIVE_ID, 60));
         return levelCompetences;
     }
 
 
-    public static Map<String, Integer> levelCompetenceForLevelSix() {
-        Map<String, Integer> levelCompetences = new HashMap<>();
-        levelCompetences.put(MaturityLevelMother.LEVEL_TWO_CODE, 95);
-        levelCompetences.put(MaturityLevelMother.LEVEL_THREE_CODE, 85);
-        levelCompetences.put(MaturityLevelMother.LEVEL_FOUR_CODE, 75);
-        levelCompetences.put(MaturityLevelMother.LEVEL_FIVE_CODE, 70);
-        levelCompetences.put(MaturityLevelMother.LEVEL_SIX_CODE, 60);
+    public static List<MaturityLevelCompetence> levelCompetenceForLevelSix() {
+        List<MaturityLevelCompetence> levelCompetences = new ArrayList<>();
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_TWO_ID, 95));
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_THREE_ID, 85));
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_FOUR_ID, 75));
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_FIVE_ID, 70));
+        levelCompetences.add(new MaturityLevelCompetence(LEVEL_SIX_ID, 60));
         return levelCompetences;
     }
 }

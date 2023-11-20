@@ -12,12 +12,12 @@ import java.util.List;
 @AllArgsConstructor
 public class MaturityLevel {
 
-    private final long id;
+    private final Long id;
     private final String code;
     private final String title;
     @Setter
-    private final int index;
+    private int index;
     private final int value;
     @Setter
-    private final List<MaturityLevelCompetence> competences;
+    private List<MaturityLevelCompetence> competences;
 }

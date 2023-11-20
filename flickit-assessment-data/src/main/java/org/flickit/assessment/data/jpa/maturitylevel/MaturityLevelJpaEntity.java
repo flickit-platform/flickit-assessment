@@ -27,6 +27,9 @@ public class MaturityLevelJpaEntity {
     @Column(name = "value", nullable = false)
     private Integer value;
 
+    @Column(name = "index", nullable = false)
+    private Integer index;
+
     @Column(name = "assessment_kit_id")
     private Long assessmentKitId;
 }

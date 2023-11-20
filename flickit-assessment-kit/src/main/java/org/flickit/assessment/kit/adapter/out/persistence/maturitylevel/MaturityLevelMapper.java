@@ -8,13 +8,14 @@ import org.flickit.assessment.kit.application.domain.MaturityLevel;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MaturityLevelMapper {
 
-    public static MaturityLevel mapToKitDomainModel(MaturityLevelJpaEntity entity) {
+    public static MaturityLevel mapToDomainModel(MaturityLevelJpaEntity entity) {
         return new MaturityLevel(
             entity.getId(),
+            entity.getCode(),
             entity.getTitle(),
-            entity.getTitle(),
-            null,
-            entity.getValue()
+            entity.getIndex(),
+            entity.getValue(),
+            null
         );
     }
 
@@ -24,6 +25,7 @@ public class MaturityLevelMapper {
             level.getCode(),
             level.getTitle(),
             level.getValue(),
+            level.getIndex(),
             kitId
         );
     }
