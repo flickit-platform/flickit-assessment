@@ -4,11 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.exception.InvalidContentException;
-import org.springframework.stereotype.Component;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.TRANSLATE_KIT_DSL_UNABLE_TO_PARSE_JSON;
 
-@Component
 public class DslTranslator {
 
     public AssessmentKitDslModel parseJson(String content) {
