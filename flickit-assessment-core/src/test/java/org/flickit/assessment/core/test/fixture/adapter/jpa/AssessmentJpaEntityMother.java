@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.test.fixture.adapter.jpa;
 
 import org.flickit.assessment.core.application.domain.AssessmentColor;
-import org.flickit.assessment.data.jpa.assessment.AssessmentJpaEntity;
+import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

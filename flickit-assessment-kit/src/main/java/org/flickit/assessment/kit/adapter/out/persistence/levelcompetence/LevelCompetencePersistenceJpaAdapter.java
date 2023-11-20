@@ -4,19 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
-import org.flickit.assessment.kit.application.port.out.levelcomptenece.LoadLevelCompetenceAsMapByMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.levelcomptenece.LoadLevelCompetencesByMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class LevelCompetencePersistenceJpaAdapter implements
-    LoadLevelCompetenceAsMapByMaturityLevelPort,
+    LoadLevelCompetencesByMaturityLevelPort,
     DeleteLevelCompetencePort,
     CreateLevelCompetencePort,
     UpdateLevelCompetencePort {
@@ -25,35 +25,34 @@ public class LevelCompetencePersistenceJpaAdapter implements
     private final MaturityLevelJpaRepository maturityLevelJpaRepository;
 
     @Override
-    public Map<String, Integer> loadByMaturityLevelId(Long maturityLevelId) {
+    public List<MaturityLevelCompetence> loadByMaturityLevelId(Long maturityLevelId) {
         var levelCompetences = repository.findByMaturityLevelId(maturityLevelId);
         return levelCompetences.stream()
-            .collect(Collectors.toMap(entity -> entity.getLevelCompetence().getTitle(),
-                LevelCompetenceJpaEntity::getValue));
+            .map(MaturityLevelCompetenceMapper::mapToDomainModel)
+            .toList();
     }
 
     @Override
-    public void delete(String competenceLevelTitle, Long maturityLevelId, Long kitId) {
-        Long competenceLevelId = maturityLevelJpaRepository.findByTitleAndAssessmentKitId(competenceLevelTitle, kitId).getId();
-        repository.delete(competenceLevelId, maturityLevelId);
+    public void delete(Long effectiveLevelId, Long maturityLevelId, Long kitId) {
+        repository.delete(effectiveLevelId, maturityLevelId);
     }
 
     @Override
-    public Long persist(String levelCompetenceTitle, Integer value, String maturityLevelTitle, Long kitId) {
+    public Long persist(Long effectiveLevelId, Integer value, String maturityLevelCode, Long kitId) {
         LevelCompetenceJpaEntity entity = new LevelCompetenceJpaEntity(
             null,
-            maturityLevelJpaRepository.findByTitleAndAssessmentKitId(maturityLevelTitle, kitId),
-            maturityLevelJpaRepository.findByTitleAndAssessmentKitId(levelCompetenceTitle, kitId),
+            maturityLevelJpaRepository.findByCodeAndAssessmentKitId(maturityLevelCode, kitId),
+            maturityLevelJpaRepository.findByIdAndAssessmentKitId(effectiveLevelId, kitId),
             value
         );
         return repository.save(entity).getId();
     }
 
     @Override
-    public void update(Long competenceId, String competenceTitle, Integer value, Long kitId) {
+    public void update(Long competenceId, Long effectiveLevelId, Integer value, Long kitId) {
         repository.update(
             competenceId,
-            maturityLevelJpaRepository.findByTitleAndAssessmentKitId(competenceTitle, kitId).getId(),
+            effectiveLevelId,
             value);
     }
 }

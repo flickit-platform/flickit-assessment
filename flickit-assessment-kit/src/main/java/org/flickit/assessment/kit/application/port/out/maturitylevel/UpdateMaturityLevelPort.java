@@ -5,6 +5,7 @@ public interface UpdateMaturityLevelPort {
     void update(Param param);
 
     record Param(
+        Long kitId,
         String code,
         String title,
         int index,

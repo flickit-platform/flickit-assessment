@@ -3,10 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,7 +14,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
     LoadMaturityLevelByKitPort,
     CreateMaturityLevelPort,
     DeleteMaturityLevelPort,
-    UpdateMaturityLevelPort {
+    UpdateMaturityLevelPort,
+    LoadMaturityLevelByTitlePort {
 
     private final MaturityLevelJpaRepository repository;
 
@@ -25,7 +23,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     public List<MaturityLevel> loadByKitId(Long assessmentKitId) {
         var maturityLevelJpaEntities = repository.findAllByAssessmentKitId(assessmentKitId);
         return maturityLevelJpaEntities.stream()
-            .map(MaturityLevelMapper::mapToKitDomainModel)
+            .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
     }
 
@@ -41,6 +39,11 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public void update(Param param) {
-        repository.update(param.title(), param.code(), param.value());
+        repository.update(param.kitId(), param.code(), param.title(), param.index(), param.value());
+    }
+
+    @Override
+    public MaturityLevel loadByTitle(String title, Long kitId) {
+        return MaturityLevelMapper.mapToDomainModel(repository.findByTitleAndAssessmentKitId(title, kitId));
     }
 }

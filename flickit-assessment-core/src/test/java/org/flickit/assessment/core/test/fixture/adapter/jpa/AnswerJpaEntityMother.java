@@ -1,8 +1,8 @@
 package org.flickit.assessment.core.test.fixture.adapter.jpa;
 
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
-import org.flickit.assessment.data.jpa.answer.AnswerJpaEntity;
-import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 
 import java.util.UUID;
 

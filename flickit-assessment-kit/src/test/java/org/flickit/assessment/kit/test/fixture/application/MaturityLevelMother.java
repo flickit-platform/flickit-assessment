@@ -36,43 +36,43 @@ public class MaturityLevelMother {
     }
 
     public static MaturityLevel levelOne() {
-        return new MaturityLevel(LEVEL_ONE_ID,
+        return new MaturityLevel(
+            LEVEL_ONE_ID,
             LEVEL_ONE_CODE,
             LEVEL_ONE_CODE,
-            null,
             1,
-            null,
-            1);
+            1,
+            null);
     }
 
     public static MaturityLevel levelTwo() {
-        return new MaturityLevel(LEVEL_TWO_ID,
+        return new MaturityLevel(
+            LEVEL_TWO_ID,
             LEVEL_TWO_CODE,
             LEVEL_TWO_CODE,
-            null,
             2,
-            LevelCompetenceMother.levelCompetenceForLevelTwo(),
-            2);
+            2,
+            LevelCompetenceMother.levelCompetenceForLevelTwo());
     }
 
     public static MaturityLevel levelThree() {
-        return new MaturityLevel(LEVEL_THREE_ID,
+        return new MaturityLevel(
+            LEVEL_THREE_ID,
             LEVEL_THREE_CODE,
             LEVEL_THREE_CODE,
-            null,
             3,
-            LevelCompetenceMother.levelCompetenceForLevelThree(),
-            3);
+            3,
+            LevelCompetenceMother.levelCompetenceForLevelThree());
     }
 
     public static MaturityLevel levelFour() {
-        return new MaturityLevel(LEVEL_FOUR_ID,
+        return new MaturityLevel(
+            LEVEL_FOUR_ID,
             LEVEL_FOUR_CODE,
             LEVEL_FOUR_CODE,
-            null,
             4,
-            LevelCompetenceMother.levelCompetenceForLevelFour(),
-            4);
+            4,
+            LevelCompetenceMother.levelCompetenceForLevelFour());
     }
 
     public static MaturityLevel levelFive(int value) {
@@ -80,10 +80,9 @@ public class MaturityLevelMother {
             LEVEL_FIVE_ID,
             LEVEL_FIVE_CODE,
             LEVEL_FIVE_CODE,
-            null,
             5,
-            LevelCompetenceMother.levelCompetenceForLevelFive(),
-            value);
+            value,
+            LevelCompetenceMother.levelCompetenceForLevelFive());
     }
 
     public static MaturityLevel levelSix() {
@@ -91,10 +90,9 @@ public class MaturityLevelMother {
             LEVEL_SIX_ID,
             LEVEL_SIX_CODE,
             LEVEL_SIX_CODE,
-            null,
             6,
-            LevelCompetenceMother.levelCompetenceForLevelSix(),
-            6);
+            6,
+            LevelCompetenceMother.levelCompetenceForLevelSix());
     }
 
 }

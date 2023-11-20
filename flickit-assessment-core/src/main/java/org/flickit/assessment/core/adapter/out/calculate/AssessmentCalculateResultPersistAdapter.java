@@ -6,9 +6,9 @@ import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
-import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaRepository;
-import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
