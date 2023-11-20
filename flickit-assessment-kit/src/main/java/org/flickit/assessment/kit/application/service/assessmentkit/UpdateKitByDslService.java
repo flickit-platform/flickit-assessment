@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
@@ -21,8 +23,10 @@ import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_KIT_CHANGE_NOT_VALID;
 
@@ -46,19 +50,23 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
     @Override
     public void update(Param param) {
         AssessmentKit loadedKit = loadAssessmentKitInfoPort.load(param.getKitId());
-        AssessmentKitDslModel kitModel = dslTranslator.parseJson(param.getDslContent());
+        AssessmentKitDslModel kitDslModel = dslTranslator.parseJson(param.getDslContent());
 
-        if (!isChangesAcceptable(kitModel, loadedKit)) {
-            throw new NotValidKitChangesException(UPDATE_KIT_BY_DSL_KIT_CHANGE_NOT_VALID);
-        }
+        validateChanges(kitDslModel, loadedKit);
 
-        if (kitModel != null) {
-            checkMaturityLevel(param.getKitId(), loadedKit.getMaturityLevels(), kitModel.getMaturityLevels());
-        }
+        checkMaturityLevel(param.getKitId(), loadedKit.getMaturityLevels(), kitDslModel.getMaturityLevels());
     }
 
-    private boolean isChangesAcceptable(AssessmentKitDslModel kitModel, AssessmentKit loadedKit) {
-        return true;
+    /**
+     * validateSubjectChanges();
+     * validateAttributeChanges();
+     * validateQuestionnaireChanges();
+     * validateQuestionChanges();
+     * @param kitModel
+     * @param loadedKit
+     * @Throws NotValidKitChangesException
+     */
+    private void validateChanges(AssessmentKitDslModel kitModel, AssessmentKit loadedKit) {
     }
 
     private void checkMaturityLevel(Long kitId, List<MaturityLevel> loadedLevels, List<MaturityLevelDslModel> levelModels) {
