@@ -17,12 +17,12 @@ public class UpdateKitByDslRestController {
 
     @PutMapping("assessment-kits/{kitId}/update-by-dsl")
     public ResponseEntity<Void> updateKit(@PathVariable("kitId") Long kitId,
-                                        @RequestBody String dslContent) {
-        useCase.update(toParam(kitId, dslContent));
+                                        @RequestBody UpdateKitByDslRequestDto request) {
+        useCase.update(toParam(kitId, request));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private UpdateKitByDslUseCase.Param toParam(Long kitId, String dslContent) {
-        return new UpdateKitByDslUseCase.Param(kitId, dslContent);
+    private UpdateKitByDslUseCase.Param toParam(Long kitId, UpdateKitByDslRequestDto request) {
+        return new UpdateKitByDslUseCase.Param(kitId, request.dslContent());
     }
 }

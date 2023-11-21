@@ -29,7 +29,6 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
         AssessmentKit assessmentKit = loadAssessmentKitPort.load(kitId).orElseThrow(
             () -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_KIT_NOT_FOUND));
         List<MaturityLevel> levels = new ArrayList<>(loadMaturityLevelByKitPort.loadByKitId(kitId));
-        setLevelIndexes(levels);
         setLevelCompetences(levels);
 
         return new AssessmentKit(
@@ -46,13 +45,6 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
             levels,
             null
         );
-    }
-
-    private void setLevelIndexes(List<MaturityLevel> levels) {
-        levels.sort(Comparator.comparing(MaturityLevel::getId));
-        for (int i = 0; i < levels.size(); i++) {
-            levels.get(i).setIndex(i);
-        }
     }
 
     private void setLevelCompetences(List<MaturityLevel> levels) {

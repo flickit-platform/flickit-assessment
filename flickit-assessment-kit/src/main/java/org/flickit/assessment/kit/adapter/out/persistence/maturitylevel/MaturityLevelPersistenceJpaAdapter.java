@@ -39,7 +39,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public void update(Param param) {
-        repository.update(param.kitId(), param.code(), param.title(), param.index(), param.value());
+        repository.update(param.id(), param.title(), param.index(), param.value());
     }
 
     @Override

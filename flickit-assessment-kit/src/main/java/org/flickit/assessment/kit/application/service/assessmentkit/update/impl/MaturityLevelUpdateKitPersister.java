@@ -100,11 +100,11 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             deletedLevel.getId(), deletedLevel.getTitle(), kitId);
     }
 
-    private void deleteLevelCompetence(Long maturityLevelId, Long effectiveLevelId) {
-        deleteLevelCompetencePort.delete(effectiveLevelId, maturityLevelId);
-        log.debug("Level Competence with effective level id [{}], maturity level id [{}] is deleted.",
-            effectiveLevelId,
-            maturityLevelId);
+    private void deleteLevelCompetence(Long affectedLevelId, Long effectiveLevelId) {
+        deleteLevelCompetencePort.delete(affectedLevelId, effectiveLevelId);
+        log.debug("Level Competence with affected level id [{}], effective level id [{}] is deleted.",
+            affectedLevelId,
+            effectiveLevelId);
     }
 
     private List<MaturityLevelCompetence> toCompetenceList(Map<String, Integer> map, Long kitId) {
@@ -121,8 +121,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             newLevel.getValue() != savedLevel.getValue() ||
             newLevel.getIndex() != savedLevel.getIndex()) {
             var updateParam = new UpdateMaturityLevelPort.Param(
-                kitId,
-                newLevel.getCode(),
+                savedLevel.getId(),
                 newLevel.getTitle(),
                 newLevel.getIndex(),
                 newLevel.getValue()

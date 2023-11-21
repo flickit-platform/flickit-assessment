@@ -106,10 +106,10 @@ public class MaturityLevelUpdateKitPersisterTest {
         Long kitId = 1L;
         AssessmentKit savedKit = AssessmentKitMother.kitWithSixLevels(kitId);
         doNothing().when(deleteMaturityLevelPort).delete(LEVEL_SIX_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_TWO_ID, LEVEL_SIX_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_THREE_ID, LEVEL_SIX_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_FOUR_ID, LEVEL_SIX_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_FIVE_ID, LEVEL_SIX_ID);
+        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_TWO_ID);
+        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_THREE_ID);
+        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_FOUR_ID);
+        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_FIVE_ID);
         doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_SIX_ID);
 
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
@@ -131,7 +131,7 @@ public class MaturityLevelUpdateKitPersisterTest {
     void testMaturityLevelUpdateKitPersister_MaturityLevelUpdated_UpdateInDatabase() {
         Long kitId = 1L;
         AssessmentKit savedKit = AssessmentKitMother.kitWithFiveLevelsWithLevelFiveValue(kitId, 6);
-        var updateParam = new UpdateMaturityLevelPort.Param(kitId, LEVEL_FIVE_CODE, LEVEL_FIVE_CODE, 5, 5);
+        var updateParam = new UpdateMaturityLevelPort.Param(LEVEL_FIVE_ID, LEVEL_FIVE_CODE, 5, 5);
         doNothing().when(updateMaturityLevelPort).update(updateParam);
 
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
@@ -141,7 +141,7 @@ public class MaturityLevelUpdateKitPersisterTest {
         ArgumentCaptor<UpdateMaturityLevelPort.Param> updateCaptor = ArgumentCaptor.forClass(UpdateMaturityLevelPort.Param.class);
         verify(updateMaturityLevelPort).update(updateCaptor.capture());
 
-        assertEquals(updateParam.code(), updateCaptor.getValue().code());
+        assertEquals(updateParam.id(), updateCaptor.getValue().id());
         assertEquals(updateParam.title(), updateCaptor.getValue().title());
         assertEquals(updateParam.index(), updateCaptor.getValue().index());
         assertEquals(updateParam.index(), updateCaptor.getValue().index());
@@ -189,14 +189,14 @@ public class MaturityLevelUpdateKitPersisterTest {
         AssessmentKit savedKit = AssessmentKitMother.kitWithFiveLevels(kitId);
         savedKit.getMaturityLevels().get(4).getCompetences().add(new MaturityLevelCompetence(LEVEL_ONE_ID, LEVEL_ONE_CODE, 100));
         when(loadMaturityLevelByCodePort.loadByCode(LEVEL_ONE_CODE, kitId)).thenReturn(MaturityLevelMother.levelOne());
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_ONE_ID, LEVEL_FIVE_ID);
+        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_FIVE_ID, LEVEL_ONE_ID);
 
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKitDslModel dslKit = dslTranslator.parseJson(dslContent);
         persister.persist(savedKit, dslKit);
 
         verify(loadMaturityLevelByCodePort, times(1)).loadByCode(anyString(), anyLong());
-        verify(deleteLevelCompetencePort, times(1)).delete(LEVEL_ONE_ID, LEVEL_FIVE_ID);
+        verify(deleteLevelCompetencePort, times(1)).delete(LEVEL_FIVE_ID, LEVEL_ONE_ID);
         verifyNoInteractions(
             createMaturityLevelPort,
             createLevelCompetencePort,

@@ -16,14 +16,12 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
         "m.title = :title, " +
         "m.index = :index, " +
         "m.value = :value " +
-        "WHERE m.code = :code AND m.assessmentKitId = :kitId")
-    void update(@Param(value = "kitId") Long kitId,
-                @Param(value = "code") String code,
+        "WHERE m.id = :id")
+    void update(@Param(value = "id") Long id,
                 @Param(value = "title") String title,
                 @Param(value = "index") int index,
                 @Param(value = "value") int value);
 
     MaturityLevelJpaEntity findByCodeAndAssessmentKitId(String code, Long assessmentKitId);
 
-    MaturityLevelJpaEntity findByIdAndAssessmentKitId(Long id, Long assessmentKitId);
 }

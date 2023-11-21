@@ -15,8 +15,7 @@ public class MaturityLevel {
     private final Long id;
     private final String code;
     private final String title;
-    @Setter
-    private int index;
+    private final int index;
     private final int value;
     @Setter
     private List<MaturityLevelCompetence> competences;

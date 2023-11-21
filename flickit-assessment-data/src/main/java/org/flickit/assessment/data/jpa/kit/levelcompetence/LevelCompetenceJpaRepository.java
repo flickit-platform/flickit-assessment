@@ -13,13 +13,13 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
     @Modifying
     @Query("DELETE LevelCompetenceJpaEntity l WHERE " +
         "l.levelCompetence.id = :effectiveLevelId AND " +
-        "l.maturityLevel.id = :maturityLevelId")
-    void delete(@Param(value = "effectiveLevelId") Long effectiveLevelId, @Param(value = "maturityLevelId") Long maturityLevelId);
+        "l.maturityLevel.id = :affectedLevelId")
+    void delete(@Param(value = "affectedLevelId") Long affectedLevelId, @Param(value = "effectiveLevelId") Long effectiveLevelId);
 
     @Modifying
     @Query("UPDATE LevelCompetenceJpaEntity l SET " +
         "l.value = :value " +
-        "WHERE l.maturityLevel.id = :maturityLevelId " +
-        "AND l.levelCompetence.id = :competenceId")
-    void update(Long maturityLevelId, Long competenceId, Integer value);
+        "WHERE l.maturityLevel.id = :affectedLevelId " +
+        "AND l.levelCompetence.id = :effectiveLevelId")
+    void update(Long affectedLevelId, Long effectiveLevelId, Integer value);
 }

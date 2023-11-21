@@ -36,8 +36,8 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void delete(Long effectiveLevelId, Long maturityLevelId) {
-        repository.delete(effectiveLevelId, maturityLevelId);
+    public void delete(Long affectedLevelId, Long maturityLevelId) {
+        repository.delete(affectedLevelId, maturityLevelId);
     }
 
     @Override
@@ -52,9 +52,9 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(Long competenceId, Long effectiveLevelId, Integer value) {
+    public void update(Long affectedLevelId, Long effectiveLevelId, Integer value) {
         repository.update(
-            competenceId,
+            affectedLevelId,
             effectiveLevelId,
             value);
     }
