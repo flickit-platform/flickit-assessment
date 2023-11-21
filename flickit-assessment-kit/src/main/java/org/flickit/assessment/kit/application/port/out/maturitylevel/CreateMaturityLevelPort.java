@@ -4,5 +4,5 @@ import org.flickit.assessment.kit.application.domain.MaturityLevel;
 
 public interface CreateMaturityLevelPort {
 
-    void persist(MaturityLevel level, Long kitId);
+    Long persist(MaturityLevel level, Long kitId);
 }

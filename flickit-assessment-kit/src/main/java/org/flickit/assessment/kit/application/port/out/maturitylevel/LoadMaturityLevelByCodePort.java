@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.port.out.maturitylevel;
 
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 
-public interface LoadMaturityLevelByTitlePort {
+public interface LoadMaturityLevelByCodePort {
 
-    MaturityLevel loadByTitle(String title, Long kitId);
+    MaturityLevel loadByCode(String code, Long kitId);
 }

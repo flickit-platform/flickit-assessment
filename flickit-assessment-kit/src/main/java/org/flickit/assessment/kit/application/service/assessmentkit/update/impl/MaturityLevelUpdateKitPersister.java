@@ -13,7 +13,7 @@ import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLev
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByTitlePort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByCodePort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
 
     private final DeleteMaturityLevelPort deleteMaturityLevelPort;
     private final CreateMaturityLevelPort createMaturityLevelPort;
-    private final LoadMaturityLevelByTitlePort loadMaturityLevelByTitlePort;
+    private final LoadMaturityLevelByCodePort loadMaturityLevelByCodePort;
     private final UpdateMaturityLevelPort updateMaturityLevelPort;
     private final DeleteLevelCompetencePort deleteLevelCompetencePort;
     private final CreateLevelCompetencePort createLevelCompetencePort;
@@ -85,10 +85,11 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             toCompetenceList(newLevel.getCompetencesCodeToValueMap(), kitId)
         );
 
-        createMaturityLevelPort.persist(newDomainLevel, kitId);
+        Long persistedLevelId = createMaturityLevelPort.persist(newDomainLevel, kitId);
         log.debug("Maturity Level with title [{}] and kit id [{}] is created.", newLevel.getTitle(), kitId);
 
-        //TODO save competences
+        List<MaturityLevelCompetence> newCompetences = toCompetenceList(newLevel.getCompetencesCodeToValueMap(), kitId);
+        newCompetences.forEach(i -> createLevelCompetence(persistedLevelId, i.getEffectiveLevelId(), i.getValue()));
     }
 
     private void deleteMaturityLevel(MaturityLevel deletedLevel, Long kitId) {
@@ -109,7 +110,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
     private List<MaturityLevelCompetence> toCompetenceList(Map<String, Integer> map, Long kitId) {
         return map.keySet().stream()
             .map(key -> new MaturityLevelCompetence(
-                loadMaturityLevelByTitlePort.loadByTitle(key, kitId).getId(),
+                loadMaturityLevelByCodePort.loadByCode(key, kitId).getId(),
                 key,
                 map.get(key)))
             .toList();
@@ -140,11 +141,23 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             List<String> deletedCompetences = deletedCodesInNewDsl(savedCompetenceCodesMap.keySet(), competenceCodeToValueMap.keySet());
             List<String> sameCompetences = sameCodesInNewDsl(savedCompetenceCodesMap.keySet(), competenceCodeToValueMap.keySet());
 
-            long effectiveMaturityLevelId = loadMaturityLevelByTitlePort.loadByTitle(newLevel.getCode(), kitId).getId();
+            newCompetences.forEach(i -> createLevelCompetence(
+                savedLevel.getId(),
+                loadMaturityLevelByCodePort.loadByCode(i, kitId).getId(),
+                competenceCodeToValueMap.get(i)));
 
-            newCompetences.forEach(i -> createLevelCompetence(savedLevel.getId(), effectiveMaturityLevelId, competenceCodeToValueMap.get(i)));
-            deletedCompetences.forEach(i -> deleteLevelCompetence(savedLevel.getId(), effectiveMaturityLevelId));
-            sameCompetences.forEach(i -> updateLevelCompetence(savedLevel.getId(), effectiveMaturityLevelId, competenceCodeToValueMap.get(i)));
+            deletedCompetences.forEach(i -> deleteLevelCompetence(
+                savedLevel.getId(),
+                loadMaturityLevelByCodePort.loadByCode(i, kitId).getId()));
+
+            sameCompetences.forEach(i -> {
+                if (savedCompetenceCodesMap.get(i).getValue() != competenceCodeToValueMap.get(i)) {
+                    updateLevelCompetence(
+                        savedLevel.getId(),
+                        loadMaturityLevelByCodePort.loadByCode(i, kitId).getId(),
+                        competenceCodeToValueMap.get(i));
+                }
+            });
         }
     }
 

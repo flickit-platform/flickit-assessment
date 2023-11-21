@@ -5,5 +5,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ValidationException extends RuntimeException {
 
-    private final Notification validation;
+    private final transient Notification validation;
 }

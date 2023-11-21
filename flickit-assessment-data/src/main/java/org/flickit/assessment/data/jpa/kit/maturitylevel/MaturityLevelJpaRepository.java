@@ -25,7 +25,5 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
 
     MaturityLevelJpaEntity findByCodeAndAssessmentKitId(String code, Long assessmentKitId);
 
-    MaturityLevelJpaEntity findByTitleAndAssessmentKitId(String code, Long assessmentKitId);
-
     MaturityLevelJpaEntity findByIdAndAssessmentKitId(Long id, Long assessmentKitId);
 }

@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateKitByDslUseCaseParamTest {
 
     @Test
-    void testUpdateKitByDsl_kitIdIsNull_ErrorMessage() {
+    void testMaturityLevelUpdateKitPersister_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateKitByDslUseCase.Param(null, "dslContent"));
         assertThat(throwable).hasMessage("kitId: " + UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateKitByDsl_dslContentIdBlank_ErrorMessage() {
+    void testMaturityLevelUpdateKitPersister_dslContentIdBlank_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateKitByDslUseCase.Param(1L, ""));
         assertThat(throwable).hasMessage("dslContent: " + UPDATE_KIT_BY_DSL_DSL_CONTENT_NOT_NULL);

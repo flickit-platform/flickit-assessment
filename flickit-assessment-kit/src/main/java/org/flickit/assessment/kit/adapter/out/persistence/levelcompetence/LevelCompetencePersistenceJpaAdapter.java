@@ -41,17 +41,6 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public Long persist(Long effectiveLevelId, Integer value, String maturityLevelCode, Long kitId) {
-        LevelCompetenceJpaEntity entity = new LevelCompetenceJpaEntity(
-            null,
-            maturityLevelJpaRepository.findByCodeAndAssessmentKitId(maturityLevelCode, kitId),
-            maturityLevelJpaRepository.findByIdAndAssessmentKitId(effectiveLevelId, kitId),
-            value
-        );
-        return repository.save(entity).getId();
-    }
-
-    @Override
     public Long persist(Long affectedLevelId, Long effectiveLevelId, int value) {
         LevelCompetenceJpaEntity entity = new LevelCompetenceJpaEntity(
             null,

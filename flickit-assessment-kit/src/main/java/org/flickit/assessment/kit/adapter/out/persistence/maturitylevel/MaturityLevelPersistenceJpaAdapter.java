@@ -15,7 +15,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     CreateMaturityLevelPort,
     DeleteMaturityLevelPort,
     UpdateMaturityLevelPort,
-    LoadMaturityLevelByTitlePort {
+    LoadMaturityLevelByCodePort {
 
     private final MaturityLevelJpaRepository repository;
 
@@ -28,8 +28,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public void persist(MaturityLevel level, Long kitId) {
-        repository.save(MaturityLevelMapper.mapToJpaEntity(level, kitId));
+    public Long persist(MaturityLevel level, Long kitId) {
+        return repository.save(MaturityLevelMapper.mapToJpaEntity(level, kitId)).getId();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public MaturityLevel loadByTitle(String title, Long kitId) {
-        return MaturityLevelMapper.mapToDomainModel(repository.findByTitleAndAssessmentKitId(title, kitId));
+    public MaturityLevel loadByCode(String code, Long kitId) {
+        return MaturityLevelMapper.mapToDomainModel(repository.findByCodeAndAssessmentKitId(code, kitId));
     }
 }
