@@ -52,8 +52,5 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
     void invalidateByKitId(@Param(value = "kitId") Long kitId,
                         @Param(value = "isCalculateValid")Boolean isCalculateValid);
 
-    @Query("SELECT a FROM AssessmentResultJpaEntity a " +
-        "WHERE a.assessment.id IN (SELECT b.id FROM AssessmentJpaEntity b WHERE b.assessmentKitId = :kitId)")
-    List<AssessmentResultJpaEntity> findByKitId(@Param(value = "kitId") Long kitId);
 
 }
