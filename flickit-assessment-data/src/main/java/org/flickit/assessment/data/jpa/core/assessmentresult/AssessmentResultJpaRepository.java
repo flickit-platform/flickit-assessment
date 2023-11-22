@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,8 +48,12 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
     @Modifying
     @Query("UPDATE AssessmentResultJpaEntity a SET " +
         "a.isCalculateValid = :isCalculateValid " +
-        "WHERE a.assessment.assessmentKitId = :kitId")
+        "WHERE a.assessment.id IN (SELECT b.id FROM AssessmentJpaEntity b WHERE b.assessmentKitId = :kitId)")
     void invalidateByKitId(@Param(value = "kitId") Long kitId,
                         @Param(value = "isCalculateValid")Boolean isCalculateValid);
+
+    @Query("SELECT a FROM AssessmentResultJpaEntity a " +
+        "WHERE a.assessment.id IN (SELECT b.id FROM AssessmentJpaEntity b WHERE b.assessmentKitId = :kitId)")
+    List<AssessmentResultJpaEntity> findByKitId(@Param(value = "kitId") Long kitId);
 
 }
