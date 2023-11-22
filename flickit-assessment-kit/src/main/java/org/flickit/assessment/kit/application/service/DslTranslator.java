@@ -9,7 +9,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.TRANSLATE_KIT_DS
 
 public class DslTranslator {
 
-    public AssessmentKitDslModel parseJson(String content) {
+    public static AssessmentKitDslModel parseJson(String content) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(content, AssessmentKitDslModel.class);

@@ -44,4 +44,11 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
                                         @Param(value = "isConfidenceValid") boolean isConfidenceValid,
                                         @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
 
+    @Modifying
+    @Query("UPDATE AssessmentResultJpaEntity a SET " +
+        "a.isCalculateValid = :isCalculateValid " +
+        "WHERE a.assessment.assessmentKitId = :kitId")
+    void invalidateByKitId(@Param(value = "kitId") Long kitId,
+                        @Param(value = "isCalculateValid")Boolean isCalculateValid);
+
 }

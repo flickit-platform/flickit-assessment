@@ -20,14 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
-    private final DslTranslator dslTranslator = new DslTranslator();
     private final LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
     private final CompositeUpdateKitValidator validator;
     private final CompositeUpdateKitPersister persister;
 
     @Override
     public void update(Param param) {
-        AssessmentKitDslModel dslKit = dslTranslator.parseJson(param.getDslContent());
+        AssessmentKitDslModel dslKit = DslTranslator.parseJson(param.getDslContent());
         AssessmentKit savedKit = loadAssessmentKitInfoPort.load(param.getKitId());
 
         validateChanges(savedKit, dslKit);
