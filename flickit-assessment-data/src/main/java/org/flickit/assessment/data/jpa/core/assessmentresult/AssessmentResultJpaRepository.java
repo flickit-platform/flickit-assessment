@@ -46,10 +46,9 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
 
     @Modifying
     @Query("UPDATE AssessmentResultJpaEntity a SET " +
-        "a.isCalculateValid = :isCalculateValid " +
+        "a.isCalculateValid = false " +
         "WHERE a.assessment.id IN (SELECT b.id FROM AssessmentJpaEntity b WHERE b.assessmentKitId = :kitId)")
-    void invalidateByKitId(@Param(value = "kitId") Long kitId,
-                        @Param(value = "isCalculateValid")Boolean isCalculateValid);
+    void invalidateByKitId(@Param(value = "kitId") Long kitId);
 
 
 }

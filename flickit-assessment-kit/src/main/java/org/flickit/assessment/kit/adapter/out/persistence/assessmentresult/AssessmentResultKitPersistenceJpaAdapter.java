@@ -12,7 +12,7 @@ public class AssessmentResultKitPersistenceJpaAdapter implements InvalidateAsses
     private final AssessmentResultJpaRepository repository;
 
     @Override
-    public void invalidateByKitId(Long kitId, Boolean isCalculateValid) {
-        repository.invalidateByKitId(kitId, isCalculateValid);
+    public void invalidateByKitId(Long kitId) {
+        repository.invalidateByKitId(kitId);
     }
 }
