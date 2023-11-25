@@ -12,15 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DslTranslatorTest {
 
-    private final DslTranslator translator = new DslTranslator();
-
     @Test
     @SneakyThrows
     void testJsonParser() {
         String file = "src/test/resources/dsl.json";
         String json = new String(Files.readAllBytes(Paths.get(file)));
 
-        AssessmentKitDslModel kit = translator.parseJson(json);
+        AssessmentKitDslModel kit = DslTranslator.parseJson(json);
         assertNotNull(kit);
 
         List<SubjectDslModel> subjects = kit.getSubjects();
