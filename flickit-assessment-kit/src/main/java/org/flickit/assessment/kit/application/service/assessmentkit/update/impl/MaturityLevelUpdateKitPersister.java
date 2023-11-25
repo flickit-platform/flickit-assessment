@@ -54,11 +54,11 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         boolean invalidateResults = false;
         newLevels.forEach(i -> createMaturityLevel(newDslLevelCodesMap.get(i), savedKit.getId()));
         deletedLevels.forEach(i -> deleteMaturityLevel(savedLevelCodesMap.get(i), savedKit.getId()));
+
         for (String i : sameLevels) {
-            boolean updateMaturityLevel = updateMaturityLevel(savedLevelCodesMap.get(i), newDslLevelCodesMap.get(i), savedKit.getId());
-            if (!invalidateResults) {
-                invalidateResults = invalidateResults || updateMaturityLevel;
-            }
+            boolean invalidOnUpdate = updateMaturityLevel(savedLevelCodesMap.get(i), newDslLevelCodesMap.get(i), savedKit.getId());
+            if (invalidOnUpdate)
+                invalidateResults = true;
         }
 
         if (invalidateResults || !newLevels.isEmpty() || !deletedLevels.isEmpty()) {
