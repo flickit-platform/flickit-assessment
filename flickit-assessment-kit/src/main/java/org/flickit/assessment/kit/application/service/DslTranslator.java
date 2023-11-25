@@ -2,19 +2,22 @@ package org.flickit.assessment.kit.application.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.ValidationException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.springframework.stereotype.Component;
+import org.flickit.assessment.kit.application.exception.InvalidContentException;
 
-@Component
+import static org.flickit.assessment.kit.common.ErrorMessageKey.TRANSLATE_KIT_DSL_UNABLE_TO_PARSE_JSON;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DslTranslator {
 
-    public AssessmentKitDslModel parseJson(String content) {
+    public static AssessmentKitDslModel parseJson(String content) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(content, AssessmentKitDslModel.class);
-        } catch (JsonProcessingException e) {
-            throw new ValidationException(e.getMessage());
+        } catch (JsonProcessingException ex) {
+            throw new InvalidContentException(TRANSLATE_KIT_DSL_UNABLE_TO_PARSE_JSON, ex);
         }
     }
 }
