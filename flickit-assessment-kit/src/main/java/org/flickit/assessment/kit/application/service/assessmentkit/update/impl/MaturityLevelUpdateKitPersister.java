@@ -164,18 +164,16 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         List<String> deletedCompetences = deletedCodesInNewDsl(savedCompetenceCodesMap.keySet(), competenceCodeToValueMap.keySet());
         List<String> sameCompetences = sameCodesInNewDsl(savedCompetenceCodesMap.keySet(), competenceCodeToValueMap.keySet());
 
-        newCompetences.forEach(i -> {
-            createLevelCompetence(
+        newCompetences.forEach(i -> createLevelCompetence(
                 savedLevel.getId(),
                 loadMaturityLevelByCodePort.loadByCode(i, kitId).getId(),
                 competenceCodeToValueMap.get(i));
-        });
+        );
 
-        deletedCompetences.forEach(i -> {
-            deleteLevelCompetence(
+        deletedCompetences.forEach(i -> deleteLevelCompetence(
                 savedLevel.getId(),
                 loadMaturityLevelByCodePort.loadByCode(i, kitId).getId());
-        });
+        );
 
         for (String i : sameCompetences) {
             if (savedCompetenceCodesMap.get(i).getValue() != competenceCodeToValueMap.get(i)) {
