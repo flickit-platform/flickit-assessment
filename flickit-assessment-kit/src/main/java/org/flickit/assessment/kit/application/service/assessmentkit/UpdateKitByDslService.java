@@ -6,8 +6,10 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
+import org.flickit.assessment.kit.application.port.out.assessmentresult.InvalidateAssessmentResultByKitPort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.CompositeUpdateKitPersister;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.flickit.assessment.kit.application.service.assessmentkit.validate.CompositeUpdateKitValidator;
 import org.flickit.assessment.kit.common.Notification;
 import org.flickit.assessment.kit.common.ValidationException;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
     private final LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
+    private final InvalidateAssessmentResultByKitPort invalidateAssessmentResultByKitPort;
     private final CompositeUpdateKitValidator validator;
     private final CompositeUpdateKitPersister persister;
 
@@ -30,16 +33,15 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
         AssessmentKit savedKit = loadAssessmentKitInfoPort.load(param.getKitId());
 
         validateChanges(savedKit, dslKit);
-        persistChanges(savedKit, dslKit);
+
+        UpdateKitPersisterResult persistResult = persister.persist(savedKit, dslKit);
+        if (persistResult.shouldInvalidateCalcResult())
+            invalidateAssessmentResultByKitPort.invalidateByKitId(savedKit.getId());
     }
 
     private void validateChanges(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Notification validation = validator.validate(savedKit, dslKit);
         if (validation.hasErrors())
             throw new ValidationException(validation);
-    }
-
-    private void persistChanges(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
-        persister.persist(savedKit, dslKit);
     }
 }
