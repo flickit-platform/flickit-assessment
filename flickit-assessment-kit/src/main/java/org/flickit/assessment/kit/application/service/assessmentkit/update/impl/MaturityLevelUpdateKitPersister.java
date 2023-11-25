@@ -148,42 +148,47 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         }
 
         if (newLevel.getCompetencesCodeToValueMap() != null || savedLevel.getCompetences() != null) {
-            Map<String, MaturityLevelCompetence> savedCompetenceCodesMap = savedLevel.getCompetences().stream()
-                .collect(Collectors.toMap(MaturityLevelCompetence::getEffectiveLevelCode, i -> i));
-            Map<String, Integer> competenceCodeToValueMap = newLevel.getCompetencesCodeToValueMap() != null ?
-                newLevel.getCompetencesCodeToValueMap() : new HashMap<>();
+            invalidateResults = updateLevelCompetences(savedLevel, newLevel, kitId, invalidateResults);
 
-            List<String> newCompetences = newCodesInNewDsl(savedCompetenceCodesMap.keySet(), competenceCodeToValueMap.keySet());
-            List<String> deletedCompetences = deletedCodesInNewDsl(savedCompetenceCodesMap.keySet(), competenceCodeToValueMap.keySet());
-            List<String> sameCompetences = sameCodesInNewDsl(savedCompetenceCodesMap.keySet(), competenceCodeToValueMap.keySet());
+        }
+        return invalidateResults;
+    }
 
-            newCompetences.forEach(i -> {
-                createLevelCompetence(
+    private boolean updateLevelCompetences(MaturityLevel savedLevel, MaturityLevelDslModel newLevel, Long kitId, boolean invalidateResults) {
+        Map<String, MaturityLevelCompetence> savedCompetenceCodesMap = savedLevel.getCompetences().stream()
+            .collect(Collectors.toMap(MaturityLevelCompetence::getEffectiveLevelCode, i -> i));
+        Map<String, Integer> competenceCodeToValueMap = newLevel.getCompetencesCodeToValueMap() != null ?
+            newLevel.getCompetencesCodeToValueMap() : new HashMap<>();
+
+        List<String> newCompetences = newCodesInNewDsl(savedCompetenceCodesMap.keySet(), competenceCodeToValueMap.keySet());
+        List<String> deletedCompetences = deletedCodesInNewDsl(savedCompetenceCodesMap.keySet(), competenceCodeToValueMap.keySet());
+        List<String> sameCompetences = sameCodesInNewDsl(savedCompetenceCodesMap.keySet(), competenceCodeToValueMap.keySet());
+
+        newCompetences.forEach(i -> {
+            createLevelCompetence(
+                savedLevel.getId(),
+                loadMaturityLevelByCodePort.loadByCode(i, kitId).getId(),
+                competenceCodeToValueMap.get(i));
+        });
+
+        deletedCompetences.forEach(i -> {
+            deleteLevelCompetence(
+                savedLevel.getId(),
+                loadMaturityLevelByCodePort.loadByCode(i, kitId).getId());
+        });
+
+        for (String i : sameCompetences) {
+            if (savedCompetenceCodesMap.get(i).getValue() != competenceCodeToValueMap.get(i)) {
+                updateLevelCompetence(
                     savedLevel.getId(),
                     loadMaturityLevelByCodePort.loadByCode(i, kitId).getId(),
                     competenceCodeToValueMap.get(i));
-            });
-
-            deletedCompetences.forEach(i -> {
-                deleteLevelCompetence(
-                    savedLevel.getId(),
-                    loadMaturityLevelByCodePort.loadByCode(i, kitId).getId());
-            });
-
-            for (String i : sameCompetences) {
-                if (savedCompetenceCodesMap.get(i).getValue() != competenceCodeToValueMap.get(i)) {
-                    updateLevelCompetence(
-                        savedLevel.getId(),
-                        loadMaturityLevelByCodePort.loadByCode(i, kitId).getId(),
-                        competenceCodeToValueMap.get(i));
-                    invalidateResults = true;
-                }
-            }
-
-            if (invalidateResults || !newCompetences.isEmpty() || !deletedCompetences.isEmpty()) {
                 invalidateResults = true;
             }
+        }
 
+        if (invalidateResults || !newCompetences.isEmpty() || !deletedCompetences.isEmpty()) {
+            invalidateResults = true;
         }
         return invalidateResults;
     }
