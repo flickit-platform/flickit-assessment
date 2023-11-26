@@ -19,14 +19,14 @@ class MaturityLevelDtoTest {
             new LevelCompetenceDto(234L, 60, 234L)
         );
 
-        MaturityLevelDto dto = new MaturityLevelDto(123L, 2, lcDtoList);
+        MaturityLevelDto dto = new MaturityLevelDto(123L, 2,2, lcDtoList);
 
         MaturityLevel domain = dto.dtoToDomain();
         List<LevelCompetence> lcList = domain.getLevelCompetences();
 
         assertNotNull(domain);
         assertEquals(dto.id(), domain.getId());
-        assertEquals(dto.level(), domain.getLevel());
+        assertEquals(dto.value(), domain.getValue());
         assertNotNull(domain.getLevelCompetences());
         assertEquals(lcDtoList.size(), lcList.size());
 

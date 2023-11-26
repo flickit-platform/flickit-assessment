@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
-import org.flickit.assessment.kit.application.port.out.assessmentresult.InvalidateAssessmentResultByKitPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
@@ -17,6 +16,7 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMatur
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByCodePort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -37,10 +37,9 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
     private final DeleteLevelCompetencePort deleteLevelCompetencePort;
     private final CreateLevelCompetencePort createLevelCompetencePort;
     private final UpdateLevelCompetencePort updateLevelCompetencePort;
-    private final InvalidateAssessmentResultByKitPort invalidateAssessmentResultByKitPort;
 
     @Override
-    public void persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         List<MaturityLevel> savedLevels = savedKit.getMaturityLevels();
         List<MaturityLevelDslModel> dslLevels = dslKit.getMaturityLevels();
 
@@ -61,10 +60,9 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
                 invalidateResults = true;
         }
 
-        if (invalidateResults || !newLevels.isEmpty() || !deletedLevels.isEmpty()) {
-            invalidateAssessmentResultByKitPort.invalidateByKitId(savedKit.getId());
-        }
+        invalidateResults = invalidateResults || !newLevels.isEmpty() || !deletedLevels.isEmpty();
 
+        return new UpdateKitPersisterResult(invalidateResults);
     }
 
     private List<String> newCodesInNewDsl(Set<String> savedItemCodes, Set<String> newItemCodes) {

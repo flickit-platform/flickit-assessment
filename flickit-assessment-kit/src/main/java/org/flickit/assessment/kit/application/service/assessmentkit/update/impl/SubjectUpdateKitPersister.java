@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectsPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +24,12 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
     private final UpdateSubjectsPort updateSubjectsPort;
 
     @Override
-    public void persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         dslKit.getSubjects().forEach(s -> {
             updateSubjectsPort.updateSubject(toUpdateParam(savedKit, s));
             log.debug("Subject with code [{}] and assessment kit id [{}] is updated.", s.getCode(), savedKit.getId());
         });
+        return new UpdateKitPersisterResult(false);
     }
 
     private UpdateSubjectsPort.Param toUpdateParam(AssessmentKit savedKit, SubjectDslModel subject) {

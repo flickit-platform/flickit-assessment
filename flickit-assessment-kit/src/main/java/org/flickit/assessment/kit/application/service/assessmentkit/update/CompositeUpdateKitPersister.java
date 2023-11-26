@@ -14,7 +14,12 @@ public class CompositeUpdateKitPersister implements UpdateKitPersister {
     private final List<UpdateKitPersister> persisters;
 
     @Override
-    public void persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
-        persisters.forEach(p -> p.persist(savedKit, dslKit));
+    public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+        boolean shouldInvalidateCalcResult = false;
+        for (UpdateKitPersister p : persisters) {
+            UpdateKitPersisterResult result = p.persist(savedKit, dslKit);
+            shouldInvalidateCalcResult = shouldInvalidateCalcResult || result.shouldInvalidateCalcResult();
+        }
+        return new UpdateKitPersisterResult(shouldInvalidateCalcResult);
     }
 }

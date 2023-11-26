@@ -31,7 +31,7 @@ class QualityAttributeValueTest {
 
         qav.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelFive().getLevel(), qav.getMaturityLevel().getLevel());
+        assertEquals(MaturityLevelMother.levelFive().getValue(), qav.getMaturityLevel().getValue());
     }
 
     @Test
@@ -57,7 +57,7 @@ class QualityAttributeValueTest {
 
         qav.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelThree().getLevel(), qav.getMaturityLevel().getLevel());
+        assertEquals(MaturityLevelMother.levelThree().getValue(), qav.getMaturityLevel().getValue());
     }
 
     @Test
@@ -81,7 +81,7 @@ class QualityAttributeValueTest {
 
         qav.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelFive().getLevel(), qav.getMaturityLevel().getLevel());
+        assertEquals(MaturityLevelMother.levelFive().getValue(), qav.getMaturityLevel().getValue());
         assertEquals(allLevels().size(), qav.getMaturityScores().size());
 
         List<MaturityScore> matchingScores = qav.getMaturityScores().stream()
@@ -114,7 +114,7 @@ class QualityAttributeValueTest {
 
         qav.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelFour().getLevel(), qav.getMaturityLevel().getLevel());
+        assertEquals(MaturityLevelMother.levelFour().getValue(), qav.getMaturityLevel().getValue());
     }
 
     @Test
@@ -140,7 +140,7 @@ class QualityAttributeValueTest {
 
         qav.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelFour().getLevel(), qav.getMaturityLevel().getLevel());
+        assertEquals(MaturityLevelMother.levelFour().getValue(), qav.getMaturityLevel().getValue());
     }
 
     @Test

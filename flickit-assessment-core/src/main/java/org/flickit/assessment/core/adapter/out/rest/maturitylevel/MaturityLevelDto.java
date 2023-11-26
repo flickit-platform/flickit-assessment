@@ -8,8 +8,10 @@ import org.flickit.assessment.core.application.domain.MaturityLevel;
 import java.util.List;
 
 public record MaturityLevelDto(Long id,
+                               @JsonProperty("index")
+                               Integer index,
                                @JsonProperty("value")
-                               Integer level,
+                               Integer value,
                                @JsonProperty("level_competences")
                                List<LevelCompetenceDto> levelCompetences) {
 
@@ -17,6 +19,6 @@ public record MaturityLevelDto(Long id,
         List<LevelCompetence> competences = levelCompetences().stream()
             .map(LevelCompetenceDto::dtoToDomain)
             .toList();
-        return new MaturityLevel(id, level, competences);
+        return new MaturityLevel(id, index, value, competences);
     }
 }
