@@ -75,7 +75,7 @@ public class QualityAttributeValue {
 
     private MaturityLevel findGainedMaturityLevel(Map<Long, Double> percentScore, List<MaturityLevel> maturityLevels) {
         List<MaturityLevel> sortedMaturityLevels = maturityLevels.stream()
-            .sorted(comparingInt(MaturityLevel::getLevel))
+            .sorted(comparingInt(MaturityLevel::getIndex))
             .toList();
 
         MaturityLevel result = null;
@@ -102,7 +102,7 @@ public class QualityAttributeValue {
 
     public int getWeightedLevel() {
         Assert.notNull(maturityLevel, () -> "maturityLevel should not be null");
-        return maturityLevel.getLevel() * qualityAttribute.getWeight();
+        return maturityLevel.getValue() * qualityAttribute.getWeight();
     }
 
     public void calculateConfidenceValue() {

@@ -29,7 +29,7 @@ class AssessmentResultTest {
 
         MaturityLevel assessmentMaturityLevel = assessmentResult.calculate();
 
-        assertEquals(MaturityLevelMother.levelThree().getLevel(), assessmentMaturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelThree().getValue(), assessmentMaturityLevel.getValue());
     }
 
     @Test
@@ -48,7 +48,7 @@ class AssessmentResultTest {
 
         MaturityLevel assessmentMaturityLevel = assessmentResult.calculate();
 
-        assertEquals(MaturityLevelMother.levelThree().getLevel(), assessmentMaturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelThree().getValue(), assessmentMaturityLevel.getValue());
     }
 
     @Test

@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.domain.dsl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

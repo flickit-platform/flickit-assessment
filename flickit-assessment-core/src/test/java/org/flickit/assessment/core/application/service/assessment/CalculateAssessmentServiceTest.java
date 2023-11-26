@@ -70,6 +70,6 @@ class CalculateAssessmentServiceTest {
 
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
-        assertEquals(4, result.maturityLevel().getLevel());
+        assertEquals(4, result.maturityLevel().getValue());
     }
 }

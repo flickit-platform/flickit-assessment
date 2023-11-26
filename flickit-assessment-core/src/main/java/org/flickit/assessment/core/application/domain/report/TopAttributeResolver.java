@@ -20,7 +20,7 @@ public class TopAttributeResolver {
 
     public List<TopAttribute> getTopStrengths() {
         return attributeValues.stream()
-            .sorted(comparing(x -> x.getMaturityLevel().getLevel(), reverseOrder()))
+            .sorted(comparing(x -> x.getMaturityLevel().getIndex(), reverseOrder()))
             .filter(x -> isHigherThanOrEqualToMiddleLevel(x.getMaturityLevel()))
             .limit(TOP_COUNT)
             .map(x -> new TopAttribute(x.getQualityAttribute().getId()))
@@ -28,12 +28,12 @@ public class TopAttributeResolver {
     }
 
     private boolean isHigherThanOrEqualToMiddleLevel(MaturityLevel maturityLevel) {
-        return maturityLevel.getLevel() >= midLevelMaturity.getLevel();
+        return maturityLevel.getIndex() >= midLevelMaturity.getIndex();
     }
 
     public List<TopAttribute> getTopWeaknesses() {
         return attributeValues.stream()
-            .sorted(comparingInt(x -> x.getMaturityLevel().getLevel()))
+            .sorted(comparingInt(x -> x.getMaturityLevel().getIndex()))
             .filter(x -> isLowerThanMiddleLevel(x.getMaturityLevel()))
             .limit(TOP_COUNT)
             .map(x -> new TopAttribute(x.getQualityAttribute().getId()))
@@ -41,6 +41,6 @@ public class TopAttributeResolver {
     }
 
     private boolean isLowerThanMiddleLevel(MaturityLevel maturityLevel) {
-        return maturityLevel.getLevel() < midLevelMaturity.getLevel();
+        return maturityLevel.getIndex() < midLevelMaturity.getIndex();
     }
 }

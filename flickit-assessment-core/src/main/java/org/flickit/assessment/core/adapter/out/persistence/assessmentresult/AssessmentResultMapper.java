@@ -31,7 +31,8 @@ public class AssessmentResultMapper {
             entity.getId(),
             AssessmentMapper.mapToDomainModel(entity.getAssessment()),
             new ArrayList<>(),
-            entity.getMaturityLevelId() == null ? null : new MaturityLevel(entity.getMaturityLevelId(), 0, new ArrayList<>()),
+            entity.getMaturityLevelId() == null ? null :
+                new MaturityLevel(entity.getMaturityLevelId(), 1, 0, new ArrayList<>()),
             entity.getConfidenceValue(),
             entity.getIsCalculateValid(),
             entity.getIsConfidenceValid(),
