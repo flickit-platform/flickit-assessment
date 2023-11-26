@@ -79,6 +79,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             !savedQuestionnaire.getDescription().equals(newQuestionnaire.getDescription()) ||
             savedQuestionnaire.getIndex() != newQuestionnaire.getIndex()) {
             var updateParam = new UpdateQuestionnaireByKitPort.Param(
+                newQuestionnaire.getCode(),
                 newQuestionnaire.getTitle(),
                 newQuestionnaire.getDescription(),
                 newQuestionnaire.getIndex(),

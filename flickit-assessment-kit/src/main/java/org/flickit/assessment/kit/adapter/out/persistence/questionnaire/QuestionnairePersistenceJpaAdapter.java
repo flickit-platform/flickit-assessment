@@ -33,6 +33,6 @@ public class QuestionnairePersistenceJpaAdapter implements
 
     @Override
     public void updateByKitId(Param param) {
-        repository.updateByKitId(param.title(), param.description(), param.index(), param.kitId());
+        repository.updateByKitId(param.code(), param.title(), param.description(), param.index(), param.kitId());
     }
 }
