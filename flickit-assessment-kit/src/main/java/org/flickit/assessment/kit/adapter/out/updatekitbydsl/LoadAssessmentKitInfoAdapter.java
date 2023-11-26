@@ -5,10 +5,13 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.LoadLevelCompetencesByMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
+import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsByKitPort;
+import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuestionImpactsByQuestionPort;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,6 +26,8 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     private final AssessmentKitJpaRepository repository;
     private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
     private final LoadLevelCompetencesByMaturityLevelPort loadLevelCompetencesByMaturityLevelPort;
+    private final LoadQuestionsByKitPort loadQuestionsByKitPort;
+    private final LoadQuestionImpactsByQuestionPort loadQuestionImpactsByQuestionPort;
 
     @Override
     public AssessmentKit load(Long kitId) {
@@ -30,6 +35,10 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
             () -> new ResourceNotFoundException(FIND_KIT_ID_NOT_FOUND));
         List<MaturityLevel> levels = new ArrayList<>(loadMaturityLevelByKitPort.loadByKitId(kitId));
         setLevelCompetences(levels);
+
+        ArrayList<Question> questions = new ArrayList<>(loadQuestionsByKitPort.loadByKit(kitId));
+        setQuestionImpacts(questions);
+        // set questionnaire questions
 
         return new AssessmentKit(
             kitId,
@@ -50,5 +59,11 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     private void setLevelCompetences(List<MaturityLevel> levels) {
         levels.forEach(level -> level.setCompetences(
             loadLevelCompetencesByMaturityLevelPort.loadByMaturityLevelId(level.getId())));
+    }
+
+    private void setQuestionImpacts(ArrayList<Question> questions) {
+        questions.forEach(question -> question.setImpacts(
+            loadQuestionImpactsByQuestionPort.loadByQuestionId(question.getId())
+        ));
     }
 }
