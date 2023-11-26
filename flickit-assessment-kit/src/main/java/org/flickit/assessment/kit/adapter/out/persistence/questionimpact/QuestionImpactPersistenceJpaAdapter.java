@@ -10,7 +10,8 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class QuestionImpactPersistenceJpaAdapter implements LoadQuestionImpactsByQuestionPort {
+public class QuestionImpactPersistenceJpaAdapter implements
+    LoadQuestionImpactsByQuestionPort {
 
     private final QuestionImpactJpaRepository repository;
 

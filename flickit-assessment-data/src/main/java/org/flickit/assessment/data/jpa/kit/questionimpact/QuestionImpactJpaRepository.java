@@ -7,4 +7,5 @@ import java.util.List;
 public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpactJpaEntity, Long> {
 
     List<QuestionImpactJpaEntity> findAllByQuestionId(Long questionId);
+
 }
