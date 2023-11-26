@@ -12,12 +12,13 @@ import static java.util.Comparator.comparingInt;
 public class MaturityLevel {
 
     private final long id;
-    private final int level;
+    private final int index;
+    private final int value;
     private final List<LevelCompetence> levelCompetences;
 
     public static MaturityLevel middleLevel(List<MaturityLevel> maturityLevels) {
         var sortedMaturityLevels = maturityLevels.stream()
-            .sorted(comparingInt(MaturityLevel::getLevel))
+            .sorted(comparingInt(MaturityLevel::getIndex))
             .toList();
         return sortedMaturityLevels.get((sortedMaturityLevels.size() / 2));
     }

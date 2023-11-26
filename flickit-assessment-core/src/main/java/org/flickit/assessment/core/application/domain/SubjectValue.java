@@ -27,21 +27,21 @@ public class SubjectValue {
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
         qualityAttributeValues.forEach(x -> x.calculate(maturityLevels));
 
-        int weightedMeanLevel = calculateWeightedMeanOfQualityAttributeValues();
+        int weightedMeanLevel = calculateWeightedMeanOfAttributeValues();
         return maturityLevels.stream()
-            .filter(m -> m.getLevel() == weightedMeanLevel)
+            .filter(m -> m.getValue() == weightedMeanLevel)
             .findAny()
             .orElseThrow(IllegalStateException::new);
     }
 
-    private int calculateWeightedMeanOfQualityAttributeValues() {
+    private int calculateWeightedMeanOfAttributeValues() {
         int weightedSum = 0;
         int sum = 0;
         for (QualityAttributeValue qav : qualityAttributeValues) {
             weightedSum += qav.getWeightedLevel();
             sum += qav.getQualityAttribute().getWeight();
         }
-        return (int) Math.round((double) weightedSum / sum);
+        return sum != 0 ? (int) Math.round((double) weightedSum / sum) : 0;
     }
 
     public Double calculateConfidenceValue() {
