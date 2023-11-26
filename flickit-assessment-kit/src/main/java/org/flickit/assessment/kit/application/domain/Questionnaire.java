@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Questionnaire {
 
-    private final long id;
+    private final Long id;
     private final String code;
     private final String title;
     private final int index;

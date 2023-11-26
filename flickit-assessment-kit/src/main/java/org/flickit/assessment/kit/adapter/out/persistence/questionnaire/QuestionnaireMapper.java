@@ -19,4 +19,17 @@ public class QuestionnaireMapper {
             entity.getLastModificationTime()
         );
     }
+
+    static QuestionnaireJpaEntity mapToJpaEntity(Questionnaire questionnaire, Long kitId) {
+        return new QuestionnaireJpaEntity(
+            null,
+            questionnaire.getCode(),
+            questionnaire.getTitle(),
+            questionnaire.getDescription(),
+            questionnaire.getCreationTime(),
+            questionnaire.getLastModificationTime(),
+            questionnaire.getIndex(),
+            kitId
+        );
+    }
 }
