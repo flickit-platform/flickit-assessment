@@ -8,7 +8,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnaireByKitPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
     private final CreateQuestionnairePort createQuestionnairePort;
-    private final UpdateQuestionnaireByKitPort updateQuestionnaireByKitPort;
+    private final UpdateQuestionnairePort updateQuestionnairePort;
 
 
     @Override
@@ -40,7 +40,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         List<String> sameQuestionnaires = sameCodesInNewDsl(savedQuestionnaireCodesMap.keySet(), newDslQuestionnaireCodesMap.keySet());
 
         newQuestionnaires.forEach(i -> createQuestionnaire(newDslQuestionnaireCodesMap.get(i), savedKit.getId()));
-        sameQuestionnaires.forEach(i -> updateQuestionnaire(savedQuestionnaireCodesMap.get(i), newDslQuestionnaireCodesMap.get(i), savedKit.getId()));
+        sameQuestionnaires.forEach(i -> updateQuestionnaire(savedQuestionnaireCodesMap.get(i), newDslQuestionnaireCodesMap.get(i)));
 
         return new UpdateKitPersisterResult(!newQuestionnaires.isEmpty());
     }
@@ -59,8 +59,8 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             .toList();
     }
 
-    private void createQuestionnaire(QuestionnaireDslModel newQuestionnaire, Long kitId) {
-        var questionnaireParam = new Questionnaire(
+    private void createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitId) {
+        var createParam = new Questionnaire(
             null,
             newQuestionnaire.getCode(),
             newQuestionnaire.getTitle(),
@@ -70,23 +70,21 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             LocalDateTime.now()
         );
 
-        createQuestionnairePort.persist(questionnaireParam, kitId);
+        createQuestionnairePort.persist(createParam, kitId);
         log.debug("A questionnaire with code [{}] is created.", newQuestionnaire.getCode());
     }
 
-    private void updateQuestionnaire(Questionnaire savedQuestionnaire, QuestionnaireDslModel newQuestionnaire, Long kitId) {
+    private void updateQuestionnaire(Questionnaire savedQuestionnaire, QuestionnaireDslModel newQuestionnaire) {
         if (!savedQuestionnaire.getTitle().equals(newQuestionnaire.getTitle()) ||
             !savedQuestionnaire.getDescription().equals(newQuestionnaire.getDescription()) ||
             savedQuestionnaire.getIndex() != newQuestionnaire.getIndex()) {
-            var updateParam = new UpdateQuestionnaireByKitPort.Param(
-                newQuestionnaire.getCode(),
+            var updateParam = new UpdateQuestionnairePort.Param(
+                savedQuestionnaire.getId(),
                 newQuestionnaire.getTitle(),
-                newQuestionnaire.getDescription(),
                 newQuestionnaire.getIndex(),
-                kitId
-            );
+                newQuestionnaire.getDescription());
 
-            updateQuestionnaireByKitPort.updateByKitId(updateParam);
+            updateQuestionnairePort.update(updateParam);
             log.debug("A questionnaire with code [{}] is updated.", savedQuestionnaire.getCode());
         }
     }

@@ -5,7 +5,7 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnaireByKitPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
@@ -33,7 +33,7 @@ class QuestionnaireUpdateKitPersisterTest {
     private CreateQuestionnairePort createQuestionnairePort;
 
     @Mock
-    private UpdateQuestionnaireByKitPort updateQuestionnaireByKitPort;
+    private UpdateQuestionnairePort updateQuestionnairePort;
 
     @Test
     @SneakyThrows
@@ -47,7 +47,7 @@ class QuestionnaireUpdateKitPersisterTest {
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
         persister.persist(savedKit, dslKit);
 
-        verifyNoInteractions(createQuestionnairePort, updateQuestionnaireByKitPort);
+        verifyNoInteractions(createQuestionnairePort, updateQuestionnairePort);
     }
 
     @Test
@@ -64,7 +64,7 @@ class QuestionnaireUpdateKitPersisterTest {
         persister.persist(savedKit, dslKit);
 
         verify(createQuestionnairePort, times(1)).persist(any(Questionnaire.class), eq(kitId));
-        verifyNoInteractions(updateQuestionnaireByKitPort);
+        verifyNoInteractions(updateQuestionnairePort);
     }
 
     @Test
@@ -75,13 +75,13 @@ class QuestionnaireUpdateKitPersisterTest {
         var savedQuestionnaire2 = QuestionnaireMother.questionnaire("CodeQuality", "Old Code Quality", 2);
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaire(List.of(savedQuestionnaire1, savedQuestionnaire2), kitId);
 
-        doNothing().when(updateQuestionnaireByKitPort).updateByKitId(any(UpdateQuestionnaireByKitPort.Param.class));
+        doNothing().when(updateQuestionnairePort).update(any(UpdateQuestionnairePort.Param.class));
 
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
         persister.persist(savedKit, dslKit);
 
-        verify(updateQuestionnaireByKitPort, times(1)).updateByKitId(any(UpdateQuestionnaireByKitPort.Param.class));
+        verify(updateQuestionnairePort, times(1)).update(any(UpdateQuestionnairePort.Param.class));
         verifyNoInteractions(createQuestionnairePort);
     }
 }

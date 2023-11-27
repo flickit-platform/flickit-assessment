@@ -38,6 +38,6 @@ public class QuestionnaireJpaEntity {
     @Column(name = "index", nullable = false)
     private Integer index;
 
-    @Column(name = "assessment_kit_id")
+    @Column(name = "assessment_kit_id", nullable = false)
     private Long assessmentKitId;
 }

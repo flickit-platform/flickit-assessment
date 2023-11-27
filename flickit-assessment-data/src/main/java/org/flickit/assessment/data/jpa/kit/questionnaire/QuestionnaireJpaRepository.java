@@ -16,10 +16,9 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         "q.title = :title, " +
         "q.description = :description, " +
         "q.index = :index " +
-        "WHERE q.code = :code AND q.assessmentKitId = :kitId")
-    void updateByKitId(@Param("code") String code,
-                       @Param("title") String title,
-                       @Param("description") String description,
-                       @Param("index") Integer index,
-                       @Param("kitId") Long kitId);
+        "WHERE q.id = :id")
+    void update(@Param("id") Long id,
+                @Param("title") String title,
+                @Param("index") Integer index,
+                @Param("description") String description);
 }

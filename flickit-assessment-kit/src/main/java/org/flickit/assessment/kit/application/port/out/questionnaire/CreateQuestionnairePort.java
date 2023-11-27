@@ -4,5 +4,5 @@ import org.flickit.assessment.kit.application.domain.Questionnaire;
 
 public interface CreateQuestionnairePort {
 
-    Long persist(Questionnaire questionnaire, Long kitId);
+    Long persist(Questionnaire questionnaire, long kitId);
 }

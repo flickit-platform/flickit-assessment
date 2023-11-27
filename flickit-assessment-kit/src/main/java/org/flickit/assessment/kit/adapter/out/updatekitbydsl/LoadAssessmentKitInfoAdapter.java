@@ -3,17 +3,19 @@ package org.flickit.assessment.kit.adapter.out.updatekitbydsl;
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
+import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
+import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
-import org.flickit.assessment.kit.application.port.out.levelcomptenece.LoadLevelCompetencesByMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByKitPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesByKitPort;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.FIND_KIT_ID_NOT_FOUND;
@@ -23,18 +25,23 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.FIND_KIT_ID_NOT_
 public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
 
     private final AssessmentKitJpaRepository repository;
-    private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
-    private final LoadLevelCompetencesByMaturityLevelPort loadLevelCompetencesByMaturityLevelPort;
-    private final LoadQuestionnairesByKitPort loadQuestionnairesByKitPort;
+    private final MaturityLevelJpaRepository maturityLevelRepository;
+    private final LevelCompetenceJpaRepository levelCompetenceRepository;
+    private final QuestionnaireJpaRepository questionnaireRepository;
 
     @Override
     public AssessmentKit load(Long kitId) {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
             () -> new ResourceNotFoundException(FIND_KIT_ID_NOT_FOUND));
-        List<MaturityLevel> levels = new ArrayList<>(loadMaturityLevelByKitPort.loadByKitId(kitId));
+        List<MaturityLevel> levels = maturityLevelRepository.findAllByAssessmentKitId(kitId).stream()
+            .map(MaturityLevelMapper::mapToDomainModel)
+            .toList();
         setLevelCompetences(levels);
 
-        ArrayList<Questionnaire> questionnaires = new ArrayList<>(loadQuestionnairesByKitPort.loadByKitId(kitId));
+        List<Questionnaire> questionnaires = questionnaireRepository.findAllByAssessmentKitId(kitId).stream()
+            .map(QuestionnaireMapper::mapToDomainModel)
+            .toList();
+        ;
 
         return new AssessmentKit(
             kitId,
@@ -54,7 +61,9 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
 
     private void setLevelCompetences(List<MaturityLevel> levels) {
         levels.forEach(level -> level.setCompetences(
-            loadLevelCompetencesByMaturityLevelPort.loadByMaturityLevelId(level.getId())));
+            levelCompetenceRepository.findByMaturityLevelId(level.getId()).stream()
+                .map(MaturityLevelCompetenceMapper::mapToDomainModel)
+                .toList()));
     }
 
 }

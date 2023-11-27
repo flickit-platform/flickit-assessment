@@ -8,7 +8,7 @@ import org.flickit.assessment.kit.application.domain.Questionnaire;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionnaireMapper {
 
-    static Questionnaire mapToDomainModel(QuestionnaireJpaEntity entity) {
+    public static Questionnaire mapToDomainModel(QuestionnaireJpaEntity entity) {
         return new Questionnaire(
             entity.getId(),
             entity.getCode(),

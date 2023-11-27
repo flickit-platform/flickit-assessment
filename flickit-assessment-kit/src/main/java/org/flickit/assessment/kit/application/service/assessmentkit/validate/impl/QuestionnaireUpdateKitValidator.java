@@ -28,21 +28,21 @@ public class QuestionnaireUpdateKitValidator implements UpdateKitValidator {
         List<QuestionnaireDslModel> dslQuestionnaires = dslKit.getQuestionnaires();
 
         Map<String, Questionnaire> savedQuestionnaireCodesMap = savedQuestionnaires.stream().collect(Collectors.toMap(Questionnaire::getCode, i -> i));
-        Map<String, QuestionnaireDslModel> newQuestionnaireCodesMap = dslQuestionnaires.stream().collect(Collectors.toMap(QuestionnaireDslModel::getCode, i -> i));
+        Map<String, QuestionnaireDslModel> dslQuestionnaireCodesMap = dslQuestionnaires.stream().collect(Collectors.toMap(QuestionnaireDslModel::getCode, i -> i));
 
-        if (isAnyDeleted(savedQuestionnaireCodesMap.keySet(), newQuestionnaireCodesMap.keySet())) {
+        if (isAnyDeleted(savedQuestionnaireCodesMap.keySet(), dslQuestionnaireCodesMap.keySet())) {
             result.add(UPDATE_KIT_BY_DSL_DSL_QUESTIONNAIRE_DELETION_NOT_ALLOWED);
         }
 
         return result;
     }
 
-    private boolean isAnyDeleted(Set<String> savedQuestionnaireCodesSet, Set<String> newQuestionnaireCodesSet) {
-        return !savedQuestionnaireCodesSet.stream()
-            .filter(s -> newQuestionnaireCodesSet.stream()
+    private boolean isAnyDeleted(Set<String> savedQuestionnaireCodesSet, Set<String> dslQuestionnaireCodesSet) {
+        List<String> deletedQuestionnaires = savedQuestionnaireCodesSet.stream()
+            .filter(s -> dslQuestionnaireCodesSet.stream()
                 .noneMatch(i -> i.equals(s)))
-            .toList()
-            .isEmpty();
+            .toList();
+        return !deletedQuestionnaires.isEmpty();
     }
 
 }
