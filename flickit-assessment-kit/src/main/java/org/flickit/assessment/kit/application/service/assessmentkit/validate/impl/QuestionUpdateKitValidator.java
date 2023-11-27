@@ -28,29 +28,29 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
         var newQuestions = dslKit.getQuestions();
 
         Map<String, Question> savedQuestionCodesMap = savedQuestions.stream().collect(Collectors.toMap(Question::getCode, i -> i));
-        Map<String, QuestionDslModel> newQuestionCodesMap = newQuestions.stream().collect(Collectors.toMap(QuestionDslModel::getCode, i -> i));
+        Map<String, QuestionDslModel> dslQuestionCodesMap = newQuestions.stream().collect(Collectors.toMap(QuestionDslModel::getCode, i -> i));
 
-        if (isAnyDeleted(savedQuestionCodesMap.keySet(), newQuestionCodesMap.keySet())) {
+        if (isAnyDeleted(savedQuestionCodesMap.keySet(), dslQuestionCodesMap.keySet())) {
             result.add(UPDATE_KIT_BY_DSL_QUESTION_DELETION_NOT_ALLOWED);
         }
 
-        if (isAdded(savedQuestionCodesMap.keySet(), newQuestionCodesMap.keySet())) {
+        if (isAdded(savedQuestionCodesMap.keySet(), dslQuestionCodesMap.keySet())) {
             result.add(UPDATE_KIT_BY_DSL_QUESTION_ADDITION_NOT_ALLOWED);
         }
 
         return result;
     }
 
-    private boolean isAnyDeleted(Set<String> savedQuestionCodesSet, Set<String> newQuestionCodesSet) {
+    private boolean isAnyDeleted(Set<String> savedQuestionCodesSet, Set<String> dslQuestionCodesSet) {
         return !savedQuestionCodesSet.stream()
-            .filter(s -> newQuestionCodesSet.stream()
+            .filter(s -> dslQuestionCodesSet.stream()
                 .noneMatch(i -> i.equals(s)))
             .toList()
             .isEmpty();
     }
 
-    private boolean isAdded(Set<String> savedQuestionCodesSet, Set<String> newQuestionCodesSet) {
-        return !newQuestionCodesSet.stream()
+    private boolean isAdded(Set<String> savedQuestionCodesSet, Set<String> dslQuestionCodesSet) {
+        return !dslQuestionCodesSet.stream()
             .filter(s -> savedQuestionCodesSet.stream()
                 .noneMatch(i -> i.equals(s)))
             .toList()

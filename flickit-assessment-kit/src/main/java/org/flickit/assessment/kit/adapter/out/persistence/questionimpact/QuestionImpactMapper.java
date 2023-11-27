@@ -9,10 +9,23 @@ import org.flickit.assessment.kit.application.domain.QuestionImpact;
 public class QuestionImpactMapper {
     public static QuestionImpact mapToDomainModel(QuestionImpactJpaEntity entity) {
         return new QuestionImpact(
+            entity.getId(),
             entity.getQualityAttributeId(),
             entity.getMaturityLevelId(),
             entity.getWeight(),
+            entity.getQuestionId(),
             null
+        );
+    }
+
+    public static QuestionImpactJpaEntity mapToJpaEntity(QuestionImpact impact) {
+        return new QuestionImpactJpaEntity(
+            null,
+            null,
+            impact.getWeight(),
+            impact.getQuestionId(),
+            impact.getAttributeId(),
+            impact.getMaturityLevelId()
         );
     }
 }

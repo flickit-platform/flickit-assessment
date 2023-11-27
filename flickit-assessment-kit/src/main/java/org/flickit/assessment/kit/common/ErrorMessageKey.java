@@ -15,4 +15,6 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_BY_DSL_DSL_CONTENT_NOT_NULL = "update-kit-by-dsl.dsl-content.notNull";
     public static final String UPDATE_KIT_BY_DSL_QUESTION_DELETION_NOT_ALLOWED = "update-kit-by-dsl.delete-question.notAllowed";
     public static final String UPDATE_KIT_BY_DSL_QUESTION_ADDITION_NOT_ALLOWED = "update-kit-by-dsl.add-question.notAllowed";
+    public static final String UPDATE_KIT_BY_DSL_MATURITY_LEVEL_NOT_FOUND = "update-kit-by-dsl.maturity-level.notFound";
+    public static final String UPDATE_KIT_BY_DSL_ATTRIBUTE_NOT_FOUND= "update-kit-by-dsl.attribute.notFound";
 }

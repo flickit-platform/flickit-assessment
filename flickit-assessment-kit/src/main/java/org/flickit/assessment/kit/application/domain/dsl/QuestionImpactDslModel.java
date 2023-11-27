@@ -17,4 +17,5 @@ public class QuestionImpactDslModel {
     @JsonProperty("optionValues")
     private Map<Integer, Double> optionsIndextoValueMap;
     private Integer weight;
+
 }

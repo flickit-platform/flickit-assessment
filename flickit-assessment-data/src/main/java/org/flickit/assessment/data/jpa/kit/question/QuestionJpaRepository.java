@@ -22,7 +22,9 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
         "WHERE q.id = id")
     void update(@Param("id") Long id,
                 @Param("title") String title,
-                @Param("description") String description,
                 @Param("index") Integer index,
+                @Param("description") String description,
                 @Param("notApplicable") Boolean notApplicable);
+
+    QuestionJpaEntity findByCode(String code);
 }

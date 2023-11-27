@@ -4,6 +4,6 @@ public interface UpdateQuestionPort {
 
     void update(Param param);
 
-    record Param(Long id, String title, String description, Integer index, Boolean isNotApplicable) {
+    record Param(Long id, String title, Integer index, String description, Boolean isNotApplicable) {
     }
 }
