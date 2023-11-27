@@ -11,7 +11,9 @@ import org.flickit.assessment.kit.common.Notification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_BY_DSL_SUBJECT_CODE_NOT_CHANGE;
+import java.util.stream.Collectors;
+
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -22,10 +24,16 @@ public class SubjectUpdateValidator implements UpdateKitValidator {
     @Override
     public Notification validate(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Notification notification = new Notification();
-        var codes = dslKit.getSubjects().stream().map(BaseDslModel::getCode).toList();
-        var savedCodes = savedKit.getSubjects().stream().map(Subject::getCode).toList();
-        if (savedCodes.containsAll(codes)) {
-            notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_CODE_NOT_CHANGE);
+        var codes = dslKit.getSubjects().stream().map(BaseDslModel::getCode).collect(Collectors.toSet());
+        var savedCodes = savedKit.getSubjects().stream().map(Subject::getCode).collect(Collectors.toSet());
+        if (!savedCodes.equals(codes)) {
+            if (savedCodes.size() > codes.size()) {
+                notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE);
+            } else if (savedCodes.size() < codes.size()) {
+                notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD);
+            } else {
+                notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_CODE_NOT_CHANGE);
+            }
             log.debug("Subjects code for assessment kit id [{}] has changes.", savedKit.getId());
         }
         return notification;

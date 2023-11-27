@@ -165,7 +165,7 @@
     {
       "code": "Software",
       "title": "Software",
-      "description": "",
+      "description": "Description for Software",
       "index": 1,
       "weight": 0,
       "questionnaireCodes": null
@@ -173,7 +173,7 @@
     {
       "code": "Team",
       "title": "Team",
-      "description": "",
+      "description": "Description for Software",
       "index": 2,
       "weight": 0,
       "questionnaireCodes": null

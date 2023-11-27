@@ -74,5 +74,67 @@ public class AssessmentKitMother {
             null);
     }
 
+    public static AssessmentKit kitWithTwoSubject(Long id) {
+        return new AssessmentKit(
+            id,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            EXPERT_GROUP_ID,
+            SubjectMother.twoSubject(),
+            null,
+            null);
+    }
 
+    public static AssessmentKit kitWithThreeSubject(Long id) {
+        return new AssessmentKit(
+            id,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            EXPERT_GROUP_ID,
+            SubjectMother.threeSubjects(),
+            null,
+            null);
+    }
+
+    public static AssessmentKit kitWithOneSubject(Long id) {
+        return new AssessmentKit(
+            id,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            EXPERT_GROUP_ID,
+            SubjectMother.oneSubjects(),
+            null,
+            null);
+    }
+
+    public static AssessmentKit kitWithTwoSubjectDiffCode(Long id) {
+        return new AssessmentKit(
+            id,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            EXPERT_GROUP_ID,
+            SubjectMother.twoSubjectDiffCode(),
+            null,
+            null);
+    }
 }
