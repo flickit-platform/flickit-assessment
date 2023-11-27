@@ -17,8 +17,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
@@ -64,15 +67,17 @@ class SubjectUpdatePersisterTest {
 
         assertEquals(1L, softwareSubject.kitId());
         assertEquals("Software", softwareSubject.code());
-        assertEquals("Software title", softwareSubject.Title());
-        assertEquals("Description for Software", softwareSubject.Description());
-        assertEquals(1, softwareSubject.Index());
+        assertEquals("Software title", softwareSubject.title());
+        assertEquals("Description for Software", softwareSubject.description());
+        assertEquals(1, softwareSubject.index());
+        assertThat(softwareSubject.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
 
         assertEquals(1L, teamSubject.kitId());
         assertEquals("Team", teamSubject.code());
-        assertEquals("Team title", teamSubject.Title());
-        assertEquals("Description for Team", teamSubject.Description());
-        assertEquals(2, teamSubject.Index());
+        assertEquals("Team title", teamSubject.title());
+        assertEquals("Description for Team", teamSubject.description());
+        assertEquals(2, teamSubject.index());
+        assertThat(teamSubject.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
 
         assertFalse(result.shouldInvalidateCalcResult());
     }

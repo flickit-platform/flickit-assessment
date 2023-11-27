@@ -9,9 +9,9 @@ public interface UpdateSubjectsPort {
     record Param(
         long kitId,
         String code,
-        String Title,
-        String Description,
-        int Index,
+        String title,
+        String description,
+        int index,
         LocalDateTime lastModificationTime
     ) {
     }

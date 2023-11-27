@@ -29,9 +29,9 @@ public class SubjectPersistenceJpaAdapter implements
     public void updateSubject(Param param) {
         repo.updateByCodeAndAssessmentKitId(param.kitId(),
             param.code(),
-            param.Title(),
-            param.Description(),
-            param.Index(),
+            param.title(),
+            param.description(),
+            param.index(),
             param.lastModificationTime());
     }
 }

@@ -10,16 +10,16 @@ public class SubjectMother {
     public static final Long SUBJECT_ONE_ID = 10L;
     public static final String SUBJECT_ONE_CODE = "Software";
     public static final String SUBJECT_ONE_TITLE = "Software1";
-    public static final String SUBJECT_ONE_DESCRIPTION = "Description for Software1";
+    public static final String SUBJECT_ONE_DESCRIPTION = "description for Software1";
     public static final Long SUBJECT_TWO_ID = 20L;
     public static final String SUBJECT_TWO_CODE = "Team";
     public static final String SUBJECT_TWO_TITLE = "Team1";
-    public static final String SUBJECT_TWO_DESCRIPTION = "Description for Team1";
+    public static final String SUBJECT_TWO_DESCRIPTION = "description for Team1";
 
     public static final Long SUBJECT_THREE_ID = 30L;
     public static final String SUBJECT_THREE_CODE = "Security";
     public static final String SUBJECT_THREE_TITLE = "Security";
-    public static final String SUBJECT_THREE_DESCRIPTION = "Description for Security";
+    public static final String SUBJECT_THREE_DESCRIPTION = "description for Security";
 
 
     public static List<Subject> oneSubjects() {
