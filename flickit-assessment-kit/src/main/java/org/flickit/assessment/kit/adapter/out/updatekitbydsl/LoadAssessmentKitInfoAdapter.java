@@ -41,7 +41,6 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
         List<Questionnaire> questionnaires = questionnaireRepository.findAllByAssessmentKitId(kitId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
             .toList();
-        ;
 
         return new AssessmentKit(
             kitId,
