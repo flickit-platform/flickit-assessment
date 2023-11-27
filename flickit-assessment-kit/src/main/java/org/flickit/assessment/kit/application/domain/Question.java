@@ -21,6 +21,7 @@ public class Question {
     private List<QuestionImpact> impacts;
     @Setter
     private List<AnswerOption> options;
+    private final Long questionnaireId;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
 }

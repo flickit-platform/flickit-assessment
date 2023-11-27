@@ -4,13 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByCodePort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component

@@ -15,6 +15,7 @@ public class QuestionMapper {
             entity.getIndex(),
             entity.getDescription(),
             entity.getNotApplicable(),
+            entity.getQuestionnaireId(),
             entity.getCreationTime(),
             entity.getLastModificationTime()
         );
