@@ -6,7 +6,6 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaReposit
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
-import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.Question;
@@ -26,8 +25,9 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.FIND_KIT_ID_NOT_
 public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
 
     private final AssessmentKitJpaRepository repository;
-    private final LoadMaturityLevelByKitPort loadMaturityLevelByKitPort;
-    private final LoadLevelCompetencesByMaturityLevelPort loadLevelCompetencesByMaturityLevelPort;
+    private final MaturityLevelJpaRepository maturityLevelRepository;
+    private final LevelCompetenceJpaRepository levelCompetenceRepository;
+    private final QuestionnaireJpaRepository questionnaireRepository;
     private final QuestionJpaRepository questionRepository;
     private final QuestionImpactJpaRepository questionImpactRepository;
 
@@ -35,8 +35,14 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     public AssessmentKit load(Long kitId) {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
             () -> new ResourceNotFoundException(FIND_KIT_ID_NOT_FOUND));
-        List<MaturityLevel> levels = new ArrayList<>(loadMaturityLevelByKitPort.loadByKitId(kitId));
+        List<MaturityLevel> levels = maturityLevelRepository.findAllByAssessmentKitId(kitId).stream()
+            .map(MaturityLevelMapper::mapToDomainModel)
+            .toList();
         setLevelCompetences(levels);
+
+        List<Questionnaire> questionnaires = questionnaireRepository.findAllByAssessmentKitId(kitId).stream()
+            .map(QuestionnaireMapper::mapToDomainModel)
+            .toList();
 
         List<Question> questions = questionRepository.findByKitId(kitId).stream()
             .map(QuestionMapper::mapToDomainModel)
@@ -56,13 +62,15 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
             entity.getExpertGroupId(),
             null,
             levels,
-            null
+            questionnaires
         );
     }
 
     private void setLevelCompetences(List<MaturityLevel> levels) {
         levels.forEach(level -> level.setCompetences(
-            loadLevelCompetencesByMaturityLevelPort.loadByMaturityLevelId(level.getId())));
+            levelCompetenceRepository.findByMaturityLevelId(level.getId()).stream()
+                .map(MaturityLevelCompetenceMapper::mapToDomainModel)
+                .toList()));
     }
 
     private void setQuestionImpacts(List<Question> questions) {
