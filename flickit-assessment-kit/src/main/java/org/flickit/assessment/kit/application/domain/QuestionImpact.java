@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -14,7 +15,8 @@ public class QuestionImpact {
     private final long maturityLevelId;
     private final int weight;
     private final Long questionId;
-    private final List<AnswerOptionImpact> optionImpacts;
+    @Setter
+    private List<AnswerOptionImpact> optionImpacts;
 
     public record Code(String attributeCode, String maturityLevelCode) {}
 }

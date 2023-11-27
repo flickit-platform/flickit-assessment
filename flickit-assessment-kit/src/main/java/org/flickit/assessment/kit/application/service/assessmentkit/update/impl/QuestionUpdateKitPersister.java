@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByCodePort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributeByCodePort;
@@ -42,6 +43,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final CreateQuestionImpactPort createQuestionImpactPort;
     private final DeleteQuestionImpactPort deleteQuestionImpactPort;
     private final UpdateQuestionImpactPort updateQuestionImpactPort;
+    private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
 
     @Override
     public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
@@ -91,13 +93,14 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         }
 
         if (savedQuestion.getImpacts() != null || dslQuestion.getQuestionImpacts() != null) {
-            invalidateResults = updateQuestionImpacts(savedQuestion, dslQuestion, kitId, invalidateResults);
+            invalidateResults = invalidateResults || updateQuestionImpacts(savedQuestion, dslQuestion, kitId);
         }
 
         return invalidateResults;
     }
 
-    private boolean updateQuestionImpacts(Question savedQuestion, QuestionDslModel dslQuestion, long kitId, boolean invalidateResults) {
+    private boolean updateQuestionImpacts(Question savedQuestion, QuestionDslModel dslQuestion, long kitId) {
+        boolean invalidateResults = false;
         Map<QuestionImpact.Code, QuestionImpact> savedImpactCodesMap = savedQuestion.getImpacts().stream()
             .collect(Collectors.toMap(this::createQuestionImpactCode, i -> i));
         Map<QuestionImpact.Code, QuestionImpactDslModel> dslImpactCodesMap = dslQuestion.getQuestionImpacts().stream()
@@ -110,9 +113,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         newImpacts.forEach(i -> createImpact(dslImpactCodesMap.get(i), dslImpactCodesMap.get(i).getQuestion().getCode(), kitId));
         deletedImpacts.forEach(i -> deleteImpact(savedImpactCodesMap.get(new QuestionImpact.Code(i.attributeCode(), i.maturityLevelCode())).getId()));
         for (QuestionImpact.Code i : sameImpacts) {
-            invalidateResults = updateImpact(savedImpactCodesMap.get(i).getId(),
-                dslImpactCodesMap.get(i).getWeight(),
-                savedImpactCodesMap.get(i).getQuestionId());
+            invalidateResults = updateImpact(savedImpactCodesMap.get(i), dslImpactCodesMap.get(i));
         }
 
         if (invalidateResults || !newImpacts.isEmpty() || !deletedImpacts.isEmpty())
@@ -158,24 +159,62 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             loadQualityAttributeByCodePort.loadByCode(dslQuestionImpact.getAttributeCode()).getId(),
             loadMaturityLevelByCodePort.loadByCode(dslQuestionImpact.getMaturityLevel().getCode(), kitId).getId(),
             dslQuestionImpact.getWeight(),
-            loadQuestionByCodePort.loadByCode(questionCode).getId(),
-            null
+            loadQuestionByCodePort.loadByCode(questionCode).getId()
         );
-        createQuestionImpactPort.persist(newQuestionImpact);
+        Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
+        log.debug("Question impact with attribute code [{}] and maturity level code [{}] is created.",
+            dslQuestionImpact.getAttributeCode(), dslQuestionImpact.getMaturityLevel().getCode());
+
+        /*var answerOptionImpactCreateParamList = dslQuestionImpact.getOptionsIndextoValueMap().keySet().stream()
+            .map(key -> new CreateAnswerOptionImpactPort.Param(impactId, key, dslQuestionImpact.getOptionsIndextoValueMap().get(key)))
+            .toList();
+        answerOptionImpactCreateParamList.forEach(a -> {
+            Long optionImpactId = createAnswerOptionImpactPort.persist(a);
+            log.debug("Answer option impact with id [{}] is created.", optionImpactId);
+        });*/
+    }
+
+    private List<AnswerOptionImpact> toAnswerOptionImpactList(Map<Integer, Double> map) {
+        return map.keySet().stream()
+            .map(key -> new AnswerOptionImpact(
+                key,
+                map.get(key)))
+            .toList();
     }
 
     private void deleteImpact(long id) {
         deleteQuestionImpactPort.delete(id);
+        log.debug("Question impact with id [{}] is deleted.", id);
+
+        // TODO: delete option impacts
     }
 
-    private boolean updateImpact(Long id, int weight, Long questionId) {
-        var updateParam = new UpdateQuestionImpactPort.Param(
-            id,
-            weight,
-            questionId
-        );
-        updateQuestionImpactPort.update(updateParam);
-        return true;
+    private boolean updateImpact(QuestionImpact savedImpact, QuestionImpactDslModel dslImpact) {
+        boolean invalidateResult = false;
+        if (savedImpact.getWeight() != dslImpact.getWeight()) {
+            var updateParam = new UpdateQuestionImpactPort.Param(
+                savedImpact.getId(),
+                dslImpact.getWeight(),
+                savedImpact.getQuestionId()
+            );
+            updateQuestionImpactPort.update(updateParam);
+            log.debug("Question impact with id [{}] is updated.", savedImpact.getId());
+            invalidateResult = true;
+        }
+
+        if (savedImpact.getOptionImpacts() != null || dslImpact.getOptionsIndextoValueMap() != null) {
+            invalidateResult = invalidateResult || updateOptionImpacts(savedImpact, dslImpact);
+        }
+
+        return invalidateResult;
+    }
+
+    private boolean updateOptionImpacts(QuestionImpact savedImpact, QuestionImpactDslModel dslImpact) {
+        boolean invalidateResult = false;
+        // TODO: create option impacts
+        // TODO: delete option impacts
+        // TODO: update option impacts
+        return invalidateResult;
     }
 
 }
