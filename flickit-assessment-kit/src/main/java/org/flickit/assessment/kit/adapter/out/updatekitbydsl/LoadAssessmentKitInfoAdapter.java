@@ -3,18 +3,18 @@ package org.flickit.assessment.kit.adapter.out.updatekitbydsl;
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpeEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.domain.Subject;
+import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.springframework.stereotype.Component;
@@ -32,6 +32,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
     private final SubjectJpaRepository subjectJpaRepository;
+    private final AttributeJpaRepository attributeRepository;
     private final QuestionnaireJpaRepository questionnaireRepository;
 
     @Override
@@ -41,14 +42,28 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
         List<MaturityLevel> levels = maturityLevelRepository.findAllByAssessmentKitId(kitId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
-        List<Subject> subjects = new ArrayList<>(subjectJpaRepository.findAllByAssessmentKit_Id(kitId)).stream()
-            .map(SubjectMapper::mapToDomainModel)
-            .toList();
+
         setLevelCompetences(levels);
 
         List<Questionnaire> questionnaires = questionnaireRepository.findAllByAssessmentKitId(kitId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
             .toList();
+
+
+        List<SubjectJpaEntity> subjectEntities = subjectJpaRepository.findAllByAssessmentKit_Id(kitId);
+
+        List<Attribute> attributes;
+        List<AttributeJpeEntity> attributeEntities;
+        List<Subject> subjects = new ArrayList<>();
+        for (SubjectJpaEntity s: subjectEntities) {
+            attributeEntities = attributeRepository.findAllBySubjectId(s.getId());
+            attributes = attributeEntities.stream()
+                .map(this::mapToDomainModel)
+                .toList();
+            Subject subject = SubjectMapper.mapToDomainModel(s, attributes);
+            subjects.add(subject);
+        }
+
 
         return new AssessmentKit(
             kitId,
@@ -71,6 +86,20 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
             levelCompetenceRepository.findByMaturityLevelId(level.getId()).stream()
                 .map(MaturityLevelCompetenceMapper::mapToDomainModel)
                 .toList()));
+    }
+
+
+    private Attribute mapToDomainModel(AttributeJpeEntity entity) {
+        return new Attribute(
+            entity.getId(),
+            entity.getCode(),
+            entity.getTitle(),
+            entity.getIndex(),
+            entity.getDescription(),
+            entity.getWeight(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime()
+        );
     }
 
 }
