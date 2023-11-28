@@ -31,7 +31,7 @@ public class QuestionnaireUpdateKitValidator implements UpdateKitValidator {
         Map<String, QuestionnaireDslModel> dslQuestionnaireCodesMap = dslQuestionnaires.stream().collect(Collectors.toMap(QuestionnaireDslModel::getCode, i -> i));
 
         if (isAnyDeleted(savedQuestionnaireCodesMap.keySet(), dslQuestionnaireCodesMap.keySet())) {
-            result.add(UPDATE_KIT_BY_DSL_DSL_QUESTIONNAIRE_DELETION_NOT_ALLOWED);
+            result.add(new Notification.Error(UPDATE_KIT_BY_DSL_DSL_QUESTIONNAIRE_DELETION_NOT_ALLOWED));
         }
 
         return result;
