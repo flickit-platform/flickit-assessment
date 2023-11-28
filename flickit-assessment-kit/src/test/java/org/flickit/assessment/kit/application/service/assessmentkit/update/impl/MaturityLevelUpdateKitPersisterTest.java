@@ -14,7 +14,6 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturit
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.Constants;
 import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +32,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MaturityLevelUpdateKitPersisterTest {
+class MaturityLevelUpdateKitPersisterTest {
 
     @InjectMocks
     private MaturityLevelUpdateKitPersister persister;

@@ -12,6 +12,7 @@ public class Constants {
 
     public static String QUESTION_CODE1 = "m1";
     public static String QUESTION_TITLE1 = "Is API provided using standard and well-known communication protocols (such as REST and GraphQL)?";
+    public static String QUESTION_OLD_TITLE1 = "Is API provided using standard and well-known communication protocols?";
     public static String QUESTION_CODE2 = "m2";
     public static String QUESTION_TITLE2 = "Are the APIs documented and tested, and are proper tools and standards employed to accomplish this?";
 

@@ -86,13 +86,51 @@ class QuestionUpdateKitPersisterTest {
     @SneakyThrows
     void testQuestionUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
         Long kitId = 1L;
+        AssessmentKit savedKit = createTwoQuestionsAndMock(QUESTION_TITLE1, kitId);
+        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
+        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
+        persister.persist(savedKit, dslKit);
+
+        verifyNoInteractions(
+            updateQuestionPort,
+            createQuestionImpactPort,
+            deleteQuestionImpactPort,
+            updateQuestionImpactPort,
+            createAnswerOptionImpactPort,
+            deleteAnswerOptionImpactPort,
+            updateAnswerOptionImpactPort
+        );
+    }
+
+    @Test
+    @SneakyThrows
+    void testQuestionUpdateKitPersister_QuestionUpdated_UpdateInDatabase() {
+        Long kitId = 1L;
+        AssessmentKit savedKit = createTwoQuestionsAndMock(QUESTION_OLD_TITLE1, kitId);
+        doNothing().when(updateQuestionPort).update(any(UpdateQuestionPort.Param.class));
+
+        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
+        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
+        persister.persist(savedKit, dslKit);
+
+        verifyNoInteractions(
+            createQuestionImpactPort,
+            deleteQuestionImpactPort,
+            updateQuestionImpactPort,
+            createAnswerOptionImpactPort,
+            deleteAnswerOptionImpactPort,
+            updateAnswerOptionImpactPort
+        );
+    }
+
+    private AssessmentKit createTwoQuestionsAndMock(String questionTitle1, Long kitId) {
         var levelTwo = MaturityLevelMother.levelTwo();
         var levelThree = MaturityLevelMother.levelThree();
         var levelFour = MaturityLevelMother.levelFour();
         var savedQuestionnaire1 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE1, QUESTIONNAIRE_TITLE1, 1);
         var savedQuestion11 = QuestionMother.createQuestion(
             QUESTION_CODE1,
-            QUESTION_TITLE1,
+            questionTitle1,
             1,
             null,
             false,
@@ -161,26 +199,7 @@ class QuestionUpdateKitPersisterTest {
         when(loadAnswerOptionByIndexPort.loadByIndex(4, savedQuestion21.getId())).thenReturn(answerOption6);
         when(loadQuestionByCodePort.loadByCode(savedQuestion11.getCode())).thenReturn(savedQuestion11);
         when(loadQuestionByCodePort.loadByCode(savedQuestion21.getCode())).thenReturn(savedQuestion21);
-
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
-        persister.persist(savedKit, dslKit);
-
-        verifyNoInteractions(
-            updateQuestionPort,
-            createQuestionImpactPort,
-            deleteQuestionImpactPort,
-            updateQuestionImpactPort,
-            createAnswerOptionImpactPort,
-            deleteAnswerOptionImpactPort,
-            updateAnswerOptionImpactPort
-        );
-    }
-
-    @Test
-    @SneakyThrows
-    void testQuestionUpdateKitPersister_QuestionUpdated_UpdateInDatabase() {
-
+        return savedKit;
     }
 
     @Test
