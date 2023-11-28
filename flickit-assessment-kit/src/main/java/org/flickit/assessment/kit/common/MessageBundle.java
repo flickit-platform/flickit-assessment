@@ -21,7 +21,7 @@ public class MessageBundle {
 
     private static MessageSource messageSource() {
         var messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("i18n/messages");
+        messageSource.setBasename("i18n/kit/messages");
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setDefaultLocale(Locale.ENGLISH);
         return messageSource;

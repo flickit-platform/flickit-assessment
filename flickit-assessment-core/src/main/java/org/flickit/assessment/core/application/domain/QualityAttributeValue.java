@@ -121,7 +121,7 @@ public class QualityAttributeValue {
             return Collections.emptyMap();
         }
         List<Answer> validAnswers = answers.stream()
-            .filter(x -> Boolean.TRUE.equals(x.getIsNotApplicable() || x.getSelectedOption() != null))
+            .filter(x -> (Boolean.TRUE.equals(x.getIsNotApplicable()) || x.getSelectedOption() != null))
             .toList();
         return qualityAttribute.getQuestions().stream()
             .filter(q -> validAnswers.stream().anyMatch(a -> a.getQuestionId().equals(q.getId())))
