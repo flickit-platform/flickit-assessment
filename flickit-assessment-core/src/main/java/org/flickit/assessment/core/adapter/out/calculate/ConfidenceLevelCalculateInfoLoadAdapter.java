@@ -145,9 +145,11 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
         return context.allAnswerEntities.stream()
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
-            .filter(a -> a.getAnswerOptionId() != null)
             .map(entity -> {
-                AnswerOption answerOption = new AnswerOption(entity.getAnswerOptionId(), entity.getQuestionId(), null);
+                AnswerOption answerOption = null;
+                if (entity.getAnswerOptionId() != null) {
+                    answerOption = new AnswerOption(entity.getAnswerOptionId(), entity.getQuestionId(), null);
+                }
                 return new Answer(
                     entity.getId(),
                     answerOption,
