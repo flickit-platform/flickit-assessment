@@ -1,24 +1,18 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
 import org.flickit.assessment.kit.application.service.assessmentkit.validate.UpdateKitValidator;
 import org.flickit.assessment.kit.common.Notification;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toSet;
+import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.SUBJECT;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE;
-
-@Slf4j
-@Transactional(readOnly = true)
-@Component
+@Service
 @RequiredArgsConstructor
 public class SubjectUpdateKitValidator implements UpdateKitValidator {
 
@@ -26,20 +20,18 @@ public class SubjectUpdateKitValidator implements UpdateKitValidator {
     public Notification validate(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Notification notification = new Notification();
 
-        var savedSubjectCodes = savedKit.getSubjects().stream().map(Subject::getCode).collect(Collectors.toSet());
-        var dslSubjectCodes = dslKit.getSubjects().stream().map(BaseDslModel::getCode).collect(Collectors.toSet());
+        var savedSubjectCodes = savedKit.getSubjects().stream().map(Subject::getCode).collect(toSet());
+        var dslSubjectCodes = dslKit.getSubjects().stream().map(BaseDslModel::getCode).collect(toSet());
 
-        var deletedCodes = savedSubjectCodes.stream().filter(s -> dslSubjectCodes.stream().noneMatch(i -> i.equals(s))).toList();
-        var newCodes = dslSubjectCodes.stream().filter(i -> savedSubjectCodes.stream().noneMatch(s -> s.equals(i))).toList();
+        var deletedCodes = savedSubjectCodes.stream().filter(s -> !dslSubjectCodes.contains(s)).collect(toSet());
+        var newCodes = dslSubjectCodes.stream().filter(s -> !savedSubjectCodes.contains(s)).collect(toSet());
 
-        if (!newCodes.isEmpty()) {
-            notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD);
-            log.debug("New subjects code in dsl for assessment kit id [{}] has found.", savedKit.getId());
-        }
-        if (!deletedCodes.isEmpty()) {
-            notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE);
-            log.debug("Old Subjects code in dsl for assessment kit id [{}] has not found.", savedKit.getId());
-        }
+        if (!deletedCodes.isEmpty())
+            notification.add(new InvalidDeletionError(SUBJECT, deletedCodes));
+
+        if (!newCodes.isEmpty())
+            notification.add(new InvalidAdditionError(SUBJECT, newCodes));
+
         return notification;
     }
 }
