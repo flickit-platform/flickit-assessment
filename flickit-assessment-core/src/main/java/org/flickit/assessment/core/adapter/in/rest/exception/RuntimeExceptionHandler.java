@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import static org.flickit.assessment.core.adapter.in.rest.exception.api.ErrorCodes.INTERNAL_ERROR;
 
 @Slf4j
-@RestControllerAdvice
+//@RestControllerAdvice
 public class RuntimeExceptionHandler {
 
     @ResponseBody
