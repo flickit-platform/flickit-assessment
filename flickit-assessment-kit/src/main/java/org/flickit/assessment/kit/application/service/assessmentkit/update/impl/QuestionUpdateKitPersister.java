@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -83,7 +84,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private boolean updateQuestion(Question savedQuestion, QuestionDslModel dslQuestion, long kitId) {
         boolean invalidateResults = false;
         if (!savedQuestion.getTitle().equals(dslQuestion.getTitle()) ||
-            !savedQuestion.getHint().equals(dslQuestion.getDescription()) ||
+            !Objects.equals(savedQuestion.getHint(), dslQuestion.getDescription()) ||
             savedQuestion.getIndex() != dslQuestion.getIndex() ||
             savedQuestion.getMayNotBeApplicable() != dslQuestion.isMayNotBeApplicable()) {
             var updateParam = new UpdateQuestionPort.Param(
@@ -132,10 +133,10 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
     private QuestionImpact.Code createQuestionImpactCode(QuestionImpact impact) {
         Attribute attribute = loadQualityAttributePort.load(impact.getAttributeId()).orElseThrow(
-            () -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_MATURITY_LEVEL_NOT_FOUND)
+            () -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ATTRIBUTE_NOT_FOUND)
         );
         MaturityLevel maturityLevel = loadMaturityLevelPort.load(impact.getMaturityLevelId()).orElseThrow(
-            () -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ATTRIBUTE_NOT_FOUND)
+            () -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_MATURITY_LEVEL_NOT_FOUND)
         );
         return new QuestionImpact.Code(attribute.getCode(), maturityLevel.getCode());
     }

@@ -14,6 +14,7 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturit
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
+import org.flickit.assessment.kit.test.fixture.application.Constants;
 import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static org.flickit.assessment.kit.test.fixture.application.Constants.FILE;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
@@ -33,7 +35,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class MaturityLevelUpdateKitPersisterTest {
 
-    public static final String FILE = "src/test/resources/dsl.json";
     @InjectMocks
     private MaturityLevelUpdateKitPersister persister;
     @Mock

@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuest
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
+import org.flickit.assessment.kit.test.fixture.application.Constants;
 import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,12 +20,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class QuestionnaireUpdateKitPersisterTest {
-
-    public static final String FILE = "src/test/resources/dsl.json";
 
     @InjectMocks
     private QuestionnaireUpdateKitPersister persister;
@@ -39,8 +39,8 @@ class QuestionnaireUpdateKitPersisterTest {
     @SneakyThrows
     void testQuestionnaireUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
         Long kitId = 1L;
-        var savedQuestionnaire1 = QuestionnaireMother.questionnaire("CleanArchitecture", "Clean Architecture", 1);
-        var savedQuestionnaire2 = QuestionnaireMother.questionnaire("CodeQuality", "Code Quality", 2);
+        var savedQuestionnaire1 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE1, QUESTIONNAIRE_TITLE1, 1);
+        var savedQuestionnaire2 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE2, QUESTIONNAIRE_TITLE2, 2);
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaire(List.of(savedQuestionnaire1, savedQuestionnaire2), kitId);
 
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
@@ -54,7 +54,7 @@ class QuestionnaireUpdateKitPersisterTest {
     @SneakyThrows
     void testQuestionnaireUpdateKitPersister_QuestionnaireAdded_AddToDatabase() {
         Long kitId = 1L;
-        var savedQuestionnaire1 = QuestionnaireMother.questionnaire("CleanArchitecture", "Clean Architecture", 1);
+        var savedQuestionnaire1 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE1, QUESTIONNAIRE_TITLE1, 1);
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaire(List.of(savedQuestionnaire1), kitId);
 
         when(createQuestionnairePort.persist(any(Questionnaire.class), eq(kitId))).thenReturn(1L);
@@ -71,8 +71,8 @@ class QuestionnaireUpdateKitPersisterTest {
     @SneakyThrows
     void testQuestionnaireUpdateKitPersister_QuestionnaireUpdated_UpdateInDatabase() {
         Long kitId = 1L;
-        var savedQuestionnaire1 = QuestionnaireMother.questionnaire("CleanArchitecture", "Clean Architecture", 1);
-        var savedQuestionnaire2 = QuestionnaireMother.questionnaire("CodeQuality", "Old Code Quality", 2);
+        var savedQuestionnaire1 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE1, QUESTIONNAIRE_TITLE1, 1);
+        var savedQuestionnaire2 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE2, QUESTIONNAIRE_OLD_TITLE2, 2);
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaire(List.of(savedQuestionnaire1, savedQuestionnaire2), kitId);
 
         doNothing().when(updateQuestionnairePort).update(any(UpdateQuestionnairePort.Param.class));

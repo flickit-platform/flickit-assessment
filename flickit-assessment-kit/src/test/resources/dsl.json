@@ -37,19 +37,21 @@
       "title": "Is API provided using standard and well-known communication protocols (such as REST and GraphQL)?",
       "description": null,
       "index": 1,
-      "questionnaireCode": "ApiAndIntegration",
+      "questionnaireCode": "CleanArchitecture",
       "questionImpacts": [
         {
           "attributeCode": "SoftwareMaintainability",
           "level": {
-            "code": null,
+            "code": "Weak",
             "title": "Weak",
             "description": null,
             "index": null,
             "levelCompetence": null,
             "value": null
           },
-          "question": null,
+          "question": {
+            "code": "m1"
+          },
           "optionValues": {
             "1": 0,
             "2": 1
@@ -69,26 +71,28 @@
           "index": 2
         }
       ],
-      "mayNotBeApplicable": true
+      "mayNotBeApplicable": false
     },
     {
       "code": "m2",
       "title": "Are the APIs documented and tested, and are proper tools and standards employed to accomplish this?",
       "description": null,
       "index": 2,
-      "questionnaireCode": "ApiAndIntegration",
+      "questionnaireCode": "CodeQuality",
       "questionImpacts": [
         {
           "attributeCode": "SoftwareReliability",
           "level": {
-            "code": null,
+            "code": "Weak",
             "title": "Weak",
             "description": null,
             "index": null,
             "levelCompetence": null,
             "value": null
           },
-          "question": null,
+          "question": {
+            "code": "m2"
+          },
           "optionValues": {
             "1": 0,
             "2": 0,
@@ -100,14 +104,16 @@
         {
           "attributeCode": "SoftwareMaintainability",
           "level": {
-            "code": null,
+            "code": "Moderate",
             "title": "Moderate",
             "description": null,
             "index": null,
             "levelCompetence": null,
             "value": null
           },
-          "question": null,
+          "question": {
+            "code": "m2"
+          },
           "optionValues": {
             "1": 0,
             "2": 0.5,
@@ -119,14 +125,16 @@
         {
           "attributeCode": "SoftwareMaintainability",
           "level": {
-            "code": null,
+            "code": "Good",
             "title": "Good",
             "description": null,
             "index": null,
             "levelCompetence": null,
             "value": null
           },
-          "question": null,
+          "question": {
+            "code": "m2"
+          },
           "optionValues": {
             "1": 0,
             "2": 0,
