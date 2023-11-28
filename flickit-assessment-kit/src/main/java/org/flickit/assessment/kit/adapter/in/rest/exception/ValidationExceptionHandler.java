@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static org.flickit.assessment.kit.adapter.in.rest.exception.api.ErrorCodes.NOT_ALLOWED_DSL_CONTENT_CHANGE;
+import static org.flickit.assessment.kit.adapter.in.rest.exception.api.ErrorCodes.UNSUPPORTED_DSL_CONTENT_CHANGE;
 
 @RestControllerAdvice
 public class ValidationExceptionHandler {
@@ -23,7 +23,7 @@ public class ValidationExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponseDto handle(ValidationException ex) {
         String messages = toMessage(ex);
-        return new ErrorResponseDto(NOT_ALLOWED_DSL_CONTENT_CHANGE, messages);
+        return new ErrorResponseDto(UNSUPPORTED_DSL_CONTENT_CHANGE, messages);
     }
 
     private String toMessage(ValidationException ex) {
