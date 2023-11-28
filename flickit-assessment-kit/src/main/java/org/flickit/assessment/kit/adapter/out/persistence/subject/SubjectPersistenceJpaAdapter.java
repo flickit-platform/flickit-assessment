@@ -1,37 +1,25 @@
 package org.flickit.assessment.kit.adapter.out.persistence.subject;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
-import org.flickit.assessment.kit.application.domain.Subject;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectByKitPort;
-import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectsPort;
+import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 
 @Component
 @RequiredArgsConstructor
 public class SubjectPersistenceJpaAdapter implements
-    LoadSubjectByKitPort,
-    UpdateSubjectsPort {
+    UpdateSubjectPort {
 
-    private final SubjectJpaRepository repo;
-
-    @Override
-    public List<Subject> loadByKitId(Long assessmentKitId) {
-        List<SubjectJpaEntity> entities = repo.findAllByAssessmentKit_Id(assessmentKitId);
-        return entities.stream().map(SubjectMapper::mapToDomainModel).toList();
-    }
+    private final SubjectJpaRepository repository;
 
     @Override
-    public void updateSubject(Param param) {
-        repo.updateByCodeAndAssessmentKitId(param.kitId(),
-            param.code(),
+    public void updateByCodeAndKitId(Param param) {
+        repository.updateByCodeAndKitId(param.code(),
             param.title(),
-            param.description(),
             param.index(),
-            param.lastModificationTime());
+            param.description(),
+            param.lastModificationTime(),
+            param.kitId());
     }
 }

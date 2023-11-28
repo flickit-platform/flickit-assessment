@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 import lombok.SneakyThrows;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectsPort;
+import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
@@ -36,7 +36,7 @@ class SubjectUpdatePersisterTest {
     private SubjectUpdateKitPersister persister;
 
     @Mock
-    private UpdateSubjectsPort updateSubjectsPort;
+    private UpdateSubjectPort updateSubjectPort;
 
     private AssessmentKitDslModel dslKit;
 
@@ -54,16 +54,16 @@ class SubjectUpdatePersisterTest {
         Long kitId = 1L;
         AssessmentKit savedKit = AssessmentKitMother.kitWithTwoSubject(kitId);
 
-        doNothing().when(updateSubjectsPort).updateSubject(any());
+        doNothing().when(updateSubjectPort).updateByCodeAndKitId(any());
 
         UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
 
-        ArgumentCaptor<UpdateSubjectsPort.Param> param = ArgumentCaptor.forClass(UpdateSubjectsPort.Param.class);
-        verify(updateSubjectsPort, times(2)).updateSubject(param.capture());
+        ArgumentCaptor<UpdateSubjectPort.Param> param = ArgumentCaptor.forClass(UpdateSubjectPort.Param.class);
+        verify(updateSubjectPort, times(2)).updateByCodeAndKitId(param.capture());
 
-        List<UpdateSubjectsPort.Param> paramList = param.getAllValues();
-        UpdateSubjectsPort.Param softwareSubject = paramList.get(0);
-        UpdateSubjectsPort.Param teamSubject = paramList.get(1);
+        List<UpdateSubjectPort.Param> paramList = param.getAllValues();
+        UpdateSubjectPort.Param softwareSubject = paramList.get(0);
+        UpdateSubjectPort.Param teamSubject = paramList.get(1);
 
         assertEquals(1L, softwareSubject.kitId());
         assertEquals("Software", softwareSubject.code());

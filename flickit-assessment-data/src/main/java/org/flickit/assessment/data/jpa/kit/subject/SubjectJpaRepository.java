@@ -19,12 +19,12 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
         "s.index = :index, " +
         "s.lastModificationTime = :lastModificationTime " +
         "WHERE s.code = :code AND s.assessmentKitId = :kitId")
-    void updateByCodeAndAssessmentKitId(
-        @Param(value = "kitId") long kitId,
+    void updateByCodeAndKitId(
         @Param(value = "code") String code,
         @Param(value = "title") String title,
-        @Param(value = "description") String description,
         @Param(value = "index") int index,
-        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime
+        @Param(value = "description") String description,
+        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
+        @Param(value = "kitId") long kitId
     );
 }
