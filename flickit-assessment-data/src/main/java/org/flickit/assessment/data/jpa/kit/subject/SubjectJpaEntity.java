@@ -1,8 +1,10 @@
 package org.flickit.assessment.data.jpa.kit.subject;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 
 import java.time.LocalDateTime;
 
@@ -35,9 +37,8 @@ public class SubjectJpaEntity {
     @Column(name = "last_modification_date", nullable = false)
     private LocalDateTime lastModificationTime;
 
-    @ManyToOne
-    @JoinColumn(name = "assessment_kit_id", referencedColumnName = "id")
-    private AssessmentKitJpaEntity assessmentKit;
+    @Column(name = "assessment_kit_id", nullable = false)
+    private Long assessmentKitId;
 
     @Column(name = "index", nullable = false)
     private Integer index;
