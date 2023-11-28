@@ -24,9 +24,9 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
     public Result calculate(Param param) {
         AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(param.getAssessmentId());
 
-        Double confidenceLevel = assessmentResult.calculateConfidenceValue();
+        Double confidenceValue = assessmentResult.calculateConfidenceValue();
 
-        assessmentResult.setConfidenceValue(confidenceLevel);
+        assessmentResult.setConfidenceValue(confidenceValue);
         assessmentResult.setConfidenceValid(Boolean.TRUE);
         assessmentResult.setLastModificationTime(LocalDateTime.now());
 
@@ -34,6 +34,6 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
         updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
 
-        return new Result(confidenceLevel);
+        return new Result(confidenceValue);
     }
 }
