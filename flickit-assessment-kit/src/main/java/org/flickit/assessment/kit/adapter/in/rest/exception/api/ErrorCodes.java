@@ -7,5 +7,6 @@ import lombok.NoArgsConstructor;
 public class ErrorCodes {
 
     public static final String INVALID_DSL_CONTENT = "INVALID_DSL_CONTENT";
+    public static final String NOT_ALLOWED_DSL_CONTENT_CHANGE = "NOT_ALLOWED_DSL_CONTENT_CHANGE";
     public static final String INVALID_MATURITY_LEVEL = "INVALID_MATURITY_LEVEL";
 }
