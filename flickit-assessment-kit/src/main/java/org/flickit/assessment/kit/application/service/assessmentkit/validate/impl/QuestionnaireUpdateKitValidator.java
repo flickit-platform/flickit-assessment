@@ -10,8 +10,9 @@ import org.flickit.assessment.kit.common.Notification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_QUESTIONNAIRE_DELETION_UNSUPPORTED;
 
 @Service
@@ -25,13 +26,12 @@ public class QuestionnaireUpdateKitValidator implements UpdateKitValidator {
         List<Questionnaire> savedQuestionnaires = savedKit.getQuestionnaires();
         List<QuestionnaireDslModel> dslQuestionnaires = dslKit.getQuestionnaires();
 
-        List<String> savedQuestionnaireCodes = savedQuestionnaires.stream().map(Questionnaire::getCode).toList();
-        List<String> dslQuestionnaireCodes = dslQuestionnaires.stream().map(QuestionnaireDslModel::getCode).toList();
+        Set<String> savedQuestionnaireCodes = savedQuestionnaires.stream().map(Questionnaire::getCode).collect(toSet());
+        Set<String> dslQuestionnaireCodes = dslQuestionnaires.stream().map(QuestionnaireDslModel::getCode).collect(toSet());
 
-        List<String> deletedQuestionnaires = savedQuestionnaireCodes.stream()
-            .filter(s -> dslQuestionnaireCodes.stream()
-                .noneMatch(i -> i.equals(s)))
-            .toList();
+        Set<String> deletedQuestionnaires = savedQuestionnaireCodes.stream()
+            .filter(s -> !dslQuestionnaireCodes.contains(s))
+            .collect(toSet());
 
         if (!deletedQuestionnaires.isEmpty()) {
             String deletedCodes = String.join(", ", deletedQuestionnaires);
