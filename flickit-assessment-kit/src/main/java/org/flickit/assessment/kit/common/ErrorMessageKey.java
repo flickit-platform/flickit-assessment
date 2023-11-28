@@ -13,5 +13,16 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_DSL_CONTENT_NOT_NULL = "update-kit-by-dsl.dsl-content.notNull";
-    public static final String UPDATE_KIT_BY_DSL_QUESTIONNAIRE_DELETION_UNSUPPORTED = "update-kit-by-dsl.questionnaire-deletion.unsupported";
+
+    public static final String UPDATE_KIT_BY_DSL_ADDITION_UNSUPPORTED = "update-kit-by-dsl.addition.unsupported";
+    public static final String UPDATE_KIT_BY_DSL_DELETION_UNSUPPORTED = "update-kit-by-dsl.deletion.unsupported";
+
+    public static String entityNameSingleFirst(String fieldName) {
+        return String.format("entities.%s.single.first", fieldName);
+    }
+
+    public static String entityNamePlural(String fieldName) {
+        return String.format("entities.%s.plural", fieldName);
+    }
+
 }

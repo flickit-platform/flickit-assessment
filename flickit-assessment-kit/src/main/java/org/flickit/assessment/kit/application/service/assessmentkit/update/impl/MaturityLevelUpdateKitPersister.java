@@ -18,6 +18,8 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMatur
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(propagation = Propagation.MANDATORY)
 public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
 
     private final DeleteMaturityLevelPort deleteMaturityLevelPort;
