@@ -16,18 +16,18 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_B
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE;
 import static org.junit.jupiter.api.Assertions.*;
 
-class SubjectUpdateValidatorTest {
+class SubjectUpdateKitValidatorTest {
 
     public static final String FILE = "src/test/resources/dsl.json";
 
-    private SubjectUpdateValidator validator;
+    private SubjectUpdateKitValidator validator;
     private AssessmentKitDslModel dslKit;
 
     @BeforeEach
     @SneakyThrows
     void init() {
         if (validator == null) {
-            validator = new SubjectUpdateValidator();
+            validator = new SubjectUpdateKitValidator();
 
             String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
             dslKit = DslTranslator.parseJson(dslContent);

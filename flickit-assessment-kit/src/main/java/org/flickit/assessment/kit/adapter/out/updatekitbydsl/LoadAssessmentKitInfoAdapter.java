@@ -19,7 +19,6 @@ import org.flickit.assessment.kit.application.exception.ResourceNotFoundExceptio
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.FIND_KIT_ID_NOT_FOUND;
@@ -31,18 +30,20 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     private final AssessmentKitJpaRepository repository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
-    private final SubjectJpaRepository subjectJpaRepository;
+    private final SubjectJpaRepository subjectRepository;
     private final QuestionnaireJpaRepository questionnaireRepository;
 
     @Override
     public AssessmentKit load(Long kitId) {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
             () -> new ResourceNotFoundException(FIND_KIT_ID_NOT_FOUND));
+
+        List<Subject> subjects = subjectRepository.findAllByAssessmentKitId(kitId).stream()
+            .map(SubjectMapper::mapToDomainModel)
+            .toList();
+
         List<MaturityLevel> levels = maturityLevelRepository.findAllByAssessmentKitId(kitId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
-            .toList();
-        List<Subject> subjects = new ArrayList<>(subjectJpaRepository.findAllByAssessmentKit_Id(kitId)).stream()
-            .map(SubjectMapper::mapToDomainModel)
             .toList();
         setLevelCompetences(levels);
 

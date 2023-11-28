@@ -20,15 +20,17 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_B
 @Transactional(readOnly = true)
 @Component
 @RequiredArgsConstructor
-public class SubjectUpdateValidator implements UpdateKitValidator {
+public class SubjectUpdateKitValidator implements UpdateKitValidator {
 
     @Override
     public Notification validate(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Notification notification = new Notification();
-        var codes = dslKit.getSubjects().stream().map(BaseDslModel::getCode).collect(Collectors.toSet());
-        var savedCodes = savedKit.getSubjects().stream().map(Subject::getCode).collect(Collectors.toSet());
-        var deletedCodes = savedCodes.stream().filter(s -> codes.stream().noneMatch(i -> i.equals(s))).toList();
-        var newCodes = codes.stream().filter(i -> savedCodes.stream().noneMatch(s -> s.equals(i))).toList();
+
+        var savedSubjectCodes = savedKit.getSubjects().stream().map(Subject::getCode).collect(Collectors.toSet());
+        var dslSubjectCodes = dslKit.getSubjects().stream().map(BaseDslModel::getCode).collect(Collectors.toSet());
+
+        var deletedCodes = savedSubjectCodes.stream().filter(s -> dslSubjectCodes.stream().noneMatch(i -> i.equals(s))).toList();
+        var newCodes = dslSubjectCodes.stream().filter(i -> savedSubjectCodes.stream().noneMatch(s -> s.equals(i))).toList();
 
         if (!newCodes.isEmpty()) {
             notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD);

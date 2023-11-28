@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Long> {
 
-    List<SubjectJpaEntity> findAllByAssessmentKit_Id(Long assessmentKitId);
+    List<SubjectJpaEntity> findAllByAssessmentKitId(Long assessmentKitId);
 
     @Modifying
     @Query("UPDATE SubjectJpaEntity s SET " +
