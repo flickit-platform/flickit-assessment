@@ -5,6 +5,7 @@ import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepos
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
+import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuestionImpactByAttributeAndMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Component;
 public class QuestionImpactPersistenceJpaAdapter implements
     CreateQuestionImpactPort,
     DeleteQuestionImpactPort,
-    UpdateQuestionImpactPort {
+    UpdateQuestionImpactPort,
+    LoadQuestionImpactByAttributeAndMaturityLevelPort {
 
     private final QuestionImpactJpaRepository repository;
 
@@ -30,5 +32,10 @@ public class QuestionImpactPersistenceJpaAdapter implements
     @Override
     public void update(UpdateQuestionImpactPort.Param param) {
         repository.update(param.id(), param.weight(), param.questionId());
+    }
+
+    @Override
+    public QuestionImpact loadByAttributeCodeAndMaturityLevelCode(Long attributeId, Long maturityLevelId) {
+        return QuestionImpactMapper.mapToDomainModel(repository.findByQualityAttributeIdAndMaturityLevelId(attributeId, maturityLevelId));
     }
 }

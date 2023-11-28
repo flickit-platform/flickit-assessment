@@ -19,7 +19,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
         "q.description = :description, " +
         "q.index = :index, " +
         "q.notApplicable = :notApplicable " +
-        "WHERE q.id = id")
+        "WHERE q.id = :id")
     void update(@Param("id") Long id,
                 @Param("title") String title,
                 @Param("index") Integer index,

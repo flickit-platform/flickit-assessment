@@ -90,7 +90,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact) {
         impact.setOptionImpacts(
-            answerOptionImpactRepository.findAllByQuestionImpact(impact.getId()).stream()
+            answerOptionImpactRepository.findAllByQuestionImpactId(impact.getId()).stream()
                 .map(AnswerOptionImpactMapper::mapToDomainModel)
                 .toList()
         );
