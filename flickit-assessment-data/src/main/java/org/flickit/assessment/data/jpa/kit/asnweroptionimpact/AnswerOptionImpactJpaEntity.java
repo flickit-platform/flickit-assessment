@@ -2,8 +2,6 @@ package org.flickit.assessment.data.jpa.kit.asnweroptionimpact;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 
 @Entity
 @Table(name = "baseinfo_optionvalue")
