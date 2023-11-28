@@ -12,7 +12,8 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubjectUpdateValidatorTest {
@@ -66,17 +67,5 @@ class SubjectUpdateValidatorTest {
         assertTrue(notification.hasErrors());
         assertEquals(1, notification.getErrors().size());
         assertTrue(notification.getErrors().contains(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE));
-    }
-
-    @Test
-    void testSubjectUpdateValidator_ChangeSubjectCode_NotValidChange() {
-        Long kitId = 1L;
-        AssessmentKit savedKit = AssessmentKitMother.kitWithTwoSubjectDiffCode(kitId);
-
-        Notification notification = validator.validate(savedKit, dslKit);
-
-        assertTrue(notification.hasErrors());
-        assertEquals(1, notification.getErrors().size());
-        assertTrue(notification.getErrors().contains(UPDATE_SUBJECT_BY_DSL_SUBJECT_CODE_NOT_CHANGE));
     }
 }

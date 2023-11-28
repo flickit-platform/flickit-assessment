@@ -17,5 +17,4 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE = "update-subject-by-dsl.subject.notRemove";
     public static final String UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD = "update-subject-by-dsl.subject.notAdd";
-    public static final String UPDATE_SUBJECT_BY_DSL_SUBJECT_CODE_NOT_CHANGE = "update-subject-by-dsl.subject.code.notChange";
 }

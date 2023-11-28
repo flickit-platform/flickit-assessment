@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -26,15 +27,16 @@ public class SubjectUpdateValidator implements UpdateKitValidator {
         Notification notification = new Notification();
         var codes = dslKit.getSubjects().stream().map(BaseDslModel::getCode).collect(Collectors.toSet());
         var savedCodes = savedKit.getSubjects().stream().map(Subject::getCode).collect(Collectors.toSet());
-        if (!savedCodes.equals(codes)) {
-            if (savedCodes.size() > codes.size()) {
-                notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE);
-            } else if (savedCodes.size() < codes.size()) {
-                notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD);
-            } else {
-                notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_CODE_NOT_CHANGE);
-            }
-            log.debug("Subjects code for assessment kit id [{}] has changes.", savedKit.getId());
+        var deletedCodes = savedCodes.stream().filter(s -> codes.stream().noneMatch(i -> i.equals(s))).toList();
+        var newCodes = codes.stream().filter(i -> savedCodes.stream().noneMatch(s -> s.equals(i))).toList();
+
+        if (!newCodes.isEmpty()) {
+            notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD);
+            log.debug("New subjects code in dsl for assessment kit id [{}] has found.", savedKit.getId());
+        }
+        if (!deletedCodes.isEmpty()) {
+            notification.add(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE);
+            log.debug("Old Subjects code in dsl for assessment kit id [{}] has not found.", savedKit.getId());
         }
         return notification;
     }
