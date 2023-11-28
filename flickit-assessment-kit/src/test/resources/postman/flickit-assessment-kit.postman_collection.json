@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"dslContent\": {\r\n        \"subject\": \"subject\"\r\n    }\r\n}",
+					"raw": "{\r\n    \"dslContent\": \"\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -21,14 +21,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-kits/300/update-by-dsl",
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/update-by-dsl",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
 						"assessment-kits",
-						"300",
+						"302",
 						"update-by-dsl"
 					]
 				}

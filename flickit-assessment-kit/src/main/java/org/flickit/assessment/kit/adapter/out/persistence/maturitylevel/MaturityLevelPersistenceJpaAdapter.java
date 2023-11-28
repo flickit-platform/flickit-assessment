@@ -3,29 +3,21 @@ package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByCodePort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class MaturityLevelPersistenceJpaAdapter implements
-    LoadMaturityLevelByKitPort,
     CreateMaturityLevelPort,
     DeleteMaturityLevelPort,
     UpdateMaturityLevelPort,
     LoadMaturityLevelByCodePort {
 
     private final MaturityLevelJpaRepository repository;
-
-    @Override
-    public List<MaturityLevel> loadByKitId(Long assessmentKitId) {
-        var maturityLevelJpaEntities = repository.findAllByAssessmentKitId(assessmentKitId);
-        return maturityLevelJpaEntities.stream()
-            .map(MaturityLevelMapper::mapToDomainModel)
-            .toList();
-    }
 
     @Override
     public Long persist(MaturityLevel level, Long kitId) {
