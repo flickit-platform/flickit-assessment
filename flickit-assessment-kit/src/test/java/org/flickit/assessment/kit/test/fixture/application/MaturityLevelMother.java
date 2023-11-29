@@ -16,8 +16,6 @@ public class MaturityLevelMother {
     public static final String LEVEL_FOUR_CODE = "Good";
     public static final Long LEVEL_FIVE_ID = 50L;
     public static final String LEVEL_FIVE_CODE = "Great";
-    public static final Long LEVEL_SIX_ID = 60L;
-    public static final String LEVEL_SIX_CODE = "Awesome";
 
     public static List<MaturityLevel> fiveLevels() {
         return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive(5));

@@ -7,18 +7,18 @@ import java.time.LocalDateTime;
 public class QuestionnaireMother {
 
     private static Long id = 134L;
-    private static final String DESCRIPTION = "";
+    private static int index = 1;
 
-    public static Questionnaire questionnaire(String code, String title, int index) {
-        id++;
+    public static Questionnaire questionnaireWithTitle(String title) {
         return new Questionnaire(
-            id,
-            code,
+            id++,
+            "c-" + title,
             title,
-            index,
-            DESCRIPTION,
+            index++,
+            "Description",
             LocalDateTime.now(),
             LocalDateTime.now()
         );
     }
+
 }

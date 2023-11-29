@@ -49,9 +49,9 @@ public class AssessmentKitMother {
             null);
     }
 
-    public static AssessmentKit kitWithQuestionnaire(List<Questionnaire> questionnaires, Long id) {
+    public static AssessmentKit kitWithQuestionnaires(List<Questionnaire> questionnaires) {
         return new AssessmentKit(
-            id,
+            id++,
             CODE + id,
             TITLE + id,
             SUMMARY,
