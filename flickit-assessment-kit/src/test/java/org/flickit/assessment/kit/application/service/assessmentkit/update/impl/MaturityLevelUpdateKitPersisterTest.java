@@ -14,6 +14,7 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturit
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
+import org.flickit.assessment.kit.test.fixture.application.Constants;
 import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,11 +77,11 @@ class MaturityLevelUpdateKitPersisterTest {
     void testMaturityLevelUpdateKitPersister_MaturityLevelAdded_AddToDatabase() {
         Long kitId = 1L;
         AssessmentKit savedKit = AssessmentKitMother.kitWithFourLevels(kitId);
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_TWO_CODE, kitId)).thenReturn(MaturityLevelMother.levelTwo());
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_THREE_CODE, kitId)).thenReturn(MaturityLevelMother.levelThree());
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_FOUR_CODE, kitId)).thenReturn(MaturityLevelMother.levelFour());
+        when(loadMaturityLevelByCodePort.loadByCode(Constants.LEVEL_TWO_CODE, kitId)).thenReturn(MaturityLevelMother.levelTwo());
+        when(loadMaturityLevelByCodePort.loadByCode(Constants.LEVEL_THREE_CODE, kitId)).thenReturn(MaturityLevelMother.levelThree());
+        when(loadMaturityLevelByCodePort.loadByCode(Constants.LEVEL_FOUR_CODE, kitId)).thenReturn(MaturityLevelMother.levelFour());
         MaturityLevel levelFive = levelFive(5);
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_FIVE_CODE, kitId)).thenReturn(levelFive);
+        when(loadMaturityLevelByCodePort.loadByCode(Constants.LEVEL_FIVE_CODE, kitId)).thenReturn(levelFive);
         Long persistedLevelId = levelFive.getId();
         when(createMaturityLevelPort.persist(any(MaturityLevel.class), eq(kitId))).thenReturn(persistedLevelId);
         levelFive.getCompetences().forEach(i ->
@@ -104,18 +105,18 @@ class MaturityLevelUpdateKitPersisterTest {
     void testMaturityLevelUpdateKitPersister_MaturityLevelDeleted_DeleteFromDatabase() {
         Long kitId = 1L;
         AssessmentKit savedKit = AssessmentKitMother.kitWithSixLevels(kitId);
-        doNothing().when(deleteMaturityLevelPort).delete(LEVEL_SIX_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_TWO_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_THREE_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_FOUR_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_FIVE_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_SIX_ID);
+        doNothing().when(deleteMaturityLevelPort).delete(Constants.LEVEL_SIX_ID);
+        doNothing().when(deleteLevelCompetencePort).delete(Constants.LEVEL_SIX_ID, Constants.LEVEL_TWO_ID);
+        doNothing().when(deleteLevelCompetencePort).delete(Constants.LEVEL_SIX_ID, Constants.LEVEL_THREE_ID);
+        doNothing().when(deleteLevelCompetencePort).delete(Constants.LEVEL_SIX_ID, Constants.LEVEL_FOUR_ID);
+        doNothing().when(deleteLevelCompetencePort).delete(Constants.LEVEL_SIX_ID, Constants.LEVEL_FIVE_ID);
+        doNothing().when(deleteLevelCompetencePort).delete(Constants.LEVEL_SIX_ID, Constants.LEVEL_SIX_ID);
 
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
         persister.persist(savedKit, dslKit);
 
-        verify(deleteMaturityLevelPort, times(1)).delete(LEVEL_SIX_ID);
+        verify(deleteMaturityLevelPort, times(1)).delete(Constants.LEVEL_SIX_ID);
         verify(deleteLevelCompetencePort, times(5)).delete(any(), any());
         verifyNoInteractions(
             createMaturityLevelPort,
@@ -130,7 +131,7 @@ class MaturityLevelUpdateKitPersisterTest {
     void testMaturityLevelUpdateKitPersister_MaturityLevelUpdated_UpdateInDatabase() {
         Long kitId = 1L;
         AssessmentKit savedKit = AssessmentKitMother.kitWithFiveLevelsWithLevelFiveValue(kitId, 6);
-        var updateParam = new UpdateMaturityLevelPort.Param(LEVEL_FIVE_ID, LEVEL_FIVE_CODE, 5, 5);
+        var updateParam = new UpdateMaturityLevelPort.Param(Constants.LEVEL_FIVE_ID, Constants.LEVEL_FIVE_CODE, 5, 5);
         doNothing().when(updateMaturityLevelPort).update(updateParam);
 
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
@@ -162,17 +163,17 @@ class MaturityLevelUpdateKitPersisterTest {
         AssessmentKit savedKit = AssessmentKitMother.kitWithFiveLevels(kitId);
         var newCompetence = savedKit.getMaturityLevels().get(4).getCompetences().get(0);
         savedKit.getMaturityLevels().get(4).getCompetences().remove(0);
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_TWO_CODE, kitId)).thenReturn(MaturityLevelMother.levelTwo());
-        when(createLevelCompetencePort.persist(LEVEL_FIVE_ID, newCompetence.getEffectiveLevelId(), newCompetence.getValue()))
+        when(loadMaturityLevelByCodePort.loadByCode(Constants.LEVEL_TWO_CODE, kitId)).thenReturn(MaturityLevelMother.levelTwo());
+        when(createLevelCompetencePort.persist(Constants.LEVEL_FIVE_ID, newCompetence.getEffectiveLevelId(), newCompetence.getValue()))
             .thenReturn(1L);
 
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
         persister.persist(savedKit, dslKit);
 
-        verify(loadMaturityLevelByCodePort, times(1)).loadByCode(LEVEL_TWO_CODE, kitId);
+        verify(loadMaturityLevelByCodePort, times(1)).loadByCode(Constants.LEVEL_TWO_CODE, kitId);
         verify(createLevelCompetencePort, times(1))
-            .persist(LEVEL_FIVE_ID, newCompetence.getEffectiveLevelId(), newCompetence.getValue());
+            .persist(Constants.LEVEL_FIVE_ID, newCompetence.getEffectiveLevelId(), newCompetence.getValue());
         verifyNoInteractions(
             deleteMaturityLevelPort,
             deleteLevelCompetencePort,
@@ -186,16 +187,16 @@ class MaturityLevelUpdateKitPersisterTest {
     void testMaturityLevelUpdateKitPersister_LevelCompetenceDeleted_AddToDatabase() {
         Long kitId = 1L;
         AssessmentKit savedKit = AssessmentKitMother.kitWithFiveLevels(kitId);
-        savedKit.getMaturityLevels().get(4).getCompetences().add(new MaturityLevelCompetence(LEVEL_ONE_ID, LEVEL_ONE_CODE, 100));
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_ONE_CODE, kitId)).thenReturn(MaturityLevelMother.levelOne());
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_FIVE_ID, LEVEL_ONE_ID);
+        savedKit.getMaturityLevels().get(4).getCompetences().add(new MaturityLevelCompetence(Constants.LEVEL_ONE_ID, Constants.LEVEL_ONE_CODE, 100));
+        when(loadMaturityLevelByCodePort.loadByCode(Constants.LEVEL_ONE_CODE, kitId)).thenReturn(MaturityLevelMother.levelOne());
+        doNothing().when(deleteLevelCompetencePort).delete(Constants.LEVEL_FIVE_ID, Constants.LEVEL_ONE_ID);
 
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
         persister.persist(savedKit, dslKit);
 
         verify(loadMaturityLevelByCodePort, times(1)).loadByCode(anyString(), anyLong());
-        verify(deleteLevelCompetencePort, times(1)).delete(LEVEL_FIVE_ID, LEVEL_ONE_ID);
+        verify(deleteLevelCompetencePort, times(1)).delete(Constants.LEVEL_FIVE_ID, Constants.LEVEL_ONE_ID);
         verifyNoInteractions(
             createMaturityLevelPort,
             createLevelCompetencePort,
@@ -210,16 +211,16 @@ class MaturityLevelUpdateKitPersisterTest {
         Long kitId = 1L;
         AssessmentKit savedKit = AssessmentKitMother.kitWithFiveLevels(kitId);
         savedKit.getMaturityLevels().get(1).getCompetences().remove(0);
-        savedKit.getMaturityLevels().get(1).getCompetences().add(new MaturityLevelCompetence(LEVEL_TWO_ID, LEVEL_TWO_CODE, 70));
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_TWO_CODE, kitId)).thenReturn(MaturityLevelMother.levelTwo());
-        doNothing().when(updateLevelCompetencePort).update(LEVEL_TWO_ID, LEVEL_TWO_ID, 60);
+        savedKit.getMaturityLevels().get(1).getCompetences().add(new MaturityLevelCompetence(Constants.LEVEL_TWO_ID, Constants.LEVEL_TWO_CODE, 70));
+        when(loadMaturityLevelByCodePort.loadByCode(Constants.LEVEL_TWO_CODE, kitId)).thenReturn(MaturityLevelMother.levelTwo());
+        doNothing().when(updateLevelCompetencePort).update(Constants.LEVEL_TWO_ID, Constants.LEVEL_TWO_ID, 60);
 
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
         persister.persist(savedKit, dslKit);
 
-        verify(loadMaturityLevelByCodePort, times(1)).loadByCode(LEVEL_TWO_CODE, kitId);
-        verify(updateLevelCompetencePort, times(1)).update(LEVEL_TWO_ID, LEVEL_TWO_ID, 60);
+        verify(loadMaturityLevelByCodePort, times(1)).loadByCode(Constants.LEVEL_TWO_CODE, kitId);
+        verify(updateLevelCompetencePort, times(1)).update(Constants.LEVEL_TWO_ID, Constants.LEVEL_TWO_ID, 60);
         verifyNoInteractions(
             createMaturityLevelPort,
             createLevelCompetencePort,
