@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 
 import java.time.LocalDateTime;
@@ -13,10 +14,12 @@ public class AssessmentKitMother {
     public static final String SUMMARY = "summary";
     public static final String ABOUT = "about";
     public static final long EXPERT_GROUP_ID = 1L;
+    private static long id = 134L;
 
-    public static AssessmentKit kitWithFourLevels(Long id) {
+
+    public static AssessmentKit simpleKitWithMaturityLevels(List<MaturityLevel> maturityLevels) {
         return new AssessmentKit(
-            id,
+            id++,
             CODE + id,
             TITLE + id,
             SUMMARY,
@@ -26,7 +29,7 @@ public class AssessmentKitMother {
             Boolean.TRUE,
             EXPERT_GROUP_ID,
             null,
-            MaturityLevelMother.fourLevels(),
+            maturityLevels,
             null);
     }
 
