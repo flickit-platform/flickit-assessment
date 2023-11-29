@@ -2,9 +2,8 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 
 import lombok.SneakyThrows;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
+import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
@@ -12,9 +11,6 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMatur
 import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByCodePort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
-import org.flickit.assessment.kit.application.service.DslTranslator;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -22,18 +18,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKitWithMaturityLevels;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.*;
+import static org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother.competenceListToMap;
+import static org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother.domainToDslModel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MaturityLevelUpdateKitPersisterTest {
+class MaturityLevelUpdateKitPersisterTest {
 
-    public static final String FILE = "src/test/resources/dsl.json";
     @InjectMocks
     private MaturityLevelUpdateKitPersister persister;
     @Mock
@@ -52,13 +51,19 @@ public class MaturityLevelUpdateKitPersisterTest {
     private UpdateLevelCompetencePort updateLevelCompetencePort;
 
     @Test
-    @SneakyThrows
-    void testMaturityLevelUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
-        Long kitId = 1L;
-        AssessmentKit savedKit = AssessmentKitMother.kitWithFiveLevels(kitId);
+    void testPersist_ThreeSameLevelsInDbAndDsl_NoUpdate() {
+        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo(), levelThree()));
 
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
+        MaturityLevelDslModel dslLevelOne = domainToDslModel(levelOne());
+        MaturityLevelDslModel dslLevelTwo = domainToDslModel(levelTwo());
+        MaturityLevelDslModel dslLevelThree = domainToDslModel(levelThree());
+
+        List<MaturityLevelDslModel> dslLevels = List.of(dslLevelOne, dslLevelTwo, dslLevelThree);
+
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .maturityLevels(dslLevels)
+            .build();
+
         persister.persist(savedKit, dslKit);
 
         verifyNoInteractions(
@@ -72,26 +77,26 @@ public class MaturityLevelUpdateKitPersisterTest {
     }
 
     @Test
-    @SneakyThrows
-    void testMaturityLevelUpdateKitPersister_MaturityLevelAdded_AddToDatabase() {
-        Long kitId = 1L;
-        AssessmentKit savedKit = AssessmentKitMother.kitWithFourLevels(kitId);
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_TWO_CODE, kitId)).thenReturn(MaturityLevelMother.levelTwo());
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_THREE_CODE, kitId)).thenReturn(MaturityLevelMother.levelThree());
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_FOUR_CODE, kitId)).thenReturn(MaturityLevelMother.levelFour());
-        MaturityLevel levelFive = levelFive(5);
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_FIVE_CODE, kitId)).thenReturn(levelFive);
-        Long persistedLevelId = levelFive.getId();
-        when(createMaturityLevelPort.persist(any(MaturityLevel.class), eq(kitId))).thenReturn(persistedLevelId);
-        levelFive.getCompetences().forEach(i ->
-            when(createLevelCompetencePort.persist(persistedLevelId, i.getEffectiveLevelId(), i.getValue())).thenReturn(1L));
+    void testPersist_TwoSameLevelsInDbAnDsl_OneNewLevelInDsl_Create() {
+        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo()));
 
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
+        MaturityLevelDslModel firstDslLevel = domainToDslModel(levelOne());
+        MaturityLevelDslModel secondDslLevel = domainToDslModel(levelTwo());
+        MaturityLevelDslModel thirdDslLevel = domainToDslModel(levelThree());
+
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .maturityLevels(List.of(firstDslLevel, secondDslLevel, thirdDslLevel))
+            .build();
+
+        Long persistedLevelId = 3L;
+        when(createMaturityLevelPort.persist(any(), eq(savedKit.getId()))).thenReturn(persistedLevelId);
+        when(createLevelCompetencePort.persist(persistedLevelId, levelTwo().getId(), 75)).thenReturn(1L);
+        when(createLevelCompetencePort.persist(persistedLevelId, levelThree().getId(), 60)).thenReturn(2L);
+        when(loadMaturityLevelByCodePort.loadByCode(levelTwo().getCode(), savedKit.getId())).thenReturn(levelTwo());
+        when(loadMaturityLevelByCodePort.loadByCode(levelThree().getCode(), savedKit.getId())).thenReturn(levelThree());
+
         persister.persist(savedKit, dslKit);
 
-        verify(loadMaturityLevelByCodePort, times(4)).loadByCode(anyString(), anyLong());
-        verify(createMaturityLevelPort, times(1)).persist(any(MaturityLevel.class), eq(kitId));
         verifyNoInteractions(
             deleteMaturityLevelPort,
             deleteLevelCompetencePort,
@@ -100,23 +105,22 @@ public class MaturityLevelUpdateKitPersisterTest {
     }
 
     @Test
-    @SneakyThrows
-    void testMaturityLevelUpdateKitPersister_MaturityLevelDeleted_DeleteFromDatabase() {
-        Long kitId = 1L;
-        AssessmentKit savedKit = AssessmentKitMother.kitWithSixLevels(kitId);
-        doNothing().when(deleteMaturityLevelPort).delete(LEVEL_SIX_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_TWO_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_THREE_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_FOUR_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_FIVE_ID);
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_SIX_ID, LEVEL_SIX_ID);
+    void testPersist_ThreeLevelsInDb_TwoSameLevelsInDslAndOneIsDeleted_Delete() {
+        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo(), levelThree()));
 
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
+        MaturityLevelDslModel firstDslLevel = domainToDslModel(levelOne());
+        MaturityLevelDslModel secondDslLevel = domainToDslModel(levelTwo());
+
+        List<MaturityLevelDslModel> dslLevels = List.of(firstDslLevel, secondDslLevel);
+
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .maturityLevels(dslLevels)
+            .build();
+
         persister.persist(savedKit, dslKit);
 
-        verify(deleteMaturityLevelPort, times(1)).delete(LEVEL_SIX_ID);
-        verify(deleteLevelCompetencePort, times(5)).delete(any(), any());
+        verify(deleteMaturityLevelPort, times(1)).delete(levelThree().getId());
+        verify(deleteLevelCompetencePort, times(2)).delete(any(), any());
         verifyNoInteractions(
             createMaturityLevelPort,
             createLevelCompetencePort,
@@ -126,15 +130,18 @@ public class MaturityLevelUpdateKitPersisterTest {
     }
 
     @Test
-    @SneakyThrows
-    void testMaturityLevelUpdateKitPersister_MaturityLevelUpdated_UpdateInDatabase() {
-        Long kitId = 1L;
-        AssessmentKit savedKit = AssessmentKitMother.kitWithFiveLevelsWithLevelFiveValue(kitId, 6);
-        var updateParam = new UpdateMaturityLevelPort.Param(LEVEL_FIVE_ID, LEVEL_FIVE_CODE, 5, 5);
+    void testPersist_DslLevelTwoHasDifferentTitle_Update() {
+        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelTwo()));
+
+        MaturityLevelDslModel dslLevel = domainToDslModel(levelTwo(), l -> l.title(levelTwo().getTitle() + "new"));
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .maturityLevels(List.of(dslLevel))
+            .build();
+
+        var updateParam = new UpdateMaturityLevelPort.Param(
+            levelTwo().getId(), dslLevel.getTitle(), dslLevel.getIndex(), dslLevel.getValue());
         doNothing().when(updateMaturityLevelPort).update(updateParam);
 
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
         persister.persist(savedKit, dslKit);
 
         ArgumentCaptor<UpdateMaturityLevelPort.Param> updateCaptor = ArgumentCaptor.forClass(UpdateMaturityLevelPort.Param.class);
@@ -142,7 +149,6 @@ public class MaturityLevelUpdateKitPersisterTest {
 
         assertEquals(updateParam.id(), updateCaptor.getValue().id());
         assertEquals(updateParam.title(), updateCaptor.getValue().title());
-        assertEquals(updateParam.index(), updateCaptor.getValue().index());
         assertEquals(updateParam.index(), updateCaptor.getValue().index());
         assertEquals(updateParam.value(), updateCaptor.getValue().value());
 
@@ -156,23 +162,25 @@ public class MaturityLevelUpdateKitPersisterTest {
     }
 
     @Test
-    @SneakyThrows
-    void testMaturityLevelUpdateKitPersister_LevelCompetenceAdded_AddToDatabase() {
-        Long kitId = 1L;
-        AssessmentKit savedKit = AssessmentKitMother.kitWithFiveLevels(kitId);
-        var newCompetence = savedKit.getMaturityLevels().get(4).getCompetences().get(0);
-        savedKit.getMaturityLevels().get(4).getCompetences().remove(0);
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_TWO_CODE, kitId)).thenReturn(MaturityLevelMother.levelTwo());
-        when(createLevelCompetencePort.persist(LEVEL_FIVE_ID, newCompetence.getEffectiveLevelId(), newCompetence.getValue()))
-            .thenReturn(1L);
+    void testPersist_DslLevelTwoHasOneMoreCompetence_Create() {
+        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo()));
 
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
+        MaturityLevelDslModel dslLevelOne = domainToDslModel(levelOne());
+
+        Map<String, Integer> dslLevelTwoCompetenceMap = competenceListToMap(levelTwo().getCompetences());
+        // add competence to dslLevelTwo: affectedLevel=levelTwo, effectiveLevel=levelOne
+        dslLevelTwoCompetenceMap.put(levelOne().getCode(), 90);
+        MaturityLevelDslModel dslLevelTwo = domainToDslModel(levelTwo(), b -> b.competencesCodeToValueMap(dslLevelTwoCompetenceMap));
+
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .maturityLevels(List.of(dslLevelOne, dslLevelTwo))
+            .build();
+
+        when(loadMaturityLevelByCodePort.loadByCode(levelOne().getCode(), savedKit.getId())).thenReturn(levelOne());
+        when(createLevelCompetencePort.persist(levelTwo().getId(), levelOne().getId(), 90)).thenReturn(1L);
+
         persister.persist(savedKit, dslKit);
 
-        verify(loadMaturityLevelByCodePort, times(1)).loadByCode(LEVEL_TWO_CODE, kitId);
-        verify(createLevelCompetencePort, times(1))
-            .persist(LEVEL_FIVE_ID, newCompetence.getEffectiveLevelId(), newCompetence.getValue());
         verifyNoInteractions(
             deleteMaturityLevelPort,
             deleteLevelCompetencePort,
@@ -183,19 +191,26 @@ public class MaturityLevelUpdateKitPersisterTest {
 
     @Test
     @SneakyThrows
-    void testMaturityLevelUpdateKitPersister_LevelCompetenceDeleted_AddToDatabase() {
-        Long kitId = 1L;
-        AssessmentKit savedKit = AssessmentKitMother.kitWithFiveLevels(kitId);
-        savedKit.getMaturityLevels().get(4).getCompetences().add(new MaturityLevelCompetence(LEVEL_ONE_ID, LEVEL_ONE_CODE, 100));
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_ONE_CODE, kitId)).thenReturn(MaturityLevelMother.levelOne());
-        doNothing().when(deleteLevelCompetencePort).delete(LEVEL_FIVE_ID, LEVEL_ONE_ID);
+    void testPersist_DslLevelThreeHasOneLessCompetence_Delete() {
+        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo(), levelThree()));
 
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
+        Map<String, Integer> dslLevelThreeCompetenceMap = competenceListToMap(levelThree().getCompetences());
+        // delete competence from dslLevelThree: affectedLevel=levelThree, effectiveLevel=levelTwo
+        dslLevelThreeCompetenceMap.remove(levelTwo().getCode());
+
+        MaturityLevelDslModel dslLevelOne = domainToDslModel(levelOne());
+        MaturityLevelDslModel dslLevelTwo = domainToDslModel(levelTwo());
+        MaturityLevelDslModel dslLevelThree = domainToDslModel(levelThree(), b -> b.competencesCodeToValueMap(dslLevelThreeCompetenceMap));
+
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .maturityLevels(List.of(dslLevelOne, dslLevelTwo, dslLevelThree))
+            .build();
+
+        when(loadMaturityLevelByCodePort.loadByCode(levelTwo().getCode(), savedKit.getId())).thenReturn(levelTwo());
+        doNothing().when(deleteLevelCompetencePort).delete(levelThree().getId(), levelTwo().getId());
+
         persister.persist(savedKit, dslKit);
 
-        verify(loadMaturityLevelByCodePort, times(1)).loadByCode(anyString(), anyLong());
-        verify(deleteLevelCompetencePort, times(1)).delete(LEVEL_FIVE_ID, LEVEL_ONE_ID);
         verifyNoInteractions(
             createMaturityLevelPort,
             createLevelCompetencePort,
@@ -205,21 +220,25 @@ public class MaturityLevelUpdateKitPersisterTest {
     }
 
     @Test
-    @SneakyThrows
-    void testMaturityLevelUpdateKitPersister_LevelCompetenceUpdated_UpdateInDatabase() {
-        Long kitId = 1L;
-        AssessmentKit savedKit = AssessmentKitMother.kitWithFiveLevels(kitId);
-        savedKit.getMaturityLevels().get(1).getCompetences().remove(0);
-        savedKit.getMaturityLevels().get(1).getCompetences().add(new MaturityLevelCompetence(LEVEL_TWO_ID, LEVEL_TWO_CODE, 70));
-        when(loadMaturityLevelByCodePort.loadByCode(LEVEL_TWO_CODE, kitId)).thenReturn(MaturityLevelMother.levelTwo());
-        doNothing().when(updateLevelCompetencePort).update(LEVEL_TWO_ID, LEVEL_TWO_ID, 60);
+    void testPersist_DslLevelTwoHasOneCompetenceWithDifferenceValue_Update() {
+        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo()));
 
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
+        MaturityLevelDslModel dslLevelOne = domainToDslModel(levelOne());
+
+        Map<String, Integer> dslLevelTwoCompetenceMap = competenceListToMap(levelTwo().getCompetences());
+        // change competence value from 60 to 100: affectedLevel=levelTwo, effectiveLevel=levelTwo
+        dslLevelTwoCompetenceMap.put(levelTwo().getCode(), 100);
+        MaturityLevelDslModel dslLevelTwo = domainToDslModel(levelTwo(), b -> b.competencesCodeToValueMap(dslLevelTwoCompetenceMap));
+
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .maturityLevels(List.of(dslLevelOne, dslLevelTwo))
+            .build();
+
+        when(loadMaturityLevelByCodePort.loadByCode(levelTwo().getCode(), savedKit.getId())).thenReturn(levelTwo());
+        doNothing().when(updateLevelCompetencePort).update(levelTwo().getId(), levelTwo().getId(), 100);
+
         persister.persist(savedKit, dslKit);
 
-        verify(loadMaturityLevelByCodePort, times(1)).loadByCode(LEVEL_TWO_CODE, kitId);
-        verify(updateLevelCompetencePort, times(1)).update(LEVEL_TWO_ID, LEVEL_TWO_ID, 60);
         verifyNoInteractions(
             createMaturityLevelPort,
             createLevelCompetencePort,
