@@ -6,6 +6,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,8 @@ import java.util.List;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithQuestionnaires;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.QuestionnaireDslModelMother.domainToDslModel;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,7 +46,9 @@ class QuestionnaireUpdateKitPersisterTest {
             .questionnaires(List.of(dslQOne, dslQTwo))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
+
+        assertFalse(result.shouldInvalidateCalcResult());
 
         verifyNoInteractions(createQuestionnairePort, updateQuestionnairePort);
     }
@@ -63,7 +68,9 @@ class QuestionnaireUpdateKitPersisterTest {
 
         when(createQuestionnairePort.persist(any(Questionnaire.class), eq(savedKit.getId()))).thenReturn(1L);
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
+
+        assertTrue(result.shouldInvalidateCalcResult());
 
         verifyNoInteractions(updateQuestionnairePort);
     }
@@ -82,7 +89,9 @@ class QuestionnaireUpdateKitPersisterTest {
 
         doNothing().when(updateQuestionnairePort).update(any(UpdateQuestionnairePort.Param.class));
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
+
+        assertFalse(result.shouldInvalidateCalcResult());
 
         verifyNoInteractions(createQuestionnairePort);
     }
