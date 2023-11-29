@@ -31,7 +31,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     private final AssessmentKitJpaRepository repository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
-    private final SubjectJpaRepository subjectJpaRepository;
+    private final SubjectJpaRepository subjectRepository;
     private final AttributeJpaRepository attributeRepository;
     private final QuestionnaireJpaRepository questionnaireRepository;
 
@@ -39,18 +39,8 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     public AssessmentKit load(Long kitId) {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
             () -> new ResourceNotFoundException(FIND_KIT_ID_NOT_FOUND));
-        List<MaturityLevel> levels = maturityLevelRepository.findAllByAssessmentKitId(kitId).stream()
-            .map(MaturityLevelMapper::mapToDomainModel)
-            .toList();
 
-        setLevelCompetences(levels);
-
-        List<Questionnaire> questionnaires = questionnaireRepository.findAllByAssessmentKitId(kitId).stream()
-            .map(QuestionnaireMapper::mapToDomainModel)
-            .toList();
-
-
-        List<SubjectJpaEntity> subjectEntities = subjectJpaRepository.findAllByAssessmentKit_Id(kitId);
+        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByAssessmentKitId(kitId);
 
         List<Attribute> attributes;
         List<AttributeJpeEntity> attributeEntities;
@@ -64,6 +54,13 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
             subjects.add(subject);
         }
 
+        List<MaturityLevel> levels = maturityLevelRepository.findAllByAssessmentKitId(kitId).stream()
+            .map(MaturityLevelMapper::mapToDomainModel)
+            .toList();
+
+        List<Questionnaire> questionnaires = questionnaireRepository.findAllByAssessmentKitId(kitId).stream()
+            .map(QuestionnaireMapper::mapToDomainModel)
+            .toList();
 
         return new AssessmentKit(
             kitId,

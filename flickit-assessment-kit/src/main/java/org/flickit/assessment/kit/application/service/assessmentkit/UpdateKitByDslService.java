@@ -29,8 +29,8 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
     @Override
     public void update(Param param) {
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(param.getDslContent());
         AssessmentKit savedKit = loadAssessmentKitInfoPort.load(param.getKitId());
+        AssessmentKitDslModel dslKit = DslTranslator.parseJson(param.getDslContent());
 
         validateChanges(savedKit, dslKit);
 

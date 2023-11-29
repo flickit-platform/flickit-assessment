@@ -26,5 +26,5 @@ public interface CalculateConfidenceUseCase {
         }
     }
 
-    record Result(double confidenceValue) {}
+    record Result(Double confidenceValue) {}
 }

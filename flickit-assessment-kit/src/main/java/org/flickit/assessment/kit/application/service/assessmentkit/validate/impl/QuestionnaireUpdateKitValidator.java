@@ -9,12 +9,8 @@ import org.flickit.assessment.kit.application.service.assessmentkit.validate.Upd
 import org.flickit.assessment.kit.common.Notification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_DSL_QUESTIONNAIRE_DELETION_NOT_ALLOWED;
+import static java.util.stream.Collectors.toSet;
+import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.QUESTIONNAIRE;
 
 @Service
 @RequiredArgsConstructor
@@ -22,27 +18,18 @@ public class QuestionnaireUpdateKitValidator implements UpdateKitValidator {
 
     @Override
     public Notification validate(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
-        Notification result = new Notification();
+        Notification notification = new Notification();
 
-        List<Questionnaire> savedQuestionnaires = savedKit.getQuestionnaires();
-        List<QuestionnaireDslModel> dslQuestionnaires = dslKit.getQuestionnaires();
+        var savedQuestionnaireCodes = savedKit.getQuestionnaires().stream().map(Questionnaire::getCode).collect(toSet());
+        var dslQuestionnaireCodes = dslKit.getQuestionnaires().stream().map(QuestionnaireDslModel::getCode).collect(toSet());
 
-        Map<String, Questionnaire> savedQuestionnaireCodesMap = savedQuestionnaires.stream().collect(Collectors.toMap(Questionnaire::getCode, i -> i));
-        Map<String, QuestionnaireDslModel> dslQuestionnaireCodesMap = dslQuestionnaires.stream().collect(Collectors.toMap(QuestionnaireDslModel::getCode, i -> i));
+        var deletedQuestionnaires = savedQuestionnaireCodes.stream()
+            .filter(s -> !dslQuestionnaireCodes.contains(s))
+            .collect(toSet());
 
-        if (isAnyDeleted(savedQuestionnaireCodesMap.keySet(), dslQuestionnaireCodesMap.keySet())) {
-            result.add(UPDATE_KIT_BY_DSL_DSL_QUESTIONNAIRE_DELETION_NOT_ALLOWED);
-        }
+        if (!deletedQuestionnaires.isEmpty())
+            notification.add(new InvalidDeletionError(QUESTIONNAIRE, deletedQuestionnaires));
 
-        return result;
+        return notification;
     }
-
-    private boolean isAnyDeleted(Set<String> savedQuestionnaireCodesSet, Set<String> dslQuestionnaireCodesSet) {
-        List<String> deletedQuestionnaires = savedQuestionnaireCodesSet.stream()
-            .filter(s -> dslQuestionnaireCodesSet.stream()
-                .noneMatch(i -> i.equals(s)))
-            .toList();
-        return !deletedQuestionnaires.isEmpty();
-    }
-
 }

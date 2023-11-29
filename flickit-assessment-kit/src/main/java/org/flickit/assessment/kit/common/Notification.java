@@ -8,10 +8,15 @@ import java.util.Set;
 @Getter
 public class Notification {
 
-    private final Set<String> errors = new HashSet<>();
+    private final Set<Error> errors = new HashSet<>();
 
-    public Notification add(String error) {
+    public Notification add(Error error) {
         errors.add(error);
+        return this;
+    }
+
+    public Notification add(String errorMsg) {
+        errors.add(new SimpleError(errorMsg));
         return this;
     }
 
@@ -22,5 +27,12 @@ public class Notification {
 
     public boolean hasErrors() {
         return !errors.isEmpty();
+    }
+
+    public interface Error {
+        String message();
+    }
+
+    public record SimpleError(String message) implements Error {
     }
 }

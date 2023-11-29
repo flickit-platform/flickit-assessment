@@ -12,22 +12,23 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.as;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class SubjectUpdateValidatorTest {
+class SubjectUpdateKitValidatorTest {
 
     public static final String FILE = "src/test/resources/dsl.json";
 
-    private SubjectUpdateValidator validator;
+    private SubjectUpdateKitValidator validator;
     private AssessmentKitDslModel dslKit;
 
     @BeforeEach
     @SneakyThrows
     void init() {
         if (validator == null) {
-            validator = new SubjectUpdateValidator();
+            validator = new SubjectUpdateKitValidator();
 
             String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
             dslKit = DslTranslator.parseJson(dslContent);
@@ -35,37 +36,46 @@ class SubjectUpdateValidatorTest {
     }
 
     @Test
-    void testSubjectUpdateValidator_SameSizeWithSavedAndNotChangeCodes_ValidChange() {
+    void testValidate_SameSizeWithSavedAndNotChangeCodes_ValidChange() {
         Long kitId = 1L;
         AssessmentKit savedKit = AssessmentKitMother.kitWithTwoSubject(kitId);
 
         Notification notification = validator.validate(savedKit, dslKit);
 
         assertFalse(notification.hasErrors());
-        assertTrue(notification.getErrors().isEmpty());
     }
 
     @Test
-    void testSubjectUpdateValidator_AddNewSubject_NotValidChange() {
+    void testValidate_AddNewSubject_InvalidChange() {
         Long kitId = 1L;
         AssessmentKit savedKit = AssessmentKitMother.kitWithOneSubject(kitId);
 
         Notification notification = validator.validate(savedKit, dslKit);
 
-        assertTrue(notification.hasErrors());
-        assertEquals(1, notification.getErrors().size());
-        assertTrue(notification.getErrors().contains(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD));
+        assertThat(notification)
+            .returns(true, Notification::hasErrors)
+            .extracting(Notification::getErrors, as(COLLECTION))
+            .singleElement()
+            .isInstanceOfSatisfying(InvalidAdditionError.class, x -> {
+                assertThat(x.fieldName()).isEqualTo("subject");
+                assertThat(x.addedItems()).contains("Team");
+            });
     }
 
     @Test
-    void testSubjectUpdateValidator_RemoveSubject_NotValidChange() {
+    void testValidate_DeleteSubject_InvalidChange() {
         Long kitId = 1L;
         AssessmentKit savedKit = AssessmentKitMother.kitWithThreeSubject(kitId);
 
         Notification notification = validator.validate(savedKit, dslKit);
 
-        assertTrue(notification.hasErrors());
-        assertEquals(1, notification.getErrors().size());
-        assertTrue(notification.getErrors().contains(UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE));
+        assertThat(notification)
+            .returns(true, Notification::hasErrors)
+            .extracting(Notification::getErrors, as(COLLECTION))
+            .singleElement()
+            .isInstanceOfSatisfying(InvalidDeletionError.class, x -> {
+                assertThat(x.fieldName()).isEqualTo("subject");
+                assertThat(x.deletedItems()).contains("Security");
+            });
     }
 }
