@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.test.fixture.application.dsl.model.mother;
+package org.flickit.assessment.kit.test.fixture.application.dsl;
 
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
@@ -18,15 +18,15 @@ public class QuestionDslModelMother {
         List<AnswerOptionDslModel> answerOptions,
         boolean mayNotBeApplicable) {
 
-        QuestionDslModel dslQuestion = new QuestionDslModel();
-        dslQuestion.setCode(code);
-        dslQuestion.setIndex(index);
-        dslQuestion.setTitle(title);
-        dslQuestion.setDescription(description);
-        dslQuestion.setQuestionnaireCode(questionnaireCode);
-        dslQuestion.setQuestionImpacts(questionImpacts);
-        dslQuestion.setAnswerOptions(answerOptions);
-        dslQuestion.setMayNotBeApplicable(mayNotBeApplicable);
-        return dslQuestion;
+        return QuestionDslModel.builder()
+            .code(code)
+            .index(index)
+            .title(title)
+            .description(description)
+            .questionnaireCode(questionnaireCode)
+            .questionImpacts(questionImpacts)
+            .answerOptions(answerOptions)
+            .mayNotBeApplicable(mayNotBeApplicable)
+            .build();
     }
 }

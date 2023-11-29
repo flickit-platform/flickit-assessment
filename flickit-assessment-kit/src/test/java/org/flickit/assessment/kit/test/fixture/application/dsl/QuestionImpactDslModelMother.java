@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.test.fixture.application.dsl.model.mother;
+package org.flickit.assessment.kit.test.fixture.application.dsl;
 
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
@@ -14,12 +14,12 @@ public class QuestionImpactDslModelMother {
         QuestionDslModel question,
         Map<Integer, Double> optionsIndextoValueMap,
         Integer weight) {
-        QuestionImpactDslModel dslImpact = new QuestionImpactDslModel();
-        dslImpact.setAttributeCode(attributeCode);
-        dslImpact.setMaturityLevel(maturityLevel);
-        dslImpact.setQuestion(question);
-        dslImpact.setOptionsIndextoValueMap(optionsIndextoValueMap);
-        dslImpact.setWeight(weight);
-        return dslImpact;
+        return QuestionImpactDslModel.builder()
+            .attributeCode(attributeCode)
+            .maturityLevel(maturityLevel)
+            .question(question)
+            .optionsIndextoValueMap(optionsIndextoValueMap)
+            .weight(weight)
+            .build();
     }
 }

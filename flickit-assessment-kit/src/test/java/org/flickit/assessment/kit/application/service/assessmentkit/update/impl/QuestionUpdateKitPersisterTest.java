@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionByIndexPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
@@ -18,7 +19,10 @@ import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQues
 import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuestionImpactByAttributeAndMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.flickit.assessment.kit.test.fixture.application.*;
-import org.flickit.assessment.kit.test.fixture.application.dsl.model.mother.*;
+import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
+import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
+import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionImpactDslModelMother;
+import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionnaireDslModelMother;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +34,10 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
+import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.levelThree;
+import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.levelTwo;
+import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
+import static org.flickit.assessment.kit.test.fixture.application.dsl.AnswerOptionDslModelMother.answerOptionDslModel;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -165,11 +173,11 @@ class QuestionUpdateKitPersisterTest {
     }
 
     private AssessmentKit buildQuestionsAndMock(String updateQuestionTitle1, Boolean removeAnImpact, Long kitId) {
-        var levelTwo = MaturityLevelMother.levelTwo();
-        var levelThree = MaturityLevelMother.levelThree();
+        var levelTwo = levelTwo();
+        var levelThree = levelThree();
 
-        var savedQuestionnaire1 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE1, QUESTIONNAIRE_TITLE1, 1);
-        var savedQuestionnaire2 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE2, QUESTIONNAIRE_TITLE2, 2);
+        var savedQuestionnaire1 = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
+        var savedQuestionnaire2 = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE2);
 
         var savedQuestion11 = QuestionMother.createQuestion(QUESTION_CODE1, updateQuestionTitle1, 1, null, false, savedQuestionnaire1.getId());
         var savedQuestion21 = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, null, false, savedQuestionnaire2.getId());
@@ -212,7 +220,7 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire1.setQuestions(List.of(savedQuestion11));
         savedQuestionnaire2.setQuestions(List.of(savedQuestion21));
 
-        AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaire(List.of(savedQuestionnaire1, savedQuestionnaire2), kitId);
+        AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire1, savedQuestionnaire2));
 
         List<Attribute> attributes = List.of(attribute1, attribute2);
         List<MaturityLevel> maturityLevels = List.of(levelTwo, levelThree);
@@ -232,16 +240,16 @@ class QuestionUpdateKitPersisterTest {
     }
 
     private AssessmentKitDslModel buildAssessmentKitDslModel() {
-        var dslQuestionnaire1 = QuestionnaireDslModelMother.questionnaireDslModel(QUESTIONNAIRE_CODE1, 1, QUESTIONNAIRE_TITLE1, "");
-        var dslQuestionnaire2 = QuestionnaireDslModelMother.questionnaireDslModel(QUESTIONNAIRE_CODE2, 2, QUESTIONNAIRE_TITLE2, "");
+        var dslQuestionnaire1 = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
+        var dslQuestionnaire2 = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE2));
 
-        var dslMaturityLevelTwo = MaturityLevelDslModelMother.maturityLevelDslModel(LEVEL_TWO_CODE, 2, LEVEL_TWO_CODE, "", null, 2);
-        var dslMaturityLevelThree = MaturityLevelDslModelMother.maturityLevelDslModel(LEVEL_THREE_CODE, 3, LEVEL_THREE_CODE, "", null, 3);
+        var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
+        var dslMaturityLevelThree = MaturityLevelDslModelMother.domainToDslModel(levelThree());
 
-        var dslAnswerOption1 = AnswerOptionDslModelMother.answerOptionDslModel(1, "Weak", 1);
-        var dslAnswerOption2 = AnswerOptionDslModelMother.answerOptionDslModel(2, "Moderate", 1);
-        var dslAnswerOption3 = AnswerOptionDslModelMother.answerOptionDslModel(3, "Good", 1);
-        var dslAnswerOption4 = AnswerOptionDslModelMother.answerOptionDslModel(4, "Great", 1);
+        var dslAnswerOption1 = answerOptionDslModel(1, "Weak");
+        var dslAnswerOption2 = answerOptionDslModel(2, "Moderate");
+        var dslAnswerOption3 = answerOptionDslModel(3, "Good");
+        var dslAnswerOption4 = answerOptionDslModel(4, "Great");
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2, dslAnswerOption3, dslAnswerOption4);
 
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
@@ -250,7 +258,7 @@ class QuestionUpdateKitPersisterTest {
         optionsIndexToValueMap.put(dslAnswerOption3.getIndex(), 0.5D);
         optionsIndexToValueMap.put(dslAnswerOption4.getIndex(), 1D);
 
-        var dslImpact1 = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        QuestionImpactDslModel dslImpact1 = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
         var dslImpact2 = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE2, dslMaturityLevelThree, null, optionsIndexToValueMap, 1);
         var dslImpact3 = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
 
@@ -259,11 +267,14 @@ class QuestionUpdateKitPersisterTest {
         var dslQuestion2 = QuestionDslModelMother.questionDslModel(
             QUESTION_CODE2, 2, QUESTION_TITLE2, null, QUESTIONNAIRE_CODE2, List.of(dslImpact2, dslImpact3), dslAnswerOptionList, Boolean.FALSE);
 
-        dslImpact1.setQuestion(dslQuestion1);
-        dslImpact2.setQuestion(dslQuestion2);
-        dslImpact3.setQuestion(dslQuestion2);
+//        in QuestionImpactDslModel, Question field is always null.
+//        dslImpact1.setQuestion(dslQuestion1);
+//        dslImpact2.setQuestion(dslQuestion2);
+//        dslImpact3.setQuestion(dslQuestion2);
 
-        return AssessmentKitDslModelMother.assessmentKitDslModel(
-            List.of(dslQuestionnaire1, dslQuestionnaire2), null, List.of(dslQuestion1, dslQuestion2), null, null);
+        return AssessmentKitDslModel.builder()
+            .questionnaires(List.of(dslQuestionnaire1, dslQuestionnaire2))
+            .questions(List.of(dslQuestion1, dslQuestion2))
+            .build();
     }
 }
