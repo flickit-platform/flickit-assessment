@@ -17,4 +17,7 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_REMOVE = "update-subject-by-dsl.subject.notRemove";
     public static final String UPDATE_SUBJECT_BY_DSL_SUBJECT_NOT_ADD = "update-subject-by-dsl.subject.notAdd";
+
+    public static final String UPDATE_ATTRIBUTE_BY_DSL_ATTRIBUTE_DELETION_NOT_ALLOWED = "update-attribute-by-dsl.attribute-deletion.notAllowed";
+    public static final String UPDATE_ATTRIBUTE_BY_DSL_ATTRIBUTE_ADDITION_NOT_ALLOWED = "update-attribute-by-dsl.attribute-addition.notAllowed";
 }
