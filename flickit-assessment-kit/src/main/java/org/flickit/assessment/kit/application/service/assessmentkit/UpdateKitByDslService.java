@@ -40,8 +40,8 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
     }
 
     private void validateChanges(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
-        Notification validation = validator.validate(savedKit, dslKit);
-        if (validation.hasErrors())
-            throw new ValidationException(validation);
+        Notification notification = validator.validate(savedKit, dslKit);
+        if (notification.hasErrors())
+            throw new ValidationException(notification);
     }
 }
