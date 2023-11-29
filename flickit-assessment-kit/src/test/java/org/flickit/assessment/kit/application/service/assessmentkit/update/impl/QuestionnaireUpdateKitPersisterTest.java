@@ -1,11 +1,12 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.update.impl;
 
-import lombok.SneakyThrows;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.Constants;
@@ -16,10 +17,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithQuestionnaires;
+import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
+import static org.flickit.assessment.kit.test.fixture.application.dsl.QuestionnaireDslModelMother.domainToDslModel;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
 import static org.mockito.Mockito.*;
 
@@ -36,52 +40,64 @@ class QuestionnaireUpdateKitPersisterTest {
     private UpdateQuestionnairePort updateQuestionnairePort;
 
     @Test
-    @SneakyThrows
-    void testQuestionnaireUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
-        Long kitId = 1L;
-        var savedQuestionnaire1 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE1, QUESTIONNAIRE_TITLE1, 1);
-        var savedQuestionnaire2 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE2, QUESTIONNAIRE_TITLE2, 2);
-        AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaire(List.of(savedQuestionnaire1, savedQuestionnaire2), kitId);
+    void testPersist_TwoSameQuestionnairesInDbAnDsl_NoUpdate() {
+        var savedQuestionnaire1 = questionnaireWithTitle("Clean Architecture");
+        var savedQuestionnaire2 = questionnaireWithTitle("Code Quality");
+        AssessmentKit savedKit = kitWithQuestionnaires(List.of(savedQuestionnaire1, savedQuestionnaire2));
 
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
-        persister.persist(savedKit, dslKit);
+        QuestionnaireDslModel dslQOne = domainToDslModel(savedQuestionnaire1);
+        QuestionnaireDslModel dslQTwo = domainToDslModel(savedQuestionnaire2);
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .questionnaires(List.of(dslQOne, dslQTwo))
+            .build();
+
+        UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
+
+        assertFalse(result.shouldInvalidateCalcResult());
 
         verifyNoInteractions(createQuestionnairePort, updateQuestionnairePort);
     }
 
     @Test
-    @SneakyThrows
-    void testQuestionnaireUpdateKitPersister_QuestionnaireAdded_AddToDatabase() {
-        Long kitId = 1L;
-        var savedQuestionnaire1 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE1, QUESTIONNAIRE_TITLE1, 1);
-        AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaire(List.of(savedQuestionnaire1), kitId);
+    void testPersist_OneNewQuestionnaireInDsl_Create() {
+        var savedQuestionnaire1 = questionnaireWithTitle("Clean Architecture");
+        AssessmentKit savedKit = kitWithQuestionnaires(List.of(savedQuestionnaire1));
 
-        when(createQuestionnairePort.persist(any(Questionnaire.class), eq(kitId))).thenReturn(1L);
+        QuestionnaireDslModel dslQOne = domainToDslModel(savedQuestionnaire1);
+        Questionnaire newQuestionnaire = questionnaireWithTitle("Test");
+        QuestionnaireDslModel dslQTwo = domainToDslModel(newQuestionnaire);
 
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
-        persister.persist(savedKit, dslKit);
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .questionnaires(List.of(dslQOne, dslQTwo))
+            .build();
 
-        verify(createQuestionnairePort, times(1)).persist(any(Questionnaire.class), eq(kitId));
+        when(createQuestionnairePort.persist(any(Questionnaire.class), eq(savedKit.getId()))).thenReturn(1L);
+
+        UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
+
+        assertTrue(result.shouldInvalidateCalcResult());
+
         verifyNoInteractions(updateQuestionnairePort);
     }
 
     @Test
-    @SneakyThrows
-    void testQuestionnaireUpdateKitPersister_QuestionnaireUpdated_UpdateInDatabase() {
-        Long kitId = 1L;
-        var savedQuestionnaire1 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE1, QUESTIONNAIRE_TITLE1, 1);
-        var savedQuestionnaire2 = QuestionnaireMother.questionnaire(QUESTIONNAIRE_CODE2, QUESTIONNAIRE_OLD_TITLE2, 2);
-        AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaire(List.of(savedQuestionnaire1, savedQuestionnaire2), kitId);
+    void testPersist_DslQuestionnaireTwoHasDifferentTitle_Update() {
+        var savedQuestionnaire1 = questionnaireWithTitle("Clean Architecture");
+        var savedQuestionnaire2 = questionnaireWithTitle("Old Code Quality");
+        AssessmentKit savedKit = kitWithQuestionnaires(List.of(savedQuestionnaire1, savedQuestionnaire2));
+
+        QuestionnaireDslModel dslQOne = domainToDslModel(savedQuestionnaire1);
+        QuestionnaireDslModel dslQTwo = domainToDslModel(savedQuestionnaire2, b -> b.title("Test"));
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .questionnaires(List.of(dslQOne, dslQTwo))
+            .build();
 
         doNothing().when(updateQuestionnairePort).update(any(UpdateQuestionnairePort.Param.class));
 
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
 
-        verify(updateQuestionnairePort, times(1)).update(any(UpdateQuestionnairePort.Param.class));
+        assertFalse(result.shouldInvalidateCalcResult());
+
         verifyNoInteractions(createQuestionnairePort);
     }
 }

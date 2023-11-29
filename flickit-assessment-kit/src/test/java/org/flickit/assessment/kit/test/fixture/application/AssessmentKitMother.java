@@ -1,7 +1,9 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.Subject;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,10 +15,27 @@ public class AssessmentKitMother {
     public static final String SUMMARY = "summary";
     public static final String ABOUT = "about";
     public static final long EXPERT_GROUP_ID = 1L;
+    private static long id = 134L;
 
-    public static AssessmentKit kitWithFourLevels(Long id) {
+public static AssessmentKit simpleKit() {
+    return new AssessmentKit(
+        id++,
+        CODE + id,
+        TITLE + id,
+        SUMMARY,
+        ABOUT,
+        LocalDateTime.now(),
+        LocalDateTime.now(),
+        Boolean.TRUE,
+        EXPERT_GROUP_ID,
+        null,
+        null,
+        null);
+}
+
+    public static AssessmentKit kitWithMaturityLevels(List<MaturityLevel> maturityLevels) {
         return new AssessmentKit(
-            id,
+            id++,
             CODE + id,
             TITLE + id,
             SUMMARY,
@@ -26,60 +45,13 @@ public class AssessmentKitMother {
             Boolean.TRUE,
             EXPERT_GROUP_ID,
             null,
-            MaturityLevelMother.fourLevels(),
+            maturityLevels,
             null);
     }
 
-    public static AssessmentKit kitWithFiveLevels(Long id) {
+    public static AssessmentKit kitWithQuestionnaires(List<Questionnaire> questionnaires) {
         return new AssessmentKit(
-            id,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            null,
-            MaturityLevelMother.fiveLevels(),
-            null);
-    }
-
-    public static AssessmentKit kitWithFiveLevelsWithLevelFiveValue(Long id, int value) {
-        return new AssessmentKit(id,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            null,
-            MaturityLevelMother.fiveLevelsWithLevelFiveValue(value),
-            null);
-    }
-
-    public static AssessmentKit kitWithSixLevels(Long id) {
-        return new AssessmentKit(
-            id,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            null,
-            MaturityLevelMother.sixLevels(),
-            null);
-    }
-
-    public static AssessmentKit kitWithQuestionnaire(List<Questionnaire> questionnaires, Long id) {
-        return new AssessmentKit(
-            id,
+            id++,
             CODE + id,
             TITLE + id,
             SUMMARY,
@@ -94,9 +66,9 @@ public class AssessmentKitMother {
         );
     }
 
-    public static AssessmentKit kitWithTwoSubject(Long id) {
+    public static AssessmentKit kitWithSubjects(List<Subject> subjects) {
         return new AssessmentKit(
-            id,
+            id++,
             CODE + id,
             TITLE + id,
             SUMMARY,
@@ -105,55 +77,7 @@ public class AssessmentKitMother {
             LocalDateTime.now(),
             Boolean.TRUE,
             EXPERT_GROUP_ID,
-            SubjectMother.twoSubject(),
-            null,
-            null);
-    }
-
-    public static AssessmentKit kitWithThreeSubject(Long id) {
-        return new AssessmentKit(
-            id,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            SubjectMother.threeSubjects(),
-            null,
-            null);
-    }
-
-    public static AssessmentKit kitWithOneSubject(Long id) {
-        return new AssessmentKit(
-            id,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            SubjectMother.oneSubjects(),
-            null,
-            null);
-    }
-
-    public static AssessmentKit kitWithTwoSubjectDiffCode(Long id) {
-        return new AssessmentKit(
-            id,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            SubjectMother.twoSubjectDiffCode(),
+            subjects,
             null,
             null);
     }

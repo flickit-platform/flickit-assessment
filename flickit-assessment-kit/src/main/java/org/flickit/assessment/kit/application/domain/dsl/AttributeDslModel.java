@@ -1,14 +1,16 @@
 package org.flickit.assessment.kit.application.domain.dsl;
 
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
-@Getter
-@Setter
+@Value
+@Jacksonized
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class AttributeDslModel extends BaseDslModel {
 
-    private String subjectCode;
-    private Integer weight;
+    String subjectCode;
+    Integer weight;
 }
