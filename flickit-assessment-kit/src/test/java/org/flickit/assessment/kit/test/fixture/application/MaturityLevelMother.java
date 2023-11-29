@@ -19,20 +19,8 @@ public class MaturityLevelMother {
     public static final Long LEVEL_SIX_ID = 60L;
     public static final String LEVEL_SIX_CODE = "Awesome";
 
-    public static List<MaturityLevel> fourLevels() {
-        return List.of(levelOne(), levelTwo(), levelThree(), levelFour());
-    }
-
     public static List<MaturityLevel> fiveLevels() {
         return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive(5));
-    }
-
-    public static List<MaturityLevel> fiveLevelsWithLevelFiveValue(int value) {
-        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive(value));
-    }
-
-    public static List<MaturityLevel> sixLevels() {
-        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive(5), levelSix());
     }
 
     public static MaturityLevel levelOne() {
@@ -42,7 +30,7 @@ public class MaturityLevelMother {
             LEVEL_ONE_CODE,
             1,
             1,
-            null);
+            List.of());
     }
 
     public static MaturityLevel levelTwo() {
@@ -84,15 +72,4 @@ public class MaturityLevelMother {
             value,
             LevelCompetenceMother.levelCompetenceForLevelFive());
     }
-
-    public static MaturityLevel levelSix() {
-        return new MaturityLevel(
-            LEVEL_SIX_ID,
-            LEVEL_SIX_CODE,
-            LEVEL_SIX_CODE,
-            6,
-            6,
-            LevelCompetenceMother.levelCompetenceForLevelSix());
-    }
-
 }

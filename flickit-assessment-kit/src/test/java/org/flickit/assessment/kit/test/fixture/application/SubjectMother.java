@@ -30,10 +30,6 @@ public class SubjectMother {
         return List.of(subjectOne(), subjectTwo());
     }
 
-    public static List<Subject> twoSubjectDiffCode() {
-        return List.of(subjectOne(), subjectTwoDiffCode());
-    }
-
     public static List<Subject> threeSubjects() {
         return List.of(subjectOne(), subjectTwo(), subjectThree());
     }
@@ -71,19 +67,6 @@ public class SubjectMother {
             SUBJECT_THREE_TITLE,
             3,
             SUBJECT_THREE_DESCRIPTION,
-            null,
-            LocalDateTime.now(),
-            LocalDateTime.now()
-        );
-    }
-
-    public static Subject subjectTwoDiffCode() {
-        return new Subject(
-            SUBJECT_TWO_ID,
-            SUBJECT_TWO_CODE + "_change",
-            SUBJECT_TWO_TITLE,
-            2,
-            SUBJECT_TWO_DESCRIPTION,
             null,
             LocalDateTime.now(),
             LocalDateTime.now()

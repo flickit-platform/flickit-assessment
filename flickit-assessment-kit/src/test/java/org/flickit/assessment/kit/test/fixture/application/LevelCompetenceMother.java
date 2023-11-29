@@ -38,15 +38,4 @@ public class LevelCompetenceMother {
         levelCompetences.add(new MaturityLevelCompetence(LEVEL_FIVE_ID, LEVEL_FIVE_CODE, 60));
         return levelCompetences;
     }
-
-
-    public static List<MaturityLevelCompetence> levelCompetenceForLevelSix() {
-        List<MaturityLevelCompetence> levelCompetences = new ArrayList<>();
-        levelCompetences.add(new MaturityLevelCompetence(LEVEL_TWO_ID, LEVEL_TWO_CODE, 95));
-        levelCompetences.add(new MaturityLevelCompetence(LEVEL_THREE_ID, LEVEL_THREE_CODE, 85));
-        levelCompetences.add(new MaturityLevelCompetence(LEVEL_FOUR_ID, LEVEL_FOUR_CODE, 75));
-        levelCompetences.add(new MaturityLevelCompetence(LEVEL_FIVE_ID, LEVEL_FIVE_CODE, 70));
-        levelCompetences.add(new MaturityLevelCompetence(LEVEL_SIX_ID, LEVEL_SIX_CODE, 60));
-        return levelCompetences;
-    }
 }

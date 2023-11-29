@@ -49,37 +49,6 @@ public class AssessmentKitMother {
             null);
     }
 
-    public static AssessmentKit kitWithFiveLevelsWithLevelFiveValue(Long id, int value) {
-        return new AssessmentKit(id,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            null,
-            MaturityLevelMother.fiveLevelsWithLevelFiveValue(value),
-            null);
-    }
-
-    public static AssessmentKit kitWithSixLevels(Long id) {
-        return new AssessmentKit(
-            id,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            null,
-            MaturityLevelMother.sixLevels(),
-            null);
-    }
-
     public static AssessmentKit kitWithQuestionnaire(List<Questionnaire> questionnaires, Long id) {
         return new AssessmentKit(
             id,
@@ -145,19 +114,4 @@ public class AssessmentKitMother {
             null);
     }
 
-    public static AssessmentKit kitWithTwoSubjectDiffCode(Long id) {
-        return new AssessmentKit(
-            id,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            SubjectMother.twoSubjectDiffCode(),
-            null,
-            null);
-    }
 }
