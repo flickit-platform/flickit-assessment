@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Map;
 
-import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKitWithMaturityLevels;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithMaturityLevels;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.*;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother.competenceListToMap;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother.domainToDslModel;
@@ -52,7 +52,7 @@ class MaturityLevelUpdateKitPersisterTest {
 
     @Test
     void testPersist_ThreeSameLevelsInDbAndDsl_NoUpdate() {
-        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo(), levelThree()));
+        AssessmentKit savedKit = kitWithMaturityLevels(List.of(levelOne(), levelTwo(), levelThree()));
 
         MaturityLevelDslModel dslLevelOne = domainToDslModel(levelOne());
         MaturityLevelDslModel dslLevelTwo = domainToDslModel(levelTwo());
@@ -78,7 +78,7 @@ class MaturityLevelUpdateKitPersisterTest {
 
     @Test
     void testPersist_TwoSameLevelsInDbAnDsl_OneNewLevelInDsl_Create() {
-        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo()));
+        AssessmentKit savedKit = kitWithMaturityLevels(List.of(levelOne(), levelTwo()));
 
         MaturityLevelDslModel firstDslLevel = domainToDslModel(levelOne());
         MaturityLevelDslModel secondDslLevel = domainToDslModel(levelTwo());
@@ -106,7 +106,7 @@ class MaturityLevelUpdateKitPersisterTest {
 
     @Test
     void testPersist_ThreeLevelsInDb_TwoSameLevelsInDslAndOneIsDeleted_Delete() {
-        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo(), levelThree()));
+        AssessmentKit savedKit = kitWithMaturityLevels(List.of(levelOne(), levelTwo(), levelThree()));
 
         MaturityLevelDslModel firstDslLevel = domainToDslModel(levelOne());
         MaturityLevelDslModel secondDslLevel = domainToDslModel(levelTwo());
@@ -131,7 +131,7 @@ class MaturityLevelUpdateKitPersisterTest {
 
     @Test
     void testPersist_DslLevelTwoHasDifferentTitle_Update() {
-        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelTwo()));
+        AssessmentKit savedKit = kitWithMaturityLevels(List.of(levelTwo()));
 
         MaturityLevelDslModel dslLevel = domainToDslModel(levelTwo(), l -> l.title(levelTwo().getTitle() + "new"));
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
@@ -163,7 +163,7 @@ class MaturityLevelUpdateKitPersisterTest {
 
     @Test
     void testPersist_DslLevelTwoHasOneMoreCompetence_Create() {
-        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo()));
+        AssessmentKit savedKit = kitWithMaturityLevels(List.of(levelOne(), levelTwo()));
 
         MaturityLevelDslModel dslLevelOne = domainToDslModel(levelOne());
 
@@ -192,7 +192,7 @@ class MaturityLevelUpdateKitPersisterTest {
     @Test
     @SneakyThrows
     void testPersist_DslLevelThreeHasOneLessCompetence_Delete() {
-        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo(), levelThree()));
+        AssessmentKit savedKit = kitWithMaturityLevels(List.of(levelOne(), levelTwo(), levelThree()));
 
         Map<String, Integer> dslLevelThreeCompetenceMap = competenceListToMap(levelThree().getCompetences());
         // delete competence from dslLevelThree: affectedLevel=levelThree, effectiveLevel=levelTwo
@@ -221,7 +221,7 @@ class MaturityLevelUpdateKitPersisterTest {
 
     @Test
     void testPersist_DslLevelTwoHasOneCompetenceWithDifferenceValue_Update() {
-        AssessmentKit savedKit = simpleKitWithMaturityLevels(List.of(levelOne(), levelTwo()));
+        AssessmentKit savedKit = kitWithMaturityLevels(List.of(levelOne(), levelTwo()));
 
         MaturityLevelDslModel dslLevelOne = domainToDslModel(levelOne());
 
