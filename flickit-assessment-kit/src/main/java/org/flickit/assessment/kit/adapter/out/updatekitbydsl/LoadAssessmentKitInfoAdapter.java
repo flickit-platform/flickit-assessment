@@ -9,12 +9,18 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaReposit
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
@@ -32,6 +38,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     private final AssessmentKitJpaRepository repository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
+    private final SubjectJpaRepository subjectRepository;
     private final QuestionnaireJpaRepository questionnaireRepository;
     private final QuestionJpaRepository questionRepository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -41,6 +48,11 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     public AssessmentKit load(Long kitId) {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
             () -> new ResourceNotFoundException(FIND_KIT_ID_NOT_FOUND));
+
+        List<Subject> subjects = subjectRepository.findAllByAssessmentKitId(kitId).stream()
+            .map(SubjectMapper::mapToDomainModel)
+            .toList();
+
         List<MaturityLevel> levels = maturityLevelRepository.findAllByAssessmentKitId(kitId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
@@ -66,7 +78,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
             entity.getLastModificationTime(),
             entity.getIsActive(),
             entity.getExpertGroupId(),
-            null,
+            subjects,
             levels,
             questionnaires
         );

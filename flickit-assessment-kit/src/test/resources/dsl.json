@@ -172,16 +172,16 @@
   "subjectModels": [
     {
       "code": "Software",
-      "title": "Software",
-      "description": "",
+      "title": "Software title",
+      "description": "Description for Software",
       "index": 1,
       "weight": 0,
       "questionnaireCodes": null
     },
     {
       "code": "Team",
-      "title": "Team",
-      "description": "",
+      "title": "Team title",
+      "description": "Description for Team",
       "index": 2,
       "weight": 0,
       "questionnaireCodes": null
