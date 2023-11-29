@@ -2,20 +2,22 @@ package org.flickit.assessment.kit.application.domain.dsl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Value
+@Jacksonized
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class QuestionDslModel extends BaseDslModel {
 
-    private String questionnaireCode;
-    private List<QuestionImpactDslModel> questionImpacts;
+    String questionnaireCode;
+    List<QuestionImpactDslModel> questionImpacts;
     @JsonProperty("answers")
-    private List<AnswerOptionDslModel> answerOptions;
-    private boolean mayNotBeApplicable;
+    List<AnswerOptionDslModel> answerOptions;
+    boolean mayNotBeApplicable;
 
 }

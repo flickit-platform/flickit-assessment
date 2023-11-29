@@ -1,13 +1,15 @@
 package org.flickit.assessment.kit.application.domain.dsl;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
-@Getter
-@Setter
+@Value
+@Builder
+@Jacksonized
 public class AnswerOptionDslModel {
 
-    private Integer index;
-    private String caption;
-    private Integer value; //TODO it's unused and can be removed
+    Integer index;
+    String caption;
+    Integer value; //TODO it's unused and can be removed
 }
