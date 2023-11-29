@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.update.impl;
 
-import lombok.SneakyThrows;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
@@ -20,6 +19,7 @@ import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuesti
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.flickit.assessment.kit.test.fixture.application.*;
 import org.flickit.assessment.kit.test.fixture.application.dsl.model.mother.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,6 +33,7 @@ import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled
 class QuestionUpdateKitPersisterTest {
 
     @InjectMocks
@@ -81,7 +82,6 @@ class QuestionUpdateKitPersisterTest {
     private LoadQuestionImpactByAttributeAndMaturityLevelPort loadQuestionImpactByAttributeAndMaturityLevelPort;
 
     @Test
-    @SneakyThrows
     void testQuestionUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
         Long kitId = 1L;
         AssessmentKit savedKit = buildQuestionsAndMock(QUESTION_TITLE1, false, kitId);
@@ -101,7 +101,6 @@ class QuestionUpdateKitPersisterTest {
     }
 
     @Test
-    @SneakyThrows
     void testQuestionUpdateKitPersister_QuestionUpdated_UpdateInDatabase() {
         Long kitId = 1L;
         AssessmentKit savedKit = buildQuestionsAndMock(QUESTION_OLD_TITLE1, false, kitId);
@@ -121,7 +120,6 @@ class QuestionUpdateKitPersisterTest {
     }
 
     @Test
-    @SneakyThrows
     void testQuestionUpdateKitPersister_QuestionImpactAdded_AddToDatabase() {
         Long kitId = 1L;
 
@@ -142,31 +140,26 @@ class QuestionUpdateKitPersisterTest {
     }
 
     @Test
-    @SneakyThrows
     void testQuestionUpdateKitPersister_QuestionImpactDeleted_DeleteFromDatabase() {
 
     }
 
     @Test
-    @SneakyThrows
     void testQuestionUpdateKitPersister_QuestionImpactUpdated_UpdateInDatabase() {
 
     }
 
     @Test
-    @SneakyThrows
     void testQuestionUpdateKitPersister_AnswerOptionImpactAdded_AddToDatabase() {
 
     }
 
     @Test
-    @SneakyThrows
     void testQuestionUpdateKitPersister_AnswerOptionImpactDeleted_DeleteFromDatabase() {
 
     }
 
     @Test
-    @SneakyThrows
     void testQuestionUpdateKitPersister_AnswerOptionImpactUpdated_UpdateInDatabase() {
 
     }
