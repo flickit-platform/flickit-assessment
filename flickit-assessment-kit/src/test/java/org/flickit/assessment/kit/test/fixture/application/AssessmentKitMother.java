@@ -17,6 +17,21 @@ public class AssessmentKitMother {
     public static final long EXPERT_GROUP_ID = 1L;
     private static long id = 134L;
 
+public static AssessmentKit simpleKit() {
+    return new AssessmentKit(
+        id++,
+        CODE + id,
+        TITLE + id,
+        SUMMARY,
+        ABOUT,
+        LocalDateTime.now(),
+        LocalDateTime.now(),
+        Boolean.TRUE,
+        EXPERT_GROUP_ID,
+        null,
+        null,
+        null);
+}
 
     public static AssessmentKit kitWithMaturityLevels(List<MaturityLevel> maturityLevels) {
         return new AssessmentKit(
@@ -31,22 +46,6 @@ public class AssessmentKitMother {
             EXPERT_GROUP_ID,
             null,
             maturityLevels,
-            null);
-    }
-
-    public static AssessmentKit kitWithFiveLevels(Long id) {
-        return new AssessmentKit(
-            id,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            null,
-            MaturityLevelMother.fiveLevels(),
             null);
     }
 
