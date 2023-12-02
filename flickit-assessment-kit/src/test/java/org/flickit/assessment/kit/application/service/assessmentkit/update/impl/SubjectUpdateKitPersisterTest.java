@@ -36,6 +36,11 @@ class SubjectUpdateKitPersisterTest {
     private UpdateSubjectPort updateSubjectPort;
 
     @Test
+    void testOrder() {
+        assertEquals(2, persister.order());
+    }
+
+    @Test
     void testPersist_SameSubjectCodesWithDifferentFields_Update() {
         Subject subjectOne = subjectWithTitle("Software");
         Subject subjectTwo = subjectWithTitle("Team");

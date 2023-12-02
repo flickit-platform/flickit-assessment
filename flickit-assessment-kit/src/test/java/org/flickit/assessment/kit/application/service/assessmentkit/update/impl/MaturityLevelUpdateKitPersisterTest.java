@@ -51,6 +51,11 @@ class MaturityLevelUpdateKitPersisterTest {
     private UpdateLevelCompetencePort updateLevelCompetencePort;
 
     @Test
+    void testOrder() {
+        assertEquals(1, persister.order());
+    }
+
+    @Test
     void testPersist_ThreeSameLevelsInDbAndDsl_NoUpdate() {
         AssessmentKit savedKit = kitWithMaturityLevels(List.of(levelOne(), levelTwo(), levelThree()));
 
