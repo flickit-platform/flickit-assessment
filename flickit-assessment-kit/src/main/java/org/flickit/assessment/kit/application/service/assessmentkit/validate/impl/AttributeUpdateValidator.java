@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ATTRIBUTE_BY_DSL_ATTRIBUTE_DELETION_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ATTRIBUTE_BY_DSL_ATTRIBUTE_ADDITION_NOT_ALLOWED;
+import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.ATTRIBUTE;
 
 @Service
 public class AttributeUpdateValidator implements UpdateKitValidator {
@@ -22,29 +21,29 @@ public class AttributeUpdateValidator implements UpdateKitValidator {
     public Notification validate(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Notification notification = new Notification();
 
-        var dslKitAttributeCodes = dslKit.getAttributes().stream()
+        var dslAttributeCodes = dslKit.getAttributes().stream()
             .map(BaseDslModel::getCode)
             .collect(Collectors.toSet());
 
-        var currentAttributeCodes = savedKit.getSubjects().stream()
+        var savedAttributeCodes = savedKit.getSubjects().stream()
             .map(Subject::getAttributes)
             .flatMap(Collection::stream)
             .map(Attribute::getCode)
-            .toList();
+            .collect(Collectors.toSet());
 
-        var deletedAttributeCodes = currentAttributeCodes.stream()
-            .filter(e -> dslKitAttributeCodes.stream().noneMatch(o -> o.equals(e)))
-            .toList();
+        var deletedAttributeCodes = savedAttributeCodes.stream()
+            .filter(e -> !dslAttributeCodes.contains(e))
+            .collect(Collectors.toSet());
 
-        var addedAttributeCodes = dslKitAttributeCodes.stream()
-            .filter(e -> currentAttributeCodes.stream().noneMatch(o -> o.equals(e)))
-            .toList();
+        var addedAttributeCodes = dslAttributeCodes.stream()
+            .filter(e -> !savedAttributeCodes.contains(e))
+            .collect(Collectors.toSet());
 
         if (!addedAttributeCodes.isEmpty())
-            notification.add(UPDATE_ATTRIBUTE_BY_DSL_ATTRIBUTE_ADDITION_NOT_ALLOWED);
+            notification.add(new InvalidAdditionError(ATTRIBUTE, addedAttributeCodes));
 
         if (!deletedAttributeCodes.isEmpty())
-            notification.add(UPDATE_ATTRIBUTE_BY_DSL_ATTRIBUTE_DELETION_NOT_ALLOWED);
+            notification.add(new InvalidDeletionError(ATTRIBUTE, deletedAttributeCodes));
 
         return notification;
     }
