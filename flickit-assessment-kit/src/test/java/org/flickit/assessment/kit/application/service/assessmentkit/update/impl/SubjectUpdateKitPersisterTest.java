@@ -6,7 +6,6 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
-import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -37,8 +36,13 @@ class SubjectUpdateKitPersisterTest {
     private UpdateSubjectPort updateSubjectPort;
 
     @Test
+    void testOrder() {
+        assertEquals(2, persister.order());
+    }
+
+    @Test
     void testPersist_SameSubjectCodesWithDifferentFields_Update() {
-        Subject subjectOne = SubjectMother.subjectWithTitle("Software");
+        Subject subjectOne = subjectWithTitle("Software");
         Subject subjectTwo = subjectWithTitle("Team");
         AssessmentKit savedKit = kitWithSubjects(List.of(subjectOne, subjectTwo));
 
@@ -48,26 +52,24 @@ class SubjectUpdateKitPersisterTest {
             .subjects(List.of(dslSubjectOne, dslSubjectTwo))
             .build();
 
-        doNothing().when(updateSubjectPort).updateByCodeAndKitId(any());
+        doNothing().when(updateSubjectPort).update(any());
 
         UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
 
         ArgumentCaptor<UpdateSubjectPort.Param> param = ArgumentCaptor.forClass(UpdateSubjectPort.Param.class);
-        verify(updateSubjectPort, times(2)).updateByCodeAndKitId(param.capture());
+        verify(updateSubjectPort, times(2)).update(param.capture());
 
         List<UpdateSubjectPort.Param> paramList = param.getAllValues();
         UpdateSubjectPort.Param softwareSubject = paramList.get(0);
         UpdateSubjectPort.Param teamSubject = paramList.get(1);
 
-        assertEquals(savedKit.getId(), softwareSubject.kitId());
-        assertEquals(dslSubjectOne.getCode(), softwareSubject.code());
+        assertEquals(subjectOne.getId(), softwareSubject.id());
         assertEquals(dslSubjectOne.getTitle(), softwareSubject.title());
         assertEquals(dslSubjectOne.getDescription(), softwareSubject.description());
         assertEquals(dslSubjectOne.getIndex(), softwareSubject.index());
         assertThat(softwareSubject.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
 
-        assertEquals(savedKit.getId(), teamSubject.kitId());
-        assertEquals(dslSubjectTwo.getCode(), teamSubject.code());
+        assertEquals(subjectTwo.getId(), teamSubject.id());
         assertEquals(dslSubjectTwo.getTitle(), teamSubject.title());
         assertEquals(dslSubjectTwo.getDescription(), teamSubject.description());
         assertEquals(dslSubjectTwo.getIndex(), teamSubject.index());

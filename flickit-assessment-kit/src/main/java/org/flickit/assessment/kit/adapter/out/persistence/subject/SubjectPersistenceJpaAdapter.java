@@ -14,12 +14,12 @@ public class SubjectPersistenceJpaAdapter implements
     private final SubjectJpaRepository repository;
 
     @Override
-    public void updateByCodeAndKitId(Param param) {
-        repository.updateByCodeAndKitId(param.code(),
+    public void update(Param param) {
+        repository.update(param.id(),
             param.title(),
             param.index(),
             param.description(),
-            param.lastModificationTime(),
-            param.kitId());
+            param.lastModificationTime()
+        );
     }
 }

@@ -25,6 +25,7 @@ import static org.flickit.assessment.kit.test.fixture.application.dsl.Questionna
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,6 +39,11 @@ class QuestionnaireUpdateKitPersisterTest {
 
     @Mock
     private UpdateQuestionnairePort updateQuestionnairePort;
+
+    @Test
+    void testOrder() {
+        assertEquals(3, persister.order());
+    }
 
     @Test
     void testPersist_TwoSameQuestionnairesInDbAnDsl_NoUpdate() {
