@@ -21,12 +21,17 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.MANDATORY)
 public class SubjectUpdateKitPersister implements UpdateKitPersister {
 
     private final UpdateSubjectPort updateSubjectPort;
 
     @Override
+    public int order() {
+        return 2;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Map<String, Long> savedSubjectCodesMap = savedKit.getSubjects().stream().collect(Collectors.toMap(Subject::getCode, Subject::getId));
         dslKit.getSubjects().forEach(s -> {

@@ -24,14 +24,18 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.MANDATORY)
 public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
     private final CreateQuestionnairePort createQuestionnairePort;
     private final UpdateQuestionnairePort updateQuestionnairePort;
 
+    @Override
+    public int order() {
+        return 3;
+    }
 
     @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         List<Questionnaire> savedQuestionnaires = savedKit.getQuestionnaires();
         List<QuestionnaireDslModel> dslQuestionnaires = dslKit.getQuestionnaires();
