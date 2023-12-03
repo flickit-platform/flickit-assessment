@@ -12,11 +12,9 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturit
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributeByCodePort;
 import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributePort;
-import org.flickit.assessment.kit.application.port.out.question.LoadQuestionByCodePort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
-import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuestionImpactByAttributeAndMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.flickit.assessment.kit.test.fixture.application.*;
 import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
@@ -63,9 +61,6 @@ class QuestionUpdateKitPersisterTest {
     private LoadQualityAttributeByCodePort loadQualityAttributeByCodePort;
 
     @Mock
-    private LoadQuestionByCodePort loadQuestionByCodePort;
-
-    @Mock
     private CreateQuestionImpactPort createQuestionImpactPort;
 
     @Mock
@@ -85,9 +80,6 @@ class QuestionUpdateKitPersisterTest {
 
     @Mock
     private UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
-
-    @Mock
-    private LoadQuestionImpactByAttributeAndMaturityLevelPort loadQuestionImpactByAttributeAndMaturityLevelPort;
 
     @Test
     void testQuestionUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
@@ -224,17 +216,15 @@ class QuestionUpdateKitPersisterTest {
 
         List<Attribute> attributes = List.of(attribute1, attribute2);
         List<MaturityLevel> maturityLevels = List.of(levelTwo, levelThree);
-        List<QuestionImpact> impacts = Stream.of(savedImpact111, savedImpact211, savedImpact212).filter(Objects::nonNull).toList();
+//        List<QuestionImpact> impacts = Stream.of(savedImpact111, savedImpact211, savedImpact212).filter(Objects::nonNull).toList();
         List<AnswerOption> answerOptions = List.of(answerOption11, answerOption12, answerOption13, answerOption14, answerOption21, answerOption22, answerOption23, answerOption24);
-        List<Question> questions = List.of(savedQuestion11, savedQuestion21);
+//        List<Question> questions = List.of(savedQuestion11, savedQuestion21);
 
         attributes.forEach(a -> when(loadQualityAttributePort.load(a.getId())).thenReturn(Optional.of(a)));
         attributes.forEach(a -> when(loadQualityAttributeByCodePort.loadByCode(a.getCode())).thenReturn(a));
         maturityLevels.forEach(l -> when(loadMaturityLevelPort.load(l.getId())).thenReturn(Optional.of(l)));
         maturityLevels.forEach(l -> when(loadMaturityLevelByCodePort.loadByCode(l.getCode(), kitId)).thenReturn(l));
-        impacts.forEach(s -> when(loadQuestionImpactByAttributeAndMaturityLevelPort.loadByAttributeCodeAndMaturityLevelCode(s.getAttributeId(), s.getMaturityLevelId())).thenReturn(s));
         answerOptions.forEach(a -> when(loadAnswerOptionByIndexPort.loadByIndex(a.getIndex(), a.getQuestionId())).thenReturn(a));
-        questions.forEach(q -> when(loadQuestionByCodePort.loadByCode(q.getCode())).thenReturn(q));
 
         return savedKit;
     }

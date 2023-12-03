@@ -17,5 +17,4 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
         "WHERE q.id = :id AND q.questionId = :questionId")
     void update(@Param("id") Long id, @Param("weight") int weight, @Param("questionId") Long questionId);
 
-    QuestionImpactJpaEntity findByQualityAttributeIdAndMaturityLevelId(Long qualityAttributeId, Long maturityLevelId);
 }

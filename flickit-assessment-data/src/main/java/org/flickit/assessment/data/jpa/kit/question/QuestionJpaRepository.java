@@ -26,5 +26,4 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 @Param("description") String description,
                 @Param("notApplicable") Boolean notApplicable);
 
-    QuestionJpaEntity findByCode(String code);
 }

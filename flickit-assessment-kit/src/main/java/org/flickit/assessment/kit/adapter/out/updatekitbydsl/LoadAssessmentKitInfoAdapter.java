@@ -17,17 +17,14 @@ import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMappe
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.FIND_KIT_ID_NOT_FOUND;
 
@@ -110,8 +107,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     }
 
     private void setQuestions(List<Questionnaire> questionnaires, List<Question> questions) {
-        questionnaires.forEach(q -> q.setQuestions(
-            questions.stream().filter(i -> Objects.equals(i.getQuestionnaireId(), q.getId())).toList()
-        ));
+        Map<Long, List<Question>> groupedQuestions = questions.stream().collect(Collectors.groupingBy(Question::getQuestionnaireId));
+        questionnaires.forEach(q -> groupedQuestions.get(q.getId()));
     }
 }

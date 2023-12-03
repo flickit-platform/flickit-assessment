@@ -26,8 +26,8 @@ public class QuestionJpaEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "description") // TODO
+    private String hint;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
@@ -35,12 +35,12 @@ public class QuestionJpaEntity {
     @Column(name = "last_modification_date", nullable = false)
     private LocalDateTime lastModificationTime;
 
-    @Column(name = "index")
+    @Column(name = "index", nullable = false)
     private Integer index;
 
     @Column(name = "questionnaire_id", nullable = false)
     private Long questionnaireId;
 
     @Column(name = "may_not_be_applicable", nullable = false)
-    private Boolean notApplicable;
+    private Boolean mayNotBeApplicable;
 }
