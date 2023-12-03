@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -41,32 +41,27 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         List<QuestionnaireDslModel> dslQuestionnaires = dslKit.getQuestionnaires();
 
         Map<String, Questionnaire> savedQuestionnaireCodesMap = savedQuestionnaires.stream().collect(Collectors.toMap(Questionnaire::getCode, i -> i));
-        Map<String, QuestionnaireDslModel> newDslQuestionnaireCodesMap = dslQuestionnaires.stream().collect(Collectors.toMap(BaseDslModel::getCode, i -> i));
+        Map<String, QuestionnaireDslModel> dslQuestionnaireCodesMap = dslQuestionnaires.stream().collect(Collectors.toMap(BaseDslModel::getCode, i -> i));
 
-        List<String> newQuestionnaires = newCodesInNewDsl(savedQuestionnaireCodesMap.keySet(), newDslQuestionnaireCodesMap.keySet());
-        List<String> sameQuestionnaires = sameCodesInNewDsl(savedQuestionnaireCodesMap.keySet(), newDslQuestionnaireCodesMap.keySet());
-
-        newQuestionnaires.forEach(i -> createQuestionnaire(newDslQuestionnaireCodesMap.get(i), savedKit.getId()));
-        sameQuestionnaires.forEach(i -> updateQuestionnaire(savedQuestionnaireCodesMap.get(i), newDslQuestionnaireCodesMap.get(i)));
-
-        return new UpdateKitPersisterResult(!newQuestionnaires.isEmpty());
-    }
-
-    private List<String> newCodesInNewDsl(Set<String> savedItemCodes, Set<String> newItemCodes) {
-        return newItemCodes.stream()
-            .filter(i -> savedItemCodes.stream()
-                .noneMatch(s -> s.equals(i)))
+        List<String> newQuestionnairesCodes = dslQuestionnaireCodesMap.keySet().stream()
+            .filter(i -> !savedQuestionnaireCodesMap.containsKey(i))
             .toList();
-    }
-
-    private List<String> sameCodesInNewDsl(Set<String> savedItemCodes, Set<String> newItemCodes) {
-        return savedItemCodes.stream()
-            .filter(s -> newItemCodes.stream()
-                .anyMatch(i -> i.equals(s)))
+        List<String> sameQuestionnairesCodes = savedQuestionnaireCodesMap.keySet().stream()
+            .filter(i -> !dslQuestionnaireCodesMap.containsKey(i))
             .toList();
+
+        List<Questionnaire> finalQuestionnaires = new ArrayList<>();
+
+        newQuestionnairesCodes.forEach(i -> finalQuestionnaires.add(createQuestionnaire(dslQuestionnaireCodesMap.get(i), savedKit.getId())));
+        sameQuestionnairesCodes.forEach(i -> finalQuestionnaires.add(updateQuestionnaire(savedQuestionnaireCodesMap.get(i), dslQuestionnaireCodesMap.get(i))));
+
+        AssessmentKit updatedKit = savedKit.toBuilder()
+            .questionnaires(finalQuestionnaires)
+            .build();
+        return new UpdateKitPersisterResult(updatedKit, !newQuestionnairesCodes.isEmpty());
     }
 
-    private void createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitId) {
+    private Questionnaire createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitId) {
         var createParam = new Questionnaire(
             null,
             newQuestionnaire.getCode(),
@@ -77,11 +72,21 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             LocalDateTime.now()
         );
 
-        createQuestionnairePort.persist(createParam, kitId);
+        long id = createQuestionnairePort.persist(createParam, kitId);
         log.debug("A questionnaire with code [{}] is created.", newQuestionnaire.getCode());
+
+        return new Questionnaire(
+            id,
+            createParam.getCode(),
+            createParam.getTitle(),
+            createParam.getIndex(),
+            createParam.getDescription(),
+            createParam.getCreationTime(),
+            createParam.getLastModificationTime()
+        );
     }
 
-    private void updateQuestionnaire(Questionnaire savedQuestionnaire, QuestionnaireDslModel newQuestionnaire) {
+    private Questionnaire updateQuestionnaire(Questionnaire savedQuestionnaire, QuestionnaireDslModel newQuestionnaire) {
         if (!savedQuestionnaire.getTitle().equals(newQuestionnaire.getTitle()) ||
             !savedQuestionnaire.getDescription().equals(newQuestionnaire.getDescription()) ||
             savedQuestionnaire.getIndex() != newQuestionnaire.getIndex()) {
@@ -94,6 +99,16 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
             updateQuestionnairePort.update(updateParam);
             log.debug("A questionnaire with code [{}] is updated.", savedQuestionnaire.getCode());
+
+            return new Questionnaire(updateParam.id(),
+                savedQuestionnaire.getCode(),
+                updateParam.title(),
+                updateParam.index(),
+                updateParam.description(),
+                savedQuestionnaire.getCreationTime(),
+                updateParam.lastModificationTime()
+            );
         }
+        return savedQuestionnaire;
     }
 }
