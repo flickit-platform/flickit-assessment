@@ -149,7 +149,7 @@
                                  referencedTableName="baseinfo_assessmentkit"
                                  referencedColumnNames="id"
                                  constraintName="fk_baseinfo_qualityattribute_assessmentkit"
-                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>
 
