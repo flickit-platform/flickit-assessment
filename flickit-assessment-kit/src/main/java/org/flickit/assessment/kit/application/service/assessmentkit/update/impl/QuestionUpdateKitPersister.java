@@ -70,6 +70,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         return new UpdateKitPersisterResult(invalidateResults);
     }
 
+    @Override
+    public int order() {
+        return 5;
+    }
+
     private List<String> sameCodesInNewDsl(Set<String> savedItemCodes, Set<String> newItemCodes) {
         return savedItemCodes.stream()
             .filter(s -> newItemCodes.stream()
