@@ -4,15 +4,14 @@ import java.time.LocalDateTime;
 
 public interface UpdateSubjectPort {
 
-    void updateByCodeAndKitId(Param param);
+    void update(Param param);
 
     record Param(
-        String code,
+        long id,
         String title,
         int index,
         String description,
-        LocalDateTime lastModificationTime,
-        long kitId
+        LocalDateTime lastModificationTime
     ) {
     }
 }

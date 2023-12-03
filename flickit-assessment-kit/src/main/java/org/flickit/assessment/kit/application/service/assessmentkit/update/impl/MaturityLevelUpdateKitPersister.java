@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.MANDATORY)
 public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
 
     private final DeleteMaturityLevelPort deleteMaturityLevelPort;
@@ -42,6 +41,12 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
     private final UpdateLevelCompetencePort updateLevelCompetencePort;
 
     @Override
+    public int order() {
+        return 1;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         List<MaturityLevel> savedLevels = savedKit.getMaturityLevels();
         List<MaturityLevelDslModel> dslLevels = dslKit.getMaturityLevels();

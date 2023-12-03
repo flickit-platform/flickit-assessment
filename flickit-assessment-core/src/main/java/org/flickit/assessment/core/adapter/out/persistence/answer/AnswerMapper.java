@@ -27,11 +27,12 @@ public class AnswerMapper {
     }
 
     public static AnswerListItem mapJpaEntityToAnswerItem(AnswerJpaEntity answer) {
+        ConfidenceLevel confidenceLevel = answer.getConfidenceLevelId() != null ? ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()) : null;
         return new AnswerListItem(
             answer.getId(),
             answer.getQuestionId(),
             answer.getAnswerOptionId(),
-            ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()),
+            confidenceLevel,
             answer.getIsNotApplicable()
         );
     }
