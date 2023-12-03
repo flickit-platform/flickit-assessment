@@ -12,7 +12,7 @@ public class AnswerOptionMapper {
         return new AnswerOption(
             entity.getId(),
             entity.getQuestionId(),
-            entity.getCaption(),
+            entity.getTitle(),
             entity.getIndex()
         );
     }

@@ -2,7 +2,9 @@ package org.flickit.assessment.kit.application.port.out.answeroption;
 
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 
-public interface LoadAnswerOptionByIndexPort {
+import java.util.List;
 
-    AnswerOption loadByIndex(int index, Long questionId);
+public interface LoadAnswerOptionsByQuestionPort {
+
+    List<AnswerOption> loadByQuestionId(Long questionId);
 }

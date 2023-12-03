@@ -12,28 +12,19 @@ public class Constants {
     public static final String LEVEL_FOUR_CODE = "Good";
     public static final Long LEVEL_FIVE_ID = 50L;
     public static final String LEVEL_FIVE_CODE = "Great";
-    public static final Long LEVEL_SIX_ID = 60L;
-    public static final String LEVEL_SIX_CODE = "Awesome";
 
-    public static String FILE = "src/test/resources/dsl.json";
 
     public static String QUESTIONNAIRE_CODE1 = "CleanArchitecture";
     public static String QUESTIONNAIRE_TITLE1 = "Clean Architecture";
-    public static String QUESTIONNAIRE_CODE2 = "CodeQuality";
-    public static String QUESTIONNAIRE_TITLE2 = "Code Quality";
-    public static String QUESTIONNAIRE_OLD_TITLE2 = "Old Code Quality";
 
     public static String QUESTION_CODE1 = "m1";
     public static String QUESTION_TITLE1 = "Is API provided using standard and well-known communication protocols (such as REST and GraphQL)?";
     public static String QUESTION_OLD_TITLE1 = "Is API provided using standard and well-known communication protocols?";
-    public static String QUESTION_CODE2 = "m2";
-    public static String QUESTION_TITLE2 = "Are the APIs documented and tested, and are proper tools and standards employed to accomplish this?";
 
     public static String ATTRIBUTE_CODE1 = "SoftwareMaintainability";
     public static String ATTRIBUTE_TITLE1 = "SoftwareMaintainability";
-    public static String ATTRIBUTE_CODE2 = "SoftwareReliability";
-    public static String ATTRIBUTE_TITLE2 = "SoftwareReliability";
 
+    public static String OLD_OPTION_TITLE = "Old Title";
     public static String OPTION_TITLE = "Title";
     public static Integer OPTION_INDEX1 = 1;
     public static Integer OPTION_INDEX2 = 2;

@@ -13,7 +13,7 @@ public class QuestionMapper {
             entity.getCode(),
             entity.getTitle(),
             entity.getIndex(),
-            entity.getHint(),
+            entity.getDescription(),
             entity.getMayNotBeApplicable(),
             entity.getQuestionnaireId(),
             entity.getCreationTime(),

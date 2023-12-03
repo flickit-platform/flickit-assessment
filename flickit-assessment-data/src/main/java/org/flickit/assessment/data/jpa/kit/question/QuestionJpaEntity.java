@@ -26,8 +26,8 @@ public class QuestionJpaEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description") // TODO
-    private String hint;
+    @Column(name = "hint") // TODO
+    private String description;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

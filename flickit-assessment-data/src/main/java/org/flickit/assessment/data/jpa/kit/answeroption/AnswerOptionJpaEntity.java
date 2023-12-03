@@ -19,10 +19,7 @@ public class AnswerOptionJpaEntity {
     private Long id;
 
     @Column(name = "caption", nullable = false)
-    private String caption;
-
-    @Column(name = "value", nullable = false)
-    private Integer value;
+    private String title;
 
     @Column(name = "question_id", nullable = false)
     private Long questionId;

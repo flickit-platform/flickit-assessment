@@ -16,11 +16,11 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_KIT_BY_DSL_ADDITION_UNSUPPORTED = "update-kit-by-dsl.addition.unsupported";
     public static final String UPDATE_KIT_BY_DSL_DELETION_UNSUPPORTED = "update-kit-by-dsl.deletion.unsupported";
-    public static final String UPDATE_KIT_BY_DSL_QUESTIONNAIRE_DELETION_UNSUPPORTED = "update-kit-by-dsl.questionnaire-deletion.unsupported";
     public static final String UPDATE_KIT_BY_DSL_QUESTION_DELETION_NOT_ALLOWED = "update-kit-by-dsl.delete-question.notAllowed";
     public static final String UPDATE_KIT_BY_DSL_QUESTION_ADDITION_NOT_ALLOWED = "update-kit-by-dsl.add-question.notAllowed";
     public static final String UPDATE_KIT_BY_DSL_MATURITY_LEVEL_NOT_FOUND = "update-kit-by-dsl.maturity-level.notFound";
     public static final String UPDATE_KIT_BY_DSL_ATTRIBUTE_NOT_FOUND= "update-kit-by-dsl.attribute.notFound";
+    public static final String UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND= "update-kit-by-dsl.answer-option.notFound";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);

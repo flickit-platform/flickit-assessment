@@ -19,6 +19,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.Question
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +41,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     private final QuestionJpaRepository questionRepository;
     private final QuestionImpactJpaRepository questionImpactRepository;
     private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
+    private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
 
     @Override
     public AssessmentKit load(Long kitId) {
@@ -59,6 +61,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
             .map(QuestionMapper::mapToDomainModel)
             .toList();
         setQuestionImpacts(questions);
+        setQuestionOptions(questions);
 
         List<Questionnaire> questionnaires = questionnaireRepository.findAllByAssessmentKitId(kitId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
@@ -95,6 +98,10 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
                 .map(this::setOptionImpacts)
                 .toList()
         ));
+    }
+
+    private void setQuestionOptions(List<Question> questions) {
+        questions.forEach(q -> q.setOptions(loadAnswerOptionsByQuestionPort.loadByQuestionId(q.getId())));
     }
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact) {

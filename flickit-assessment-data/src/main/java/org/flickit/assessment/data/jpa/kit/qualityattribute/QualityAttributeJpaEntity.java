@@ -42,5 +42,5 @@ public class QualityAttributeJpaEntity {
     private Integer weight;
 
     @Column(name = "assessment_subject_id", nullable = false)
-    private Long assessmentSubjectId;
+    private Long subjectId;
 }

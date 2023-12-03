@@ -11,4 +11,6 @@ public class AnswerOption {
     private final long questionId;
     private final String title;
     private final int index;
+
+    public record Code(long questionId, int index) {}
 }

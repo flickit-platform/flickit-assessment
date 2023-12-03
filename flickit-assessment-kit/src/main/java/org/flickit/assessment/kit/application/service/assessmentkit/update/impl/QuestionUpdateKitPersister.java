@@ -3,11 +3,12 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.application.domain.*;
+import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionByIndexPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
@@ -29,8 +30,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_ATTRIBUTE_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_MATURITY_LEVEL_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Slf4j
 @Service
@@ -46,9 +46,9 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final DeleteQuestionImpactPort deleteQuestionImpactPort;
     private final UpdateQuestionImpactPort updateQuestionImpactPort;
     private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
-    private final LoadAnswerOptionByIndexPort loadAnswerOptionByIndexPort;
     private final DeleteAnswerOptionImpactPort deleteAnswerOptionImpactPort;
     private final UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
+    private final UpdateAnswerOptionPort updateAnswerOptionPort;
 
     @Override
     public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
@@ -97,10 +97,47 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             }
         }
 
+        if (savedQuestion.getOptions() != null || dslQuestion.getAnswerOptions() != null) {
+            invalidateResults = invalidateResults || updateAnswerOptions(savedQuestion, dslQuestion);
+        }
+
         if (savedQuestion.getImpacts() != null || dslQuestion.getQuestionImpacts() != null) {
             invalidateResults = invalidateResults || updateQuestionImpacts(savedQuestion, dslQuestion, kitId);
         }
 
+        return invalidateResults;
+    }
+
+    private boolean updateAnswerOptions(Question savedQuestion, QuestionDslModel dslQuestion) {
+        boolean invalidateResults = false;
+        Map<AnswerOption.Code, AnswerOption> savedOptionCodesMap = savedQuestion.getOptions().stream()
+            .collect(toMap(a -> new AnswerOption.Code(savedQuestion.getId(), a.getIndex()), a -> a));
+        Map<AnswerOption.Code, AnswerOptionDslModel> dslOptionCodesMap = dslQuestion.getAnswerOptions().stream()
+            .collect(toMap(a -> new AnswerOption.Code(savedQuestion.getId(), a.getIndex()), a -> a));
+
+        List<AnswerOption.Code> sameOptions = sameOptionsInNewDsl(savedOptionCodesMap.keySet(), dslOptionCodesMap.keySet());
+
+        for (AnswerOption.Code code : sameOptions) {
+            invalidateResults = invalidateResults || updateOptions(savedOptionCodesMap.get(code), dslOptionCodesMap.get(code));
+        }
+
+        return invalidateResults;
+    }
+
+    private List<AnswerOption.Code> sameOptionsInNewDsl(Set<AnswerOption.Code> savedOptionCodes, Set<AnswerOption.Code> dslOptionCodes) {
+        return savedOptionCodes.stream()
+            .filter(i -> dslOptionCodes.stream()
+                .anyMatch(s -> s.questionId() == i.questionId() && s.index() == i.index()))
+            .toList();
+    }
+
+    private boolean updateOptions(AnswerOption savedOption, AnswerOptionDslModel dslOption) {
+        boolean invalidateResults = false;
+        if (!Objects.equals(savedOption.getTitle(), dslOption.getCaption())) {
+            updateAnswerOptionPort.update(new UpdateAnswerOptionPort.Param(savedOption.getId(), dslOption.getCaption()));
+            log.debug("Answer option with id [{}] is updated.", savedOption.getId());
+            invalidateResults = true;
+        }
         return invalidateResults;
     }
 
@@ -115,10 +152,10 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         List<QuestionImpact.Code> deletedImpacts = deletedImpactsInNewDsl(savedImpactCodesMap.keySet(), dslImpactCodesMap.keySet());
         List<QuestionImpact.Code> sameImpacts = sameImpactsInNewDsl(savedImpactCodesMap.keySet(), dslImpactCodesMap.keySet());
 
-        newImpacts.forEach(i -> createImpact(dslImpactCodesMap.get(i), savedQuestion.getId(), kitId));
+        newImpacts.forEach(i -> createImpact(savedQuestion, dslImpactCodesMap.get(i), kitId));
         deletedImpacts.forEach(i -> deleteImpact(savedImpactCodesMap.get(new QuestionImpact.Code(i.attributeCode(), i.maturityLevelCode()))));
         for (QuestionImpact.Code i : sameImpacts) {
-            invalidateResults = invalidateResults || updateImpact(savedImpactCodesMap.get(i), dslImpactCodesMap.get(i), savedQuestion.getId());
+            invalidateResults = invalidateResults || updateImpact(savedQuestion, savedImpactCodesMap.get(i), dslImpactCodesMap.get(i));
         }
 
         if (invalidateResults || !newImpacts.isEmpty() || !deletedImpacts.isEmpty())
@@ -158,14 +195,14 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             .toList();
     }
 
-    private void createImpact(QuestionImpactDslModel dslQuestionImpact, Long questionId, Long kitId) {
+    private void createImpact(Question savedQuestion, QuestionImpactDslModel dslQuestionImpact, Long kitId) {
         QuestionImpact newQuestionImpact = new QuestionImpact(
             null,
             loadQualityAttributeByCodePort.loadByCode(dslQuestionImpact.getAttributeCode()).getId(),
             // TODO: maturity levels can be loaded from kit
             loadMaturityLevelByCodePort.loadByCode(dslQuestionImpact.getMaturityLevel().getCode(), kitId).getId(),
             dslQuestionImpact.getWeight(),
-            questionId
+            savedQuestion.getId()
         );
         Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
         log.debug("Question impact with is [{}] is created.", impactId);
@@ -173,7 +210,10 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         for (Integer key : dslQuestionImpact.getOptionsIndextoValueMap().keySet()) {
             CreateAnswerOptionImpactPort.Param param = new CreateAnswerOptionImpactPort.Param(
                 impactId,
-                loadAnswerOptionByIndexPort.loadByIndex(key, questionId).getId(),
+                savedQuestion.getOptions().stream()
+                    .filter(o -> o.getQuestionId() == savedQuestion.getId() && o.getIndex() == key)
+                    .findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND)).getId(),
                 dslQuestionImpact.getOptionsIndextoValueMap().get(key));
             Long optionImpactId = createAnswerOptionImpactPort.persist(param);
             log.debug("Answer option impact with id [{}] is created.", optionImpactId);
@@ -191,7 +231,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         });
     }
 
-    private boolean updateImpact(QuestionImpact savedImpact, QuestionImpactDslModel dslImpact, Long questionId) {
+    private boolean updateImpact(Question savedQuestion, QuestionImpact savedImpact, QuestionImpactDslModel dslImpact) {
         boolean invalidateResult = false;
         if (savedImpact.getWeight() != dslImpact.getWeight()) {
             var updateParam = new UpdateQuestionImpactPort.Param(
@@ -205,26 +245,29 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         }
 
         if (savedImpact.getOptionImpacts() != null || dslImpact.getOptionsIndextoValueMap() != null) {
-            invalidateResult = invalidateResult || updateOptionImpacts(savedImpact, dslImpact, questionId);
+            invalidateResult = invalidateResult || updateOptionImpacts(savedQuestion, savedImpact, dslImpact);
         }
 
         return invalidateResult;
     }
 
-    private boolean updateOptionImpacts(QuestionImpact savedImpact, QuestionImpactDslModel dslImpact, Long questionId) {
+    private boolean updateOptionImpacts(Question savedQuestion, QuestionImpact savedImpact, QuestionImpactDslModel dslImpact) {
         boolean invalidateResults = false;
         Map<AnswerOptionImpact.Code, AnswerOptionImpact> savedOptionImpactCodesMap = savedImpact.getOptionImpacts().stream()
             .collect(toMap(a -> new AnswerOptionImpact.Code(savedImpact.getId(), a.getOptionId()), a -> a));
         Map<AnswerOptionImpact.Code, AnswerOptionImpact> dslOptionImpactCodesMap = dslImpact.getOptionsIndextoValueMap().keySet().stream()
-            .collect(toMap(k -> buildOptionImpactCode(savedImpact.getId(), k, questionId),
-                k -> buildOptionImpact(k, dslImpact.getOptionsIndextoValueMap().get(k), questionId)));
+            .collect(toMap(k -> buildOptionImpactCode(savedQuestion, savedImpact.getId(), k),
+                k -> buildOptionImpact(savedQuestion, k, dslImpact.getOptionsIndextoValueMap().get(k))));
 
         List<AnswerOptionImpact.Code> newOptionImpacts = newOptionImpactsInNewDsl(savedOptionImpactCodesMap.keySet(), dslOptionImpactCodesMap.keySet());
         List<AnswerOptionImpact.Code> deletedOptionImpacts = deletedOptionImpactsInNewDsl(savedOptionImpactCodesMap.keySet(), dslOptionImpactCodesMap.keySet());
         List<AnswerOptionImpact.Code> sameOptionImpacts = sameOptionImpactsInNewDsl(savedOptionImpactCodesMap.keySet(), dslOptionImpactCodesMap.keySet());
 
         newOptionImpacts.forEach(i -> createAnswerOptionImpact(i, dslOptionImpactCodesMap.get(i).getValue()));
-        deletedOptionImpacts.forEach(i -> deleteAnswerOptionImpactPort.delete(i.impactId(), i.optionId()));
+        deletedOptionImpacts.forEach(i -> {
+            deleteAnswerOptionImpactPort.delete(i.impactId(), i.optionId());
+            log.debug("Answer option impact with question impact id [{}] and option id [{}] is deleted.", i.impactId(), i.optionId());
+        });
         for (AnswerOptionImpact.Code i : sameOptionImpacts) {
             invalidateResults = invalidateResults || updateAnswerOptionImpact(savedOptionImpactCodesMap.get(i), dslOptionImpactCodesMap.get(i), i);
         }
@@ -235,15 +278,26 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         return invalidateResults;
     }
 
-    private AnswerOptionImpact.Code buildOptionImpactCode(Long impactId, Integer index, Long questionId) {
+    private AnswerOptionImpact.Code buildOptionImpactCode(Question savedQuestion, Long impactId, Integer index) {
         return new AnswerOptionImpact.Code(
             impactId,
-            loadAnswerOptionByIndexPort.loadByIndex(index, questionId).getId()
+            savedQuestion.getOptions().stream()
+                .filter(o -> o.getQuestionId() == savedQuestion.getId() && o.getIndex() == index)
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND))
+                .getId()
         );
     }
 
-    private AnswerOptionImpact buildOptionImpact(Integer index, Double value, Long questionId) {
-        return new AnswerOptionImpact(loadAnswerOptionByIndexPort.loadByIndex(index, questionId).getId(), value);
+    private AnswerOptionImpact buildOptionImpact(Question savedQuestion, Integer index, Double value) {
+        return new AnswerOptionImpact(
+            savedQuestion.getOptions().stream()
+                .filter(o -> o.getQuestionId() == savedQuestion.getId() && o.getIndex() == index)
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND))
+                .getId(),
+            value
+        );
     }
 
     private List<AnswerOptionImpact.Code> newOptionImpactsInNewDsl(Set<AnswerOptionImpact.Code> savedOptionImpactCodes, Set<AnswerOptionImpact.Code> dslOptionImpactCodes) {
@@ -282,6 +336,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 dslOptionImpact.getValue()
             );
             updateAnswerOptionImpactPort.update(updateParam);
+            log.debug("Answer option impact with impact id [{}] and option id [{}] is updated.", code.impactId(), code.optionId());
             invalidateResults = true;
         }
 
