@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -52,25 +49,33 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         List<MaturityLevelDslModel> dslLevels = dslKit.getMaturityLevels();
 
         Map<String, MaturityLevel> savedLevelCodesMap = savedLevels.stream().collect(Collectors.toMap(MaturityLevel::getCode, i -> i));
-        Map<String, MaturityLevelDslModel> newDslLevelCodesMap = dslLevels.stream().collect(Collectors.toMap(BaseDslModel::getCode, i -> i));
+        Map<String, MaturityLevelDslModel> dslLevelCodesMap = dslLevels.stream().collect(Collectors.toMap(BaseDslModel::getCode, i -> i));
 
-        List<String> newLevels = newCodesInNewDsl(savedLevelCodesMap.keySet(), newDslLevelCodesMap.keySet());
-        List<String> deletedLevels = deletedCodesInNewDsl(savedLevelCodesMap.keySet(), newDslLevelCodesMap.keySet());
-        List<String> sameLevels = sameCodesInNewDsl(savedLevelCodesMap.keySet(), newDslLevelCodesMap.keySet());
+        List<String> newLevels = newCodesInNewDsl(savedLevelCodesMap.keySet(), dslLevelCodesMap.keySet());
+        List<String> deletedLevels = deletedCodesInNewDsl(savedLevelCodesMap.keySet(), dslLevelCodesMap.keySet());
+        List<String> sameLevels = sameCodesInNewDsl(savedLevelCodesMap.keySet(), dslLevelCodesMap.keySet());
 
+        List<MaturityLevel> finalMaturityLevels = new ArrayList<>();
         boolean invalidateResults = false;
-        newLevels.forEach(i -> createMaturityLevel(newDslLevelCodesMap.get(i), savedKit.getId()));
+
+        newLevels.forEach(i -> finalMaturityLevels.add(createMaturityLevel(dslLevelCodesMap.get(i), savedKit.getId())));
         deletedLevels.forEach(i -> deleteMaturityLevel(savedLevelCodesMap.get(i), savedKit.getId()));
 
         for (String i : sameLevels) {
-            boolean invalidOnUpdate = updateMaturityLevel(savedLevelCodesMap.get(i), newDslLevelCodesMap.get(i), savedKit.getId());
-            if (invalidOnUpdate)
+            finalMaturityLevels.add(savedLevelCodesMap.get(i));
+            boolean invalidOnUpdate = updateMaturityLevel(savedLevelCodesMap.get(i), dslLevelCodesMap.get(i), savedKit.getId());
+            if (invalidOnUpdate) {
                 invalidateResults = true;
+            }
         }
+
+        AssessmentKit updatedKit = savedKit.toBuilder()
+            .maturityLevels(finalMaturityLevels)
+            .build();
 
         invalidateResults = invalidateResults || !newLevels.isEmpty() || !deletedLevels.isEmpty();
 
-        return new UpdateKitPersisterResult(invalidateResults);
+        return new UpdateKitPersisterResult(updatedKit, invalidateResults);
     }
 
     private List<String> newCodesInNewDsl(Set<String> savedItemCodes, Set<String> newItemCodes) {
@@ -94,7 +99,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             .toList();
     }
 
-    private void createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId) {
+    private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId) {
         MaturityLevel newDomainLevel = new MaturityLevel(
             null,
             newLevel.getCode(),
@@ -109,6 +114,14 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
 
         List<MaturityLevelCompetence> newCompetences = toCompetenceList(newLevel.getCompetencesCodeToValueMap(), kitId);
         newCompetences.forEach(i -> createLevelCompetence(persistedLevelId, i.getEffectiveLevelId(), i.getValue()));
+        return new MaturityLevel(
+            persistedLevelId,
+            newLevel.getCode(),
+            newLevel.getTitle(),
+            newLevel.getIndex(),
+            newLevel.getValue(),
+            newCompetences
+        );
     }
 
     private void deleteMaturityLevel(MaturityLevel deletedLevel, Long kitId) {
