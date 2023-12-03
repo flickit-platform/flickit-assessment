@@ -1,4 +1,6 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.update;
 
-public record UpdateKitPersisterResult(boolean shouldInvalidateCalcResult) {
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
+
+public record UpdateKitPersisterResult(AssessmentKit updatedKit, boolean shouldInvalidateCalcResult) {
 }

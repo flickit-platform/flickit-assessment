@@ -56,7 +56,7 @@ class UpdateKitByDslServiceTest {
 
         when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new Notification());
-        when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new UpdateKitPersisterResult(false));
+        when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new UpdateKitPersisterResult(savedKit,false));
 
         var param = new UpdateKitByDslUseCase.Param(kitId, dslContent);
         service.update(param);
@@ -70,7 +70,7 @@ class UpdateKitByDslServiceTest {
 
         when(loadAssessmentKitInfoPort.load(savedKit.getId())).thenReturn(savedKit);
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new Notification());
-        when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new UpdateKitPersisterResult(true));
+        when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new UpdateKitPersisterResult(savedKit, true));
         doNothing().when(invalidateResultByKitPort).invalidateByKitId(savedKit.getId());
 
         var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), dslContent);

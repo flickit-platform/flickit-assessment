@@ -31,9 +31,10 @@ public class CompositeUpdateKitPersister implements UpdateKitPersister {
         boolean shouldInvalidateCalcResult = false;
         for (UpdateKitPersister p : persisters) {
             UpdateKitPersisterResult result = p.persist(savedKit, dslKit);
+            savedKit = result.updatedKit();
             shouldInvalidateCalcResult = shouldInvalidateCalcResult || result.shouldInvalidateCalcResult();
         }
-        return new UpdateKitPersisterResult(shouldInvalidateCalcResult);
+        return new UpdateKitPersisterResult(savedKit, shouldInvalidateCalcResult);
     }
 
     @Override
