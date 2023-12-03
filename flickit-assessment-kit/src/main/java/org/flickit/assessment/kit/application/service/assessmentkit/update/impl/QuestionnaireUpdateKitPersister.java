@@ -47,7 +47,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             .filter(i -> !savedQuestionnaireCodesMap.containsKey(i))
             .toList();
         List<String> sameQuestionnairesCodes = savedQuestionnaireCodesMap.keySet().stream()
-            .filter(i -> !dslQuestionnaireCodesMap.containsKey(i))
+            .filter(dslQuestionnaireCodesMap::containsKey)
             .toList();
 
         List<Questionnaire> finalQuestionnaires = new ArrayList<>();

@@ -91,8 +91,6 @@ class QuestionnaireUpdateKitPersisterTest {
             .questionnaires(List.of(dslQOne, dslQTwo))
             .build();
 
-        doNothing().when(updateQuestionnairePort).update(any(UpdateQuestionnairePort.Param.class));
-
         UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
 
         assertFalse(result.shouldInvalidateCalcResult());
