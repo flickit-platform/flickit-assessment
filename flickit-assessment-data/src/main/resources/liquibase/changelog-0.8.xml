@@ -120,4 +120,35 @@
         <addNotNullConstraint tableName="baseinfo_maturitylevel" columnName="index"/>
     </changeSet>
 
+    <changeSet id="0.8-21" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_qualityattribute">
+            <column name="assessment_kit_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.8-22" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_qualityattribute">
+            <column name="assessment_kit_id" valueComputed="s.assessment_kit_id FROM baseinfo_assessmentsubject s
+            WHERE assessment_subject_id = s.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.8-23" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_qualityattribute" columnName="assessment_kit_id"/>
+    </changeSet>
+
+    <changeSet id="0.8-24" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_kit_id, code"
+                             constraintName="uq_baseinfo_qualityattribute_code_kit_id"
+                             tableName="baseinfo_qualityattribute"/>
+    </changeSet>
+
+    <changeSet id="0.8-25" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_qualityattribute"
+                                 constraintName="baseinfo_qualityattribute_assessment_kit_id_fk_assessmentkit"
+                                 deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="baseinfo_assessmentkit"
+                                 validate="true"/>
+    </changeSet>
+
 </databaseChangeLog>
