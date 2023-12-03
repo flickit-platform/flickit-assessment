@@ -14,7 +14,7 @@ public class QuestionImpactJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_questionimpact_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_metricimpact_id_seq")
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 

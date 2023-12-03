@@ -24,7 +24,7 @@ public class QualityAttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public Attribute loadByCode(String code) {
-        return QualityAttributeMapper.mapToDomain(repository.findByCode(code));
+    public Attribute loadByCode(String code, Long kitId) {
+        return QualityAttributeMapper.mapToDomain(repository.findByCodeAndKitId(code, kitId));
     }
 }

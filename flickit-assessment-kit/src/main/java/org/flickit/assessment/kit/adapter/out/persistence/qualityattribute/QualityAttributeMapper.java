@@ -17,7 +17,7 @@ public class QualityAttributeMapper {
             entity.getDescription(),
             entity.getWeight(),
             entity.getCreationTime(),
-            entity.getLastModificationTime()
+            entity.getLastModificationDate()
         );
     }
 }

@@ -115,6 +115,6 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
 
     private void setQuestions(List<Questionnaire> questionnaires, List<Question> questions) {
         Map<Long, List<Question>> groupedQuestions = questions.stream().collect(Collectors.groupingBy(Question::getQuestionnaireId));
-        questionnaires.forEach(q -> groupedQuestions.get(q.getId()));
+        questionnaires.forEach(q -> q.setQuestions(groupedQuestions.get(q.getId())));
     }
 }

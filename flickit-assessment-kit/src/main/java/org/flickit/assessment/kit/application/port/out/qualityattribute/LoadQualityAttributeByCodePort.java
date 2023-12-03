@@ -4,5 +4,5 @@ import org.flickit.assessment.kit.application.domain.Attribute;
 
 public interface LoadQualityAttributeByCodePort {
 
-    Attribute loadByCode(String code);
+    Attribute loadByCode(String code, Long kitId);
 }
