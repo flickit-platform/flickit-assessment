@@ -89,7 +89,8 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
                 savedQuestionnaire.getId(),
                 newQuestionnaire.getTitle(),
                 newQuestionnaire.getIndex(),
-                newQuestionnaire.getDescription());
+                newQuestionnaire.getDescription(),
+                LocalDateTime.now());
 
             updateQuestionnairePort.update(updateParam);
             log.debug("A questionnaire with code [{}] is updated.", savedQuestionnaire.getCode());

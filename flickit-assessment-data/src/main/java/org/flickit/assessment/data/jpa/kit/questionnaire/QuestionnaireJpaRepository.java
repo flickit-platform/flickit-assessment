@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, Long> {
@@ -14,11 +15,13 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
     @Modifying
     @Query("UPDATE QuestionnaireJpaEntity q SET " +
         "q.title = :title, " +
-        "q.description = :description, " +
         "q.index = :index " +
+        "q.description = :description, " +
+        "q.lastModificationTime = :lastModificationTime " +
         "WHERE q.id = :id")
     void update(@Param("id") Long id,
                 @Param("title") String title,
                 @Param("index") Integer index,
-                @Param("description") String description);
+                @Param("description") String description,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }
