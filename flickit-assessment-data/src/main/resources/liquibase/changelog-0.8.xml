@@ -138,17 +138,24 @@
     </changeSet>
 
     <changeSet id="0.8-24" author="Mahdi Rezazadeh">
-        <addUniqueConstraint columnNames="assessment_kit_id, code"
-                             constraintName="uq_baseinfo_qualityattribute_code_kit_id"
-                             tableName="baseinfo_qualityattribute"/>
+        <addUniqueConstraint tableName="baseinfo_qualityattribute"
+                             columnNames="assessment_kit_id, code"
+                             constraintName="uq_baseinfo_qualityattribute_code_kitid"/>
     </changeSet>
 
     <changeSet id="0.8-25" author="Mahdi Rezazadeh">
-        <addForeignKeyConstraint baseColumnNames="assessment_kit_id" baseTableName="baseinfo_qualityattribute"
-                                 constraintName="baseinfo_qualityattribute_assessment_kit_id_fk_assessmentkit"
+        <addForeignKeyConstraint baseTableName="baseinfo_qualityattribute"
+                                 baseColumnNames="assessment_kit_id"
+                                 referencedTableName="baseinfo_assessmentkit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_baseinfo_qualityattribute_assessmentkit"
                                  deferrable="true" initiallyDeferred="true" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="baseinfo_assessmentkit"
                                  validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-26" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint tableName="baseinfo_qualityattribute"
+                              constraintName="baseinfo_qualityattribut_title_assessment_subject_4a82494c_uniq"/>
     </changeSet>
 
 </databaseChangeLog>
