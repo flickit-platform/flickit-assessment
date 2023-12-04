@@ -9,13 +9,17 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -29,7 +33,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
     private final UpdateAttributePort updateAttributePort;
 
     @Override
-    public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
 
         Map<String, Long> collect = savedKit.getSubjects().stream()
             .collect(Collectors.toMap(Subject::getCode, Subject::getId));
