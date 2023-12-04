@@ -39,7 +39,9 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             updateSubjectPort.update(toUpdateParam(id, s));
             log.debug("Subject with id [{}] is updated.", id);
         });
-        return new UpdateKitPersisterResult(savedKit, false);
+
+        ctx.put(KEY_SUBJECTS, savedSubjectCodesMap);
+        return new UpdateKitPersisterResult(false);
     }
 
     private UpdateSubjectPort.Param toUpdateParam(long id, SubjectDslModel subject) {
