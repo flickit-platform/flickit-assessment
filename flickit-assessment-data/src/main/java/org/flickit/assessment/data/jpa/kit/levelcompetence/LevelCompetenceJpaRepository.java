@@ -8,18 +8,19 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompetenceJpaEntity, Long> {
-    List<LevelCompetenceJpaEntity> findByMaturityLevelId(Long maturityLevelId);
+
+    List<LevelCompetenceJpaEntity> findByAffectedLevelId(Long affectedLevelId);
 
     @Modifying
     @Query("DELETE LevelCompetenceJpaEntity l WHERE " +
-        "l.levelCompetence.id = :effectiveLevelId AND " +
-        "l.maturityLevel.id = :affectedLevelId")
+        "l.effectiveLevel.id = :effectiveLevelId AND " +
+        "l.affectedLevel.id = :affectedLevelId")
     void delete(@Param(value = "affectedLevelId") Long affectedLevelId, @Param(value = "effectiveLevelId") Long effectiveLevelId);
 
     @Modifying
     @Query("UPDATE LevelCompetenceJpaEntity l SET " +
         "l.value = :value " +
-        "WHERE l.maturityLevel.id = :affectedLevelId " +
-        "AND l.levelCompetence.id = :effectiveLevelId")
+        "WHERE l.affectedLevel.id = :affectedLevelId " +
+        "AND l.effectiveLevel.id = :effectiveLevelId")
     void update(Long affectedLevelId, Long effectiveLevelId, Integer value);
 }
