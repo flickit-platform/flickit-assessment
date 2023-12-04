@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswer
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByCodePort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributeByCodePort;
 import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributePort;
@@ -16,6 +15,7 @@ import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPo
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.test.fixture.application.*;
 import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
@@ -55,9 +55,6 @@ class QuestionUpdateKitPersisterTest {
 
     @Mock
     private LoadQualityAttributePort loadQualityAttributePort;
-
-    @Mock
-    private LoadMaturityLevelByCodePort loadMaturityLevelByCodePort;
 
     @Mock
     private LoadQualityAttributeByCodePort loadQualityAttributeByCodePort;
@@ -118,7 +115,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -168,7 +166,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             createQuestionImpactPort,
@@ -202,7 +201,6 @@ class QuestionUpdateKitPersisterTest {
         when(loadQualityAttributePort.load(attribute.getId())).thenReturn(Optional.of(attribute));
         when(loadQualityAttributeByCodePort.loadByCode(attribute.getCode(), savedKit.getId())).thenReturn(attribute);
         when(loadMaturityLevelPort.load(levelTwo.getId())).thenReturn(Optional.of(levelTwo));
-        when(loadMaturityLevelByCodePort.loadByCode(levelThree.getCode(), savedKit.getId())).thenReturn(levelThree);
         when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(1L);
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(1L);
 
@@ -223,8 +221,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionImpactPort,
@@ -282,7 +280,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -329,7 +328,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -389,8 +389,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionImpactPort,
@@ -440,7 +440,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -489,7 +490,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -536,7 +538,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,

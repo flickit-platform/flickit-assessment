@@ -11,17 +11,13 @@ import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswer
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByCodePort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributeByCodePort;
-import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnaireByCodePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Slf4j
@@ -41,11 +39,6 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
     private final UpdateQuestionPort updateQuestionPort;
     private final CreateQuestionPort createQuestionPort;
-    private final LoadQuestionnaireByCodePort loadQuestionnaireByCodePort;
-    private final LoadMaturityLevelPort loadMaturityLevelPort;
-    private final LoadQualityAttributePort loadQualityAttributePort;
-    private final LoadMaturityLevelByCodePort loadMaturityLevelByCodePort;
-    private final LoadQualityAttributeByCodePort loadQualityAttributeByCodePort;
     private final CreateQuestionImpactPort createQuestionImpactPort;
     private final DeleteQuestionImpactPort deleteQuestionImpactPort;
     private final UpdateQuestionImpactPort updateQuestionImpactPort;
@@ -57,7 +50,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final CreateAnswerOptionPort createAnswerOptionPort;
 
     @Override
-    public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+        Map<String, Long> postUpdateQuestionnaires = ctx.get(KEY_QUESTIONNAIRES);
+        Map<String, Long> postUpdateAttributes = ctx.get(KEY_ATTRIBUTES);
+        Map<String, Long> postUpdateMaturityLevels = ctx.get(KEY_MATURITY_LEVELS);
+
         var savedQuestionnaires = savedKit.getQuestionnaires();
         var dslQuestionnaires = dslKit.getQuestionnaires();
 
@@ -65,16 +62,15 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         Map<String, QuestionnaireDslModel> dslQuestionnaireCodesMap = dslQuestionnaires.stream().collect(toMap(QuestionnaireDslModel::getCode, q -> q));
 
         List<String> newQuestionnaires = dslQuestionnaireCodesMap.keySet().stream()
-            .filter(s -> savedQuestionnaireCodesMap.keySet().stream()
-                .noneMatch(s::equals))
+            .filter(s -> !savedQuestionnaireCodesMap.containsKey(s))
             .toList();
 
         // Assuming that new questionnaires have been created in Questionnaire persister
-        createQuestion(savedKit.getId(), dslKit.getQuestions(), newQuestionnaires);
+        createQuestion(dslKit.getQuestions(), newQuestionnaires,
+            postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels);
 
         List<String> sameQuestionnaires = savedQuestionnaireCodesMap.keySet().stream()
-            .filter(s -> dslQuestionnaireCodesMap.keySet().stream()
-                .anyMatch(s::equals))
+            .filter(dslQuestionnaireCodesMap::containsKey)
             .toList();
 
         boolean invalidateResults = false;
@@ -90,7 +86,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 List<String> sameLevels = sameCodesInNewDsl(savedQuestionCodesMap.keySet(), dslQuestionCodesMap.keySet());
 
                 for (String i : sameLevels) {
-                    boolean invalidOnUpdate = updateQuestion(savedQuestionCodesMap.get(i), dslQuestionCodesMap.get(i), savedKit.getId());
+                    boolean invalidOnUpdate = updateQuestion(savedQuestionCodesMap.get(i), dslQuestionCodesMap.get(i),
+                        postUpdateAttributes, postUpdateMaturityLevels);
                     if (invalidOnUpdate)
                         invalidateResults = true;
                 }
@@ -100,13 +97,14 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         return new UpdateKitPersisterResult(invalidateResults || !newQuestionnaires.isEmpty());
     }
 
-    private void createQuestion(Long kitId, List<QuestionDslModel> dslQuestions, List<String> newQuestionnaires) {
+    private void createQuestion(List<QuestionDslModel> dslQuestions, List<String> newQuestionnaires,
+                                Map<String, Long> questionnaires, Map<String, Long> attributes, Map<String, Long> maturityLevels) {
         newQuestionnaires.forEach(q -> {
             var newQuestions = dslQuestions.stream().filter(i -> i.getQuestionnaireCode().equals(q)).toList();
             if (Objects.nonNull(newQuestions) && !newQuestions.isEmpty()) {
-                var questionnaire = loadQuestionnaireByCodePort.loadByCode(q, kitId);
                 newQuestions.forEach(i -> {
-                    var createParam = new CreateQuestionPort.Param(i.getCode(), i.getTitle(), i.getDescription(), i.getIndex(), questionnaire.getId(), i.isMayNotBeApplicable());
+                    var createParam = new CreateQuestionPort.Param(i.getCode(), i.getTitle(), i.getDescription(), i.getIndex(),
+                        questionnaires.get(q), i.isMayNotBeApplicable());
                     Long questionId = createQuestionPort.persist(createParam);
                     log.debug("Question with id [{}] is created.", questionId);
 
@@ -117,7 +115,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
                     var newImpacts = i.getQuestionImpacts();
                     if (Objects.nonNull(newImpacts) && !newImpacts.isEmpty()) {
-                        newImpacts.forEach(n -> createImpact(questionId, n, kitId));
+                        newImpacts.forEach(n -> createImpact(questionId, n, attributes, maturityLevels));
                     }
                 });
             }
@@ -142,7 +140,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             .toList();
     }
 
-    private boolean updateQuestion(Question savedQuestion, QuestionDslModel dslQuestion, long kitId) {
+    private boolean updateQuestion(Question savedQuestion, QuestionDslModel dslQuestion, Map<String, Long> attributes, Map<String, Long> maturityLevels) {
         boolean invalidateResults = false;
         if (!savedQuestion.getTitle().equals(dslQuestion.getTitle()) ||
             !Objects.equals(savedQuestion.getHint(), dslQuestion.getDescription()) ||
@@ -168,7 +166,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         }
 
         if (savedQuestion.getImpacts() != null || dslQuestion.getQuestionImpacts() != null) {
-            invalidateResults = invalidateResults || updateQuestionImpacts(savedQuestion, dslQuestion, kitId);
+            invalidateResults = invalidateResults || updateQuestionImpacts(savedQuestion, dslQuestion, attributes, maturityLevels);
         }
 
         return invalidateResults;
@@ -207,10 +205,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         return invalidateResults;
     }
 
-    private boolean updateQuestionImpacts(Question savedQuestion, QuestionDslModel dslQuestion, long kitId) {
+    private boolean updateQuestionImpacts(Question savedQuestion, QuestionDslModel dslQuestion,
+                                          Map<String, Long> attributes, Map<String, Long> maturityLevels) {
         boolean invalidateResults = false;
         Map<QuestionImpact.Code, QuestionImpact> savedImpactCodesMap = savedQuestion.getImpacts().stream()
-            .collect(toMap(this::createQuestionImpactCode, i -> i));
+            .collect(toMap(i -> createQuestionImpactCode(i, attributes, maturityLevels), i -> i));
         Map<QuestionImpact.Code, QuestionImpactDslModel> dslImpactCodesMap = dslQuestion.getQuestionImpacts().stream()
             .collect(toMap(i -> new QuestionImpact.Code(i.getAttributeCode(), i.getMaturityLevel().getTitle()), i -> i));
 
@@ -218,7 +217,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         List<QuestionImpact.Code> deletedImpacts = deletedImpactsInNewDsl(savedImpactCodesMap.keySet(), dslImpactCodesMap.keySet());
         List<QuestionImpact.Code> sameImpacts = sameImpactsInNewDsl(savedImpactCodesMap.keySet(), dslImpactCodesMap.keySet());
 
-        newImpacts.forEach(i -> createImpact(savedQuestion.getId(), dslImpactCodesMap.get(i), kitId));
+        newImpacts.forEach(i -> createImpact(savedQuestion.getId(), dslImpactCodesMap.get(i), attributes, maturityLevels));
         deletedImpacts.forEach(i -> deleteImpact(savedImpactCodesMap.get(new QuestionImpact.Code(i.attributeCode(), i.maturityLevelCode()))));
         for (QuestionImpact.Code i : sameImpacts) {
             invalidateResults = invalidateResults || updateImpact(savedQuestion, savedImpactCodesMap.get(i), dslImpactCodesMap.get(i));
@@ -230,14 +229,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         return invalidateResults;
     }
 
-    private QuestionImpact.Code createQuestionImpactCode(QuestionImpact impact) {
-        Attribute attribute = loadQualityAttributePort.load(impact.getAttributeId()).orElseThrow(
-            () -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ATTRIBUTE_NOT_FOUND)
-        );
-        MaturityLevel maturityLevel = loadMaturityLevelPort.load(impact.getMaturityLevelId()).orElseThrow(
-            () -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_MATURITY_LEVEL_NOT_FOUND)
-        ); // TODO: we can use loaded maturity levels from kit (but we do not pass kit to this class)
-        return new QuestionImpact.Code(attribute.getCode(), maturityLevel.getCode());
+    private QuestionImpact.Code createQuestionImpactCode(QuestionImpact impact, Map<String, Long> attributes, Map<String, Long> maturityLevels) {
+        Map<Long, String> attributesIdToCode = attributes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        Map<Long, String> levelsIdToCode = maturityLevels.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        String attributeCode = attributesIdToCode.get(impact.getAttributeId());
+        String levelCode = levelsIdToCode.get(impact.getMaturityLevelId());
+        return new QuestionImpact.Code(attributeCode, levelCode);
     }
 
     private List<QuestionImpact.Code> newImpactsInNewDsl(Set<QuestionImpact.Code> savedImpactCodes, Set<QuestionImpact.Code> dslImpactCodes) {
@@ -261,12 +258,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             .toList();
     }
 
-    private void createImpact(Long questionId, QuestionImpactDslModel dslQuestionImpact, Long kitId) {
+    private void createImpact(Long questionId, QuestionImpactDslModel dslQuestionImpact,
+                              Map<String, Long> attributes, Map<String, Long> maturityLevels) {
         QuestionImpact newQuestionImpact = new QuestionImpact(
             null,
-            loadQualityAttributeByCodePort.loadByCode(dslQuestionImpact.getAttributeCode(), kitId).getId(),
-            // TODO: maturity levels can be loaded from kit
-            loadMaturityLevelByCodePort.loadByCode(dslQuestionImpact.getMaturityLevel().getTitle(), kitId).getId(),
+            attributes.get(dslQuestionImpact.getAttributeCode()),
+            maturityLevels.get(dslQuestionImpact.getMaturityLevel().getCode()),
             dslQuestionImpact.getWeight(),
             questionId
         );

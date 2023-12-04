@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.questionimpact;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 
@@ -11,7 +12,7 @@ public class QuestionImpactMapper {
         return new QuestionImpact(
             entity.getId(),
             entity.getQualityAttributeId(),
-            entity.getMaturityLevelId(),
+            entity.getMaturityLevel().getId(),
             entity.getWeight(),
             entity.getQuestionId()
         );
@@ -24,7 +25,7 @@ public class QuestionImpactMapper {
             impact.getWeight(),
             impact.getQuestionId(),
             impact.getAttributeId(),
-            impact.getMaturityLevelId()
+            new MaturityLevelJpaEntity(impact.getMaturityLevelId(), null, null, null, null, null)
         );
     }
 }
