@@ -11,15 +11,12 @@ import org.flickit.assessment.kit.application.port.out.answeroptionimpact.Create
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributeByCodePort;
 import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnaireByCodePort;
-import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.test.fixture.application.*;
 import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
@@ -59,16 +56,10 @@ class QuestionUpdateKitPersisterTest {
     private CreateQuestionPort createQuestionPort;
 
     @Mock
-    private LoadQuestionnaireByCodePort loadQuestionnaireByCodePort;
-
-    @Mock
     private LoadMaturityLevelPort loadMaturityLevelPort;
 
     @Mock
     private LoadQualityAttributePort loadQualityAttributePort;
-
-    @Mock
-    private LoadQualityAttributeByCodePort loadQualityAttributeByCodePort;
 
     @Mock
     private CreateQuestionImpactPort createQuestionImpactPort;
@@ -145,7 +136,6 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
-            loadQuestionnaireByCodePort,
             loadAnswerOptionByIndexPort,
             createAnswerOptionPort
         );
@@ -170,8 +160,6 @@ class QuestionUpdateKitPersisterTest {
         savedQuestion.setImpacts(List.of(savedImpact));
         savedQuestionnaire2.setQuestions(List.of(savedQuestion));
 
-        when(loadQuestionnaireByCodePort.loadByCode(savedQuestionnaire2.getCode(), savedKit.getId())).thenReturn(savedQuestionnaire2);
-        when(loadQualityAttributeByCodePort.loadByCode(attribute.getCode(), savedKit.getId())).thenReturn(attribute);
         when(loadAnswerOptionByIndexPort.loadByIndex(eq(answerOption1.getIndex()), any())).thenReturn(answerOption1);
         when(loadAnswerOptionByIndexPort.loadByIndex(eq(answerOption2.getIndex()), any())).thenReturn(answerOption2);
 
@@ -250,7 +238,6 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
-            loadQuestionnaireByCodePort,
             loadAnswerOptionByIndexPort,
             createAnswerOptionPort
         );
@@ -275,7 +262,6 @@ class QuestionUpdateKitPersisterTest {
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire));
 
         when(loadQualityAttributePort.load(attribute.getId())).thenReturn(Optional.of(attribute));
-        when(loadQualityAttributeByCodePort.loadByCode(attribute.getCode(), savedKit.getId())).thenReturn(attribute);
         when(loadMaturityLevelPort.load(levelTwo.getId())).thenReturn(Optional.of(levelTwo));
         when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(1L);
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(1L);
@@ -310,7 +296,6 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
-            loadQuestionnaireByCodePort,
             createAnswerOptionPort
         );
     }
@@ -372,7 +357,6 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
-            loadQuestionnaireByCodePort,
             loadAnswerOptionByIndexPort,
             createAnswerOptionPort
         );
@@ -425,7 +409,6 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
-            loadQuestionnaireByCodePort,
             loadAnswerOptionByIndexPort,
             createAnswerOptionPort
         );
@@ -489,7 +472,6 @@ class QuestionUpdateKitPersisterTest {
             deleteAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
-            loadQuestionnaireByCodePort,
             loadAnswerOptionByIndexPort,
             createAnswerOptionPort
         );
@@ -545,7 +527,6 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
-            loadQuestionnaireByCodePort,
             loadAnswerOptionByIndexPort,
             createAnswerOptionPort
         );
@@ -599,7 +580,6 @@ class QuestionUpdateKitPersisterTest {
             deleteAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
-            loadQuestionnaireByCodePort,
             loadAnswerOptionByIndexPort,
             createAnswerOptionPort
         );
@@ -653,7 +633,6 @@ class QuestionUpdateKitPersisterTest {
             loadQualityAttributePort,
             loadMaturityLevelPort,
             createQuestionPort,
-            loadQuestionnaireByCodePort,
             loadAnswerOptionByIndexPort,
             createAnswerOptionPort
         );
