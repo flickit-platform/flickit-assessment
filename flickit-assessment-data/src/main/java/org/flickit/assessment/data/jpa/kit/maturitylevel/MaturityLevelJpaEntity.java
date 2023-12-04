@@ -2,6 +2,10 @@ package org.flickit.assessment.data.jpa.kit.maturitylevel;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
+import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
+
+import java.util.List;
 
 @Entity
 @Table(name = "baseinfo_maturitylevel")
@@ -33,4 +37,22 @@ public class MaturityLevelJpaEntity {
 
     @Column(name = "assessment_kit_id")
     private Long assessmentKitId;
+
+    public MaturityLevelJpaEntity(Long id, String code, String title, Integer value, Integer index, Long assessmentKitId) {
+        this.id = id;
+        this.code = code;
+        this.title = title;
+        this.value = value;
+        this.index = index;
+        this.assessmentKitId = assessmentKitId;
+    }
+
+    @OneToMany(mappedBy = "affectedLevel", cascade = CascadeType.REMOVE)
+    private List<LevelCompetenceJpaEntity> affectedCompetences;
+
+    @OneToMany(mappedBy = "effectiveLevel", cascade = CascadeType.REMOVE)
+    private List<LevelCompetenceJpaEntity> effectiveCompetences;
+
+    @OneToMany(mappedBy = "maturityLevel", cascade = CascadeType.REMOVE)
+    private List<QuestionImpactJpaEntity> questionImpacts;
 }
