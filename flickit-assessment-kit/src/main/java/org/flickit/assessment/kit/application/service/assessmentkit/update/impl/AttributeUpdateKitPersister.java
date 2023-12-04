@@ -6,13 +6,17 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
+import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
+import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -22,25 +26,53 @@ import java.util.stream.Collectors;
 @Transactional(propagation = Propagation.MANDATORY)
 public class AttributeUpdateKitPersister implements UpdateKitPersister {
 
+    private final UpdateAttributePort updateAttributePort;
 
     @Override
     public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
 
-        Map<String, Long> collect = savedKit.getSubjects().stream().collect(Collectors.toMap(Subject::getCode, Subject::getId));
-        Map<String, List<Attribute>> codeToAttributes = savedKit.getSubjects().stream().collect(Collectors.toMap(Subject::getCode, Subject::getAttributes));
+        Map<String, Long> collect = savedKit.getSubjects().stream()
+            .collect(Collectors.toMap(Subject::getCode, Subject::getId));
+
+        Map<String, Attribute> codeToAttribute = savedKit.getSubjects().stream()
+            .map(Subject::getAttributes)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toMap(Attribute::getCode, Function.identity()));
 
 
-        savedKit.getSubjects().stream().map(Subject::getAttributes).flatMap(Collection::stream).forEach(e -> {
+        Map<String, Long> codeToSubjectId = new HashMap<>();
 
+        savedKit.getSubjects().forEach(e -> {
+            e.getAttributes().forEach(o -> codeToSubjectId.put(o.getCode(), e.getId()));
         });
 
-        dslKit.getAttributes().forEach(e -> {
+        boolean shouldInvalidated = false;
+        for (AttributeDslModel e : dslKit.getAttributes()) {
             String subjectCode = e.getSubjectCode();
             Long subjectId = collect.get(subjectCode);
-            codeToAttributes.get(subjectCode);
+            Long oldSubjectId = codeToSubjectId.get(e.getCode());
+            if (!Objects.equals(e.getWeight(), codeToAttribute.get(e.getCode()).getWeight()) || !Objects.equals(subjectId, oldSubjectId))
+                shouldInvalidated = true;
 
-        });
-        return new UpdateKitPersisterResult(false);
+            updateAttributePort.update(toUpdatePram(codeToAttribute.get(e.getCode()).getId(), subjectId, e));
+
+        }
+        return new UpdateKitPersisterResult(shouldInvalidated);
+    }
+
+    private UpdateAttributePort.Param toUpdatePram(long id, Long subjectId, AttributeDslModel e) {
+        return new UpdateAttributePort.Param(id,
+            e.getTitle(),
+            e.getIndex(),
+            e.getDescription(),
+            e.getWeight(),
+            LocalDateTime.now(),
+            subjectId);
+    }
+
+    @Override
+    public int order() {
+        return 4;
     }
 
 }
