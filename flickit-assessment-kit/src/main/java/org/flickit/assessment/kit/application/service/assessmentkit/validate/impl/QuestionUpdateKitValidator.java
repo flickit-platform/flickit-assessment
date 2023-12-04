@@ -14,11 +14,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_QUESTION_ADDITION_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_QUESTION_DELETION_NOT_ALLOWED;
+import static java.util.stream.Collectors.toSet;
+import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.QUESTION;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
 
     @Override
     public Notification validate(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
-        Notification result = new Notification();
+        Notification notification = new Notification();
 
         var savedQuestionnaires = savedKit.getQuestionnaires();
         var dslQuestionnaires = dslKit.getQuestionnaires();
@@ -43,38 +42,31 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
             Questionnaire questionnaire = savedQuestionnaireCodesMap.get(q);
             if (Objects.nonNull(questionnaire.getQuestions())) {
                 List<Question> savedQuestions = questionnaire.getQuestions();
-                List<QuestionDslModel> newQuestions = dslKit.getQuestions().stream().filter(i -> i.getQuestionnaireCode().equals(q)).toList();
+                List<QuestionDslModel> dslQuestions = dslKit.getQuestions().stream().filter(i -> i.getQuestionnaireCode().equals(q)).toList();
 
                 Map<String, Question> savedQuestionCodesMap = savedQuestions.stream().collect(toMap(Question::getCode, i -> i));
-                Map<String, QuestionDslModel> dslQuestionCodesMap = newQuestions.stream().collect(toMap(QuestionDslModel::getCode, i -> i));
+                Map<String, QuestionDslModel> dslQuestionCodesMap = dslQuestions.stream().collect(toMap(QuestionDslModel::getCode, i -> i));
 
-                if (isAnyDeleted(savedQuestionCodesMap.keySet(), dslQuestionCodesMap.keySet())) {
-                    result.add(UPDATE_KIT_BY_DSL_QUESTION_DELETION_NOT_ALLOWED);
+                var deletedQuestions = savedQuestionCodesMap.keySet().stream()
+                    .filter(s -> !dslQuestionCodesMap.containsKey(s))
+                    .collect(toSet());
+
+                var newQuestions = dslQuestionCodesMap.keySet().stream()
+                    .filter(s -> !savedQuestionCodesMap.containsKey(s))
+                    .collect(toSet());
+
+                if (!deletedQuestions.isEmpty()) {
+                    notification.add(new InvalidDeletionError(QUESTION, deletedQuestions));
                 }
 
-                if (isAdded(savedQuestionCodesMap.keySet(), dslQuestionCodesMap.keySet())) {
-                    result.add(UPDATE_KIT_BY_DSL_QUESTION_ADDITION_NOT_ALLOWED);
+                if (!newQuestions.isEmpty()) {
+                    notification.add(new InvalidAdditionError(QUESTION, newQuestions));
                 }
             }
 
         });
 
-        return result;
+        return notification;
     }
 
-    private boolean isAnyDeleted(Set<String> savedQuestionCodesSet, Set<String> dslQuestionCodesSet) {
-        return !savedQuestionCodesSet.stream()
-            .filter(s -> dslQuestionCodesSet.stream()
-                .noneMatch(i -> i.equals(s)))
-            .toList()
-            .isEmpty();
-    }
-
-    private boolean isAdded(Set<String> savedQuestionCodesSet, Set<String> dslQuestionCodesSet) {
-        return !dslQuestionCodesSet.stream()
-            .filter(s -> savedQuestionCodesSet.stream()
-                .noneMatch(i -> i.equals(s)))
-            .toList()
-            .isEmpty();
-    }
 }

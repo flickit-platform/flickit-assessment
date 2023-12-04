@@ -1,10 +1,12 @@
 package org.flickit.assessment.kit.test.fixture.application.dsl;
 
+import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class QuestionDslModelMother {
 
@@ -28,5 +30,25 @@ public class QuestionDslModelMother {
             .answerOptions(answerOptions)
             .mayNotBeApplicable(mayNotBeApplicable)
             .build();
+    }
+
+    public static QuestionDslModel domainToDslModel(Question question) {
+        return domainToDslModel(question, b -> {
+        });
+    }
+
+    public static QuestionDslModel domainToDslModel(Question question,
+                                                    Consumer<QuestionDslModel.QuestionDslModelBuilder<?, ?>> changer) {
+        var builder = domainToDslModelBuilder(question);
+        changer.accept(builder);
+        return builder.build();
+    }
+
+    private static QuestionDslModel.QuestionDslModelBuilder<?, ?> domainToDslModelBuilder(Question question) {
+        return QuestionDslModel.builder()
+            .code(question.getCode())
+            .title(question.getTitle())
+            .index(question.getIndex())
+            .description(question.getHint());
     }
 }

@@ -18,8 +18,10 @@ public class Constants {
     public static String QUESTIONNAIRE_TITLE1 = "Clean Architecture";
 
     public static String QUESTION_CODE1 = "m1";
-    public static String QUESTION_TITLE1 = "Is API provided using standard and well-known communication protocols (such as REST and GraphQL)?";
-    public static String QUESTION_OLD_TITLE1 = "Is API provided using standard and well-known communication protocols?";
+    public static String QUESTION_CODE2 = "m2";
+    public static String QUESTION_TITLE1 = "Question Title 1?";
+    public static String QUESTION_TITLE2 = "Question Title 2?";
+    public static String QUESTION_OLD_TITLE1 = "Old Question Title 1?";
 
     public static String ATTRIBUTE_CODE1 = "SoftwareMaintainability";
     public static String ATTRIBUTE_TITLE1 = "SoftwareMaintainability";
