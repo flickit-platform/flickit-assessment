@@ -8,9 +8,9 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface AttributeJpaRepository extends JpaRepository<AttributeJpeEntity, Long> {
+public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity, Long> {
 
-    List<AttributeJpeEntity> findAllBySubjectId(long subjectId);
+    List<AttributeJpaEntity> findAllBySubjectId(long subjectId);
 
     @Modifying
     @Query("UPDATE AttributeJpeEntity a SET " +

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
-import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpeEntity;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
@@ -43,7 +43,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
         List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByAssessmentKitId(kitId);
 
         List<Attribute> attributes;
-        List<AttributeJpeEntity> attributeEntities;
+        List<AttributeJpaEntity> attributeEntities;
         List<Subject> subjects = new ArrayList<>();
         for (SubjectJpaEntity s: subjectEntities) {
             attributeEntities = attributeRepository.findAllBySubjectId(s.getId());
@@ -86,7 +86,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     }
 
 
-    private Attribute mapToDomainModel(AttributeJpeEntity entity) {
+    private Attribute mapToDomainModel(AttributeJpaEntity entity) {
         return new Attribute(
             entity.getId(),
             entity.getCode(),

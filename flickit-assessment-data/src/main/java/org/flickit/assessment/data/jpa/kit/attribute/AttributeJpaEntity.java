@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class AttributeJpeEntity {
+public class AttributeJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
