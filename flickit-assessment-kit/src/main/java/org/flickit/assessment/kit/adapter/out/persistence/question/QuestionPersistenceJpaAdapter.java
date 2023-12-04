@@ -14,7 +14,7 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public void update(Param param) {
-        repository.update(param.id(), param.title(), param.index(), param.description(), param.isNotApplicable());
+        repository.update(param.id(), param.title(), param.index(), param.description(), param.isNotApplicable(), param.lastModificationTime());
     }
 
 }

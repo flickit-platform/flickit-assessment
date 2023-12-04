@@ -21,6 +21,7 @@ import org.flickit.assessment.kit.application.service.assessmentkit.update.Updat
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -106,7 +107,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 dslQuestion.getTitle(),
                 dslQuestion.getIndex(),
                 dslQuestion.getDescription(),
-                dslQuestion.isMayNotBeApplicable()
+                dslQuestion.isMayNotBeApplicable(),
+                LocalDateTime.now()
             );
             updateQuestionPort.update(updateParam);
             log.warn("A question with id [{}] is updated.", savedQuestion.getId());
