@@ -9,8 +9,9 @@ import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLev
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByCodePort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -21,11 +22,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Map;
 
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_MATURITY_LEVELS;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithMaturityLevels;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.*;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother.competenceListToMap;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother.domainToDslModel;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -39,8 +41,6 @@ class MaturityLevelUpdateKitPersisterTest {
     private CreateMaturityLevelPort createMaturityLevelPort;
     @Mock
     private DeleteMaturityLevelPort deleteMaturityLevelPort;
-    @Mock
-    private LoadMaturityLevelByCodePort loadMaturityLevelByCodePort;
     @Mock
     private UpdateMaturityLevelPort updateMaturityLevelPort;
     @Mock
@@ -69,14 +69,19 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(dslLevels)
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+
+        assertFalse(result.shouldInvalidateCalcResult());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
+        assertNotNull(codeToIdMap);
+        assertEquals(3, codeToIdMap.keySet().size());
 
         verifyNoInteractions(
             deleteMaturityLevelPort,
             deleteLevelCompetencePort,
             createMaturityLevelPort,
             createLevelCompetencePort,
-            loadMaturityLevelByCodePort,
             updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
@@ -93,14 +98,18 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(firstDslLevel, secondDslLevel, thirdDslLevel))
             .build();
 
-        Long persistedLevelId = 3L;
+        Long persistedLevelId = levelThree().getId();
         when(createMaturityLevelPort.persist(any(), eq(savedKit.getId()))).thenReturn(persistedLevelId);
         when(createLevelCompetencePort.persist(persistedLevelId, levelTwo().getId(), 75)).thenReturn(1L);
         when(createLevelCompetencePort.persist(persistedLevelId, levelThree().getId(), 60)).thenReturn(2L);
-        when(loadMaturityLevelByCodePort.loadByCode(levelTwo().getCode(), savedKit.getId())).thenReturn(levelTwo());
-        when(loadMaturityLevelByCodePort.loadByCode(levelThree().getCode(), savedKit.getId())).thenReturn(levelThree());
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+
+        assertTrue(result.shouldInvalidateCalcResult());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
+        assertNotNull(codeToIdMap);
+        assertEquals(3, codeToIdMap.keySet().size());
 
         verifyNoInteractions(
             deleteMaturityLevelPort,
@@ -122,14 +131,18 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(dslLevels)
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+
+        assertTrue(result.shouldInvalidateCalcResult());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
+        assertNotNull(codeToIdMap);
+        assertEquals(2, codeToIdMap.keySet().size());
 
         verify(deleteMaturityLevelPort, times(1)).delete(levelThree().getId());
-        verify(deleteLevelCompetencePort, times(2)).delete(any(), any());
         verifyNoInteractions(
             createMaturityLevelPort,
             createLevelCompetencePort,
-            loadMaturityLevelByCodePort,
             updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
@@ -147,7 +160,8 @@ class MaturityLevelUpdateKitPersisterTest {
             levelTwo().getId(), dslLevel.getTitle(), dslLevel.getIndex(), dslLevel.getValue());
         doNothing().when(updateMaturityLevelPort).update(updateParam);
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
 
         ArgumentCaptor<UpdateMaturityLevelPort.Param> updateCaptor = ArgumentCaptor.forClass(UpdateMaturityLevelPort.Param.class);
         verify(updateMaturityLevelPort).update(updateCaptor.capture());
@@ -157,10 +171,14 @@ class MaturityLevelUpdateKitPersisterTest {
         assertEquals(updateParam.index(), updateCaptor.getValue().index());
         assertEquals(updateParam.value(), updateCaptor.getValue().value());
 
+        assertFalse(result.shouldInvalidateCalcResult());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
+        assertNotNull(codeToIdMap);
+        assertEquals(1, codeToIdMap.keySet().size());
+
         verifyNoInteractions(
             createMaturityLevelPort,
             createLevelCompetencePort,
-            loadMaturityLevelByCodePort,
             deleteMaturityLevelPort,
             deleteLevelCompetencePort,
             updateLevelCompetencePort);
@@ -181,10 +199,15 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevelOne, dslLevelTwo))
             .build();
 
-        when(loadMaturityLevelByCodePort.loadByCode(levelOne().getCode(), savedKit.getId())).thenReturn(levelOne());
         when(createLevelCompetencePort.persist(levelTwo().getId(), levelOne().getId(), 90)).thenReturn(1L);
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+
+        assertTrue(result.shouldInvalidateCalcResult());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
+        assertNotNull(codeToIdMap);
+        assertEquals(2, codeToIdMap.keySet().size());
 
         verifyNoInteractions(
             deleteMaturityLevelPort,
@@ -211,10 +234,15 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevelOne, dslLevelTwo, dslLevelThree))
             .build();
 
-        when(loadMaturityLevelByCodePort.loadByCode(levelTwo().getCode(), savedKit.getId())).thenReturn(levelTwo());
         doNothing().when(deleteLevelCompetencePort).delete(levelThree().getId(), levelTwo().getId());
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+
+        assertTrue(result.shouldInvalidateCalcResult());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
+        assertNotNull(codeToIdMap);
+        assertEquals(3, codeToIdMap.keySet().size());
 
         verifyNoInteractions(
             createMaturityLevelPort,
@@ -239,10 +267,15 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevelOne, dslLevelTwo))
             .build();
 
-        when(loadMaturityLevelByCodePort.loadByCode(levelTwo().getCode(), savedKit.getId())).thenReturn(levelTwo());
         doNothing().when(updateLevelCompetencePort).update(levelTwo().getId(), levelTwo().getId(), 100);
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+
+        assertTrue(result.shouldInvalidateCalcResult());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
+        assertNotNull(codeToIdMap);
+        assertEquals(2, codeToIdMap.keySet().size());
 
         verifyNoInteractions(
             createMaturityLevelPort,

@@ -158,4 +158,11 @@
                               constraintName="baseinfo_qualityattribut_title_assessment_subject_4a82494c_uniq"/>
     </changeSet>
 
+    <changeSet id="0.8-27" author="MKouhestani">
+        <update tableName="fac_answer">
+            <column name="confidence_level_id" valueNumeric="1"/>
+            <where>fac_answer.answer_option_id IS NOT Null AND fac_answer.confidence_level_id IS Null</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>

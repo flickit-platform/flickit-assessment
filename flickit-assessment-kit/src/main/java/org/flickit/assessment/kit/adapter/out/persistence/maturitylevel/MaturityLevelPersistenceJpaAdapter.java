@@ -5,6 +5,9 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
