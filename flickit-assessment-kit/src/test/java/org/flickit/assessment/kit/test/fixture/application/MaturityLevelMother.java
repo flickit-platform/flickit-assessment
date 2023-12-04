@@ -3,6 +3,9 @@ package org.flickit.assessment.kit.test.fixture.application;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 
 import java.util.List;
+import java.util.Map;
+
+import static org.flickit.assessment.kit.test.fixture.application.LevelCompetenceMother.*;
 
 public class MaturityLevelMother {
 
@@ -17,8 +20,24 @@ public class MaturityLevelMother {
     public static final Long LEVEL_FIVE_ID = 50L;
     public static final String LEVEL_FIVE_CODE = "Great";
 
+    private static final Map<Long, MaturityLevel> idToMaturityLevel = Map.of(
+        LEVEL_ONE_ID, levelOne(),
+        LEVEL_TWO_ID, levelTwo(),
+        LEVEL_THREE_ID, levelThree(),
+        LEVEL_FOUR_ID, levelFour(),
+        LEVEL_FIVE_ID, levelFive()
+    );
+
+    public static String getCodeById(long id) {
+        return getById(id).getCode();
+    }
+
+    public static MaturityLevel getById(long id) {
+        return idToMaturityLevel.get(id);
+    }
+
     public static List<MaturityLevel> fiveLevels() {
-        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive(5));
+        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive());
     }
 
     public static MaturityLevel levelOne() {
@@ -38,7 +57,7 @@ public class MaturityLevelMother {
             LEVEL_TWO_CODE,
             2,
             2,
-            LevelCompetenceMother.levelCompetenceForLevelTwo());
+            levelCompetenceForLevelTwo());
     }
 
     public static MaturityLevel levelThree() {
@@ -48,7 +67,7 @@ public class MaturityLevelMother {
             LEVEL_THREE_CODE,
             3,
             3,
-            LevelCompetenceMother.levelCompetenceForLevelThree());
+            levelCompetenceForLevelThree());
     }
 
     public static MaturityLevel levelFour() {
@@ -58,16 +77,16 @@ public class MaturityLevelMother {
             LEVEL_FOUR_CODE,
             4,
             4,
-            LevelCompetenceMother.levelCompetenceForLevelFour());
+            levelCompetenceForLevelFour());
     }
 
-    public static MaturityLevel levelFive(int value) {
+    public static MaturityLevel levelFive() {
         return new MaturityLevel(
             LEVEL_FIVE_ID,
             LEVEL_FIVE_CODE,
             LEVEL_FIVE_CODE,
             5,
-            value,
-            LevelCompetenceMother.levelCompetenceForLevelFive());
+            5,
+            levelCompetenceForLevelFive());
     }
 }

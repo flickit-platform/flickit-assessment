@@ -3,11 +3,13 @@ package org.flickit.assessment.kit.test.fixture.application.dsl;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
+import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 public class MaturityLevelDslModelMother {
 
@@ -36,6 +38,6 @@ public class MaturityLevelDslModelMother {
         if (competences == null)
             return Map.of();
         return competences.stream()
-            .collect(Collectors.toMap(MaturityLevelCompetence::getEffectiveLevelCode, MaturityLevelCompetence::getValue));
+            .collect(toMap(x -> MaturityLevelMother.getCodeById(x.getEffectiveLevelId()), MaturityLevelCompetence::getValue));
     }
 }
