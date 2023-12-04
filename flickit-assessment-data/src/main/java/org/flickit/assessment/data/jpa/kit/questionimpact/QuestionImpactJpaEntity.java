@@ -2,7 +2,7 @@ package org.flickit.assessment.data.jpa.kit.questionimpact;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.answeroptionimpact.AnswerOptionImpactJpaEntity;
+import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 
 import java.util.List;
