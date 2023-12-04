@@ -24,7 +24,7 @@ public class QuestionnairePersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateQuestionnairePort.Param param) {
-        repository.update(param.id(), param.title(), param.index(), param.description());
+        repository.update(param.id(), param.title(), param.index(), param.description(), param.lastModificationTime());
     }
 
     @Override

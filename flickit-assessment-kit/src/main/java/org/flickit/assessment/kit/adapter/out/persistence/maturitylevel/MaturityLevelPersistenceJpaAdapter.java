@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -15,7 +18,6 @@ public class MaturityLevelPersistenceJpaAdapter implements
     CreateMaturityLevelPort,
     DeleteMaturityLevelPort,
     UpdateMaturityLevelPort,
-    LoadMaturityLevelByCodePort,
     LoadMaturityLevelPort {
 
     private final MaturityLevelJpaRepository repository;
@@ -33,11 +35,6 @@ public class MaturityLevelPersistenceJpaAdapter implements
     @Override
     public void update(Param param) {
         repository.update(param.id(), param.title(), param.index(), param.value());
-    }
-
-    @Override
-    public MaturityLevel loadByCode(String code, Long kitId) {
-        return MaturityLevelMapper.mapToDomainModel(repository.findByCodeAndAssessmentKitId(code, kitId));
     }
 
     @Override
