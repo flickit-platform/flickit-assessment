@@ -4,6 +4,8 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
+import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionByIndexPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
@@ -12,10 +14,13 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturit
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributeByCodePort;
 import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributePort;
+import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnaireByCodePort;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.test.fixture.application.*;
 import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
@@ -47,8 +52,15 @@ class QuestionUpdateKitPersisterTest {
     @InjectMocks
     private QuestionUpdateKitPersister persister;
 
+
     @Mock
     private UpdateQuestionPort updateQuestionPort;
+
+    @Mock
+    private CreateQuestionPort createQuestionPort;
+
+    @Mock
+    private LoadQuestionnaireByCodePort loadQuestionnaireByCodePort;
 
     @Mock
     private LoadMaturityLevelPort loadMaturityLevelPort;
@@ -82,6 +94,12 @@ class QuestionUpdateKitPersisterTest {
 
     @Mock
     private UpdateAnswerOptionPort updateAnswerOptionPort;
+
+    @Mock
+    private LoadAnswerOptionByIndexPort loadAnswerOptionByIndexPort;
+
+    @Mock
+    private CreateAnswerOptionPort createAnswerOptionPort;
 
     @Test
     void testQuestionUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
@@ -118,7 +136,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -126,6 +145,62 @@ class QuestionUpdateKitPersisterTest {
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
+            deleteAnswerOptionImpactPort,
+            updateAnswerOptionImpactPort,
+            updateAnswerOptionPort,
+            createQuestionPort,
+            loadQuestionnaireByCodePort,
+            loadAnswerOptionByIndexPort,
+            createAnswerOptionPort
+        );
+    }
+
+    @Test
+    void testQuestionUpdateKitPersister_QuestionAdded_AddToDatabase() {
+        var savedQuestionnaire1 = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE2);
+        AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire1));
+
+        var levelTwo = levelTwo();
+        var savedQuestionnaire2 = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
+        var savedQuestion = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_OLD_TITLE1, 1, null, false, savedQuestionnaire2.getId());
+        var attribute = AttributeMother.createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
+        var savedImpact = QuestionImpactMother.createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
+        var answerOption1 = AnswerOptionMother.createAnswerOption(savedQuestion.getId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = AnswerOptionMother.createAnswerOption(savedQuestion.getId(), OPTION_TITLE, OPTION_INDEX2);
+        var savedOptionImpact1 = AnswerOptionImpactMother.createAnswerOptionImpact(answerOption1.getId(), 0);
+        var savedOptionImpact2 = AnswerOptionImpactMother.createAnswerOptionImpact(answerOption2.getId(), 1);
+        savedImpact.setOptionImpacts(List.of(savedOptionImpact1, savedOptionImpact2));
+        savedQuestion.setOptions(List.of(answerOption1, answerOption2));
+        savedQuestion.setImpacts(List.of(savedImpact));
+        savedQuestionnaire2.setQuestions(List.of(savedQuestion));
+
+        when(loadQuestionnaireByCodePort.loadByCode(savedQuestionnaire2.getCode(), savedKit.getId())).thenReturn(savedQuestionnaire2);
+        when(loadQualityAttributeByCodePort.loadByCode(attribute.getCode(), savedKit.getId())).thenReturn(attribute);
+        when(loadMaturityLevelByCodePort.loadByCode(levelTwo.getCode(), savedKit.getId())).thenReturn(levelTwo);
+        when(loadAnswerOptionByIndexPort.loadByIndex(eq(answerOption1.getIndex()), any())).thenReturn(answerOption1);
+        when(loadAnswerOptionByIndexPort.loadByIndex(eq(answerOption2.getIndex()), any())).thenReturn(answerOption2);
+
+        var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
+        var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(savedQuestionnaire2);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
+        Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
+        optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
+        optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
+        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE);
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .questionnaires(List.of(dslQuestionnaire))
+            .questions(List.of(dslQuestion))
+            .build();
+
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
+
+        verifyNoInteractions(
+            deleteQuestionImpactPort,
+            updateQuestionImpactPort,
             deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort
@@ -168,7 +243,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             createQuestionImpactPort,
@@ -177,7 +253,11 @@ class QuestionUpdateKitPersisterTest {
             createAnswerOptionImpactPort,
             deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionPort
+            updateAnswerOptionPort,
+            createQuestionPort,
+            loadQuestionnaireByCodePort,
+            loadAnswerOptionByIndexPort,
+            createAnswerOptionPort
         );
     }
 
@@ -205,6 +285,8 @@ class QuestionUpdateKitPersisterTest {
         when(loadMaturityLevelByCodePort.loadByCode(levelThree.getCode(), savedKit.getId())).thenReturn(levelThree);
         when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(1L);
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(1L);
+        when(loadAnswerOptionByIndexPort.loadByIndex(answerOption1.getIndex(), savedQuestion.getId())).thenReturn(answerOption1);
+        when(loadAnswerOptionByIndexPort.loadByIndex(answerOption2.getIndex(), savedQuestion.getId())).thenReturn(answerOption2);
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslMaturityLevelThree = MaturityLevelDslModelMother.domainToDslModel(levelThree());
@@ -224,7 +306,8 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionImpactPort,
@@ -232,7 +315,10 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionPort,
             deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionPort
+            updateAnswerOptionPort,
+            createQuestionPort,
+            loadQuestionnaireByCodePort,
+            createAnswerOptionPort
         );
     }
 
@@ -282,7 +368,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -290,7 +377,11 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionPort
+            updateAnswerOptionPort,
+            createQuestionPort,
+            loadQuestionnaireByCodePort,
+            loadAnswerOptionByIndexPort,
+            createAnswerOptionPort
         );
     }
 
@@ -329,7 +420,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -338,7 +430,11 @@ class QuestionUpdateKitPersisterTest {
             createAnswerOptionImpactPort,
             deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionPort
+            updateAnswerOptionPort,
+            createQuestionPort,
+            loadQuestionnaireByCodePort,
+            loadAnswerOptionByIndexPort,
+            createAnswerOptionPort
         );
     }
 
@@ -390,7 +486,8 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionImpactPort,
@@ -398,7 +495,11 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionPort,
             createQuestionImpactPort,
             deleteAnswerOptionImpactPort,
-            updateAnswerOptionPort
+            updateAnswerOptionPort,
+            createQuestionPort,
+            loadQuestionnaireByCodePort,
+            loadAnswerOptionByIndexPort,
+            createAnswerOptionPort
         );
     }
 
@@ -440,7 +541,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -449,7 +551,11 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionPort
+            updateAnswerOptionPort,
+            createQuestionPort,
+            loadQuestionnaireByCodePort,
+            loadAnswerOptionByIndexPort,
+            createAnswerOptionPort
         );
     }
 
@@ -489,7 +595,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -498,7 +605,11 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
             deleteAnswerOptionImpactPort,
-            updateAnswerOptionPort
+            updateAnswerOptionPort,
+            createQuestionPort,
+            loadQuestionnaireByCodePort,
+            loadAnswerOptionByIndexPort,
+            createAnswerOptionPort
         );
     }
 
@@ -536,7 +647,8 @@ class QuestionUpdateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -547,7 +659,11 @@ class QuestionUpdateKitPersisterTest {
             deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             loadQualityAttributePort,
-            loadMaturityLevelPort
+            loadMaturityLevelPort,
+            createQuestionPort,
+            loadQuestionnaireByCodePort,
+            loadAnswerOptionByIndexPort,
+            createAnswerOptionPort
         );
     }
 

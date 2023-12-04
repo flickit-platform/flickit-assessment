@@ -22,6 +22,7 @@ import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQues
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnaireByCodePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +58,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final CreateAnswerOptionPort createAnswerOptionPort;
 
     @Override
-    public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         var savedQuestionnaires = savedKit.getQuestionnaires();
         var dslQuestionnaires = dslKit.getQuestionnaires();
 
@@ -106,7 +107,13 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             if (Objects.nonNull(newQuestions) && !newQuestions.isEmpty()) {
                 var questionnaire = loadQuestionnaireByCodePort.loadByCode(q, kitId);
                 newQuestions.forEach(i -> {
-                    var createParam = new CreateQuestionPort.Param(i.getCode(), i.getTitle(), i.getDescription(), i.getIndex(), questionnaire.getId(), i.isMayNotBeApplicable());
+                    var createParam = new CreateQuestionPort.Param(
+                        i.getCode(),
+                        i.getTitle(),
+                        i.getDescription(),
+                        i.getIndex(),
+                        questionnaire.getId(),
+                        i.isMayNotBeApplicable());
                     Long questionId = createQuestionPort.persist(createParam);
                     log.debug("Question with id [{}] is created.", questionId);
 
