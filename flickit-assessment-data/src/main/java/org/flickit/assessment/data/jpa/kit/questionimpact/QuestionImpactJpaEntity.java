@@ -49,5 +49,5 @@ public class QuestionImpactJpaEntity {
     }
 
     @OneToMany(mappedBy = "questionImpact", cascade = CascadeType.REMOVE)
-    List<AnswerOptionImpactJpaEntity> answerOptionImpacts;
+    private List<AnswerOptionImpactJpaEntity> answerOptionImpacts;
 }

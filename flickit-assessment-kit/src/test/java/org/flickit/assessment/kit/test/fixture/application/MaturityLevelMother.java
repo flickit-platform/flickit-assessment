@@ -5,16 +5,17 @@ import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import java.util.List;
 import java.util.Map;
 
+import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
 import static org.flickit.assessment.kit.test.fixture.application.LevelCompetenceMother.*;
 
 public class MaturityLevelMother {
 
     private static final Map<Long, MaturityLevel> idToMaturityLevel = Map.of(
-        Constants.LEVEL_ONE_ID, levelOne(),
-        Constants.LEVEL_TWO_ID, levelTwo(),
-        Constants.LEVEL_THREE_ID, levelThree(),
-        Constants.LEVEL_FOUR_ID, levelFour(),
-        Constants.LEVEL_FIVE_ID, levelFive()
+        LEVEL_ONE_ID, levelOne(),
+        LEVEL_TWO_ID, levelTwo(),
+        LEVEL_THREE_ID, levelThree(),
+        LEVEL_FOUR_ID, levelFour(),
+        LEVEL_FIVE_ID, levelFive()
     );
 
     public static String getCodeById(long id) {
@@ -25,15 +26,11 @@ public class MaturityLevelMother {
         return idToMaturityLevel.get(id);
     }
 
-    public static List<MaturityLevel> fiveLevels() {
-        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive());
-    }
-
     public static MaturityLevel levelOne() {
         return new MaturityLevel(
-            Constants.LEVEL_ONE_ID,
-            Constants.LEVEL_ONE_CODE,
-            Constants.LEVEL_ONE_CODE,
+            LEVEL_ONE_ID,
+            LEVEL_ONE_CODE,
+            LEVEL_ONE_CODE,
             1,
             1,
             List.of());
@@ -41,9 +38,9 @@ public class MaturityLevelMother {
 
     public static MaturityLevel levelTwo() {
         return new MaturityLevel(
-            Constants.LEVEL_TWO_ID,
-            Constants.LEVEL_TWO_CODE,
-            Constants.LEVEL_TWO_CODE,
+            LEVEL_TWO_ID,
+            LEVEL_TWO_CODE,
+            LEVEL_TWO_CODE,
             2,
             2,
             levelCompetenceForLevelTwo());
@@ -51,9 +48,9 @@ public class MaturityLevelMother {
 
     public static MaturityLevel levelThree() {
         return new MaturityLevel(
-            Constants.LEVEL_THREE_ID,
-            Constants.LEVEL_THREE_CODE,
-            Constants.LEVEL_THREE_CODE,
+            LEVEL_THREE_ID,
+            LEVEL_THREE_CODE,
+            LEVEL_THREE_CODE,
             3,
             3,
             levelCompetenceForLevelThree());
@@ -61,9 +58,9 @@ public class MaturityLevelMother {
 
     public static MaturityLevel levelFour() {
         return new MaturityLevel(
-            Constants.LEVEL_FOUR_ID,
-            Constants.LEVEL_FOUR_CODE,
-            Constants.LEVEL_FOUR_CODE,
+            LEVEL_FOUR_ID,
+            LEVEL_FOUR_CODE,
+            LEVEL_FOUR_CODE,
             4,
             4,
             levelCompetenceForLevelFour());
@@ -71,9 +68,9 @@ public class MaturityLevelMother {
 
     public static MaturityLevel levelFive() {
         return new MaturityLevel(
-            Constants.LEVEL_FIVE_ID,
-            Constants.LEVEL_FIVE_CODE,
-            Constants.LEVEL_FIVE_CODE,
+            LEVEL_FIVE_ID,
+            LEVEL_FIVE_CODE,
+            LEVEL_FIVE_CODE,
             5,
             5,
             levelCompetenceForLevelFive());

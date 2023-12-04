@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.questionimpact;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
@@ -16,10 +17,15 @@ public class QuestionImpactPersistenceJpaAdapter implements
     UpdateQuestionImpactPort {
 
     private final QuestionImpactJpaRepository repository;
+    private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
     public Long persist(QuestionImpact impact) {
-        return repository.save(QuestionImpactMapper.mapToJpaEntity(impact)).getId();
+        return repository.save(QuestionImpactMapper.mapToJpaEntity(
+            impact,
+            maturityLevelRepository.findById(impact.getMaturityLevelId()),
+            null
+            )).getId();
     }
 
     @Override

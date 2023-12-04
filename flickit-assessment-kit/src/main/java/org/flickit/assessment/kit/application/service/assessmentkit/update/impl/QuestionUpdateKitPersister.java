@@ -103,8 +103,13 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             var newQuestions = dslQuestions.stream().filter(i -> i.getQuestionnaireCode().equals(q)).toList();
             if (Objects.nonNull(newQuestions) && !newQuestions.isEmpty()) {
                 newQuestions.forEach(i -> {
-                    var createParam = new CreateQuestionPort.Param(i.getCode(), i.getTitle(), i.getDescription(), i.getIndex(),
-                        questionnaires.get(q), i.isMayNotBeApplicable());
+                    var createParam = new CreateQuestionPort.Param(
+                        i.getCode(),
+                        i.getTitle(),
+                        i.getDescription(),
+                        i.getIndex(),
+                        questionnaires.get(q),
+                        i.isMayNotBeApplicable());
                     Long questionId = createQuestionPort.persist(createParam);
                     log.debug("Question with id [{}] is created.", questionId);
 

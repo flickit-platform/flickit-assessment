@@ -14,8 +14,8 @@ public class Constants {
     public static final String LEVEL_FIVE_CODE = "Great";
 
 
-    public static String QUESTIONNAIRE_CODE1 = "CleanArchitecture";
     public static String QUESTIONNAIRE_TITLE1 = "Clean Architecture";
+    public static String QUESTIONNAIRE_TITLE2 = "Clean Architecture2";
 
     public static String QUESTION_CODE1 = "m1";
     public static String QUESTION_CODE2 = "m2";
