@@ -21,4 +21,6 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
                 @Param("title") String title,
                 @Param("index") Integer index,
                 @Param("description") String description);
+
+    QuestionnaireJpaEntity findByCodeAndAssessmentKitId(String code, Long assessmentKitId);
 }

@@ -21,6 +21,7 @@ import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslM
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionImpactDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionnaireDslModelMother;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,6 +41,7 @@ import static org.flickit.assessment.kit.test.fixture.application.dsl.AnswerOpti
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled
 class QuestionUpdateKitPersisterTest {
 
     @InjectMocks

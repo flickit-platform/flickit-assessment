@@ -15,4 +15,6 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
     void update(Long id, String title);
 
     List<AnswerOptionJpaEntity> findByQuestionId(Long questionId);
+
+    AnswerOptionJpaEntity findByIndexAndQuestionId(Integer index, Long questionId);
 }

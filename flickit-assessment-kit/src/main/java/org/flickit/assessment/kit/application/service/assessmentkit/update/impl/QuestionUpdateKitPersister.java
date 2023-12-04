@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionByIndexPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
@@ -13,10 +15,12 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturit
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributeByCodePort;
 import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributePort;
+import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnaireByCodePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
@@ -36,6 +40,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
     private final UpdateQuestionPort updateQuestionPort;
+    private final CreateQuestionPort createQuestionPort;
+    private final LoadQuestionnaireByCodePort loadQuestionnaireByCodePort;
     private final LoadMaturityLevelPort loadMaturityLevelPort;
     private final LoadQualityAttributePort loadQualityAttributePort;
     private final LoadMaturityLevelByCodePort loadMaturityLevelByCodePort;
@@ -47,6 +53,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final DeleteAnswerOptionImpactPort deleteAnswerOptionImpactPort;
     private final UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
+    private final LoadAnswerOptionByIndexPort loadAnswerOptionByIndexPort;
+    private final CreateAnswerOptionPort createAnswerOptionPort;
 
     @Override
     public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
@@ -55,6 +63,14 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         Map<String, Questionnaire> savedQuestionnaireCodesMap = savedQuestionnaires.stream().collect(toMap(Questionnaire::getCode, q -> q));
         Map<String, QuestionnaireDslModel> dslQuestionnaireCodesMap = dslQuestionnaires.stream().collect(toMap(QuestionnaireDslModel::getCode, q -> q));
+
+        List<String> newQuestionnaires = dslQuestionnaireCodesMap.keySet().stream()
+            .filter(s -> savedQuestionnaireCodesMap.keySet().stream()
+                .noneMatch(s::equals))
+            .toList();
+
+        // Assuming that new questionnaires have been created in Questionnaire persister
+        createQuestion(savedKit.getId(), dslKit.getQuestions(), newQuestionnaires);
 
         List<String> sameQuestionnaires = savedQuestionnaireCodesMap.keySet().stream()
             .filter(s -> dslQuestionnaireCodesMap.keySet().stream()
@@ -81,7 +97,37 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             }
         }
 
-        return new UpdateKitPersisterResult(invalidateResults);
+        return new UpdateKitPersisterResult(invalidateResults || !newQuestionnaires.isEmpty());
+    }
+
+    private void createQuestion(Long kitId, List<QuestionDslModel> dslQuestions, List<String> newQuestionnaires) {
+        newQuestionnaires.forEach(q -> {
+            var newQuestions = dslQuestions.stream().filter(i -> i.getQuestionnaireCode().equals(q)).toList();
+            if (Objects.nonNull(newQuestions) && !newQuestions.isEmpty()) {
+                var questionnaire = loadQuestionnaireByCodePort.loadByCode(q, kitId);
+                newQuestions.forEach(i -> {
+                    var createParam = new CreateQuestionPort.Param(i.getCode(), i.getTitle(), i.getDescription(), i.getIndex(), questionnaire.getId(), i.isMayNotBeApplicable());
+                    Long questionId = createQuestionPort.persist(createParam);
+                    log.debug("Question with id [{}] is created.", questionId);
+
+                    var newOptions = i.getAnswerOptions();
+                    if (Objects.nonNull(newOptions) && !newOptions.isEmpty()) {
+                        newOptions.forEach(n -> createAnswerOption(n, questionId));
+                    }
+
+                    var newImpacts = i.getQuestionImpacts();
+                    if (Objects.nonNull(newImpacts) && !newImpacts.isEmpty()) {
+                        newImpacts.forEach(n -> createImpact(questionId, n, kitId));
+                    }
+                });
+            }
+        });
+    }
+
+    private void createAnswerOption(AnswerOptionDslModel n, Long questionId) {
+        var createOptionParam = new CreateAnswerOptionPort.Param(n.getCaption(), questionId, n.getIndex());
+        var optionId = createAnswerOptionPort.persist(createOptionParam);
+        log.debug("Answer option with id [{}] is created.", optionId);
     }
 
     @Override
@@ -172,7 +218,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         List<QuestionImpact.Code> deletedImpacts = deletedImpactsInNewDsl(savedImpactCodesMap.keySet(), dslImpactCodesMap.keySet());
         List<QuestionImpact.Code> sameImpacts = sameImpactsInNewDsl(savedImpactCodesMap.keySet(), dslImpactCodesMap.keySet());
 
-        newImpacts.forEach(i -> createImpact(savedQuestion, dslImpactCodesMap.get(i), kitId));
+        newImpacts.forEach(i -> createImpact(savedQuestion.getId(), dslImpactCodesMap.get(i), kitId));
         deletedImpacts.forEach(i -> deleteImpact(savedImpactCodesMap.get(new QuestionImpact.Code(i.attributeCode(), i.maturityLevelCode()))));
         for (QuestionImpact.Code i : sameImpacts) {
             invalidateResults = invalidateResults || updateImpact(savedQuestion, savedImpactCodesMap.get(i), dslImpactCodesMap.get(i));
@@ -215,29 +261,23 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             .toList();
     }
 
-    private void createImpact(Question savedQuestion, QuestionImpactDslModel dslQuestionImpact, Long kitId) {
+    private void createImpact(Long questionId, QuestionImpactDslModel dslQuestionImpact, Long kitId) {
         QuestionImpact newQuestionImpact = new QuestionImpact(
             null,
             loadQualityAttributeByCodePort.loadByCode(dslQuestionImpact.getAttributeCode(), kitId).getId(),
             // TODO: maturity levels can be loaded from kit
             loadMaturityLevelByCodePort.loadByCode(dslQuestionImpact.getMaturityLevel().getTitle(), kitId).getId(),
             dslQuestionImpact.getWeight(),
-            savedQuestion.getId()
+            questionId
         );
         Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
         log.debug("Question impact with is [{}] is created.", impactId);
 
-        for (Integer key : dslQuestionImpact.getOptionsIndextoValueMap().keySet()) {
-            CreateAnswerOptionImpactPort.Param param = new CreateAnswerOptionImpactPort.Param(
-                impactId,
-                savedQuestion.getOptions().stream()
-                    .filter(o -> o.getQuestionId() == savedQuestion.getId() && o.getIndex() == key)
-                    .findFirst()
-                    .orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND)).getId(),
-                dslQuestionImpact.getOptionsIndextoValueMap().get(key));
-            Long optionImpactId = createAnswerOptionImpactPort.persist(param);
-            log.debug("Answer option impact with id [{}] is created.", optionImpactId);
-        }
+        dslQuestionImpact.getOptionsIndextoValueMap().keySet().forEach(index -> createAnswerOptionImpact(
+            impactId,
+            loadAnswerOptionByIndexPort.loadByIndex(index, questionId).getId(),
+            dslQuestionImpact.getOptionsIndextoValueMap().get(index))
+        );
     }
 
     private void deleteImpact(QuestionImpact impact) {
@@ -283,7 +323,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         List<AnswerOptionImpact.Code> deletedOptionImpacts = deletedOptionImpactsInNewDsl(savedOptionImpactCodesMap.keySet(), dslOptionImpactCodesMap.keySet());
         List<AnswerOptionImpact.Code> sameOptionImpacts = sameOptionImpactsInNewDsl(savedOptionImpactCodesMap.keySet(), dslOptionImpactCodesMap.keySet());
 
-        newOptionImpacts.forEach(i -> createAnswerOptionImpact(i, dslOptionImpactCodesMap.get(i).getValue()));
+        newOptionImpacts.forEach(i -> createAnswerOptionImpact(i.impactId(), i.optionId(), dslOptionImpactCodesMap.get(i).getValue()));
         deletedOptionImpacts.forEach(i -> {
             deleteAnswerOptionImpactPort.delete(i.impactId(), i.optionId());
             log.debug("Answer option impact with question impact id [{}] and option id [{}] is deleted.", i.impactId(), i.optionId());
@@ -341,8 +381,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             .toList();
     }
 
-    private void createAnswerOptionImpact(AnswerOptionImpact.Code code, Double value) {
-        var createParam = new CreateAnswerOptionImpactPort.Param(code.impactId(), code.optionId(), value);
+    private void createAnswerOptionImpact(Long impactId, Long optionId, Double value) {
+        var createParam = new CreateAnswerOptionImpactPort.Param(impactId, optionId, value);
         Long optionImpactId = createAnswerOptionImpactPort.persist(createParam);
         log.debug("Answer option impact with id [{}] is created.", optionImpactId);
     }
