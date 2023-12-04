@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
 
 @Slf4j
 @Service
@@ -36,7 +39,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         List<Questionnaire> savedQuestionnaires = savedKit.getQuestionnaires();
         List<QuestionnaireDslModel> dslQuestionnaires = dslKit.getQuestionnaires();
 
@@ -55,10 +58,11 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         newQuestionnairesCodes.forEach(i -> finalQuestionnaires.add(createQuestionnaire(dslQuestionnaireCodesMap.get(i), savedKit.getId())));
         sameQuestionnairesCodes.forEach(i -> finalQuestionnaires.add(updateQuestionnaire(savedQuestionnaireCodesMap.get(i), dslQuestionnaireCodesMap.get(i))));
 
-        AssessmentKit updatedKit = savedKit.toBuilder()
-            .questionnaires(finalQuestionnaires)
-            .build();
-        return new UpdateKitPersisterResult(updatedKit, !newQuestionnairesCodes.isEmpty());
+        Map<String, Long> questionnaireCodeToIdMap = finalQuestionnaires.stream().collect(Collectors.toMap(Questionnaire::getCode, Questionnaire::getId));
+        ctx.put(KEY_QUESTIONNAIRES, questionnaireCodeToIdMap);
+        log.debug("Final questionnaires: {}", questionnaireCodeToIdMap);
+
+        return new UpdateKitPersisterResult(!newQuestionnairesCodes.isEmpty());
     }
 
     private Questionnaire createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitId) {
@@ -72,11 +76,11 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             LocalDateTime.now()
         );
 
-        long id = createQuestionnairePort.persist(createParam, kitId);
-        log.debug("A questionnaire with code [{}] is created.", newQuestionnaire.getCode());
+        long persistedId = createQuestionnairePort.persist(createParam, kitId);
+        log.debug("Questionnaire[id={}, code={}] created.", persistedId, newQuestionnaire.getCode());
 
         return new Questionnaire(
-            id,
+            persistedId,
             createParam.getCode(),
             createParam.getTitle(),
             createParam.getIndex(),
@@ -86,19 +90,19 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private Questionnaire updateQuestionnaire(Questionnaire savedQuestionnaire, QuestionnaireDslModel newQuestionnaire) {
-        if (!savedQuestionnaire.getTitle().equals(newQuestionnaire.getTitle()) ||
-            !savedQuestionnaire.getDescription().equals(newQuestionnaire.getDescription()) ||
-            savedQuestionnaire.getIndex() != newQuestionnaire.getIndex()) {
+    private Questionnaire updateQuestionnaire(Questionnaire savedQuestionnaire, QuestionnaireDslModel dslQuestionnaire) {
+        if (!savedQuestionnaire.getTitle().equals(dslQuestionnaire.getTitle()) ||
+            !savedQuestionnaire.getDescription().equals(dslQuestionnaire.getDescription()) ||
+            savedQuestionnaire.getIndex() != dslQuestionnaire.getIndex()) {
             var updateParam = new UpdateQuestionnairePort.Param(
                 savedQuestionnaire.getId(),
-                newQuestionnaire.getTitle(),
-                newQuestionnaire.getIndex(),
-                newQuestionnaire.getDescription(),
+                dslQuestionnaire.getTitle(),
+                dslQuestionnaire.getIndex(),
+                dslQuestionnaire.getDescription(),
                 LocalDateTime.now());
 
             updateQuestionnairePort.update(updateParam);
-            log.debug("A questionnaire with code [{}] is updated.", savedQuestionnaire.getCode());
+            log.debug("Questionnaire[id={}, code={}] updated.", savedQuestionnaire.getId(), savedQuestionnaire.getCode());
 
             return new Questionnaire(updateParam.id(),
                 savedQuestionnaire.getCode(),

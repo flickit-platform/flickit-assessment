@@ -5,6 +5,7 @@ import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,14 +16,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_SUBJECTS;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithSubjects;
 import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.SubjectDslModelMother.domainToDslModel;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -46,15 +48,16 @@ class SubjectUpdateKitPersisterTest {
         Subject subjectTwo = subjectWithTitle("Team");
         AssessmentKit savedKit = kitWithSubjects(List.of(subjectOne, subjectTwo));
 
-        SubjectDslModel dslSubjectOne = domainToDslModel(subjectOne, b->b.description("new description"));
-        SubjectDslModel dslSubjectTwo = domainToDslModel(subjectTwo, b-> b.title("new title"));
+        SubjectDslModel dslSubjectOne = domainToDslModel(subjectOne, b -> b.description("new description"));
+        SubjectDslModel dslSubjectTwo = domainToDslModel(subjectTwo, b -> b.title("new title"));
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .subjects(List.of(dslSubjectOne, dslSubjectTwo))
             .build();
 
         doNothing().when(updateSubjectPort).update(any());
 
-        UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
 
         ArgumentCaptor<UpdateSubjectPort.Param> param = ArgumentCaptor.forClass(UpdateSubjectPort.Param.class);
         verify(updateSubjectPort, times(2)).update(param.capture());
@@ -76,5 +79,8 @@ class SubjectUpdateKitPersisterTest {
         assertThat(teamSubject.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
 
         assertFalse(result.shouldInvalidateCalcResult());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_SUBJECTS);
+        assertNotNull(codeToIdMap);
+        assertEquals(2, codeToIdMap.keySet().size());
     }
 }

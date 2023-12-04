@@ -15,13 +15,15 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
     @Modifying
     @Query("UPDATE QuestionnaireJpaEntity q SET " +
         "q.title = :title, " +
-        "q.index = :index " +
+        "q.index = :index, " +
         "q.description = :description, " +
         "q.lastModificationTime = :lastModificationTime " +
         "WHERE q.id = :id")
-    void update(@Param("id") Long id,
-                @Param("title") String title,
-                @Param("index") Integer index,
-                @Param("description") String description,
-                @Param("lastModificationTime") LocalDateTime lastModificationTime);
+    void update(
+        @Param(value = "id") long id,
+        @Param(value = "title") String title,
+        @Param(value = "index") int index,
+        @Param(value = "description") String description,
+        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime
+    );
 }

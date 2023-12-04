@@ -5,7 +5,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 
 public interface UpdateKitPersister {
 
-    UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit);
+    UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit);
 
     int order();
 }

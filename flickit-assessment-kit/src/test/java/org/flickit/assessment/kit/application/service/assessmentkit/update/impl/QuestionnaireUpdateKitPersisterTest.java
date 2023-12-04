@@ -6,6 +6,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +15,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithQuestionnaires;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.QuestionnaireDslModelMother.domainToDslModel;
@@ -50,9 +53,13 @@ class QuestionnaireUpdateKitPersisterTest {
             .questionnaires(List.of(dslQOne, dslQTwo))
             .build();
 
-        UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
 
         assertFalse(result.shouldInvalidateCalcResult());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
+        assertNotNull(codeToIdMap);
+        assertEquals(2, codeToIdMap.keySet().size());
 
         verifyNoInteractions(createQuestionnairePort, updateQuestionnairePort);
     }
@@ -72,9 +79,13 @@ class QuestionnaireUpdateKitPersisterTest {
 
         when(createQuestionnairePort.persist(any(Questionnaire.class), eq(savedKit.getId()))).thenReturn(1L);
 
-        UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
 
         assertTrue(result.shouldInvalidateCalcResult());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
+        assertNotNull(codeToIdMap);
+        assertEquals(2, codeToIdMap.keySet().size());
 
         verifyNoInteractions(updateQuestionnairePort);
     }
@@ -91,9 +102,13 @@ class QuestionnaireUpdateKitPersisterTest {
             .questionnaires(List.of(dslQOne, dslQTwo))
             .build();
 
-        UpdateKitPersisterResult result = persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
 
         assertFalse(result.shouldInvalidateCalcResult());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
+        assertNotNull(codeToIdMap);
+        assertEquals(2, codeToIdMap.keySet().size());
 
         verifyNoInteractions(createQuestionnairePort);
     }

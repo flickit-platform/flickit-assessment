@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import static java.util.Comparator.comparingInt;
 
 @Service
-public class CompositeUpdateKitPersister implements UpdateKitPersister {
+public class CompositeUpdateKitPersister {
 
     private final List<UpdateKitPersister> persisters;
 
@@ -26,19 +26,13 @@ public class CompositeUpdateKitPersister implements UpdateKitPersister {
             throw new IllegalStateException();
     }
 
-    @Override
     public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         boolean shouldInvalidateCalcResult = false;
         for (UpdateKitPersister p : persisters) {
-            UpdateKitPersisterResult result = p.persist(savedKit, dslKit);
-            savedKit = result.updatedKit();
+            UpdateKitPersisterResult result = p.persist(ctx, savedKit, dslKit);
             shouldInvalidateCalcResult = shouldInvalidateCalcResult || result.shouldInvalidateCalcResult();
         }
-        return new UpdateKitPersisterResult(savedKit, shouldInvalidateCalcResult);
-    }
-
-    @Override
-    public int order() {
-        return 0;
+        return new UpdateKitPersisterResult(shouldInvalidateCalcResult);
     }
 }
