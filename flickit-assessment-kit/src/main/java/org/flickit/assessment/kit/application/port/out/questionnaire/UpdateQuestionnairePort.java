@@ -6,6 +6,12 @@ public interface UpdateQuestionnairePort {
 
     void update(Param param);
 
-    record Param(Long id, String title, Integer index, String description, LocalDateTime lastModificationTime) {
+    record Param(
+        long id,
+        String title,
+        int index,
+        String description,
+        LocalDateTime lastModificationTime
+    ) {
     }
 }

@@ -15,6 +15,7 @@ public class MaturityLevelJpaEntity {
     @Id
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_maturitylevel_id_seq")
+    @SequenceGenerator(name = "baseinfo_maturitylevel_id_seq", sequenceName = "baseinfo_maturitylevel_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
