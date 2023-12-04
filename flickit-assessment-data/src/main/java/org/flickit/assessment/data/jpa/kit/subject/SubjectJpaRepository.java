@@ -15,8 +15,8 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
     @Modifying
     @Query("UPDATE SubjectJpaEntity s SET " +
         "s.title = :title, " +
-        "s.description = :description, " +
         "s.index = :index, " +
+        "s.description = :description, " +
         "s.lastModificationTime = :lastModificationTime " +
         "WHERE s.id = :id")
     void update(

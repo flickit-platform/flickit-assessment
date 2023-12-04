@@ -10,8 +10,7 @@ public class MaturityLevelCompetenceMapper {
 
     public static MaturityLevelCompetence mapToDomainModel(LevelCompetenceJpaEntity entity) {
         return new MaturityLevelCompetence(
-            entity.getLevelCompetence().getId(),
-            entity.getLevelCompetence().getCode(),
+            entity.getEffectiveLevel().getId(),
             entity.getValue()
         );
     }
