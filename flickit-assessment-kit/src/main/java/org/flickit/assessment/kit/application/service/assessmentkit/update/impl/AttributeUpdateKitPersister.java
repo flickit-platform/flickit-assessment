@@ -61,6 +61,14 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
             updateAttributePort.update(toUpdatePram(codeToAttribute.get(e.getCode()).getId(), subjectId, e));
 
         }
+
+        Map<String, Long> codeToAttributeId = savedKit.getSubjects().stream()
+            .map(Subject::getAttributes)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toMap(Attribute::getCode, Attribute::getId));
+
+        ctx.put(UpdateKitPersisterContext.KEY_ATTRIBUTES, codeToAttributeId);
+
         return new UpdateKitPersisterResult(shouldInvalidated);
     }
 
