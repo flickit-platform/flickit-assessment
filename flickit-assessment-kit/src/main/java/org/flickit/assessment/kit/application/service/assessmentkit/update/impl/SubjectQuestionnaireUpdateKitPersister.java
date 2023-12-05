@@ -35,22 +35,39 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
 
     @Override
     public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
-        Map<String, Set<Long>> attributeCodeToSubjectIdMap = attributeCodeToSubjectIdMap(savedKit);
-        Map<String, Long> questionnaireCodeToIdMap = questionnaireCodeToIdMap(savedKit);
-        Map<Long, Set<Long>> questionnaireIdToSubjectIdMap = questionnaireIdToSubjectIdMap(dslKit, attributeCodeToSubjectIdMap, questionnaireCodeToIdMap);
-        List<SubjectQuestionnaire> savedSubjectQuestionnaires = loadPort.loadByKitId(savedKit.getId());
-        Map<Long, HashMap<Long, Long>> savedQuestionnaireIdToSubjectIdToIdMap = questionnaireIdToSubjectIdToIdMap(savedSubjectQuestionnaires);
+        var questionnaireIdToSubjectIdMap = extractQuestionnaireIdToSubjectIdMap(savedKit, dslKit);
+        var savedSubjectQuestionnaires = loadPort.loadByKitId(savedKit.getId());
+        var savedQuestionnaireIdToSubjectIdToIdMap =
+            questionnaireIdToSubjectIdToIdMap(savedSubjectQuestionnaires);
 
-        boolean invalidateCalcResult = updateSubjectQuestionnaires(questionnaireIdToSubjectIdMap, savedQuestionnaireIdToSubjectIdToIdMap);
+        boolean invalidateCalcResult =
+            updateSubjectQuestionnaires(savedQuestionnaireIdToSubjectIdToIdMap, questionnaireIdToSubjectIdMap);
 
         return new UpdateKitPersisterResult(invalidateCalcResult);
+    }
+
+    private Map<Long, Set<Long>> extractQuestionnaireIdToSubjectIdMap(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+        var attributeCodeToSubjectIdMap = attributeCodeToSubjectIdMap(savedKit);
+        var questionnaireCodeToIdMap = questionnaireCodeToIdMap(savedKit);
+
+        return dslKit.getQuestions().stream()
+            .collect(Collectors.toMap(
+                    q -> questionnaireCodeToIdMap.get(q.getCode()),
+                    q ->
+                        q.getQuestionImpacts().stream()
+                            .map(QuestionImpactDslModel::getAttributeCode)
+                            .map(attributeCodeToSubjectIdMap::get)
+                            .flatMap(Collection::stream)
+                            .collect(Collectors.toSet())
+                )
+            );
     }
 
     private Map<String, Set<Long>> attributeCodeToSubjectIdMap(AssessmentKit savedKit) {
         Map<String, Set<Long>> attributeCodeToSubjectIdMap = new HashMap<>();
         for (Subject subject : savedKit.getSubjects()) {
             long id = subject.getId();
-            Set<String> attributeCodes = subject.getAttributes().stream()
+            var attributeCodes = subject.getAttributes().stream()
                 .map(Attribute::getCode)
                 .collect(Collectors.toSet());
             for (String code : attributeCodes) {
@@ -69,22 +86,6 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
             .collect(Collectors.toMap(Questionnaire::getCode, Questionnaire::getId));
     }
 
-    private Map<Long, Set<Long>> questionnaireIdToSubjectIdMap(AssessmentKitDslModel dslKit,
-                                                               Map<String, Set<Long>> attributeCodeToSubjectIdMap,
-                                                               Map<String, Long> questionnaireCodeToIdMap) {
-        return dslKit.getQuestions().stream()
-            .collect(Collectors.toMap(
-                    q -> questionnaireCodeToIdMap.get(q.getCode()),
-                    q ->
-                        q.getQuestionImpacts().stream()
-                            .map(QuestionImpactDslModel::getAttributeCode)
-                            .map(attributeCodeToSubjectIdMap::get)
-                            .flatMap(Collection::stream)
-                            .collect(Collectors.toSet())
-                )
-            );
-    }
-
     private Map<Long, HashMap<Long, Long>> questionnaireIdToSubjectIdToIdMap(List<SubjectQuestionnaire> subjectQuestionnaires) {
         Map<Long, HashMap<Long, Long>> result = new HashMap<>();
         for (SubjectQuestionnaire entity : subjectQuestionnaires) {
@@ -100,19 +101,18 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
         return result;
     }
 
-    private boolean updateSubjectQuestionnaires(Map<Long, Set<Long>> questionnaireIdToSubjectIdMap,
-                                                Map<Long, HashMap<Long, Long>> savedQuestionnaireIdToSubjectIdMap) {
+    private boolean updateSubjectQuestionnaires(Map<Long, HashMap<Long, Long>> savedQuestionnaireIdToSubjectIdMap,
+                                                Map<Long, Set<Long>> questionnaireIdToSubjectIdMap) {
         boolean invalidateCalcResult = false;
         for (Long questionnaireId : questionnaireIdToSubjectIdMap.keySet()) {
-            HashMap<Long, Long> savedSubjectIdToIdMap = savedQuestionnaireIdToSubjectIdMap
-                .getOrDefault(questionnaireId, new HashMap<>());
+            var savedSubjectIdToIdMap = savedQuestionnaireIdToSubjectIdMap.getOrDefault(questionnaireId, new HashMap<>());
 
-            Set<Long> savedSubjectIds = savedSubjectIdToIdMap.keySet();
-            Set<Long> subjectIds = questionnaireIdToSubjectIdMap.get(questionnaireId);
+            var savedSubjectIds = savedSubjectIdToIdMap.keySet();
+            var subjectIds = questionnaireIdToSubjectIdMap.get(questionnaireId);
 
-            Set<Long> deletedSubjectIds = savedSubjectIds.stream().filter(id -> !subjectIds.contains(id))
+            var deletedSubjectIds = savedSubjectIds.stream().filter(id -> !subjectIds.contains(id))
                 .collect(Collectors.toSet());
-            Set<Long> addedSubjectIds = subjectIds.stream().filter(id -> !savedSubjectIds.contains(id))
+            var addedSubjectIds = subjectIds.stream().filter(id -> !savedSubjectIds.contains(id))
                 .collect(Collectors.toSet());
 
             invalidateCalcResult = invalidateCalcResult || !deletedSubjectIds.isEmpty() || !addedSubjectIds.isEmpty();
