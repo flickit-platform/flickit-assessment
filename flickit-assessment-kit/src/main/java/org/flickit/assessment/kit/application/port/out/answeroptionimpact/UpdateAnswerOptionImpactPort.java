@@ -4,6 +4,6 @@ public interface UpdateAnswerOptionImpactPort {
 
     void update(Param param);
 
-    record Param(Long impactId, Long optionId, Double value) {
+    record Param(Long id, Double value) {
     }
 }

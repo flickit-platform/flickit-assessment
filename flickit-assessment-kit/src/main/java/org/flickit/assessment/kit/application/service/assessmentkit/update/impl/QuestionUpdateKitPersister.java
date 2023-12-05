@@ -47,6 +47,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final CreateAnswerOptionPort createAnswerOptionPort;
 
     @Override
+    public int order() {
+        return 5;
+    }
+
+    @Override
     public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Map<String, Long> postUpdateQuestionnaires = ctx.get(KEY_QUESTIONNAIRES);
         Map<String, Long> postUpdateAttributes = ctx.get(KEY_ATTRIBUTES);
@@ -128,11 +133,6 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         var createOptionParam = new CreateAnswerOptionPort.Param(n.getCaption(), questionId, n.getIndex());
         var optionId = createAnswerOptionPort.persist(createOptionParam);
         log.warn("Answer option with id [{}] is created.", optionId);
-    }
-
-    @Override
-    public int order() {
-        return 5;
     }
 
     private List<String> sameCodesInNewDsl(Set<String> savedItemCodes, Set<String> newItemCodes) {
@@ -330,7 +330,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             log.warn("Answer option impact with question impact id [{}] and option id [{}] is deleted.", i.impactId(), i.optionId());
         });
         for (AnswerOptionImpact.Code i : sameOptionImpacts) {
-            invalidateResults = invalidateResults || updateAnswerOptionImpact(savedOptionImpactCodesMap.get(i), dslOptionImpactCodesMap.get(i), i);
+            invalidateResults = invalidateResults || updateAnswerOptionImpact(savedOptionImpactCodesMap.get(i), dslOptionImpactCodesMap.get(i));
         }
 
         if (invalidateResults || !newOptionImpacts.isEmpty() || !deletedOptionImpacts.isEmpty())
@@ -354,6 +354,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             .filter(o -> o.getQuestionId() == savedQuestion.getId() && o.getIndex() == index)
             .findFirst();
         return new AnswerOptionImpact(
+            null,
             answerOption.orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND)).getId(),
             value
         );
@@ -386,16 +387,15 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         log.warn("Answer option impact with id [{}] is created.", optionImpactId);
     }
 
-    private boolean updateAnswerOptionImpact(AnswerOptionImpact savedOptionImpact, AnswerOptionImpact dslOptionImpact, AnswerOptionImpact.Code code) {
+    private boolean updateAnswerOptionImpact(AnswerOptionImpact savedOptionImpact, AnswerOptionImpact dslOptionImpact) {
         boolean invalidateResults = false;
         if (savedOptionImpact.getValue() != dslOptionImpact.getValue()) {
             var updateParam = new UpdateAnswerOptionImpactPort.Param(
-                code.impactId(),
-                code.optionId(),
+                savedOptionImpact.getId(),
                 dslOptionImpact.getValue()
             );
             updateAnswerOptionImpactPort.update(updateParam);
-            log.warn("Answer option impact with impact id [{}] and option id [{}] is updated.", code.impactId(), code.optionId());
+            log.warn("Answer option impact with id [{}] is updated.", savedOptionImpact.getId());
             invalidateResults = true;
         }
 
