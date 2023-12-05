@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.CreateSubjectQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.DeleteSubjectQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.LoadSubjectQuestionnairePort;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
 import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
@@ -67,7 +68,8 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
             .questions(List.of(questionDslModel))
             .build();
 
-        var result = persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        var result = persister.persist(ctx, savedKit, dslKit);
 
         assertFalse(result.shouldInvalidateCalcResult());
         verifyNoInteractions(
@@ -117,7 +119,8 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
             .questions(List.of(questionDslModel, questionDslModel2))
             .build();
 
-        var result = persister.persist(savedKit, dslKit);
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        var result = persister.persist(ctx, savedKit, dslKit);
         assertFalse(result.shouldInvalidateCalcResult());
 
         verify(deletePort, times(1)).delete(subjectQuestionnaire2.getId());

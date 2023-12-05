@@ -9,6 +9,7 @@ import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.Crea
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.DeleteSubjectQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.LoadSubjectQuestionnairePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,7 +35,7 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
     }
 
     @Override
-    public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         var questionnaireIdToSubjectIdMap = extractQuestionnaireIdToSubjectIdMap(savedKit, dslKit);
         var savedSubjectQuestionnaires = loadPort.loadByKitId(savedKit.getId());
         var savedQuestionnaireIdToSubjectIdToIdMap =
