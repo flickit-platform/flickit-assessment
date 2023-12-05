@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.MANDATORY)
 public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
     private final LoadSubjectQuestionnairePort loadPort;
@@ -35,6 +34,7 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
     }
 
     @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         var questionnaireIdToSubjectIdMap = extractQuestionnaireIdToSubjectIdMap(savedKit, dslKit);
         var savedSubjectQuestionnaires = loadPort.loadByKitId(savedKit.getId());
