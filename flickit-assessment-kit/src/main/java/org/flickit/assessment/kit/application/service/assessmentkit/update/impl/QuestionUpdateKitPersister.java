@@ -6,7 +6,7 @@ import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionByIndexPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.*;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -46,7 +46,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final DeleteAnswerOptionImpactPort deleteAnswerOptionImpactPort;
     private final UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
-    private final LoadAnswerOptionByIndexPort loadAnswerOptionByIndexPort;
+    private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
 
     @Override
@@ -275,9 +275,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
         log.warn("Question impact with is [{}] is created.", impactId);
 
+        Map<Integer, Long> answerOptionIndexToIdMap = loadAnswerOptionsByQuestionPort.loadByQuestionId(questionId).stream()
+            .collect(toMap(AnswerOption::getIndex, AnswerOption::getQuestionId));
         dslQuestionImpact.getOptionsIndextoValueMap().keySet().forEach(index -> createAnswerOptionImpact(
             impactId,
-            loadAnswerOptionByIndexPort.loadByIndex(index, questionId).getId(),
+            answerOptionIndexToIdMap.get(index),
             dslQuestionImpact.getOptionsIndextoValueMap().get(index))
         );
     }

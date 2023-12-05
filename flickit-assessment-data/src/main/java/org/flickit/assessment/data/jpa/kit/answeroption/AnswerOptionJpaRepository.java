@@ -16,5 +16,4 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     List<AnswerOptionJpaEntity> findByQuestionId(Long questionId);
 
-    AnswerOptionJpaEntity findByIndexAndQuestionId(Integer index, Long questionId);
 }
