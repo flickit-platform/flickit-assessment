@@ -40,10 +40,9 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
         var savedQuestionnaireIdToSubjectIdToIdMap =
             questionnaireIdToSubjectIdToIdMap(savedSubjectQuestionnaires);
 
-        boolean invalidateCalcResult =
-            updateSubjectQuestionnaires(savedQuestionnaireIdToSubjectIdToIdMap, questionnaireIdToSubjectIdMap);
+        updateSubjectQuestionnaires(savedQuestionnaireIdToSubjectIdToIdMap, questionnaireIdToSubjectIdMap);
 
-        return new UpdateKitPersisterResult(invalidateCalcResult);
+        return new UpdateKitPersisterResult(false);
     }
 
     private Map<Long, Set<Long>> extractQuestionnaireIdToSubjectIdMap(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
@@ -101,9 +100,8 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
         return result;
     }
 
-    private boolean updateSubjectQuestionnaires(Map<Long, HashMap<Long, Long>> savedQuestionnaireIdToSubjectIdMap,
-                                                Map<Long, Set<Long>> questionnaireIdToSubjectIdMap) {
-        boolean invalidateCalcResult = false;
+    private void updateSubjectQuestionnaires(Map<Long, HashMap<Long, Long>> savedQuestionnaireIdToSubjectIdMap,
+                                             Map<Long, Set<Long>> questionnaireIdToSubjectIdMap) {
         for (Long questionnaireId : questionnaireIdToSubjectIdMap.keySet()) {
             var savedSubjectIdToIdMap = savedQuestionnaireIdToSubjectIdMap.getOrDefault(questionnaireId, new HashMap<>());
 
@@ -115,8 +113,6 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
             var addedSubjectIds = subjectIds.stream().filter(id -> !savedSubjectIds.contains(id))
                 .collect(Collectors.toSet());
 
-            invalidateCalcResult = invalidateCalcResult || !deletedSubjectIds.isEmpty() || !addedSubjectIds.isEmpty();
-
             for (Long subjectId : deletedSubjectIds) {
                 deletePort.delete(savedSubjectIdToIdMap.get(subjectId));
             }
@@ -124,7 +120,6 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
                 createPort.persist(toCreateParam(questionnaireId, subjectId));
             }
         }
-        return invalidateCalcResult;
     }
 
     private CreateSubjectQuestionnairePort.Param toCreateParam(Long questionnaireId, Long subjectId) {

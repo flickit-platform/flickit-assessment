@@ -20,7 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -117,7 +118,7 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
             .build();
 
         var result = persister.persist(savedKit, dslKit);
-        assertTrue(result.shouldInvalidateCalcResult());
+        assertFalse(result.shouldInvalidateCalcResult());
 
         verify(deletePort, times(1)).delete(subjectQuestionnaire2.getId());
 
