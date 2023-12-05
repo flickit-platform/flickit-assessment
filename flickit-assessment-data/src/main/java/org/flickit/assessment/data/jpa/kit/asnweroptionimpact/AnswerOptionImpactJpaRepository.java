@@ -16,6 +16,6 @@ public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOpt
     @Modifying
     @Query("UPDATE AnswerOptionImpactJpaEntity a SET " +
         "a.value = :value " +
-        "WHERE a.questionImpactId = :impactId AND a.optionId = :optionId")
+        "WHERE a.questionImpact.id = :impactId AND a.optionId = :optionId")
     void update(@Param("impactId") Long impactId, @Param("optionId") Long optionId, @Param("value") Double value);
 }
