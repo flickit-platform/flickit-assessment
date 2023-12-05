@@ -45,4 +45,7 @@ public class AttributeJpaEntity {
 
     @Column(name = "assessment_subject_id", nullable = false)
     private long subjectId;
+
+    @Column(name = "assessment_kit_id", nullable = false)
+    private long assessmentKitId;
 }
