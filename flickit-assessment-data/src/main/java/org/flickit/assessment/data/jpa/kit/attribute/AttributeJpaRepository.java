@@ -26,7 +26,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 @Param("index") int index,
                 @Param("description") String description,
                 @Param("weight") int weight,
-                @Param("localDateTime") LocalDateTime localDateTime,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("subjectId") long subjectId);
 
 }
