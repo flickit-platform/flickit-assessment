@@ -81,4 +81,20 @@ public static AssessmentKit simpleKit() {
             null,
             null);
     }
+
+    public static AssessmentKit kitWithSubjectsAndQuestionnaires(List<Subject> subjects, List<Questionnaire> questionnaires) {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            EXPERT_GROUP_ID,
+            subjects,
+            null,
+            questionnaires);
+    }
 }

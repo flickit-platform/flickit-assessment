@@ -52,7 +52,7 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
 
         return dslKit.getQuestions().stream()
             .collect(Collectors.toMap(
-                    q -> questionnaireCodeToIdMap.get(q.getCode()),
+                    q -> questionnaireCodeToIdMap.get(q.getQuestionnaireCode()),
                     q ->
                         q.getQuestionImpacts().stream()
                             .map(QuestionImpactDslModel::getAttributeCode)

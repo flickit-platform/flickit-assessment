@@ -1,8 +1,10 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
+import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class SubjectMother {
 
@@ -22,4 +24,16 @@ public class SubjectMother {
         );
     }
 
+    public static Subject subjectWithTitleAndAttributes(String title, List<Attribute> attributes) {
+        return new Subject(
+            id++,
+            "c-" + title,
+            title,
+            index++,
+            "Description",
+            attributes,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+    }
 }
