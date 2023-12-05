@@ -23,9 +23,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_ATTRIBUTES;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 public class AttributeUpdateKitPersisterTest {
@@ -99,5 +103,9 @@ public class AttributeUpdateKitPersisterTest {
         Assertions.assertEquals(subject.getId(), secondAttr.subjectId());
 
         Assertions.assertTrue(result.shouldInvalidateCalcResult());
+
+        Map<String, Long> codeToIdMap = ctx.get(KEY_ATTRIBUTES);
+        assertNotNull(codeToIdMap);
+        assertEquals(2, codeToIdMap.keySet().size());
     }
 }
