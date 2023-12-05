@@ -19,8 +19,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashMap;
 import java.util.List;
 
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
@@ -69,6 +71,10 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        HashMap<String, Long> questionnairesCodeToIdMap = new HashMap<>();
+        questionnairesCodeToIdMap.put(cleanArchitecture.getCode(), cleanArchitecture.getId());
+        ctx.put(KEY_QUESTIONNAIRES, questionnairesCodeToIdMap);
+
         var result = persister.persist(ctx, savedKit, dslKit);
 
         assertFalse(result.shouldInvalidateCalcResult());
@@ -120,6 +126,11 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        HashMap<String, Long> questionnairesCodeToIdMap = new HashMap<>();
+        questionnairesCodeToIdMap.put(cleanArchitecture.getCode(), cleanArchitecture.getId());
+        questionnairesCodeToIdMap.put(teamLearning.getCode(), teamLearning.getId());
+        ctx.put(KEY_QUESTIONNAIRES, questionnairesCodeToIdMap);
+
         var result = persister.persist(ctx, savedKit, dslKit);
         assertFalse(result.shouldInvalidateCalcResult());
 

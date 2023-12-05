@@ -2,7 +2,10 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.kit.application.domain.*;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.Subject;
+import org.flickit.assessment.kit.application.domain.SubjectQuestionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.CreateSubjectQuestionnairePort;
@@ -17,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
 
 
 @Slf4j
@@ -36,7 +41,7 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
-        var questionnaireIdToSubjectIdMap = extractQuestionnaireIdToSubjectIdMap(savedKit, dslKit);
+        var questionnaireIdToSubjectIdMap = extractQuestionnaireIdToSubjectIdMap(ctx, savedKit, dslKit);
         var savedSubjectQuestionnaires = loadPort.loadByKitId(savedKit.getId());
         var savedQuestionnaireIdToSubjectIdToIdMap =
             questionnaireIdToSubjectIdToIdMap(savedSubjectQuestionnaires);
@@ -46,17 +51,17 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
         return new UpdateKitPersisterResult(false);
     }
 
-    private Map<Long, Set<Long>> extractQuestionnaireIdToSubjectIdMap(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    private Map<Long, Set<Long>> extractQuestionnaireIdToSubjectIdMap(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         var attributeCodeToSubjectIdMap = attributeCodeToSubjectIdMap(savedKit);
-        var questionnaireCodeToIdMap = questionnaireCodeToIdMap(savedKit);
+        Map<String, Long> questionnaireCodeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
 
         return dslKit.getQuestions().stream()
             .collect(Collectors.toMap(
-                    q -> questionnaireCodeToIdMap.get(q.getQuestionnaireCode()),
-                    q ->
-                        q.getQuestionImpacts().stream()
-                            .map(QuestionImpactDslModel::getAttributeCode)
-                            .map(attributeCodeToSubjectIdMap::get)
+                q -> questionnaireCodeToIdMap.get(q.getQuestionnaireCode()),
+                q ->
+                    q.getQuestionImpacts().stream()
+                        .map(QuestionImpactDslModel::getAttributeCode)
+                        .map(attributeCodeToSubjectIdMap::get)
                             .flatMap(Collection::stream)
                             .collect(Collectors.toSet())
                 )
@@ -79,11 +84,6 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
             }
         }
         return attributeCodeToSubjectIdMap;
-    }
-
-    private Map<String, Long> questionnaireCodeToIdMap(AssessmentKit savedKit) {
-        return savedKit.getQuestionnaires().stream()
-            .collect(Collectors.toMap(Questionnaire::getCode, Questionnaire::getId));
     }
 
     private Map<Long, HashMap<Long, Long>> questionnaireIdToSubjectIdToIdMap(List<SubjectQuestionnaire> subjectQuestionnaires) {
