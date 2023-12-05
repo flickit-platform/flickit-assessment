@@ -26,7 +26,7 @@ public class QuestionJpaEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description") // TODO
+    @Column(name = "description") // TODO: must be renamed to hint at the same time with database in a changelog
     private String description;
 
     @Column(name = "creation_time", nullable = false)

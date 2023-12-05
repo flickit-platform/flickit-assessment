@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.kit.qualityattribute;
+package org.flickit.assessment.data.jpa.kit.attribute;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class QualityAttributeJpaEntity {
+public class AttributeJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include

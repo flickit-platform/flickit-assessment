@@ -22,10 +22,7 @@ import org.flickit.assessment.kit.application.service.assessmentkit.update.Updat
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -343,23 +340,21 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private AnswerOptionImpact.Code buildOptionImpactCode(Question savedQuestion, Long impactId, Integer index) {
+        Optional<AnswerOption> answerOption = savedQuestion.getOptions().stream()
+            .filter(o -> o.getQuestionId() == savedQuestion.getId() && o.getIndex() == index)
+            .findFirst();
         return new AnswerOptionImpact.Code(
             impactId,
-            savedQuestion.getOptions().stream()
-                .filter(o -> o.getQuestionId() == savedQuestion.getId() && o.getIndex() == index)
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND))
-                .getId()
+            answerOption.orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND)).getId()
         );
     }
 
     private AnswerOptionImpact buildOptionImpact(Question savedQuestion, Integer index, Double value) {
+        Optional<AnswerOption> answerOption = savedQuestion.getOptions().stream()
+            .filter(o -> o.getQuestionId() == savedQuestion.getId() && o.getIndex() == index)
+            .findFirst();
         return new AnswerOptionImpact(
-            savedQuestion.getOptions().stream()
-                .filter(o -> o.getQuestionId() == savedQuestion.getId() && o.getIndex() == index)
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND))
-                .getId(),
+            answerOption.orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND)).getId(),
             value
         );
     }

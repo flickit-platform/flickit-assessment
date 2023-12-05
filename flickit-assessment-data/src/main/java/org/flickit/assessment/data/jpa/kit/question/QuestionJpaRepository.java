@@ -12,7 +12,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     @Query("SELECT q FROM QuestionJpaEntity q " +
         "WHERE q.questionnaireId IN (SELECT i.id FROM QuestionnaireJpaEntity i WHERE i.assessmentKitId = :kitId)")
-    List<QuestionJpaEntity> findByKitId(Long kitId);
+    List<QuestionJpaEntity> findByKitId(@Param("kitId") Long kitId);
 
     @Modifying
     @Query("UPDATE QuestionJpaEntity q SET " +

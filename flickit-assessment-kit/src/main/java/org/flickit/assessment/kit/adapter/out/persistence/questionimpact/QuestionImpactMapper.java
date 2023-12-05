@@ -21,7 +21,6 @@ public class QuestionImpactMapper {
     public static QuestionImpactJpaEntity mapToJpaEntity(QuestionImpact impact) {
         return new QuestionImpactJpaEntity(
             null,
-            null,
             impact.getWeight(),
             impact.getQuestionId(),
             impact.getAttributeId(),

@@ -23,9 +23,6 @@ public class QuestionImpactJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "level")
-    private Integer level;
-
     @Column(name = "weight", nullable = false)
     private Integer weight;
 
@@ -39,9 +36,8 @@ public class QuestionImpactJpaEntity {
     @JoinColumn(name = "maturity_level_id", referencedColumnName = "id")
     private MaturityLevelJpaEntity maturityLevel;
 
-    public QuestionImpactJpaEntity(Long id, Integer level, Integer weight, Long questionId, Long qualityAttributeId, MaturityLevelJpaEntity maturityLevel) {
+    public QuestionImpactJpaEntity(Long id, Integer weight, Long questionId, Long qualityAttributeId, MaturityLevelJpaEntity maturityLevel) {
         this.id = id;
-        this.level = level;
         this.weight = weight;
         this.questionId = questionId;
         this.qualityAttributeId = qualityAttributeId;
