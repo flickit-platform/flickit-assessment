@@ -111,7 +111,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                         questionnaires.get(q),
                         i.isMayNotBeApplicable());
                     Long questionId = createQuestionPort.persist(createParam);
-                    log.debug("Question with id [{}] is created.", questionId);
+                    log.warn("Question with id [{}] is created.", questionId);
 
                     var newOptions = i.getAnswerOptions();
                     if (Objects.nonNull(newOptions) && !newOptions.isEmpty()) {
@@ -130,7 +130,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private void createAnswerOption(AnswerOptionDslModel n, Long questionId) {
         var createOptionParam = new CreateAnswerOptionPort.Param(n.getCaption(), questionId, n.getIndex());
         var optionId = createAnswerOptionPort.persist(createOptionParam);
-        log.debug("Answer option with id [{}] is created.", optionId);
+        log.warn("Answer option with id [{}] is created.", optionId);
     }
 
     @Override
@@ -160,7 +160,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 LocalDateTime.now()
             );
             updateQuestionPort.update(updateParam);
-            log.debug("A question with id [{}] is updated.", savedQuestion.getId());
+            log.warn("A question with id [{}] is updated.", savedQuestion.getId());
             if (savedQuestion.getMayNotBeApplicable() != dslQuestion.isMayNotBeApplicable()) {
                 invalidateResults = true;
             }
@@ -204,7 +204,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         boolean invalidateResults = false;
         if (!Objects.equals(savedOption.getTitle(), dslOption.getCaption())) {
             updateAnswerOptionPort.update(new UpdateAnswerOptionPort.Param(savedOption.getId(), dslOption.getCaption()));
-            log.debug("Answer option with id [{}] is updated.", savedOption.getId());
+            log.warn("Answer option with id [{}] is updated.", savedOption.getId());
             invalidateResults = true;
         }
         return invalidateResults;
@@ -268,12 +268,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         QuestionImpact newQuestionImpact = new QuestionImpact(
             null,
             attributes.get(dslQuestionImpact.getAttributeCode()),
-            maturityLevels.get(dslQuestionImpact.getMaturityLevel().getCode()),
+            maturityLevels.get(dslQuestionImpact.getMaturityLevel().getTitle()),
             dslQuestionImpact.getWeight(),
             questionId
         );
         Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
-        log.debug("Question impact with is [{}] is created.", impactId);
+        log.warn("Question impact with is [{}] is created.", impactId);
 
         dslQuestionImpact.getOptionsIndextoValueMap().keySet().forEach(index -> createAnswerOptionImpact(
             impactId,
@@ -284,11 +284,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
     private void deleteImpact(QuestionImpact impact) {
         deleteQuestionImpactPort.delete(impact.getId());
-        log.debug("Question impact with id [{}] is deleted.", impact.getId());
+        log.warn("Question impact with id [{}] is deleted.", impact.getId());
 
         impact.getOptionImpacts().forEach(o -> {
             deleteAnswerOptionImpactPort.delete(impact.getId(), o.getOptionId());
-            log.debug("Answer option impact with question impact id [{}], option id [{}] and value [{}] is deleted.",
+            log.warn("Answer option impact with question impact id [{}], option id [{}] and value [{}] is deleted.",
                 impact.getId(), o.getOptionId(), o.getValue());
         });
     }
@@ -302,7 +302,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 savedImpact.getQuestionId()
             );
             updateQuestionImpactPort.update(updateParam);
-            log.debug("Question impact with id [{}] is updated.", savedImpact.getId());
+            log.warn("Question impact with id [{}] is updated.", savedImpact.getId());
             invalidateResult = true;
         }
 
@@ -328,7 +328,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         newOptionImpacts.forEach(i -> createAnswerOptionImpact(i.impactId(), i.optionId(), dslOptionImpactCodesMap.get(i).getValue()));
         deletedOptionImpacts.forEach(i -> {
             deleteAnswerOptionImpactPort.delete(i.impactId(), i.optionId());
-            log.debug("Answer option impact with question impact id [{}] and option id [{}] is deleted.", i.impactId(), i.optionId());
+            log.warn("Answer option impact with question impact id [{}] and option id [{}] is deleted.", i.impactId(), i.optionId());
         });
         for (AnswerOptionImpact.Code i : sameOptionImpacts) {
             invalidateResults = invalidateResults || updateAnswerOptionImpact(savedOptionImpactCodesMap.get(i), dslOptionImpactCodesMap.get(i), i);
@@ -386,7 +386,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private void createAnswerOptionImpact(Long impactId, Long optionId, Double value) {
         var createParam = new CreateAnswerOptionImpactPort.Param(impactId, optionId, value);
         Long optionImpactId = createAnswerOptionImpactPort.persist(createParam);
-        log.debug("Answer option impact with id [{}] is created.", optionImpactId);
+        log.warn("Answer option impact with id [{}] is created.", optionImpactId);
     }
 
     private boolean updateAnswerOptionImpact(AnswerOptionImpact savedOptionImpact, AnswerOptionImpact dslOptionImpact, AnswerOptionImpact.Code code) {
@@ -398,7 +398,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 dslOptionImpact.getValue()
             );
             updateAnswerOptionImpactPort.update(updateParam);
-            log.debug("Answer option impact with impact id [{}] and option id [{}] is updated.", code.impactId(), code.optionId());
+            log.warn("Answer option impact with impact id [{}] and option id [{}] is updated.", code.impactId(), code.optionId());
             invalidateResults = true;
         }
 

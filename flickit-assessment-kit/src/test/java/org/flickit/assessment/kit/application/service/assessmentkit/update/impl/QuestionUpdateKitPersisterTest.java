@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.update.impl;
 
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.QuestionImpact;
+import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
@@ -10,8 +9,6 @@ import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswer
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.qualityattribute.LoadQualityAttributePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
@@ -33,8 +30,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.*;
 import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.levelThree;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.levelTwo;
@@ -54,12 +53,6 @@ class QuestionUpdateKitPersisterTest {
 
     @Mock
     private CreateQuestionPort createQuestionPort;
-
-    @Mock
-    private LoadMaturityLevelPort loadMaturityLevelPort;
-
-    @Mock
-    private LoadQualityAttributePort loadQualityAttributePort;
 
     @Mock
     private CreateQuestionImpactPort createQuestionImpactPort;
@@ -105,9 +98,6 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire));
 
-        when(loadQualityAttributePort.load(attribute.getId())).thenReturn(Optional.of(attribute));
-        when(loadMaturityLevelPort.load(levelTwo.getId())).thenReturn(Optional.of(levelTwo));
-
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
         var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
@@ -124,6 +114,9 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
@@ -179,6 +172,9 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire1, savedQuestionnaire2).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
@@ -207,8 +203,6 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire));
 
-        when(loadQualityAttributePort.load(attribute.getId())).thenReturn(Optional.of(attribute));
-        when(loadMaturityLevelPort.load(levelTwo.getId())).thenReturn(Optional.of(levelTwo));
         doNothing().when(updateQuestionPort).update(any(UpdateQuestionPort.Param.class));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
@@ -227,6 +221,9 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
@@ -261,8 +258,6 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire));
 
-        when(loadQualityAttributePort.load(attribute.getId())).thenReturn(Optional.of(attribute));
-        when(loadMaturityLevelPort.load(levelTwo.getId())).thenReturn(Optional.of(levelTwo));
         when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(1L);
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(1L);
         when(loadAnswerOptionByIndexPort.loadByIndex(answerOption1.getIndex(), savedQuestion.getId())).thenReturn(answerOption1);
@@ -286,6 +281,9 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo, levelThree).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
@@ -324,9 +322,6 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire));
 
-        when(loadQualityAttributePort.load(attribute.getId())).thenReturn(Optional.of(attribute));
-        when(loadMaturityLevelPort.load(levelTwo.getId())).thenReturn(Optional.of(levelTwo));
-        when(loadMaturityLevelPort.load(levelThree.getId())).thenReturn(Optional.of(levelThree));
         doNothing().when(deleteQuestionImpactPort).delete(savedImpact2.getId());
         doNothing().when(deleteAnswerOptionImpactPort).delete(savedImpact2.getId(), answerOption3.getId());
         doNothing().when(deleteAnswerOptionImpactPort).delete(savedImpact2.getId(), answerOption4.getId());
@@ -347,6 +342,9 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo, levelThree).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
@@ -379,9 +377,6 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire));
 
-        when(loadQualityAttributePort.load(attribute1.getId())).thenReturn(Optional.of(attribute1));
-        when(loadMaturityLevelPort.load(levelTwo.getId())).thenReturn(Optional.of(levelTwo));
-
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
         var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
@@ -398,6 +393,9 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute1).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
@@ -436,9 +434,6 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire));
 
-        when(loadQualityAttributePort.load(attribute.getId())).thenReturn(Optional.of(attribute));
-        when(loadMaturityLevelPort.load(levelTwo.getId())).thenReturn(Optional.of(levelTwo));
-        when(loadMaturityLevelPort.load(levelThree.getId())).thenReturn(Optional.of(levelThree));
         doNothing().when(updateAnswerOptionImpactPort).update(any(UpdateAnswerOptionImpactPort.Param.class));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
@@ -462,6 +457,9 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo, levelThree).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
@@ -496,8 +494,6 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire));
 
-        when(loadQualityAttributePort.load(attribute.getId())).thenReturn(Optional.of(attribute));
-        when(loadMaturityLevelPort.load(levelTwo.getId())).thenReturn(Optional.of(levelTwo));
         doNothing().when(deleteAnswerOptionImpactPort).delete(savedImpact.getId(), answerOption3.getId());
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
@@ -516,6 +512,9 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
@@ -549,8 +548,6 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire));
 
-        when(loadQualityAttributePort.load(attribute.getId())).thenReturn(Optional.of(attribute));
-        when(loadMaturityLevelPort.load(levelTwo.getId())).thenReturn(Optional.of(levelTwo));
         doNothing().when(updateAnswerOptionImpactPort).update(any(UpdateAnswerOptionImpactPort.Param.class));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
@@ -569,6 +566,9 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
@@ -620,6 +620,9 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit);
 
         verifyNoInteractions(
@@ -630,8 +633,6 @@ class QuestionUpdateKitPersisterTest {
             createAnswerOptionImpactPort,
             deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
-            loadQualityAttributePort,
-            loadMaturityLevelPort,
             createQuestionPort,
             loadAnswerOptionByIndexPort,
             createAnswerOptionPort
