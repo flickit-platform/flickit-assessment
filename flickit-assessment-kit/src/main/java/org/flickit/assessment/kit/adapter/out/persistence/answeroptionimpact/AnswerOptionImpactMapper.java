@@ -14,6 +14,7 @@ public class AnswerOptionImpactMapper {
 
     public static AnswerOptionImpact mapToDomainModel(AnswerOptionImpactJpaEntity entity) {
         return new AnswerOptionImpact(
+            entity.getId(),
             entity.getOptionId(),
             entity.getValue()
         );
