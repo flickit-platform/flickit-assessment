@@ -13,7 +13,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
     List<AttributeJpaEntity> findAllBySubjectId(long subjectId);
 
     @Modifying
-    @Query("UPDATE AttributeJpeEntity a SET " +
+    @Query("UPDATE AttributeJpaEntity a SET " +
         "a.title = :title, " +
         "a.index = :index, " +
         "a.description = :description, " +
