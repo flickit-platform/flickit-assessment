@@ -69,7 +69,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
 
     private void setLevelCompetences(List<MaturityLevel> levels) {
         levels.forEach(level -> level.setCompetences(
-            levelCompetenceRepository.findByMaturityLevelId(level.getId()).stream()
+            levelCompetenceRepository.findByAffectedLevelId(level.getId()).stream()
                 .map(MaturityLevelCompetenceMapper::mapToDomainModel)
                 .toList()));
     }

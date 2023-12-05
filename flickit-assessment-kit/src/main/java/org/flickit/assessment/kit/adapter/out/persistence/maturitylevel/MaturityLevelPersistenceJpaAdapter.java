@@ -5,7 +5,6 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaReposit
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelByCodePort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +13,7 @@ import org.springframework.stereotype.Component;
 public class MaturityLevelPersistenceJpaAdapter implements
     CreateMaturityLevelPort,
     DeleteMaturityLevelPort,
-    UpdateMaturityLevelPort,
-    LoadMaturityLevelByCodePort {
+    UpdateMaturityLevelPort {
 
     private final MaturityLevelJpaRepository repository;
 
@@ -34,8 +32,4 @@ public class MaturityLevelPersistenceJpaAdapter implements
         repository.update(param.id(), param.title(), param.index(), param.value());
     }
 
-    @Override
-    public MaturityLevel loadByCode(String code, Long kitId) {
-        return MaturityLevelMapper.mapToDomainModel(repository.findByCodeAndAssessmentKitId(code, kitId));
-    }
 }
