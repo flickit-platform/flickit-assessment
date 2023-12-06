@@ -133,7 +133,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         QuestionImpact newQuestionImpact = new QuestionImpact(
             null,
             attributes.get(dslQuestionImpact.getAttributeCode()),
-            maturityLevels.get(dslQuestionImpact.getMaturityLevel().getCode()),
+            maturityLevels.get(dslQuestionImpact.getMaturityLevel().getTitle()),
             dslQuestionImpact.getWeight(),
             questionId
         );
