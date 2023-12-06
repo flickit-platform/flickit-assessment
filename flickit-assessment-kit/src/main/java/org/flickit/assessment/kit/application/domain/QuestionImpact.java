@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -9,8 +10,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuestionImpact {
 
+    private final Long id;
     private final long attributeId;
     private final long maturityLevelId;
     private final int weight;
-    private final List<AnswerOptionImpact> optionImpacts;
+    private final Long questionId;
+    @Setter
+    private List<AnswerOptionImpact> optionImpacts;
 }

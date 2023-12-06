@@ -21,4 +21,17 @@ public class AttributeMother {
             LocalDateTime.now()
         );
     }
+
+    public static Attribute createAttribute(String code, String title, int index, String description, int weight) {
+        return new Attribute(
+            id++,
+            code,
+            title,
+            index,
+            description,
+            weight,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+    }
 }

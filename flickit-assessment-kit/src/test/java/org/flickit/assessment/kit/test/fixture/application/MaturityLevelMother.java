@@ -5,20 +5,10 @@ import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import java.util.List;
 import java.util.Map;
 
+import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
 import static org.flickit.assessment.kit.test.fixture.application.LevelCompetenceMother.*;
 
 public class MaturityLevelMother {
-
-    public static final Long LEVEL_ONE_ID = 10L;
-    public static final String LEVEL_ONE_CODE = "Elementary";
-    public static final Long LEVEL_TWO_ID = 20L;
-    public static final String LEVEL_TWO_CODE = "Weak";
-    public static final Long LEVEL_THREE_ID = 30L;
-    public static final String LEVEL_THREE_CODE = "Moderate";
-    public static final Long LEVEL_FOUR_ID = 40L;
-    public static final String LEVEL_FOUR_CODE = "Good";
-    public static final Long LEVEL_FIVE_ID = 50L;
-    public static final String LEVEL_FIVE_CODE = "Great";
 
     private static final Map<Long, MaturityLevel> idToMaturityLevel = Map.of(
         LEVEL_ONE_ID, levelOne(),
@@ -34,10 +24,6 @@ public class MaturityLevelMother {
 
     public static MaturityLevel getById(long id) {
         return idToMaturityLevel.get(id);
-    }
-
-    public static List<MaturityLevel> fiveLevels() {
-        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive());
     }
 
     public static MaturityLevel levelOne() {

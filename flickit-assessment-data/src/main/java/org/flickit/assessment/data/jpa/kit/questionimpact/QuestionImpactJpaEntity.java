@@ -2,7 +2,7 @@ package org.flickit.assessment.data.jpa.kit.questionimpact;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.answeroptionimpact.AnswerOptionImpactJpaEntity;
+import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 
 import java.util.List;
@@ -23,9 +23,6 @@ public class QuestionImpactJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "level")
-    private Integer level;
-
     @Column(name = "weight", nullable = false)
     private Integer weight;
 
@@ -39,6 +36,14 @@ public class QuestionImpactJpaEntity {
     @JoinColumn(name = "maturity_level_id", referencedColumnName = "id")
     private MaturityLevelJpaEntity maturityLevel;
 
+    public QuestionImpactJpaEntity(Long id, Integer weight, Long questionId, Long qualityAttributeId, MaturityLevelJpaEntity maturityLevel) {
+        this.id = id;
+        this.weight = weight;
+        this.questionId = questionId;
+        this.qualityAttributeId = qualityAttributeId;
+        this.maturityLevel = maturityLevel;
+    }
+
     @OneToMany(mappedBy = "questionImpact", cascade = CascadeType.REMOVE)
-    List<AnswerOptionImpactJpaEntity> answerOptionImpacts;
+    private List<AnswerOptionImpactJpaEntity> answerOptionImpacts;
 }

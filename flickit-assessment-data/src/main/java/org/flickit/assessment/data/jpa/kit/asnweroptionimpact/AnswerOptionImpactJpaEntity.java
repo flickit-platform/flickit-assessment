@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.kit.answeroptionimpact;
+package org.flickit.assessment.data.jpa.kit.asnweroptionimpact;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,13 +20,13 @@ public class AnswerOptionImpactJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "option_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "question_impact_id", referencedColumnName = "id")
+    private QuestionImpactJpaEntity questionImpact;
+
+    @JoinColumn(name = "option_id", nullable = false)
     private Long optionId;
 
     @Column(name = "value", nullable = false)
     private double value;
-
-    @ManyToOne
-    @JoinColumn(name = "question_impact_id", referencedColumnName = "id")
-    private QuestionImpactJpaEntity questionImpact;
 }

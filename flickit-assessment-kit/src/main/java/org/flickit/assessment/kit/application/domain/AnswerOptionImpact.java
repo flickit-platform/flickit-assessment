@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AnswerOptionImpact {
 
+    private final Long id;
     private final long optionId;
     private final double value;
 }

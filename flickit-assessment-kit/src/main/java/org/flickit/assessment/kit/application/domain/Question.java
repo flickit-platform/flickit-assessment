@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,8 +17,11 @@ public class Question {
     private final int index;
     private final String hint;
     private final Boolean mayNotBeApplicable;
-    private final List<QuestionImpact> impacts;
-    private final List<AnswerOption> options;
+    @Setter
+    private List<QuestionImpact> impacts;
+    @Setter
+    private List<AnswerOption> options;
+    private final Long questionnaireId;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
 }

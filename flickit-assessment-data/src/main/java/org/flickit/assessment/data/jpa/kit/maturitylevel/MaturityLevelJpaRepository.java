@@ -21,7 +21,4 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
                 @Param(value = "title") String title,
                 @Param(value = "index") int index,
                 @Param(value = "value") int value);
-
-    MaturityLevelJpaEntity findByCodeAndAssessmentKitId(String code, Long assessmentKitId);
-
 }

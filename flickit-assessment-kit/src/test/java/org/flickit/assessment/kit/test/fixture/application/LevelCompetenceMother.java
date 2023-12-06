@@ -5,7 +5,7 @@ import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.*;
+import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
 
 public class LevelCompetenceMother {
 
