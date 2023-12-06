@@ -162,7 +162,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         if (!savedQuestion.getTitle().equals(dslQuestion.getTitle()) ||
             !Objects.equals(savedQuestion.getHint(), dslQuestion.getDescription()) ||
             savedQuestion.getIndex() != dslQuestion.getIndex() ||
-            savedQuestion.getMayNotBeApplicable().equals(dslQuestion.isMayNotBeApplicable())) {
+            !savedQuestion.getMayNotBeApplicable().equals(dslQuestion.isMayNotBeApplicable())) {
             var updateParam = new UpdateQuestionPort.Param(
                 savedQuestion.getId(),
                 dslQuestion.getTitle(),
@@ -173,7 +173,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             );
             updateQuestionPort.update(updateParam);
             log.debug("Question[id={}] updated.", savedQuestion.getId());
-            if (savedQuestion.getMayNotBeApplicable().equals(dslQuestion.isMayNotBeApplicable())) {
+            if (!savedQuestion.getMayNotBeApplicable().equals(dslQuestion.isMayNotBeApplicable())) {
                 invalidateResults = true;
             }
         }
