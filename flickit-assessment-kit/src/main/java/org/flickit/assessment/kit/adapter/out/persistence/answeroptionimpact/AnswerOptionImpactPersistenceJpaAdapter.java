@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
-import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AnswerOptionImpactPersistenceJpaAdapter implements
     CreateAnswerOptionImpactPort,
-    DeleteAnswerOptionImpactPort,
     UpdateAnswerOptionImpactPort {
 
     private final AnswerOptionImpactJpaRepository repository;
@@ -24,11 +22,6 @@ public class AnswerOptionImpactPersistenceJpaAdapter implements
             param,
             questionImpactRepository.findById(param.questionImpactId())
             )).getId();
-    }
-
-    @Override
-    public void delete(Long impactId, Long optionId) {
-        repository.deleteByQuestionImpactIdAndOptionId(impactId, optionId);
     }
 
     @Override

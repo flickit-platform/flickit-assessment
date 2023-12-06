@@ -7,7 +7,6 @@ import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswer
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
-import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
@@ -65,9 +64,6 @@ class QuestionUpdateKitPersisterTest {
     private CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
 
     @Mock
-    private DeleteAnswerOptionImpactPort deleteAnswerOptionImpactPort;
-
-    @Mock
     private UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
 
     @Mock
@@ -123,7 +119,6 @@ class QuestionUpdateKitPersisterTest {
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
-            deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
@@ -178,7 +173,6 @@ class QuestionUpdateKitPersisterTest {
         verifyNoInteractions(
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
-            deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort
         );
@@ -229,7 +223,6 @@ class QuestionUpdateKitPersisterTest {
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
-            deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
@@ -288,7 +281,6 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionImpactPort,
             deleteQuestionImpactPort,
             updateQuestionPort,
-            deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
@@ -319,8 +311,6 @@ class QuestionUpdateKitPersisterTest {
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire));
 
         doNothing().when(deleteQuestionImpactPort).delete(savedImpact2.getId());
-        doNothing().when(deleteAnswerOptionImpactPort).delete(savedImpact2.getId(), answerOption1.getId());
-        doNothing().when(deleteAnswerOptionImpactPort).delete(savedImpact2.getId(), answerOption2.getId());
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
@@ -399,7 +389,6 @@ class QuestionUpdateKitPersisterTest {
             createQuestionImpactPort,
             deleteQuestionImpactPort,
             createAnswerOptionImpactPort,
-            deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
@@ -454,7 +443,6 @@ class QuestionUpdateKitPersisterTest {
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
-            deleteAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
             loadAnswerOptionsByQuestionPort,
@@ -508,7 +496,6 @@ class QuestionUpdateKitPersisterTest {
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
-            deleteAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             createQuestionPort,
             loadAnswerOptionsByQuestionPort,

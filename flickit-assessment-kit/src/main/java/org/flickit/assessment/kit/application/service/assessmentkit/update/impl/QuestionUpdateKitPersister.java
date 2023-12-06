@@ -9,7 +9,6 @@ import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswer
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
-import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
@@ -40,7 +39,6 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final DeleteQuestionImpactPort deleteQuestionImpactPort;
     private final UpdateQuestionImpactPort updateQuestionImpactPort;
     private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
-    private final DeleteAnswerOptionImpactPort deleteAnswerOptionImpactPort;
     private final UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
     private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
@@ -258,12 +256,6 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private void deleteImpact(QuestionImpact impact, Long questionId) {
         deleteQuestionImpactPort.delete(impact.getId());
         log.debug("QuestionImpact[id={}, questionId={}] deleted.", impact.getId(), questionId);
-
-        impact.getOptionImpacts().forEach(o -> {
-            deleteAnswerOptionImpactPort.delete(impact.getId(), o.getOptionId());
-            log.debug("AnswerOptionImpact[impactId={}, optionId={} ,value={} deleted.",
-                impact.getId(), o.getOptionId(), o.getValue());
-        });
     }
 
     private boolean updateImpact(Question savedQuestion, QuestionImpact savedImpact, QuestionImpactDslModel dslImpact) {
