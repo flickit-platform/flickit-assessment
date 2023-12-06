@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
