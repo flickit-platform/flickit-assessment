@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class AttributeUpdateValidatorTest {
+class AttributeUpdateValidatorTest {
 
     @InjectMocks
     private AttributeUpdateValidator validator;
