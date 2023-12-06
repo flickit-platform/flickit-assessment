@@ -21,21 +21,17 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @ExtendWith(MockitoExtension.class)
 class QuestionnaireUpdateKitValidatorTest {
 
-    public static final String QUESTIONNAIRE_TITLE_1 = "Questionnaire1";
-    public static final String QUESTIONNAIRE_TITLE_2 = "Questionnaire2";
-    public static final String NEW = "New";
     @InjectMocks
     private QuestionnaireUpdateKitValidator validator;
 
-
     @Test
     void testValidate_SameQuestionnairesInDbAndDsl_Valid() {
-        var questionnaireOne = questionnaireWithTitle(QUESTIONNAIRE_TITLE_1);
-        var questionnaireTwo = questionnaireWithTitle(QUESTIONNAIRE_TITLE_2);
+        var questionnaireOne = questionnaireWithTitle("CodeQuality");
+        var questionnaireTwo = questionnaireWithTitle("Log");
         var savedKit = kitWithQuestionnaires(List.of(questionnaireOne, questionnaireTwo));
 
-        var dslQuestionnaireOne = QuestionnaireDslModelMother.domainToDslModel(questionnaireOne, q -> q.title(NEW + QUESTIONNAIRE_TITLE_1));
-        var dslQuestionnaireTwo = QuestionnaireDslModelMother.domainToDslModel(questionnaireTwo, q -> q.title(NEW + QUESTIONNAIRE_TITLE_2));
+        var dslQuestionnaireOne = QuestionnaireDslModelMother.domainToDslModel(questionnaireOne, q -> q.title("NEW" + questionnaireOne.getTitle()));
+        var dslQuestionnaireTwo = QuestionnaireDslModelMother.domainToDslModel(questionnaireTwo, q -> q.title("NEW" + questionnaireTwo.getTitle()));
         var dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaireOne, dslQuestionnaireTwo))
             .build();
@@ -47,11 +43,11 @@ class QuestionnaireUpdateKitValidatorTest {
 
     @Test
     void testValidate_NewQuestionnaireInDsl_Valid() {
-        var questionnaireOne = questionnaireWithTitle(QUESTIONNAIRE_TITLE_1);
+        var questionnaireOne = questionnaireWithTitle("CodeQuality");
         var savedKit = kitWithQuestionnaires(List.of(questionnaireOne));
 
         var dslQuestionnaireOne = QuestionnaireDslModelMother.domainToDslModel(questionnaireOne);
-        var dslQuestionnaireNew = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(NEW + QUESTIONNAIRE_TITLE_1));
+        var dslQuestionnaireNew = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle("NEW" + questionnaireOne.getTitle()));
         var dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaireOne, dslQuestionnaireNew))
             .build();
@@ -63,11 +59,11 @@ class QuestionnaireUpdateKitValidatorTest {
 
     @Test
     void testValidate_dslHasOneQuestionnaireLessThanDsl_Invalid() {
-        var questionnaireOne = questionnaireWithTitle(QUESTIONNAIRE_TITLE_1);
-        var questionnaireTwo = questionnaireWithTitle(QUESTIONNAIRE_TITLE_2);
+        var questionnaireOne = questionnaireWithTitle("CodeQuality");
+        var questionnaireTwo = questionnaireWithTitle("Log");
         var savedKit = kitWithQuestionnaires(List.of(questionnaireOne, questionnaireTwo));
 
-        var dslQuestionnaireOne = QuestionnaireDslModelMother.domainToDslModel(questionnaireOne, q -> q.title(NEW + QUESTIONNAIRE_TITLE_1));
+        var dslQuestionnaireOne = QuestionnaireDslModelMother.domainToDslModel(questionnaireOne, q -> q.title("NEW" + questionnaireOne.getTitle()));
         var dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaireOne))
             .build();
