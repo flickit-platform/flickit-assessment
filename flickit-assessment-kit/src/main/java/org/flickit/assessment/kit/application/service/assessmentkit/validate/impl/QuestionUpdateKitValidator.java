@@ -13,7 +13,6 @@ import org.flickit.assessment.kit.common.Notification;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.Objects;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.ANSWER_OPTION;
@@ -48,32 +47,29 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
                 .filter(s -> !codeToQuestion.containsKey(s))
                 .collect(toSet());
 
-            if (!deletedQuestions.isEmpty()) {
+            if (!deletedQuestions.isEmpty())
                 notification.add(new InvalidDeletionError(QUESTION, deletedQuestions));
-            }
 
-            if (!newQuestions.isEmpty()) {
+            if (!newQuestions.isEmpty())
                 notification.add(new InvalidAdditionError(QUESTION, newQuestions));
-            }
 
             validateAnswerOptions(codeToQuestion, codeToDslQuestion, notification);
-
         }
 
         return notification;
     }
 
-    private static void validateAnswerOptions(Map<String, Question> codeToQuestion, Map<String, QuestionDslModel> codeToDslQuestion, Notification notification) {
+    private void validateAnswerOptions(Map<String, Question> codeToQuestion, Map<String, QuestionDslModel> codeToDslQuestion, Notification notification) {
         for (Map.Entry<String, Question> questionEntry : codeToQuestion.entrySet()) {
             Map<Integer, AnswerOption> savedOptionIndexMap = questionEntry.getValue()
                 .getOptions().stream()
                 .collect(toMap(AnswerOption::getIndex, a -> a));
 
-            if (Objects.isNull(codeToDslQuestion.get(questionEntry.getKey()))) {
+            QuestionDslModel dslQuestion = codeToDslQuestion.get(questionEntry.getKey());
+            if (dslQuestion == null)
                 continue;
-            }
-            Map<Integer, AnswerOptionDslModel> dslOptionIndexMap = codeToDslQuestion.get(questionEntry.getKey())
-                .getAnswerOptions().stream()
+
+            Map<Integer, AnswerOptionDslModel> dslOptionIndexMap = dslQuestion.getAnswerOptions().stream()
                 .collect(toMap(AnswerOptionDslModel::getIndex, a -> a));
 
             var deletedOptions = savedOptionIndexMap.entrySet().stream()
@@ -86,14 +82,11 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
                 .map(answerOption -> answerOption.getValue().getCaption())
                 .collect(toSet());
 
-            if (!deletedOptions.isEmpty()) {
+            if (!deletedOptions.isEmpty())
                 notification.add(new InvalidDeletionError(ANSWER_OPTION, deletedOptions));
-            }
 
-            if (!newOptions.isEmpty()) {
+            if (!newOptions.isEmpty())
                 notification.add(new InvalidAdditionError(ANSWER_OPTION, newOptions));
-            }
         }
     }
-
 }
