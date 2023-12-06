@@ -103,11 +103,12 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
 
     private void updateSubjectQuestionnaires(Map<Long, HashMap<Long, Long>> savedQuestionnaireIdToSubjectIdMap,
                                              Map<Long, Set<Long>> questionnaireIdToSubjectIdMap) {
-        for (Long questionnaireId : questionnaireIdToSubjectIdMap.keySet()) {
+        for (Map.Entry<Long, Set<Long>> entry : questionnaireIdToSubjectIdMap.entrySet()) {
+            Long questionnaireId = entry.getKey();
             var savedSubjectIdToIdMap = savedQuestionnaireIdToSubjectIdMap.getOrDefault(questionnaireId, new HashMap<>());
 
             var savedSubjectIds = savedSubjectIdToIdMap.keySet();
-            var subjectIds = questionnaireIdToSubjectIdMap.get(questionnaireId);
+            var subjectIds = entry.getValue();
 
             var deletedSubjectIds = savedSubjectIds.stream().filter(id -> !subjectIds.contains(id))
                 .collect(Collectors.toSet());
