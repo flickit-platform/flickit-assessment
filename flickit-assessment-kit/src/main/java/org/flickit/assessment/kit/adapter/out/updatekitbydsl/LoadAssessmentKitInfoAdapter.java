@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -11,6 +12,7 @@ import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepos
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
@@ -37,6 +39,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
     private final SubjectJpaRepository subjectRepository;
+    private final AttributeJpaRepository attributeRepository;
     private final QuestionnaireJpaRepository questionnaireRepository;
     private final QuestionJpaRepository questionRepository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -49,7 +52,11 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
             () -> new ResourceNotFoundException(FIND_KIT_ID_NOT_FOUND));
 
         List<Subject> subjects = subjectRepository.findAllByAssessmentKitId(kitId).stream()
-            .map(SubjectMapper::mapToDomainModel)
+            .map(e -> {
+                List<Attribute> attributes = attributeRepository.findAllBySubjectId(e.getId()).stream()
+                    .map(AttributeMapper::mapToDomainModel)
+                    .toList();
+                return SubjectMapper.mapToDomainModel(e, attributes);})
             .toList();
 
         List<MaturityLevel> levels = maturityLevelRepository.findAllByAssessmentKitId(kitId).stream()

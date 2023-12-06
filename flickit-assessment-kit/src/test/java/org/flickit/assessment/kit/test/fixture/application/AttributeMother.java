@@ -6,7 +6,21 @@ import java.time.LocalDateTime;
 
 public class AttributeMother {
 
-    private static Long id = 234L;
+    private static long id = 1013;
+    private static int index = 1;
+
+    public static Attribute attributeWithTitle(String title) {
+        return new Attribute(
+            id++,
+            "c-" + title,
+            title,
+            index++,
+            "Description",
+            1,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+    }
 
     public static Attribute createAttribute(String code, String title, int index, String description, int weight) {
         return new Attribute(
