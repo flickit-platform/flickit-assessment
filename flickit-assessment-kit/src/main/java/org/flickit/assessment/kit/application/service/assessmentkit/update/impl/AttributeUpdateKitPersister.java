@@ -13,12 +13,10 @@ import org.flickit.assessment.kit.application.service.assessmentkit.update.Updat
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.springframework.stereotype.Service;
 
-
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 
 @Slf4j
 @Service
@@ -34,42 +32,36 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
 
     @Override
     public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
-
-        boolean shouldInvalidated = false;
-
         Map<String, Long> subjectCodeToSubjectId = savedKit.getSubjects().stream()
             .collect(Collectors.toMap(Subject::getCode, Subject::getId));
 
         Map<String, AttributeDslModel> attrCodeToAttrDslModel = dslKit.getAttributes().stream()
             .collect(Collectors.toMap(AttributeDslModel::getCode, Function.identity()));
 
+        boolean shouldInvalidate = false;
         for (Subject subject : savedKit.getSubjects()) {
             String subjectCode = subject.getCode();
-            for (Attribute attribute : subject.getAttributes()) {
+            for (Attribute savedAttribute : subject.getAttributes()) {
+                AttributeDslModel dslAttribute = attrCodeToAttrDslModel.get(savedAttribute.getCode());
 
-                AttributeDslModel attributeDslModel = attrCodeToAttrDslModel.get(attribute.getCode());
-
-
-                if (!attribute.getTitle().equals(attributeDslModel.getTitle()) ||
-                    !attribute.getDescription().equals(attributeDslModel.getDescription()) ||
-                    !subjectCode.equals(attributeDslModel.getSubjectCode()) ||
-                    attribute.getIndex() != attributeDslModel.getIndex() ||
-                    attribute.getWeight() != attributeDslModel.getWeight()
+                if (!savedAttribute.getTitle().equals(dslAttribute.getTitle()) ||
+                    !savedAttribute.getDescription().equals(dslAttribute.getDescription()) ||
+                    !subjectCode.equals(dslAttribute.getSubjectCode()) ||
+                    savedAttribute.getIndex() != dslAttribute.getIndex() ||
+                    savedAttribute.getWeight() != dslAttribute.getWeight()
                     ) {
 
-                    updateAttributePort.update(toUpdatePram(attribute.getId(),
-                        subjectCodeToSubjectId.get(attributeDslModel.getSubjectCode()),
-                        attributeDslModel));
-                    log.debug("Attribute[id = {}, code = {}] updated!", attribute.getId(), attribute.getCode());
+                    Long newSubjectId = subjectCodeToSubjectId.get(dslAttribute.getSubjectCode());
+                    updateAttributePort.update(toUpdatePram(savedAttribute.getId(), newSubjectId, dslAttribute));
+                    log.debug("Attribute[id={}, code={}] updated", savedAttribute.getId(), savedAttribute.getCode());
                 }
 
-                if (!subjectCode.equals(attributeDslModel.getSubjectCode()) ||
-                    attribute.getWeight() != attributeDslModel.getWeight()) {
-                    shouldInvalidated = true;
+                if (!subjectCode.equals(dslAttribute.getSubjectCode()) ||
+                    savedAttribute.getWeight() != dslAttribute.getWeight()) {
+                    shouldInvalidate = true;
                 }
             }
         }
-
 
         Map<String, Long> attrCodeToAttrId = savedKit.getSubjects().stream()
             .map(Subject::getAttributes)
@@ -78,7 +70,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
         ctx.put(UpdateKitPersisterContext.KEY_ATTRIBUTES, attrCodeToAttrId);
         log.debug("Final attributes: {}", attrCodeToAttrId);
 
-        return new UpdateKitPersisterResult(shouldInvalidated);
+        return new UpdateKitPersisterResult(shouldInvalidate);
     }
 
     private UpdateAttributePort.Param toUpdatePram(long id, Long subjectId, AttributeDslModel attributeDslModel) {
