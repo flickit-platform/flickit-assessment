@@ -1,7 +1,9 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
 
+import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.common.Notification;
+import org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
 import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
@@ -31,12 +33,18 @@ class QuestionUpdateKitValidatorTest {
     void testValidator_SameQuestionsInDbAndDsl_Valid() {
         var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, 1L);
         var questionTwo = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, 1L);
+        questionOne.setOptions(List.of());
+        questionTwo.setOptions(List.of());
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne, questionTwo));
         var savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(questionnaire));
 
-        var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q.questionnaireCode(questionnaire.getCode()));
-        var dslQuestionTwo = QuestionDslModelMother.domainToDslModel(questionTwo, q -> q.questionnaireCode(questionnaire.getCode()));
+        var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
+            .answerOptions(List.of())
+            .questionnaireCode(questionnaire.getCode()));
+        var dslQuestionTwo = QuestionDslModelMother.domainToDslModel(questionTwo, q -> q
+            .answerOptions(List.of())
+            .questionnaireCode(questionnaire.getCode()));
         var dslQuestionnaires = QuestionnaireDslModelMother.domainToDslModel(questionnaire);
         var dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaires))
@@ -51,13 +59,18 @@ class QuestionUpdateKitValidatorTest {
     @Test
     void testValidator_dslHasOneNewQuestion_Invalid() {
         var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, 1L);
+        questionOne.setOptions(List.of());
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne));
         var savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(questionnaire));
 
-        var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q.questionnaireCode(questionnaire.getCode()));
+        var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
+            .answerOptions(List.of())
+            .questionnaireCode(questionnaire.getCode()));
         var questionTwo = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, 1L);
-        var dslQuestionTwo = QuestionDslModelMother.domainToDslModel(questionTwo, q -> q.questionnaireCode(questionnaire.getCode()));
+        var dslQuestionTwo = QuestionDslModelMother.domainToDslModel(questionTwo, q -> q
+            .answerOptions(List.of())
+            .questionnaireCode(questionnaire.getCode()));
         var dslQuestionnaires = QuestionnaireDslModelMother.domainToDslModel(questionnaire);
         var dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaires))
@@ -80,11 +93,15 @@ class QuestionUpdateKitValidatorTest {
     void testValidator_dslHasOneQuestionLessThanDb_Invalid() {
         var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, 1L);
         var questionTwo = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, 1L);
+        questionOne.setOptions(List.of());
+        questionTwo.setOptions(List.of());
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne, questionTwo));
         var savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(questionnaire));
 
-        var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q.questionnaireCode(questionnaire.getCode()));
+        var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
+            .answerOptions(List.of())
+            .questionnaireCode(questionnaire.getCode()));
         var dslQuestionnaires = QuestionnaireDslModelMother.domainToDslModel(questionnaire);
         var dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaires))
@@ -100,6 +117,70 @@ class QuestionUpdateKitValidatorTest {
             .isInstanceOfSatisfying(InvalidDeletionError.class, x -> {
                 assertThat(x.fieldName()).isEqualTo(QUESTION);
                 assertThat(x.deletedItems()).contains(questionTwo.getCode());
+            });
+    }
+
+    @Test
+    void testValidator_dslHasOneNewAnswerOption_Invalid() {
+        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, 1L);
+        questionOne.setOptions(List.of());
+        var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
+        questionnaire.setQuestions(List.of(questionOne));
+        var savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(questionnaire));
+
+        var newAnswerOption = AnswerOptionDslModel.builder()
+            .caption(OPTION_TITLE)
+            .index(1)
+            .value(1)
+            .build();
+        var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
+            .answerOptions(List.of(newAnswerOption))
+            .questionnaireCode(questionnaire.getCode()));
+        var dslQuestionnaires = QuestionnaireDslModelMother.domainToDslModel(questionnaire);
+        var dslKit = AssessmentKitDslModel.builder()
+            .questionnaires(List.of(dslQuestionnaires))
+            .questions(List.of(dslQuestionOne))
+            .build();
+
+        Notification notification = validator.validate(savedKit, dslKit);
+
+        assertThat(notification)
+            .returns(true, Notification::hasErrors)
+            .extracting(Notification::getErrors, as(COLLECTION))
+            .singleElement()
+            .isInstanceOfSatisfying(InvalidAdditionError.class, x -> {
+                assertThat(x.fieldName()).isEqualTo(ANSWER_OPTION);
+                assertThat(x.addedItems()).contains(newAnswerOption.getCaption());
+            });
+    }
+
+    @Test
+    void testValidator_dslHasOneNewAnswerOptionLessThanDb_Invalid() {
+        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, 1L);
+        var deletedAnswerOption = AnswerOptionMother.createAnswerOption(questionOne.getId(), OPTION_TITLE, 1);
+        questionOne.setOptions(List.of(deletedAnswerOption));
+        var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
+        questionnaire.setQuestions(List.of(questionOne));
+        var savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(questionnaire));
+
+        var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
+            .answerOptions(List.of())
+            .questionnaireCode(questionnaire.getCode()));
+        var dslQuestionnaires = QuestionnaireDslModelMother.domainToDslModel(questionnaire);
+        var dslKit = AssessmentKitDslModel.builder()
+            .questionnaires(List.of(dslQuestionnaires))
+            .questions(List.of(dslQuestionOne))
+            .build();
+
+        Notification notification = validator.validate(savedKit, dslKit);
+
+        assertThat(notification)
+            .returns(true, Notification::hasErrors)
+            .extracting(Notification::getErrors, as(COLLECTION))
+            .singleElement()
+            .isInstanceOfSatisfying(InvalidDeletionError.class, x -> {
+                assertThat(x.fieldName()).isEqualTo(ANSWER_OPTION);
+                assertThat(x.deletedItems()).contains(deletedAnswerOption.getTitle());
             });
     }
 }

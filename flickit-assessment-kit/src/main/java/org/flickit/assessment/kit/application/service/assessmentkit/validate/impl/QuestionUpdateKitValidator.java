@@ -1,22 +1,22 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
-import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.service.assessmentkit.validate.UpdateKitValidator;
 import org.flickit.assessment.kit.common.Notification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
+import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.ANSWER_OPTION;
 import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.QUESTION;
 
 @Service
@@ -27,44 +27,67 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
     public Notification validate(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Notification notification = new Notification();
 
-        var savedQuestionnaires = savedKit.getQuestionnaires();
-        var dslQuestionnaires = dslKit.getQuestionnaires();
+        Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap = savedKit.getQuestionnaires().stream()
+            .collect(toMap(Questionnaire::getCode, q -> q.getQuestions().stream()
+                .collect(toMap(Question::getCode, s -> s))
+            ));
+        Map<String, Map<String, QuestionDslModel>> dslQuestionnaireToQuestionsMap = dslKit.getQuestions().stream()
+            .collect(groupingBy(QuestionDslModel::getQuestionnaireCode,
+                toMap(QuestionDslModel::getCode, model -> model)
+            ));
 
-        Map<String, Questionnaire> savedQuestionnaireCodesMap = savedQuestionnaires.stream().collect(toMap(Questionnaire::getCode, q -> q));
-        Map<String, QuestionnaireDslModel> dslQuestionnaireCodesMap = dslQuestionnaires.stream().collect(toMap(QuestionnaireDslModel::getCode, q -> q));
+        for (Map.Entry<String, Map<String, Question>> questionnaireEntry : savedQuestionnaireToQuestionsMap.entrySet()) {
+            Map<String, Question> codeToQuestion = questionnaireEntry.getValue();
+            Map<String, QuestionDslModel> codeToDslQuestion = dslQuestionnaireToQuestionsMap.get(questionnaireEntry.getKey());
 
-        List<String> sameQuestionnaires = savedQuestionnaireCodesMap.keySet().stream()
-            .filter(s -> dslQuestionnaireCodesMap.keySet().stream()
-                .anyMatch(s::equals))
-            .toList();
+            var deletedQuestions = codeToQuestion.keySet().stream()
+                .filter(s -> !codeToDslQuestion.containsKey(s))
+                .collect(toSet());
 
-        sameQuestionnaires.forEach(q -> {
-            Questionnaire questionnaire = savedQuestionnaireCodesMap.get(q);
-            if (Objects.nonNull(questionnaire.getQuestions())) {
-                List<Question> savedQuestions = questionnaire.getQuestions();
-                List<QuestionDslModel> dslQuestions = dslKit.getQuestions().stream().filter(i -> i.getQuestionnaireCode().equals(q)).toList();
+            var newQuestions = codeToDslQuestion.keySet().stream()
+                .filter(s -> !codeToQuestion.containsKey(s))
+                .collect(toSet());
 
-                Map<String, Question> savedQuestionCodesMap = savedQuestions.stream().collect(toMap(Question::getCode, i -> i));
-                Map<String, QuestionDslModel> dslQuestionCodesMap = dslQuestions.stream().collect(toMap(QuestionDslModel::getCode, i -> i));
+            if (!deletedQuestions.isEmpty()) {
+                notification.add(new InvalidDeletionError(QUESTION, deletedQuestions));
+            }
 
-                var deletedQuestions = savedQuestionCodesMap.keySet().stream()
-                    .filter(s -> !dslQuestionCodesMap.containsKey(s))
+            if (!newQuestions.isEmpty()) {
+                notification.add(new InvalidAdditionError(QUESTION, newQuestions));
+            }
+
+            for (Map.Entry<String, Question> questionEntry : codeToQuestion.entrySet()) {
+                Map<Integer, AnswerOption> savedOptionIndexMap = questionEntry.getValue()
+                    .getOptions().stream()
+                    .collect(toMap(AnswerOption::getIndex, a -> a));
+
+                if (Objects.isNull(codeToDslQuestion.get(questionEntry.getKey()))) {
+                    continue;
+                }
+                Map<Integer, AnswerOptionDslModel> dslOptionIndexMap = codeToDslQuestion.get(questionEntry.getKey())
+                    .getAnswerOptions().stream()
+                    .collect(toMap(AnswerOptionDslModel::getIndex, a -> a));
+
+                var deletedOptions = savedOptionIndexMap.entrySet().stream()
+                    .filter(savedOption -> !dslOptionIndexMap.containsKey(savedOption.getKey()))
+                    .map(answerOption -> answerOption.getValue().getTitle())
                     .collect(toSet());
 
-                var newQuestions = dslQuestionCodesMap.keySet().stream()
-                    .filter(s -> !savedQuestionCodesMap.containsKey(s))
+                var newOptions = dslOptionIndexMap.entrySet().stream()
+                    .filter(savedOption -> !savedOptionIndexMap.containsKey(savedOption.getKey()))
+                    .map(answerOption -> answerOption.getValue().getCaption())
                     .collect(toSet());
 
-                if (!deletedQuestions.isEmpty()) {
-                    notification.add(new InvalidDeletionError(QUESTION, deletedQuestions));
+                if (!deletedOptions.isEmpty()) {
+                    notification.add(new InvalidDeletionError(ANSWER_OPTION, deletedOptions));
                 }
 
-                if (!newQuestions.isEmpty()) {
-                    notification.add(new InvalidAdditionError(QUESTION, newQuestions));
+                if (!newOptions.isEmpty()) {
+                    notification.add(new InvalidAdditionError(ANSWER_OPTION, newOptions));
                 }
             }
 
-        });
+        }
 
         return notification;
     }

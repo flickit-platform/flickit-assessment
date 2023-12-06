@@ -210,7 +210,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         Map<AttributeLevel, QuestionImpact> savedImpactsMap = savedQuestion.getImpacts().stream()
             .collect(toMap(impact -> createAttributeLevel(impact, attributes, maturityLevels), i -> i));
         Map<AttributeLevel, QuestionImpactDslModel> dslImpactMap = dslQuestion.getQuestionImpacts().stream()
-            .collect(toMap(i -> new AttributeLevel(i.getAttributeCode(), i.getMaturityLevel().getCode()), i -> i));
+            .collect(toMap(i -> new AttributeLevel(i.getAttributeCode(), i.getMaturityLevel().getTitle()), i -> i));
 
         List<AttributeLevel> newImpacts = newImpactsInNewDsl(savedImpactsMap.keySet(), dslImpactMap.keySet());
         List<AttributeLevel> deletedImpacts = deletedImpactsInNewDsl(savedImpactsMap.keySet(), dslImpactMap.keySet());
