@@ -10,7 +10,4 @@ public class AnswerOptionImpact {
     private final Long id;
     private final long optionId;
     private final double value;
-
-    public record Code(Long impactId, Long optionId) {
-    }
 }

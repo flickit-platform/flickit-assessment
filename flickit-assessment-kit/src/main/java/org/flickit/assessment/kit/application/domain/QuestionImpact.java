@@ -17,6 +17,4 @@ public class QuestionImpact {
     private final Long questionId;
     @Setter
     private List<AnswerOptionImpact> optionImpacts;
-
-    public record Code(String attributeCode, String maturityLevelCode) {}
 }

@@ -174,89 +174,74 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         return invalidateResults;
     }
 
-    private boolean updateAnswerOptions(Question savedQuestion, QuestionDslModel dslQuestion) {
-        boolean invalidateResults = false;
-        Map<AnswerOption.Code, AnswerOption> savedOptionCodesMap = savedQuestion.getOptions().stream()
-            .collect(toMap(a -> new AnswerOption.Code(savedQuestion.getId(), a.getIndex()), a -> a));
-        Map<AnswerOption.Code, AnswerOptionDslModel> dslOptionCodesMap = dslQuestion.getAnswerOptions().stream()
-            .collect(toMap(a -> new AnswerOption.Code(savedQuestion.getId(), a.getIndex()), a -> a));
+    private void updateAnswerOptions(Question savedQuestion, QuestionDslModel dslQuestion) {
+        Map<Integer, AnswerOption> savedOptionIndexMap = savedQuestion.getOptions().stream()
+            .collect(toMap(AnswerOption::getIndex, a -> a));
 
-        List<AnswerOption.Code> sameOptions = sameOptionsInNewDsl(savedOptionCodesMap.keySet(), dslOptionCodesMap.keySet());
+        Map<Integer, AnswerOptionDslModel> dslOptionIndexMap = dslQuestion.getAnswerOptions().stream()
+            .collect(toMap(AnswerOptionDslModel::getIndex, a -> a));
 
-        for (AnswerOption.Code code : sameOptions) {
-            invalidateResults = invalidateResults || updateOptions(savedOptionCodesMap.get(code), dslOptionCodesMap.get(code));
+        for (Map.Entry<Integer, AnswerOption> optionEntry : savedOptionIndexMap.entrySet()) {
+            String savedOptionTitle = optionEntry.getValue().getTitle();
+            String dslOptionTitle = dslOptionIndexMap.get(optionEntry.getKey()).getCaption();
+            if (!savedOptionTitle.equals(dslOptionTitle)) {
+                updateAnswerOptionPort.update(new UpdateAnswerOptionPort.Param(optionEntry.getValue().getId(), dslOptionTitle));
+                log.debug("AnswerOption[id={}, index={}, newTitle{}, questionId{}] updated.",
+                    optionEntry.getValue().getId(), optionEntry.getKey(), dslOptionTitle, savedQuestion.getId());
+            }
         }
-
-        return invalidateResults;
     }
 
-    private List<AnswerOption.Code> sameOptionsInNewDsl(Set<AnswerOption.Code> savedOptionCodes, Set<AnswerOption.Code> dslOptionCodes) {
-        return savedOptionCodes.stream()
-            .filter(i -> dslOptionCodes.stream()
-                .anyMatch(s -> s.questionId() == i.questionId() && s.index() == i.index()))
-            .toList();
-    }
-
-    private boolean updateOptions(AnswerOption savedOption, AnswerOptionDslModel dslOption) {
-        boolean invalidateResults = false;
-        if (!Objects.equals(savedOption.getTitle(), dslOption.getCaption())) {
-            updateAnswerOptionPort.update(new UpdateAnswerOptionPort.Param(savedOption.getId(), dslOption.getCaption()));
-            log.warn("Answer option with id [{}] is updated.", savedOption.getId());
-            invalidateResults = true;
-        }
-        return invalidateResults;
+    private record AttributeLevel(String attributeCode, String levelCode) {
     }
 
     private boolean updateQuestionImpacts(Question savedQuestion, QuestionDslModel dslQuestion,
                                           Map<String, Long> attributes, Map<String, Long> maturityLevels) {
-        boolean invalidateResults = false;
-        Map<QuestionImpact.Code, QuestionImpact> savedImpactCodesMap = savedQuestion.getImpacts().stream()
-            .collect(toMap(i -> createQuestionImpactCode(i, attributes, maturityLevels), i -> i));
-        Map<QuestionImpact.Code, QuestionImpactDslModel> dslImpactCodesMap = dslQuestion.getQuestionImpacts().stream()
-            .collect(toMap(i -> new QuestionImpact.Code(i.getAttributeCode(), i.getMaturityLevel().getTitle()), i -> i));
+        Map<AttributeLevel, QuestionImpact> savedImpactsMap = savedQuestion.getImpacts().stream()
+            .collect(toMap(impact -> createAttributeLevel(impact, attributes, maturityLevels), i -> i));
+        Map<AttributeLevel, QuestionImpactDslModel> dslImpactMap = dslQuestion.getQuestionImpacts().stream()
+            .collect(toMap(i -> new AttributeLevel(i.getAttributeCode(), i.getMaturityLevel().getCode()), i -> i));
 
-        List<QuestionImpact.Code> newImpacts = newImpactsInNewDsl(savedImpactCodesMap.keySet(), dslImpactCodesMap.keySet());
-        List<QuestionImpact.Code> deletedImpacts = deletedImpactsInNewDsl(savedImpactCodesMap.keySet(), dslImpactCodesMap.keySet());
-        List<QuestionImpact.Code> sameImpacts = sameImpactsInNewDsl(savedImpactCodesMap.keySet(), dslImpactCodesMap.keySet());
+        List<AttributeLevel> newImpacts = newImpactsInNewDsl(savedImpactsMap.keySet(), dslImpactMap.keySet());
+        List<AttributeLevel> deletedImpacts = deletedImpactsInNewDsl(savedImpactsMap.keySet(), dslImpactMap.keySet());
+        List<AttributeLevel> sameImpacts = sameImpactsInNewDsl(savedImpactsMap.keySet(), dslImpactMap.keySet());
 
-        newImpacts.forEach(i -> createImpact(savedQuestion.getId(), dslImpactCodesMap.get(i), attributes, maturityLevels));
-        deletedImpacts.forEach(i -> deleteImpact(savedImpactCodesMap.get(new QuestionImpact.Code(i.attributeCode(), i.maturityLevelCode()))));
-        for (QuestionImpact.Code i : sameImpacts) {
-            invalidateResults = invalidateResults || updateImpact(savedQuestion, savedImpactCodesMap.get(i), dslImpactCodesMap.get(i));
-        }
+        newImpacts.forEach(i -> createImpact(dslImpactMap.get(i), savedQuestion.getId(), attributes, maturityLevels));
+        deletedImpacts.forEach(i -> deleteImpact(savedImpactsMap.get(i), savedQuestion.getId()));
 
-        if (invalidateResults || !newImpacts.isEmpty() || !deletedImpacts.isEmpty())
-            invalidateResults = true;
+        boolean invalidOnUpdate = false;
+        for (AttributeLevel impact : sameImpacts)
+            invalidOnUpdate = updateImpact(savedQuestion, savedImpactsMap.get(impact), dslImpactMap.get(impact));
 
-        return invalidateResults;
+        return !newImpacts.isEmpty() || !deletedImpacts.isEmpty() || invalidOnUpdate;
     }
 
-    private QuestionImpact.Code createQuestionImpactCode(QuestionImpact impact, Map<String, Long> attributes, Map<String, Long> maturityLevels) {
+    private AttributeLevel createAttributeLevel(QuestionImpact impact, Map<String, Long> attributes, Map<String, Long> maturityLevels) {
         Map<Long, String> attributesIdToCode = attributes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
         Map<Long, String> levelsIdToCode = maturityLevels.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
         String attributeCode = attributesIdToCode.get(impact.getAttributeId());
         String levelCode = levelsIdToCode.get(impact.getMaturityLevelId());
-        return new QuestionImpact.Code(attributeCode, levelCode);
+        return new AttributeLevel(attributeCode, levelCode);
     }
 
-    private List<QuestionImpact.Code> newImpactsInNewDsl(Set<QuestionImpact.Code> savedImpactCodes, Set<QuestionImpact.Code> dslImpactCodes) {
+    private List<AttributeLevel> newImpactsInNewDsl(Set<AttributeLevel> savedImpactCodes, Set<AttributeLevel> dslImpactCodes) {
         return dslImpactCodes.stream()
             .filter(i -> savedImpactCodes.stream()
-                .noneMatch(s -> s.attributeCode().equals(i.attributeCode()) && s.maturityLevelCode().equals(i.maturityLevelCode())))
+                .noneMatch(s -> s.attributeCode.equals(i.attributeCode) && s.levelCode.equals(i.levelCode)))
             .toList();
     }
 
-    private List<QuestionImpact.Code> deletedImpactsInNewDsl(Set<QuestionImpact.Code> savedImpactCodes, Set<QuestionImpact.Code> dslImpactCodes) {
+    private List<AttributeLevel> deletedImpactsInNewDsl(Set<AttributeLevel> savedImpactCodes, Set<AttributeLevel> dslImpactCodes) {
         return savedImpactCodes.stream()
             .filter(i -> dslImpactCodes.stream()
-                .noneMatch(s -> s.attributeCode().equals(i.attributeCode()) && s.maturityLevelCode().equals(i.maturityLevelCode())))
+                .noneMatch(s -> s.attributeCode.equals(i.attributeCode) && s.levelCode.equals(i.levelCode)))
             .toList();
     }
 
-    private List<QuestionImpact.Code> sameImpactsInNewDsl(Set<QuestionImpact.Code> savedImpactCodes, Set<QuestionImpact.Code> dslImpactCodes) {
+    private List<AttributeLevel> sameImpactsInNewDsl(Set<AttributeLevel> savedImpactCodes, Set<AttributeLevel> dslImpactCodes) {
         return savedImpactCodes.stream()
             .filter(i -> dslImpactCodes.stream()
-                .anyMatch(s -> s.attributeCode().equals(i.attributeCode()) && s.maturityLevelCode().equals(i.maturityLevelCode())))
+                .anyMatch(s -> s.attributeCode.equals(i.attributeCode) && s.levelCode().equals(i.levelCode())))
             .toList();
     }
 
@@ -314,39 +299,25 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
     private boolean updateOptionImpacts(Question savedQuestion, QuestionImpact savedImpact, QuestionImpactDslModel dslImpact) {
         boolean invalidateResults = false;
-        Map<AnswerOptionImpact.Code, AnswerOptionImpact> savedOptionImpactCodesMap = savedImpact.getOptionImpacts().stream()
-            .collect(toMap(a -> new AnswerOptionImpact.Code(savedImpact.getId(), a.getOptionId()), a -> a));
-        Map<AnswerOptionImpact.Code, AnswerOptionImpact> dslOptionImpactCodesMap = dslImpact.getOptionsIndextoValueMap().keySet().stream()
-            .collect(toMap(k -> buildOptionImpactCode(savedQuestion, savedImpact.getId(), k),
-                k -> buildOptionImpact(savedQuestion, k, dslImpact.getOptionsIndextoValueMap().get(k))));
+        Map<Long, AnswerOption> optionMap = savedQuestion.getOptions().stream().collect(toMap(AnswerOption::getId, i -> i));
 
-        List<AnswerOptionImpact.Code> newOptionImpacts = newOptionImpactsInNewDsl(savedOptionImpactCodesMap.keySet(), dslOptionImpactCodesMap.keySet());
-        List<AnswerOptionImpact.Code> deletedOptionImpacts = deletedOptionImpactsInNewDsl(savedOptionImpactCodesMap.keySet(), dslOptionImpactCodesMap.keySet());
-        List<AnswerOptionImpact.Code> sameOptionImpacts = sameOptionImpactsInNewDsl(savedOptionImpactCodesMap.keySet(), dslOptionImpactCodesMap.keySet());
+        Map<Integer, AnswerOptionImpact> savedOptionImpactMap = savedImpact.getOptionImpacts().stream()
+            .collect(toMap(a -> optionMap.get(a.getOptionId()).getIndex(), a -> a));
 
-        newOptionImpacts.forEach(i -> createAnswerOptionImpact(i.impactId(), i.optionId(), dslOptionImpactCodesMap.get(i).getValue()));
-        deletedOptionImpacts.forEach(i -> {
-            deleteAnswerOptionImpactPort.delete(i.impactId(), i.optionId());
-            log.warn("Answer option impact with question impact id [{}] and option id [{}] is deleted.", i.impactId(), i.optionId());
-        });
-        for (AnswerOptionImpact.Code i : sameOptionImpacts) {
-            invalidateResults = invalidateResults || updateAnswerOptionImpact(savedOptionImpactCodesMap.get(i), dslOptionImpactCodesMap.get(i));
+        Map<Integer, AnswerOptionImpact> dslOptionImpactMap = dslImpact.getOptionsIndextoValueMap().entrySet().stream()
+            .collect(toMap(Map.Entry::getKey,
+                entry -> buildOptionImpact(savedQuestion, entry.getKey(), dslImpact.getOptionsIndextoValueMap().get(entry.getKey()))));
+
+        for (Map.Entry<Integer, AnswerOptionImpact> entry : savedOptionImpactMap.entrySet()) {
+            AnswerOptionImpact savedOptionImpact = entry.getValue();
+            AnswerOptionImpact newOptionImpact = dslOptionImpactMap.get(entry.getKey());
+
+            if (savedOptionImpact.getValue() != newOptionImpact.getValue()) {
+                updateAnswerOptionImpact(savedOptionImpact, newOptionImpact);
+                invalidateResults = true;
+            }
         }
-
-        if (invalidateResults || !newOptionImpacts.isEmpty() || !deletedOptionImpacts.isEmpty())
-            invalidateResults = true;
-
         return invalidateResults;
-    }
-
-    private AnswerOptionImpact.Code buildOptionImpactCode(Question savedQuestion, Long impactId, Integer index) {
-        Optional<AnswerOption> answerOption = savedQuestion.getOptions().stream()
-            .filter(o -> o.getQuestionId() == savedQuestion.getId() && o.getIndex() == index)
-            .findFirst();
-        return new AnswerOptionImpact.Code(
-            impactId,
-            answerOption.orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND)).getId()
-        );
     }
 
     private AnswerOptionImpact buildOptionImpact(Question savedQuestion, Integer index, Double value) {
@@ -360,46 +331,13 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private List<AnswerOptionImpact.Code> newOptionImpactsInNewDsl(Set<AnswerOptionImpact.Code> savedOptionImpactCodes, Set<AnswerOptionImpact.Code> dslOptionImpactCodes) {
-        return dslOptionImpactCodes.stream()
-            .filter(i -> savedOptionImpactCodes.stream()
-                .noneMatch(s -> s.optionId().equals(i.optionId()) && s.impactId().equals(i.impactId())))
-            .toList();
+    private void updateAnswerOptionImpact(AnswerOptionImpact savedOptionImpact, AnswerOptionImpact dslOptionImpact) {
+        var updateParam = new UpdateAnswerOptionImpactPort.Param(
+            savedOptionImpact.getId(),
+            dslOptionImpact.getValue()
+        );
+        updateAnswerOptionImpactPort.update(updateParam);
+        log.debug("AnswerOptionImpact[id={}, optionId={}, newValue={}] updated.",
+            savedOptionImpact.getId(), savedOptionImpact.getOptionId(), dslOptionImpact.getValue());
     }
-
-    private List<AnswerOptionImpact.Code> deletedOptionImpactsInNewDsl(Set<AnswerOptionImpact.Code> savedOptionImpactCodes, Set<AnswerOptionImpact.Code> dslOptionImpactCodes) {
-        return savedOptionImpactCodes.stream()
-            .filter(i -> dslOptionImpactCodes.stream()
-                .noneMatch(s -> s.optionId().equals(i.optionId()) && s.impactId().equals(i.impactId())))
-            .toList();
-    }
-
-    private List<AnswerOptionImpact.Code> sameOptionImpactsInNewDsl(Set<AnswerOptionImpact.Code> savedOptionImpactCodes, Set<AnswerOptionImpact.Code> dslOptionImpactCodes) {
-        return savedOptionImpactCodes.stream()
-            .filter(i -> dslOptionImpactCodes.stream()
-                .anyMatch(s -> s.optionId().equals(i.optionId()) && s.impactId().equals(i.impactId())))
-            .toList();
-    }
-
-    private void createAnswerOptionImpact(Long impactId, Long optionId, Double value) {
-        var createParam = new CreateAnswerOptionImpactPort.Param(impactId, optionId, value);
-        Long optionImpactId = createAnswerOptionImpactPort.persist(createParam);
-        log.warn("Answer option impact with id [{}] is created.", optionImpactId);
-    }
-
-    private boolean updateAnswerOptionImpact(AnswerOptionImpact savedOptionImpact, AnswerOptionImpact dslOptionImpact) {
-        boolean invalidateResults = false;
-        if (savedOptionImpact.getValue() != dslOptionImpact.getValue()) {
-            var updateParam = new UpdateAnswerOptionImpactPort.Param(
-                savedOptionImpact.getId(),
-                dslOptionImpact.getValue()
-            );
-            updateAnswerOptionImpactPort.update(updateParam);
-            log.warn("Answer option impact with id [{}] is updated.", savedOptionImpact.getId());
-            invalidateResults = true;
-        }
-
-        return invalidateResults;
-    }
-
 }
