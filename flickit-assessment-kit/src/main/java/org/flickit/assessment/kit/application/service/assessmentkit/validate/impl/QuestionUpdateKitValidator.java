@@ -56,40 +56,44 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
                 notification.add(new InvalidAdditionError(QUESTION, newQuestions));
             }
 
-            for (Map.Entry<String, Question> questionEntry : codeToQuestion.entrySet()) {
-                Map<Integer, AnswerOption> savedOptionIndexMap = questionEntry.getValue()
-                    .getOptions().stream()
-                    .collect(toMap(AnswerOption::getIndex, a -> a));
-
-                if (Objects.isNull(codeToDslQuestion.get(questionEntry.getKey()))) {
-                    continue;
-                }
-                Map<Integer, AnswerOptionDslModel> dslOptionIndexMap = codeToDslQuestion.get(questionEntry.getKey())
-                    .getAnswerOptions().stream()
-                    .collect(toMap(AnswerOptionDslModel::getIndex, a -> a));
-
-                var deletedOptions = savedOptionIndexMap.entrySet().stream()
-                    .filter(savedOption -> !dslOptionIndexMap.containsKey(savedOption.getKey()))
-                    .map(answerOption -> answerOption.getValue().getTitle())
-                    .collect(toSet());
-
-                var newOptions = dslOptionIndexMap.entrySet().stream()
-                    .filter(savedOption -> !savedOptionIndexMap.containsKey(savedOption.getKey()))
-                    .map(answerOption -> answerOption.getValue().getCaption())
-                    .collect(toSet());
-
-                if (!deletedOptions.isEmpty()) {
-                    notification.add(new InvalidDeletionError(ANSWER_OPTION, deletedOptions));
-                }
-
-                if (!newOptions.isEmpty()) {
-                    notification.add(new InvalidAdditionError(ANSWER_OPTION, newOptions));
-                }
-            }
+            validateAnswerOptions(codeToQuestion, codeToDslQuestion, notification);
 
         }
 
         return notification;
+    }
+
+    private static void validateAnswerOptions(Map<String, Question> codeToQuestion, Map<String, QuestionDslModel> codeToDslQuestion, Notification notification) {
+        for (Map.Entry<String, Question> questionEntry : codeToQuestion.entrySet()) {
+            Map<Integer, AnswerOption> savedOptionIndexMap = questionEntry.getValue()
+                .getOptions().stream()
+                .collect(toMap(AnswerOption::getIndex, a -> a));
+
+            if (Objects.isNull(codeToDslQuestion.get(questionEntry.getKey()))) {
+                continue;
+            }
+            Map<Integer, AnswerOptionDslModel> dslOptionIndexMap = codeToDslQuestion.get(questionEntry.getKey())
+                .getAnswerOptions().stream()
+                .collect(toMap(AnswerOptionDslModel::getIndex, a -> a));
+
+            var deletedOptions = savedOptionIndexMap.entrySet().stream()
+                .filter(savedOption -> !dslOptionIndexMap.containsKey(savedOption.getKey()))
+                .map(answerOption -> answerOption.getValue().getTitle())
+                .collect(toSet());
+
+            var newOptions = dslOptionIndexMap.entrySet().stream()
+                .filter(savedOption -> !savedOptionIndexMap.containsKey(savedOption.getKey()))
+                .map(answerOption -> answerOption.getValue().getCaption())
+                .collect(toSet());
+
+            if (!deletedOptions.isEmpty()) {
+                notification.add(new InvalidDeletionError(ANSWER_OPTION, deletedOptions));
+            }
+
+            if (!newOptions.isEmpty()) {
+                notification.add(new InvalidAdditionError(ANSWER_OPTION, newOptions));
+            }
+        }
     }
 
 }
