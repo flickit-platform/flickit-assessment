@@ -39,6 +39,9 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
             Map<String, Question> codeToQuestion = questionnaireEntry.getValue();
             Map<String, QuestionDslModel> codeToDslQuestion = dslQuestionnaireToQuestionsMap.get(questionnaireEntry.getKey());
 
+            if (codeToDslQuestion == null)
+                continue;
+
             var deletedQuestions = codeToQuestion.keySet().stream()
                 .filter(s -> !codeToDslQuestion.containsKey(s))
                 .collect(toSet());
