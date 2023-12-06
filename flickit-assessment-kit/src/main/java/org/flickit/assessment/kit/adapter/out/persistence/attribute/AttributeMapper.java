@@ -1,27 +1,23 @@
-package org.flickit.assessment.kit.adapter.out.persistence.subject;
+package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.domain.Subject;
-
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SubjectMapper {
+public class AttributeMapper {
 
-    public static Subject mapToDomainModel(SubjectJpaEntity entity, List<Attribute> attributes) {
-        return new Subject(
+    public static Attribute mapToDomainModel(AttributeJpaEntity entity) {
+        return new Attribute(
             entity.getId(),
             entity.getCode(),
             entity.getTitle(),
             entity.getIndex(),
             entity.getDescription(),
-            attributes,
+            entity.getWeight(),
             entity.getCreationTime(),
             entity.getLastModificationTime()
         );
     }
 }
-

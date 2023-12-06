@@ -19,4 +19,5 @@ public class UpdateKitPersisterContext {
     public static final String KEY_MATURITY_LEVELS = "MATURITY_LEVELS";
     public static final String KEY_QUESTIONNAIRES = "QUESTIONNAIRES";
     public static final String KEY_SUBJECTS = "SUBJECTS";
+    public static final String KEY_ATTRIBUTES = "ATTRIBUTES";
 }
