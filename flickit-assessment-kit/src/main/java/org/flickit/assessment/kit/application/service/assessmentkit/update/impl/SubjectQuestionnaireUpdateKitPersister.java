@@ -2,11 +2,9 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.domain.Subject;
-import org.flickit.assessment.kit.application.domain.SubjectQuestionnaire;
+import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.CreateSubjectQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.DeleteSubjectQuestionnairePort;
@@ -18,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
@@ -58,16 +53,17 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
         var attributeCodeToSubjectIdMap = attributeCodeToSubjectIdMap(savedKit);
         Map<String, Long> questionnaireCodeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
 
-        return dslKit.getQuestions().stream()
-            .collect(Collectors.toMap(
-                q -> questionnaireCodeToIdMap.get(q.getQuestionnaireCode()),
-                q ->
-                    q.getQuestionImpacts().stream()
-                        .map(QuestionImpactDslModel::getAttributeCode)
-                        .map(attributeCodeToSubjectIdMap::get)
-                            .collect(Collectors.toSet())
-                )
-            );
+        Map<Long, Set<Long>> resultMap = new HashMap<>();
+        for (QuestionDslModel q : dslKit.getQuestions()) {
+            Long questionnaireId = questionnaireCodeToIdMap.get(q.getQuestionnaireCode());
+            Set<Long> subjectIds = q.getQuestionImpacts().stream()
+                .map(QuestionImpactDslModel::getAttributeCode)
+                .map(attributeCodeToSubjectIdMap::get)
+                .collect(Collectors.toSet());
+            resultMap.computeIfAbsent(questionnaireId, key -> new HashSet<>());
+            resultMap.get(questionnaireId).addAll(subjectIds);
+        }
+        return resultMap;
     }
 
     private Map<String, Long> attributeCodeToSubjectIdMap(AssessmentKit savedKit) {
