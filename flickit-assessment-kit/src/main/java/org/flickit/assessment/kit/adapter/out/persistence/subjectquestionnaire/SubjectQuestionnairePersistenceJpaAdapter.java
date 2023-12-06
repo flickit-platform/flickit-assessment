@@ -28,12 +28,12 @@ public class SubjectQuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(long id) {
         repository.deleteById(id);
     }
 
     @Override
-    public long persist(Long subjectId, Long questionnaireId) {
+    public long persist(long subjectId, long questionnaireId) {
         SubjectQuestionnaireJpaEntity entity = repository.save(new SubjectQuestionnaireJpaEntity(
             null,
             subjectId,
