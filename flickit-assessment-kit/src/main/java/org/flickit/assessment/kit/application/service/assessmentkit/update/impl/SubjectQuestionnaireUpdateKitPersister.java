@@ -113,12 +113,17 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
             var addedSubjectIds = subjectIds.stream().filter(id -> !savedSubjectIds.contains(id))
                 .collect(Collectors.toSet());
 
-            for (Long subjectId : deletedSubjectIds) {
-                deletePort.delete(savedSubjectIdToIdMap.get(subjectId));
-            }
-            for (Long subjectId : addedSubjectIds) {
-                createPort.persist(subjectId, questionnaireId);
-            }
+            deletedSubjectIds.forEach(subjectId -> {
+                Long subjectQuestionnaireId = savedSubjectIdToIdMap.get(subjectId);
+                deletePort.delete(subjectQuestionnaireId);
+                log.debug("SubjectQuestionnaire[id={}, subjectId={}, questionnaireId={}] deleted.",
+                    subjectQuestionnaireId, subjectId, questionnaireId);
+            });
+            addedSubjectIds.forEach(subjectId -> {
+                long subjectQuestionnaireId = createPort.persist(subjectId, questionnaireId);
+                log.debug("SubjectQuestionnaire[id={}, subjectId={}, questionnaireId={}] deleted.",
+                    subjectQuestionnaireId, subjectId, questionnaireId);
+            });
         }
     }
 }
