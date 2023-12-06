@@ -17,9 +17,6 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_BY_DSL_ADDITION_UNSUPPORTED = "update-kit-by-dsl.addition.unsupported";
     public static final String UPDATE_KIT_BY_DSL_DELETION_UNSUPPORTED = "update-kit-by-dsl.deletion.unsupported";
 
-    public static final String UPDATE_ATTRIBUTE_BY_DSL_ATTRIBUTE_DELETION_NOT_ALLOWED = "update-attribute-by-dsl.attribute-deletion.notAllowed";
-    public static final String UPDATE_ATTRIBUTE_BY_DSL_ATTRIBUTE_ADDITION_NOT_ALLOWED = "update-attribute-by-dsl.attribute-addition.notAllowed";
-
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
