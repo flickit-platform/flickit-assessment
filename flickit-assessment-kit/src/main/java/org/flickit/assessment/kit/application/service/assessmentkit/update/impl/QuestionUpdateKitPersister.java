@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND;
 
@@ -57,89 +57,104 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         Map<String, Long> postUpdateAttributes = ctx.get(KEY_ATTRIBUTES);
         Map<String, Long> postUpdateMaturityLevels = ctx.get(KEY_MATURITY_LEVELS);
 
-        var savedQuestionnaires = savedKit.getQuestionnaires();
-        var dslQuestionnaires = dslKit.getQuestionnaires();
+        Set<String> savedQuestionnaireCodes = savedKit.getQuestionnaires().stream().map(Questionnaire::getCode).collect(toSet());
+        Set<String> dslQuestionnaireCodes = dslKit.getQuestionnaires().stream().map(QuestionnaireDslModel::getCode).collect(toSet());
 
-        Map<String, Questionnaire> savedQuestionnaireCodesMap = savedQuestionnaires.stream().collect(toMap(Questionnaire::getCode, q -> q));
-        Map<String, QuestionnaireDslModel> dslQuestionnaireCodesMap = dslQuestionnaires.stream().collect(toMap(QuestionnaireDslModel::getCode, q -> q));
+        // Map<questionnaireCode, Map<questionCode, question>>
+        Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap = savedKit.getQuestionnaires().stream()
+            .collect(toMap(Questionnaire::getCode, q -> q.getQuestions().stream()
+                .collect(toMap(Question::getCode, s -> s))
+            ));
+        Map<String, Map<String, QuestionDslModel>> dslQuestionnaireToQuestionsMap = dslKit.getQuestions().stream()
+            .collect(groupingBy(QuestionDslModel::getQuestionnaireCode,
+                toMap(QuestionDslModel::getCode, model -> model)
+            ));
 
-        List<String> newQuestionnaires = dslQuestionnaireCodesMap.keySet().stream()
-            .filter(s -> !savedQuestionnaireCodesMap.containsKey(s))
+        List<String> newQuestionnaireCodes = dslQuestionnaireCodes.stream()
+            .filter(s -> !savedQuestionnaireCodes.contains(s))
             .toList();
 
-        // Assuming that new questionnaires have been created in Questionnaire persister
-        createQuestion(dslKit.getQuestions(), newQuestionnaires,
-            postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels);
-
-        List<String> sameQuestionnaires = savedQuestionnaireCodesMap.keySet().stream()
-            .filter(dslQuestionnaireCodesMap::containsKey)
-            .toList();
+        // Assuming that new questionnaires have been created in QuestionnairePersister
+        newQuestionnaireCodes.forEach(code -> createQuestionsOfNewQuestionnaires(dslQuestionnaireToQuestionsMap.get(code),
+            postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels));
 
         boolean invalidateResults = false;
-        for (String questionnaireCode : sameQuestionnaires) {
-            Questionnaire questionnaire = savedQuestionnaireCodesMap.get(questionnaireCode);
-            if (Objects.nonNull(questionnaire.getQuestions())) {
-                var savedQuestions = questionnaire.getQuestions();
-                var dslQuestions = dslKit.getQuestions().stream().filter(i -> i.getQuestionnaireCode().equals(questionnaireCode)).toList();
 
-                Map<String, Question> savedQuestionCodesMap = savedQuestions.stream().collect(toMap(Question::getCode, i -> i));
-                Map<String, QuestionDslModel> dslQuestionCodesMap = dslQuestions.stream().collect(toMap(QuestionDslModel::getCode, i -> i));
-
-                List<String> sameLevels = sameCodesInNewDsl(savedQuestionCodesMap.keySet(), dslQuestionCodesMap.keySet());
-
-                for (String i : sameLevels) {
-                    boolean invalidOnUpdate = updateQuestion(savedQuestionCodesMap.get(i), dslQuestionCodesMap.get(i),
-                        postUpdateAttributes, postUpdateMaturityLevels);
-                    if (invalidOnUpdate)
-                        invalidateResults = true;
-                }
+        for (Map.Entry<String, Map<String, Question>> questionnaireEntry : savedQuestionnaireToQuestionsMap.entrySet()) {
+            Map<String, Question> codeToQuestion = questionnaireEntry.getValue();
+            Map<String, QuestionDslModel> codeToDslQuestion = dslQuestionnaireToQuestionsMap.get(questionnaireEntry.getKey());
+            for (Map.Entry<String, Question> questionEntry : codeToQuestion.entrySet()) {
+                Question question = questionEntry.getValue();
+                QuestionDslModel dslQuestion = codeToDslQuestion.get(questionEntry.getKey());
+                boolean invalidOnUpdate = updateQuestion(
+                    question,
+                    dslQuestion,
+                    postUpdateAttributes,
+                    postUpdateMaturityLevels);
+                if (invalidOnUpdate)
+                    invalidateResults = true;
             }
         }
-
-        return new UpdateKitPersisterResult(invalidateResults || !newQuestionnaires.isEmpty());
+        return new UpdateKitPersisterResult(invalidateResults || !newQuestionnaireCodes.isEmpty());
     }
 
-    private void createQuestion(List<QuestionDslModel> dslQuestions, List<String> newQuestionnaires,
-                                Map<String, Long> questionnaires, Map<String, Long> attributes, Map<String, Long> maturityLevels) {
-        newQuestionnaires.forEach(q -> {
-            var newQuestions = dslQuestions.stream().filter(i -> i.getQuestionnaireCode().equals(q)).toList();
-            if (Objects.nonNull(newQuestions) && !newQuestions.isEmpty()) {
-                newQuestions.forEach(i -> {
-                    var createParam = new CreateQuestionPort.Param(
-                        i.getCode(),
-                        i.getTitle(),
-                        i.getDescription(),
-                        i.getIndex(),
-                        questionnaires.get(q),
-                        i.isMayNotBeApplicable());
-                    Long questionId = createQuestionPort.persist(createParam);
-                    log.warn("Question with id [{}] is created.", questionId);
+    private void createQuestionsOfNewQuestionnaires(Map<String, QuestionDslModel> dslQuestions,
+                                                    Map<String, Long> questionnaires, Map<String, Long> attributes, Map<String, Long> maturityLevels) {
+        if (dslQuestions == null || dslQuestions.isEmpty())
+            return;
 
-                    var newOptions = i.getAnswerOptions();
-                    if (Objects.nonNull(newOptions) && !newOptions.isEmpty()) {
-                        newOptions.forEach(n -> createAnswerOption(n, questionId));
-                    }
+        dslQuestions.values().forEach(dslQuestion -> {
+            var createParam = new CreateQuestionPort.Param(
+                dslQuestion.getCode(),
+                dslQuestion.getTitle(),
+                dslQuestion.getDescription(),
+                dslQuestion.getIndex(),
+                questionnaires.get(dslQuestion.getQuestionnaireCode()),
+                dslQuestion.isMayNotBeApplicable());
+            Long questionId = createQuestionPort.persist(createParam);
+            log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
+                questionId, dslQuestion.getCode(), questionnaires.get(dslQuestion.getQuestionnaireCode()));
 
-                    var newImpacts = i.getQuestionImpacts();
-                    if (Objects.nonNull(newImpacts) && !newImpacts.isEmpty()) {
-                        newImpacts.forEach(n -> createImpact(questionId, n, attributes, maturityLevels));
-                    }
-                });
-            }
+            dslQuestion.getAnswerOptions().forEach(option -> createAnswerOption(option, questionId));
+
+            dslQuestion.getQuestionImpacts().forEach(impact -> createImpact(impact, questionId, attributes, maturityLevels));
         });
     }
 
-    private void createAnswerOption(AnswerOptionDslModel n, Long questionId) {
-        var createOptionParam = new CreateAnswerOptionPort.Param(n.getCaption(), questionId, n.getIndex());
+    private void createAnswerOption(AnswerOptionDslModel option, Long questionId) {
+        var createOptionParam = new CreateAnswerOptionPort.Param(option.getCaption(), questionId, option.getIndex());
         var optionId = createAnswerOptionPort.persist(createOptionParam);
-        log.warn("Answer option with id [{}] is created.", optionId);
+        log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",
+            optionId, option.getIndex(), option.getCaption(), questionId);
     }
 
-    private List<String> sameCodesInNewDsl(Set<String> savedItemCodes, Set<String> newItemCodes) {
-        return savedItemCodes.stream()
-            .filter(s -> newItemCodes.stream()
-                .anyMatch(i -> i.equals(s)))
-            .toList();
+    private void createImpact(QuestionImpactDslModel dslQuestionImpact, Long questionId,
+                              Map<String, Long> attributes, Map<String, Long> maturityLevels) {
+        QuestionImpact newQuestionImpact = new QuestionImpact(
+            null,
+            attributes.get(dslQuestionImpact.getAttributeCode()),
+            maturityLevels.get(dslQuestionImpact.getMaturityLevel().getCode()),
+            dslQuestionImpact.getWeight(),
+            questionId
+        );
+        Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
+        log.debug("QuestionImpact[impactId={}, questionId={}] created.", impactId, questionId);
+
+        Map<Integer, Long> optionIndexToIdMap = loadAnswerOptionsByQuestionPort.loadByQuestionId(questionId).stream()
+            .collect(toMap(AnswerOption::getIndex, AnswerOption::getQuestionId));
+
+        dslQuestionImpact.getOptionsIndextoValueMap().keySet().forEach(
+            index -> createAnswerOptionImpact(
+                impactId,
+                optionIndexToIdMap.get(index),
+                dslQuestionImpact.getOptionsIndextoValueMap().get(index))
+        );
+    }
+
+    private void createAnswerOptionImpact(Long questionImpactId, Long optionId, Double value) {
+        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value);
+        Long optionImpactId = createAnswerOptionImpactPort.persist(createParam);
+        log.debug("AnswerOptionImpact[id={}, questionImpactId={}] created.", optionImpactId, questionImpactId);
     }
 
     private boolean updateQuestion(Question savedQuestion, QuestionDslModel dslQuestion, Map<String, Long> attributes, Map<String, Long> maturityLevels) {
@@ -147,7 +162,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         if (!savedQuestion.getTitle().equals(dslQuestion.getTitle()) ||
             !Objects.equals(savedQuestion.getHint(), dslQuestion.getDescription()) ||
             savedQuestion.getIndex() != dslQuestion.getIndex() ||
-            savedQuestion.getMayNotBeApplicable() != dslQuestion.isMayNotBeApplicable()) {
+            savedQuestion.getMayNotBeApplicable().equals(dslQuestion.isMayNotBeApplicable())) {
             var updateParam = new UpdateQuestionPort.Param(
                 savedQuestion.getId(),
                 dslQuestion.getTitle(),
@@ -157,21 +172,16 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 LocalDateTime.now()
             );
             updateQuestionPort.update(updateParam);
-            log.warn("A question with id [{}] is updated.", savedQuestion.getId());
-            if (savedQuestion.getMayNotBeApplicable() != dslQuestion.isMayNotBeApplicable()) {
+            log.debug("Question[id={}] updated.", savedQuestion.getId());
+            if (savedQuestion.getMayNotBeApplicable().equals(dslQuestion.isMayNotBeApplicable())) {
                 invalidateResults = true;
             }
         }
 
-        if (savedQuestion.getOptions() != null || dslQuestion.getAnswerOptions() != null) {
-            invalidateResults = invalidateResults || updateAnswerOptions(savedQuestion, dslQuestion);
-        }
+        updateAnswerOptions(savedQuestion, dslQuestion);
+        boolean invalidOnUpdateQuestionImpact = updateQuestionImpacts(savedQuestion, dslQuestion, attributes, maturityLevels);
 
-        if (savedQuestion.getImpacts() != null || dslQuestion.getQuestionImpacts() != null) {
-            invalidateResults = invalidateResults || updateQuestionImpacts(savedQuestion, dslQuestion, attributes, maturityLevels);
-        }
-
-        return invalidateResults;
+        return invalidateResults || invalidOnUpdateQuestionImpact;
     }
 
     private void updateAnswerOptions(Question savedQuestion, QuestionDslModel dslQuestion) {
@@ -245,34 +255,13 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             .toList();
     }
 
-    private void createImpact(Long questionId, QuestionImpactDslModel dslQuestionImpact,
-                              Map<String, Long> attributes, Map<String, Long> maturityLevels) {
-        QuestionImpact newQuestionImpact = new QuestionImpact(
-            null,
-            attributes.get(dslQuestionImpact.getAttributeCode()),
-            maturityLevels.get(dslQuestionImpact.getMaturityLevel().getTitle()),
-            dslQuestionImpact.getWeight(),
-            questionId
-        );
-        Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
-        log.warn("Question impact with is [{}] is created.", impactId);
-
-        Map<Integer, Long> answerOptionIndexToIdMap = loadAnswerOptionsByQuestionPort.loadByQuestionId(questionId).stream()
-            .collect(toMap(AnswerOption::getIndex, AnswerOption::getQuestionId));
-        dslQuestionImpact.getOptionsIndextoValueMap().keySet().forEach(index -> createAnswerOptionImpact(
-            impactId,
-            answerOptionIndexToIdMap.get(index),
-            dslQuestionImpact.getOptionsIndextoValueMap().get(index))
-        );
-    }
-
-    private void deleteImpact(QuestionImpact impact) {
+    private void deleteImpact(QuestionImpact impact, Long questionId) {
         deleteQuestionImpactPort.delete(impact.getId());
-        log.warn("Question impact with id [{}] is deleted.", impact.getId());
+        log.debug("QuestionImpact[id={}, questionId={}] deleted.", impact.getId(), questionId);
 
         impact.getOptionImpacts().forEach(o -> {
             deleteAnswerOptionImpactPort.delete(impact.getId(), o.getOptionId());
-            log.warn("Answer option impact with question impact id [{}], option id [{}] and value [{}] is deleted.",
+            log.debug("AnswerOptionImpact[impactId={}, optionId={} ,value={} deleted.",
                 impact.getId(), o.getOptionId(), o.getValue());
         });
     }
@@ -286,15 +275,13 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 savedImpact.getQuestionId()
             );
             updateQuestionImpactPort.update(updateParam);
-            log.warn("Question impact with id [{}] is updated.", savedImpact.getId());
+            log.debug("QuestionImpact[id={}, questionId={}] updated.", savedImpact.getId(), savedQuestion.getId());
             invalidateResult = true;
         }
 
-        if (savedImpact.getOptionImpacts() != null || dslImpact.getOptionsIndextoValueMap() != null) {
-            invalidateResult = invalidateResult || updateOptionImpacts(savedQuestion, savedImpact, dslImpact);
-        }
+        boolean invalidateOnUpdateOptionImpact = updateOptionImpacts(savedQuestion, savedImpact, dslImpact);
 
-        return invalidateResult;
+        return invalidateResult || invalidateOnUpdateOptionImpact;
     }
 
     private boolean updateOptionImpacts(Question savedQuestion, QuestionImpact savedImpact, QuestionImpactDslModel dslImpact) {
@@ -322,7 +309,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
     private AnswerOptionImpact buildOptionImpact(Question savedQuestion, Integer index, Double value) {
         Optional<AnswerOption> answerOption = savedQuestion.getOptions().stream()
-            .filter(o -> o.getQuestionId() == savedQuestion.getId() && o.getIndex() == index)
+            .filter(o -> o.getIndex() == index)
             .findFirst();
         return new AnswerOptionImpact(
             null,
