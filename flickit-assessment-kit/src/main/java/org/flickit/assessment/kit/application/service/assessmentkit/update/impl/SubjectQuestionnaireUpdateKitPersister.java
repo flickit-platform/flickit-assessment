@@ -119,9 +119,10 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
                 log.debug("SubjectQuestionnaire[id={}, subjectId={}, questionnaireId={}] deleted.",
                     subjectQuestionnaireId, subjectId, questionnaireId);
             });
+
             addedSubjectIds.forEach(subjectId -> {
                 long subjectQuestionnaireId = createPort.persist(subjectId, questionnaireId);
-                log.debug("SubjectQuestionnaire[id={}, subjectId={}, questionnaireId={}] deleted.",
+                log.debug("SubjectQuestionnaire[id={}, subjectId={}, questionnaireId={}] created.",
                     subjectQuestionnaireId, subjectId, questionnaireId);
             });
         }
