@@ -135,6 +135,7 @@ class QuestionUpdateKitPersisterTest {
     @Test
     void testQuestionUpdateKitPersister_QuestionAdded_AddToDatabase() {
         var savedQuestionnaire1 = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE2);
+        savedQuestionnaire1.setQuestions(List.of());
         AssessmentKit savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(savedQuestionnaire1));
 
         var levelTwo = levelTwo();
