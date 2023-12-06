@@ -50,10 +50,8 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
                     savedAttribute.getIndex() != dslAttribute.getIndex() ||
                     savedAttribute.getWeight() != dslAttribute.getWeight()
                     ) {
-
                     Long newSubjectId = subjectCodeToSubjectId.get(dslAttribute.getSubjectCode());
-                    updateAttributePort.update(toUpdatePram(savedAttribute.getId(), newSubjectId, dslAttribute));
-                    log.debug("Attribute[id={}, code={}] updated", savedAttribute.getId(), savedAttribute.getCode());
+                    updateAttribute(savedAttribute, newSubjectId, dslAttribute);
                 }
 
                 if (!subjectCode.equals(dslAttribute.getSubjectCode()) ||
@@ -73,13 +71,15 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
         return new UpdateKitPersisterResult(shouldInvalidate);
     }
 
-    private UpdateAttributePort.Param toUpdatePram(long id, Long subjectId, AttributeDslModel attributeDslModel) {
-        return new UpdateAttributePort.Param(id,
-            attributeDslModel.getTitle(),
-            attributeDslModel.getIndex(),
-            attributeDslModel.getDescription(),
-            attributeDslModel.getWeight(),
+    private void updateAttribute(Attribute savedAttribute, Long subjectId, AttributeDslModel dslAttribute) {
+        UpdateAttributePort.Param param = new UpdateAttributePort.Param(savedAttribute.getId(),
+            dslAttribute.getTitle(),
+            dslAttribute.getIndex(),
+            dslAttribute.getDescription(),
+            dslAttribute.getWeight(),
             LocalDateTime.now(),
             subjectId);
+        updateAttributePort.update(param);
+        log.debug("Attribute[id={}, code={}] updated", savedAttribute.getId(), savedAttribute.getCode());
     }
 }
