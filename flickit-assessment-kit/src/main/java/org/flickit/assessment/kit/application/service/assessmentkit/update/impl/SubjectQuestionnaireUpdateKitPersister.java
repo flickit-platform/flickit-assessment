@@ -117,12 +117,8 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
                 deletePort.delete(savedSubjectIdToIdMap.get(subjectId));
             }
             for (Long subjectId : addedSubjectIds) {
-                createPort.persist(toCreateParam(questionnaireId, subjectId));
+                createPort.persist(subjectId, questionnaireId);
             }
         }
-    }
-
-    private CreateSubjectQuestionnairePort.Param toCreateParam(Long questionnaireId, Long subjectId) {
-        return new CreateSubjectQuestionnairePort.Param(subjectId, questionnaireId);
     }
 }

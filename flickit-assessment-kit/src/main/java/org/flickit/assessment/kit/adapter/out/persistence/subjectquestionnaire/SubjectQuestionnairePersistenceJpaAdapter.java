@@ -33,7 +33,11 @@ public class SubjectQuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public void persist(Param param) {
-        repository.save(SubjectQuestionnaireMapper.mapToJpaEntity(param));
+    public long persist(Long subjectId, Long questionnaireId) {
+        SubjectQuestionnaireJpaEntity entity = repository.save(new SubjectQuestionnaireJpaEntity(
+            null,
+            subjectId,
+            questionnaireId));
+        return entity.getId();
     }
 }

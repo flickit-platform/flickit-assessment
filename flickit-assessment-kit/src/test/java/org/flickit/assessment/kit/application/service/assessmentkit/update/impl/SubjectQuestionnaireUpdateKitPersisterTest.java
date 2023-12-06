@@ -136,9 +136,10 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
 
         verify(deletePort, times(1)).delete(subjectQuestionnaire2.getId());
 
-        var createArgumentCaptor = ArgumentCaptor.forClass(CreateSubjectQuestionnairePort.Param.class);
-        verify(createPort, times(1)).persist(createArgumentCaptor.capture());
-        assertEquals(team.getId(), createArgumentCaptor.getValue().subjectId());
-        assertEquals(teamLearning.getId(), createArgumentCaptor.getValue().questionnaireId());
+        var subjectIdArgumentCaptor = ArgumentCaptor.forClass(Long.class);
+        var questionnaireIdArgumentCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(createPort, times(1)).persist(subjectIdArgumentCaptor.capture(), questionnaireIdArgumentCaptor.capture());
+        assertEquals(team.getId(), subjectIdArgumentCaptor.getValue());
+        assertEquals(teamLearning.getId(), questionnaireIdArgumentCaptor.getValue());
     }
 }
