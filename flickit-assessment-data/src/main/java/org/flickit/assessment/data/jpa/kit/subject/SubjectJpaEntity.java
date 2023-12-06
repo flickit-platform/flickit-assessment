@@ -1,9 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.subject;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,6 +16,8 @@ public class SubjectJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_assessmentsubject_id_seq")
+    @SequenceGenerator(name = "baseinfo_assessmentsubject_id_seq", sequenceName = "baseinfo_assessmentsubject_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
