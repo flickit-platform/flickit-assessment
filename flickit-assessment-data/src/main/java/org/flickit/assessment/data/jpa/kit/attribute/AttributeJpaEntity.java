@@ -7,9 +7,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "baseinfo_qualityattribute", uniqueConstraints = {
-    @UniqueConstraint(name = "baseinfo_qualityattribut_title_assessment_subject_4a82494c_uniq", columnNames = {"title", "subjectId"}),
-    @UniqueConstraint(name = "baseinfo_qualityattribute_code_fc2b6cd0_uniq", columnNames = {"subjectId", "code"})})
+@Table(name = "baseinfo_qualityattribute")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,6 +17,8 @@ public class AttributeJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_qualityattribute_id_seq")
+    @SequenceGenerator(name = "baseinfo_qualityattribute_id_seq", sequenceName = "baseinfo_qualityattribute_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
@@ -31,7 +31,7 @@ public class AttributeJpaEntity {
     @Column(name = "index", nullable = false)
     private Integer index;
 
-    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "weight", nullable = false)
@@ -44,8 +44,8 @@ public class AttributeJpaEntity {
     private LocalDateTime lastModificationTime;
 
     @Column(name = "assessment_subject_id", nullable = false)
-    private long subjectId;
+    private Long subjectId;
 
     @Column(name = "assessment_kit_id", nullable = false)
-    private long assessmentKitId;
+    private Long assessmentKitId;
 }
