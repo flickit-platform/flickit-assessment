@@ -11,7 +11,6 @@ public class AttributeDslModelMother {
         return domainToDslModel(attribute, b -> {});
     }
 
-
     public static AttributeDslModel domainToDslModel(Attribute attribute,
                                                      Consumer<AttributeDslModel.AttributeDslModelBuilder<?, ?>> changer) {
 
@@ -19,7 +18,6 @@ public class AttributeDslModelMother {
         changer.accept(builder);
         return builder.build();
     }
-
 
     private static AttributeDslModel.AttributeDslModelBuilder<?, ?> domainToDslModelBuilder(Attribute attribute) {
         return AttributeDslModel.builder()

@@ -29,7 +29,6 @@ public class AttributeUpdateValidatorTest {
 
     @Test
     void testValidate_SameAttributeCodesInDbAndDsl_Valid() {
-
         Attribute attrOne = AttributeMother.attributeWithTitle("attr1");
         Attribute attrTwo = AttributeMother.attributeWithTitle("attr2");
         Subject subject = SubjectMother.subjectWithAttributes("subject1", Arrays.asList(attrOne, attrTwo));
@@ -55,7 +54,6 @@ public class AttributeUpdateValidatorTest {
 
     @Test
     void testValidate_DslHasTwoNewAttributes_Invalid() {
-
         Attribute attrOne = AttributeMother.attributeWithTitle("attr1");
         Attribute attrTwo = AttributeMother.attributeWithTitle("attr2");
         Subject subject = SubjectMother.subjectWithAttributes("subject1", Arrays.asList(attrOne, attrTwo));
@@ -82,7 +80,6 @@ public class AttributeUpdateValidatorTest {
         Notification notification = validator.validate(savedKit, dslKit);
 
         Assertions.assertTrue(notification.hasErrors());
-
     }
 
     @Test
