@@ -18,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
@@ -62,25 +65,20 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
                     q.getQuestionImpacts().stream()
                         .map(QuestionImpactDslModel::getAttributeCode)
                         .map(attributeCodeToSubjectIdMap::get)
-                            .flatMap(Collection::stream)
                             .collect(Collectors.toSet())
                 )
             );
     }
 
-    private Map<String, Set<Long>> attributeCodeToSubjectIdMap(AssessmentKit savedKit) {
-        Map<String, Set<Long>> attributeCodeToSubjectIdMap = new HashMap<>();
+    private Map<String, Long> attributeCodeToSubjectIdMap(AssessmentKit savedKit) {
+        Map<String, Long> attributeCodeToSubjectIdMap = new HashMap<>();
         for (Subject subject : savedKit.getSubjects()) {
-            long id = subject.getId();
+            long subjectId = subject.getId();
             var attributeCodes = subject.getAttributes().stream()
                 .map(Attribute::getCode)
                 .collect(Collectors.toSet());
-            for (String code : attributeCodes) {
-                if (attributeCodeToSubjectIdMap.containsKey(code))
-                    attributeCodeToSubjectIdMap.get(code).add(id);
-                else {
-                    attributeCodeToSubjectIdMap.put(code, new HashSet<>(List.of(id)));
-                }
+            for (String attributeCode : attributeCodes) {
+                attributeCodeToSubjectIdMap.put(attributeCode, subjectId);
             }
         }
         return attributeCodeToSubjectIdMap;
