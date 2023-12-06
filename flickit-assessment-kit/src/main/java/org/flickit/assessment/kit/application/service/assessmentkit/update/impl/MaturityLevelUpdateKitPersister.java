@@ -84,7 +84,11 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         newLevels.forEach(code -> {
             MaturityLevel affectedLevel = codeToPersistedLevels.get(code);
             MaturityLevelDslModel dslLevel = dslLevelCodesMap.get(code);
-            dslLevel.getCompetencesCodeToValueMap().forEach((key, value) -> {
+
+            Map<String, Integer> dslLevelCompetenceCodes = dslLevel.getCompetencesCodeToValueMap() != null ?
+                dslLevel.getCompetencesCodeToValueMap() : Map.of();
+
+            dslLevelCompetenceCodes.forEach((key, value) -> {
                 Long effectiveLevelId = codeToPersistedLevels.get(key).getId();
                 createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value);
             });

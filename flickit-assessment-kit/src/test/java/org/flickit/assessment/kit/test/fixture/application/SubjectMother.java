@@ -24,6 +24,19 @@ public class SubjectMother {
         );
     }
 
+    public static Subject subjectWithAttributes(String title, List<Attribute> attributes) {
+        return new Subject(
+            id++,
+            "c-" + title,
+            title,
+            index++,
+            "Description",
+            attributes,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+    }
+
     public static Subject subjectWithTitleAndAttributes(String title, List<Attribute> attributes) {
         return new Subject(
             id++,
