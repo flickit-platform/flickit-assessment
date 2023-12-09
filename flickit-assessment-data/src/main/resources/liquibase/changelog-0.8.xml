@@ -165,4 +165,15 @@
         </update>
     </changeSet>
 
+    <changeSet id="0.8-28" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="baseinfo_qualityattribute" columnName="index"/>
+    </changeSet>
+
+    <changeSet id="0.8-29" author="Ali Sedaghat">
+        <addUniqueConstraint
+                tableName="baseinfo_qualityattribute"
+                columnNames="index, assessment_subject_id"
+                constraintName="baseinfo_qualityattribute_index_assessment_subject_id_unique"/>
+    </changeSet>
+
 </databaseChangeLog>
