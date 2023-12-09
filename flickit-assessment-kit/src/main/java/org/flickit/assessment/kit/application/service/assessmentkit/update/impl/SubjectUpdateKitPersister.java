@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,7 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
     @Transactional(propagation = Propagation.MANDATORY)
     public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Map<String, Subject> savedSubjectCodesMap = savedKit.getSubjects().stream().collect(toMap(Subject::getCode, i -> i));
+        List<UpdateSubjectPort.Param> updateList = new ArrayList<>();
 
         dslKit.getSubjects().forEach(dslSubject -> {
             Subject savedSubject = savedSubjectCodesMap.get(dslSubject.getCode());
@@ -45,10 +48,12 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
                 savedSubject.getIndex() != dslSubject.getIndex() ||
                 !savedSubject.getDescription().equals(dslSubject.getDescription())) {
-                updateSubjectPort.update(toUpdateParam(savedSubject.getId(), dslSubject));
+                updateList.add(toUpdateParam(savedSubject.getId(), dslSubject));
                 log.debug("Subject[id={}, code={}] updated", savedSubject.getId(), savedSubject.getCode());
             }
         });
+
+        updateSubjectPort.update(updateList);
 
         Map<String, Long> subjectCodeToIdMap = savedSubjectCodesMap.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getId()));
