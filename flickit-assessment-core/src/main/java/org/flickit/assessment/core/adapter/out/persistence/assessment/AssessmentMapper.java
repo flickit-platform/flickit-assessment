@@ -58,7 +58,8 @@ public class AssessmentMapper {
             AssessmentColor.valueOfById(assessmentEntity.getColorId()),
             assessmentEntity.getLastModificationTime(),
             itemView.getMaturityLevelId(),
-            itemView.getIsCalculateValid()
+            itemView.getIsCalculateValid(),
+            itemView.getIsConfidenceValid()
         );
     }
 
