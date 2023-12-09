@@ -63,9 +63,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         // Map<questionnaireCode, Map<questionCode, question>>
         Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap = savedKit.getQuestionnaires().stream()
-            .collect(toMap(Questionnaire::getCode, q -> q.getQuestions().stream()
-                .collect(toMap(Question::getCode, s -> s))
-            ));
+            .collect(toMap(Questionnaire::getCode, q -> {
+                if (q.getQuestions() == null)
+                    return Map.of();
+                return q.getQuestions().stream()
+                    .collect(toMap(Question::getCode, s -> s));
+            }));
         Map<String, Map<String, QuestionDslModel>> dslQuestionnaireToQuestionsMap = dslKit.getQuestions().stream()
             .collect(groupingBy(QuestionDslModel::getQuestionnaireCode,
                 toMap(QuestionDslModel::getCode, model -> model)
