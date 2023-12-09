@@ -1,8 +1,14 @@
 package org.flickit.assessment.kit.application.port.out.maturitylevel;
 
+import org.flickit.assessment.kit.application.domain.MaturityLevel;
+
+import java.util.List;
+
 public interface UpdateMaturityLevelPort {
 
     void update(Param param);
+
+    void update(List<MaturityLevel> maturityLevels);
 
     record Param(
         Long id,
