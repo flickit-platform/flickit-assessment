@@ -9,7 +9,6 @@ import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.port.out.questionnaire.BatchUpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
@@ -31,7 +30,6 @@ import static org.flickit.assessment.kit.application.service.assessmentkit.updat
 public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
     private final CreateQuestionnairePort createQuestionnairePort;
-    private final UpdateQuestionnairePort updateQuestionnairePort;
     private final BatchUpdateQuestionnairePort batchUpdateQuestionnairePort;
 
     @Override
@@ -102,23 +100,15 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         if (!savedQuestionnaire.getTitle().equals(dslQuestionnaire.getTitle()) ||
             !savedQuestionnaire.getDescription().equals(dslQuestionnaire.getDescription()) ||
             savedQuestionnaire.getIndex() != dslQuestionnaire.getIndex()) {
-            var updateParam = new UpdateQuestionnairePort.Param(
+
+            return new Questionnaire(
                 savedQuestionnaire.getId(),
+                savedQuestionnaire.getCode(),
                 dslQuestionnaire.getTitle(),
                 dslQuestionnaire.getIndex(),
                 dslQuestionnaire.getDescription(),
-                LocalDateTime.now());
-
-//            updateQuestionnairePort.update(updateParam);
-//            log.debug("Questionnaire[id={}, code={}] updated.", savedQuestionnaire.getId(), savedQuestionnaire.getCode());
-
-            return new Questionnaire(updateParam.id(),
-                savedQuestionnaire.getCode(),
-                updateParam.title(),
-                updateParam.index(),
-                updateParam.description(),
                 savedQuestionnaire.getCreationTime(),
-                updateParam.lastModificationTime()
+                LocalDateTime.now()
             );
         }
         return savedQuestionnaire;

@@ -4,8 +4,8 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
+import org.flickit.assessment.kit.application.port.out.questionnaire.BatchUpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class QuestionnaireUpdateKitPersisterTest {
     private CreateQuestionnairePort createQuestionnairePort;
 
     @Mock
-    private UpdateQuestionnairePort updateQuestionnairePort;
+    private BatchUpdateQuestionnairePort batchUpdateQuestionnairePort;
 
     @Test
     void testOrder() {
@@ -61,7 +61,7 @@ class QuestionnaireUpdateKitPersisterTest {
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());
 
-        verifyNoInteractions(createQuestionnairePort, updateQuestionnairePort);
+        verifyNoInteractions(createQuestionnairePort, batchUpdateQuestionnairePort);
     }
 
     @Test
@@ -87,7 +87,7 @@ class QuestionnaireUpdateKitPersisterTest {
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());
 
-        verifyNoInteractions(updateQuestionnairePort);
+        verifyNoInteractions(batchUpdateQuestionnairePort);
     }
 
     @Test

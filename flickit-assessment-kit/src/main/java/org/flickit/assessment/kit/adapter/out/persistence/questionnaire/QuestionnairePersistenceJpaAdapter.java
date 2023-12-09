@@ -5,7 +5,6 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaReposit
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.out.questionnaire.BatchUpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuestionnairePersistenceJpaAdapter implements
     CreateQuestionnairePort,
-    UpdateQuestionnairePort,
     BatchUpdateQuestionnairePort {
 
     private final QuestionnaireJpaRepository repository;
@@ -22,11 +20,6 @@ public class QuestionnairePersistenceJpaAdapter implements
     @Override
     public Long persist(Questionnaire questionnaire, long kitId) {
         return repository.save(QuestionnaireMapper.mapToJpaEntity(questionnaire, kitId)).getId();
-    }
-
-    @Override
-    public void update(UpdateQuestionnairePort.Param param) {
-        repository.update(param.id(), param.title(), param.index(), param.description(), param.lastModificationTime());
     }
 
     @Override

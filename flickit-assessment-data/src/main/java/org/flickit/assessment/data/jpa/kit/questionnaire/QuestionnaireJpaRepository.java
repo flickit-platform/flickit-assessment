@@ -12,18 +12,4 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
 
     List<QuestionnaireJpaEntity> findAllByAssessmentKitId(Long assessmentKitId);
 
-    @Modifying
-    @Query("UPDATE QuestionnaireJpaEntity q SET " +
-        "q.title = :title, " +
-        "q.index = :index, " +
-        "q.description = :description, " +
-        "q.lastModificationTime = :lastModificationTime " +
-        "WHERE q.id = :id")
-    void update(
-        @Param(value = "id") long id,
-        @Param(value = "title") String title,
-        @Param(value = "index") int index,
-        @Param(value = "description") String description,
-        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime
-    );
 }
