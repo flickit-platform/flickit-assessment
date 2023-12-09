@@ -35,7 +35,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public void update(List<MaturityLevel> maturityLevels) {
-        Map<Long, MaturityLevel> idToModel = maturityLevels.stream().collect(toMap(x -> x.getId(), x -> x));
+        Map<Long, MaturityLevel> idToModel = maturityLevels.stream().collect(toMap(MaturityLevel::getId, x -> x));
         List<MaturityLevelJpaEntity> entities = repository.findAllById(idToModel.keySet());
         entities.forEach(x -> {
             MaturityLevel newLevel = idToModel.get(x.getId());
