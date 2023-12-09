@@ -173,7 +173,7 @@
         <addUniqueConstraint
                 tableName="baseinfo_qualityattribute"
                 columnNames="index, assessment_subject_id"
-                constraintName="baseinfo_qualityattribute_index_assessment_subject_id_unique"/>
+                constraintName="uq_baseinfo_qualityattribute_index_assessment_subject_id"/>
     </changeSet>
 
 </databaseChangeLog>
