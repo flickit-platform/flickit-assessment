@@ -139,7 +139,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         log.debug("QuestionImpact[impactId={}, questionId={}] created.", impactId, questionId);
 
         Map<Integer, Long> optionIndexToIdMap = loadAnswerOptionsByQuestionPort.loadByQuestionId(questionId).stream()
-            .collect(toMap(AnswerOption::getIndex, AnswerOption::getQuestionId));
+            .collect(toMap(AnswerOption::getIndex, AnswerOption::getId));
 
         dslQuestionImpact.getOptionsIndextoValueMap().keySet().forEach(
             index -> createAnswerOptionImpact(
