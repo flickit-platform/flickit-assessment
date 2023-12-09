@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.*;
@@ -54,6 +53,10 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         Map<String, Long> postUpdateQuestionnaires = ctx.get(KEY_QUESTIONNAIRES);
         Map<String, Long> postUpdateAttributes = ctx.get(KEY_ATTRIBUTES);
         Map<String, Long> postUpdateMaturityLevels = ctx.get(KEY_MATURITY_LEVELS);
+
+        Map<Long, String> savedAttributeIdToCodeMap = savedKit.getSubjects().stream()
+            .flatMap(s -> s.getAttributes().stream()).collect(toMap(Attribute::getId, Attribute::getCode));
+        Map<Long, String> savedLevelIdToCodeMap = savedKit.getMaturityLevels().stream().collect(toMap(MaturityLevel::getId, MaturityLevel::getCode));
 
         Set<String> savedQuestionnaireCodes = savedKit.getQuestionnaires().stream().map(Questionnaire::getCode).collect(toSet());
         Set<String> dslQuestionnaireCodes = dslKit.getQuestionnaires().stream().map(QuestionnaireDslModel::getCode).collect(toSet());
@@ -87,6 +90,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 boolean invalidOnUpdate = updateQuestion(
                     question,
                     dslQuestion,
+                    savedAttributeIdToCodeMap,
+                    savedLevelIdToCodeMap,
                     postUpdateAttributes,
                     postUpdateMaturityLevels);
                 if (invalidOnUpdate)
@@ -152,10 +157,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private void createAnswerOptionImpact(Long questionImpactId, Long optionId, Double value) {
         var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value);
         Long optionImpactId = createAnswerOptionImpactPort.persist(createParam);
-        log.debug("AnswerOptionImpact[id={}, questionImpactId={}] created.", optionImpactId, questionImpactId);
+        log.debug("AnswerOptionImpact[id={}, questionImpactId={}, optionId={}] created.", optionImpactId, questionImpactId, optionId);
     }
 
-    private boolean updateQuestion(Question savedQuestion, QuestionDslModel dslQuestion, Map<String, Long> attributes, Map<String, Long> maturityLevels) {
+    private boolean updateQuestion(Question savedQuestion, QuestionDslModel dslQuestion,
+                                   Map<Long, String> savedAttributes, Map<Long, String> savedLevels,
+                                   Map<String, Long> updatedAttributes, Map<String, Long> updatedLevels) {
         boolean invalidateResults = false;
         if (!savedQuestion.getTitle().equals(dslQuestion.getTitle()) ||
             !Objects.equals(savedQuestion.getHint(), dslQuestion.getDescription()) ||
@@ -177,7 +184,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         }
 
         updateAnswerOptions(savedQuestion, dslQuestion);
-        boolean invalidOnUpdateQuestionImpact = updateQuestionImpacts(savedQuestion, dslQuestion, attributes, maturityLevels);
+        boolean invalidOnUpdateQuestionImpact = updateQuestionImpacts(savedQuestion, dslQuestion, savedAttributes, savedLevels, updatedAttributes, updatedLevels);
 
         return invalidateResults || invalidOnUpdateQuestionImpact;
     }
@@ -204,9 +211,10 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private boolean updateQuestionImpacts(Question savedQuestion, QuestionDslModel dslQuestion,
-                                          Map<String, Long> attributes, Map<String, Long> maturityLevels) {
+                                          Map<Long, String> savedAttributes, Map<Long, String> savedLevels,
+                                          Map<String, Long> updatedAttributes, Map<String, Long> updatedLevels) {
         Map<AttributeLevel, QuestionImpact> savedImpactsMap = savedQuestion.getImpacts().stream()
-            .collect(toMap(impact -> createAttributeLevel(impact, attributes, maturityLevels), i -> i));
+            .collect(toMap(impact -> createSavedAttributeLevel(impact, savedAttributes, savedLevels), i -> i));
         Map<AttributeLevel, QuestionImpactDslModel> dslImpactMap = dslQuestion.getQuestionImpacts().stream()
             .collect(toMap(i -> new AttributeLevel(i.getAttributeCode(), i.getMaturityLevel().getTitle()), i -> i));
 
@@ -214,7 +222,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         List<AttributeLevel> deletedImpacts = deletedImpactsInNewDsl(savedImpactsMap.keySet(), dslImpactMap.keySet());
         List<AttributeLevel> sameImpacts = sameImpactsInNewDsl(savedImpactsMap.keySet(), dslImpactMap.keySet());
 
-        newImpacts.forEach(i -> createImpact(dslImpactMap.get(i), savedQuestion.getId(), attributes, maturityLevels));
+        newImpacts.forEach(i -> createImpact(dslImpactMap.get(i), savedQuestion.getId(), updatedAttributes, updatedLevels));
         deletedImpacts.forEach(i -> deleteImpact(savedImpactsMap.get(i), savedQuestion.getId()));
 
         boolean invalidOnUpdate = false;
@@ -224,11 +232,9 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         return !newImpacts.isEmpty() || !deletedImpacts.isEmpty() || invalidOnUpdate;
     }
 
-    private AttributeLevel createAttributeLevel(QuestionImpact impact, Map<String, Long> attributes, Map<String, Long> maturityLevels) {
-        Map<Long, String> attributesIdToCode = attributes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
-        Map<Long, String> levelsIdToCode = maturityLevels.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
-        String attributeCode = attributesIdToCode.get(impact.getAttributeId());
-        String levelCode = levelsIdToCode.get(impact.getMaturityLevelId());
+    private AttributeLevel createSavedAttributeLevel(QuestionImpact impact, Map<Long, String> attributes, Map<Long, String> maturityLevels) {
+        String attributeCode = attributes.get(impact.getAttributeId());
+        String levelCode = maturityLevels.get(impact.getMaturityLevelId());
         return new AttributeLevel(attributeCode, levelCode);
     }
 
