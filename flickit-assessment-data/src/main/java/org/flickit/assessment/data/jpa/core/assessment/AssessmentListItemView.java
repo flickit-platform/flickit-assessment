@@ -7,4 +7,6 @@ public interface AssessmentListItemView {
     Long getMaturityLevelId();
 
     boolean getIsCalculateValid();
+
+    boolean getIsConfidenceValid();
 }
