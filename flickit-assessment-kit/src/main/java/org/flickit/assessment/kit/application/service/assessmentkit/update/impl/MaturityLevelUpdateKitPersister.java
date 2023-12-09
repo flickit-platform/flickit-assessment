@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -57,28 +54,40 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         Map<String, MaturityLevel> savedLevelCodesMap = savedLevels.stream().collect(Collectors.toMap(MaturityLevel::getCode, i -> i));
         Map<String, MaturityLevelDslModel> dslLevelCodesMap = dslLevels.stream().collect(Collectors.toMap(BaseDslModel::getCode, i -> i));
 
-        Set<String> newLevels = newCodesInNewDsl(savedLevelCodesMap.keySet(), dslLevelCodesMap.keySet());
         Set<String> deletedLevels = deletedCodesInNewDsl(savedLevelCodesMap.keySet(), dslLevelCodesMap.keySet());
         Set<String> existingLevels = sameCodesInNewDsl(savedLevelCodesMap.keySet(), dslLevelCodesMap.keySet());
+        Set<String> newLevels = newCodesInNewDsl(savedLevelCodesMap.keySet(), dslLevelCodesMap.keySet());
 
         Map<String, MaturityLevel> codeToPersistedLevels = new HashMap<>();
+
+        deletedLevels.forEach(i -> deleteMaturityLevel(savedLevelCodesMap.get(i), savedKit.getId()));
+
+        boolean existingLevelValueUpdated = false;
+        List<MaturityLevel> updatedLevels = new ArrayList<>();
+        for (String code : existingLevels) {
+            MaturityLevel existingLevel = savedLevelCodesMap.get(code);
+            MaturityLevelDslModel updatingLevel = dslLevelCodesMap.get(code);
+            if (existingLevel.getValue() != updatingLevel.getValue())
+                existingLevelValueUpdated = true;
+
+            if (isMaturityLevelUpdated(existingLevel, updatingLevel)) {
+                MaturityLevel updatedLevel = createUpdatedLevel(existingLevel, updatingLevel);
+                updatedLevels.add(updatedLevel);
+                log.debug("MaturityLevel[id={}, code={}] updated.", existingLevel.getId(), existingLevel.getCode());
+                codeToPersistedLevels.put(existingLevel.getCode(), updatedLevel);
+            } else {
+                codeToPersistedLevels.put(existingLevel.getCode(), existingLevel);
+            }
+        }
+        updateMaturityLevelPort.update(updatedLevels);
 
         newLevels.forEach(code -> {
             MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(code), savedKit.getId());
             codeToPersistedLevels.put(createdLevel.getCode(), createdLevel);
         });
 
-        deletedLevels.forEach(i -> deleteMaturityLevel(savedLevelCodesMap.get(i), savedKit.getId()));
-
-        boolean existingLevelValueUpdated = false;
-
-        for (String code : existingLevels) {
-            MaturityLevel existingLevel = savedLevelCodesMap.get(code);
-            MaturityLevel updatedLevel = updateMaturityLevel(existingLevel, dslLevelCodesMap.get(code));
-            if (existingLevel.getValue() != updatedLevel.getValue())
-                existingLevelValueUpdated = true;
-            codeToPersistedLevels.put(updatedLevel.getCode(), updatedLevel);
-        }
+        // update competences of existing levels
+        boolean isCompetencesChanged = updateCompetencesToExistingLevels(savedLevelCodesMap, dslLevelCodesMap, existingLevels, codeToPersistedLevels);
 
         // create competences of new levels
         newLevels.forEach(code -> {
@@ -93,9 +102,6 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
                 createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value);
             });
         });
-
-        // update competences of existing levels
-        boolean isCompetencesChanged = updateCompetencesToExistingLevels(savedLevelCodesMap, dslLevelCodesMap, existingLevels, codeToPersistedLevels);
 
         Map<String, Long> levelCodeToIdMap = codeToPersistedLevels.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getId()));
@@ -131,28 +137,21 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private MaturityLevel updateMaturityLevel(MaturityLevel savedLevel, MaturityLevelDslModel newLevel) {
-        if (!newLevel.getTitle().equals(savedLevel.getTitle()) ||
+    private static boolean isMaturityLevelUpdated(MaturityLevel savedLevel, MaturityLevelDslModel newLevel) {
+        return !newLevel.getTitle().equals(savedLevel.getTitle()) ||
             newLevel.getValue() != savedLevel.getValue() ||
-            newLevel.getIndex() != savedLevel.getIndex()) {
-            var updateParam = new UpdateMaturityLevelPort.Param(
-                savedLevel.getId(),
-                newLevel.getTitle(),
-                newLevel.getIndex(),
-                newLevel.getValue()
-            );
-            updateMaturityLevelPort.update(updateParam);
-            log.debug("MaturityLevel[id={}, code={}] updated.", savedLevel.getId(), newLevel.getTitle());
-            return new MaturityLevel(
-                savedLevel.getId(),
-                savedLevel.getCode(),
-                newLevel.getTitle(),
-                newLevel.getIndex(),
-                newLevel.getValue(),
-                null
-            );
-        }
-        return savedLevel;
+            newLevel.getIndex() != savedLevel.getIndex();
+    }
+
+    private static MaturityLevel createUpdatedLevel(MaturityLevel savedLevel, MaturityLevelDslModel newLevel) {
+        return new MaturityLevel(
+            savedLevel.getId(),
+            savedLevel.getCode(),
+            newLevel.getTitle(),
+            newLevel.getIndex(),
+            newLevel.getValue(),
+            null
+        );
     }
 
     private boolean updateCompetencesToExistingLevels(Map<String, MaturityLevel> savedLevelCodesMap,

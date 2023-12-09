@@ -165,4 +165,103 @@
         </update>
     </changeSet>
 
+
+    <changeSet id="0.8-28" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_maturitylevel"
+                              constraintName="baseinfo_maturitylevel_value_profile_id_ddb3a964_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-29" author="Khorsandi">
+        <addUniqueConstraint columnNames="index, assessment_kit_id"
+                             constraintName="baseinfo_maturitylevel_value_profile_id_ddb3a964_uniq"
+                             tableName="baseinfo_maturitylevel" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-30" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_maturitylevel"
+                              constraintName="baseinfo_maturitylevel_title_profile_id_2682c3b0_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-31" author="Khorsandi">
+        <addUniqueConstraint columnNames="title, assessment_kit_id"
+                             constraintName="baseinfo_maturitylevel_title_profile_id_2682c3b0_uniq"
+                             tableName="baseinfo_maturitylevel" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-32" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_assessmentsubject"
+                              constraintName="baseinfo_assessmentsubje_index_assessment_profile_bd210cc8_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-33" author="Khorsandi">
+        <addUniqueConstraint columnNames="index, assessment_kit_id"
+                             constraintName="baseinfo_assessmentsubje_index_assessment_profile_bd210cc8_uniq"
+                             tableName="baseinfo_assessmentsubject" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-34" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_assessmentsubject"
+                              constraintName="baseinfo_assessmentsubje_title_assessment_profile_b703b977_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-35" author="Khorsandi">
+        <addUniqueConstraint columnNames="title, assessment_kit_id"
+                             constraintName="baseinfo_assessmentsubje_title_assessment_profile_b703b977_uniq"
+                             tableName="baseinfo_assessmentsubject" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-36" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_questionnaire"
+                              constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-37" author="Khorsandi">
+        <addUniqueConstraint columnNames="index, assessment_kit_id"
+                             constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"
+                             tableName="baseinfo_questionnaire" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-38" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_questionnaire"
+                              constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-39" author="Khorsandi">
+        <addUniqueConstraint columnNames="title, assessment_kit_id"
+                             constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"
+                             tableName="baseinfo_questionnaire" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-40" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_questionnaire"
+                              constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-41" author="Khorsandi">
+        <addUniqueConstraint columnNames="index, assessment_kit_id"
+                             constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"
+                             tableName="baseinfo_questionnaire" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-42" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_questionnaire"
+                              constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-43" author="Khorsandi">
+        <addUniqueConstraint columnNames="title, assessment_kit_id"
+                             constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"
+                             tableName="baseinfo_questionnaire" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-44" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="baseinfo_qualityattribute" columnName="index"/>
+    </changeSet>
+
+    <changeSet id="0.8-45" author="Ali Sedaghat">
+        <addUniqueConstraint columnNames="index, assessment_subject_id"
+                             constraintName="uq_baseinfo_qualityattribute_index_assessment_subject_id"
+                             tableName="baseinfo_qualityattribute" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
 </databaseChangeLog>

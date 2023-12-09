@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 
 import lombok.SneakyThrows;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
@@ -82,7 +83,6 @@ class MaturityLevelUpdateKitPersisterTest {
             deleteLevelCompetencePort,
             createMaturityLevelPort,
             createLevelCompetencePort,
-            updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
 
@@ -114,7 +114,6 @@ class MaturityLevelUpdateKitPersisterTest {
         verifyNoInteractions(
             deleteMaturityLevelPort,
             deleteLevelCompetencePort,
-            updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
 
@@ -143,7 +142,6 @@ class MaturityLevelUpdateKitPersisterTest {
         verifyNoInteractions(
             createMaturityLevelPort,
             createLevelCompetencePort,
-            updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
 
@@ -156,20 +154,21 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevel))
             .build();
 
-        var updateParam = new UpdateMaturityLevelPort.Param(
-            levelTwo().getId(), dslLevel.getTitle(), dslLevel.getIndex(), dslLevel.getValue());
-        doNothing().when(updateMaturityLevelPort).update(updateParam);
+        doNothing().when(updateMaturityLevelPort).update(anyList());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
 
-        ArgumentCaptor<UpdateMaturityLevelPort.Param> updateCaptor = ArgumentCaptor.forClass(UpdateMaturityLevelPort.Param.class);
+        ArgumentCaptor<List<MaturityLevel>> updateCaptor = ArgumentCaptor.forClass(List.class);
         verify(updateMaturityLevelPort).update(updateCaptor.capture());
 
-        assertEquals(updateParam.id(), updateCaptor.getValue().id());
-        assertEquals(updateParam.title(), updateCaptor.getValue().title());
-        assertEquals(updateParam.index(), updateCaptor.getValue().index());
-        assertEquals(updateParam.value(), updateCaptor.getValue().value());
+        var updatedMaturityLevel = new MaturityLevel(
+            levelTwo().getId(), levelTwo().getCode(), dslLevel.getTitle(), dslLevel.getIndex(), dslLevel.getValue(), levelTwo().getCompetences()
+        );
+        assertEquals(updatedMaturityLevel.getId(), updateCaptor.getValue().get(0).getId());
+        assertEquals(updatedMaturityLevel.getTitle(), updateCaptor.getValue().get(0).getTitle());
+        assertEquals(updatedMaturityLevel.getIndex(), updateCaptor.getValue().get(0).getIndex());
+        assertEquals(updatedMaturityLevel.getValue(), updateCaptor.getValue().get(0).getValue());
 
         assertFalse(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
@@ -213,7 +212,6 @@ class MaturityLevelUpdateKitPersisterTest {
             deleteMaturityLevelPort,
             deleteLevelCompetencePort,
             createMaturityLevelPort,
-            updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
 
@@ -248,7 +246,6 @@ class MaturityLevelUpdateKitPersisterTest {
             createMaturityLevelPort,
             createLevelCompetencePort,
             deleteMaturityLevelPort,
-            updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
 
@@ -281,7 +278,6 @@ class MaturityLevelUpdateKitPersisterTest {
             createMaturityLevelPort,
             createLevelCompetencePort,
             deleteMaturityLevelPort,
-            deleteLevelCompetencePort,
-            updateMaturityLevelPort);
+            deleteLevelCompetencePort);
     }
 }
