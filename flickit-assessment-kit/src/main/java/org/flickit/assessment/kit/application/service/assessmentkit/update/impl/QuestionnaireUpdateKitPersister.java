@@ -57,12 +57,19 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         List<Questionnaire> mustBeUpdatedQuestionnaires = new ArrayList<>();
 
         newQuestionnairesCodes.forEach(i -> finalQuestionnaires.add(createQuestionnaire(dslQuestionnaireCodesMap.get(i), savedKit.getId())));
-        sameQuestionnairesCodes.forEach(i -> mustBeUpdatedQuestionnaires.add(updateQuestionnaire(savedQuestionnaireCodesMap.get(i), dslQuestionnaireCodesMap.get(i))));
+        sameQuestionnairesCodes.forEach(i -> {
+            if (isQuestionnaireUpdated(savedQuestionnaireCodesMap.get(i), dslQuestionnaireCodesMap.get(i))) {
+                mustBeUpdatedQuestionnaires.add(createUpdatedQuestionnaire(savedQuestionnaireCodesMap.get(i), dslQuestionnaireCodesMap.get(i)));
+            } else {
+                finalQuestionnaires.add(savedQuestionnaireCodesMap.get(i));
+            }
+        });
 
-        batchUpdateQuestionnairePort.batchUpdate(mustBeUpdatedQuestionnaires, savedKit.getId());
-        mustBeUpdatedQuestionnaires.forEach(i -> log.debug("Questionnaire[id={}, code={}] updated.", i.getId(), i.getCode()));
-
-        finalQuestionnaires.addAll(mustBeUpdatedQuestionnaires);
+        if (!mustBeUpdatedQuestionnaires.isEmpty()) {
+            batchUpdateQuestionnairePort.batchUpdate(mustBeUpdatedQuestionnaires, savedKit.getId());
+            mustBeUpdatedQuestionnaires.forEach(i -> log.debug("Questionnaire[id={}, code={}] updated.", i.getId(), i.getCode()));
+            finalQuestionnaires.addAll(mustBeUpdatedQuestionnaires);
+        }
 
         Map<String, Long> questionnaireCodeToIdMap = finalQuestionnaires.stream().collect(Collectors.toMap(Questionnaire::getCode, Questionnaire::getId));
         ctx.put(KEY_QUESTIONNAIRES, questionnaireCodeToIdMap);
@@ -96,21 +103,22 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private Questionnaire updateQuestionnaire(Questionnaire savedQuestionnaire, QuestionnaireDslModel dslQuestionnaire) {
-        if (!savedQuestionnaire.getTitle().equals(dslQuestionnaire.getTitle()) ||
+    private boolean isQuestionnaireUpdated(Questionnaire savedQuestionnaire, QuestionnaireDslModel dslQuestionnaire) {
+        return !savedQuestionnaire.getTitle().equals(dslQuestionnaire.getTitle()) ||
             !savedQuestionnaire.getDescription().equals(dslQuestionnaire.getDescription()) ||
-            savedQuestionnaire.getIndex() != dslQuestionnaire.getIndex()) {
+            savedQuestionnaire.getIndex() != dslQuestionnaire.getIndex();
+    }
 
-            return new Questionnaire(
-                savedQuestionnaire.getId(),
-                savedQuestionnaire.getCode(),
-                dslQuestionnaire.getTitle(),
-                dslQuestionnaire.getIndex(),
-                dslQuestionnaire.getDescription(),
-                savedQuestionnaire.getCreationTime(),
-                LocalDateTime.now()
-            );
-        }
-        return savedQuestionnaire;
+    private Questionnaire createUpdatedQuestionnaire(Questionnaire savedQuestionnaire, QuestionnaireDslModel dslQuestionnaire) {
+        return new Questionnaire(
+            savedQuestionnaire.getId(),
+            savedQuestionnaire.getCode(),
+            dslQuestionnaire.getTitle(),
+            dslQuestionnaire.getIndex(),
+            dslQuestionnaire.getDescription(),
+            savedQuestionnaire.getCreationTime(),
+            LocalDateTime.now()
+        );
+
     }
 }
