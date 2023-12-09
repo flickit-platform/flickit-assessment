@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 
 import lombok.SneakyThrows;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
@@ -82,7 +83,6 @@ class MaturityLevelUpdateKitPersisterTest {
             deleteLevelCompetencePort,
             createMaturityLevelPort,
             createLevelCompetencePort,
-            updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
 
@@ -114,7 +114,6 @@ class MaturityLevelUpdateKitPersisterTest {
         verifyNoInteractions(
             deleteMaturityLevelPort,
             deleteLevelCompetencePort,
-            updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
 
@@ -143,7 +142,6 @@ class MaturityLevelUpdateKitPersisterTest {
         verifyNoInteractions(
             createMaturityLevelPort,
             createLevelCompetencePort,
-            updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
 
@@ -213,7 +211,6 @@ class MaturityLevelUpdateKitPersisterTest {
             deleteMaturityLevelPort,
             deleteLevelCompetencePort,
             createMaturityLevelPort,
-            updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
 
@@ -248,7 +245,6 @@ class MaturityLevelUpdateKitPersisterTest {
             createMaturityLevelPort,
             createLevelCompetencePort,
             deleteMaturityLevelPort,
-            updateMaturityLevelPort,
             updateLevelCompetencePort);
     }
 
@@ -281,7 +277,6 @@ class MaturityLevelUpdateKitPersisterTest {
             createMaturityLevelPort,
             createLevelCompetencePort,
             deleteMaturityLevelPort,
-            deleteLevelCompetencePort,
-            updateMaturityLevelPort);
+            deleteLevelCompetencePort);
     }
 }
