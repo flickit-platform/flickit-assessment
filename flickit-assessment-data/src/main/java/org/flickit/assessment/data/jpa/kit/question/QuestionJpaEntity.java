@@ -16,8 +16,8 @@ public class QuestionJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_metricimpact_id_seq")
-    @SequenceGenerator(name = "baseinfo_metricimpact_id_seq", sequenceName = "baseinfo_metricimpact_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_metric_id_seq")
+    @SequenceGenerator(name = "baseinfo_metric_id_seq", sequenceName = "baseinfo_metric_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
