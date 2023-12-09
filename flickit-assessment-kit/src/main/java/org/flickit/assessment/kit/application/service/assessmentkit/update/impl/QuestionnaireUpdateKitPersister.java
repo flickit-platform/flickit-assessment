@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
+import org.flickit.assessment.kit.application.port.out.questionnaire.BatchUpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
@@ -31,6 +32,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
     private final CreateQuestionnairePort createQuestionnairePort;
     private final UpdateQuestionnairePort updateQuestionnairePort;
+    private final BatchUpdateQuestionnairePort batchUpdateQuestionnairePort;
 
     @Override
     public int order() {
@@ -54,9 +56,15 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             .toList();
 
         List<Questionnaire> finalQuestionnaires = new ArrayList<>();
+        List<Questionnaire> mustBeUpdatedQuestionnaires = new ArrayList<>();
 
         newQuestionnairesCodes.forEach(i -> finalQuestionnaires.add(createQuestionnaire(dslQuestionnaireCodesMap.get(i), savedKit.getId())));
-        sameQuestionnairesCodes.forEach(i -> finalQuestionnaires.add(updateQuestionnaire(savedQuestionnaireCodesMap.get(i), dslQuestionnaireCodesMap.get(i))));
+        sameQuestionnairesCodes.forEach(i -> mustBeUpdatedQuestionnaires.add(updateQuestionnaire(savedQuestionnaireCodesMap.get(i), dslQuestionnaireCodesMap.get(i))));
+
+        batchUpdateQuestionnairePort.batchUpdate(mustBeUpdatedQuestionnaires, savedKit.getId());
+        mustBeUpdatedQuestionnaires.forEach(i -> log.debug("Questionnaire[id={}, code={}] updated.", i.getId(), i.getCode()));
+
+        finalQuestionnaires.addAll(mustBeUpdatedQuestionnaires);
 
         Map<String, Long> questionnaireCodeToIdMap = finalQuestionnaires.stream().collect(Collectors.toMap(Questionnaire::getCode, Questionnaire::getId));
         ctx.put(KEY_QUESTIONNAIRES, questionnaireCodeToIdMap);
@@ -101,8 +109,8 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
                 dslQuestionnaire.getDescription(),
                 LocalDateTime.now());
 
-            updateQuestionnairePort.update(updateParam);
-            log.debug("Questionnaire[id={}, code={}] updated.", savedQuestionnaire.getId(), savedQuestionnaire.getCode());
+//            updateQuestionnairePort.update(updateParam);
+//            log.debug("Questionnaire[id={}, code={}] updated.", savedQuestionnaire.getId(), savedQuestionnaire.getCode());
 
             return new Questionnaire(updateParam.id(),
                 savedQuestionnaire.getCode(),

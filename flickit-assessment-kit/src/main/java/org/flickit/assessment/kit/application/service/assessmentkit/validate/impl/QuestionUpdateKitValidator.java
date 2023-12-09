@@ -27,6 +27,7 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
         Notification notification = new Notification();
 
         Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap = savedKit.getQuestionnaires().stream()
+            .filter(questionnaire -> questionnaire.getQuestions() != null)
             .collect(toMap(Questionnaire::getCode, q -> q.getQuestions().stream()
                 .collect(toMap(Question::getCode, s -> s))
             ));

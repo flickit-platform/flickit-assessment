@@ -32,4 +32,17 @@ public class QuestionnaireMapper {
             kitId
         );
     }
+
+    public static QuestionnaireJpaEntity mapToJpaEntityWithId(Questionnaire questionnaire, Long kitId) {
+        return new QuestionnaireJpaEntity(
+            questionnaire.getId(),
+            questionnaire.getCode(),
+            questionnaire.getTitle(),
+            questionnaire.getDescription(),
+            questionnaire.getCreationTime(),
+            questionnaire.getLastModificationTime(),
+            questionnaire.getIndex(),
+            kitId
+        );
+    }
 }

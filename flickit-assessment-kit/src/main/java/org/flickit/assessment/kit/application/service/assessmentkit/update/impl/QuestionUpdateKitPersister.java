@@ -60,6 +60,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         // Map<questionnaireCode, Map<questionCode, question>>
         Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap = savedKit.getQuestionnaires().stream()
+            .filter(questionnaire -> questionnaire.getQuestions() != null)
             .collect(toMap(Questionnaire::getCode, q -> q.getQuestions().stream()
                 .collect(toMap(Question::getCode, s -> s))
             ));
