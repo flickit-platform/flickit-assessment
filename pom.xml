@@ -138,7 +138,7 @@
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
 						<labels>
 							<org.opencontainers.image.source>
-								https://github.com/avansoft/flickit-assessment
+								https://github.com/avansoft/flickit-assessment-core
 							</org.opencontainers.image.source>
 						</labels>
 					</container>
