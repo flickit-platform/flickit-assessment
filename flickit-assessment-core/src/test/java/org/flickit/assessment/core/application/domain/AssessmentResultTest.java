@@ -29,11 +29,11 @@ class AssessmentResultTest {
 
         MaturityLevel assessmentMaturityLevel = assessmentResult.calculate();
 
-        assertEquals(MaturityLevelMother.levelThree().getLevel(), assessmentMaturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelThree().getValue(), assessmentMaturityLevel.getValue());
     }
 
     @Test
-    void calculate_withDifferentWeightsAndLevels() {
+    void testCalculate_withDifferentWeightsAndLevels() {
         List<SubjectValue> subjectValues = new ArrayList<>();
         subjectValues.add(SubjectValueMother.withQAValues(List.of(
             QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(1),
@@ -48,6 +48,43 @@ class AssessmentResultTest {
 
         MaturityLevel assessmentMaturityLevel = assessmentResult.calculate();
 
-        assertEquals(MaturityLevelMother.levelThree().getLevel(), assessmentMaturityLevel.getLevel());
+        assertEquals(MaturityLevelMother.levelThree().getValue(), assessmentMaturityLevel.getValue());
     }
+
+    @Test
+    void testCalculateConfidenceLevel_withSameWeightsAndConfidenceLevels() {
+        List<SubjectValue> subjectValues = new ArrayList<>();
+        subjectValues.add(SubjectValueMother.withQAValues(List.of(
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId())
+        )));
+
+        AssessmentResult assessmentResult = AssessmentResultMother.invalidResultWithSubjectValues(subjectValues);
+
+        double calculateConfidenceLevel = assessmentResult.calculateConfidenceValue();
+
+        assertEquals(80.0, calculateConfidenceLevel);
+    }
+
+    @Test
+    void testCalculateConfidenceLevel_withDifferentWeightsAndConfidenceLevels() {
+        List<SubjectValue> subjectValues = new ArrayList<>();
+        subjectValues.add(SubjectValueMother.withQAValues(List.of(
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.COMPLETELY_UNSURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.FAIRLY_UNSURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.FAIRLY_SURE.getId()),
+            QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(5, ConfidenceLevel.COMPLETELY_SURE.getId())
+        )));
+
+        AssessmentResult assessmentResult = AssessmentResultMother.invalidResultWithSubjectValues(subjectValues);
+
+        double calculateConfidenceLevel = assessmentResult.calculateConfidenceValue();
+
+        assertEquals(73.333333333333333, calculateConfidenceLevel);
+    }
+
 }

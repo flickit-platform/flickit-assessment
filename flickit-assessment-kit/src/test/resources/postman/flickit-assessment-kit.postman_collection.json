@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "f85c557b-5318-439d-9535-d6bc087d37b6",
+		"name": "flickit-assessment-kit",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6692064"
+	},
+	"item": [
+		{
+			"name": "Update Kit By DSL",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"dslContent\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/update-by-dsl",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302",
+						"update-by-dsl"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8098",
+			"type": "string"
+		},
+		{
+			"key": "api_path",
+			"value": "assessment-core/api",
+			"type": "string"
+		}
+	]
+}

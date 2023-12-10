@@ -5,13 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.exception.CalculateNotValidException;
+import org.flickit.assessment.core.application.exception.ConfidenceCalculationNotValidException;
 import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
-import org.flickit.assessment.data.jpa.assessment.AssessmentJpaEntity;
-import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaEntity;
-import org.flickit.assessment.data.jpa.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -43,6 +44,11 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             throw new CalculateNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
         }
 
+        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsConfidenceValid())) {
+            log.warn("The calculated confidence value is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultEntity.getId());
+            throw new ConfidenceCalculationNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
+        }
+
         UUID assessmentResultId = assessmentResultEntity.getId();
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
 
@@ -56,6 +62,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             buildAssessment(assessmentResultEntity.getAssessment(), maturityLevels),
             subjectValues,
             findMaturityLevelById(maturityLevels, assessmentResultEntity.getMaturityLevelId()),
+            assessmentResultEntity.getConfidenceValue(),
             assessmentResultEntity.getIsCalculateValid(),
             assessmentResultEntity.getIsConfidenceValid(),
             assessmentResultEntity.getLastModificationTime());
@@ -68,7 +75,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                     x.getId(),
                     new Subject(x.getSubjectId()),
                     null,
-                    findMaturityLevelById(maturityLevels, x.getMaturityLevelId()))
+                    findMaturityLevelById(maturityLevels, x.getMaturityLevelId()),
+                    x.getConfidenceValue())
             ).toList();
     }
 

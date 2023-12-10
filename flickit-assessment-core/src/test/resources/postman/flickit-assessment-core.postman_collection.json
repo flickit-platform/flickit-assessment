@@ -579,7 +579,35 @@
             }
           },
           "response": []
-        }
+        }, {
+        "name": "Calculate Confidence",
+        "request": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessments/70c58eab-3d5f-48aa-9ffb-07802e5ea48f/calculate-confidence",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessments",
+              "70c58eab-3d5f-48aa-9ffb-07802e5ea48f",
+              "calculate-confidence"
+            ]
+          }
+        },
+        "response": []
+      }
 	],
 	"variable": [
 		{

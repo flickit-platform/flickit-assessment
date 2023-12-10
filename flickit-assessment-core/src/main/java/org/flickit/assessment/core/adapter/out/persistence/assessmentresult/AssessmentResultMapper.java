@@ -6,7 +6,7 @@ import org.flickit.assessment.core.adapter.out.persistence.assessment.Assessment
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
-import org.flickit.assessment.data.jpa.assessmentresult.AssessmentResultJpaEntity;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 
 import java.util.ArrayList;
 
@@ -16,6 +16,7 @@ public class AssessmentResultMapper {
 
     public static AssessmentResultJpaEntity mapToJpaEntity(CreateAssessmentResultPort.Param param) {
         return new AssessmentResultJpaEntity(
+            null,
             null,
             null,
             null,
@@ -30,7 +31,9 @@ public class AssessmentResultMapper {
             entity.getId(),
             AssessmentMapper.mapToDomainModel(entity.getAssessment()),
             new ArrayList<>(),
-            entity.getMaturityLevelId() == null ? null : new MaturityLevel(entity.getMaturityLevelId(), 0, new ArrayList<>()),
+            entity.getMaturityLevelId() == null ? null :
+                new MaturityLevel(entity.getMaturityLevelId(), 1, 0, new ArrayList<>()),
+            entity.getConfidenceValue(),
             entity.getIsCalculateValid(),
             entity.getIsConfidenceValid(),
             entity.getLastModificationTime()

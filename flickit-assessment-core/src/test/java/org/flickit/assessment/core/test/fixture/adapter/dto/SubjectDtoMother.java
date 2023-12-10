@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.test.fixture.adapter.dto;
 
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
-import org.flickit.assessment.data.jpa.attributevalue.QualityAttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 
 import java.util.List;
 

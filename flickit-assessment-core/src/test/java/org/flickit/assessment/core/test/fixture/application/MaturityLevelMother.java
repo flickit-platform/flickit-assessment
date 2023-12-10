@@ -17,30 +17,30 @@ public class MaturityLevelMother {
     }
 
     public static MaturityLevel levelOne() {
-        return new MaturityLevel(LEVEL_ONE_ID, 1,
+        return new MaturityLevel(LEVEL_ONE_ID, 1, 1,
             List.of());
     }
 
     public static MaturityLevel levelTwo() {
-        return new MaturityLevel(LEVEL_TWO_ID, 2,
+        return new MaturityLevel(LEVEL_TWO_ID, 2, 2,
             List.of(LevelCompetenceMother.onLevelTwo(60)));
     }
 
     public static MaturityLevel levelThree() {
-        return new MaturityLevel(LEVEL_THREE_ID, 3,
+        return new MaturityLevel(LEVEL_THREE_ID, 3, 3,
             List.of(LevelCompetenceMother.onLevelTwo(75),
                 LevelCompetenceMother.onLevelThree(60)));
     }
 
     public static MaturityLevel levelFour() {
-        return new MaturityLevel(LEVEL_FOUR_ID, 4,
+        return new MaturityLevel(LEVEL_FOUR_ID, 4, 4,
             List.of(LevelCompetenceMother.onLevelTwo(85),
                 LevelCompetenceMother.onLevelThree(75),
                 LevelCompetenceMother.onLevelFour(60)));
     }
 
     public static MaturityLevel levelFive() {
-        return new MaturityLevel(LEVEL_FIVE_ID, 5,
+        return new MaturityLevel(LEVEL_FIVE_ID, 5, 5,
             List.of(LevelCompetenceMother.onLevelTwo(95),
                 LevelCompetenceMother.onLevelThree(85),
                 LevelCompetenceMother.onLevelFour(70),

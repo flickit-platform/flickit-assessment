@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.mutable.MutableDouble;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,9 @@ public class AssessmentResult {
     MaturityLevel maturityLevel;
 
     @Setter
+    Double confidenceValue;
+
+    @Setter
     boolean isCalculateValid;
 
     @Setter
@@ -35,9 +39,9 @@ public class AssessmentResult {
     public MaturityLevel calculate() {
         List<MaturityLevel> maturityLevels = assessment.getAssessmentKit().getMaturityLevels();
         calculateSubjectValuesAndSetMaturityLevel(maturityLevels);
-        int weightedMeanLevel = calculateWeightedMeanOfQualityAttributeValues();
+        int weightedMeanLevel = calculateWeightedMeanOfAttributeValues();
         return maturityLevels.stream()
-            .filter(m -> m.getLevel() == weightedMeanLevel)
+            .filter(m -> m.getValue() == weightedMeanLevel)
             .findAny()
             .orElseThrow(IllegalStateException::new);
     }
@@ -49,7 +53,7 @@ public class AssessmentResult {
         });
     }
 
-    private int calculateWeightedMeanOfQualityAttributeValues() {
+    private int calculateWeightedMeanOfAttributeValues() {
         MutableInt weightedSum = new MutableInt();
         MutableInt sum = new MutableInt();
         subjectValues.stream()
@@ -59,6 +63,31 @@ public class AssessmentResult {
                 sum.add(x.getQualityAttribute().getWeight());
             });
         return (int) Math.round((double) weightedSum.getValue() / sum.getValue());
+    }
+
+    public Double calculateConfidenceValue() {
+        calculateSubjectValuesAndSetConfidenceValue();
+        return calculateWeightedMeanOfAttributeConfidenceValues();
+    }
+
+    private void calculateSubjectValuesAndSetConfidenceValue() {
+        subjectValues.forEach(x -> {
+            Double calcResult = x.calculateConfidenceValue();
+            x.setConfidenceValue(calcResult);
+        });
+    }
+
+    private Double calculateWeightedMeanOfAttributeConfidenceValues() {
+        MutableDouble weightedSum = new MutableDouble();
+        MutableDouble sum = new MutableDouble();
+        subjectValues.stream()
+            .flatMap(x -> x.getQualityAttributeValues().stream())
+            .filter(x -> x.getConfidenceValue() != null)
+            .forEach(x -> {
+                weightedSum.add(x.getWeightedConfidenceValue());
+                sum.add(x.getQualityAttribute().getWeight());
+            });
+        return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
     }
 
 }

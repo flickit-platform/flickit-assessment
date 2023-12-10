@@ -1,0 +1,247 @@
+{
+  "questionnaireModels": [
+    {
+      "code": "CleanArchitecture",
+      "title": "Clean Architecture",
+      "description": "",
+      "index": 1
+    },
+    {
+      "code": "CodeQuality",
+      "title": "Code Quality",
+      "description": "",
+      "index": 2
+    }
+  ],
+  "attributeModels": [
+    {
+      "code": "SoftwareReliability",
+      "title": "Software-Reliability",
+      "description": "",
+      "index": 1,
+      "subjectCode": "Software",
+      "weight": 1
+    },
+    {
+      "code": "SoftwareEfficiency",
+      "title": "Software-Efficiency",
+      "description": "",
+      "index": 2,
+      "subjectCode": "Software",
+      "weight": 1
+    }
+  ],
+  "questionModels": [
+    {
+      "code": "m1",
+      "title": "Is API provided using standard and well-known communication protocols (such as REST and GraphQL)?",
+      "description": null,
+      "index": 1,
+      "questionnaireCode": "CleanArchitecture",
+      "questionImpacts": [
+        {
+          "attributeCode": "SoftwareMaintainability",
+          "level": {
+            "code": "Weak",
+            "title": "Weak",
+            "description": null,
+            "index": null,
+            "levelCompetence": null,
+            "value": null
+          },
+          "question": {
+            "code": "m1"
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 1
+          },
+          "weight": 1
+        }
+      ],
+      "answers": [
+        {
+          "caption": "No",
+          "value": 1,
+          "index": 1
+        },
+        {
+          "caption": "Yes",
+          "value": 5,
+          "index": 2
+        }
+      ],
+      "mayNotBeApplicable": false
+    },
+    {
+      "code": "m2",
+      "title": "Are the APIs documented and tested, and are proper tools and standards employed to accomplish this?",
+      "description": null,
+      "index": 2,
+      "questionnaireCode": "CodeQuality",
+      "questionImpacts": [
+        {
+          "attributeCode": "SoftwareReliability",
+          "level": {
+            "code": "Weak",
+            "title": "Weak",
+            "description": null,
+            "index": null,
+            "levelCompetence": null,
+            "value": null
+          },
+          "question": {
+            "code": "m2"
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0,
+            "3": 0.5,
+            "4": 1
+          },
+          "weight": 1
+        },
+        {
+          "attributeCode": "SoftwareMaintainability",
+          "level": {
+            "code": "Moderate",
+            "title": "Moderate",
+            "description": null,
+            "index": null,
+            "levelCompetence": null,
+            "value": null
+          },
+          "question": {
+            "code": "m2"
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.5,
+            "3": 1,
+            "4": 1
+          },
+          "weight": 1
+        },
+        {
+          "attributeCode": "SoftwareMaintainability",
+          "level": {
+            "code": "Good",
+            "title": "Good",
+            "description": null,
+            "index": null,
+            "levelCompetence": null,
+            "value": null
+          },
+          "question": {
+            "code": "m2"
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 1
+          },
+          "weight": 1
+        }
+      ],
+      "answers": [
+        {
+          "caption": "Poor",
+          "value": 1,
+          "index": 1
+        },
+        {
+          "caption": "Weak",
+          "value": 2,
+          "index": 2
+        },
+        {
+          "caption": "Moderate",
+          "value": 4,
+          "index": 3
+        },
+        {
+          "caption": "Good",
+          "value": 5,
+          "index": 4
+        }
+      ],
+      "mayNotBeApplicable": true
+    }
+  ],
+  "subjectModels": [
+    {
+      "code": "Software",
+      "title": "Software title",
+      "description": "Description for Software",
+      "index": 1,
+      "weight": 0,
+      "questionnaireCodes": null
+    },
+    {
+      "code": "Team",
+      "title": "Team title",
+      "description": "Description for Team",
+      "index": 2,
+      "weight": 0,
+      "questionnaireCodes": null
+    }
+  ],
+  "levelModels": [
+    {
+      "code": "Elementary",
+      "title": "Elementary",
+      "description": null,
+      "index": 1,
+      "levelCompetence": null,
+      "value": 1
+    },
+    {
+      "code": "Weak",
+      "title": "Weak",
+      "description": null,
+      "index": 2,
+      "levelCompetence": {
+        "Weak": 60
+      },
+      "value": 2
+    },
+    {
+      "code": "Moderate",
+      "title": "Moderate",
+      "description": null,
+      "index": 3,
+      "levelCompetence": {
+        "Weak": 75,
+        "Moderate": 60
+      },
+      "value": 3
+    },
+    {
+      "code": "Good",
+      "title": "Good",
+      "description": null,
+      "index": 4,
+      "levelCompetence": {
+        "Weak": 85,
+        "Moderate": 75,
+        "Good": 60
+      },
+      "value": 4
+    },
+    {
+      "code": "Great",
+      "title": "Great",
+      "description": null,
+      "index": 5,
+      "levelCompetence": {
+        "Great": 60,
+        "Weak": 95,
+        "Moderate": 85,
+        "Good": 75
+      },
+      "value": 5
+    }
+  ],
+  "hasError": false
+}

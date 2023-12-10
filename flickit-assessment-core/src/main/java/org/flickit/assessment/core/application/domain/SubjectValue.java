@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.mutable.MutableDouble;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,24 +21,44 @@ public class SubjectValue {
     @Setter
     MaturityLevel maturityLevel;
 
+    @Setter
+    Double confidenceValue;
+
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
         qualityAttributeValues.forEach(x -> x.calculate(maturityLevels));
 
-        int weightedMeanLevel = calculateWeightedMeanOfQualityAttributeValues();
+        int weightedMeanLevel = calculateWeightedMeanOfAttributeValues();
         return maturityLevels.stream()
-            .filter(m -> m.getLevel() == weightedMeanLevel)
+            .filter(m -> m.getValue() == weightedMeanLevel)
             .findAny()
             .orElseThrow(IllegalStateException::new);
     }
 
-    private int calculateWeightedMeanOfQualityAttributeValues() {
+    private int calculateWeightedMeanOfAttributeValues() {
         int weightedSum = 0;
         int sum = 0;
         for (QualityAttributeValue qav : qualityAttributeValues) {
             weightedSum += qav.getWeightedLevel();
             sum += qav.getQualityAttribute().getWeight();
         }
-        return (int) Math.round((double) weightedSum / sum);
+        return sum != 0 ? (int) Math.round((double) weightedSum / sum) : 0;
+    }
+
+    public Double calculateConfidenceValue() {
+        qualityAttributeValues.forEach(QualityAttributeValue::calculateConfidenceValue);
+        return calculateWeightedMeanOfAttributeConfidenceValues();
+    }
+
+    private Double calculateWeightedMeanOfAttributeConfidenceValues() {
+        MutableDouble weightedSum = new MutableDouble();
+        MutableDouble sum = new MutableDouble();
+        for (QualityAttributeValue qav : qualityAttributeValues) {
+            if (qav.getConfidenceValue() != null) {
+                weightedSum.add(qav.getWeightedConfidenceValue());
+                sum.add(qav.getQualityAttribute().getWeight());
+            }
+        }
+        return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
     }
 
 }

@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
-import org.flickit.assessment.data.jpa.answer.AnswerJpaEntity;
+import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 
 import java.util.ArrayList;
 
@@ -27,11 +27,12 @@ public class AnswerMapper {
     }
 
     public static AnswerListItem mapJpaEntityToAnswerItem(AnswerJpaEntity answer) {
+        ConfidenceLevel confidenceLevel = answer.getConfidenceLevelId() != null ? ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()) : null;
         return new AnswerListItem(
             answer.getId(),
             answer.getQuestionId(),
             answer.getAnswerOptionId(),
-            ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()),
+            confidenceLevel,
             answer.getIsNotApplicable()
         );
     }

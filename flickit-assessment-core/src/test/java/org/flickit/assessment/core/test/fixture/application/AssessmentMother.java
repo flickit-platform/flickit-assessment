@@ -37,6 +37,7 @@ public class AssessmentMother {
             AssessmentColor.BLUE,
             LocalDateTime.now(),
             1L,
+            Boolean.TRUE,
             Boolean.TRUE
         );
     }

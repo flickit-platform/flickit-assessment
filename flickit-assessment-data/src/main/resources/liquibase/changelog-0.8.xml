@@ -5,9 +5,268 @@
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
     <changeSet id="0.8-01" author="Mahdi Rezazadeh">
-        <dropForeignKeyConstraint baseTableName="account_space"
-                                  constraintName="account_space_owner_id_9c7e98ca_fk_account_user_id"/>
+        <dropUniqueConstraint constraintName="baseinfo_assessmentsubject_code_a19bcda2_uniq"
+                              tableName="baseinfo_assessmentsubject"/>
     </changeSet>
+
+    <changeSet id="0.8-02" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_kit_id, code"
+                             constraintName="baseinfo_assessmentsubject_code_a19bcda2_uniq"
+                             tableName="baseinfo_assessmentsubject"/>
+    </changeSet>
+
+    <changeSet id="0.8-03" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_assessmentsubject">
+            <column name="code" valueComputed="REGEXP_REPLACE(title, '[^a-zA-Z0-9]', '', 'g')"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.8-04" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint constraintName="baseinfo_qualityattribute_code_fc2b6cd0_uniq"
+                              tableName="baseinfo_qualityattribute"/>
+    </changeSet>
+
+    <changeSet id="0.8-05" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_subject_id, code"
+                             constraintName="baseinfo_qualityattribute_code_fc2b6cd0_uniq"
+                             tableName="baseinfo_qualityattribute"/>
+    </changeSet>
+
+    <changeSet id="0.8-06" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_qualityattribute">
+            <column name="code" valueComputed="REGEXP_REPLACE(title, '[^a-zA-Z0-9]', '', 'g')"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.8-07" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint constraintName="baseinfo_questionnaire_code_04aa0ba7_uniq"
+                              tableName="baseinfo_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.8-08" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_kit_id, code"
+                             constraintName="baseinfo_questionnaire_code_04aa0ba7_uniq"
+                             tableName="baseinfo_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.8-09" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_questionnaire">
+            <column name="code" valueComputed="REGEXP_REPLACE(title, '[^a-zA-Z0-9]', '', 'g')"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.8-10" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_maturitylevel">
+            <column name="code" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.8-11" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_maturitylevel">
+            <column name="code" valueComputed="REGEXP_REPLACE(title, '[^a-zA-Z0-9]', '', 'g')"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.8-12" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_maturitylevel" columnName="code"/>
+    </changeSet>
+
+    <changeSet id="0.8-13" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="assessment_kit_id, code"
+                             constraintName="uq_baseinfo_maturitylevel_code_kit_id"
+                             tableName="baseinfo_maturitylevel"/>
+    </changeSet>
+
+    <changeSet id="0.8-14" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_question">
+            <column name="code" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.8-15" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_question">
+            <column name="code" valueComputed="CONCAT('q', index)"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.8-16" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_question" columnName="code"/>
+    </changeSet>
+
+    <changeSet id="0.8-17" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="questionnaire_id, code"
+                             constraintName="uq_baseinfo_question_code_questionnaire_id"
+                             tableName="baseinfo_question"/>
+    </changeSet>
+
+    <changeSet id="0.8-18" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_maturitylevel">
+            <column name="index" type="tinyint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.8-19" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_maturitylevel">
+            <column name="index" valueComputed="subquery.index
+                FROM (
+                SELECT id,
+                       ROW_NUMBER() OVER (PARTITION BY assessment_kit_id ORDER BY id) as index FROM baseinfo_maturitylevel
+            ) as subquery
+            WHERE baseinfo_maturitylevel.id = subquery.id;"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.8-20" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_maturitylevel" columnName="index"/>
+    </changeSet>
+
+    <changeSet id="0.8-21" author="Mahdi Rezazadeh">
+        <addColumn tableName="baseinfo_qualityattribute">
+            <column name="assessment_kit_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.8-22" author="Mahdi Rezazadeh">
+        <update tableName="baseinfo_qualityattribute">
+            <column name="assessment_kit_id" valueComputed="s.assessment_kit_id FROM baseinfo_assessmentsubject s
+            WHERE assessment_subject_id = s.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.8-23" author="Mahdi Rezazadeh">
+        <addNotNullConstraint tableName="baseinfo_qualityattribute" columnName="assessment_kit_id"/>
+    </changeSet>
+
+    <changeSet id="0.8-24" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="baseinfo_qualityattribute"
+                             columnNames="assessment_kit_id, code"
+                             constraintName="uq_baseinfo_qualityattribute_code_kitid"/>
+    </changeSet>
+
+    <changeSet id="0.8-25" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="baseinfo_qualityattribute"
+                                 baseColumnNames="assessment_kit_id"
+                                 referencedTableName="baseinfo_assessmentkit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_baseinfo_qualityattribute_assessmentkit"
+                                 deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-26" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint tableName="baseinfo_qualityattribute"
+                              constraintName="baseinfo_qualityattribut_title_assessment_subject_4a82494c_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-27" author="MKouhestani">
+        <update tableName="fac_answer">
+            <column name="confidence_level_id" valueNumeric="1"/>
+            <where>fac_answer.answer_option_id IS NOT Null AND fac_answer.confidence_level_id IS Null</where>
+        </update>
+    </changeSet>
+
+
+    <changeSet id="0.8-28" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_maturitylevel"
+                              constraintName="baseinfo_maturitylevel_value_profile_id_ddb3a964_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-29" author="Khorsandi">
+        <addUniqueConstraint columnNames="index, assessment_kit_id"
+                             constraintName="baseinfo_maturitylevel_value_profile_id_ddb3a964_uniq"
+                             tableName="baseinfo_maturitylevel" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-30" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_maturitylevel"
+                              constraintName="baseinfo_maturitylevel_title_profile_id_2682c3b0_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-31" author="Khorsandi">
+        <addUniqueConstraint columnNames="title, assessment_kit_id"
+                             constraintName="baseinfo_maturitylevel_title_profile_id_2682c3b0_uniq"
+                             tableName="baseinfo_maturitylevel" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-32" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_assessmentsubject"
+                              constraintName="baseinfo_assessmentsubje_index_assessment_profile_bd210cc8_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-33" author="Khorsandi">
+        <addUniqueConstraint columnNames="index, assessment_kit_id"
+                             constraintName="baseinfo_assessmentsubje_index_assessment_profile_bd210cc8_uniq"
+                             tableName="baseinfo_assessmentsubject" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-34" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_assessmentsubject"
+                              constraintName="baseinfo_assessmentsubje_title_assessment_profile_b703b977_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-35" author="Khorsandi">
+        <addUniqueConstraint columnNames="title, assessment_kit_id"
+                             constraintName="baseinfo_assessmentsubje_title_assessment_profile_b703b977_uniq"
+                             tableName="baseinfo_assessmentsubject" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-36" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_questionnaire"
+                              constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-37" author="Khorsandi">
+        <addUniqueConstraint columnNames="index, assessment_kit_id"
+                             constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"
+                             tableName="baseinfo_questionnaire" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-38" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_questionnaire"
+                              constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-39" author="Khorsandi">
+        <addUniqueConstraint columnNames="title, assessment_kit_id"
+                             constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"
+                             tableName="baseinfo_questionnaire" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-40" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_questionnaire"
+                              constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-41" author="Khorsandi">
+        <addUniqueConstraint columnNames="index, assessment_kit_id"
+                             constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"
+                             tableName="baseinfo_questionnaire" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-42" author="Khorsandi">
+        <dropUniqueConstraint tableName="baseinfo_questionnaire"
+                              constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.8-43" author="Khorsandi">
+        <addUniqueConstraint columnNames="title, assessment_kit_id"
+                             constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"
+                             tableName="baseinfo_questionnaire" deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.8-44" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="baseinfo_qualityattribute" columnName="index"/>
+    </changeSet>
+
+    <changeSet id="0.8-45" author="Ali Sedaghat">
+        <addUniqueConstraint columnNames="index, assessment_subject_id"
+                             constraintName="uq_baseinfo_qualityattribute_index_assessment_subject_id"
+                             tableName="baseinfo_qualityattribute" deferrable="true" initiallyDeferred="true"/>
+
+        <changeSet id="0.8-01" author="Mahdi Rezazadeh">
+            <dropForeignKeyConstraint baseTableName="account_space"
+                                      constraintName="account_space_owner_id_9c7e98ca_fk_account_user_id"/>
+        </changeSet>
 
     <changeSet id="0.8-02" author="Mahdi Rezazadeh">
         <dropForeignKeyConstraint baseTableName="account_useraccess"
