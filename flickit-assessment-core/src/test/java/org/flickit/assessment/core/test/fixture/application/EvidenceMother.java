@@ -11,7 +11,7 @@ public class EvidenceMother {
         return new Evidence(
             UUID.randomUUID(),
             "description",
-            1L,
+            UUID.randomUUID(),
             UUID.randomUUID(),
             1L,
             LocalDateTime.now(),
