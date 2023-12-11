@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.user.DeleteUserAccessPort
 import org.flickit.assessment.kit.application.port.out.user.LoadUserByIdPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,12 +20,12 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitUserMother.simpleKitUser;
 import static org.flickit.assessment.kit.test.fixture.application.UserMother.simpleUser;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DeleteUserAccessServiceTest {
+class DeleteUserAccessServiceTest {
 
     @InjectMocks
     private DeleteUserAccessService service;
@@ -46,13 +47,19 @@ public class DeleteUserAccessServiceTest {
         Long kitId = 1L;
         Long userId = 1L;
 
-        doNothing().when(deleteUserAccessPort).delete(kitId, userId);
+        doNothing().when(deleteUserAccessPort).delete(new DeleteUserAccessPort.Param(kitId, userId));
         when(loadKitByIdPort.load(kitId)).thenReturn(Optional.of(simpleKit()));
         when(loadUserByIdPort.load(userId)).thenReturn(Optional.of(simpleUser()));
         when(loadKitUserByKitAndUserPort.loadByKitAndUser(kitId, userId)).thenReturn(Optional.of(simpleKitUser()));
 
         var param = new DeleteUserAccessUseCase.Param(kitId, userId);
         service.delete(param);
+
+        ArgumentCaptor<DeleteUserAccessPort.Param> deletePortParam = ArgumentCaptor.forClass(DeleteUserAccessPort.Param.class);
+        verify(deleteUserAccessPort).delete(deletePortParam.capture());
+
+        assertEquals(kitId, deletePortParam.getValue().kitId());
+        assertEquals(userId, deletePortParam.getValue().userId());
     }
 
     @Test

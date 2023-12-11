@@ -32,7 +32,7 @@ public class DeleteUserAccessService implements DeleteUserAccessUseCase {
             () -> new ResourceNotFoundException(DELETE_USER_ACCESS_KIT_USER_NOT_FOUND)
         );
 
-        deleteUserAccessPort.delete(param.getKitId(), param.getUserId());
+        deleteUserAccessPort.delete(new DeleteUserAccessPort.Param(param.getKitId(), param.getUserId()));
         log.debug("User [{}] access to private kit [{}] is removed.", param.getUserId(), param.getUserId());
     }
 }

@@ -18,8 +18,8 @@ public class UserPersistenceJpaAdapter implements
     private final UserJpaRepository repository;
 
     @Override
-    public void delete(Long kitId, Long userId) {
-        repository.deleteByKitIdAndUserId(kitId, userId);
+    public void delete(DeleteUserAccessPort.Param param) {
+        repository.deleteByKitIdAndUserId(param.kitId(), param.userId());
     }
 
     @Override
