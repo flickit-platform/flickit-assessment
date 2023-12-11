@@ -33,7 +33,7 @@ class AddEvidenceServiceTest {
     void testAddEvidence_ValidParam_PersistsAndReturnsId() {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
-            1L,
+            UUID.randomUUID(),
             UUID.randomUUID(),
             1L
         );
@@ -60,7 +60,7 @@ class AddEvidenceServiceTest {
     void testAddEvidence_InvalidAssessmentId_ThrowNotFoundException() {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
-            1L,
+            UUID.randomUUID(),
             UUID.randomUUID(),
             1L
         );

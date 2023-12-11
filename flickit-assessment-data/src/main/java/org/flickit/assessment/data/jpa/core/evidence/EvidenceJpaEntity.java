@@ -34,7 +34,7 @@ public class EvidenceJpaEntity {
     private LocalDateTime lastModificationTime;
 
     @Column(name = "created_by_id", nullable = false)
-    private Long createdById;
+    private UUID createdById;
 
     @Column(name = "assessment_id", nullable = false)
     private UUID assessmentId;
