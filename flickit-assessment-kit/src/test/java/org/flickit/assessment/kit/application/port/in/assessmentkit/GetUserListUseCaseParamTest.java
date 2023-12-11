@@ -11,7 +11,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class GetUserListUseCaseParamTest {
+class GetUserListUseCaseParamTest {
 
     @Test
     void testGetUserList_kitIdIsNull_ErrorMessage() {
