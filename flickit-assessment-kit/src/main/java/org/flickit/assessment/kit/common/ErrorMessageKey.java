@@ -19,6 +19,10 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND= "update-kit-by-dsl.answer-option.notFound";
 
+
+    public static final String DELETE_USER_ACCESS_KIT_ID_NOT_NULL = "delete-user-access.kitId.notNull";
+    public static final String DELETE_USER_ACCESS_USER_ID_NOT_NULL = "delete-user-access.userId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
