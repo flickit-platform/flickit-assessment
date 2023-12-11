@@ -19,6 +19,13 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND= "update-kit-by-dsl.answer-option.notFound";
 
+
+    public static final String GET_USER_LIST_KIT_ID_NOT_NULL = "get-user-list.kit-id.notNull";
+    public static final String GET_USER_LIST_PAGE_MIN = "get-user-list.page.min";
+    public static final String GET_USER_LIST_SIZE_MIN = "get-user-list.size.min";
+    public static final String GET_USER_LIST_SIZE_MAX = "get-user-list.size.max";
+
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
