@@ -50,7 +50,7 @@ public interface GetEvidenceListUseCase {
     record EvidenceListItem(
         UUID id,
         String description,
-        long createdById,
+        UUID createdById,
         UUID assessmentId,
         LocalDateTime lastModificationTime){}
 }

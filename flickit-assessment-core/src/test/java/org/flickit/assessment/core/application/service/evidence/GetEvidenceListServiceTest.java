@@ -88,7 +88,7 @@ class GetEvidenceListServiceTest {
         return new EvidenceListItem(
             UUID.randomUUID(),
             "desc",
-            1L,
+            UUID.randomUUID(),
             UUID.randomUUID(),
             LocalDateTime.now()
         );
