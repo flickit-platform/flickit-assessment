@@ -21,7 +21,7 @@ public class DeleteUserAccessService implements DeleteUserAccessUseCase {
 
     private final LoadKitByIdPort loadKitByIdPort;
     private final LoadUserByIdPort loadUserByIdPort;
-    private final LoadKitUserByKitAndUserPort loadKitUserByKitAndUserPort;
+    private final LoadKitUserByKitAndUserPort loadKitUserByKitAndUserPort; // TODO: implement this port
     private final DeleteUserAccessPort deleteUserAccessPort;
 
     @Override
