@@ -21,8 +21,8 @@ public class GetUserListRestController {
         @PathVariable("kitId") Long kitId,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "50") int size) {
-        useCase.getUserList(toParam(kitId, page, size));
-        return new ResponseEntity<>(HttpStatus.OK);
+        var userList = useCase.getUserList(toParam(kitId, page, size));
+        return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 
     private GetUserListUseCase.Param toParam(Long kitId, int page, int size) {
