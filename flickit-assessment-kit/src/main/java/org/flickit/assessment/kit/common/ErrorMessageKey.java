@@ -22,6 +22,9 @@ public class ErrorMessageKey {
 
     public static final String DELETE_USER_ACCESS_KIT_ID_NOT_NULL = "delete-user-access.kitId.notNull";
     public static final String DELETE_USER_ACCESS_USER_ID_NOT_NULL = "delete-user-access.userId.notNull";
+    public static final String DELETE_USER_ACCESS_KIT_NOT_FOUND = "delete-user-access.kit.notFound";
+    public static final String DELETE_USER_ACCESS_USER_NOT_FOUND = "delete-user-access.user.notFound";
+    public static final String DELETE_USER_ACCESS_KIT_USER_NOT_FOUND = "delete-user-access.kit-user.notFound";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
