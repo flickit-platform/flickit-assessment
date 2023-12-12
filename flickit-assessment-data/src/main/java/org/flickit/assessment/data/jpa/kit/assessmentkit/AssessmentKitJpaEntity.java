@@ -1,12 +1,12 @@
 package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
+import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "baseinfo_assessmentkit")
@@ -37,8 +37,9 @@ public class AssessmentKitJpaEntity {
     @Column(name = "last_modification_date", nullable = false)
     private LocalDateTime lastModificationTime;
 
-    @Column(name = "expert_group_id")
-    private Integer expertGroupId;
+    @ManyToOne
+    @JoinColumn(name = "expert_group_id", referencedColumnName = "id", nullable = false)
+    private ExpertGroupJpaEntity expertGroup;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
@@ -46,4 +47,10 @@ public class AssessmentKitJpaEntity {
     @Column(name = "about", nullable = false)
     private String about;
 
+    @ManyToMany
+    @JoinTable(
+        name = "baseinfo_assessmentkit_account_user",
+        joinColumns = @JoinColumn(name = "assessment_kit_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<UserJpaEntity> accessGrantedUsers;
 }
