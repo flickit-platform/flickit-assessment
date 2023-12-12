@@ -19,6 +19,12 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND= "update-kit-by-dsl.answer-option.notFound";
 
+    public static final String GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_NULL = "grant-user-access-to-kit.kitId.notNull";
+    public static final String GRANT_USER_ACCESS_TO_KIT_USER_EMAIL_NOT_NULL = "grant-user-access-to-kit.userEmail.notNull";
+    public static final String GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_NOT_NULL = "grant-user-access-to-kit.currentUser.notNull";
+    public static final String GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND = "grant-user-access-to-kit.kitId.notFound";
+    public static final String GRANT_USER_ACCESS_TO_KIT_USER_EMAIL_NOT_FOUND = "grant-user-access-to-kit.userEmail.notFound";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
