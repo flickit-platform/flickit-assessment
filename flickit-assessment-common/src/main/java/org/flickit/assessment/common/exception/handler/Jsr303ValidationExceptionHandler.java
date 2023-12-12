@@ -1,4 +1,4 @@
-package org.flickit.assessment.common.exception;
+package org.flickit.assessment.common.exception.handler;
 
 import jakarta.validation.ConstraintViolationException;
 import org.flickit.assessment.common.application.MessageBundle;

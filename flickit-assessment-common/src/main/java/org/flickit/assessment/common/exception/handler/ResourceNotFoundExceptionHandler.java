@@ -1,6 +1,7 @@
-package org.flickit.assessment.common.exception;
+package org.flickit.assessment.common.exception.handler;
 
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

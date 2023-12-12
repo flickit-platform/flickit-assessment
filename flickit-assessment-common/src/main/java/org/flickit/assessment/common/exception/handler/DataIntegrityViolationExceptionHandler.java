@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.in.rest.exception;
+package org.flickit.assessment.common.exception.handler;
 
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;

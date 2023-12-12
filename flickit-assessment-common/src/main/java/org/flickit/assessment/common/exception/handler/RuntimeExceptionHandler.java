@@ -1,4 +1,4 @@
-package org.flickit.assessment.common.exception;
+package org.flickit.assessment.common.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.MessageBundle;
