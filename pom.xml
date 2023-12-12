@@ -21,6 +21,7 @@
 		<module>flickit-assessment-kit</module>
 		<module>flickit-assessment-data</module>
 		<module>flickit-assessment-server</module>
+		<module>flickit-assessment-common</module>
 	</modules>
 
 	<properties>
@@ -55,6 +56,11 @@
 			<dependency>
 				<groupId>org.flickit</groupId>
 				<artifactId>flickit-assessment-data</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.flickit</groupId>
+				<artifactId>flickit-assessment-common</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
