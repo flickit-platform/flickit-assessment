@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.config;
+package org.flickit.assessment.common.config;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

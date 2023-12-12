@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.rest.api.exception;
+package org.flickit.assessment.common.adapter.out.rest.api.exception;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;

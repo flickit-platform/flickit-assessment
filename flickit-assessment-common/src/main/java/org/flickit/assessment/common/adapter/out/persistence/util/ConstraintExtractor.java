@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.util;
+package org.flickit.assessment.common.adapter.out.persistence.util;
 
 import jakarta.annotation.Nullable;
 import lombok.AccessLevel;

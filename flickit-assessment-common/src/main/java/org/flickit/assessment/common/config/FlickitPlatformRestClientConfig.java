@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.config;
+package org.flickit.assessment.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
