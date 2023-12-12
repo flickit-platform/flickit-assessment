@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.in.rest.exception.api;
+package org.flickit.assessment.common.exception.api;
 
 import java.util.List;
 

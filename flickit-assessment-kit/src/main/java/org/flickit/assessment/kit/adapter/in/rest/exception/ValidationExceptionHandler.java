@@ -1,6 +1,6 @@
 package org.flickit.assessment.kit.adapter.in.rest.exception;
 
-import org.flickit.assessment.kit.adapter.in.rest.exception.api.ErrorResponsesDto;
+import org.flickit.assessment.common.exception.api.ErrorResponsesDto;
 import org.flickit.assessment.kit.common.Notification;
 import org.flickit.assessment.kit.common.ValidationException;
 import org.springframework.http.HttpStatus;

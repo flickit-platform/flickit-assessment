@@ -1,6 +1,6 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
 
-import org.flickit.assessment.kit.common.MessageBundle;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.kit.common.Notification;
 
 import java.util.Set;

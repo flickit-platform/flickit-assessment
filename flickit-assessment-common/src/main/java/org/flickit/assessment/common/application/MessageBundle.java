@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.common;
+package org.flickit.assessment.common.application;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.context.MessageSource;
@@ -21,7 +21,7 @@ public class MessageBundle {
 
     private static MessageSource messageSource() {
         var messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("i18n/kit/messages");
+        messageSource.setBasenames("i18n/core/messages", "i18n/kit/messages");
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setDefaultLocale(Locale.ENGLISH);
         return messageSource;

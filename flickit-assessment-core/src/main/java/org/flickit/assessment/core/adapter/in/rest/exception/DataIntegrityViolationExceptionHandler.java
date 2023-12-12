@@ -2,9 +2,9 @@ package org.flickit.assessment.core.adapter.in.rest.exception;
 
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.core.adapter.in.rest.exception.api.ErrorCodes;
-import org.flickit.assessment.core.adapter.in.rest.exception.api.ErrorResponseDto;
-import org.flickit.assessment.core.common.MessageBundle;
+import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.exception.api.ErrorCodes;
+import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.flickit.assessment.core.adapter.out.persistence.util.ConstraintExtractor.extractConstraint;
+import static org.flickit.assessment.common.adapter.out.persistence.util.ConstraintExtractor.extractConstraint;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Slf4j

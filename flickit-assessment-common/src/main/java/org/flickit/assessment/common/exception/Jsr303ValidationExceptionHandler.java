@@ -1,15 +1,15 @@
-package org.flickit.assessment.core.adapter.in.rest.exception;
+package org.flickit.assessment.common.exception;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.core.adapter.in.rest.exception.api.ErrorResponseDto;
-import org.flickit.assessment.core.common.MessageBundle;
+import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static org.flickit.assessment.core.adapter.in.rest.exception.api.ErrorCodes.INVALID_INPUT;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
 
 @RestControllerAdvice
 public class Jsr303ValidationExceptionHandler {

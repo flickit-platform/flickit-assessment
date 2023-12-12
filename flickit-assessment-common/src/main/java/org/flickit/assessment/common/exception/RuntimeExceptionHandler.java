@@ -1,15 +1,14 @@
-package org.flickit.assessment.core.adapter.in.rest.exception;
+package org.flickit.assessment.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.core.adapter.in.rest.exception.api.ErrorResponseDto;
-import org.flickit.assessment.core.common.MessageBundle;
+import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static org.flickit.assessment.core.adapter.in.rest.exception.api.ErrorCodes.INTERNAL_ERROR;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.INTERNAL_ERROR;
 
 @Slf4j
 //@RestControllerAdvice
