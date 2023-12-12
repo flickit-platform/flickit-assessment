@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.10-06" author="MKouhestani">
+        <addColumn tableName="fac_answer">
+            <column name="created_by" type="uuid"/>
+            <column name="last_modified_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.10-07" author="MKouhestani">
+        <sql>UPDATE fac_answer SET created_by = (SELECT fac_assessment.created_by FROM fac_assessment WHERE
+            fac_assessment.id = (SELECT fac_assessment_result.assessment_id FROM fac_assessment_result WHERE
+            fac_assessment_result.id = fac_answer.assessment_result_id))
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.10-08" author="MKouhestani">
+        <sql>UPDATE fac_answer SET last_modified_by = (SELECT fac_assessment.created_by FROM fac_assessment WHERE
+            fac_assessment.id = (SELECT fac_assessment_result.assessment_id FROM fac_assessment_result WHERE
+            fac_assessment_result.id = fac_answer.assessment_result_id))
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.10-09" author="MKouhestani">
+        <addNotNullConstraint columnDataType="uuid"
+                              columnName="created_by"
+                              constraintName="created_by_not_null"
+                              tableName="fac_answer"/>
+    </changeSet>
+
+    <changeSet id="0.10-10" author="MKouhestani">
+        <addNotNullConstraint columnDataType="uuid"
+                              columnName="last_modified_by"
+                              constraintName="last_modified_by_not_null"
+                              tableName="fac_answer"/>
+    </changeSet>
+
+</databaseChangeLog>

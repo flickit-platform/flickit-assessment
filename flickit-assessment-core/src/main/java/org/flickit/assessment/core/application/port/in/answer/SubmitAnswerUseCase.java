@@ -32,13 +32,17 @@ public interface SubmitAnswerUseCase {
 
         Boolean isNotApplicable;
 
-        public Param(UUID assessmentId, Long questionnaireId, Long questionId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable) {
+        @NotNull(message = SUBMIT_ANSWER_CREATED_BY_NOT_NULL)
+        UUID createdBy;
+
+        public Param(UUID assessmentId, Long questionnaireId, Long questionId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable, UUID createdBy) {
             this.assessmentId = assessmentId;
             this.questionnaireId = questionnaireId;
             this.questionId = questionId;
             this.answerOptionId = answerOptionId;
             this.confidenceLevelId = confidenceLevelId;
             this.isNotApplicable = isNotApplicable;
+            this.createdBy = createdBy;
             this.validateSelf();
         }
     }

@@ -21,6 +21,7 @@ public class SubmitAnswerRestController {
     @PutMapping("/assessments/{assessmentId}/answer-question")
     public ResponseEntity<SubmitAnswerResponseDto> submitAnswer(@PathVariable("assessmentId") UUID assessmentId,
                                                                 @RequestBody SubmitAnswerRequestDto requestDto) {
+        // TODO: get created by id from jwt
         SubmitAnswerResponseDto responseDto = toResponseDto(useCase.submitAnswer(toParam(assessmentId, requestDto)));
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
@@ -32,7 +33,8 @@ public class SubmitAnswerRestController {
             requestDto.questionId(),
             requestDto.answerOptionId(),
             requestDto.confidenceLevelId(),
-            requestDto.isNotApplicable()
+            requestDto.isNotApplicable(),
+            requestDto.createdBy()
         );
     }
 

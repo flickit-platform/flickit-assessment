@@ -70,7 +70,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             param.getQuestionId(),
             answerOptionId,
             confidenceLevelId,
-            param.getIsNotApplicable()
+            param.getIsNotApplicable(),
+            param.getCreatedBy()
         );
     }
 
