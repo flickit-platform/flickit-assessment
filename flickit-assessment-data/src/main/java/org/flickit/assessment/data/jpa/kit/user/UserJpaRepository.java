@@ -9,5 +9,5 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, Long> {
 
     @Query("SELECT u FROM UserJpaEntity u " +
         "WHERE u.id IN (SELECT uk FROM AssessmentKitUserJpaEntity uk WHERE uk.kitId = :kitId)")
-    Page<UserJpaEntity> findAllByAccessToKitId(Long kitId, Pageable pageable);
+    Page<UserJpaEntity> findAllKitUsers(Long kitId, Pageable pageable);
 }

@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.in.user;
+package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -10,22 +10,22 @@ import org.flickit.assessment.kit.common.SelfValidating;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
-public interface GetUserListUseCase {
+public interface GetKitUserListUseCase {
 
-    PaginatedResponse<UserListItem> getUserList(Param param);
+    PaginatedResponse<KitUserListItem> getKitUserList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_USER_LIST_KIT_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_USER_LIST_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @Min(value = 0, message = GET_USER_LIST_PAGE_MIN)
+        @Min(value = 0, message = GET_KIT_USER_LIST_PAGE_MIN)
         int page;
 
-        @Min(value = 1, message = GET_USER_LIST_SIZE_MIN)
-        @Max(value = 100, message = GET_USER_LIST_SIZE_MAX)
+        @Min(value = 1, message = GET_KIT_USER_LIST_SIZE_MIN)
+        @Max(value = 100, message = GET_KIT_USER_LIST_SIZE_MAX)
         int size;
 
         public Param(Long kitId, int page, int size) {
@@ -36,7 +36,7 @@ public interface GetUserListUseCase {
         }
     }
 
-    record UserListItem(
+    record KitUserListItem(
         String name,
         String email) {
     }

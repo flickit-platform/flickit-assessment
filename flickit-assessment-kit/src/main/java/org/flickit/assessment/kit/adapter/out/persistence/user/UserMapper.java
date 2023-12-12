@@ -3,12 +3,12 @@ package org.flickit.assessment.kit.adapter.out.persistence.user;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
-import org.flickit.assessment.kit.application.port.in.user.GetUserListUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
-    public static GetUserListUseCase.UserListItem mapJpaEntityToUserItem(UserJpaEntity entity) {
-        return new GetUserListUseCase.UserListItem(
+    public static GetKitUserListUseCase.KitUserListItem mapJpaEntityToUserItem(UserJpaEntity entity) {
+        return new GetKitUserListUseCase.KitUserListItem(
             entity.getDisplayName(),
             entity.getEmail()
         );

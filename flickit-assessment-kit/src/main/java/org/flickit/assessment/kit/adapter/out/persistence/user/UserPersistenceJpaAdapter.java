@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.kit.application.port.in.user.GetUserListUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.user.LoadUsersByKitPort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,8 +18,8 @@ public class UserPersistenceJpaAdapter implements LoadUsersByKitPort {
     private final UserJpaRepository repository;
 
     @Override
-    public PaginatedResponse<GetUserListUseCase.UserListItem> load(LoadUsersByKitPort.Param param) {
-        Page<UserJpaEntity> pageResult = repository.findAllByAccessToKitId(
+    public PaginatedResponse<GetKitUserListUseCase.KitUserListItem> load(LoadUsersByKitPort.Param param) {
+        Page<UserJpaEntity> pageResult = repository.findAllKitUsers(
             param.kitId(),
             PageRequest.of(param.page(), param.size()));
 

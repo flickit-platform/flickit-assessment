@@ -1,8 +1,8 @@
-package org.flickit.assessment.kit.application.service.user;
+package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.kit.application.port.in.user.GetUserListUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.user.LoadUsersByKitPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,35 +22,35 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GetUserListServiceTest {
+class GetKitUserListServiceTest {
 
     @InjectMocks
-    private GetUserListService service;
+    private GetKitUserListService service;
 
     @Mock
     private LoadUsersByKitPort loadUsersByKitPort;
 
     @Test
-    void testGetUserList_ValidInputs_ValidResults() {
+    void testGetKitUserList_ValidInputs_ValidResults() {
         Long kitId = 1L;
         int page = 0;
         int size = 10;
 
-        List<GetUserListUseCase.UserListItem> userListItems = List.of(
+        List<GetKitUserListUseCase.KitUserListItem> kitUserListItems = List.of(
             userListItem("UserName1", "UserEmail1@email.com"),
             userListItem("UserName2", "UserEmail2@email.com")
         );
-        PaginatedResponse<GetUserListUseCase.UserListItem> paginatedResponse = new PaginatedResponse<>(
-            userListItems,
+        PaginatedResponse<GetKitUserListUseCase.KitUserListItem> paginatedResponse = new PaginatedResponse<>(
+            kitUserListItems,
             page,
             size,
             UserJpaEntity.Fields.ID,
             Sort.Direction.ASC.name().toLowerCase(),
-            userListItems.size());
+            kitUserListItems.size());
         when(loadUsersByKitPort.load(any(LoadUsersByKitPort.Param.class))).thenReturn(paginatedResponse);
 
-        var param = new GetUserListUseCase.Param(kitId, page, size);
-        var result = service.getUserList(param);
+        var param = new GetKitUserListUseCase.Param(kitId, page, size);
+        var result = service.getKitUserList(param);
 
         ArgumentCaptor<LoadUsersByKitPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadUsersByKitPort.Param.class);
         verify(loadUsersByKitPort).load(loadPortParam.capture());
@@ -59,17 +59,17 @@ class GetUserListServiceTest {
         assertEquals(page, loadPortParam.getValue().page());
         assertEquals(size, loadPortParam.getValue().size());
         assertNotNull(result.getItems());
-        assertEquals(userListItems, result.getItems());
+        assertEquals(kitUserListItems, result.getItems());
         verify(loadUsersByKitPort, times(1)).load(any(LoadUsersByKitPort.Param.class));
     }
 
     @Test
-    void testGetUserList_ValidInputs_EmptyResult() {
+    void testGetKitUserList_ValidInputs_EmptyResult() {
         Long kitId = 1L;
         int page = 0;
         int size = 10;
 
-        PaginatedResponse<GetUserListUseCase.UserListItem> paginatedResponse = new PaginatedResponse<>(
+        PaginatedResponse<GetKitUserListUseCase.KitUserListItem> paginatedResponse = new PaginatedResponse<>(
             Collections.emptyList(),
             page,
             size,
@@ -78,8 +78,8 @@ class GetUserListServiceTest {
             0);
         when(loadUsersByKitPort.load(any(LoadUsersByKitPort.Param.class))).thenReturn(paginatedResponse);
 
-        var param = new GetUserListUseCase.Param(kitId, page, size);
-        var result = service.getUserList(param);
+        var param = new GetKitUserListUseCase.Param(kitId, page, size);
+        var result = service.getKitUserList(param);
 
         ArgumentCaptor<LoadUsersByKitPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadUsersByKitPort.Param.class);
         verify(loadUsersByKitPort).load(loadPortParam.capture());
