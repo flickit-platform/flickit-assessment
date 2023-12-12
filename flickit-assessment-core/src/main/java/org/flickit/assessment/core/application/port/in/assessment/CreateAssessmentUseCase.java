@@ -33,11 +33,15 @@ public interface CreateAssessmentUseCase {
         @NotNull(message = CREATE_ASSESSMENT_COLOR_ID_NOT_NULL)
         Integer colorId;
 
-        public Param(Long spaceId, String title, Long assessmentKitId, Integer colorId) {
+        @NotNull(message = CREATE_ASSESSMENT_CREATED_BY_NOT_NULL)
+        UUID createdBy;
+
+        public Param(Long spaceId, String title, Long assessmentKitId, Integer colorId, UUID createdBy) {
             this.title = title != null ? title.strip() : null;
             this.spaceId = spaceId;
             this.assessmentKitId = assessmentKitId;
             this.colorId = colorId;
+            this.createdBy = createdBy;
             this.validateSelf();
         }
     }

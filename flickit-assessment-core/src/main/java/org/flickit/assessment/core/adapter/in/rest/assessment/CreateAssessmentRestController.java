@@ -17,6 +17,7 @@ public class CreateAssessmentRestController {
 
     @PostMapping("/assessments")
     public ResponseEntity<CreateAssessmentResponseDto> createAssessment(@RequestBody CreateAssessmentRequestDto request) {
+        // TODO: get created by id from jwt
         CreateAssessmentResponseDto response = toResponseDto(useCase.createAssessment(toParam(request)));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -26,7 +27,8 @@ public class CreateAssessmentRestController {
             requestDto.spaceId(),
             requestDto.title(),
             requestDto.assessmentKitId(),
-            requestDto.colorId()
+            requestDto.colorId(),
+            requestDto.createdBy()
         );
     }
 

@@ -53,7 +53,8 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             creationTime,
             lastModificationTime,
             NOT_DELETED_DELETION_TIME,
-            false
+            false,
+            param.getCreatedBy()
         );
     }
 

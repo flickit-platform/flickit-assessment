@@ -24,7 +24,9 @@ public class AssessmentMapper {
             param.creationTime(),
             param.lastModificationTime(),
             param.deletionTime(),
-            param.deleted()
+            param.deleted(),
+            param.createdBy(),
+            param.createdBy()
         );
     }
 

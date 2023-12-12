@@ -53,7 +53,8 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1
+            1,
+            UUID.randomUUID()
         );
         UUID expectedId = UUID.randomUUID();
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
@@ -80,7 +81,8 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1
+            1,
+            UUID.randomUUID()
         );
         UUID assessmentId = UUID.randomUUID();
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(assessmentId);
@@ -106,7 +108,8 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             assessmentKitId,
-            1
+            1,
+            UUID.randomUUID()
         );
 
         QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
@@ -134,7 +137,8 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             assessmentKitId,
-            1
+            1,
+            UUID.randomUUID()
         );
         QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
         QualityAttribute qa2 = QualityAttributeMother.simpleAttribute();
@@ -160,7 +164,8 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            7
+            7,
+            UUID.randomUUID()
         );
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
