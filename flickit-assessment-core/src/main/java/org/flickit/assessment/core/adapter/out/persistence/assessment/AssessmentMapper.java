@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.assessment;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.core.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
@@ -9,6 +10,7 @@ import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentL
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentListItemView;
+
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentMapper {
@@ -25,8 +27,8 @@ public class AssessmentMapper {
             param.lastModificationTime(),
             param.deletionTime(),
             param.deleted(),
-            param.createdBy(),
-            param.createdBy()
+            UserMapper.toJpaEntity(param.createdBy()),
+            UserMapper.toJpaEntity(param.createdBy())
         );
     }
 
