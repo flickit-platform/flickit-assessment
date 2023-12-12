@@ -1,11 +1,11 @@
 package org.flickit.assessment.core.adapter.out.rest.subject;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.adapter.out.rest.api.DataItemsDto;
-import org.flickit.assessment.core.adapter.out.rest.api.exception.FlickitPlatformRestException;
+import org.flickit.assessment.common.adapter.out.rest.api.DataItemsDto;
+import org.flickit.assessment.common.adapter.out.rest.api.exception.FlickitPlatformRestException;
+import org.flickit.assessment.common.config.FlickitPlatformRestProperties;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
-import org.flickit.assessment.core.config.FlickitPlatformRestProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

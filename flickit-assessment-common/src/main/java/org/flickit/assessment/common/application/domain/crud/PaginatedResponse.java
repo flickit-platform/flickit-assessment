@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.domain.crud;
+package org.flickit.assessment.common.application.domain.crud;
 
 import lombok.NonNull;
 import lombok.Value;

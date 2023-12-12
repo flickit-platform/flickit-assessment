@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.rest.api;
+package org.flickit.assessment.common.adapter.out.rest.api;
 
 import java.util.List;
 
