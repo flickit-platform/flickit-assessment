@@ -9,7 +9,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.service.assessmentkit.validate.UpdateKitValidator;
-import org.flickit.assessment.kit.common.Notification;
+import org.flickit.assessment.common.exception.api.Notification;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

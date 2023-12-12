@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.common;
+package org.flickit.assessment.common.exception.api;
 
 import lombok.Getter;
 

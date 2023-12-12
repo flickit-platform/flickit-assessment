@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
 
 import org.flickit.assessment.common.application.MessageBundle;
-import org.flickit.assessment.kit.common.Notification;
+import org.flickit.assessment.common.exception.api.Notification;
 
 import java.util.Set;
 
