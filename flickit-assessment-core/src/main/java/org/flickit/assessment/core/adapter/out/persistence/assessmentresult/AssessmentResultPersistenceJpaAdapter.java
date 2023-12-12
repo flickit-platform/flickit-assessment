@@ -1,8 +1,8 @@
 package org.flickit.assessment.core.adapter.out.persistence.assessmentresult;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
-
 
 @Component
 @RequiredArgsConstructor

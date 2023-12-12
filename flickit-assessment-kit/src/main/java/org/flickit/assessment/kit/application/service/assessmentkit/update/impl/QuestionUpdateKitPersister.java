@@ -2,9 +2,9 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.*;
-import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
