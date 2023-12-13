@@ -5,13 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.extern.jackson.Jacksonized;
 
+import java.util.UUID;
+
 @Builder
 @Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record UserDetail(@JsonProperty("preferred_username") String username,
-                         @JsonProperty("email") String email,
-                         @JsonProperty("email_verified") Boolean emailVerified,
-                         @JsonProperty("given_name") String firstName,
-                         @JsonProperty("family_name") String lastName,
-                         @JsonProperty("name") String fullName) {
+public record UserDetail(@JsonProperty("sub") UUID id) {
 }
