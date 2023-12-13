@@ -7,7 +7,9 @@
 
     <changeSet id="0.10-1" author="MKouhestani">
         <addColumn tableName="baseinfo_assessmentkit">
-            <column name="is_private" type="boolean" defaultValueBoolean="false"/>
+            <column name="is_private" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
     </changeSet>
 
