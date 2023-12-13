@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.config;
+package org.flickit.assessment.common.config.jwt;
 
 import lombok.Getter;
 import lombok.Setter;
