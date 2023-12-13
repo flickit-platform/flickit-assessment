@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.assessment.kit.common.SelfValidating;
+import org.flickit.assessment.common.application.SelfValidating;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
