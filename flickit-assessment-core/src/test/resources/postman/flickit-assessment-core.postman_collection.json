@@ -86,6 +86,11 @@
 						"value": "application/json",
 						"type": "default",
 						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -241,6 +246,11 @@
 						"value": "application/json",
 						"type": "default",
 						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -379,6 +389,11 @@
 						"value": "application/json",
 						"type": "default",
 						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -452,6 +467,11 @@
 						"value": "application/json",
 						"type": "default",
 						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -482,6 +502,11 @@
 						"value": "application/json",
 						"type": "default",
 						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -548,6 +573,11 @@
 						"value": "application/json",
 						"type": "default",
 						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
