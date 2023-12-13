@@ -2,12 +2,14 @@ package org.flickit.assessment.core.application.service.answer;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_USER_NOT_FOUND;
 
 @Service
 @Transactional
@@ -26,6 +29,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final LoadAnswerPort loadAnswerPort;
     private final UpdateAnswerPort updateAnswerPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
+    private final LoadUserPort loadUserPort;
 
     @Override
     public Result submitAnswer(Param param) {
@@ -56,14 +60,15 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
-        UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId));
+        var user = loadUserPort.load(param.getCreatedBy()).orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_USER_NOT_FOUND));
+        UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId, user));
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId, Boolean.FALSE, Boolean.FALSE);
         }
         return new Result(savedAnswerId);
     }
 
-    private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
+    private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId, User user) {
         return new CreateAnswerPort.Param(
             assessmentResultId,
             param.getQuestionnaireId(),
@@ -71,7 +76,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             answerOptionId,
             confidenceLevelId,
             param.getIsNotApplicable(),
-            param.getCreatedBy()
+            user
         );
     }
 

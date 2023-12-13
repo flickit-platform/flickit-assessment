@@ -8,13 +8,14 @@ import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
+import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 
 import java.util.ArrayList;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerMapper {
 
-    public static AnswerJpaEntity mapCreateParamToJpaEntity(CreateAnswerPort.Param param) {
+    public static AnswerJpaEntity mapCreateParamToJpaEntity(CreateAnswerPort.Param param, UserJpaEntity userEntity) {
         return new AnswerJpaEntity(
             null,
             null,
@@ -23,8 +24,8 @@ public class AnswerMapper {
             param.answerOptionId(),
             param.confidenceLevelId(),
             param.isNotApplicable(),
-            param.createdBy(),
-            param.createdBy()
+            userEntity,
+            userEntity
         );
     }
 

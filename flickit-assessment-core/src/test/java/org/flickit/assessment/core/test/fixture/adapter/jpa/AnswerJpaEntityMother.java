@@ -9,7 +9,7 @@ import java.util.UUID;
 public class AnswerJpaEntityMother {
 
     public static AnswerJpaEntity answerEntityWithOption(AssessmentResultJpaEntity assessmentResultJpaEntity, Long questionId, Long answerOptionId) {
-        UUID createdBy = UUID.randomUUID();
+        var createdBy = UserJpaEntityMother.user();
         return new AnswerJpaEntity(
             UUID.randomUUID(),
             assessmentResultJpaEntity,
@@ -24,7 +24,7 @@ public class AnswerJpaEntityMother {
     }
 
     public static AnswerJpaEntity answerEntityWithNoOption(AssessmentResultJpaEntity assessmentResultJpaEntity, Long questionId) {
-        UUID createdBy = UUID.randomUUID();
+        var createdBy = UserJpaEntityMother.user();
         return new AnswerJpaEntity(
             UUID.randomUUID(),
             assessmentResultJpaEntity,
@@ -39,7 +39,7 @@ public class AnswerJpaEntityMother {
     }
 
     public static AnswerJpaEntity answerEntityWithIsNotApplicableTrue(AssessmentResultJpaEntity assessmentResultJpaEntity, Long questionId) {
-        UUID createdBy = UUID.randomUUID();
+        var createdBy = UserJpaEntityMother.user();
         return new AnswerJpaEntity(
             UUID.randomUUID(),
             assessmentResultJpaEntity,
