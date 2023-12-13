@@ -1,66 +1,46 @@
 package org.flickit.assessment.kit.config;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.util.Base64;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 @RequiredArgsConstructor
 public class AuthTokenFilter extends OncePerRequestFilter {
 
-    @Value("${app.keycloak.jwt-secret}")
-    private String jwtSecret;
-
-    private final SecurityContext context;
+    private final UserContext context;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
         try {
-            SecretKey key = new SecretKeySpec(jwtSecret.getBytes(), "HmacSHA256");
-            String jwt = request.getHeader("JWT");
+            String jwt = request.getHeader(AUTHORIZATION);
 
-            if (jwt != null && validateJwtToken(jwt, key)) {
-                String username = getUserNameFromJwtToken(jwt, key);
-                context.setUsername(username);
+            if (jwt != null) {
+                UserDetail user = getUserFromJwtToken(jwt);
+                context.setUser(user);
             }
         } catch (Exception e) {
-            logger.error("Cannot set user username: {}", e);
+            logger.error("Can not set user UserContext", e);
         }
 
         filterChain.doFilter(request, response);
     }
 
-    public boolean validateJwtToken(String authToken, SecretKey key) {
-        try {
-            Jwts.parser().verifyWith(key).build().parseSignedClaims(authToken);
-            return true;
-        } catch (MalformedJwtException e) {
-            logger.error("Invalid JWT token: {}", e);
-        } catch (ExpiredJwtException e) {
-            logger.error("JWT token is expired: {}", e);
-        } catch (UnsupportedJwtException e) {
-            logger.error("JWT token is unsupported: {}", e);
-        } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty: {}", e);
-        }
-        return false;
-    }
-
-    public String getUserNameFromJwtToken(String token, SecretKey key) {
-        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().get("email", String.class);
+    public UserDetail getUserFromJwtToken(String jwt) {
+        String token = jwt.substring(7);
+        String[] chunks = token.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String payload = new String(decoder.decode(chunks[1]));
+        return JwtTranslator.parseJson(payload);
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.context.annotation.RequestScope;
 @Setter
 @Component
 @RequestScope
-public class SecurityContext {
+public class UserContext {
 
-    private String username;
+    private UserDetail user;
 }
