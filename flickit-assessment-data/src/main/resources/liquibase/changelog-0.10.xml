@@ -4,6 +4,13 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
+
+    <changeSet id="0.10-1" author="MKouhestani">
+        <addColumn tableName="baseinfo_assessmentkit">
+            <column name="is_private" type="boolean" defaultValueBoolean="false"/>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="0.10-06" author="MKouhestani">
         <addColumn tableName="fac_answer">
             <column name="created_by" type="uuid"/>

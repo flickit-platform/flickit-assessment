@@ -3,8 +3,8 @@ package org.flickit.assessment.core.application.port.in.subject;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.core.application.domain.report.SubjectReport;
-import org.flickit.assessment.core.common.SelfValidating;
 
 import java.util.UUID;
 

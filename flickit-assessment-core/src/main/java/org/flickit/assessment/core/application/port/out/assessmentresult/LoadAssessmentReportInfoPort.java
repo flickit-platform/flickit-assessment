@@ -1,8 +1,8 @@
 package org.flickit.assessment.core.application.port.out.assessmentresult;
 
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.exception.CalculateNotValidException;
-import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 
 import java.util.UUID;
 
