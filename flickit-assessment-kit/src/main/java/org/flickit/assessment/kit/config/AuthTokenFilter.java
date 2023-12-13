@@ -36,7 +36,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    public UserDetail getUserFromJwtToken(String jwt) {
+    private UserDetail getUserFromJwtToken(String jwt) {
         String token = jwt.substring(7);
         String[] chunks = token.split("\\.");
         Base64.Decoder decoder = Base64.getUrlDecoder();
