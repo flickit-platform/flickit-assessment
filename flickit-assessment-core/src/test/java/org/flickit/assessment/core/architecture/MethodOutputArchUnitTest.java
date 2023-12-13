@@ -3,7 +3,7 @@ package org.flickit.assessment.core.architecture;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
-import org.flickit.assessment.core.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.springframework.http.ResponseEntity;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;

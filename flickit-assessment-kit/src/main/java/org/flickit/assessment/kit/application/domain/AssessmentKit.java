@@ -20,6 +20,7 @@ public class AssessmentKit {
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
     private final boolean published;
+    private final boolean isPrivate;
     private final long expertGroupId;
     private final List<Subject> subjects;
     private final List<MaturityLevel> maturityLevels;

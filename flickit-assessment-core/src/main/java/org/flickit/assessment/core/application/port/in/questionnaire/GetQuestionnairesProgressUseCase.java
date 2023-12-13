@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.port.in.questionnaire;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.assessment.core.common.SelfValidating;
+import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.List;
 import java.util.UUID;

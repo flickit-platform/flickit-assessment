@@ -6,7 +6,7 @@ import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.service.assessmentkit.validate.UpdateKitValidator;
-import org.flickit.assessment.kit.common.Notification;
+import org.flickit.assessment.common.exception.api.Notification;
 import org.springframework.stereotype.Service;
 
 import static java.util.stream.Collectors.toSet;
