@@ -11,10 +11,12 @@ import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.CompositeUpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.flickit.assessment.kit.application.service.assessmentkit.validate.CompositeUpdateKitValidator;
-import org.flickit.assessment.kit.common.Notification;
-import org.flickit.assessment.kit.common.ValidationException;
+import org.flickit.assessment.common.exception.api.Notification;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.flickit.assessment.kit.adapter.in.rest.exception.api.ErrorCodes.UNSUPPORTED_DSL_CONTENT_CHANGE;
 
 @Slf4j
 @Service
@@ -42,6 +44,6 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
     private void validateChanges(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Notification notification = validator.validate(savedKit, dslKit);
         if (notification.hasErrors())
-            throw new ValidationException(notification);
+            throw new ValidationException(UNSUPPORTED_DSL_CONTENT_CHANGE, notification);
     }
 }

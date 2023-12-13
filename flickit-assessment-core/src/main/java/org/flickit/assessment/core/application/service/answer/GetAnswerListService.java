@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.application.service.answer;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswersByQuestionnaireIdPort;
 import org.springframework.stereotype.Service;
