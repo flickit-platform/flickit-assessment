@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.port.in.assessment;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.assessment.core.common.SelfValidating;
+import org.flickit.assessment.common.application.SelfValidating;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.COUNT_ASSESSMENTS_KIT_ID_AND_SPACE_ID_NOT_NULL;
 

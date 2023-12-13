@@ -1,9 +1,9 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import org.assertj.core.api.Assertions;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentProgressUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
-import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

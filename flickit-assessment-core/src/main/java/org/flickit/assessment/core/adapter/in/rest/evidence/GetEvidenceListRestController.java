@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.adapter.in.rest.evidence;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.springframework.http.HttpStatus;
