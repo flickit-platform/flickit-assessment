@@ -7,10 +7,15 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserLi
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
-    public static GetKitUserListUseCase.KitUserListItem mapJpaEntityToUserItem(UserJpaEntity entity) {
+    public static GetKitUserListUseCase.KitUserListItem mapJpaEntityToUserItem(
+        UserJpaEntity entity,
+        String kitTitle,
+        String expertGroupTitle) {
         return new GetKitUserListUseCase.KitUserListItem(
             entity.getDisplayName(),
-            entity.getEmail()
+            entity.getEmail(),
+            kitTitle,
+            expertGroupTitle
         );
     }
 }

@@ -38,7 +38,7 @@ public class AssessmentKitJpaEntity {
     private LocalDateTime lastModificationTime;
 
     @Column(name = "expert_group_id")
-    private Integer expertGroupId;
+    private Long expertGroupId;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;

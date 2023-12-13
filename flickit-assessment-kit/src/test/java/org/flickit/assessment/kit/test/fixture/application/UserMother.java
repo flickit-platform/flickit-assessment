@@ -5,6 +5,6 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserLi
 public class UserMother {
 
     public static GetKitUserListUseCase.KitUserListItem userListItem(String name, String email) {
-        return new GetKitUserListUseCase.KitUserListItem(name, email);
+        return new GetKitUserListUseCase.KitUserListItem(name, email, "KitTitle", "ExpertGroupTitle");
     }
 }
