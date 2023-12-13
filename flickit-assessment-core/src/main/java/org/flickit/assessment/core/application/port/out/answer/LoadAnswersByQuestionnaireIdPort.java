@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.application.port.out.answer;
 
-import org.flickit.assessment.core.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 
 import java.util.UUID;

@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.adapter.in.rest.answer;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.springframework.http.HttpStatus;

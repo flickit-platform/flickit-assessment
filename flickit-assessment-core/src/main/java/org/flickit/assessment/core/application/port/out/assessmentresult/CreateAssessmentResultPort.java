@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.application.port.out.assessmentresult;
 
-import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.updatekitbydsl;
 
 import lombok.AllArgsConstructor;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
@@ -20,7 +21,6 @@ import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.Questio
 import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.*;
-import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.springframework.stereotype.Component;
@@ -84,6 +84,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getIsActive(),
+            entity.getIsPrivate(),
             entity.getExpertGroup().getId(),
             subjects,
             levels,
