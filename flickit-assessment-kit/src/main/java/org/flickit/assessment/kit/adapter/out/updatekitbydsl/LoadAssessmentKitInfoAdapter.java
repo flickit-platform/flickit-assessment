@@ -85,7 +85,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
             entity.getLastModificationTime(),
             entity.getIsActive(),
             entity.getIsPrivate(),
-            entity.getExpertGroupId(),
+            entity.getExpertGroup().getId(),
             subjects,
             levels,
             questionnaires

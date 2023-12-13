@@ -7,19 +7,18 @@ import org.flickit.assessment.kit.application.domain.User;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
+
     public static User mapToDomainModel(UserJpaEntity entity) {
         return new User(
             entity.getId(),
-            entity.getLastLogin(),
-            entity.getIsSuperuser(),
-            entity.getIsStaff(),
-            entity.getIsActive(),
             entity.getEmail(),
-            entity.getCurrentSpaceId(),
             entity.getDisplayName(),
             entity.getBio(),
-            entity.getLinkedin(),
-            entity.getPicture(),
+            entity.getLastLogin(),
+            entity.isSuperUser(),
+            entity.isStaff(),
+            entity.isActive(),
+            entity.getCurrentSpaceId(),
             entity.getDefaultSpaceId()
         );
     }
