@@ -10,7 +10,13 @@
 			"name": "Create Assessment",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"colorId\": 1,\n    \"spaceId\": 1\n}",
@@ -37,7 +43,13 @@
 			"name": "Update Assessment",
 			"request": {
 				"method": "PUT",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"title\": \"The title2\",\r\n    \"colorId\": 1\r\n}",
@@ -111,7 +123,13 @@
 			"name": "Get Assessment",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/assessments/3bfa613e-4e50-46a4-96aa-a061f104224e",
 					"host": [
@@ -130,7 +148,13 @@
 			"name": "Delete Assessment",
 			"request": {
 				"method": "DELETE",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608",
 					"host": [
@@ -149,7 +173,13 @@
 			"name": "Get Assessment Colors",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
 					"host": [
@@ -163,35 +193,41 @@
 			},
 			"response": []
 		},
-        {
-          "name": "Submit Answer",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"questionnaireId\": 1095,\n    \"questionId\": 1997,\n    \"answerOptionId\": 4846,\n    \"confidenceLevelId\": 2,\n    \"isNotApplicable\": false\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/{{api_path}}/assessments/70c58eab-3d5f-48aa-9ffb-07802e5ea48f/answer-question",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "{{api_path}}",
-                "assessments",
-                "70c58eab-3d5f-48aa-9ffb-07802e5ea48f",
-                "answer-question"
-              ]
-            }
-          },
-          "response": []
-        },
+		{
+			"name": "Submit Answer",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"questionnaireId\": 1095,\n    \"questionId\": 1997,\n    \"answerOptionId\": 4846,\n    \"confidenceLevelId\": 2,\n    \"isNotApplicable\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/70c58eab-3d5f-48aa-9ffb-07802e5ea48f/answer-question",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"70c58eab-3d5f-48aa-9ffb-07802e5ea48f",
+						"answer-question"
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "Add Evidence",
 			"protocolProfileBehavior": {
@@ -233,7 +269,13 @@
 			"name": "Calculate",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "",
@@ -262,7 +304,13 @@
 			"name": "Get Answers",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/assessments/8028f9a4-a7a8-4391-995d-4645c15d53aa/answers?questionnaireId=1&page=0&size=50",
 					"host": [
@@ -296,7 +344,13 @@
 			"name": "Report Assessment",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/report",
 					"host": [
@@ -362,7 +416,13 @@
 			"name": "Get Questionnaires Progress",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/assessments/c4e0b4a4-66a1-4383-872f-be9fc6c3cecb/questionnaires/progress",
 					"host": [
@@ -445,7 +505,13 @@
 			"name": "Update Evidence",
 			"request": {
 				"method": "PUT",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"description\": \"new_desc\"\n}",
@@ -505,7 +571,13 @@
 			"name": "Count Assessments",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/assessments/counters?spaceId=2&deleted=true&notDeleted=true&total=true",
 					"host": [
@@ -547,7 +619,13 @@
 			"name": "Delete Evidence",
 			"request": {
 				"method": "DELETE",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/evidences/9f9cd530-73a0-4adc-863a-4b455c9488e1",
 					"host": [
@@ -562,52 +640,65 @@
 			},
 			"response": []
 		},
-        {
-          "name": "Get Confidence Level List",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/{{api_path}}/confidence-levels",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "{{api_path}}",
-                "confidence-levels"
-              ]
-            }
-          },
-          "response": []
-        }, {
-        "name": "Calculate Confidence",
-        "request": {
-          "method": "POST",
-          "header": [],
-          "body": {
-            "mode": "raw",
-            "raw": "",
-            "options": {
-              "raw": {
-                "language": "json"
-              }
-            }
-          },
-          "url": {
-            "raw": "{{base_url}}/{{api_path}}/assessments/70c58eab-3d5f-48aa-9ffb-07802e5ea48f/calculate-confidence",
-            "host": [
-              "{{base_url}}"
-            ],
-            "path": [
-              "{{api_path}}",
-              "assessments",
-              "70c58eab-3d5f-48aa-9ffb-07802e5ea48f",
-              "calculate-confidence"
-            ]
-          }
-        },
-        "response": []
-      }
+		{
+			"name": "Get Confidence Level List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/confidence-levels",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"confidence-levels"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Calculate Confidence",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/70c58eab-3d5f-48aa-9ffb-07802e5ea48f/calculate-confidence",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"70c58eab-3d5f-48aa-9ffb-07802e5ea48f",
+						"calculate-confidence"
+					]
+				}
+			},
+			"response": []
+		}
 	],
 	"variable": [
 		{
@@ -618,6 +709,11 @@
 		{
 			"key": "api_path",
 			"value": "assessment-core/api",
+			"type": "string"
+		},
+		{
+			"key": "authorization_header",
+			"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJUMFU2Rjh2R3Y2R2hzOUxwOGxnSWJsY2dQSFN1RE94bHNIbldRanJoZG00In0.eyJleHAiOjE3MDI0NzYwNjcsImlhdCI6MTcwMjQ3NTc2NywiYXV0aF90aW1lIjoxNzAyNDc1NzY1LCJqdGkiOiI1MzVmY2U5OC00YTNlLTRlOWEtYmVmZC03ZDdlN2ZmYjQyNDAiLCJpc3MiOiJodHRwczovL3Rlc3QuZmxpY2tpdC5vcmcvYWNjb3VudHMvcmVhbG1zL2ZsaWNraXQiLCJhdWQiOlsiZmxpY2tpdC1iZmYiLCJhY2NvdW50Il0sInN1YiI6ImU5YzEwYjM0LWNkZGUtNDFkZC1hODM0LTdmYmJkN2E0ODYxNSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImZsaWNraXQtZnJvbnRlbmQiLCJub25jZSI6IjNhZjVmNTcyLWRmYTAtNDRiMC04NGQwLTFiMWI2NzZjZWM0ZSIsInNlc3Npb25fc3RhdGUiOiIyZWZiYWQ5YS01ZjYzLTRlYmMtODU5Yy0yYmIxM2QyYWJlNjUiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vdGVzdC5mbGlja2l0Lm9yZyIsImh0dHA6Ly9sb2NhbGhvc3Q6MzAwMCJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1mbGlja2l0Iiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiIyZWZiYWQ5YS01ZjYzLTRlYmMtODU5Yy0yYmIxM2QyYWJlNjUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Im1haGRpIHJlemF6YWRlaCIsInByZWZlcnJlZF91c2VybmFtZSI6Im1haGRpcmV6YXphZGVoMTArMkBnbWFpbC5jb20iLCJnaXZlbl9uYW1lIjoibWFoZGkiLCJmYW1pbHlfbmFtZSI6InJlemF6YWRlaCIsImVtYWlsIjoibWFoZGlyZXphemFkZWgxMCsyQGdtYWlsLmNvbSJ9.qpso7SbPUd8cXIKORRXYHzZ-y6BCvFSoICs_dEAai20K4WYM5ZP9KgmKzkrQ_KxWfB3RqZJEjSVq3EIkF3YZPzVqi8bx4Yv6qnPQNVMP0ab0F_iNPv1P445WHuu6OlFIRf2kvUsJt0UiHx7R1Q-G_TCbCGROf-SeD-8hYo9qMxFU_ot4ZGEo-sq0bpMBFoEqwCmHTuiwg10_ffAA7yWZd5xY5D9-sQVEFYtRUfamNnsv_Y2keuTK7_07TMXm-NVvLTbXq3ExGosdgWFggIyODNR7WGW8L96RAtMeFMcv_8RkpUG_uUon08BseYWz8M38ekFsizirYueAhxESXFkcsw",
 			"type": "string"
 		}
 	]
