@@ -43,6 +43,9 @@ public class AssessmentKitJpaEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
+    @Column(name = "is_private", nullable = false)
+    private Boolean isPrivate;
+
     @Column(name = "about", nullable = false)
     private String about;
 

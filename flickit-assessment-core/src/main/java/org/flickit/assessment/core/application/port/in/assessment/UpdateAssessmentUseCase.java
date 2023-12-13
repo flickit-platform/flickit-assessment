@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.common.SelfValidating;
+import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 
 import java.util.UUID;
 
