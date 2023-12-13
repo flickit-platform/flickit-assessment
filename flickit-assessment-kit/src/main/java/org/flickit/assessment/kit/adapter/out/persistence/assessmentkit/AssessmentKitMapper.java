@@ -17,6 +17,7 @@ public class AssessmentKitMapper {
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getIsActive(),
+            entity.getIsPrivate(),
             entity.getExpertGroupId(),
             null,
             null,

@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.kit.application.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.user.DeleteUserAccessUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitByIdPort;
 import org.flickit.assessment.kit.application.port.out.kituser.LoadKitUserByKitAndUserPort;

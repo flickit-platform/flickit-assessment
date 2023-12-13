@@ -3,8 +3,8 @@ package org.flickit.assessment.kit.application.port.in.user;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
-import org.flickit.assessment.kit.common.SelfValidating;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_KIT_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_USER_ID_NOT_NULL;
