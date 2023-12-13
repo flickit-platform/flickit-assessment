@@ -5,8 +5,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.kit.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.kit.common.SelfValidating;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
