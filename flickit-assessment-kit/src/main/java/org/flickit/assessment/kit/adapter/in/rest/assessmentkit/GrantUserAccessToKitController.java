@@ -9,25 +9,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 @RestController
 @RequiredArgsConstructor
 public class GrantUserAccessToKitController {
 
     private final GrantUserAccessToKitUseCase useCase;
 
-    @PostMapping("assessment-kits/{kitId}/users/{ownerId}")
+    @PostMapping("assessment-kits/{kitId}/users/{currentUserEmail}")
     public ResponseEntity<Void> grantUserAccessToKit(@PathVariable("kitId") Long kitId,
-                                                     @PathVariable("ownerId") UUID ownerId,
+                                                     @PathVariable("currentUserEmail") String currentUserEmail,
                                                      @RequestBody GrantUserAccessToKitRequestDto request) {
 
-//        TODO get ownerId from jwt token
-        useCase.grantUserAccessToKit(toParam(kitId, request, ownerId));
+//        TODO get currentUserEmail from jwt token
+        useCase.grantUserAccessToKit(toParam(kitId, request, currentUserEmail));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private GrantUserAccessToKitUseCase.Param toParam(Long kitId, GrantUserAccessToKitRequestDto request, UUID ownerId) {
-        return new GrantUserAccessToKitUseCase.Param(kitId, request.userEmail(), ownerId);
+    private GrantUserAccessToKitUseCase.Param toParam(Long kitId, GrantUserAccessToKitRequestDto request, String currentUserEmail) {
+        return new GrantUserAccessToKitUseCase.Param(kitId, request.userEmail(), currentUserEmail);
     }
 }

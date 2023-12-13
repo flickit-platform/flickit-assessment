@@ -12,12 +12,13 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
 import org.springframework.stereotype.Component;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_USER_EMAIL_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentKitPersistenceJpaAdapter implements GrantUserAccessToKitPort, LoadAssessmentKitOwnerPort {
+public class AssessmentKitPersistenceJpaAdapter implements
+    GrantUserAccessToKitPort,
+    LoadAssessmentKitOwnerPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -43,6 +44,6 @@ public class AssessmentKitPersistenceJpaAdapter implements GrantUserAccessToKitP
             UserJpaEntity kitOwner = assessmentKit.getExpertGroup().getOwner();
             return UserMapper.mapToDomainModel(kitOwner);
         } else
-            throw new ResourceNotFoundException("");
+            throw new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_KIT_OWNER_NOT_FOUND);
     }
 }
