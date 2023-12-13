@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.assessment.core.common.SelfValidating;
+import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 

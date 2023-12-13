@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit.validate.im
 
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.kit.common.Notification;
+import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.QuestionMother;

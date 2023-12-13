@@ -10,8 +10,8 @@ import org.flickit.assessment.kit.application.service.assessmentkit.update.Compo
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.flickit.assessment.kit.application.service.assessmentkit.validate.CompositeUpdateKitValidator;
 import org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.InvalidAdditionError;
-import org.flickit.assessment.kit.common.Notification;
-import org.flickit.assessment.kit.common.ValidationException;
+import org.flickit.assessment.common.exception.api.Notification;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

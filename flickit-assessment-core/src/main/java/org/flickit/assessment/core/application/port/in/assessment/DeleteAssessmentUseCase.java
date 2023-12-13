@@ -3,8 +3,8 @@ package org.flickit.assessment.core.application.port.in.assessment;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.assessment.core.application.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.common.SelfValidating;
+import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 
 import java.util.UUID;
 
