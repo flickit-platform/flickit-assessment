@@ -13,4 +13,8 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.10-2" author="MKouhestani">
+        <addNotNullConstraint tableName="baseinfo_assessmentkit" columnName="expert_group_id"/>
+    </changeSet>
+
 </databaseChangeLog>
