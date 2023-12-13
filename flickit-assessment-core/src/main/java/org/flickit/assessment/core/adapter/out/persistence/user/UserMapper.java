@@ -21,4 +21,19 @@ public class UserMapper {
             user.getDefaultSpaceId()
         );
     }
+
+    public static User toDomainModel(UserJpaEntity entity) {
+        return new User(
+            entity.getId(),
+            entity.getEmail(),
+            entity.getDisplayName(),
+            entity.getBio(),
+            entity.getLastLogin(),
+            entity.isSuperUser(),
+            entity.isStaff(),
+            entity.isActive(),
+            entity.getCurrentSpaceId(),
+            entity.getDefaultSpaceId()
+        );
+    }
 }

@@ -5,7 +5,7 @@
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
 
-    <changeSet id="0.10-1" author="MKouhestani">
+    <changeSet id="0.10-01" author="MKouhestani">
         <addColumn tableName="baseinfo_assessmentkit">
             <column name="is_private" type="boolean" defaultValueBoolean="false"/>
         </addColumn>
@@ -19,23 +19,37 @@
     </changeSet>
 
     <changeSet id="0.10-03" author="MKouhestani">
-        <sql>UPDATE fac_assessment SET created_by = (SELECT account_space.owner_id FROM account_space WHERE fac_assessment.space_id = account_space.id)</sql>
+        <addForeignKeyConstraint baseTableName="fac_assessment"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessment_account_user_created_by"/>
     </changeSet>
 
     <changeSet id="0.10-04" author="MKouhestani">
-        <sql>UPDATE fac_assessment SET last_modified_by = (SELECT account_space.owner_id FROM account_space WHERE fac_assessment.space_id = account_space.id)</sql>
+        <addForeignKeyConstraint baseTableName="fac_assessment"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessment_account_user_last_modified_by"/>
     </changeSet>
 
     <changeSet id="0.10-05" author="MKouhestani">
-        <addNotNullConstraint columnDataType="uuid"
-                              columnName="created_by"
+        <sql>UPDATE fac_assessment SET created_by = (SELECT account_space.owner_id FROM account_space WHERE fac_assessment.space_id = account_space.id)</sql>
+    </changeSet>
+
+    <changeSet id="0.10-06" author="MKouhestani">
+        <sql>UPDATE fac_assessment SET last_modified_by = (SELECT account_space.owner_id FROM account_space WHERE fac_assessment.space_id = account_space.id)</sql>
+    </changeSet>
+
+    <changeSet id="0.10-07" author="MKouhestani">
+        <addNotNullConstraint columnName="created_by"
                               constraintName="created_by_not_null"
                               tableName="fac_assessment"/>
     </changeSet>
 
-    <changeSet id="0.10-06" author="MKouhestani">
-        <addNotNullConstraint columnDataType="uuid"
-                              columnName="last_modified_by"
+    <changeSet id="0.10-08" author="MKouhestani">
+        <addNotNullConstraint columnName="last_modified_by"
                               constraintName="last_modified_by_not_null"
                               tableName="fac_assessment"/>
     </changeSet>
