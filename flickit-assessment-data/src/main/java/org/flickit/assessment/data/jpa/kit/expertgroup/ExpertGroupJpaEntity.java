@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.expertgroup;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 
 import java.util.UUID;
 
@@ -31,7 +30,7 @@ public class ExpertGroupJpaEntity {
     @Column(name = "picture", nullable = false)
     private String picture;
 
-    @Column(name = "website", length = 200, nullable = false)
+    @Column(name = "website", length = 200)
     private String website;
 
     @Column(name = "bio", length = 200, nullable = false)
