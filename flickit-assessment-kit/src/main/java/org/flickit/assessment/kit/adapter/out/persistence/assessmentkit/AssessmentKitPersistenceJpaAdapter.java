@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.User;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitOwnerPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitByIdPort;
 import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class AssessmentKitPersistenceJpaAdapter implements
     GrantUserAccessToKitPort,
-    LoadAssessmentKitOwnerPort {
+    LoadAssessmentKitOwnerPort,
+    LoadKitByIdPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;

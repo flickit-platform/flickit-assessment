@@ -1,9 +1,9 @@
-package org.flickit.assessment.kit.application.service.user;
+package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.port.in.user.DeleteUserAccessUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.DeleteUserAccessOnKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitByIdPort;
 import org.flickit.assessment.kit.application.port.out.kituser.LoadKitUserByKitAndUserPort;
 import org.flickit.assessment.kit.application.port.out.user.DeleteUserAccessPort;
@@ -17,7 +17,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DeleteUserAccessService implements DeleteUserAccessUseCase {
+public class DeleteUserAccessOnKitService implements DeleteUserAccessOnKitUseCase {
 
     private final LoadKitByIdPort loadKitByIdPort;
     private final LoadUserByIdPort loadUserByIdPort;
@@ -28,6 +28,7 @@ public class DeleteUserAccessService implements DeleteUserAccessUseCase {
     public void delete(Param param) {
         loadKitByIdPort.load(param.getKitId()).orElseThrow(() -> new ResourceNotFoundException(DELETE_USER_ACCESS_KIT_NOT_FOUND));
         loadUserByIdPort.load(param.getUserId()).orElseThrow(() -> new ResourceNotFoundException(DELETE_USER_ACCESS_USER_NOT_FOUND));
+
         loadKitUserByKitAndUserPort.loadByKitAndUser(param.getKitId(), param.getUserId()).orElseThrow(
             () -> new ResourceNotFoundException(DELETE_USER_ACCESS_KIT_USER_NOT_FOUND)
         );

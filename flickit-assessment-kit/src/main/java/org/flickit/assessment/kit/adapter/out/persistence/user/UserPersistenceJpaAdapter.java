@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.user.LoadUserByIdPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class UserPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<User> load(Long userId) {
+    public Optional<User> load(UUID userId) {
         var entity = repository.findById(userId);
         return entity.map(UserMapper::mapToDomainModel);
     }
