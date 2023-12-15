@@ -17,4 +17,16 @@
         <addNotNullConstraint tableName="baseinfo_assessmentkit" columnName="expert_group_id"/>
     </changeSet>
 
+    <changeSet id="0.10-3" author="MKouhestani">
+        <modifyDataType tableName="baseinfo_assessmentkit" columnName="expert_group_id" newDataType="bigint"/>
+    </changeSet>
+
+    <changeSet id="0.10-4" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="baseinfo_expertgroup"
+                                 baseColumnNames="owner_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_baseinfo_expertgroup_account_user"/>
+    </changeSet>
+
 </databaseChangeLog>
