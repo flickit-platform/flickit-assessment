@@ -14,10 +14,12 @@ public class UserMapper {
             entity.getEmail(),
             entity.getDisplayName(),
             entity.getBio(),
+            entity.getLinkedin(),
+            entity.getPicture(),
             entity.getLastLogin(),
-            entity.isSuperUser(),
-            entity.isStaff(),
-            entity.isActive(),
+            entity.getIsSuperUser(),
+            entity.getIsStaff(),
+            entity.getIsActive(),
             entity.getCurrentSpaceId(),
             entity.getDefaultSpaceId()
         );
