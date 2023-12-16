@@ -11,4 +11,21 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.10-02" author="Mahdi Rezazadeh">
+        <createTable tableName="baseinfo_assessmentkit_account_user">
+            <column name="assessment_kit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.10-03" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="baseinfo_assessmentkit_account_user"
+                             columnNames="assessment_kit_id, user_id"
+                             constraintName="uq_baseinfo_assessmentkit_account_user_kit_user"/>
+    </changeSet>
+
 </databaseChangeLog>
