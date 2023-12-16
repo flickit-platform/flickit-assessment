@@ -7,10 +7,10 @@ import java.util.UUID;
 
 public class UserMother {
 
-    public static User userWithEmail(String email) {
+    public static User userWithId(UUID id) {
         return new User(
-            UUID.randomUUID(),
-            email,
+            id,
+            "user@email.com",
             "full name",
             "bio",
             LocalDateTime.now(),

@@ -13,7 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_NOT_ALLOWED;
+import java.util.UUID;
+
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_NOT_KIT_OWNER;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_USER_ALREADY_EXIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -36,9 +38,9 @@ class GrantUserAccessToKitServiceTest {
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,
             "user@email.com",
-            "currentuser@email.com"
+            UUID.randomUUID()
         );
-        User currentUser = UserMother.userWithEmail(param.getCurrentUserEmail());
+        User currentUser = UserMother.userWithId(param.getCurrentUserId());
         when(loadKitOwnerPort.loadKitOwnerById(param.getKitId())).thenReturn(currentUser);
         when(grantUserAccessToKitPort.grantUserAccessToKitByUserEmail(param.getKitId(), param.getUserEmail()))
             .thenReturn(true);
@@ -62,14 +64,14 @@ class GrantUserAccessToKitServiceTest {
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,
             "user@email.com",
-            "currentuser@email.com"
+            UUID.randomUUID()
         );
-        User kitOwner = UserMother.userWithEmail("kitOwnerUser@email.com");
+        User kitOwner = UserMother.userWithId(UUID.randomUUID());
         when(loadKitOwnerPort.loadKitOwnerById(param.getKitId())).thenReturn(kitOwner);
 
         var exception = assertThrows(InvalidActionException.class, () -> service.grantUserAccessToKit(param));
 
-        assertEquals(GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        assertEquals(GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_NOT_KIT_OWNER, exception.getMessage());
         verify(loadKitOwnerPort, times(1)).loadKitOwnerById(any());
         verify(grantUserAccessToKitPort, never()).grantUserAccessToKitByUserEmail(any(), any());
     }
@@ -79,9 +81,9 @@ class GrantUserAccessToKitServiceTest {
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,
             "user@email.com",
-            "currentuser@email.com"
+            UUID.randomUUID()
         );
-        User currentUser = UserMother.userWithEmail(param.getCurrentUserEmail());
+        User currentUser = UserMother.userWithId(param.getCurrentUserId());
         when(loadKitOwnerPort.loadKitOwnerById(param.getKitId())).thenReturn(currentUser);
         when(grantUserAccessToKitPort.grantUserAccessToKitByUserEmail(param.getKitId(), param.getUserEmail()))
             .thenReturn(false);
