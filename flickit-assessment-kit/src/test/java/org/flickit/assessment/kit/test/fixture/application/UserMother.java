@@ -13,6 +13,8 @@ public class UserMother {
             "user@email.com",
             "full name",
             "bio",
+            "linkedin",
+            "picture",
             LocalDateTime.now(),
             false,
             false,
