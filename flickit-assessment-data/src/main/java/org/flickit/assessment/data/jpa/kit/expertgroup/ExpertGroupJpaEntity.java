@@ -18,16 +18,16 @@ public class ExpertGroupJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "name", length = 100, nullable = false)
+    @Column(name = "name", length = 100, unique = true, nullable = false)
     private String name;
 
     @Column(name = "about", nullable = false, columnDefinition = "TEXT")
     private String about;
 
-    @Column(name = "picture", nullable = false)
+    @Column(name = "picture", length = 100)
     private String picture;
 
-    @Column(name = "website", length = 200, nullable = false)
+    @Column(name = "website", length = 200)
     private String website;
 
     @Column(name = "bio", length = 200, nullable = false)
