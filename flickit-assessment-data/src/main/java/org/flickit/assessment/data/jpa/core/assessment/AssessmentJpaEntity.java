@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.core.assessment;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
@@ -54,13 +53,11 @@ public class AssessmentJpaEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
-    private UserJpaEntity createdBy;
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
 
-    @ManyToOne
-    @JoinColumn(name = "last_modified_by", referencedColumnName = "id", nullable = false)
-    private UserJpaEntity lastModifiedBy;
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {

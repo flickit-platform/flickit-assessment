@@ -4,7 +4,6 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.Subject;
-import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
@@ -12,7 +11,6 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.CreateA
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.QualityAttributeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,10 +20,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.test.fixture.application.UserMother.user;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -50,20 +46,15 @@ class CreateAssessmentServiceTest {
     @Mock
     private CreateQualityAttributeValuePort createQualityAttributeValuePort;
 
-    @Mock
-    private LoadUserPort loadUserPort;
-
 
     @Test
     void testCreateAssessment_ValidParam_PersistsAndReturnsId() {
-        User user = user();
-        when(loadUserPort.load(any())).thenReturn(Optional.of(user));
         Param param = new Param(
             1L,
             "title example",
             1L,
             1,
-            user.getId()
+            UUID.randomUUID()
         );
         UUID expectedId = UUID.randomUUID();
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
@@ -86,14 +77,12 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_ValidParam_PersistsAssessmentResult() {
-        User user = user();
-        when(loadUserPort.load(any())).thenReturn(Optional.of(user));
         Param param = new Param(
             1L,
             "title example",
             1L,
             1,
-            user.getId()
+            UUID.randomUUID()
         );
         UUID assessmentId = UUID.randomUUID();
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(assessmentId);
@@ -114,15 +103,13 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_ValidParam_PersistsSubjectValues() {
-        User user = user();
-        when(loadUserPort.load(any())).thenReturn(Optional.of(user));
         Long assessmentKitId = 1L;
         Param param = new Param(
             1L,
             "title example",
             assessmentKitId,
             1,
-            user.getId()
+            UUID.randomUUID()
         );
 
         QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
@@ -145,15 +132,13 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_ValidCommand_PersistsQualityAttributeValue() {
-        User user = user();
-        when(loadUserPort.load(any())).thenReturn(Optional.of(user));
         Long assessmentKitId = 1L;
         Param param = new Param(
             1L,
             "title example",
             assessmentKitId,
             1,
-            user.getId()
+            UUID.randomUUID()
         );
         QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
         QualityAttribute qa2 = QualityAttributeMother.simpleAttribute();
@@ -175,14 +160,12 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_InvalidColor_UseDefaultColor() {
-        User user = user();
-        when(loadUserPort.load(any())).thenReturn(Optional.of(user));
         Param param = new Param(
             1L,
             "title example",
             1L,
             7,
-            user.getId()
+            UUID.randomUUID()
         );
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);

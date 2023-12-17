@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
@@ -10,7 +9,6 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.CreateA
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +19,6 @@ import java.util.UUID;
 import static org.flickit.assessment.core.application.domain.Assessment.generateSlugCode;
 import static org.flickit.assessment.core.application.domain.AssessmentColor.getValidId;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_USER_NOT_FOUND;
 
 @Service
 @Transactional
@@ -33,7 +30,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
     private final LoadSubjectByAssessmentKitIdPort loadSubjectByAssessmentKitIdPort;
-    private final LoadUserPort loadUserPort;
 
     @Override
     public Result createAssessment(Param param) {
@@ -47,7 +43,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         String code = generateSlugCode(param.getTitle());
         LocalDateTime creationTime = LocalDateTime.now();
         LocalDateTime lastModificationTime = LocalDateTime.now();
-        var createdBy = loadUserPort.load(param.getCreatedBy()).orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_USER_NOT_FOUND));
         return new CreateAssessmentPort.Param(
             code,
             param.getTitle(),
@@ -58,7 +53,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             lastModificationTime,
             NOT_DELETED_DELETION_TIME,
             false,
-            createdBy
+            param.getCreatedBy()
         );
     }
 

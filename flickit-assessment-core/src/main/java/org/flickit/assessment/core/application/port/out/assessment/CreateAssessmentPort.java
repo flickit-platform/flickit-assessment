@@ -1,7 +1,5 @@
 package org.flickit.assessment.core.application.port.out.assessment;
 
-import org.flickit.assessment.core.application.domain.User;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,6 +16,6 @@ public interface CreateAssessmentPort {
                  LocalDateTime lastModificationTime,
                  Long deletionTime,
                  boolean deleted,
-                 User createdBy) {
+                 UUID createdBy) {
     }
 }
