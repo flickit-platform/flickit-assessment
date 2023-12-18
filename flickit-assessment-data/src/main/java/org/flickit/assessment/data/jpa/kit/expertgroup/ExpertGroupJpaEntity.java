@@ -1,8 +1,12 @@
 package org.flickit.assessment.data.jpa.kit.expertgroup;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "baseinfo_expertgroup")
@@ -33,7 +37,6 @@ public class ExpertGroupJpaEntity {
     @Column(name = "bio", length = 200, nullable = false)
     private String bio;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
-    private UserJpaEntity owner;
+    @Column(name = "owner_id", nullable = false)
+    private UUID ownerId;
 }

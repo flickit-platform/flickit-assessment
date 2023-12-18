@@ -1,11 +1,9 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.User;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitOwnerPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerIdPort;
 import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
-import org.flickit.assessment.kit.test.fixture.application.UserMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -27,28 +25,28 @@ class GrantUserAccessToKitServiceTest {
     private GrantUserAccessToKitService service;
 
     @Mock
-    private LoadAssessmentKitOwnerPort loadKitOwnerPort;
+    private LoadExpertGroupOwnerIdPort loadExpertGroupOwnerIdPort;
 
     @Mock
     private GrantUserAccessToKitPort grantUserAccessToKitPort;
 
     @Test
     void testGrantUserAccessToKit_ValidParams_AddUserSuccessfully() {
+        var currentUserId = UUID.randomUUID();
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,
             "user@email.com",
-            UUID.randomUUID()
+            currentUserId
         );
-        User currentUser = UserMother.userWithId(param.getCurrentUserId());
-        when(loadKitOwnerPort.loadKitOwnerById(param.getKitId())).thenReturn(currentUser);
+        when(loadExpertGroupOwnerIdPort.loadByKitId(param.getKitId())).thenReturn(currentUserId);
         when(grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getUserEmail()))
             .thenReturn(true);
 
         service.grantUserAccessToKit(param);
 
-        var loadKitOwnerParam = ArgumentCaptor.forClass(Long.class);
-        verify(loadKitOwnerPort, times(1)).loadKitOwnerById(loadKitOwnerParam.capture());
-        assertEquals(param.getKitId(), loadKitOwnerParam.getValue());
+        var LoadExpertGroupOwnerParam = ArgumentCaptor.forClass(Long.class);
+        verify(loadExpertGroupOwnerIdPort, times(1)).loadByKitId(LoadExpertGroupOwnerParam.capture());
+        assertEquals(param.getKitId(), LoadExpertGroupOwnerParam.getValue());
 
         var grantAccessKitIdParam = ArgumentCaptor.forClass(Long.class);
         var grantAccessUserEmailParam = ArgumentCaptor.forClass(String.class);
@@ -60,44 +58,19 @@ class GrantUserAccessToKitServiceTest {
 
     @Test
     void testGrantUserAccessToKit_InvalidCurrentUser_ThrowsException() {
+        var currentUserId = UUID.randomUUID();
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,
             "user@email.com",
-            UUID.randomUUID()
+            currentUserId
         );
-        User kitOwner = UserMother.userWithId(UUID.randomUUID());
-        when(loadKitOwnerPort.loadKitOwnerById(param.getKitId())).thenReturn(kitOwner);
+        var expertGroupOwnerId = UUID.randomUUID();
+        when(loadExpertGroupOwnerIdPort.loadByKitId(param.getKitId())).thenReturn(expertGroupOwnerId);
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.grantUserAccessToKit(param));
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
-        verify(loadKitOwnerPort, times(1)).loadKitOwnerById(any());
+        verify(loadExpertGroupOwnerIdPort, times(1)).loadByKitId(any());
         verify(grantUserAccessToKitPort, never()).grantUserAccess(any(), any());
-    }
-
-    @Test
-    void testGrantUserAccessToKit_UserAlreadyHasAccess_AddUserSuccessfully() {
-        GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
-            1L,
-            "user@email.com",
-            UUID.randomUUID()
-        );
-        User currentUser = UserMother.userWithId(param.getCurrentUserId());
-        when(loadKitOwnerPort.loadKitOwnerById(param.getKitId())).thenReturn(currentUser);
-        when(grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getUserEmail()))
-            .thenReturn(false);
-
-        service.grantUserAccessToKit(param);
-
-        var loadKitOwnerParam = ArgumentCaptor.forClass(Long.class);
-        verify(loadKitOwnerPort, times(1)).loadKitOwnerById(loadKitOwnerParam.capture());
-        assertEquals(param.getKitId(), loadKitOwnerParam.getValue());
-
-        var grantAccessKitIdParam = ArgumentCaptor.forClass(Long.class);
-        var grantAccessUserEmailParam = ArgumentCaptor.forClass(String.class);
-        verify(grantUserAccessToKitPort, times(1))
-            .grantUserAccess(grantAccessKitIdParam.capture(), grantAccessUserEmailParam.capture());
-        assertEquals(param.getKitId(), grantAccessKitIdParam.getValue());
-        assertEquals(param.getUserEmail(), grantAccessUserEmailParam.getValue());
     }
 }

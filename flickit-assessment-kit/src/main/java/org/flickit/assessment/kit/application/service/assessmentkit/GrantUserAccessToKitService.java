@@ -3,14 +3,14 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.User;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitOwnerPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerIdPort;
 import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -21,7 +21,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.COMMON_CURRENT_U
 public class GrantUserAccessToKitService implements GrantUserAccessToKitUseCase {
 
     private final GrantUserAccessToKitPort grantUserAccessToKitPort;
-    private final LoadAssessmentKitOwnerPort loadKitOwnerPort;
+    private final LoadExpertGroupOwnerIdPort loadExpertGroupOwnerIdPort;
 
     @Override
     public void grantUserAccessToKit(Param param) {
@@ -31,8 +31,8 @@ public class GrantUserAccessToKitService implements GrantUserAccessToKitUseCase 
     }
 
     private void validateCurrentUser(Param param) {
-        User user = loadKitOwnerPort.loadKitOwnerById(param.getKitId());
-        if (!Objects.equals(user.getId(), param.getCurrentUserId())) {
+        UUID expertGroupOwnerId = loadExpertGroupOwnerIdPort.loadByKitId(param.getKitId());
+        if (!Objects.equals(expertGroupOwnerId, param.getCurrentUserId())) {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
     }

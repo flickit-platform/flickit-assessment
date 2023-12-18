@@ -25,7 +25,7 @@ public class ErrorMessageKey {
     public static final String GRANT_USER_ACCESS_TO_KIT_USER_EMAIL_NOT_NULL = "grant-user-access-to-kit.userEmail.notNull";
     public static final String GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_ID_NOT_NULL = "grant-user-access-to-kit.currentUserId.notNull";
     public static final String GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND = "grant-user-access-to-kit.kitId.notFound";
-    public static final String GRANT_USER_ACCESS_TO_KIT_KIT_OWNER_NOT_FOUND = "grant-user-access-to-kit.kitOwner.notFound";
+    public static final String GRANT_USER_ACCESS_TO_KIT_EXPERT_GROUP_OWNER_NOT_FOUND = "grant-user-access-to-kit.expertGroupOwner.notFound";
     public static final String GRANT_USER_ACCESS_TO_KIT_USER_EMAIL_NOT_FOUND = "grant-user-access-to-kit.userEmail.notFound";
 
     public static String entityNameSingleFirst(String fieldName) {
