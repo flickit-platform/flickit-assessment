@@ -1,9 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.expertgroup;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
@@ -19,6 +16,8 @@ public class ExpertGroupJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_expertgroup_id_seq")
+    @SequenceGenerator(name = "baseinfo_expertgroup_id_seq", sequenceName = "baseinfo_expertgroup_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
