@@ -10,7 +10,13 @@
 			"name": "Update Kit By DSL",
 			"request": {
 				"method": "PUT",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"dslContent\": \"\"\r\n}",
@@ -65,6 +71,11 @@
 		{
 			"key": "api_path",
 			"value": "assessment-core/api",
+			"type": "string"
+		},
+		{
+			"key": "authorization_header",
+			"value": "",
 			"type": "string"
 		}
 	]
