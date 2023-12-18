@@ -50,8 +50,8 @@ public class AssessmentKitJpaEntity {
 
     @ManyToMany
     @JoinTable(
-        name = "baseinfo_assessmentkit_account_user",
-        joinColumns = @JoinColumn(name = "assessment_kit_id"),
+        name = "fak_kit_user_access",
+        joinColumns = @JoinColumn(name = "kit_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<UserJpaEntity> accessGrantedUsers;
 }
