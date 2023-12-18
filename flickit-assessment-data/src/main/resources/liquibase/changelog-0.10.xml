@@ -11,14 +11,50 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.10-09" author="MKouhestani">
+    <changeSet id="0.10-02" author="Mahdi Rezazadeh">
+        <createTable tableName="fak_kit_user_access">
+            <column name="kit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.10-03" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_kit_user_access"
+                             columnNames="kit_id, user_id"/>
+    </changeSet>
+
+    <changeSet id="0.10-04" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_kit_user_access"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="baseinfo_assessmentkit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kit_user_access_assessmentkit"
+                                 deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.10-05" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_kit_user_access"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kit_user_access_account_user"
+                                 deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.10-13" author="MKouhestani">
         <addColumn tableName="fac_answer">
             <column name="created_by" type="uuid"/>
             <column name="last_modified_by" type="uuid"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.10-10" author="MKouhestani">
+    <changeSet id="0.10-14" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fac_answer"
                                  baseColumnNames="created_by"
                                  referencedTableName="account_user"
@@ -26,7 +62,7 @@
                                  constraintName="fk_fac_answer_account_user_created_by"/>
     </changeSet>
 
-    <changeSet id="0.10-11" author="MKouhestani">
+    <changeSet id="0.10-15" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fac_answer"
                                  baseColumnNames="last_modified_by"
                                  referencedTableName="account_user"
@@ -34,27 +70,27 @@
                                  constraintName="fk_fac_answer_account_user_last_modified_by"/>
     </changeSet>
 
-    <changeSet id="0.10-12" author="MKouhestani">
+    <changeSet id="0.10-16" author="MKouhestani">
         <sql>UPDATE fac_answer SET created_by = (SELECT fac_assessment.created_by FROM fac_assessment WHERE
             fac_assessment.id = (SELECT fac_assessment_result.assessment_id FROM fac_assessment_result WHERE
             fac_assessment_result.id = fac_answer.assessment_result_id))
         </sql>
     </changeSet>
 
-    <changeSet id="0.10-13" author="MKouhestani">
+    <changeSet id="0.10-17" author="MKouhestani">
         <sql>UPDATE fac_answer SET last_modified_by = (SELECT fac_assessment.created_by FROM fac_assessment WHERE
             fac_assessment.id = (SELECT fac_assessment_result.assessment_id FROM fac_assessment_result WHERE
             fac_assessment_result.id = fac_answer.assessment_result_id))
         </sql>
     </changeSet>
 
-    <changeSet id="0.10-14" author="MKouhestani">
+    <changeSet id="0.10-18" author="MKouhestani">
         <addNotNullConstraint columnName="created_by"
                               constraintName="created_by_not_null"
                               tableName="fac_answer"/>
     </changeSet>
 
-    <changeSet id="0.10-15" author="MKouhestani">
+    <changeSet id="0.10-19" author="MKouhestani">
         <addNotNullConstraint columnName="last_modified_by"
                               constraintName="last_modified_by_not_null"
                               tableName="fac_answer"/>
