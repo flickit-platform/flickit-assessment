@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_NOT_KIT_OWNER;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -70,7 +70,7 @@ class GrantUserAccessToKitServiceTest {
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.grantUserAccessToKit(param));
 
-        assertEquals(GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_NOT_KIT_OWNER, exception.getMessage());
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verify(loadKitOwnerPort, times(1)).loadKitOwnerById(any());
         verify(grantUserAccessToKitPort, never()).grantUserAccess(any(), any());
     }

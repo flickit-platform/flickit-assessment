@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_NOT_KIT_OWNER;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Slf4j
 @Service
@@ -33,7 +33,7 @@ public class GrantUserAccessToKitService implements GrantUserAccessToKitUseCase 
     private void validateCurrentUser(Param param) {
         User user = loadKitOwnerPort.loadKitOwnerById(param.getKitId());
         if (!Objects.equals(user.getId(), param.getCurrentUserId())) {
-            throw new AccessDeniedException(GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_NOT_KIT_OWNER);
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
     }
 }

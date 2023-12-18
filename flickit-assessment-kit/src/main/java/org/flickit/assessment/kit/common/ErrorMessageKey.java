@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorMessageKey {
 
+    public static final String COMMON_CURRENT_USER_NOT_ALLOWED = "common.currentUser.notAllowed";
+
     public static final String TRANSLATE_KIT_DSL_UNABLE_TO_PARSE_JSON = "translate-kit-dsl.unable.to.parse.json";
 
     public static final String FIND_MATURITY_LEVEL_ID_NOT_FOUND = "find-maturity-level.id.notFound";
@@ -25,7 +27,6 @@ public class ErrorMessageKey {
     public static final String GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND = "grant-user-access-to-kit.kitId.notFound";
     public static final String GRANT_USER_ACCESS_TO_KIT_KIT_OWNER_NOT_FOUND = "grant-user-access-to-kit.kitOwner.notFound";
     public static final String GRANT_USER_ACCESS_TO_KIT_USER_EMAIL_NOT_FOUND = "grant-user-access-to-kit.userEmail.notFound";
-    public static final String GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_NOT_KIT_OWNER = "grant-user-access-to-kit.currentUser.notKitOwner";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
