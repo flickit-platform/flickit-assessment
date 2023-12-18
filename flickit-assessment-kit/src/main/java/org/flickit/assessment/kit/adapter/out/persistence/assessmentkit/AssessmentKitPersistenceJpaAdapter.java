@@ -6,25 +6,20 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
-import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.User;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitOwnerPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitByIdPort;
 import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
 import org.springframework.stereotype.Component;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_EMAIL_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND;
 import java.util.Optional;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_EMAIL_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
 public class AssessmentKitPersistenceJpaAdapter implements
-    GrantUserAccessToKitPort
-    LoadAssessmentKitOwnerPort,
+    GrantUserAccessToKitPort,
     LoadKitByIdPort {
 
     private final AssessmentKitJpaRepository repository;
@@ -41,17 +36,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
         repository.save(assessmentKit);
 
         return isAccessUpdated;
-    }
-
-    @Override
-    public User loadKitOwnerById(Long kitId) {
-        AssessmentKitJpaEntity assessmentKit = repository.findById(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND));
-        if (assessmentKit.getExpertGroup() != null && assessmentKit.getExpertGroup().getOwner() != null) {
-            UserJpaEntity kitOwner = assessmentKit.getExpertGroup().getOwner();
-            return UserMapper.mapToDomainModel(kitOwner);
-        } else
-            throw new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_KIT_OWNER_NOT_FOUND);
     }
 
     @Override

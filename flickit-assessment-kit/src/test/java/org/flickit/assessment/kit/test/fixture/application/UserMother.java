@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.test.fixture.application;
 
 import org.flickit.assessment.kit.application.domain.User;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class UserMother {
@@ -14,11 +13,8 @@ public class UserMother {
             "User" + userId + "@mail.com",
             "user" + userId,
             "bio",
-            LocalDateTime.now(),
-            Boolean.FALSE,
-            Boolean.TRUE,
-            Boolean.TRUE,
-            1L,
+            "linkedin",
+            "picture" + userId,
             1L
         );
     }
