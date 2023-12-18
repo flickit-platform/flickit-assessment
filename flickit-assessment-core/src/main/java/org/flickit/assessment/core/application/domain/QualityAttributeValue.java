@@ -92,7 +92,7 @@ public class QualityAttributeValue {
 
         return levelCompetences.isEmpty() || levelCompetences.stream()
             .allMatch(levelCompetence -> {
-                Long mlId = levelCompetence.getMaturityLevelId();
+                Long mlId = levelCompetence.getEffectiveLevelId();
                 return !percentScore.containsKey(mlId) || percentScore.get(mlId) >= levelCompetence.getValue();
             });
     }
