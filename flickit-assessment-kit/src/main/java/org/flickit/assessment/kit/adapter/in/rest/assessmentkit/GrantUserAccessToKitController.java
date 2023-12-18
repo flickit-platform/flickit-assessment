@@ -24,7 +24,6 @@ public class GrantUserAccessToKitController {
                                                      @RequestBody GrantUserAccessToKitRequestDto request) {
 
         UUID currentUserId = userContext.getUser().id();
-        currentUserId = UUID.fromString("00000000-0000-0000-0000-000000000413");
         useCase.grantUserAccessToKit(toParam(kitId, request, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }

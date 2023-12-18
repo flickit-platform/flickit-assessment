@@ -23,9 +23,8 @@
     </changeSet>
 
     <changeSet id="0.10-03" author="Mahdi Rezazadeh">
-        <addUniqueConstraint tableName="fak_kit_user_access"
-                             columnNames="kit_id, user_id"
-                             constraintName="uq_fak_kit_user_access_kit_user"/>
+        <addPrimaryKey tableName="fak_kit_user_access"
+                             columnNames="kit_id, user_id"/>
     </changeSet>
 
     <changeSet id="0.10-04" author="Mahdi Rezazadeh">
