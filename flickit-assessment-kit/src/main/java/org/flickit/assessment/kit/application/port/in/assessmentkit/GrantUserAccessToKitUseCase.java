@@ -21,15 +21,15 @@ public interface GrantUserAccessToKitUseCase {
         @NotNull(message = GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotBlank(message = GRANT_USER_ACCESS_TO_KIT_USER_EMAIL_NOT_NULL)
-        String userEmail;
+        @NotBlank(message = GRANT_USER_ACCESS_TO_KIT_EMAIL_NOT_NULL)
+        String email;
 
         @NotNull(message = GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitId, String userEmail, UUID currentUserId) {
+        public Param(Long kitId, String email, UUID currentUserId) {
             this.kitId = kitId;
-            this.userEmail = userEmail;
+            this.email = email;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

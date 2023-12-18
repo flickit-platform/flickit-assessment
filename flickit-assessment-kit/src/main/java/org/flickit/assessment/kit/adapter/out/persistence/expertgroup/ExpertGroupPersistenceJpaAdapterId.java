@@ -6,7 +6,7 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerIdPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -17,7 +17,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCES
 @Component
 @RequiredArgsConstructor
 public class ExpertGroupPersistenceJpaAdapterId implements
-    LoadExpertGroupOwnerIdPort {
+    LoadExpertGroupOwnerPort {
 
     private final ExpertGroupJpaRepository repository;
     private final AssessmentKitJpaRepository kitRepository;

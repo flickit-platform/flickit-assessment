@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerIdPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +25,7 @@ class GrantUserAccessToKitServiceTest {
     private GrantUserAccessToKitService service;
 
     @Mock
-    private LoadExpertGroupOwnerIdPort loadExpertGroupOwnerIdPort;
+    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Mock
     private GrantUserAccessToKitPort grantUserAccessToKitPort;
@@ -38,22 +38,22 @@ class GrantUserAccessToKitServiceTest {
             "user@email.com",
             currentUserId
         );
-        when(loadExpertGroupOwnerIdPort.loadByKitId(param.getKitId())).thenReturn(currentUserId);
-        when(grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getUserEmail()))
+        when(loadExpertGroupOwnerPort.loadByKitId(param.getKitId())).thenReturn(currentUserId);
+        when(grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getEmail()))
             .thenReturn(true);
 
         service.grantUserAccessToKit(param);
 
         var LoadExpertGroupOwnerParam = ArgumentCaptor.forClass(Long.class);
-        verify(loadExpertGroupOwnerIdPort, times(1)).loadByKitId(LoadExpertGroupOwnerParam.capture());
+        verify(loadExpertGroupOwnerPort, times(1)).loadByKitId(LoadExpertGroupOwnerParam.capture());
         assertEquals(param.getKitId(), LoadExpertGroupOwnerParam.getValue());
 
         var grantAccessKitIdParam = ArgumentCaptor.forClass(Long.class);
-        var grantAccessUserEmailParam = ArgumentCaptor.forClass(String.class);
+        var grantAccessEmailParam = ArgumentCaptor.forClass(String.class);
         verify(grantUserAccessToKitPort, times(1))
-            .grantUserAccess(grantAccessKitIdParam.capture(), grantAccessUserEmailParam.capture());
+            .grantUserAccess(grantAccessKitIdParam.capture(), grantAccessEmailParam.capture());
         assertEquals(param.getKitId(), grantAccessKitIdParam.getValue());
-        assertEquals(param.getUserEmail(), grantAccessUserEmailParam.getValue());
+        assertEquals(param.getEmail(), grantAccessEmailParam.getValue());
     }
 
     @Test
@@ -65,12 +65,12 @@ class GrantUserAccessToKitServiceTest {
             currentUserId
         );
         var expertGroupOwnerId = UUID.randomUUID();
-        when(loadExpertGroupOwnerIdPort.loadByKitId(param.getKitId())).thenReturn(expertGroupOwnerId);
+        when(loadExpertGroupOwnerPort.loadByKitId(param.getKitId())).thenReturn(expertGroupOwnerId);
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.grantUserAccessToKit(param));
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
-        verify(loadExpertGroupOwnerIdPort, times(1)).loadByKitId(any());
+        verify(loadExpertGroupOwnerPort, times(1)).loadByKitId(any());
         verify(grantUserAccessToKitPort, never()).grantUserAccess(any(), any());
     }
 }

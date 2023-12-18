@@ -20,11 +20,11 @@ class GrantUserAccessToKitUseCaseParamTest {
     }
 
     @Test
-    void testGrantUserAccessToKitParam_userEmailIsBlank_ErrorMessage() {
+    void testGrantUserAccessToKitParam_emailIsBlank_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GrantUserAccessToKitUseCase.Param(1L, "  ", currentUserId));
-        assertThat(throwable).hasMessage("userEmail: " + GRANT_USER_ACCESS_TO_KIT_USER_EMAIL_NOT_NULL);
+        assertThat(throwable).hasMessage("email: " + GRANT_USER_ACCESS_TO_KIT_EMAIL_NOT_NULL);
     }
 
     @Test
