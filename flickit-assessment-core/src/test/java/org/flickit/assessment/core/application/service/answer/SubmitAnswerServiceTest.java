@@ -7,7 +7,6 @@ import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
 import org.flickit.assessment.core.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
@@ -47,9 +46,6 @@ class SubmitAnswerServiceTest {
     @Mock
     private InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
-    @Mock
-    private LoadUserPort loadUserPort;
-
     private static final Long QUESTIONNAIRE_ID = 25L;
     private static final Long QUESTION_ID = 1L;
 
@@ -60,9 +56,7 @@ class SubmitAnswerServiceTest {
         UUID savedAnswerId = UUID.randomUUID();
         Long answerOptionId = 2L;
         Boolean isNotApplicable = Boolean.FALSE;
-        User user = user();
 
-        when(loadUserPort.load(any())).thenReturn(Optional.of(user));
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadExistAnswerViewPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.empty());
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
@@ -89,9 +83,7 @@ class SubmitAnswerServiceTest {
         AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         UUID savedAnswerId = UUID.randomUUID();
         Boolean isNotApplicable = Boolean.FALSE;
-        User user = user();
 
-        when(loadUserPort.load(any())).thenReturn(Optional.of(user));
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadExistAnswerViewPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.empty());
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
@@ -118,9 +110,7 @@ class SubmitAnswerServiceTest {
         UUID savedAnswerId = UUID.randomUUID();
         Long answerOptionId = 1L;
         Boolean isNotApplicable = Boolean.TRUE;
-        User user = user();
 
-        when(loadUserPort.load(any())).thenReturn(Optional.of(user));
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadExistAnswerViewPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.empty());
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);

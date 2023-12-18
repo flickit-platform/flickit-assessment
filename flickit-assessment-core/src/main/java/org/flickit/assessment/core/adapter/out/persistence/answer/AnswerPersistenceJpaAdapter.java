@@ -3,7 +3,6 @@ package org.flickit.assessment.core.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.QuestionnaireProgress;
@@ -34,12 +33,11 @@ public class AnswerPersistenceJpaAdapter implements
     UpdateAnswerPort {
 
     private final AnswerJpaRepository repository;
-
     private final AssessmentResultJpaRepository assessmentResultRepo;
 
     @Override
     public UUID persist(CreateAnswerPort.Param param) {
-        AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param, UserMapper.mapToJpaEntity(param.createdBy()));
+        AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param);
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepo.findById(param.assessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
         unsavedEntity.setAssessmentResult(assessmentResult);

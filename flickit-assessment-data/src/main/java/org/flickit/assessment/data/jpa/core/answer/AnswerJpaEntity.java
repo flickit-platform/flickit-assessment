@@ -3,7 +3,6 @@ package org.flickit.assessment.data.jpa.core.answer;
 import jakarta.persistence.*;
 import lombok.*;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
@@ -45,13 +44,11 @@ public class AnswerJpaEntity {
     @Column(name = "is_not_applicable")
     private Boolean isNotApplicable;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
-    private UserJpaEntity createdBy;
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
 
-    @ManyToOne
-    @JoinColumn(name = "last_modified_by", referencedColumnName = "id", nullable = false)
-    private UserJpaEntity lastModifiedBy;
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
 
     @Override
     public String toString() {
