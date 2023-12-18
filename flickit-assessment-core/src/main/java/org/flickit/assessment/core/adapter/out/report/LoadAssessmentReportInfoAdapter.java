@@ -3,7 +3,7 @@ package org.flickit.assessment.core.adapter.out.report;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
+import org.flickit.assessment.core.adapter.out.kit.maturitylevel.MaturityLevelJpaAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.exception.CalculateNotValidException;
 import org.flickit.assessment.core.application.exception.ConfidenceCalculationNotValidException;
@@ -31,8 +31,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
-
-    private final MaturityLevelRestAdapter maturityLevelRestAdapter;
+    private final MaturityLevelJpaAdapter maturityLevelJpaAdapter;
 
     @Override
     public AssessmentResult load(UUID assessmentId) {
@@ -52,7 +51,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         UUID assessmentResultId = assessmentResultEntity.getId();
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
 
-        Map<Long, MaturityLevel> maturityLevels = maturityLevelRestAdapter.loadByKitId(assessmentResultEntity.getAssessment().getAssessmentKitId())
+        Map<Long, MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitIdWithCompetences(assessmentResultEntity.getAssessment().getAssessmentKitId())
             .stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
         List<SubjectValue> subjectValues = buildSubjectValues(subjectValueEntities, maturityLevels);

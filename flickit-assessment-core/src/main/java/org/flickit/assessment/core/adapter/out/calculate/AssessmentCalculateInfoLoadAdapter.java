@@ -2,10 +2,9 @@ package org.flickit.assessment.core.adapter.out.calculate;
 
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.kit.maturitylevel.MaturityLevelJpaAdapter;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
-import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelDto;
-import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.qualityattribute.QualityAttributeDto;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
@@ -43,7 +42,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private final SubjectRestAdapter subjectRestAdapter;
     private final QuestionRestAdapter questionRestAdapter;
     private final AnswerOptionRestAdapter answerOptionRestAdapter;
-    private final MaturityLevelRestAdapter maturityLevelRestAdapter;
+    private final MaturityLevelJpaAdapter maturityLevelJpaAdapter;
 
     record Context(List<QuestionDto> allQuestionsDto,
                    List<AnswerJpaEntity> allAnswerEntities,
@@ -200,11 +199,9 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * @return assessment with all information needed for calculation
      */
     private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity) {
-        List<MaturityLevelDto> maturityLevelsDto = maturityLevelRestAdapter.loadMaturityLevelsDtoByKitId(assessmentEntity.getAssessmentKitId());
-        List<MaturityLevel> maturityLevels = maturityLevelsDto.stream()
-            .map(MaturityLevelDto::dtoToDomain)
-            .toList();
-        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), maturityLevels);
+        Long kitId = assessmentEntity.getAssessmentKitId();
+        List<MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitIdWithCompetences(kitId);
+        AssessmentKit kit = new AssessmentKit(kitId, maturityLevels);
         return mapToDomainModel(assessmentEntity, kit);
     }
 }
