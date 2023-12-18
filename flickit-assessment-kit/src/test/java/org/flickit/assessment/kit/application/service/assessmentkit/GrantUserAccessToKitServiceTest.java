@@ -41,7 +41,7 @@ class GrantUserAccessToKitServiceTest {
         );
         User currentUser = UserMother.userWithId(param.getCurrentUserId());
         when(loadKitOwnerPort.loadKitOwnerById(param.getKitId())).thenReturn(currentUser);
-        when(grantUserAccessToKitPort.grantUserAccessToKitByUserEmail(param.getKitId(), param.getUserEmail()))
+        when(grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getUserEmail()))
             .thenReturn(true);
 
         service.grantUserAccessToKit(param);
@@ -53,7 +53,7 @@ class GrantUserAccessToKitServiceTest {
         var grantAccessKitIdParam = ArgumentCaptor.forClass(Long.class);
         var grantAccessUserEmailParam = ArgumentCaptor.forClass(String.class);
         verify(grantUserAccessToKitPort, times(1))
-            .grantUserAccessToKitByUserEmail(grantAccessKitIdParam.capture(), grantAccessUserEmailParam.capture());
+            .grantUserAccess(grantAccessKitIdParam.capture(), grantAccessUserEmailParam.capture());
         assertEquals(param.getKitId(), grantAccessKitIdParam.getValue());
         assertEquals(param.getUserEmail(), grantAccessUserEmailParam.getValue());
     }
@@ -72,7 +72,7 @@ class GrantUserAccessToKitServiceTest {
 
         assertEquals(GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_NOT_KIT_OWNER, exception.getMessage());
         verify(loadKitOwnerPort, times(1)).loadKitOwnerById(any());
-        verify(grantUserAccessToKitPort, never()).grantUserAccessToKitByUserEmail(any(), any());
+        verify(grantUserAccessToKitPort, never()).grantUserAccess(any(), any());
     }
 
     @Test
@@ -84,7 +84,7 @@ class GrantUserAccessToKitServiceTest {
         );
         User currentUser = UserMother.userWithId(param.getCurrentUserId());
         when(loadKitOwnerPort.loadKitOwnerById(param.getKitId())).thenReturn(currentUser);
-        when(grantUserAccessToKitPort.grantUserAccessToKitByUserEmail(param.getKitId(), param.getUserEmail()))
+        when(grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getUserEmail()))
             .thenReturn(false);
 
         service.grantUserAccessToKit(param);
@@ -96,7 +96,7 @@ class GrantUserAccessToKitServiceTest {
         var grantAccessKitIdParam = ArgumentCaptor.forClass(Long.class);
         var grantAccessUserEmailParam = ArgumentCaptor.forClass(String.class);
         verify(grantUserAccessToKitPort, times(1))
-            .grantUserAccessToKitByUserEmail(grantAccessKitIdParam.capture(), grantAccessUserEmailParam.capture());
+            .grantUserAccess(grantAccessKitIdParam.capture(), grantAccessUserEmailParam.capture());
         assertEquals(param.getKitId(), grantAccessKitIdParam.getValue());
         assertEquals(param.getUserEmail(), grantAccessUserEmailParam.getValue());
     }

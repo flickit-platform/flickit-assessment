@@ -26,7 +26,7 @@ public class GrantUserAccessToKitService implements GrantUserAccessToKitUseCase 
     @Override
     public void grantUserAccessToKit(Param param) {
         validateCurrentUser(param);
-        boolean isAccessUpdated = grantUserAccessToKitPort.grantUserAccessToKitByUserEmail(param.getKitId(), param.getUserEmail());
+        grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getUserEmail());
         log.debug("User [{}] granted access to kit [{}]", param.getUserEmail(), param.getKitId());
     }
 
