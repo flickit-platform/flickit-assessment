@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
+import java.util.UUID;
+
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GrantUserAccessToKitUseCase {
@@ -19,16 +21,16 @@ public interface GrantUserAccessToKitUseCase {
         @NotNull(message = GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotBlank(message = GRANT_USER_ACCESS_TO_KIT_USER_EMAIL_NOT_NULL)
-        String userEmail;
+        @NotBlank(message = GRANT_USER_ACCESS_TO_KIT_EMAIL_NOT_NULL)
+        String email;
 
-        @NotBlank(message = GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_EMAIL_NOT_NULL)
-        String currentUserEmail;
+        @NotNull(message = GRANT_USER_ACCESS_TO_KIT_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
 
-        public Param(Long kitId, String userEmail, String currentUserEmail) {
+        public Param(Long kitId, String email, UUID currentUserId) {
             this.kitId = kitId;
-            this.userEmail = userEmail;
-            this.currentUserEmail = currentUserEmail;
+            this.email = email;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

@@ -14,6 +14,8 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitById
 import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
 import org.springframework.stereotype.Component;
 
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_EMAIL_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND;
 import java.util.Optional;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
@@ -21,7 +23,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 @Component
 @RequiredArgsConstructor
 public class AssessmentKitPersistenceJpaAdapter implements
-    GrantUserAccessToKitPort,
+    GrantUserAccessToKitPort
     LoadAssessmentKitOwnerPort,
     LoadKitByIdPort {
 
@@ -29,11 +31,11 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final UserJpaRepository userRepository;
 
     @Override
-    public boolean grantUserAccessToKitByUserEmail(Long kitId, String userEmail) {
+    public boolean grantUserAccess(Long kitId, String email) {
         AssessmentKitJpaEntity assessmentKit = repository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND));
-        UserJpaEntity user = userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_USER_EMAIL_NOT_FOUND));
+        UserJpaEntity user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_EMAIL_NOT_FOUND));
 
         boolean isAccessUpdated = assessmentKit.getAccessGrantedUsers().add(user);
         repository.save(assessmentKit);
