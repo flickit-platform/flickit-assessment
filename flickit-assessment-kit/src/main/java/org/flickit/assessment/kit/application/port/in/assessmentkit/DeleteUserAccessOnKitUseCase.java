@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -7,8 +8,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_KIT_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_USER_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface DeleteUserAccessOnKitUseCase {
 
@@ -21,12 +21,16 @@ public interface DeleteUserAccessOnKitUseCase {
         @NotNull(message = DELETE_USER_ACCESS_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotNull(message = DELETE_USER_ACCESS_USER_ID_NOT_NULL)
-        UUID userId;
+        @NotBlank(message = DELETE_USER_ACCESS_EMAIL_NOT_NULL)
+        String email;
 
-        public Param(Long kitId, UUID userId) {
+        @NotNull(message = DELETE_USER_ACCESS_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(Long kitId, String email, UUID currentUserId) {
             this.kitId = kitId;
-            this.userId = userId;
+            this.email = email;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_KIT_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_USER_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_CURRENT_USER_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -20,15 +20,15 @@ class DeleteUserAccessOnKitUseCaseParamTest {
     void testDeleteUserAccess_KitIdNull_ErrorMessage() {
         UUID userId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new DeleteUserAccessOnKitUseCase.Param(null, userId));
+            () -> new DeleteUserAccessOnKitUseCase.Param(null, "email", userId));
         assertThat(throwable).hasMessage("kitId: " + DELETE_USER_ACCESS_KIT_ID_NOT_NULL);
     }
 
     @Test
     void testDeleteUserAccess_UserIdNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new DeleteUserAccessOnKitUseCase.Param(1L, null));
-        assertThat(throwable).hasMessage("userId: " + DELETE_USER_ACCESS_USER_ID_NOT_NULL);
+            () -> new DeleteUserAccessOnKitUseCase.Param(1L, "email", null));
+        assertThat(throwable).hasMessage("userId: " + DELETE_USER_ACCESS_CURRENT_USER_ID_NOT_NULL);
     }
 
 }

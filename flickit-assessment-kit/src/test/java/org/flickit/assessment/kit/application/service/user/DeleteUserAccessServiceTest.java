@@ -54,7 +54,7 @@ class DeleteUserAccessServiceTest {
         when(loadUserByIdPort.load(userId)).thenReturn(Optional.of(simpleUser()));
         when(loadKitUserByKitAndUserPort.loadByKitAndUser(kitId, userId)).thenReturn(Optional.of(simpleKitUser()));
 
-        var param = new DeleteUserAccessOnKitUseCase.Param(kitId, userId);
+        var param = new DeleteUserAccessOnKitUseCase.Param(kitId, "email", userId);
         service.delete(param);
 
         ArgumentCaptor<DeleteUserAccessPort.Param> deletePortParam = ArgumentCaptor.forClass(DeleteUserAccessPort.Param.class);
@@ -71,7 +71,7 @@ class DeleteUserAccessServiceTest {
 
         when(loadKitByIdPort.load(kitId)).thenReturn(Optional.empty());
 
-        var param = new DeleteUserAccessOnKitUseCase.Param(kitId, userId);
+        var param = new DeleteUserAccessOnKitUseCase.Param(kitId, "email", userId);
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.delete(param));
         assertThat(throwable).hasMessage(DELETE_USER_ACCESS_KIT_NOT_FOUND);
@@ -85,7 +85,7 @@ class DeleteUserAccessServiceTest {
         when(loadKitByIdPort.load(kitId)).thenReturn(Optional.of(simpleKit()));
         when(loadUserByIdPort.load(userId)).thenReturn(Optional.empty());
 
-        var param = new DeleteUserAccessOnKitUseCase.Param(kitId, userId);
+        var param = new DeleteUserAccessOnKitUseCase.Param(kitId, "email", userId);
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.delete(param));
         assertThat(throwable).hasMessage(DELETE_USER_ACCESS_USER_NOT_FOUND);
@@ -100,7 +100,7 @@ class DeleteUserAccessServiceTest {
         when(loadUserByIdPort.load(userId)).thenReturn(Optional.of(simpleUser()));
         when(loadKitUserByKitAndUserPort.loadByKitAndUser(kitId, userId)).thenReturn(Optional.empty());
 
-        var param = new DeleteUserAccessOnKitUseCase.Param(kitId, userId);
+        var param = new DeleteUserAccessOnKitUseCase.Param(kitId, "email", userId);
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.delete(param));
         assertThat(throwable).hasMessage(DELETE_USER_ACCESS_KIT_USER_NOT_FOUND);
