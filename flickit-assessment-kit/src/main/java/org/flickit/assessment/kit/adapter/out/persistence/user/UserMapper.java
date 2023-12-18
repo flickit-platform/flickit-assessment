@@ -16,11 +16,6 @@ public class UserMapper {
             entity.getBio(),
             entity.getLinkedin(),
             entity.getPicture(),
-            entity.getLastLogin(),
-            entity.getIsSuperUser(),
-            entity.getIsStaff(),
-            entity.getIsActive(),
-            entity.getCurrentSpaceId(),
             entity.getDefaultSpaceId()
         );
     }
