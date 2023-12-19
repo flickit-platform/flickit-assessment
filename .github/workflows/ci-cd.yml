@@ -129,8 +129,8 @@ jobs:
     needs: [sonar]
     name: deploy latest image
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+#    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+#      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
 
     permissions:
       contents: write
@@ -165,6 +165,8 @@ jobs:
     name: darkube deploy latest
     container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
     runs-on: ubuntu-latest
+    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
 
     steps:
       - name: Run script
