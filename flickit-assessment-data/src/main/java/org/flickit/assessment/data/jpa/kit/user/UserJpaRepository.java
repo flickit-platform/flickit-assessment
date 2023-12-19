@@ -9,5 +9,4 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
 
     Optional<UserJpaEntity> findByEmail(String email);
 
-    void deleteByKitIdAndUserId(Long kitId, UUID userId);
 }

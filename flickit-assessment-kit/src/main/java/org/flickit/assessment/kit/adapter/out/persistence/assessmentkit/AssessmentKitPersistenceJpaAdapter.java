@@ -7,8 +7,7 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaReposit
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadExpertGroupIdPort;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitByIdPort;
+import org.flickit.assessment.kit.application.port.out.useraccess.DeleteUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +21,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCES
 public class AssessmentKitPersistenceJpaAdapter implements
     GrantUserAccessToKitPort,
     LoadExpertGroupIdPort,
-    LoadKitByIdPort {
+    DeleteUserAccessPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -44,8 +43,13 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<AssessmentKit> load(Long kitId) {
-        var entity = repository.findById(kitId);
-        return entity.map(AssessmentKitMapper::mapToDomainModel);
+    public void delete(DeleteUserAccessPort.Param param) {
+        AssessmentKitJpaEntity assessmentKit = repository.findById(param.kitId())
+            .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND));
+        UserJpaEntity user = userRepository.findByEmail(param.email())
+            .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_EMAIL_NOT_FOUND));
+
+        assessmentKit.getAccessGrantedUsers().remove(user);
+        repository.save(assessmentKit);
     }
 }
