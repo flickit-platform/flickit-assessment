@@ -121,7 +121,7 @@ jobs:
 
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
 
@@ -133,7 +133,7 @@ jobs:
       github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
 
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -149,7 +149,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: avansoft
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GH_PACKAGES_TOKEN }}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -177,8 +177,7 @@ jobs:
     needs: [sonar]
     name: tag and release
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true &&
+    if: ${{ ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) &&
       !contains( needs.sonar.outputs.project_version , 'SNAPSHOT') }}
 
     permissions:
@@ -197,7 +196,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     outputs:
@@ -216,7 +215,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: avansoft
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GH_PACKAGES_TOKEN }}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
