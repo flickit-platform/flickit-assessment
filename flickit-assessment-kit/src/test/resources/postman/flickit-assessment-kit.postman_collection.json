@@ -75,7 +75,35 @@
 				}
 			},
 			"response": []
-		}
+		}, {
+          "name": "Delete User Access to Kit",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"alibalaei@asta.ir\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "assessment-kits",
+                "302",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
 	],
 	"event": [
 		{

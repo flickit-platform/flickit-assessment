@@ -31,9 +31,7 @@ public class DeleteUserAccessOnKitService implements DeleteUserAccessOnKitUseCas
     @Override
     public void delete(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
-        loadKitUserAccessPort.load(param.getKitId(), param.getCurrentUserId()).orElseThrow(
-            () -> new ResourceNotFoundException(DELETE_USER_ACCESS_KIT_USER_NOT_FOUND)
-        );
+        checkAccessExistence(param);
 
         deleteUserAccessPort.delete(new DeleteUserAccessPort.Param(param.getKitId(), param.getEmail()));
         log.debug("User [{}] access to private kit [{}] is removed.", param.getCurrentUserId(), param.getCurrentUserId());
@@ -47,5 +45,11 @@ public class DeleteUserAccessOnKitService implements DeleteUserAccessOnKitUseCas
         if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
+    }
+
+    private void checkAccessExistence(Param param) {
+        loadKitUserAccessPort.loadByKitIdAndUserEmail(param.getKitId(), param.getEmail()).orElseThrow(
+            () -> new ResourceNotFoundException(DELETE_USER_ACCESS_KIT_USER_NOT_FOUND)
+        );
     }
 }

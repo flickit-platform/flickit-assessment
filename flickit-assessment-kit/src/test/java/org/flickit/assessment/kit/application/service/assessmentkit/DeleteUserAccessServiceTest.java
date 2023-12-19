@@ -46,7 +46,7 @@ class DeleteUserAccessServiceTest {
 
         when(loadExpertGroupIdPort.loadExpertGroupId(kitId)).thenReturn(Optional.of(expertGroupId));
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
-        when(loadKitUserAccessPort.load(kitId, currentUserId)).thenReturn(Optional.of(simpleKitUser()));
+        when(loadKitUserAccessPort.loadByKitIdAndUserEmail(kitId, EMAIL)).thenReturn(Optional.of(simpleKitUser()));
         doNothing().when(deleteUserAccessPort).delete(new DeleteUserAccessPort.Param(kitId, EMAIL));
 
         var param = new DeleteUserAccessOnKitUseCase.Param(kitId, EMAIL, currentUserId);
@@ -75,7 +75,7 @@ class DeleteUserAccessServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
         verify(loadExpertGroupIdPort, times(1)).loadExpertGroupId(any());
-        verify(loadKitUserAccessPort, never()).load(any(), any());
+        verify(loadKitUserAccessPort, never()).loadByKitIdAndUserEmail(any(), any());
         verify(deleteUserAccessPort, never()).delete(any(DeleteUserAccessPort.Param.class));
     }
 
@@ -92,7 +92,7 @@ class DeleteUserAccessServiceTest {
         assertEquals(DELETE_USER_ACCESS_KIT_ID_NOT_FOUND, exception.getMessage());
         verify(loadExpertGroupIdPort, times(1)).loadExpertGroupId(any());
         verify(loadExpertGroupOwnerPort, never()).loadOwnerId(any());
-        verify(loadKitUserAccessPort, never()).load(any(), any());
+        verify(loadKitUserAccessPort, never()).loadByKitIdAndUserEmail(any(), any());
         verify(deleteUserAccessPort, never()).delete(any(DeleteUserAccessPort.Param.class));
     }
 
@@ -111,7 +111,7 @@ class DeleteUserAccessServiceTest {
         assertEquals(DELETE_USER_ACCESS_EXPERT_GROUP_OWNER_NOT_FOUND, exception.getMessage());
         verify(loadExpertGroupIdPort, times(1)).loadExpertGroupId(any());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
-        verify(loadKitUserAccessPort, never()).load(any(), any());
+        verify(loadKitUserAccessPort, never()).loadByKitIdAndUserEmail(any(), any());
         verify(deleteUserAccessPort, never()).delete(any(DeleteUserAccessPort.Param.class));
     }
 
@@ -123,7 +123,7 @@ class DeleteUserAccessServiceTest {
 
         when(loadExpertGroupIdPort.loadExpertGroupId(kitId)).thenReturn(Optional.of(expertGroupId));
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
-        when(loadKitUserAccessPort.load(kitId, currentUserId)).thenReturn(Optional.empty());
+        when(loadKitUserAccessPort.loadByKitIdAndUserEmail(kitId, EMAIL)).thenReturn(Optional.empty());
 
         var param = new DeleteUserAccessOnKitUseCase.Param(kitId, EMAIL, currentUserId);
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.delete(param));
@@ -131,7 +131,7 @@ class DeleteUserAccessServiceTest {
         assertEquals(DELETE_USER_ACCESS_KIT_USER_NOT_FOUND, exception.getMessage());
         verify(loadExpertGroupIdPort, times(1)).loadExpertGroupId(any());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
-        verify(loadKitUserAccessPort, times(1)).load(any(), any());
+        verify(loadKitUserAccessPort, times(1)).loadByKitIdAndUserEmail(any(), any());
         verify(deleteUserAccessPort, never()).delete(any(DeleteUserAccessPort.Param.class));
     }
 
