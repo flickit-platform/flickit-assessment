@@ -7,21 +7,55 @@
 
     <changeSet id="0.10-1" author="MKouhestani">
         <addColumn tableName="baseinfo_assessmentkit">
-            <column name="is_private" type="boolean" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
+            <column name="is_private" type="boolean" defaultValueBoolean="false"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.10-2" author="MKouhestani">
+    <changeSet id="0.10-02" author="Mahdi Rezazadeh">
+        <createTable tableName="fak_kit_user_access">
+            <column name="kit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.10-03" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_kit_user_access"
+                             columnNames="kit_id, user_id"/>
+    </changeSet>
+
+    <changeSet id="0.10-04" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_kit_user_access"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="baseinfo_assessmentkit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kit_user_access_assessmentkit"
+                                 deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.10-05" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_kit_user_access"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kit_user_access_account_user"
+                                 deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.10-06" author="MKouhestani">
         <addNotNullConstraint tableName="baseinfo_assessmentkit" columnName="expert_group_id"/>
     </changeSet>
 
-    <changeSet id="0.10-3" author="MKouhestani">
+    <changeSet id="0.10-07" author="MKouhestani">
         <modifyDataType tableName="baseinfo_assessmentkit" columnName="expert_group_id" newDataType="bigint"/>
     </changeSet>
 
-    <changeSet id="0.10-4" author="MKouhestani">
+    <changeSet id="0.10-08" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="baseinfo_expertgroup"
                                  baseColumnNames="owner_id"
                                  referencedTableName="account_user"

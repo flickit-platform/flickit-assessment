@@ -1,12 +1,11 @@
 package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "baseinfo_assessmentkit")
@@ -49,4 +48,10 @@ public class AssessmentKitJpaEntity {
     @Column(name = "about", nullable = false)
     private String about;
 
+    @ManyToMany
+    @JoinTable(
+        name = "fak_kit_user_access",
+        joinColumns = @JoinColumn(name = "kit_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<UserJpaEntity> accessGrantedUsers;
 }
