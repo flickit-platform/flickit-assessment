@@ -16,7 +16,7 @@ env:
   SPRING_DATASOURCE_PASSWORD: changeme
   SONAR_PROJECT_KEY: flickit-assessment-core
   REGISTRY: ghcr.io
-  IMAGE_NAME: avansoft/flickit-assessment
+  IMAGE_NAME: avansoft/flickit-assessment-core
   JIB_OPT: -Djib.httpTimeout=240000 -Dmaven.test.skip=true
   JIB_CMD: clean install jib:build
 
