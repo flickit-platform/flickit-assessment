@@ -1,13 +1,12 @@
 package org.flickit.assessment.kit.adapter.out.persistence.user;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
+import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedResponse;
 import org.flickit.assessment.kit.application.port.out.user.LoadUsersByKitPort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +25,7 @@ public class UserPersistenceJpaAdapter implements LoadUsersByKitPort {
     private final ExpertGroupJpaRepository expertGroupRepository;
 
     @Override
-    public PaginatedResponse<GetKitUserListUseCase.KitUserListItem> load(LoadUsersByKitPort.Param param) {
+    public KitUserPaginatedResponse load(LoadUsersByKitPort.Param param) {
         var kit = kitRepository.findById(param.kitId()).orElseThrow(
             () -> new ResourceNotFoundException(GET_KIT_USER_LIST_KIT_NOT_FOUND));
         var expertGroup = expertGroupRepository.findById(kit.getExpertGroupId()).orElseThrow(
@@ -37,14 +36,16 @@ public class UserPersistenceJpaAdapter implements LoadUsersByKitPort {
             PageRequest.of(param.page(), param.size()));
 
         var items = pageResult.getContent().stream()
-            .map(u -> UserMapper.mapJpaEntityToUserItem(u, kit.getTitle(), expertGroup.getName()))
+            .map(UserMapper::mapToUserListItem)
             .toList();
 
-        return new PaginatedResponse<>(
+        return new KitUserPaginatedResponse(
             items,
+            new KitUserPaginatedResponse.Kit(param.kitId(), kit.getTitle()),
+            new KitUserPaginatedResponse.ExpertGroup(expertGroup.getId(), expertGroup.getName()),
             pageResult.getNumber(),
             pageResult.getSize(),
-            UserJpaEntity.Fields.ID,
+            UserJpaEntity.Fields.NAME,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );

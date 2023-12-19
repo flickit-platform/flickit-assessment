@@ -6,13 +6,16 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedResponse;
 
+import java.util.UUID;
+
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetKitUserListUseCase {
 
-    PaginatedResponse<KitUserListItem> getKitUserList(Param param);
+    KitUserPaginatedResponse getKitUserList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -28,18 +31,16 @@ public interface GetKitUserListUseCase {
         @Max(value = 100, message = GET_KIT_USER_LIST_SIZE_MAX)
         int size;
 
-        public Param(Long kitId, int page, int size) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(Long kitId, int page, int size, UUID currentUserId) {
             this.kitId = kitId;
             this.page = page;
             this.size = size;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
 
-    record KitUserListItem(
-        String name,
-        String email,
-        String kitTitle,
-        String expertGroupTitle) {
-    }
 }

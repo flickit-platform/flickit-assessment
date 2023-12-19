@@ -13,6 +13,6 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
     Optional<UserJpaEntity> findByEmail(String email);
 
     @Query("SELECT u FROM UserJpaEntity u " +
-        "WHERE u.id IN (SELECT uk FROM AssessmentKitUserJpaEntity uk WHERE uk.kitId = :kitId)")
+        "WHERE u.id IN (SELECT ku.id.user_id FROM KitUserAccessJpaEntity ku WHERE ku.id.kit_id = :kitId)")
     Page<UserJpaEntity> findAllKitUsers(Long kitId, Pageable pageable);
 }

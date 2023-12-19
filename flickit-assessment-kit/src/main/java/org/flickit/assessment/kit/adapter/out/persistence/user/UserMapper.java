@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.domain.User;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
+import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedResponse;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
@@ -21,15 +21,9 @@ public class UserMapper {
         );
     }
 
-    public static GetKitUserListUseCase.KitUserListItem mapJpaEntityToUserItem(
-        UserJpaEntity entity,
-        String kitTitle,
-        String expertGroupTitle) {
-        return new GetKitUserListUseCase.KitUserListItem(
+    public static KitUserPaginatedResponse.UserListItem mapToUserListItem(UserJpaEntity entity) {
+        return new KitUserPaginatedResponse.UserListItem(
             entity.getDisplayName(),
-            entity.getEmail(),
-            kitTitle,
-            expertGroupTitle
-        );
+            entity.getEmail());
     }
 }
