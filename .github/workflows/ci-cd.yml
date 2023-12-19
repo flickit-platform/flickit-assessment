@@ -126,11 +126,11 @@ jobs:
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
 
   build-and-push-latest-image:
-    needs: [sonar]
+#    needs: [sonar]
     name: deploy latest image
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+#    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+#      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
 
     permissions:
       contents: write
