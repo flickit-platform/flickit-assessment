@@ -23,8 +23,8 @@ public class AnswerMapper {
             param.answerOptionId(),
             param.confidenceLevelId(),
             param.isNotApplicable(),
-            param.createdBy(),
-            param.createdBy()
+            param.currentUserId(),
+            param.currentUserId()
         );
     }
 

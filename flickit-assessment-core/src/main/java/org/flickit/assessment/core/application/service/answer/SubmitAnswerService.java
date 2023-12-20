@@ -47,7 +47,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var isConfidenceLevelChanged = Objects.equals(Boolean.TRUE, param.getIsNotApplicable()) ? Boolean.FALSE : !Objects.equals(confidenceLevelId, loadedAnswer.get().getConfidenceLevelId());
 
         if (isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged) {
-            var updateParam = toUpdateAnswerParam(loadedAnswer.get().getId(), answerOptionId, confidenceLevelId, param.getIsNotApplicable());
+            var updateParam = toUpdateAnswerParam(loadedAnswer.get().getId(), answerOptionId, confidenceLevelId, param.getIsNotApplicable(), param.getCurrentUserId());
             var isCalculateValid = !isAnswerOptionChanged && !isNotApplicableChanged;
             updateAnswer(assessmentResult.getId(), updateParam, isCalculateValid, !isConfidenceLevelChanged);
         }
@@ -71,12 +71,12 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             answerOptionId,
             confidenceLevelId,
             param.getIsNotApplicable(),
-            param.getCreatedBy()
+            param.getCurrentUserId()
         );
     }
 
-    private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable) {
-        return new UpdateAnswerPort.Param(answerId, answerOptionId, confidenceLevelId, isNotApplicable);
+    private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable, UUID currentUserId) {
+        return new UpdateAnswerPort.Param(answerId, answerOptionId, confidenceLevelId, isNotApplicable, currentUserId);
     }
 
     private void updateAnswer(UUID assessmentResultId, UpdateAnswerPort.Param updateParam, Boolean isCalculateValid, Boolean isConfidenceValid) {
