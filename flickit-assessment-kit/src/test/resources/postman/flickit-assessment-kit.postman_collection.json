@@ -79,7 +79,13 @@
           "name": "Delete User Access to Kit",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{authorization_header}}",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"email\": \"alibalaei@asta.ir\"\n}",
