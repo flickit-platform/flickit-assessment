@@ -1,8 +1,8 @@
-package org.flickit.assessment.kit.application.port.out.user;
+package org.flickit.assessment.kit.application.port.out.assessmentkit;
 
 import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedResponse;
 
-public interface LoadUsersByKitPort {
+public interface LoadKitUsersPort {
 
     KitUserPaginatedResponse load(Param param);
 

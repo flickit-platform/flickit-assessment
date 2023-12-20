@@ -6,7 +6,7 @@ import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedRespon
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadExpertGroupIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.user.LoadUsersByKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -32,7 +32,7 @@ class GetKitUserListServiceTest {
     private GetKitUserListService service;
 
     @Mock
-    private LoadUsersByKitPort loadUsersByKitPort;
+    private LoadKitUsersPort loadKitUsersPort;
 
     @Mock
     private LoadExpertGroupIdPort loadExpertGroupIdPort;
@@ -65,7 +65,7 @@ class GetKitUserListServiceTest {
             new KitUserPaginatedResponse.ExpertGroup(expertGroupId, "expert group title"));
         when(loadExpertGroupIdPort.loadExpertGroupId(kitId)).thenReturn(Optional.of(expertGroupId));
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
-        when(loadUsersByKitPort.load(any(LoadUsersByKitPort.Param.class))).thenReturn(kitUserPaginatedResponse);
+        when(loadKitUsersPort.load(any(LoadKitUsersPort.Param.class))).thenReturn(kitUserPaginatedResponse);
 
         var param = new GetKitUserListUseCase.Param(kitId, page, size, currentUserId);
         var result = service.getKitUserList(param);
@@ -78,15 +78,15 @@ class GetKitUserListServiceTest {
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(LoadExpertGroupOwnerParam.capture());
         assertEquals(expertGroupId, LoadExpertGroupOwnerParam.getValue());
 
-        ArgumentCaptor<LoadUsersByKitPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadUsersByKitPort.Param.class);
-        verify(loadUsersByKitPort).load(loadPortParam.capture());
+        ArgumentCaptor<LoadKitUsersPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadKitUsersPort.Param.class);
+        verify(loadKitUsersPort).load(loadPortParam.capture());
 
         assertEquals(kitId, loadPortParam.getValue().kitId());
         assertEquals(page, loadPortParam.getValue().page());
         assertEquals(size, loadPortParam.getValue().size());
         assertNotNull(result.getResult().getItems());
         assertEquals(kitUserListItems, result.getResult().getItems());
-        verify(loadUsersByKitPort, times(1)).load(any(LoadUsersByKitPort.Param.class));
+        verify(loadKitUsersPort, times(1)).load(any(LoadKitUsersPort.Param.class));
     }
 
     @Test
@@ -110,7 +110,7 @@ class GetKitUserListServiceTest {
             new KitUserPaginatedResponse.ExpertGroup(expertGroupId, "expert group title"));
         when(loadExpertGroupIdPort.loadExpertGroupId(kitId)).thenReturn(Optional.of(expertGroupId));
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
-        when(loadUsersByKitPort.load(any(LoadUsersByKitPort.Param.class))).thenReturn(kitUserPaginatedResponse);
+        when(loadKitUsersPort.load(any(LoadKitUsersPort.Param.class))).thenReturn(kitUserPaginatedResponse);
 
         var param = new GetKitUserListUseCase.Param(kitId, page, size, currentUserId);
         var result = service.getKitUserList(param);
@@ -123,14 +123,14 @@ class GetKitUserListServiceTest {
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(LoadExpertGroupOwnerParam.capture());
         assertEquals(expertGroupId, LoadExpertGroupOwnerParam.getValue());
 
-        ArgumentCaptor<LoadUsersByKitPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadUsersByKitPort.Param.class);
-        verify(loadUsersByKitPort).load(loadPortParam.capture());
+        ArgumentCaptor<LoadKitUsersPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadKitUsersPort.Param.class);
+        verify(loadKitUsersPort).load(loadPortParam.capture());
 
         assertEquals(kitId, loadPortParam.getValue().kitId());
         assertEquals(page, loadPortParam.getValue().page());
         assertEquals(size, loadPortParam.getValue().size());
         assertNotNull(result.getResult().getItems());
         assertEquals(0, result.getResult().getItems().size());
-        verify(loadUsersByKitPort, times(1)).load(any(LoadUsersByKitPort.Param.class));
+        verify(loadKitUsersPort, times(1)).load(any(LoadKitUsersPort.Param.class));
     }
 }

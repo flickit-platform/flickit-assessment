@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedRespon
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadExpertGroupIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.user.LoadUsersByKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +23,14 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_USER_LIS
 @RequiredArgsConstructor
 public class GetKitUserListService implements GetKitUserListUseCase {
 
-    private final LoadUsersByKitPort loadUsersByKitPort;
+    private final LoadKitUsersPort loadKitUsersPort;
     private final LoadExpertGroupIdPort loadExpertGroupIdPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Override
     public KitUserPaginatedResponse getKitUserList(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
-        return loadUsersByKitPort.load(toParam(param.getKitId(), param.getPage(), param.getSize()));
+        return loadKitUsersPort.load(toParam(param.getKitId(), param.getPage(), param.getSize()));
     }
 
     private void validateCurrentUser(Long kitId, UUID currentUserId) {
@@ -43,7 +43,7 @@ public class GetKitUserListService implements GetKitUserListUseCase {
         }
     }
 
-    private LoadUsersByKitPort.Param toParam(Long kitId, int page, int size) {
-        return new LoadUsersByKitPort.Param(kitId, page, size);
+    private LoadKitUsersPort.Param toParam(Long kitId, int page, int size) {
+        return new LoadKitUsersPort.Param(kitId, page, size);
     }
 }
