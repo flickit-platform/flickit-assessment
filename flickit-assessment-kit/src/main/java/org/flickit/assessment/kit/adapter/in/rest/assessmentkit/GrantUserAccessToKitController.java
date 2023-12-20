@@ -22,7 +22,6 @@ public class GrantUserAccessToKitController {
     @PostMapping("assessment-kits/{kitId}/users")
     public ResponseEntity<Void> grantUserAccessToKit(@PathVariable("kitId") Long kitId,
                                                      @RequestBody GrantUserAccessToKitRequestDto request) {
-
         UUID currentUserId = userContext.getUser().id();
         useCase.grantUserAccessToKit(toParam(kitId, request, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
