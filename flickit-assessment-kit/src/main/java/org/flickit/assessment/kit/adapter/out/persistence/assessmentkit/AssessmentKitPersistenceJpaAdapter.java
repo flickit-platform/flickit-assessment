@@ -10,7 +10,7 @@ import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedResponse;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadExpertGroupIdPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
 import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
 import org.springframework.data.domain.Page;
@@ -18,16 +18,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_USER_LIST_EXPERT_GROUP_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
 public class AssessmentKitPersistenceJpaAdapter implements
     GrantUserAccessToKitPort,
-    LoadExpertGroupIdPort,
+    LoadKitExpertGroupPort,
     LoadKitUsersPort {
 
     private final AssessmentKitJpaRepository repository;
@@ -46,14 +43,15 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<Long> loadExpertGroupId(Long kitId) {
-        return Optional.of(repository.loadExpertGroupIdById(kitId));
+    public Long loadKitExpertGroupId(Long kitId) {
+        return repository.loadKitExpertGroupId(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
     }
 
     @Override
-    public KitUserPaginatedResponse load(LoadKitUsersPort.Param param) {
+    public KitUserPaginatedResponse loadKitUsers(LoadKitUsersPort.Param param) {
         var kit = repository.findById(param.kitId()).orElseThrow(
-            () -> new ResourceNotFoundException(GET_KIT_USER_LIST_KIT_NOT_FOUND));
+            () -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
         var expertGroup = expertGroupRepository.findById(kit.getExpertGroupId()).orElseThrow(
             () -> new ResourceNotFoundException(GET_KIT_USER_LIST_EXPERT_GROUP_NOT_FOUND));
 

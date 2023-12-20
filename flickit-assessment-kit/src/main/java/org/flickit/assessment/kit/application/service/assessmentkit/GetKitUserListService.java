@@ -5,9 +5,9 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedResponse;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadExpertGroupIdPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_USER_LIST_EXPERT_GROUP_OWNER_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_USER_LIST_KIT_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,20 +23,19 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_USER_LIS
 public class GetKitUserListService implements GetKitUserListUseCase {
 
     private final LoadKitUsersPort loadKitUsersPort;
-    private final LoadExpertGroupIdPort loadExpertGroupIdPort;
+    private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Override
     public KitUserPaginatedResponse getKitUserList(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
-        return loadKitUsersPort.load(toParam(param.getKitId(), param.getPage(), param.getSize()));
+        return loadKitUsersPort.loadKitUsers(toParam(param.getKitId(), param.getPage(), param.getSize()));
     }
 
     private void validateCurrentUser(Long kitId, UUID currentUserId) {
-        Long expertGroupId = loadExpertGroupIdPort.loadExpertGroupId(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_USER_LIST_KIT_NOT_FOUND));
+        Long expertGroupId = loadKitExpertGroupPort.loadKitExpertGroupId(kitId);
         UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_USER_LIST_EXPERT_GROUP_OWNER_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
         if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }

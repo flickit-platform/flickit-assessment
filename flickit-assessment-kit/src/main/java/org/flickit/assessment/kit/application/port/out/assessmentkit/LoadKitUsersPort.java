@@ -4,7 +4,7 @@ import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedRespon
 
 public interface LoadKitUsersPort {
 
-    KitUserPaginatedResponse load(Param param);
+    KitUserPaginatedResponse loadKitUsers(Param param);
 
     record Param(Long kitId, int page, int size) {
     }

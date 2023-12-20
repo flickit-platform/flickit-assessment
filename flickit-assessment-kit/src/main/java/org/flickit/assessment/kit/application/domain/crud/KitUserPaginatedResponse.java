@@ -28,14 +28,9 @@ public class KitUserPaginatedResponse {
     @Override
     public String toString() {
         return "PaginateResponse[" +
-            "#items=" + result.getItems().size() +
             ", kit=" + kit.title +
             ", expert group=" + expertGroup.title +
-            ", page=" + result.getPage() +
-            ", size=" + result.getSize() +
-            ", sort='" + result.getSort() + '\'' +
-            ", order='" + result.getOrder() + '\'' +
-            ", total=" + result.getTotal() + ']';
+            ", result=" + result + ']';
     }
 
     public record Kit(Long id, String title) {
