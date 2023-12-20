@@ -30,13 +30,15 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         "a.title = :title, " +
         "a.colorId = :colorId, " +
         "a.code = :code, " +
-        "a.lastModificationTime = :lastModificationTime " +
+        "a.lastModificationTime = :lastModificationTime, " +
+        "a.lastModifiedBy = :lastModifiedBy " +
         "WHERE a.id = :id")
     void update(@Param(value = "id") UUID id,
                 @Param(value = "title") String title,
                 @Param(value = "code") String code,
                 @Param(value = "colorId") Integer colorId,
-                @Param(value = "lastModificationTime") LocalDateTime lastModificationTime);
+                @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
+                @Param(value = "lastModifiedBy") UUID lastModifiedBy);
 
 
     @Modifying

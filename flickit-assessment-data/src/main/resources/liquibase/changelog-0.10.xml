@@ -71,11 +71,17 @@
     </changeSet>
 
     <changeSet id="0.10-09" author="MKouhestani">
-        <sql>UPDATE fac_assessment SET created_by = (SELECT account_space.owner_id FROM account_space WHERE fac_assessment.space_id = account_space.id)</sql>
+        <update tableName="fac_assessment">
+            <column name="created_by"
+                    valueComputed="account_space.owner_id FROM account_space WHERE fac_assessment.space_id = account_space.id"/>
+        </update>
     </changeSet>
 
     <changeSet id="0.10-10" author="MKouhestani">
-        <sql>UPDATE fac_assessment SET last_modified_by = (SELECT account_space.owner_id FROM account_space WHERE fac_assessment.space_id = account_space.id)</sql>
+        <update tableName="fac_assessment">
+            <column name="last_modified_by"
+                    valueComputed="account_space.owner_id FROM account_space WHERE fac_assessment.space_id = account_space.id"/>
+        </update>
     </changeSet>
 
     <changeSet id="0.10-11" author="MKouhestani">

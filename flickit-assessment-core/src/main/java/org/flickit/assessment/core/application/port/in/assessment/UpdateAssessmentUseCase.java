@@ -34,10 +34,14 @@ public interface UpdateAssessmentUseCase {
         @NotNull(message = UPDATE_ASSESSMENT_COLOR_ID_NOT_NULL)
         Integer colorId;
 
-        public Param(UUID id, String title, Integer colorId) {
+        @NotNull(message = UPDATE_ASSESSMENT_LAST_MODIFIED_BY_NOT_NULL)
+        UUID lastModifiedBy;
+
+        public Param(UUID id, String title, Integer colorId, UUID lastModifiedBy) {
             this.id = id;
             this.title = title;
             this.colorId = colorId;
+            this.lastModifiedBy = lastModifiedBy;
             this.validateSelf();
         }
     }

@@ -33,7 +33,8 @@ public class UpdateAssessmentService implements UpdateAssessmentUseCase {
             param.getTitle(),
             code,
             getValidId(param.getColorId()),
-            lastModificationTime);
+            lastModificationTime,
+            param.getLastModifiedBy());
 
         return new Result(updateAssessmentPort.update(updateParam).id());
     }
