@@ -79,7 +79,13 @@
           "name": "Get Kit User Access List",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+                {
+                  "key": "Authorization",
+                  "value": "{{authorization_header}}",
+                  "type": "text"
+                }
+            ],
             "url": {
               "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?page=0&size=10",
               "host": [
