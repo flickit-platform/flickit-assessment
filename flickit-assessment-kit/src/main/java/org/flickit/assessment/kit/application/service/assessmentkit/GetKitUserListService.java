@@ -1,9 +1,9 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedResponse;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
@@ -27,7 +27,7 @@ public class GetKitUserListService implements GetKitUserListUseCase {
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Override
-    public KitUserPaginatedResponse getKitUserList(Param param) {
+    public PaginatedResponse<UserListItem> getKitUserList(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
         return loadKitUsersPort.loadKitUsers(toParam(param.getKitId(), param.getPage(), param.getSize()));
     }

@@ -1,8 +1,8 @@
 package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedResponse;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class GetKitUserListRestController {
     private final UserContext userContext;
 
     @GetMapping("assessment-kits/{kitId}/users")
-    public ResponseEntity<KitUserPaginatedResponse> getKitUserList(
+    public ResponseEntity<PaginatedResponse<GetKitUserListUseCase.UserListItem>> getKitUserList(
         @PathVariable("kitId") Long kitId,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size) {

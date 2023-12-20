@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedResponse;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 
 import java.util.UUID;
 
@@ -15,7 +15,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetKitUserListUseCase {
 
-    KitUserPaginatedResponse getKitUserList(Param param);
+    PaginatedResponse<UserListItem> getKitUserList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -41,6 +41,9 @@ public interface GetKitUserListUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
+    }
+
+    record UserListItem(String name, String email) {
     }
 
 }

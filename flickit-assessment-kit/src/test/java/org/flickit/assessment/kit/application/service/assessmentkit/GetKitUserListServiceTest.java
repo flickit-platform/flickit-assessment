@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
-import org.flickit.assessment.kit.application.domain.crud.KitUserPaginatedResponse;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
@@ -48,24 +47,20 @@ class GetKitUserListServiceTest {
         int size = 10;
         UUID currentUserId = UUID.randomUUID();
 
-        List<KitUserPaginatedResponse.UserListItem> kitUserListItems = List.of(
-            new KitUserPaginatedResponse.UserListItem("UserName1", "UserEmail1@email.com"),
-            new KitUserPaginatedResponse.UserListItem("UserName2", "UserEmail2@email.com")
+        List<GetKitUserListUseCase.UserListItem> kitUserListItems = List.of(
+            new GetKitUserListUseCase.UserListItem("UserName1", "UserEmail1@email.com"),
+            new GetKitUserListUseCase.UserListItem("UserName2", "UserEmail2@email.com")
         );
-        PaginatedResponse<KitUserPaginatedResponse.UserListItem> paginatedResponse = new PaginatedResponse<>(
+        PaginatedResponse<GetKitUserListUseCase.UserListItem> paginatedResponse = new PaginatedResponse<>(
             kitUserListItems,
             page,
             size,
             UserJpaEntity.Fields.NAME,
             Sort.Direction.ASC.name().toLowerCase(),
             kitUserListItems.size());
-        KitUserPaginatedResponse kitUserPaginatedResponse = new KitUserPaginatedResponse(
-            paginatedResponse,
-            new KitUserPaginatedResponse.Kit(kitId, "kit title"),
-            new KitUserPaginatedResponse.ExpertGroup(expertGroupId, "expert group title"));
         when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
-        when(loadKitUsersPort.loadKitUsers(any(LoadKitUsersPort.Param.class))).thenReturn(kitUserPaginatedResponse);
+        when(loadKitUsersPort.loadKitUsers(any(LoadKitUsersPort.Param.class))).thenReturn(paginatedResponse);
 
         var param = new GetKitUserListUseCase.Param(kitId, page, size, currentUserId);
         var result = service.getKitUserList(param);
@@ -84,8 +79,8 @@ class GetKitUserListServiceTest {
         assertEquals(kitId, loadPortParam.getValue().kitId());
         assertEquals(page, loadPortParam.getValue().page());
         assertEquals(size, loadPortParam.getValue().size());
-        assertNotNull(result.getResult().getItems());
-        assertEquals(kitUserListItems, result.getResult().getItems());
+        assertNotNull(result.getItems());
+        assertEquals(kitUserListItems, result.getItems());
         verify(loadKitUsersPort, times(1)).loadKitUsers(any(LoadKitUsersPort.Param.class));
     }
 
@@ -97,20 +92,16 @@ class GetKitUserListServiceTest {
         int size = 10;
         UUID currentUserId = UUID.randomUUID();
 
-        PaginatedResponse<KitUserPaginatedResponse.UserListItem> paginatedResponse = new PaginatedResponse<>(
+        PaginatedResponse<GetKitUserListUseCase.UserListItem> paginatedResponse = new PaginatedResponse<>(
             Collections.emptyList(),
             page,
             size,
             UserJpaEntity.Fields.NAME,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
-        KitUserPaginatedResponse kitUserPaginatedResponse = new KitUserPaginatedResponse(
-            paginatedResponse,
-            new KitUserPaginatedResponse.Kit(kitId, "kit title"),
-            new KitUserPaginatedResponse.ExpertGroup(expertGroupId, "expert group title"));
         when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
-        when(loadKitUsersPort.loadKitUsers(any(LoadKitUsersPort.Param.class))).thenReturn(kitUserPaginatedResponse);
+        when(loadKitUsersPort.loadKitUsers(any(LoadKitUsersPort.Param.class))).thenReturn(paginatedResponse);
 
         var param = new GetKitUserListUseCase.Param(kitId, page, size, currentUserId);
         var result = service.getKitUserList(param);
@@ -129,8 +120,8 @@ class GetKitUserListServiceTest {
         assertEquals(kitId, loadPortParam.getValue().kitId());
         assertEquals(page, loadPortParam.getValue().page());
         assertEquals(size, loadPortParam.getValue().size());
-        assertNotNull(result.getResult().getItems());
-        assertEquals(0, result.getResult().getItems().size());
+        assertNotNull(result.getItems());
+        assertEquals(0, result.getItems().size());
         verify(loadKitUsersPort, times(1)).loadKitUsers(any(LoadKitUsersPort.Param.class));
     }
 }
