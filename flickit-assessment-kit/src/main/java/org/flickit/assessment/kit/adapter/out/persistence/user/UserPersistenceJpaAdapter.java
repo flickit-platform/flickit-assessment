@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.user;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
@@ -39,15 +40,19 @@ public class UserPersistenceJpaAdapter implements LoadUsersByKitPort {
             .map(UserMapper::mapToUserListItem)
             .toList();
 
-        return new KitUserPaginatedResponse(
+        PaginatedResponse<KitUserPaginatedResponse.UserListItem> result = new PaginatedResponse<>(
             items,
-            new KitUserPaginatedResponse.Kit(param.kitId(), kit.getTitle()),
-            new KitUserPaginatedResponse.ExpertGroup(expertGroup.getId(), expertGroup.getName()),
             pageResult.getNumber(),
             pageResult.getSize(),
             UserJpaEntity.Fields.NAME,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
+        );
+
+        return new KitUserPaginatedResponse(
+            result,
+            new KitUserPaginatedResponse.Kit(param.kitId(), kit.getTitle()),
+            new KitUserPaginatedResponse.ExpertGroup(expertGroup.getId(), expertGroup.getName())
         );
     }
 }

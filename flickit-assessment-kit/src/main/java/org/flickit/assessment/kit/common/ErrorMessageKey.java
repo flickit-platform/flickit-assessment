@@ -30,6 +30,7 @@ public class ErrorMessageKey {
     public static final String GET_KIT_USER_LIST_SIZE_MIN = "get-kit-user-list.size.min";
     public static final String GET_KIT_USER_LIST_SIZE_MAX = "get-kit-user-list.size.max";
     public static final String GET_KIT_USER_LIST_KIT_NOT_FOUND = "get-kit-user-list.kit.notFound";
+    public static final String GET_KIT_USER_LIST_EXPERT_GROUP_OWNER_NOT_FOUND = "get-kit-user-list.expertGroupOwner.notFound";
     public static final String GET_KIT_USER_LIST_EXPERT_GROUP_NOT_FOUND = "get-kit-user-list.expert-group.notFound";
 
     public static String entityNameSingleFirst(String fieldName) {

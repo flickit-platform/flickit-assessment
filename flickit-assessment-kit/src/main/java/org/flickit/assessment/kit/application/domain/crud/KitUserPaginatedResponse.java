@@ -2,8 +2,7 @@ package org.flickit.assessment.kit.application.domain.crud;
 
 import lombok.NonNull;
 import lombok.Value;
-
-import java.util.List;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 
 @Value
 public class KitUserPaginatedResponse {
@@ -12,7 +11,7 @@ public class KitUserPaginatedResponse {
      * The items in the requested page, can not be null.
      */
     @NonNull
-    List<UserListItem> items;
+    PaginatedResponse<UserListItem> result;
 
     /**
      * The kit that users have access on.
@@ -26,42 +25,17 @@ public class KitUserPaginatedResponse {
     @NonNull
     ExpertGroup expertGroup;
 
-    /**
-     * The requested page number.
-     */
-    int page;
-
-    /**
-     * The requested page-size.
-     */
-    int size;
-
-    /**
-     * The sorted property, which can be determined by request or default sorting of the queried resource.
-     */
-    String sort;
-
-    /**
-     * The order of query, which can be determined by request or default order of the queried resource.
-     */
-    String order;
-
-    /**
-     * The total size of query, -1 means not provided, default: -1.
-     */
-    int total;
-
     @Override
     public String toString() {
         return "PaginateResponse[" +
-            "#items=" + items.size() +
+            "#items=" + result.getItems().size() +
             ", kit=" + kit.title +
             ", expert group=" + expertGroup.title +
-            ", page=" + page +
-            ", size=" + size +
-            ", sort='" + sort + '\'' +
-            ", order='" + order + '\'' +
-            ", total=" + total + ']';
+            ", page=" + result.getPage() +
+            ", size=" + result.getSize() +
+            ", sort='" + result.getSort() + '\'' +
+            ", order='" + result.getOrder() + '\'' +
+            ", total=" + result.getTotal() + ']';
     }
 
     public record Kit(Long id, String title) {
