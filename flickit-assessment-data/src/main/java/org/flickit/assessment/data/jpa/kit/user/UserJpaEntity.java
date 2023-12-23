@@ -7,6 +7,8 @@ import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Table(name = "account_user")
 @Getter
@@ -26,7 +28,7 @@ public class UserJpaEntity {
     @Column(name = "email", length = 254, nullable = false)
     private String email;
 
-    @Column(name = "display_name", length = 255, nullable = false)
+    @Column(name = "display_name", nullable = false)
     private String displayName;
 
     @Column(name = "bio", length = 400)
@@ -58,4 +60,9 @@ public class UserJpaEntity {
 
     @Column(name = "password", length = 128, nullable = false)
     private String password;
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String NAME = "displayName";
+    }
 }

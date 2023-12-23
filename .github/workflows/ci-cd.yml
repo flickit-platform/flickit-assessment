@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - 'main'
-    tags:
-      - 'v**'
   pull_request:
     branches:
       - '*'
@@ -89,6 +87,9 @@ jobs:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
+    outputs:
+      project_version: ${{ steps.project.outputs.version }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -100,6 +101,16 @@ jobs:
         with:
           java-version: 17
           distribution: adopt
+
+      - name: Extract Maven project version
+        run: echo version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) >> $GITHUB_OUTPUT
+        id: project
+
+      - name: Check output
+        env:
+          RELEASE_VERSION: ${{ steps.project.outputs.version }}
+        run: |
+          echo $RELEASE_VERSION
 
       - name: Cache Maven packages
         uses: actions/cache@v3
@@ -122,7 +133,7 @@ jobs:
       github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
 
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -154,8 +165,7 @@ jobs:
     name: darkube deploy latest
     container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+
     steps:
       - name: Run script
         run: darkube deploy --ref main --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "latest" --job-id "$GITHUB_RUN_ID" --stateless-app true
@@ -163,14 +173,30 @@ jobs:
           DARKUBE_DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_STAGING }}
           DARKUBE_APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}
 
-  build-and-push-image:
+  tag-and-release:
     needs: [sonar]
-    name: deploy image
+    name: tag and release
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+    if: ${{ ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) &&
+      !contains( needs.sonar.outputs.project_version , 'SNAPSHOT') }}
 
     permissions:
-      contents: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: v${{ needs.sonar.outputs.project_version }}
+          name: Release ${{ needs.sonar.outputs.project_version }}
+          makeLatest: true
+
+  build-and-push-image:
+    needs: [tag-and-release]
+    name: deploy image
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
       packages: write
 
     outputs:
@@ -198,15 +224,14 @@ jobs:
           distribution: adopt
 
       - name: Extract Maven project version
-        run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        run: echo version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) >> $GITHUB_OUTPUT
         id: project
 
       - name: Check output
         env:
-          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.project.outputs.version }}
         run: |
           echo $RELEASE_VERSION
-          echo ${{ steps.vars.outputs.tag }}
 
       - name: Build and push image
         if: v${{ steps.project.outputs.version }} == ${{ steps.vars.outputs.tag }}
@@ -217,7 +242,6 @@ jobs:
     name: darkube deploy
     container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
     steps:
       - name: Run script
         run: darkube deploy --ref main --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "${PROJECT_VERSION}" --job-id "$GITHUB_RUN_ID" --stateless-app true
