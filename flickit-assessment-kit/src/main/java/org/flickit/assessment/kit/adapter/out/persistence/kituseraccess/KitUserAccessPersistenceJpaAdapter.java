@@ -18,6 +18,7 @@ public class KitUserAccessPersistenceJpaAdapter implements LoadKitUserAccessPort
 
     @Override
     public Optional<KitUser> loadByKitIdAndUserEmail(Long kitId, UUID userId) {
-        return repository.findById(new KitUserAccessJpaEntity.KitUserAccessKey(kitId, userId)).map(KitUserAccessMapper::mapToDomainModel);
+        return repository.findById(new KitUserAccessJpaEntity.KitUserAccessKey(kitId, userId))
+            .map(KitUserAccessMapper::mapToDomainModel);
     }
 }

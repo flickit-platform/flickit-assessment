@@ -51,7 +51,8 @@ public class DeleteKitUserAccessService implements DeleteKitUserAccessUseCase {
     }
 
     private void checkAccessExistence(Param param) {
-        User user = loadUserByEmailPort.loadByEmail(param.getEmail()).orElseThrow(() -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_EMAIL_NOT_FOUND));
+        User user = loadUserByEmailPort.loadByEmail(param.getEmail()).orElseThrow(
+            () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_EMAIL_NOT_FOUND));
         loadKitUserAccessPort.loadByKitIdAndUserEmail(param.getKitId(), user.getId()).orElseThrow(
             () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND)
         );
