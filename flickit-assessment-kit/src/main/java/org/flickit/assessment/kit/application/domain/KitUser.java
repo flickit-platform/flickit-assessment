@@ -7,8 +7,8 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-public class User {
+public class KitUser {
 
-    private final UUID id;
-
+    private final Long kitId;
+    private final UUID userId;
 }

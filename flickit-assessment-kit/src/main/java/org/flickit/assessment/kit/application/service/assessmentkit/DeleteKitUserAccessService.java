@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
+import org.flickit.assessment.kit.application.domain.User;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.DeleteKitUserAccessUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.LoadKitUserAccessPort;
+import org.flickit.assessment.kit.application.port.out.user.LoadUserByEmailPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,23 +18,27 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class GrantUserAccessToKitService implements GrantUserAccessToKitUseCase {
+public class DeleteKitUserAccessService implements DeleteKitUserAccessUseCase {
 
-    private final GrantUserAccessToKitPort grantUserAccessToKitPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final LoadKitUserAccessPort loadKitUserAccessPort;
+    private final DeleteKitUserAccessPort deleteKitUserAccessPort;
+    private final LoadUserByEmailPort loadUserByEmailPort;
 
     @Override
-    public void grantUserAccessToKit(Param param) {
+    public void delete(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
-        grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getEmail());
-        log.debug("User [{}] granted access to kit [{}]", param.getEmail(), param.getKitId());
+        checkAccessExistence(param);
+
+        deleteKitUserAccessPort.delete(new DeleteKitUserAccessPort.Param(param.getKitId(), param.getEmail()));
+        log.debug("User [{}] access to private kit [{}] is removed.", param.getCurrentUserId(), param.getCurrentUserId());
     }
 
     private void validateCurrentUser(Long kitId, UUID currentUserId) {
@@ -41,5 +48,13 @@ public class GrantUserAccessToKitService implements GrantUserAccessToKitUseCase 
         if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
+    }
+
+    private void checkAccessExistence(Param param) {
+        User user = loadUserByEmailPort.loadByEmail(param.getEmail()).orElseThrow(
+            () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_EMAIL_NOT_FOUND));
+        loadKitUserAccessPort.loadByKitIdAndUserEmail(param.getKitId(), user.getId()).orElseThrow(
+            () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND)
+        );
     }
 }

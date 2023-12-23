@@ -29,7 +29,12 @@ public class ErrorMessageKey {
     public static final String GET_KIT_USER_LIST_PAGE_MIN = "get-kit-user-list.page.min";
     public static final String GET_KIT_USER_LIST_SIZE_MIN = "get-kit-user-list.size.min";
     public static final String GET_KIT_USER_LIST_SIZE_MAX = "get-kit-user-list.size.max";
-    public static final String GET_KIT_USER_LIST_EXPERT_GROUP_NOT_FOUND = "get-kit-user-list.expert-group.notFound";
+
+    public static final String DELETE_KIT_USER_ACCESS_KIT_ID_NOT_NULL = "delete-kit-user-access.kitId.notNull";
+    public static final String DELETE_KIT_USER_ACCESS_EMAIL_NOT_NULL = "delete-kit-user-access.email.notNull";
+    public static final String DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND = "delete-kit-user-access.kit-user.notFound";
+    public static final String DELETE_KIT_USER_ACCESS_KIT_ID_NOT_FOUND = "delete-kit-user-access.kitId.notFound";
+    public static final String DELETE_KIT_USER_ACCESS_EMAIL_NOT_FOUND = "delete-kit-user-access.email.notFound";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);

@@ -110,7 +110,72 @@
             }
           },
           "response": []
-        }
+        }, {
+        "name": "Grant User Access to Kit",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"alibalaei@asta.ir\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessment-kits",
+              "302",
+              "users"
+            ]
+          }
+        },
+        "response": []
+      }, {
+        "name": "Delete Kit User Access",
+        "request": {
+          "method": "DELETE",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "{{authorization_header}}",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?email=example@asta.ir",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessment-kits",
+              "302",
+              "users"
+            ],
+            "query": [
+              {
+                "key": "email",
+                "value": "example@asta.ir"
+              }
+            ]
+          }
+        },
+        "response": []
+      }
 	],
 	"event": [
 		{

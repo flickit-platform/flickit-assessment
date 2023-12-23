@@ -11,7 +11,8 @@ import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
-import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,7 +27,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 public class AssessmentKitPersistenceJpaAdapter implements
     GrantUserAccessToKitPort,
     LoadKitExpertGroupPort,
-    LoadKitUsersPort {
+    LoadKitUsersPort,
+    DeleteKitUserAccessPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -67,5 +69,16 @@ public class AssessmentKitPersistenceJpaAdapter implements
             (int) pageResult.getTotalElements()
         );
 
+    }
+
+    @Override
+    public void delete(DeleteKitUserAccessPort.Param param) {
+        AssessmentKitJpaEntity assessmentKit = repository.findById(param.kitId())
+            .orElseThrow(() -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_ID_NOT_FOUND));
+        UserJpaEntity user = userRepository.findByEmail(param.email())
+            .orElseThrow(() -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_EMAIL_NOT_FOUND));
+
+        assessmentKit.getAccessGrantedUsers().remove(user);
+        repository.save(assessmentKit);
     }
 }
