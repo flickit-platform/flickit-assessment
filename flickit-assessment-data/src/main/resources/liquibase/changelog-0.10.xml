@@ -47,6 +47,10 @@
                                  validate="true"/>
     </changeSet>
 
+    <changeSet id="0.10-06" author="MKouhestani">
+        <addNotNullConstraint tableName="baseinfo_assessmentkit" columnName="expert_group_id"/>
+    </changeSet>
+
     <changeSet id="0.10-20" author="MKouhestani">
         <addColumn tableName="fac_evidence">
             <column name="last_modified_by_id" type="uuid"/>
