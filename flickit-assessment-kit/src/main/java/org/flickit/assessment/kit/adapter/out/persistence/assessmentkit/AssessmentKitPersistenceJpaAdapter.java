@@ -11,7 +11,6 @@ import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadExpertGroupIdPort;
 import org.flickit.assessment.kit.application.port.out.useraccess.DeleteUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
 import org.springframework.data.domain.Page;
@@ -29,7 +28,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
     GrantUserAccessToKitPort,
     LoadKitExpertGroupPort,
     LoadKitUsersPort,
-    LoadExpertGroupIdPort,
     DeleteUserAccessPort{
 
     private final AssessmentKitJpaRepository repository;

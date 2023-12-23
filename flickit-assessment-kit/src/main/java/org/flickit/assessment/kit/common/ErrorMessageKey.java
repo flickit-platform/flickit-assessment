@@ -29,16 +29,10 @@ public class ErrorMessageKey {
     public static final String GET_KIT_USER_LIST_PAGE_MIN = "get-kit-user-list.page.min";
     public static final String GET_KIT_USER_LIST_SIZE_MIN = "get-kit-user-list.size.min";
     public static final String GET_KIT_USER_LIST_SIZE_MAX = "get-kit-user-list.size.max";
-    public static final String GET_KIT_USER_LIST_EXPERT_GROUP_NOT_FOUND = "get-kit-user-list.expert-group.notFound";
 
     public static final String DELETE_USER_ACCESS_KIT_ID_NOT_NULL = "delete-user-access.kitId.notNull";
     public static final String DELETE_USER_ACCESS_EMAIL_NOT_NULL = "delete-user-access.email.notNull";
-    public static final String DELETE_USER_ACCESS_CURRENT_USER_ID_NOT_NULL = "delete-user-access.currentUserId.notNull";
-    public static final String DELETE_USER_ACCESS_KIT_NOT_FOUND = "delete-user-access.kit.notFound";
-    public static final String DELETE_USER_ACCESS_USER_NOT_FOUND = "delete-user-access.user.notFound";
     public static final String DELETE_USER_ACCESS_KIT_USER_NOT_FOUND = "delete-user-access.kit-user.notFound";
-    public static final String DELETE_USER_ACCESS_KIT_ID_NOT_FOUND = "delete-user-access.kitId.notFound";
-    public static final String DELETE_USER_ACCESS_EXPERT_GROUP_OWNER_NOT_FOUND = "delete-user-access.expertGroupOwner.notFound";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);

@@ -8,7 +8,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_EMAIL_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_KIT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +36,7 @@ class DeleteUserAccessOnKitUseCaseParamTest {
     void testDeleteUserAccess_currentUserIdNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteUserAccessOnKitUseCase.Param(1L, "email", null));
-        assertThat(throwable).hasMessage("currentUserId: " + DELETE_USER_ACCESS_CURRENT_USER_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
 }

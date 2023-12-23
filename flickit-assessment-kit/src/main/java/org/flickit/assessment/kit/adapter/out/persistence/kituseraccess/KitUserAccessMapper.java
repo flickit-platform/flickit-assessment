@@ -9,8 +9,8 @@ import org.flickit.assessment.kit.application.domain.KitUser;
 public class KitUserAccessMapper {
     public static KitUser mapToDomainModel(KitUserAccessJpaEntity entity) {
         return new KitUser(
-            entity.getId().kit_id(),
-            entity.getId().user_id()
+            entity.getId().getKitId(),
+            entity.getId().getUserId()
         );
     }
 }

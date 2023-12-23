@@ -8,7 +8,9 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_EMAIL_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_KIT_ID_NOT_NULL;
 
 public interface DeleteUserAccessOnKitUseCase {
 
@@ -24,7 +26,7 @@ public interface DeleteUserAccessOnKitUseCase {
         @NotBlank(message = DELETE_USER_ACCESS_EMAIL_NOT_NULL)
         String email;
 
-        @NotNull(message = DELETE_USER_ACCESS_CURRENT_USER_ID_NOT_NULL)
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         public Param(Long kitId, String email, UUID currentUserId) {
