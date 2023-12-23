@@ -6,7 +6,7 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.DeleteUserAc
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.LoadKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.useraccess.DeleteUserAccessPort;
+import org.flickit.assessment.kit.application.port.out.useraccess.DeleteKitUserAccessPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -31,7 +31,7 @@ class DeleteUserAccessServiceTest {
     @InjectMocks
     private DeleteUserAccessOnKitService service;
     @Mock
-    private DeleteUserAccessPort deleteUserAccessPort;
+    private DeleteKitUserAccessPort deleteKitUserAccessPort;
     @Mock
     private LoadKitUserAccessPort loadKitUserAccessPort;
     @Mock
@@ -48,13 +48,13 @@ class DeleteUserAccessServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
         when(loadKitUserAccessPort.loadByKitIdAndUserEmail(kitId, EMAIL)).thenReturn(Optional.of(simpleKitUser()));
-        doNothing().when(deleteUserAccessPort).delete(new DeleteUserAccessPort.Param(kitId, EMAIL));
+        doNothing().when(deleteKitUserAccessPort).delete(new DeleteKitUserAccessPort.Param(kitId, EMAIL));
 
         var param = new DeleteUserAccessOnKitUseCase.Param(kitId, EMAIL, currentUserId);
         service.delete(param);
 
-        ArgumentCaptor<DeleteUserAccessPort.Param> deletePortParam = ArgumentCaptor.forClass(DeleteUserAccessPort.Param.class);
-        verify(deleteUserAccessPort).delete(deletePortParam.capture());
+        ArgumentCaptor<DeleteKitUserAccessPort.Param> deletePortParam = ArgumentCaptor.forClass(DeleteKitUserAccessPort.Param.class);
+        verify(deleteKitUserAccessPort).delete(deletePortParam.capture());
 
         assertEquals(kitId, deletePortParam.getValue().kitId());
         assertEquals(EMAIL, deletePortParam.getValue().email());
@@ -77,7 +77,7 @@ class DeleteUserAccessServiceTest {
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
         verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroupId(any());
         verify(loadKitUserAccessPort, never()).loadByKitIdAndUserEmail(any(), any());
-        verify(deleteUserAccessPort, never()).delete(any(DeleteUserAccessPort.Param.class));
+        verify(deleteKitUserAccessPort, never()).delete(any(DeleteKitUserAccessPort.Param.class));
     }
 
     @Test
@@ -96,7 +96,7 @@ class DeleteUserAccessServiceTest {
         verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroupId(any());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
         verify(loadKitUserAccessPort, never()).loadByKitIdAndUserEmail(any(), any());
-        verify(deleteUserAccessPort, never()).delete(any(DeleteUserAccessPort.Param.class));
+        verify(deleteKitUserAccessPort, never()).delete(any(DeleteKitUserAccessPort.Param.class));
     }
 
     @Test
@@ -112,11 +112,11 @@ class DeleteUserAccessServiceTest {
         var param = new DeleteUserAccessOnKitUseCase.Param(kitId, EMAIL, currentUserId);
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.delete(param));
 
-        assertEquals(DELETE_USER_ACCESS_KIT_USER_NOT_FOUND, exception.getMessage());
+        assertEquals(DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND, exception.getMessage());
         verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroupId(any());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
         verify(loadKitUserAccessPort, times(1)).loadByKitIdAndUserEmail(any(), any());
-        verify(deleteUserAccessPort, never()).delete(any(DeleteUserAccessPort.Param.class));
+        verify(deleteKitUserAccessPort, never()).delete(any(DeleteKitUserAccessPort.Param.class));
     }
 
 

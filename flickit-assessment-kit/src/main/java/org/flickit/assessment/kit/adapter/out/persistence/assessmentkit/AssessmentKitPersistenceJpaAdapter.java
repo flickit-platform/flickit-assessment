@@ -11,7 +11,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
-import org.flickit.assessment.kit.application.port.out.useraccess.DeleteUserAccessPort;
+import org.flickit.assessment.kit.application.port.out.useraccess.DeleteKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.useraccess.GrantUserAccessToKitPort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +28,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     GrantUserAccessToKitPort,
     LoadKitExpertGroupPort,
     LoadKitUsersPort,
-    DeleteUserAccessPort{
+    DeleteKitUserAccessPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -72,11 +72,11 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public void delete(DeleteUserAccessPort.Param param) {
+    public void delete(DeleteKitUserAccessPort.Param param) {
         AssessmentKitJpaEntity assessmentKit = repository.findById(param.kitId())
-            .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_ID_NOT_FOUND));
         UserJpaEntity user = userRepository.findByEmail(param.email())
-            .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_EMAIL_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_EMAIL_NOT_FOUND));
 
         assessmentKit.getAccessGrantedUsers().remove(user);
         repository.save(assessmentKit);

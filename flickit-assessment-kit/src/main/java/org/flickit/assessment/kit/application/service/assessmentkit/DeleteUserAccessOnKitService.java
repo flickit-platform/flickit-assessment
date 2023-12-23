@@ -8,7 +8,7 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.DeleteUserAc
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.LoadKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.useraccess.DeleteUserAccessPort;
+import org.flickit.assessment.kit.application.port.out.useraccess.DeleteKitUserAccessPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,14 +27,14 @@ public class DeleteUserAccessOnKitService implements DeleteUserAccessOnKitUseCas
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadKitUserAccessPort loadKitUserAccessPort;
-    private final DeleteUserAccessPort deleteUserAccessPort;
+    private final DeleteKitUserAccessPort deleteKitUserAccessPort;
 
     @Override
     public void delete(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
         checkAccessExistence(param);
 
-        deleteUserAccessPort.delete(new DeleteUserAccessPort.Param(param.getKitId(), param.getEmail()));
+        deleteKitUserAccessPort.delete(new DeleteKitUserAccessPort.Param(param.getKitId(), param.getEmail()));
         log.debug("User [{}] access to private kit [{}] is removed.", param.getCurrentUserId(), param.getCurrentUserId());
     }
 
@@ -49,7 +49,7 @@ public class DeleteUserAccessOnKitService implements DeleteUserAccessOnKitUseCas
 
     private void checkAccessExistence(Param param) {
         loadKitUserAccessPort.loadByKitIdAndUserEmail(param.getKitId(), param.getEmail()).orElseThrow(
-            () -> new ResourceNotFoundException(DELETE_USER_ACCESS_KIT_USER_NOT_FOUND)
+            () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND)
         );
     }
 }

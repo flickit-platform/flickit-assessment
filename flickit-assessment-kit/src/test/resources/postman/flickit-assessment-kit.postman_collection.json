@@ -111,40 +111,71 @@
           },
           "response": []
         }, {
-          "name": "Delete User Access to Kit",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "{{authorization_header}}",
-                "type": "text"
+        "name": "Grant User Access to Kit",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJUMFU2Rjh2R3Y2R2hzOUxwOGxnSWJsY2dQSFN1RE94bHNIbldRanJoZG00In0.eyJleHAiOjE3MDMzMjYyNDEsImlhdCI6MTcwMzMyNTk0MSwiYXV0aF90aW1lIjoxNzAzMzI1OTQwLCJqdGkiOiI0ZThiNmEzNS0yZjFkLTQ5MDItYTdhYS1jMTQ2MTJmZTMzZTEiLCJpc3MiOiJodHRwczovL3Rlc3QuZmxpY2tpdC5vcmcvYWNjb3VudHMvcmVhbG1zL2ZsaWNraXQiLCJhdWQiOlsiZmxpY2tpdC1iZmYiLCJhY2NvdW50Il0sInN1YiI6IjVkOTU3ZGFjLWM3NjUtNGYzZC1hNzQ5LTljODU2OWI2NGM2MCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImZsaWNraXQtZnJvbnRlbmQiLCJub25jZSI6ImIxOGQ5ODc3LTY5NWQtNDQ0NS04N2I1LTIyOThmOTY5NjEzNiIsInNlc3Npb25fc3RhdGUiOiI2ZWJjMTM1ZS1kMmE5LTRkZTMtOTk3Yi0yNmE2NGE0ZjBiMTciLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vdGVzdC5mbGlja2l0Lm9yZyIsImh0dHA6Ly9sb2NhbGhvc3Q6MzAwMCJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1mbGlja2l0Iiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiI2ZWJjMTM1ZS1kMmE5LTRkZTMtOTk3Yi0yNmE2NGE0ZjBiMTciLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ik1hc291bWVoIEtvdWhlc3RhbmkiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJtYXMua291aGVzdGFuaUBvdXRsb29rLmNvbSIsImdpdmVuX25hbWUiOiJNYXNvdW1laCIsImZhbWlseV9uYW1lIjoiS291aGVzdGFuaSIsImVtYWlsIjoibWFzLmtvdWhlc3RhbmlAb3V0bG9vay5jb20ifQ.JlMFjHQ96zf8zBpHEgbSdIqZTgy5hNHK8HKbOhV0imVTrqb4EJYUF4KndeyzquXzr5OwAKYEwo_-WI30IJuw1ynuFMnKFwJC3VyfeeN0Uz4IFaSw7_DRTP7puvFKPQyNnWc_XFPvqEtV7gLXeQuY3Ej309PgPimQAIkCRn4C7pB0aoqxjemUNXjUfhQIfiB4l5G9d6lKgELxpdRfVO5mCJiHe97fBAwREsf0ZBNC6ZzhGFInLY8DxUNtgbz8nPeV2n_4fq1jsc9XPuW_AuyIJsCW_ckoWAewelgb9JwCA6iF0VlSDTZucSnl2cp5YtoROL7-eH75tC512I0fUtdN_w",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"alibalaei@asta.ir\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
               }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"email\": \"alibalaei@asta.ir\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "{{api_path}}",
-                "assessment-kits",
-                "302",
-                "users"
-              ]
             }
           },
-          "response": []
-        }
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessment-kits",
+              "302",
+              "users"
+            ]
+          }
+        },
+        "response": []
+      }, {
+        "name": "Delete User Access to Kit",
+        "request": {
+          "method": "DELETE",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "{{authorization_header}}",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?email=alibalaei@asta.ir",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessment-kits",
+              "302",
+              "users"
+            ],
+            "query": [
+              {
+                "key": "email",
+                "value": "example@asta.ir"
+              }
+            ]
+          }
+        },
+        "response": []
+      }
 	],
 	"event": [
 		{

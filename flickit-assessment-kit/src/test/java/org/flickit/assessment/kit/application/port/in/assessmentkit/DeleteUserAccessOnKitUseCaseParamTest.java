@@ -9,8 +9,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_EMAIL_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_KIT_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_EMAIL_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_KIT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -21,7 +21,7 @@ class DeleteUserAccessOnKitUseCaseParamTest {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteUserAccessOnKitUseCase.Param(null, "email", currentUserId));
-        assertThat(throwable).hasMessage("kitId: " + DELETE_USER_ACCESS_KIT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitId: " + DELETE_KIT_USER_ACCESS_KIT_ID_NOT_NULL);
     }
 
     @Test
@@ -29,7 +29,7 @@ class DeleteUserAccessOnKitUseCaseParamTest {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteUserAccessOnKitUseCase.Param(1L, "", currentUserId));
-        assertThat(throwable).hasMessage("email: " + DELETE_USER_ACCESS_EMAIL_NOT_NULL);
+        assertThat(throwable).hasMessage("email: " + DELETE_KIT_USER_ACCESS_EMAIL_NOT_NULL);
     }
 
     @Test

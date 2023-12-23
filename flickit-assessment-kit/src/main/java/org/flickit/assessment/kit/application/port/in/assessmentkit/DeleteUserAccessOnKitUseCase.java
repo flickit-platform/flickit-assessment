@@ -9,8 +9,8 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_EMAIL_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_USER_ACCESS_KIT_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_EMAIL_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_KIT_ID_NOT_NULL;
 
 public interface DeleteUserAccessOnKitUseCase {
 
@@ -20,10 +20,10 @@ public interface DeleteUserAccessOnKitUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<UpdateKitByDslUseCase.Param> {
 
-        @NotNull(message = DELETE_USER_ACCESS_KIT_ID_NOT_NULL)
+        @NotNull(message = DELETE_KIT_USER_ACCESS_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotBlank(message = DELETE_USER_ACCESS_EMAIL_NOT_NULL)
+        @NotBlank(message = DELETE_KIT_USER_ACCESS_EMAIL_NOT_NULL)
         String email;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

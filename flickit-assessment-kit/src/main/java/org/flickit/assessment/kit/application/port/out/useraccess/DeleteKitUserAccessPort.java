@@ -1,6 +1,6 @@
 package org.flickit.assessment.kit.application.port.out.useraccess;
 
-public interface DeleteUserAccessPort {
+public interface DeleteKitUserAccessPort {
 
     void delete(Param param);
 
