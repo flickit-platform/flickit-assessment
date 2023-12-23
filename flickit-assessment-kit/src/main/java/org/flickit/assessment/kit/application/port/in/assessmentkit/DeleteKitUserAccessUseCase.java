@@ -12,7 +12,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_EMAIL_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_KIT_ID_NOT_NULL;
 
-public interface DeleteUserAccessOnKitUseCase {
+public interface DeleteKitUserAccessUseCase {
 
     void delete(Param param);
 

@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.out.useraccess;
+package org.flickit.assessment.kit.application.port.out.kituseraccess;
 
 public interface DeleteKitUserAccessPort {
 
