@@ -1,4 +1,3 @@
-
 package org.flickit.assessment.common.error;
 
 import lombok.AccessLevel;
