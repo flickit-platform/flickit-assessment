@@ -2,7 +2,6 @@ package org.flickit.assessment.core.adapter.in.rest.evidence;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.common.config.jwt.UserDetail;
 import org.flickit.assessment.core.application.port.in.evidence.UpdateEvidenceUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,6 @@ public class UpdateEvidenceRestController {
     @PutMapping("/evidences/{id}")
     public ResponseEntity<UpdateEvidenceResponseDto> updateEvidence(@PathVariable("id") UUID id,
                                                                     @RequestBody UpdateEvidenceRequestDto request) {
-        userContext.setUser(new UserDetail(UUID.fromString("00000000-0000-0000-0000-00000000041f")));
         UUID currentUserId = userContext.getUser().id();
         UpdateEvidenceUseCase.Result result = useCase.updateEvidence(toParam(id, request, currentUserId));
         return new ResponseEntity<>(toResponse(result), HttpStatus.OK);

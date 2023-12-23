@@ -74,9 +74,10 @@
     </changeSet>
 
     <changeSet id="0.10-23" author="MKouhestani">
-        <sql>UPDATE fac_evidence SET last_modified_by_id = (SELECT fac_assessment.created_by FROM fac_assessment WHERE
-            fac_assessment.id = fac_evidence.assessment_id)
-        </sql>
+        <update tableName="fac_evidence">
+            <column name="last_modified_by_id" valueComputed="fac_assessment.created_by FROM fac_assessment WHERE
+            fac_assessment.id = assessment_id"/>
+        </update>
     </changeSet>
 
     <changeSet id="0.10-24" author="MKouhestani">

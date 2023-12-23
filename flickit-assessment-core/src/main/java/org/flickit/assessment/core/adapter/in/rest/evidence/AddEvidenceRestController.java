@@ -29,9 +29,9 @@ public class AddEvidenceRestController {
     private Param toParam(AddEvidenceRequestDto requestDto, UUID currentUserId) {
         return new AddEvidenceUseCase.Param(
             requestDto.description(),
-            currentUserId,
             requestDto.assessmentId(),
-            requestDto.questionId()
+            requestDto.questionId(),
+            currentUserId
         );
     }
 

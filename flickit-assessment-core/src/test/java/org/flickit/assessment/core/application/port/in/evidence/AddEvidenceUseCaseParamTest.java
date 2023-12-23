@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,7 +22,7 @@ class AddEvidenceUseCaseParamTest {
         UUID assessmentId = UUID.randomUUID();
         UUID createdById = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddEvidenceUseCase.Param("    ", createdById, assessmentId, 1L));
+            () -> new AddEvidenceUseCase.Param("    ", assessmentId, 1L, createdById));
         assertThat(throwable).hasMessage("description: " + ADD_EVIDENCE_DESC_NOT_BLANK);
     }
 
@@ -30,7 +31,7 @@ class AddEvidenceUseCaseParamTest {
         UUID assessmentId = UUID.randomUUID();
         UUID createdById = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddEvidenceUseCase.Param("ab", createdById, assessmentId, 1L));
+            () -> new AddEvidenceUseCase.Param("ab", assessmentId, 1L, createdById));
         assertThat(throwable).hasMessage("description: " + ADD_EVIDENCE_DESC_SIZE_MIN);
     }
 
@@ -38,7 +39,7 @@ class AddEvidenceUseCaseParamTest {
     void testAddEvidenceParam_DescriptionSizeIsEqualToMin_Success() {
         UUID createdById = UUID.randomUUID();
         assertDoesNotThrow(
-            () -> new AddEvidenceUseCase.Param("abc", createdById, UUID.randomUUID(), 1L));
+            () -> new AddEvidenceUseCase.Param("abc", UUID.randomUUID(), 1L, createdById));
     }
 
     @Test
@@ -47,7 +48,7 @@ class AddEvidenceUseCaseParamTest {
         UUID createdById = UUID.randomUUID();
         var desc = randomAlphabetic(1001);
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddEvidenceUseCase.Param(desc, createdById, assessmentId, 1L));
+            () -> new AddEvidenceUseCase.Param(desc, assessmentId, 1L, createdById));
         assertThat(throwable).hasMessage("description: " + ADD_EVIDENCE_DESC_SIZE_MAX);
     }
 
@@ -55,22 +56,22 @@ class AddEvidenceUseCaseParamTest {
     void testAddEvidenceParam_DescriptionSizeIsEqualToMax_Success() {
         UUID createdById = UUID.randomUUID();
         assertDoesNotThrow(
-            () -> new AddEvidenceUseCase.Param(randomAlphabetic(1000), createdById, UUID.randomUUID(), 1L));
+            () -> new AddEvidenceUseCase.Param(randomAlphabetic(1000), UUID.randomUUID(), 1L, createdById));
     }
 
     @Test
     void testAddEvidenceParam_CreatedByIdIsNull_ErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddEvidenceUseCase.Param("desc", null, assessmentId, 1L));
-        assertThat(throwable).hasMessage("createdById: " + ADD_EVIDENCE_CREATED_BY_ID_NOT_NULL);
+            () -> new AddEvidenceUseCase.Param("desc", assessmentId, 1L, null));
+        assertThat(throwable).hasMessage("createdById: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
     void testAddEvidenceParam_AssessmentIdIsNull_ErrorMessage() {
         UUID createdById = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddEvidenceUseCase.Param("desc", createdById, null, 1L));
+            () -> new AddEvidenceUseCase.Param("desc", null, 1L, createdById));
         assertThat(throwable).hasMessage("assessmentId: " + ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL);
     }
 
@@ -79,7 +80,7 @@ class AddEvidenceUseCaseParamTest {
         UUID assessmentId = UUID.randomUUID();
         UUID createdById = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddEvidenceUseCase.Param("desc", createdById, assessmentId, null)
+            () -> new AddEvidenceUseCase.Param("desc", assessmentId, null, createdById)
         );
         assertThat(throwable).hasMessage("questionId: " + ADD_EVIDENCE_QUESTION_ID_NOT_NULL);
     }
