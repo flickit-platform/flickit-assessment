@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.MissingAuthorizationHeaderExcepti
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_AUTHORIZATION_HEADER_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_HEADER_AUTHORIZATION_NOT_NULL;
 
 @Setter
 @Component
@@ -18,7 +18,7 @@ public class UserContext {
         if (user != null) {
             return user;
         } else {
-            throw new MissingAuthorizationHeaderException(COMMON_AUTHORIZATION_HEADER_NOT_NULL);
+            throw new MissingAuthorizationHeaderException(COMMON_HEADER_AUTHORIZATION_NOT_NULL);
         }
     }
 }
