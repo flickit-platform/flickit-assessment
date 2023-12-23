@@ -76,6 +76,41 @@
 			},
 			"response": []
 		}, {
+          "name": "Get Kit User Access List",
+          "request": {
+            "method": "GET",
+            "header": [
+                {
+                  "key": "Authorization",
+                  "value": "{{authorization_header}}",
+                  "type": "text"
+                }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?page=0&size=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "assessment-kits",
+                "302",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }, {
           "name": "Delete User Access to Kit",
           "request": {
             "method": "DELETE",
