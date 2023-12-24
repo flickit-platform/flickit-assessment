@@ -7,17 +7,17 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_USER_ID_BY_EMAIL_EMAIL_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_USER_BY_EMAIL_EMAIL_NOT_NULL;
 
-public interface GetUserIdByEmailUseCase {
+public interface GetUserByEmailUseCase {
 
-    UUID getUserIdByEmail(Param param);
+    UUID getUserByEmail(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotBlank(message = GET_USER_ID_BY_EMAIL_EMAIL_NOT_NULL)
+        @NotBlank(message = GET_USER_BY_EMAIL_EMAIL_NOT_NULL)
         String email;
 
         public Param(String email) {
