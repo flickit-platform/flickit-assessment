@@ -7,4 +7,5 @@ public class ErrorCodes {
     public static final String INTERNAL_ERROR = "INTERNAL_ERROR";
     public static final String ACCESS_DENIED = "ACCESS_DENIED";
     public static final String UNAUTHORIZED = "UNAUTHORIZED";
+    public static final String ALREADY_EXIST = "ALREADY_EXIST";
 }

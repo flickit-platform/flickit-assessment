@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceAlreadyExistException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_USER_ID_DUPLICATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -48,7 +50,7 @@ class GrantUserAccessToKitServiceTest {
         var expertGroupId = 3L;
         when(loadExpertGroupIdPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
-        doNothing().when(grantUserAccessToKitPort).grantUserAccess(param.getKitId(), param.getUserId());
+        when(grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getUserId())).thenReturn(true);
 
         service.grantUserAccessToKit(param);
 
@@ -106,5 +108,26 @@ class GrantUserAccessToKitServiceTest {
         verify(loadExpertGroupIdPort, times(1)).loadKitExpertGroupId(any());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
         verify(grantUserAccessToKitPort, never()).grantUserAccess(any(), any());
+    }
+
+    @Test
+    void testGrantUserAccessToKit_DuplicateUserForKit_ThrowsException() {
+        var currentUserId = UUID.randomUUID();
+        GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
+            1L,
+            UUID.randomUUID(),
+            currentUserId
+        );
+        var expertGroupId = 3L;
+        when(loadExpertGroupIdPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+        when(grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getUserId())).thenReturn(false);
+
+        var exception = assertThrows(ResourceAlreadyExistException.class, () -> service.grantUserAccessToKit(param));
+
+        assertEquals(GRANT_USER_ACCESS_TO_KIT_USER_ID_DUPLICATE, exception.getMessage());
+        verify(loadExpertGroupIdPort, times(1)).loadKitExpertGroupId(any());
+        verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
+        verify(grantUserAccessToKitPort, times(1)).grantUserAccess(any(), any());
     }
 }

@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface GrantUserAccessToKitPort {
 
-    void grantUserAccess(Long kitId, UUID userId);
+    boolean grantUserAccess(Long kitId, UUID userId);
 }

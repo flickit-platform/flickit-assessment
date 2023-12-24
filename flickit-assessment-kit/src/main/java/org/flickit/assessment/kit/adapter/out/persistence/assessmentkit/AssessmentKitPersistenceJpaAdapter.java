@@ -35,14 +35,16 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final UserJpaRepository userRepository;
 
     @Override
-    public void grantUserAccess(Long kitId, UUID userId) {
+    public boolean grantUserAccess(Long kitId, UUID userId) {
         AssessmentKitJpaEntity assessmentKit = repository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND));
         UserJpaEntity user = userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_USER_ID_NOT_FOUND));
 
-        assessmentKit.getAccessGrantedUsers().add(user);
+        boolean isNew = assessmentKit.getAccessGrantedUsers().add(user);
         repository.save(assessmentKit);
+
+        return isNew;
     }
 
     @Override
