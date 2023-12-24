@@ -9,7 +9,7 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.DeleteKitUse
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.LoadKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.user.LoadUserByEmailPort;
+import org.flickit.assessment.kit.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,14 +30,14 @@ public class DeleteKitUserAccessService implements DeleteKitUserAccessUseCase {
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadKitUserAccessPort loadKitUserAccessPort;
     private final DeleteKitUserAccessPort deleteKitUserAccessPort;
-    private final LoadUserByEmailPort loadUserByEmailPort;
+    private final LoadUserPort loadUserPort;
 
     @Override
     public void delete(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
         checkAccessExistence(param);
 
-        deleteKitUserAccessPort.delete(new DeleteKitUserAccessPort.Param(param.getKitId(), param.getEmail()));
+        deleteKitUserAccessPort.delete(new DeleteKitUserAccessPort.Param(param.getKitId(), param.getUserId()));
         log.debug("User [{}] access to private kit [{}] is removed.", param.getCurrentUserId(), param.getCurrentUserId());
     }
 
@@ -51,9 +51,9 @@ public class DeleteKitUserAccessService implements DeleteKitUserAccessUseCase {
     }
 
     private void checkAccessExistence(Param param) {
-        User user = loadUserByEmailPort.loadByEmail(param.getEmail()).orElseThrow(
-            () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_EMAIL_NOT_FOUND));
-        loadKitUserAccessPort.loadByKitIdAndUserEmail(param.getKitId(), user.getId()).orElseThrow(
+        User user = loadUserPort.loadById(param.getUserId()).orElseThrow(
+            () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_USER_NOT_FOUND));
+        loadKitUserAccessPort.loadByKitIdAndUserId(param.getKitId(), user.getId()).orElseThrow(
             () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND)
         );
     }

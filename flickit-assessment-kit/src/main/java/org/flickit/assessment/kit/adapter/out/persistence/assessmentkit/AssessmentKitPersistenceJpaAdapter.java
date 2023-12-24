@@ -76,8 +76,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     public void delete(DeleteKitUserAccessPort.Param param) {
         AssessmentKitJpaEntity assessmentKit = repository.findById(param.kitId())
             .orElseThrow(() -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_ID_NOT_FOUND));
-        UserJpaEntity user = userRepository.findByEmail(param.email())
-            .orElseThrow(() -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_EMAIL_NOT_FOUND));
+        UserJpaEntity user = userRepository.findById(param.userId())
+            .orElseThrow(() -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_USER_NOT_FOUND));
 
         assessmentKit.getAccessGrantedUsers().remove(user);
         repository.save(assessmentKit);

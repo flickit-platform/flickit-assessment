@@ -6,9 +6,7 @@ import java.util.UUID;
 
 public class KitUserMother {
 
-    private static Long id = 134L;
-
-    public static KitUser simpleKitUser() {
-        return new KitUser(id++, UUID.randomUUID());
+    public static KitUser simpleKitUser(Long kitId, UUID userId) {
+        return new KitUser(kitId, userId);
     }
 }
