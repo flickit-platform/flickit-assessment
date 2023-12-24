@@ -48,8 +48,8 @@ class GetKitUserListServiceTest {
         UUID currentUserId = UUID.randomUUID();
 
         List<GetKitUserListUseCase.UserListItem> kitUserListItems = List.of(
-            new GetKitUserListUseCase.UserListItem("UserName1", "UserEmail1@email.com"),
-            new GetKitUserListUseCase.UserListItem("UserName2", "UserEmail2@email.com")
+            new GetKitUserListUseCase.UserListItem(UUID.randomUUID(), "UserName1", "UserEmail1@email.com"),
+            new GetKitUserListUseCase.UserListItem(UUID.randomUUID(), "UserName2", "UserEmail2@email.com")
         );
         PaginatedResponse<GetKitUserListUseCase.UserListItem> paginatedResponse = new PaginatedResponse<>(
             kitUserListItems,
