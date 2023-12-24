@@ -9,8 +9,6 @@ import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelR
 import org.flickit.assessment.core.adapter.out.rest.qualityattribute.QualityAttributeDto;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
-import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
-import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
@@ -22,6 +20,8 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -39,8 +39,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private final AnswerJpaRepository answerRepo;
     private final QualityAttributeValueJpaRepository qualityAttrValueRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
+    private final SubjectJpaRepository subjectRepository;
 
-    private final SubjectRestAdapter subjectRestAdapter;
     private final QuestionRestAdapter questionRestAdapter;
     private final AnswerOptionRestAdapter answerOptionRestAdapter;
     private final MaturityLevelRestAdapter maturityLevelRestAdapter;
@@ -50,7 +50,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                    List<AnswerOptionDto> allAnswerOptionsDto,
                    List<QualityAttributeValueJpaEntity> allQualityAttributeValueEntities,
                    List<SubjectValueJpaEntity> subjectValueEntities,
-                   Map<Long, SubjectDto> subjectIdToDto,
+                   Map<Long, SubjectJpaEntity> subjectIdToDto,
                    Map<Long, Integer> qaIdToWeightMap) {
     }
 
@@ -72,12 +72,12 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         load all subjects and their related attributes (by assessmentKit)
         and create some useful utility maps
         */
-        List<SubjectDto> subjectsDto = subjectRestAdapter.loadSubjectsDtoByAssessmentKitId(assessmentKitId);
-        Map<Long, Integer> qaIdToWeightMap = subjectsDto.stream()
+        List<SubjectJpaEntity> subjects = subjectRepository.loadByAssessmentKitId(assessmentKitId);
+        Map<Long, Integer> qaIdToWeightMap = subjects.stream()
             .flatMap(x -> x.qualityAttributes().stream())
             .collect(toMap(QualityAttributeDto::id, QualityAttributeDto::weight));
-        Map<Long, SubjectDto> subjectIdToDto = subjectsDto.stream()
-            .collect(toMap(SubjectDto::id, x -> x));
+        Map<Long, SubjectJpaEntity> subjectIdToDto = subjects.stream()
+            .collect(toMap(SubjectJpaEntity::id, x -> x));
 
         // load all questions with their impacts (by assessmentKit)
         List<QuestionDto> allQuestionsDto = questionRestAdapter.loadByAssessmentKitId(assessmentKitId);
@@ -182,7 +182,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private static List<SubjectValue> buildSubjectValues(Map<Long, QualityAttributeValue> qualityAttrIdToValue, Context context) {
         List<SubjectValue> subjectValues = new ArrayList<>();
         for (SubjectValueJpaEntity svEntity : context.subjectValueEntities) {
-            SubjectDto dto = context.subjectIdToDto.get(svEntity.getSubjectId());
+            SubjectJpaEntity dto = context.subjectIdToDto.get(svEntity.getSubjectId());
             List<QualityAttributeValue> qavList = dto.qualityAttributes().stream()
                 .map(q -> qualityAttrIdToValue.get(q.id()))
                 .filter(Objects::nonNull)

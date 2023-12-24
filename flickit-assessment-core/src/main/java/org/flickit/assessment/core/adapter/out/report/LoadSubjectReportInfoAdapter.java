@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.qualityattributevalue.QualityAttributeValuePersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
-import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.exception.CalculateNotValidException;
 import org.flickit.assessment.core.application.exception.ConfidenceCalculationNotValidException;
@@ -13,12 +12,10 @@ import org.flickit.assessment.core.application.port.out.subject.LoadSubjectRepor
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
@@ -31,9 +28,9 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
+    private final SubjectJpaRepository subjectRepository;
 
     private final MaturityLevelRestAdapter maturityLevelRestAdapter;
-    private final SubjectRestAdapter subjectRestAdapter;
 
     private final QualityAttributeValuePersistenceJpaAdapter attributeValuePersistenceJpaAdapter;
 
@@ -83,9 +80,9 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
     }
 
     private List<QualityAttributeValue> buildAttributeValues(Map<Long, MaturityLevel> maturityLevels, UUID assessmentResultId, Long kitId, Long subjectId) {
-        var subject = subjectRestAdapter.loadByAssessmentKitId(kitId)
+        var subject = subjectRepository.loadByAssessmentKitId(kitId)
             .stream()
-            .filter(x -> x.getId() == subjectId)
+            .filter(x -> Objects.equals(x.getId(), subjectId))
             .toList()
             .get(0);
         Map<Long, QualityAttribute> qualityAttributeMap = subject.getQualityAttributes()

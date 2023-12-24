@@ -26,4 +26,6 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
         @Param(value = "description") String description,
         @Param(value = "lastModificationTime") LocalDateTime lastModificationTime
     );
+
+    List<SubjectJpaEntity> loadByAssessmentKitId(Long assessmentKitId);
 }
