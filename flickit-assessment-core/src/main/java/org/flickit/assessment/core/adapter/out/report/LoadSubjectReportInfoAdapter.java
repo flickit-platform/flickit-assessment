@@ -3,7 +3,9 @@ package org.flickit.assessment.core.adapter.out.report;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.qualityattributevalue.QualityAttributeValuePersistenceJpaAdapter;
+import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.exception.CalculateNotValidException;
@@ -30,7 +32,9 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
     private final SubjectValueJpaRepository subjectValueRepo;
     private final SubjectJpaRepository subjectRepository;
 
-    private final MaturityLevelRestAdapter maturityLevelRestAdapter;
+    private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
+
+    private final SubjectRestAdapter subjectRestAdapter;
 
     private final QualityAttributeValuePersistenceJpaAdapter attributeValuePersistenceJpaAdapter;
 
@@ -56,7 +60,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
         var svEntity = subjectValueRepo.findBySubjectIdAndAssessmentResult_Id(subjectId, assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
 
-        Map<Long, MaturityLevel> maturityLevels = maturityLevelRestAdapter.loadByKitId(kitId)
+        Map<Long, MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitId(kitId)
             .stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
 

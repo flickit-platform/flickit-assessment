@@ -1,17 +1,15 @@
 package org.flickit.assessment.core.adapter.out.calculate;
 
+import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
-import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelDto;
-import org.flickit.assessment.core.adapter.out.rest.maturitylevel.MaturityLevelRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
-import org.flickit.assessment.core.application.domain.Answer;
-import org.flickit.assessment.core.application.domain.Assessment;
-import org.flickit.assessment.core.application.domain.QualityAttributeValue;
-import org.flickit.assessment.core.application.domain.SubjectValue;
-import org.flickit.assessment.core.test.fixture.adapter.dto.MaturityLevelDtoMother;
+import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
+import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother;
+import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -37,12 +35,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.test.fixture.adapter.dto.AnswerOptionDtoMother.createAnswerOptionDto;
-import static org.flickit.assessment.core.test.fixture.adapter.dto.MaturityLevelDtoMother.*;
 import static org.flickit.assessment.core.test.fixture.adapter.dto.QuestionDtoMother.createQuestionDtoWithAffectedLevelAndAttributes;
 import static org.flickit.assessment.core.test.fixture.adapter.dto.SubjectDtoMother.createSubjectDto;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
+import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -67,16 +65,16 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private AnswerOptionRestAdapter answerOptionRestAdapter;
     @Mock
-    private MaturityLevelRestAdapter maturityLevelRestAdapter;
+    private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
     @Test
     void testLoad() {
         Context context = createContext();
 
         doMocks(context);
-        List<MaturityLevelDto> maturityLevelsDtos = MaturityLevelDtoMother.allLevels();
-        when(maturityLevelRestAdapter.loadMaturityLevelsDtoByKitId(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
-            .thenReturn(maturityLevelsDtos);
+        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
+        when(maturityLevelJpaAdapter.loadByKitIdWithCompetences(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
+            .thenReturn(maturityLevels);
 
         var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
 
@@ -186,16 +184,16 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var subjectDto3 = createSubjectDto(subjectValue3.getSubjectId(), List.of(qav5, qav6));
         List<SubjectJpaEntity> subjectDtos = List.of(subjectDto1, subjectDto2, subjectDto3);
 
-        var questionDto1 = createQuestionDtoWithAffectedLevelAndAttributes(1L, levelOne().id(), attribute1Id, attribute2Id, attribute3Id);
-        var questionDto2 = createQuestionDtoWithAffectedLevelAndAttributes(2L, levelOne().id(), attribute4Id, attribute5Id, attribute6Id);
-        var questionDto3 = createQuestionDtoWithAffectedLevelAndAttributes(3L, levelTwo().id(), attribute1Id, attribute2Id, attribute3Id);
-        var questionDto4 = createQuestionDtoWithAffectedLevelAndAttributes(4L, levelTwo().id(), attribute4Id, attribute5Id, attribute6Id);
-        var questionDto5 = createQuestionDtoWithAffectedLevelAndAttributes(5L, levelThree().id(), attribute1Id, attribute2Id, attribute3Id);
-        var questionDto6 = createQuestionDtoWithAffectedLevelAndAttributes(6L, levelThree().id(), attribute4Id, attribute5Id, attribute6Id);
-        var questionDto7 = createQuestionDtoWithAffectedLevelAndAttributes(7L, levelFour().id(), attribute1Id, attribute2Id, attribute3Id);
-        var questionDto8 = createQuestionDtoWithAffectedLevelAndAttributes(8L, levelFour().id(), attribute4Id, attribute5Id, attribute6Id);
-        var questionDto9 = createQuestionDtoWithAffectedLevelAndAttributes(9L, levelFive().id(), attribute1Id, attribute2Id, attribute3Id);
-        var questionDto10 = createQuestionDtoWithAffectedLevelAndAttributes(10L, levelFive().id(), attribute4Id, attribute5Id, attribute6Id);
+        var questionDto1 = createQuestionDtoWithAffectedLevelAndAttributes(1L, LEVEL_ONE_ID, attribute1Id, attribute2Id, attribute3Id);
+        var questionDto2 = createQuestionDtoWithAffectedLevelAndAttributes(2L, LEVEL_ONE_ID, attribute4Id, attribute5Id, attribute6Id);
+        var questionDto3 = createQuestionDtoWithAffectedLevelAndAttributes(3L, LEVEL_TWO_ID, attribute1Id, attribute2Id, attribute3Id);
+        var questionDto4 = createQuestionDtoWithAffectedLevelAndAttributes(4L, LEVEL_TWO_ID, attribute4Id, attribute5Id, attribute6Id);
+        var questionDto5 = createQuestionDtoWithAffectedLevelAndAttributes(5L, LEVEL_THREE_ID, attribute1Id, attribute2Id, attribute3Id);
+        var questionDto6 = createQuestionDtoWithAffectedLevelAndAttributes(6L, LEVEL_THREE_ID, attribute4Id, attribute5Id, attribute6Id);
+        var questionDto7 = createQuestionDtoWithAffectedLevelAndAttributes(7L, LEVEL_FOUR_ID, attribute1Id, attribute2Id, attribute3Id);
+        var questionDto8 = createQuestionDtoWithAffectedLevelAndAttributes(8L, LEVEL_FOUR_ID, attribute4Id, attribute5Id, attribute6Id);
+        var questionDto9 = createQuestionDtoWithAffectedLevelAndAttributes(9L, LEVEL_FIVE_ID, attribute1Id, attribute2Id, attribute3Id);
+        var questionDto10 = createQuestionDtoWithAffectedLevelAndAttributes(10L, LEVEL_FIVE_ID, attribute4Id, attribute5Id, attribute6Id);
 
         List<QuestionDto> questionDtos = List.of(questionDto1, questionDto2, questionDto3, questionDto4, questionDto5, questionDto6, questionDto7, questionDto8, questionDto9, questionDto10);
 
