@@ -156,7 +156,7 @@
             }
           ],
           "url": {
-            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?userId=df92a05f-3b00-4bcf-86fc-e0960174b481",
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users/df92a05f-3b00-4bcf-86fc-e0960174b481",
             "host": [
               "{{base_url}}"
             ],
@@ -164,13 +164,8 @@
               "{{api_path}}",
               "assessment-kits",
               "302",
-              "users"
-            ],
-            "query": [
-              {
-                "key": "userId",
-                "value": "df92a05f-3b00-4bcf-86fc-e0960174b481"
-              }
+              "users",
+              "df92a05f-3b00-4bcf-86fc-e0960174b481"
             ]
           }
         },

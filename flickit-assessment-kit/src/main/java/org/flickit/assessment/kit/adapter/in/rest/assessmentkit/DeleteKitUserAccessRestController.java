@@ -16,9 +16,9 @@ public class DeleteKitUserAccessRestController {
     private final DeleteKitUserAccessUseCase useCase;
     private final UserContext userContext;
 
-    @DeleteMapping("assessment-kits/{kitId}/users")
+    @DeleteMapping("assessment-kits/{kitId}/users/{userId}")
     public ResponseEntity<Void> deleteKitUserAccess(@PathVariable("kitId") Long kitId,
-                                                 @RequestParam("userId") UUID userId) {
+                                                 @PathVariable("userId") UUID userId) {
         UUID currentUserId = userContext.getUser().id();
         useCase.delete(toParam(kitId, userId, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
