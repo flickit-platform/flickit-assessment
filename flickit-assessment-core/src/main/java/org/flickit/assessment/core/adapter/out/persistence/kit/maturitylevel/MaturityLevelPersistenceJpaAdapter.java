@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper.mapToDomainModel;
 
-@Component("CoreMaturityLevelPersistenceJpaAdapter")
+@Component("coreMaturityLevelPersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class MaturityLevelPersistenceJpaAdapter implements
     LoadMaturityLevelsPort {
