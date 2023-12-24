@@ -2,7 +2,8 @@ package org.flickit.assessment.core.adapter.out.calculate;
 
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.rest.qualityattribute.QualityAttributeDto;
+import org.flickit.assessment.core.adapter.out.persistence.kit.qualityattribute.QualityAttributeMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
@@ -16,14 +17,15 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND;
 
@@ -65,12 +67,19 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         load all subjects and their related attributes (by assessmentKit)
         and create some useful utility maps
         */
-        List<SubjectJpaEntity> subjectsDto = subjectRepository.loadByAssessmentKitId(assessmentKitId);
-        Map<Long, Integer> qaIdToWeightMap = subjectsDto.stream()
-            .flatMap(x -> x.qualityAttributes().stream())
-            .collect(toMap(QualityAttributeDto::id, QualityAttributeDto::weight));
-        Map<Long, SubjectJpaEntity> subjectIdToDto = subjectsDto.stream()
-            .collect(toMap(SubjectJpaEntity::id, x -> x));
+        List<SubjectJoinAttributeView> subjectsWithAttributes = subjectRepository.loadByAssessmentKitId(assessmentKitId);
+        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectsWithAttributes.stream()
+            .map(SubjectJoinAttributeView::getSubject)
+            .collect(toMap(SubjectJpaEntity::getId, x -> x));
+        Map<Long, Integer> qaIdToWeightMap = subjectsWithAttributes.stream()
+            .map(SubjectJoinAttributeView::getAttribute)
+            .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
+        Map<Long, List<SubjectJoinAttributeView>> subjectIdToJoinView = subjectsWithAttributes.stream()
+            .collect(groupingBy(x -> x.getSubject().getId()));
+        Map<Long, List<QualityAttribute>> subjectIdToAttribute = subjectIdToJoinView.values().stream()
+            .collect(toMap(map -> map.stream().findFirst().orElseThrow().getSubject().getId(),
+                map -> map.stream().map(SubjectJoinAttributeView::getAttribute).filter(Objects::nonNull).map(QualityAttributeMapper::mapToDomainModel).toList()
+            ));
 
         // load all questions with their impacts (by assessmentKit)
         var allQuestionsDto = questionRestAdapter.loadByAssessmentKitId(assessmentKitId);
@@ -82,12 +91,12 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             allAnswerEntities,
             allAttributeValueEntities,
             subjectValueEntities,
-            subjectIdToDto,
+            subjectIdToEntity,
             qaIdToWeightMap);
 
         Map<Long, QualityAttributeValue> attributeIdToValueMap = buildAttributeValues(context);
 
-        List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValueMap, context);
+        List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValueMap, subjectIdToAttribute, context);
 
         return new AssessmentResult(
             assessmentResultId,
@@ -161,22 +170,25 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
     /**
      * build subjectValues domain with all information needed for calculate their maturity levels
+     *
      * @param attributeIdToValueMap map of attributeIds to their corresponding value
-     * @param context all previously loaded data
+     * @param subjectIdToAttribute
+     * @param context               all previously loaded data
      * @return list of subjectValues
      */
-    private static List<SubjectValue> buildSubjectValues(Map<Long, QualityAttributeValue> attributeIdToValueMap, Context context) {
+    private static List<SubjectValue> buildSubjectValues(Map<Long, QualityAttributeValue> attributeIdToValueMap, Map<Long, List<QualityAttribute>> subjectIdToAttribute, Context context) {
         List<SubjectValue> subjectValues = new ArrayList<>();
         for (SubjectValueJpaEntity svEntity : context.subjectValueEntities) {
-            SubjectJpaEntity dto = context.subjectIdToDto.get(svEntity.getSubjectId());
-            List<QualityAttributeValue> qavList = dto.qualityAttributes().stream()
-                .map(q -> attributeIdToValueMap.get(q.id()))
+            SubjectJpaEntity entity = context.subjectIdToDto.get(svEntity.getSubjectId());
+            List<QualityAttribute> attributes = subjectIdToAttribute.get(entity.getId());
+            List<QualityAttributeValue> qavList = attributes.stream()
+                .map(q -> attributeIdToValueMap.get(q.getId()))
                 .filter(Objects::nonNull)
                 .toList();
             if (qavList.isEmpty()) {
                 continue;
             }
-            subjectValues.add(new SubjectValue(svEntity.getId(), dto.dtoToDomain(), qavList));
+            subjectValues.add(new SubjectValue(svEntity.getId(), SubjectMapper.mapToDomainModel(entity, attributes), qavList));
         }
         return subjectValues;
     }

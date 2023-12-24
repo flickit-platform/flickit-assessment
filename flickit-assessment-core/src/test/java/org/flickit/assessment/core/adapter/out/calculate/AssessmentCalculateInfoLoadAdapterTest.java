@@ -5,8 +5,6 @@ import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
-import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
-import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -19,6 +17,7 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.junit.jupiter.api.Assertions;
@@ -27,18 +26,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.projection.ProjectionFactory;
+import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.test.fixture.adapter.dto.AnswerOptionDtoMother.createAnswerOptionDto;
 import static org.flickit.assessment.core.test.fixture.adapter.dto.QuestionDtoMother.createQuestionDtoWithAffectedLevelAndAttributes;
-import static org.flickit.assessment.core.test.fixture.adapter.dto.SubjectDtoMother.createSubjectDto;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeJapEntityMother.createAttributeEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEntityMother.createSubject;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,36 +69,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
-    @Test
-    void testLoad() {
-        Context context = createContext();
-
-        doMocks(context);
-        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        when(maturityLevelJpaAdapter.loadByKitIdWithCompetences(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
-            .thenReturn(maturityLevels);
-
-        var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
-
-        assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
-
-        assertAssessment(context.assessmentResultEntity().getAssessment(), loadedAssessmentResult.getAssessment());
-
-        assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues());
-
-        var resultAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
-            .flatMap(sv -> sv.getQualityAttributeValues().stream())
-            .toList();
-        assertAttributeValues(context.qualityAttributeValues, resultAttributeValues);
-
-        List<Answer> answers = new ArrayList<>(resultAttributeValues.stream()
-            .flatMap(qav -> qav.getAnswers().stream())
-            .collect(Collectors.toMap(Answer::getId, Function.identity(), (a, b) -> a))
-            .values());
-
-        assertAnswers(context.answerEntities, answers);
-
-    }
+    private final ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
 
     private static void assertAssessment(AssessmentJpaEntity assessmentEntity, Assessment resultAssessment) {
         assertEquals(assessmentEntity.getId(), resultAssessment.getId());
@@ -179,10 +152,10 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var subjectValue3 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
         List<SubjectValueJpaEntity> subjectValues = List.of(subjectValue1, subjectValue2, subjectValue3);
 
-        var subjectDto1 = createSubjectDto(subjectValue1.getSubjectId(), List.of(qav1, qav2));
-        var subjectDto2 = createSubjectDto(subjectValue2.getSubjectId(), List.of(qav3, qav4));
-        var subjectDto3 = createSubjectDto(subjectValue3.getSubjectId(), List.of(qav5, qav6));
-        List<SubjectJpaEntity> subjectDtos = List.of(subjectDto1, subjectDto2, subjectDto3);
+        var subject1 = createSubject(subjectValue1.getSubjectId(), 1);
+        var subject2 = createSubject(subjectValue2.getSubjectId(), 2);
+        var subject3 = createSubject(subjectValue3.getSubjectId(), 3);
+        List<SubjectJpaEntity> subjects = List.of(subject1, subject2, subject3);
 
         var questionDto1 = createQuestionDtoWithAffectedLevelAndAttributes(1L, LEVEL_ONE_ID, attribute1Id, attribute2Id, attribute3Id);
         var questionDto2 = createQuestionDtoWithAffectedLevelAndAttributes(2L, LEVEL_ONE_ID, attribute4Id, attribute5Id, attribute6Id);
@@ -218,10 +191,41 @@ class AssessmentCalculateInfoLoadAdapterTest {
             assessmentResultEntity,
             subjectValues,
             qualityAttributeValues,
-            subjectDtos,
+            subjects,
             questionDtos,
             answerEntities,
             answerOptionDtos);
+    }
+
+    @Test
+    void testLoad() {
+        Context context = createContext();
+
+        doMocks(context);
+        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
+        when(maturityLevelJpaAdapter.loadByKitIdWithCompetences(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
+            .thenReturn(maturityLevels);
+
+        var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
+
+        assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
+
+        assertAssessment(context.assessmentResultEntity().getAssessment(), loadedAssessmentResult.getAssessment());
+
+        assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues());
+
+        var resultAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
+            .flatMap(sv -> sv.getQualityAttributeValues().stream())
+            .toList();
+        assertAttributeValues(context.qualityAttributeValues, resultAttributeValues);
+
+        List<Answer> answers = new ArrayList<>(resultAttributeValues.stream()
+            .flatMap(qav -> qav.getAnswers().stream())
+            .collect(toMap(Answer::getId, Function.identity(), (a, b) -> a))
+            .values());
+
+        assertAnswers(context.answerEntities, answers);
+
     }
 
     private void doMocks(Context context) {
@@ -232,7 +236,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
         when(qualityAttrValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.qualityAttributeValues());
         when(subjectRepository.loadByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
-            .thenReturn(context.subjectDtos());
+            .thenReturn(createSubjectJoinAttributes(context.subjects, context.qualityAttributeValues));
         when(questionRestAdapter.loadByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
             .thenReturn(context.questionDtos());
         when(answerRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
@@ -241,11 +245,42 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.answerOptionDtos());
     }
 
+    private List<SubjectJoinAttributeView> createSubjectJoinAttributes(List<SubjectJpaEntity> subjects, List<QualityAttributeValueJpaEntity> qualityAttributeValues) {
+        var projection1 = factory.createProjection(SubjectJoinAttributeView.class);
+        SubjectJpaEntity subject1 = subjects.get(0);
+        projection1.setSubject(subject1);
+        projection1.setAttribute(createAttributeEntity(qualityAttributeValues.get(0).getQualityAttributeId(), 1, subject1.getId()));
+
+        var projection2 = factory.createProjection(SubjectJoinAttributeView.class);
+        projection2.setSubject(subject1);
+        projection2.setAttribute(createAttributeEntity(qualityAttributeValues.get(1).getQualityAttributeId(), 2, subject1.getId()));
+
+        var projection3 = factory.createProjection(SubjectJoinAttributeView.class);
+        SubjectJpaEntity subject2 = subjects.get(1);
+        projection3.setSubject(subject2);
+        projection3.setAttribute(createAttributeEntity(qualityAttributeValues.get(2).getQualityAttributeId(), 3, subject2.getId()));
+
+        var projection4 = factory.createProjection(SubjectJoinAttributeView.class);
+        projection4.setSubject(subject2);
+        projection4.setAttribute(createAttributeEntity(qualityAttributeValues.get(3).getQualityAttributeId(), 4, subject2.getId()));
+
+        var projection5 = factory.createProjection(SubjectJoinAttributeView.class);
+        SubjectJpaEntity subject3 = subjects.get(2);
+        projection5.setSubject(subject3);
+        projection5.setAttribute(createAttributeEntity(qualityAttributeValues.get(4).getQualityAttributeId(), 5, subject3.getId()));
+
+        var projection6 = factory.createProjection(SubjectJoinAttributeView.class);
+        projection6.setSubject(subject3);
+        projection6.setAttribute(createAttributeEntity(qualityAttributeValues.get(5).getQualityAttributeId(), 6, subject3.getId()));
+
+        return List.of(projection1, projection2, projection3, projection4, projection5, projection6);
+    }
+
     record Context(
         AssessmentResultJpaEntity assessmentResultEntity,
         List<SubjectValueJpaEntity> subjectValues,
         List<QualityAttributeValueJpaEntity> qualityAttributeValues,
-        List<SubjectJpaEntity> subjectDtos,
+        List<SubjectJpaEntity> subjects,
         List<QuestionDto> questionDtos,
         List<AnswerJpaEntity> answerEntities,
         List<AnswerOptionDto> answerOptionDtos
