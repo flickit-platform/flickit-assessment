@@ -156,7 +156,7 @@
             }
           ],
           "url": {
-            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?email=example@asta.ir",
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?userId=df92a05f-3b00-4bcf-86fc-e0960174b481",
             "host": [
               "{{base_url}}"
             ],
@@ -168,8 +168,8 @@
             ],
             "query": [
               {
-                "key": "email",
-                "value": "example@asta.ir"
+                "key": "userId",
+                "value": "df92a05f-3b00-4bcf-86fc-e0960174b481"
               }
             ]
           }
