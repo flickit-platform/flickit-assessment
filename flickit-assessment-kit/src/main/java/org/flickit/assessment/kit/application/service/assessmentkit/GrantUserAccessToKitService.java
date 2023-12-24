@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceAlreadyExistException;
+import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
@@ -38,7 +38,7 @@ public class GrantUserAccessToKitService implements GrantUserAccessToKitUseCase 
         }
         else {
             log.debug("User [{}] already has access to kit [{}]", param.getUserId(), param.getKitId());
-            throw new ResourceAlreadyExistException(GRANT_USER_ACCESS_TO_KIT_USER_ID_DUPLICATE);
+            throw new ResourceAlreadyExistsException(GRANT_USER_ACCESS_TO_KIT_USER_ID_DUPLICATE);
         }
     }
 

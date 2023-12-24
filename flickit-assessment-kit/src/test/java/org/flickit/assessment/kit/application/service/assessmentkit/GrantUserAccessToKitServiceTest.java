@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceAlreadyExistException;
+import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
@@ -123,7 +123,7 @@ class GrantUserAccessToKitServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
         when(grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getUserId())).thenReturn(false);
 
-        var exception = assertThrows(ResourceAlreadyExistException.class, () -> service.grantUserAccessToKit(param));
+        var exception = assertThrows(ResourceAlreadyExistsException.class, () -> service.grantUserAccessToKit(param));
 
         assertEquals(GRANT_USER_ACCESS_TO_KIT_USER_ID_DUPLICATE, exception.getMessage());
         verify(loadExpertGroupIdPort, times(1)).loadKitExpertGroupId(any());
