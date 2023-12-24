@@ -25,6 +25,6 @@ public interface GetKitMinimalInfoUseCase {
         }
     }
 
-    record Result(Long id, String title, ExpertGroup expertGroup) {}
-    record ExpertGroup(Long id, String title) {}
+    record Result(Long id, String title, MinimalExpertGroup minimalExpertGroup) {}
+    record MinimalExpertGroup(Long id, String title) {}
 }

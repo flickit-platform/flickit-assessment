@@ -99,7 +99,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         return new GetKitMinimalInfoUseCase.Result(
                 kitEntity.getId(),
                 kitEntity.getTitle(),
-                new GetKitMinimalInfoUseCase.ExpertGroup(
+                new GetKitMinimalInfoUseCase.MinimalExpertGroup(
                         expertGroupEntity.getId(),
                         expertGroupEntity.getName()
                 )

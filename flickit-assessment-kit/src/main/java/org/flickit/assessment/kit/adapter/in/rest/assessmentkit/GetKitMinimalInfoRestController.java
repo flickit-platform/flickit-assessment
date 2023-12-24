@@ -23,7 +23,7 @@ public class GetKitMinimalInfoRestController {
     }
 
     private GetKitMinimalInfoResponseDto toResponseDto(GetKitMinimalInfoUseCase.Result response) {
-        return new GetKitMinimalInfoResponseDto(response.id(), response.title(), response.expertGroup());
+        return new GetKitMinimalInfoResponseDto(response.id(), response.title(), response.minimalExpertGroup());
     }
 
     private GetKitMinimalInfoUseCase.Param toParam(Long kitId) {
