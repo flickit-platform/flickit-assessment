@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.FIND_KIT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 
 @Component
 @AllArgsConstructor
@@ -49,7 +49,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     @Override
     public AssessmentKit load(Long kitId) {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
-            () -> new ResourceNotFoundException(FIND_KIT_ID_NOT_FOUND));
+            () -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         List<Subject> subjects = subjectRepository.findAllByAssessmentKitId(kitId).stream()
             .map(e -> {
