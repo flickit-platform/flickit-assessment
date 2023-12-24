@@ -31,10 +31,10 @@ public class ErrorMessageKey {
     public static final String GET_KIT_USER_LIST_SIZE_MAX = "get-kit-user-list.size.max";
 
     public static final String DELETE_KIT_USER_ACCESS_KIT_ID_NOT_NULL = "delete-kit-user-access.kitId.notNull";
-    public static final String DELETE_KIT_USER_ACCESS_EMAIL_NOT_NULL = "delete-kit-user-access.email.notNull";
+    public static final String DELETE_KIT_USER_ACCESS_USER_ID_NOT_NULL = "delete-kit-user-access.userId.notNull";
     public static final String DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND = "delete-kit-user-access.kit-user.notFound";
     public static final String DELETE_KIT_USER_ACCESS_KIT_ID_NOT_FOUND = "delete-kit-user-access.kitId.notFound";
-    public static final String DELETE_KIT_USER_ACCESS_EMAIL_NOT_FOUND = "delete-kit-user-access.email.notFound";
+    public static final String DELETE_KIT_USER_ACCESS_USER_NOT_FOUND = "delete-kit-user-access.user.notFound";
 
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_NULL = "get-user-by-email.email.notNull";
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_FOUND = "get-user-by-email.email.notFound";
