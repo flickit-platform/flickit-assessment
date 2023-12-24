@@ -155,6 +155,25 @@
           }
         },
         "response": []
+      }, {
+        "name": "Get Kit Minimal Info",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/min-info",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessment-kits",
+              "302",
+              "min-info"
+            ]
+          }
+        },
+        "response": []
       }
 	],
 	"event": [
