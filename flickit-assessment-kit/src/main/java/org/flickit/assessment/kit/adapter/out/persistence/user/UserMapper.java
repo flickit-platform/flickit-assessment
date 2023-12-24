@@ -15,6 +15,7 @@ public class UserMapper {
 
     public static GetKitUserListUseCase.UserListItem mapToUserListItem(UserJpaEntity entity) {
         return new GetKitUserListUseCase.UserListItem(
+            entity.getId(),
             entity.getDisplayName(),
             entity.getEmail());
     }
