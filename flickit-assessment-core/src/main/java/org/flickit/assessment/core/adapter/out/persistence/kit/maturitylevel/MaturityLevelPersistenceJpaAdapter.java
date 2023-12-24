@@ -27,12 +27,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     @Override
     public List<MaturityLevel> loadByKitId(Long kitId) {
         return repository.findAllByAssessmentKitId(kitId).stream()
-            .map(x -> new MaturityLevel(
-                x.getId(),
-                x.getIndex(),
-                x.getValue(),
-                null
-            ))
+            .map(levelEntity -> mapToDomainModel(levelEntity, null))
             .toList();
     }
 
@@ -44,21 +39,25 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .collect(Collectors.groupingBy(x -> x.getMaturityLevel().getId()));
 
         return collect.values().stream().map(result -> {
-
-            MaturityLevelJpaEntity levelEntity = result.stream().findFirst().get().getMaturityLevel();
+            MaturityLevelJpaEntity levelEntity = result.stream()
+                .findFirst()
+                .orElseThrow() // Can't happen
+                .getMaturityLevel();
 
             List<LevelCompetence> competences = result.stream()
                 .map(MaturityJoinCompetenceView::getLevelCompetence)
                 .filter(Objects::nonNull)
-                .map(entity -> new LevelCompetence(entity.getId(), entity.getValue(), entity.getEffectiveLevel().getId()))
+                .map(MaturityLevelPersistenceJpaAdapter::mapToCompetenceDomainModel)
                 .toList();
 
-            return new MaturityLevel(
-                levelEntity.getId(),
-                levelEntity.getIndex(),
-                levelEntity.getValue(),
-                competences
-            );
+            return mapToDomainModel(levelEntity, competences);
         }).toList();
+    }
+
+    private static LevelCompetence mapToCompetenceDomainModel(LevelCompetenceJpaEntity entity) {
+        return new LevelCompetence(
+            entity.getId(),
+            entity.getValue(),
+            entity.getEffectiveLevel().getId());
     }
 }
