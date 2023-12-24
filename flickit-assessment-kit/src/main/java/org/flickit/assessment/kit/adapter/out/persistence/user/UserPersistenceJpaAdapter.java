@@ -16,6 +16,6 @@ public class UserPersistenceJpaAdapter implements LoadUserByEmailPort {
 
     @Override
     public Optional<User> loadByEmail(String email) {
-        return repository.findByEmail(email).map(UserMapper::mapToDomainModel);
+        return repository.findByEmailIgnoreCase(email).map(UserMapper::mapToDomainModel);
     }
 }

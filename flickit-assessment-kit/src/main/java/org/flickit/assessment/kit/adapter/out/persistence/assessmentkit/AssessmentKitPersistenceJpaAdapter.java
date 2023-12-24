@@ -37,7 +37,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     public void grantUserAccess(Long kitId, String email) {
         AssessmentKitJpaEntity assessmentKit = repository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND));
-        UserJpaEntity user = userRepository.findByEmail(email)
+        UserJpaEntity user = userRepository.findByEmailIgnoreCase(email)
             .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_EMAIL_NOT_FOUND));
 
         assessmentKit.getAccessGrantedUsers().add(user);
@@ -75,7 +75,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     public void delete(DeleteKitUserAccessPort.Param param) {
         AssessmentKitJpaEntity assessmentKit = repository.findById(param.kitId())
             .orElseThrow(() -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_ID_NOT_FOUND));
-        UserJpaEntity user = userRepository.findByEmail(param.email())
+        UserJpaEntity user = userRepository.findByEmailIgnoreCase(param.email())
             .orElseThrow(() -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_EMAIL_NOT_FOUND));
 
         assessmentKit.getAccessGrantedUsers().remove(user);
