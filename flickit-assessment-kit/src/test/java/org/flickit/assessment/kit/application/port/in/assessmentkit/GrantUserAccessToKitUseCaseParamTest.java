@@ -15,9 +15,10 @@ class GrantUserAccessToKitUseCaseParamTest {
 
     @Test
     void testGrantUserAccessToKitParam_kitIdIsNull_ErrorMessage() {
+        UUID userId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GrantUserAccessToKitUseCase.Param(null, UUID.randomUUID(), currentUserId));
+            () -> new GrantUserAccessToKitUseCase.Param(null, userId, currentUserId));
         assertThat(throwable).hasMessage("kitId: " + GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_NULL);
     }
 
@@ -31,8 +32,9 @@ class GrantUserAccessToKitUseCaseParamTest {
 
     @Test
     void testGrantUserAccessToKitParam_currentUserIdIsNull_ErrorMessage() {
+        UUID userId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GrantUserAccessToKitUseCase.Param(1L, UUID.randomUUID(), null));
+            () -> new GrantUserAccessToKitUseCase.Param(1L, userId, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }
