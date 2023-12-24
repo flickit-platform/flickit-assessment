@@ -16,10 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 public class GetKitMinimalInfoServiceTest {
 
-    @Mock
-    private LoadKitMinimalInfoPort loadKitMinimalInfoPort;
     @InjectMocks
     private GetKitMinimalInfoService service;
+    @Mock
+    private LoadKitMinimalInfoPort loadKitMinimalInfoPort;
 
     @Test
     void testGetKitMinimalInfo() {

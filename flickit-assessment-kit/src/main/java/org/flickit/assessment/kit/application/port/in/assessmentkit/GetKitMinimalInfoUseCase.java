@@ -7,7 +7,6 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_MINIMAL_INFO_KIT_ID_NOT_NULL;
 
-
 public interface GetKitMinimalInfoUseCase {
 
     Result getKitMinimalInfo(Param param);

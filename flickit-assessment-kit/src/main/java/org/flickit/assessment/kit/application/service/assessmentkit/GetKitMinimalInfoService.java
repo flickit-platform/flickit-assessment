@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetKitMinimalInfoService implements GetKitMinimalInfoUseCase {
 
     private final LoadKitMinimalInfoPort loadKitMinimalInfoPort;
+
     @Override
     public Result getKitMinimalInfo(Param param) {
         return loadKitMinimalInfoPort.loadKitMinimalInfo(param.getKitId());
