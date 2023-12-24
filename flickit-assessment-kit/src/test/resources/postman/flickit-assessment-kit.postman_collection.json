@@ -156,7 +156,7 @@
             }
           ],
           "url": {
-            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?email=example@asta.ir",
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users/df92a05f-3b00-4bcf-86fc-e0960174b481",
             "host": [
               "{{base_url}}"
             ],
@@ -164,13 +164,27 @@
               "{{api_path}}",
               "assessment-kits",
               "302",
-              "users"
+              "users",
+              "df92a05f-3b00-4bcf-86fc-e0960174b481"
+            ]
+          }
+        },
+        "response": []
+      }, {
+        "name": "Get User By Email",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/users/emails/example@gmail.com",
+            "host": [
+              "{{base_url}}"
             ],
-            "query": [
-              {
-                "key": "email",
-                "value": "example@asta.ir"
-              }
+            "path": [
+              "{{api_path}}",
+              "users",
+              "emails",
+              "example@gmail.com"
             ]
           }
         },

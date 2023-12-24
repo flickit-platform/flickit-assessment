@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpe
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.LoadKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.user.LoadUserByEmailPort;
+import org.flickit.assessment.kit.application.port.out.user.LoadUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -30,7 +30,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DeleteUserAccessServiceTest {
 
-    private static final String EMAIL = "example@email.com";
     @InjectMocks
     private DeleteKitUserAccessService service;
     @Mock
@@ -42,28 +41,29 @@ class DeleteUserAccessServiceTest {
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     @Mock
-    private LoadUserByEmailPort loadUserByEmailPort;
+    private LoadUserPort loadUserPort;
 
     @Test
     void testDeleteUserAccess_ValidInputs_Delete() {
         Long kitId = 1L;
         Long expertGroupId = 1L;
         UUID currentUserId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
-        when(loadUserByEmailPort.loadByEmail(EMAIL)).thenReturn(Optional.of(userWithId(currentUserId)));
-        when(loadKitUserAccessPort.loadByKitIdAndUserEmail(kitId, currentUserId)).thenReturn(Optional.of(simpleKitUser()));
-        doNothing().when(deleteKitUserAccessPort).delete(new DeleteKitUserAccessPort.Param(kitId, EMAIL));
+        when(loadUserPort.loadById(userId)).thenReturn(Optional.of(userWithId(userId)));
+        when(loadKitUserAccessPort.loadByKitIdAndUserId(kitId, userId)).thenReturn(Optional.of(simpleKitUser(kitId, userId)));
+        doNothing().when(deleteKitUserAccessPort).delete(new DeleteKitUserAccessPort.Param(kitId, userId));
 
-        var param = new DeleteKitUserAccessUseCase.Param(kitId, EMAIL, currentUserId);
+        var param = new DeleteKitUserAccessUseCase.Param(kitId, userId, currentUserId);
         service.delete(param);
 
         ArgumentCaptor<DeleteKitUserAccessPort.Param> deletePortParam = ArgumentCaptor.forClass(DeleteKitUserAccessPort.Param.class);
         verify(deleteKitUserAccessPort).delete(deletePortParam.capture());
 
         assertEquals(kitId, deletePortParam.getValue().kitId());
-        assertEquals(EMAIL, deletePortParam.getValue().email());
+        assertEquals(userId, deletePortParam.getValue().userId());
     }
 
     @Test
@@ -71,18 +71,19 @@ class DeleteUserAccessServiceTest {
         Long kitId = 1L;
         Long expertGroupId = 1L;
         UUID currentUserId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
         var expertGroupOwnerId = UUID.randomUUID();
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(expertGroupOwnerId));
 
-        var param = new DeleteKitUserAccessUseCase.Param(kitId, EMAIL, currentUserId);
+        var param = new DeleteKitUserAccessUseCase.Param(kitId, userId, currentUserId);
         var exception = assertThrows(AccessDeniedException.class, () -> service.delete(param));
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
         verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroupId(any());
-        verify(loadKitUserAccessPort, never()).loadByKitIdAndUserEmail(any(), any());
+        verify(loadKitUserAccessPort, never()).loadByKitIdAndUserId(any(), any());
         verify(deleteKitUserAccessPort, never()).delete(any(DeleteKitUserAccessPort.Param.class));
     }
 
@@ -91,7 +92,8 @@ class DeleteUserAccessServiceTest {
         Long kitId = 1L;
         Long expertGroupId = 1L;
         UUID currentUserId = UUID.randomUUID();
-        var param = new DeleteKitUserAccessUseCase.Param(kitId, EMAIL, currentUserId);
+        UUID userId = UUID.randomUUID();
+        var param = new DeleteKitUserAccessUseCase.Param(kitId, userId, currentUserId);
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.empty());
@@ -101,7 +103,7 @@ class DeleteUserAccessServiceTest {
         assertEquals(EXPERT_GROUP_ID_NOT_FOUND, exception.getMessage());
         verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroupId(any());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
-        verify(loadKitUserAccessPort, never()).loadByKitIdAndUserEmail(any(), any());
+        verify(loadKitUserAccessPort, never()).loadByKitIdAndUserId(any(), any());
         verify(deleteKitUserAccessPort, never()).delete(any(DeleteKitUserAccessPort.Param.class));
     }
 
@@ -110,19 +112,20 @@ class DeleteUserAccessServiceTest {
         Long kitId = 1L;
         Long expertGroupId = 1L;
         UUID currentUserId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
-        when(loadUserByEmailPort.loadByEmail(EMAIL)).thenReturn(Optional.of(userWithId(currentUserId)));
-        when(loadKitUserAccessPort.loadByKitIdAndUserEmail(kitId, currentUserId)).thenReturn(Optional.empty());
+        when(loadUserPort.loadById(userId)).thenReturn(Optional.of(userWithId(userId)));
+        when(loadKitUserAccessPort.loadByKitIdAndUserId(kitId, userId)).thenReturn(Optional.empty());
 
-        var param = new DeleteKitUserAccessUseCase.Param(kitId, EMAIL, currentUserId);
+        var param = new DeleteKitUserAccessUseCase.Param(kitId, userId, currentUserId);
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.delete(param));
 
         assertEquals(DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND, exception.getMessage());
         verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroupId(any());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
-        verify(loadKitUserAccessPort, times(1)).loadByKitIdAndUserEmail(any(), any());
+        verify(loadKitUserAccessPort, times(1)).loadByKitIdAndUserId(any(), any());
         verify(deleteKitUserAccessPort, never()).delete(any(DeleteKitUserAccessPort.Param.class));
     }
 
