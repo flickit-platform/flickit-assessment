@@ -3,7 +3,7 @@ package org.flickit.assessment.core.adapter.out.report;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.kit.maturitylevel.MaturityLevelJpaAdapter;
+import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.qualityattributevalue.QualityAttributeValuePersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
@@ -32,7 +32,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
 
-    private final MaturityLevelJpaAdapter maturityLevelJpaAdapter;
+    private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
     private final SubjectRestAdapter subjectRestAdapter;
 

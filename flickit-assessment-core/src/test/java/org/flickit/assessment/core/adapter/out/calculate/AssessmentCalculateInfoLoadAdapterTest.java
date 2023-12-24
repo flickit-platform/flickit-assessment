@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.adapter.out.calculate;
 
-import org.flickit.assessment.core.adapter.out.kit.maturitylevel.MaturityLevelJpaAdapter;
+import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
@@ -63,7 +63,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private AnswerOptionRestAdapter answerOptionRestAdapter;
     @Mock
-    private MaturityLevelJpaAdapter maturityLevelJpaAdapter;
+    private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
     @Test
     void testLoad() {

@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.out.calculate;
 
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.kit.maturitylevel.MaturityLevelJpaAdapter;
+import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.qualityattribute.QualityAttributeDto;
@@ -42,7 +42,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private final SubjectRestAdapter subjectRestAdapter;
     private final QuestionRestAdapter questionRestAdapter;
     private final AnswerOptionRestAdapter answerOptionRestAdapter;
-    private final MaturityLevelJpaAdapter maturityLevelJpaAdapter;
+    private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
     record Context(List<QuestionDto> allQuestionsDto,
                    List<AnswerJpaEntity> allAnswerEntities,

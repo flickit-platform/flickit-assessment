@@ -3,7 +3,7 @@ package org.flickit.assessment.core.adapter.out.report;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.kit.maturitylevel.MaturityLevelJpaAdapter;
+import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.exception.CalculateNotValidException;
 import org.flickit.assessment.core.application.exception.ConfidenceCalculationNotValidException;
@@ -31,7 +31,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
-    private final MaturityLevelJpaAdapter maturityLevelJpaAdapter;
+    private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
     @Override
     public AssessmentResult load(UUID assessmentId) {
