@@ -9,5 +9,5 @@ public class LevelCompetence {
 
     private final long id;
     private final int value;
-    private final long maturityLevelId;
+    private final long effectiveLevelId;
 }
