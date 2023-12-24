@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class GetKitMinimalInfoServiceTest {
+class GetKitMinimalInfoServiceTest {
 
     @InjectMocks
     private GetKitMinimalInfoService service;
