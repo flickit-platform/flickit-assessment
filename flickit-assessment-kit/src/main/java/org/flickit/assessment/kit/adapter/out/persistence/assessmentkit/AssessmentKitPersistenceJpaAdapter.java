@@ -5,11 +5,15 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
+import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
+import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitMinimalInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
@@ -28,10 +32,12 @@ public class AssessmentKitPersistenceJpaAdapter implements
     GrantUserAccessToKitPort,
     LoadKitExpertGroupPort,
     LoadKitUsersPort,
-    DeleteKitUserAccessPort {
+    DeleteKitUserAccessPort,
+    LoadKitMinimalInfoPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
+    private final ExpertGroupJpaRepository expertGroupRepository;
 
     @Override
     public void grantUserAccess(Long kitId, String email) {
@@ -80,5 +86,23 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
         assessmentKit.getAccessGrantedUsers().remove(user);
         repository.save(assessmentKit);
+    }
+
+    @Override
+    public GetKitMinimalInfoUseCase.Result loadKitMinimalInfo(Long kitId) {
+        AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_MINIMAL_INFO_KIT_ID_NOT_FOUND));
+
+        ExpertGroupJpaEntity expertGroupEntity = expertGroupRepository.findById(kitEntity.getExpertGroupId())
+            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
+
+        return new GetKitMinimalInfoUseCase.Result(
+                kitEntity.getId(),
+                kitEntity.getTitle(),
+                new GetKitMinimalInfoUseCase.ExpertGroup(
+                        expertGroupEntity.getId(),
+                        expertGroupEntity.getName()
+                )
+        );
     }
 }
