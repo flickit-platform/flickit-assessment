@@ -42,13 +42,13 @@ class GrantUserAccessToKitServiceTest {
         var currentUserId = UUID.randomUUID();
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,
-            "user@email.com",
+            UUID.randomUUID(),
             currentUserId
         );
         var expertGroupId = 3L;
         when(loadExpertGroupIdPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
-        doNothing().when(grantUserAccessToKitPort).grantUserAccess(param.getKitId(), param.getEmail());
+        doNothing().when(grantUserAccessToKitPort).grantUserAccess(param.getKitId(), param.getUserId());
 
         service.grantUserAccessToKit(param);
 
@@ -61,11 +61,11 @@ class GrantUserAccessToKitServiceTest {
         assertEquals(expertGroupId, LoadExpertGroupOwnerParam.getValue());
 
         var grantAccessKitIdParam = ArgumentCaptor.forClass(Long.class);
-        var grantAccessEmailParam = ArgumentCaptor.forClass(String.class);
+        var grantAccessUserIdParam = ArgumentCaptor.forClass(UUID.class);
         verify(grantUserAccessToKitPort, times(1))
-            .grantUserAccess(grantAccessKitIdParam.capture(), grantAccessEmailParam.capture());
+            .grantUserAccess(grantAccessKitIdParam.capture(), grantAccessUserIdParam.capture());
         assertEquals(param.getKitId(), grantAccessKitIdParam.getValue());
-        assertEquals(param.getEmail(), grantAccessEmailParam.getValue());
+        assertEquals(param.getUserId(), grantAccessUserIdParam.getValue());
     }
 
     @Test
@@ -73,7 +73,7 @@ class GrantUserAccessToKitServiceTest {
         var currentUserId = UUID.randomUUID();
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,
-            "user@email.com",
+            UUID.randomUUID(),
             currentUserId
         );
         var expertGroupId = 3L;
@@ -93,7 +93,7 @@ class GrantUserAccessToKitServiceTest {
         var currentUserId = UUID.randomUUID();
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,
-            "user@email.com",
+            UUID.randomUUID(),
             currentUserId
         );
         var expertGroupId = 3L;

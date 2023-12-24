@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
@@ -34,11 +35,11 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final UserJpaRepository userRepository;
 
     @Override
-    public void grantUserAccess(Long kitId, String email) {
+    public void grantUserAccess(Long kitId, UUID userId) {
         AssessmentKitJpaEntity assessmentKit = repository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND));
-        UserJpaEntity user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_EMAIL_NOT_FOUND));
+        UserJpaEntity user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_USER_ID_NOT_FOUND));
 
         assessmentKit.getAccessGrantedUsers().add(user);
         repository.save(assessmentKit);
