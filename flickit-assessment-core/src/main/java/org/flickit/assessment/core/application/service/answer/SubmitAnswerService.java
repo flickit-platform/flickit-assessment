@@ -45,7 +45,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         var isNotApplicableChanged = !Objects.equals(param.getIsNotApplicable(), loadedAnswer.get().getIsNotApplicable());
         var isAnswerOptionChanged = Objects.equals(Boolean.TRUE, param.getIsNotApplicable()) ? Boolean.FALSE : !Objects.equals(answerOptionId, loadedAnswerOptionId);
-        var isConfidenceLevelChanged = Objects.equals(Boolean.TRUE, param.getIsNotApplicable()) ? Boolean.FALSE : !Objects.equals(confidenceLevelId, loadedAnswer.get().getConfidenceLevelId());
+        var isConfidenceLevelChanged = !Objects.equals(confidenceLevelId, loadedAnswer.get().getConfidenceLevelId());
 
         if (isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged) {
             var updateParam = toUpdateAnswerParam(loadedAnswer.get().getId(), answerOptionId, confidenceLevelId, param.getIsNotApplicable());
