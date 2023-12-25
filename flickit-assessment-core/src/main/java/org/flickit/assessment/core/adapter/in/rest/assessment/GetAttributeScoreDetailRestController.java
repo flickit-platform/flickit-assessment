@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.adapter.in.rest.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.assessment.GetAttributeScoreDetailUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

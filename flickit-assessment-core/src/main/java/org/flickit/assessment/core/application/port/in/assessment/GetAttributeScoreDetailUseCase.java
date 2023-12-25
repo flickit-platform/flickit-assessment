@@ -8,6 +8,9 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+
 public interface GetAttributeScoreDetailUseCase {
 
     Result getAttributeScoreDetail(Param param);
@@ -16,13 +19,13 @@ public interface GetAttributeScoreDetailUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = "")
+        @NotNull(message = GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = "")
+        @NotNull(message = GET_ATTRIBUTE_SCORE_DETAIL_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
-        @NotNull(message = "")
+        @NotNull(message = GET_ATTRIBUTE_SCORE_DETAIL_MATURITY_LEVEL_ID_NOT_NULL)
         Long maturityLevelId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
@@ -44,9 +47,9 @@ public interface GetAttributeScoreDetailUseCase {
                          int questionIndex,
                          String questionTitle,
                          int questionWeight,
-                         int answerOptionIndex,
+                         Integer answerOptionIndex,
                          String answerOptionTitle,
                          Double answerScore,
-                         double weightedScore) {
+                         Double weightedScore) {
     }
 }
