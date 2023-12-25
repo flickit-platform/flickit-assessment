@@ -16,18 +16,20 @@ import java.util.UUID;
 public class GetAttributeScoreDetailRestController {
 
     private final GetAttributeScoreDetailUseCase useCase;
+    private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/report/attributes/{attributeId}")
     public ResponseEntity<GetAttributeScoreDetailResponseDto> getAttributeScoreDetail(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId,
         @RequestParam(value = "maturityLevelId") Long maturityLevelId) {
-        var response = toResponse(useCase.getAttributeScoreDetail(toParam(assessmentId, attributeId, maturityLevelId)));
+        UUID currentUserId = userContext.getUser().id();
+        var response = toResponse(useCase.getAttributeScoreDetail(toParam(assessmentId, attributeId, maturityLevelId, currentUserId)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private GetAttributeScoreDetailUseCase.Param toParam(UUID assessmentId, Long attributeId, Long maturityLevelId) {
-        return new GetAttributeScoreDetailUseCase.Param(assessmentId, attributeId, maturityLevelId);
+    private GetAttributeScoreDetailUseCase.Param toParam(UUID assessmentId, Long attributeId, Long maturityLevelId, UUID currentUserId) {
+        return new GetAttributeScoreDetailUseCase.Param(assessmentId, attributeId, maturityLevelId, currentUserId);
     }
 
     private GetAttributeScoreDetailResponseDto toResponse(GetAttributeScoreDetailUseCase.Result result) {

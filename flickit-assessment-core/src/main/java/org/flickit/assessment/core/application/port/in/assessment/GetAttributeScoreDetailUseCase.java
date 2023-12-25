@@ -25,10 +25,14 @@ public interface GetAttributeScoreDetailUseCase {
         @NotNull(message = "")
         Long maturityLevelId;
 
-        public Param(UUID assessmentId, Long attributeId, Long maturityLevelId) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(UUID assessmentId, Long attributeId, Long maturityLevelId, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

@@ -53,6 +53,17 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         "a.lastModificationTime = :lastModificationTime " +
         "WHERE a.id = :id")
     void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime);
+
+    @Query("""
+        SELECT
+            count(*)
+        FROM AssessmentJpaEntity a
+        LEFT JOIN SpaceUserAccessJpaEntity su ON a.spaceId = su.spaceId
+        WHERE a.id = :assessmentId
+            AND su.userId = :userId
+        """)
+    int checkUserAccess(@Param(value = "assessmentId") UUID assessmentId,
+                         @Param(value = "userId") UUID userId);
 }
 
 
