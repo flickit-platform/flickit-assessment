@@ -6,11 +6,11 @@ import java.util.List;
 
 public class MaturityLevelMother {
 
-    public static final int LEVEL_ONE_ID = 10;
-    public static final int LEVEL_TWO_ID = 20;
-    public static final int LEVEL_THREE_ID = 30;
-    public static final int LEVEL_FOUR_ID = 40;
-    public static final int LEVEL_FIVE_ID = 50;
+    public static final long LEVEL_ONE_ID = 10;
+    public static final long LEVEL_TWO_ID = 20;
+    public static final long LEVEL_THREE_ID = 30;
+    public static final long LEVEL_FOUR_ID = 40;
+    public static final long LEVEL_FIVE_ID = 50;
 
     public static List<MaturityLevel> allLevels() {
         return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive());

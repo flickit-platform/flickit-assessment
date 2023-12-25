@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface LoadKitUserAccessPort {
 
-    Optional<KitUser> loadByKitIdAndUserEmail(Long kitId, UUID userId);
+    Optional<KitUser> loadByKitIdAndUserId(Long kitId, UUID userId);
 }

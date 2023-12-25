@@ -4,7 +4,9 @@ import org.flickit.assessment.core.application.domain.MaturityLevel;
 
 import java.util.List;
 
-public interface LoadMaturityLevelsByKitPort {
+public interface LoadMaturityLevelsPort {
 
-    List<MaturityLevel> loadByKitId(Long assessmentKitId);
+    List<MaturityLevel> loadByKitId(Long kitId);
+
+    List<MaturityLevel> loadByKitIdWithCompetences(Long kitId);
 }
