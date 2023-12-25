@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.answer;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
@@ -34,7 +35,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
-        var confidenceLevelId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getConfidenceLevelId();
+        var confidenceLevelId = Objects.isNull(param.getConfidenceLevelId()) ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
 
         if (loadedAnswer.isEmpty()) {
             return saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId);
