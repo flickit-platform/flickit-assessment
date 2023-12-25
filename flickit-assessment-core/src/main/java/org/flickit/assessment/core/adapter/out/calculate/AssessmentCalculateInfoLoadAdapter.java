@@ -76,7 +76,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         List<SubjectJoinAttributeView> subjectsWithAttributes = subjectRepository.loadByAssessmentKitId(assessmentKitId);
         Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectsWithAttributes.stream()
             .map(SubjectJoinAttributeView::getSubject)
-            .collect(toMap(SubjectJpaEntity::getId, x -> x));
+            .collect(toMap(SubjectJpaEntity::getId, x -> x, (s1, s2) -> s1));
         Map<Long, Integer> qaIdToWeightMap = subjectsWithAttributes.stream()
             .map(SubjectJoinAttributeView::getAttribute)
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));

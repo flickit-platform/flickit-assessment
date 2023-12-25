@@ -17,6 +17,7 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
@@ -26,8 +27,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.projection.ProjectionFactory;
-import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +42,7 @@ import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeValu
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEntityMother.createSubject;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
+import static org.flickit.assessment.core.test.fixture.application.SubjectJoinAttributeViewMother.subjectJoinAttributeView;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -68,8 +68,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
     private AnswerOptionRestAdapter answerOptionRestAdapter;
     @Mock
     private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
-
-    private final ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
 
     private static void assertAssessment(AssessmentJpaEntity assessmentEntity, Assessment resultAssessment) {
         assertEquals(assessmentEntity.getId(), resultAssessment.getId());
@@ -246,32 +244,21 @@ class AssessmentCalculateInfoLoadAdapterTest {
     }
 
     private List<SubjectJoinAttributeView> createSubjectJoinAttributes(List<SubjectJpaEntity> subjects, List<QualityAttributeValueJpaEntity> qualityAttributeValues) {
-        var projection1 = factory.createProjection(SubjectJoinAttributeView.class);
         SubjectJpaEntity subject1 = subjects.get(0);
-        projection1.setSubject(subject1);
-        projection1.setAttribute(createAttributeEntity(qualityAttributeValues.get(0).getQualityAttributeId(), 1, subject1.getId()));
-
-        var projection2 = factory.createProjection(SubjectJoinAttributeView.class);
-        projection2.setSubject(subject1);
-        projection2.setAttribute(createAttributeEntity(qualityAttributeValues.get(1).getQualityAttributeId(), 2, subject1.getId()));
-
-        var projection3 = factory.createProjection(SubjectJoinAttributeView.class);
         SubjectJpaEntity subject2 = subjects.get(1);
-        projection3.setSubject(subject2);
-        projection3.setAttribute(createAttributeEntity(qualityAttributeValues.get(2).getQualityAttributeId(), 3, subject2.getId()));
-
-        var projection4 = factory.createProjection(SubjectJoinAttributeView.class);
-        projection4.setSubject(subject2);
-        projection4.setAttribute(createAttributeEntity(qualityAttributeValues.get(3).getQualityAttributeId(), 4, subject2.getId()));
-
-        var projection5 = factory.createProjection(SubjectJoinAttributeView.class);
         SubjectJpaEntity subject3 = subjects.get(2);
-        projection5.setSubject(subject3);
-        projection5.setAttribute(createAttributeEntity(qualityAttributeValues.get(4).getQualityAttributeId(), 5, subject3.getId()));
-
-        var projection6 = factory.createProjection(SubjectJoinAttributeView.class);
-        projection6.setSubject(subject3);
-        projection6.setAttribute(createAttributeEntity(qualityAttributeValues.get(5).getQualityAttributeId(), 6, subject3.getId()));
+        AttributeJpaEntity attribute1 = createAttributeEntity(qualityAttributeValues.get(0).getQualityAttributeId(), 1, subject1.getId());
+        AttributeJpaEntity attribute2 = createAttributeEntity(qualityAttributeValues.get(1).getQualityAttributeId(), 2, subject1.getId());
+        AttributeJpaEntity attribute3 = createAttributeEntity(qualityAttributeValues.get(2).getQualityAttributeId(), 3, subject2.getId());
+        AttributeJpaEntity attribute4 = createAttributeEntity(qualityAttributeValues.get(3).getQualityAttributeId(), 4, subject2.getId());
+        AttributeJpaEntity attribute5 = createAttributeEntity(qualityAttributeValues.get(4).getQualityAttributeId(), 5, subject3.getId());
+        AttributeJpaEntity attribute6 = createAttributeEntity(qualityAttributeValues.get(5).getQualityAttributeId(), 6, subject3.getId());
+        var projection1 = subjectJoinAttributeView(subject1, attribute1);
+        var projection2 = subjectJoinAttributeView(subject1, attribute2);
+        var projection3 = subjectJoinAttributeView(subject2, attribute3);
+        var projection4 = subjectJoinAttributeView(subject2, attribute4);
+        var projection5 = subjectJoinAttributeView(subject3, attribute5);
+        var projection6 = subjectJoinAttributeView(subject3, attribute6);
 
         return List.of(projection1, projection2, projection3, projection4, projection5, projection6);
     }
