@@ -99,12 +99,11 @@ class SubmitAnswerServiceTest {
         assertEquals(QUESTIONNAIRE_ID, saveAnswerParam.getValue().questionnaireId());
         assertEquals(QUESTION_ID, saveAnswerParam.getValue().questionId());
         assertNull(saveAnswerParam.getValue().answerOptionId());
-        assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerParam.getValue().confidenceLevelId());
+        assertNull(saveAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
-        verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.FALSE);
-        verifyNoInteractions(updateAnswerPort);
+        verifyNoInteractions(invalidateAssessmentResultPort, updateAnswerPort);
     }
 
     @Test

@@ -35,7 +35,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
-        var confidenceLevelId = param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
+        Integer confidenceLevelId = param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
+        confidenceLevelId = (answerOptionId != null || Objects.equals(Boolean.TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
 
         if (loadedAnswer.isEmpty()) {
             return saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId);
