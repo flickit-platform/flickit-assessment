@@ -10,10 +10,5 @@ import java.util.UUID;
 public class User {
 
     private final UUID id;
-    private final String email;
-    private final String displayName;
-    private final String bio;
-    private final String linkedin;
-    private final String picture;
-    private final Long defaultSpaceId;
+
 }
