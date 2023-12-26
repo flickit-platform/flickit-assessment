@@ -7,5 +7,8 @@ import java.util.UUID;
 
 public interface LoadAttributeScoreDetailPort {
 
-    List<GetAttributeScoreDetailUseCase.QuestionScore> loadScoreDetail(UUID assessmentResultId, long attributeId, long maturityLevelId);
+    List<GetAttributeScoreDetailUseCase.QuestionScore> loadScoreDetail(
+        UUID assessmentResultId,
+        long attributeId,
+        long maturityLevelId);
 }

@@ -49,6 +49,7 @@ public interface GetAttributeScoreDetailUseCase {
                          int questionWeight,
                          Integer answerOptionIndex,
                          String answerOptionTitle,
+                         Boolean answerIsNotApplicable,
                          Double answerScore,
                          Double weightedScore) {
     }

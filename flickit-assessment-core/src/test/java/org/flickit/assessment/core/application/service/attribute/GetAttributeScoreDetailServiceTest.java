@@ -4,6 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
+import org.flickit.assessment.core.test.fixture.application.QuestionScoreMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Param;
 import static org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.QuestionScore;
+import static org.flickit.assessment.core.test.fixture.application.QuestionScoreMother.questionWithScore;
+import static org.flickit.assessment.core.test.fixture.application.QuestionScoreMother.questionWithoutAnswer;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -44,48 +47,18 @@ class GetAttributeScoreDetailServiceTest {
             maturityLevelId,
             currentUserId);
 
-        QuestionScore questionWithFullScore = new QuestionScore(
-            "DevOps",
-            1,
-            "Do you have CI/CD?",
-            4,
-            2,
-            "Yes",
-            1.0,
-            4.0);
-        QuestionScore questionWithHalfScore = new QuestionScore(
-            "DevOps",
-            2,
-            "Do you have fully automated CI/CD?",
-            2,
-            2,
-            "Yes",
-            0.5,
-            1.0);
-        QuestionScore questionWithoutScore = new QuestionScore(
-            "DevOps",
-            3,
-            "Do you have Test?",
-            1,
-            1,
-            "NO",
-            0.0,
-            0.0);
-        QuestionScore questionWithoutAnswer = new QuestionScore(
-            "Technology",
-            10,
-            "Do you have Technology?",
-            4,
-            null,
-            null,
-            null,
-            0.0);
+        QuestionScore questionWithFullScore = questionWithScore(4, 1.0);
+        QuestionScore questionWithHalfScore = questionWithScore(2, 0.5);
+        QuestionScore questionWithoutScore = questionWithScore(1, 0.0);
+        QuestionScore questionWithoutAnswer = questionWithoutAnswer(4);
+        QuestionScore questionMarkedAsNotApplicable = QuestionScoreMother.questionMarkedAsNotApplicable();
 
         List<QuestionScore> scores = List.of(
             questionWithFullScore,
             questionWithHalfScore,
             questionWithoutScore,
-            questionWithoutAnswer
+            questionWithoutAnswer,
+            questionMarkedAsNotApplicable
             );
 
         when(loadAttributeScoreDetailPort.loadScoreDetail(assessmentId, attributeId, maturityLevelId)).thenReturn(scores);
@@ -96,12 +69,13 @@ class GetAttributeScoreDetailServiceTest {
         assertNotNull(result);
         assertEquals(5, result.gainedScore());
         assertEquals(11, result.totalScore());
-        assertEquals(4, result.questionScores().size());
+        assertEquals(5, result.questionScores().size());
         //order of QuestionScore items should be equal to order of port items
         assertEquals(questionWithFullScore, result.questionScores().get(0));
         assertEquals(questionWithHalfScore, result.questionScores().get(1));
         assertEquals(questionWithoutScore, result.questionScores().get(2));
         assertEquals(questionWithoutAnswer, result.questionScores().get(3));
+        assertEquals(questionMarkedAsNotApplicable, result.questionScores().get(4));
     }
 
     @Test

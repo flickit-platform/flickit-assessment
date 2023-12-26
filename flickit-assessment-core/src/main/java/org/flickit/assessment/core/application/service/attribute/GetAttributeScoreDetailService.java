@@ -24,20 +24,23 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
     public Result getAttributeScoreDetail(Param param) {
         checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
-        var impactFullQuestions = loadAttributeScoreDetailPort.loadScoreDetail(
+        var impactFullQuestionScores = loadAttributeScoreDetailPort.loadScoreDetail(
             param.getAssessmentId(),
             param.getAttributeId(),
             param.getMaturityLevelId());
+
         double totalScore = 0.0;
         double gainedScore = 0.0;
 
-        for (QuestionScore qs : impactFullQuestions) {
+        for (QuestionScore qs : impactFullQuestionScores) {
+            if(Boolean.TRUE.equals(qs.answerIsNotApplicable()))
+                continue;
             totalScore += qs.questionWeight();
             if (qs.answerScore() != null)
                 gainedScore += qs.weightedScore();
         }
 
-        return new Result(totalScore, gainedScore, impactFullQuestions);
+        return new Result(totalScore, gainedScore, impactFullQuestionScores);
     }
 
     private void checkUserAccess(UUID assessmentId, UUID currentUserId) {

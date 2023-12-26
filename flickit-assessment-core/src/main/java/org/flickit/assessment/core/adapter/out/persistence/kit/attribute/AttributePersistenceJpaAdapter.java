@@ -35,6 +35,7 @@ public class AttributePersistenceJpaAdapter implements LoadAttributeScoreDetailP
                 view.getQuestionImpact().getWeight(),
                 view.getOptionIndex(),
                 view.getOptionTitle(),
+                view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
                 view.getOptionImpact() == null ? null : view.getOptionImpact().getValue(),
                 view.getOptionImpact() == null ? 0 : view.getOptionImpact().getValue() * view.getQuestionImpact().getWeight()
             )).toList();
