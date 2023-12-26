@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.Subject;
@@ -12,7 +11,6 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.CreateA
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.assessment.core.application.port.out.user.CheckUserExistencePort;
 import org.flickit.assessment.core.test.fixture.application.QualityAttributeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,9 +46,6 @@ class CreateAssessmentServiceTest {
     @Mock
     private CreateQualityAttributeValuePort createQualityAttributeValuePort;
 
-    @Mock
-    private CheckUserExistencePort checkUserExistencePort;
-
     @Test
     void testCreateAssessment_ValidParam_PersistsAndReturnsId() {
         UUID createdBy = UUID.randomUUID();
@@ -62,7 +57,6 @@ class CreateAssessmentServiceTest {
             createdBy
         );
         UUID expectedId = UUID.randomUUID();
-        when(checkUserExistencePort.existsById(createdBy)).thenReturn(true);
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
@@ -92,7 +86,6 @@ class CreateAssessmentServiceTest {
             createdBy
         );
         UUID assessmentId = UUID.randomUUID();
-        when(checkUserExistencePort.existsById(createdBy)).thenReturn(true);
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(assessmentId);
         UUID expectedResultId = UUID.randomUUID();
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(expectedResultId);
@@ -132,7 +125,6 @@ class CreateAssessmentServiceTest {
             new Subject(2L, List.of(qa3, qa4)),
             new Subject(3L, List.of(qa5))
         );
-        when(checkUserExistencePort.existsById(createdBy)).thenReturn(true);
         when(loadSubjectsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedSubjects);
 
         service.createAssessment(param);
@@ -162,7 +154,6 @@ class CreateAssessmentServiceTest {
             new Subject(2L, List.of(qa3, qa4)),
             new Subject(3L, List.of(qa5))
         );
-        when(checkUserExistencePort.existsById(createdBy)).thenReturn(true);
         when(loadSubjectsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedSubjects);
 
         service.createAssessment(param);
@@ -181,7 +172,6 @@ class CreateAssessmentServiceTest {
             createdBy
         );
         List<Subject> expectedResponse = List.of();
-        when(checkUserExistencePort.existsById(createdBy)).thenReturn(true);
         when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
 
         service.createAssessment(param);
@@ -190,27 +180,6 @@ class CreateAssessmentServiceTest {
         verify(createAssessmentPort).persist(createPortParam.capture());
 
         assertEquals(AssessmentColor.getDefault().getId(), createPortParam.getValue().colorId());
-    }
-
-    @Test
-    void testCreateAssessment_InvalidCreatedById_UseDefaultColor() {
-        UUID createdBy = UUID.randomUUID();
-        Param param = new Param(
-            1L,
-            "title example",
-            1L,
-            1,
-            createdBy
-        );
-        when(checkUserExistencePort.existsById(createdBy)).thenReturn(false);
-
-        assertThrows(ResourceNotFoundException.class, () -> service.createAssessment(param));
-
-        ArgumentCaptor<UUID> portIdParam = ArgumentCaptor.forClass(UUID.class);
-        verify(checkUserExistencePort).existsById(portIdParam.capture());
-
-        assertEquals(param.getCreatedBy(), portIdParam.getValue());
-        verify(createAssessmentPort, never()).persist(any());
     }
 
 }

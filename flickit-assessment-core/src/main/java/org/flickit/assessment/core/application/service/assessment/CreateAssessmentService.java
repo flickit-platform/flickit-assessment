@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
@@ -10,7 +9,6 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.CreateA
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.assessment.core.application.port.out.user.CheckUserExistencePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_FOUND;
 import static org.flickit.assessment.core.application.domain.Assessment.generateSlugCode;
 import static org.flickit.assessment.core.application.domain.AssessmentColor.getValidId;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
@@ -33,12 +30,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
     private final LoadSubjectByAssessmentKitIdPort loadSubjectByAssessmentKitIdPort;
-    private final CheckUserExistencePort checkUserExistencePort;
 
     @Override
     public Result createAssessment(Param param) {
-        if (!checkUserExistencePort.existsById(param.getCreatedBy()))
-            throw new ResourceNotFoundException(COMMON_CURRENT_USER_NOT_FOUND);
         CreateAssessmentPort.Param portParam = toParam(param);
         UUID id = createAssessmentPort.persist(portParam);
         createAssessmentResult(id, portParam.assessmentKitId());
