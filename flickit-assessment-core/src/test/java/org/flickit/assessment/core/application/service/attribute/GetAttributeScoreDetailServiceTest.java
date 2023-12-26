@@ -44,10 +44,19 @@ class GetAttributeScoreDetailServiceTest {
             maturityLevelId,
             currentUserId);
 
-        QuestionScore questionWithScore = new QuestionScore(
+        QuestionScore questionWithFullScore = new QuestionScore(
             "DevOps",
             1,
             "Do you have CI/CD?",
+            4,
+            2,
+            "Yes",
+            1.0,
+            4.0);
+        QuestionScore questionWithHalfScore = new QuestionScore(
+            "DevOps",
+            2,
+            "Do you have fully automated CI/CD?",
             2,
             2,
             "Yes",
@@ -73,10 +82,11 @@ class GetAttributeScoreDetailServiceTest {
             0.0);
 
         List<QuestionScore> scores = List.of(
-            questionWithScore,
+            questionWithFullScore,
+            questionWithHalfScore,
             questionWithoutScore,
             questionWithoutAnswer
-        );
+            );
 
         when(loadAttributeScoreDetailPort.loadScoreDetail(assessmentId, attributeId, maturityLevelId)).thenReturn(scores);
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
@@ -84,9 +94,14 @@ class GetAttributeScoreDetailServiceTest {
         GetAttributeScoreDetailUseCase.Result result = service.getAttributeScoreDetail(param);
 
         assertNotNull(result);
-        assertEquals(1, result.gainedScore());
-        assertEquals(7, result.totalScore());
-        assertEquals(3, result.questionScores().size());
+        assertEquals(5, result.gainedScore());
+        assertEquals(11, result.totalScore());
+        assertEquals(4, result.questionScores().size());
+        //order of QuestionScore items should be equal to order of port items
+        assertEquals(questionWithFullScore, result.questionScores().get(0));
+        assertEquals(questionWithHalfScore, result.questionScores().get(1));
+        assertEquals(questionWithoutScore, result.questionScores().get(2));
+        assertEquals(questionWithoutAnswer, result.questionScores().get(3));
     }
 
     @Test
