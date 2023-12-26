@@ -1,8 +1,8 @@
-package org.flickit.assessment.core.adapter.in.rest.assessment;
+package org.flickit.assessment.core.adapter.in.rest.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.port.in.assessment.GetAttributeScoreDetailUseCase;
+import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +23,7 @@ public class GetAttributeScoreDetailRestController {
     public ResponseEntity<GetAttributeScoreDetailResponseDto> getAttributeScoreDetail(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId,
-        @RequestParam(value = "maturityLevelId") Long maturityLevelId) {
+        @RequestParam(value = "maturityLevelId", required = false) Long maturityLevelId) {
         UUID currentUserId = userContext.getUser().id();
         var response = toResponse(useCase.getAttributeScoreDetail(toParam(assessmentId, attributeId, maturityLevelId, currentUserId)));
         return new ResponseEntity<>(response, HttpStatus.OK);

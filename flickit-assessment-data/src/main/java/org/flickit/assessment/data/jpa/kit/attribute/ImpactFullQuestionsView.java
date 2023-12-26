@@ -1,10 +1,10 @@
-package org.flickit.assessment.data.jpa.kit.question;
+package org.flickit.assessment.data.jpa.kit.attribute;
 
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 
-public interface QuestionJoinAnswerView {
+public interface ImpactFullQuestionsView {
 
     String getQuestionnaireTitle();
 

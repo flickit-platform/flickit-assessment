@@ -1,9 +1,9 @@
-package org.flickit.assessment.core.application.service.assessment;
+package org.flickit.assessment.core.application.service.attribute;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.port.in.assessment.GetAttributeScoreDetailUseCase;
+import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
-import org.flickit.assessment.core.application.port.out.question.LoadAttributeScoreDetailPort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,8 +15,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.application.port.in.assessment.GetAttributeScoreDetailUseCase.Param;
-import static org.flickit.assessment.core.application.port.in.assessment.GetAttributeScoreDetailUseCase.QuestionScore;
+import static org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Param;
+import static org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.QuestionScore;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -44,36 +44,41 @@ class GetAttributeScoreDetailServiceTest {
             maturityLevelId,
             currentUserId);
 
+        QuestionScore questionWithScore = new QuestionScore(
+            "DevOps",
+            1,
+            "Do you have CI/CD?",
+            2,
+            2,
+            "Yes",
+            0.5,
+            1.0);
+        QuestionScore questionWithoutScore = new QuestionScore(
+            "DevOps",
+            3,
+            "Do you have Test?",
+            1,
+            1,
+            "NO",
+            0.0,
+            0.0);
+        QuestionScore questionWithoutAnswer = new QuestionScore(
+            "Technology",
+            10,
+            "Do you have Technology?",
+            4,
+            null,
+            null,
+            null,
+            0.0);
+
         List<QuestionScore> scores = List.of(
-            new QuestionScore(
-                "DevOps",
-                1,
-                "Do you have CI/CD?",
-                2,
-                2,
-                "Yes",
-                0.5,
-                1.0),
-            new QuestionScore(
-                "DevOps",
-                3,
-                "Do you have Test?",
-                1,
-                1,
-                "NO",
-                0.0,
-                0.0),
-            new QuestionScore(
-                "Technology",
-                10,
-                "Do you have Technology?",
-                4,
-                null,
-                null,
-                null,
-                0.0)
+            questionWithScore,
+            questionWithoutScore,
+            questionWithoutAnswer
         );
-        when(loadAttributeScoreDetailPort.load(attributeId, maturityLevelId, assessmentId)).thenReturn(scores);
+
+        when(loadAttributeScoreDetailPort.loadScoreDetail(assessmentId, attributeId, maturityLevelId)).thenReturn(scores);
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
 
         GetAttributeScoreDetailUseCase.Result result = service.getAttributeScoreDetail(param);
@@ -97,7 +102,7 @@ class GetAttributeScoreDetailServiceTest {
             currentUserId);
 
         List<QuestionScore> scores = List.of();
-        when(loadAttributeScoreDetailPort.load(attributeId, maturityLevelId, assessmentId)).thenReturn(scores);
+        when(loadAttributeScoreDetailPort.loadScoreDetail(assessmentId, attributeId, maturityLevelId)).thenReturn(scores);
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
 
         GetAttributeScoreDetailUseCase.Result result = service.getAttributeScoreDetail(param);
@@ -105,7 +110,7 @@ class GetAttributeScoreDetailServiceTest {
         assertNotNull(result);
         assertEquals(0, result.gainedScore());
         assertEquals(0, result.totalScore());
-        assertEquals(0, result.questionScores().size());
+        assertTrue(result.questionScores().isEmpty());
     }
 
     @Test

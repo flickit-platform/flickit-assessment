@@ -1,11 +1,11 @@
-package org.flickit.assessment.core.adapter.out.kit.question;
+package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.port.in.assessment.GetAttributeScoreDetailUseCase;
-import org.flickit.assessment.core.application.port.out.question.LoadAttributeScoreDetailPort;
+import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,19 +13,19 @@ import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND;
 
-@Component
+@Component("coreAttributePersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class QuestionJpaAdapter implements LoadAttributeScoreDetailPort {
+public class AttributePersistenceJpaAdapter implements LoadAttributeScoreDetailPort {
 
-    private final QuestionJpaRepository repository;
+    private final AttributeJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
-    public List<GetAttributeScoreDetailUseCase.QuestionScore> load(long attributeId, long maturityLevelId, UUID assessmentId) {
+    public List<GetAttributeScoreDetailUseCase.QuestionScore> loadScoreDetail(UUID assessmentId, long attributeId, long maturityLevelId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var questionsView = repository.findImpactFullQuestionsScore(attributeId, maturityLevelId, assessmentResult.getId());
+        var questionsView = repository.findImpactFullQuestionsScore(assessmentResult.getId(), attributeId, maturityLevelId);
 
         return questionsView.stream().map(view ->
             new GetAttributeScoreDetailUseCase.QuestionScore(
