@@ -3,8 +3,6 @@ package org.flickit.assessment.core.adapter.out.calculate;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
-import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
-import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
@@ -19,24 +17,29 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.projection.ProjectionFactory;
+import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import static org.flickit.assessment.core.test.fixture.adapter.dto.AnswerOptionDtoMother.createAnswerOptionDto;
-import static org.flickit.assessment.core.test.fixture.adapter.dto.QuestionDtoMother.createQuestionDtoWithAffectedLevelAndAttributes;
+import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.core.test.fixture.adapter.dto.AnswerOptionDtoMother.answerOptionDto;
 import static org.flickit.assessment.core.test.fixture.adapter.dto.SubjectDtoMother.createSubjectDto;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.QuestionImpactEntityMother.questionImpactEntity;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.QuestionJpaEntityMother.questionEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,42 +62,11 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private SubjectRestAdapter subjectRestAdapter;
     @Mock
-    private QuestionRestAdapter questionRestAdapter;
+    private QuestionJpaRepository questionRepository;
     @Mock
     private AnswerOptionRestAdapter answerOptionRestAdapter;
     @Mock
     private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
-
-    @Test
-    void testLoad() {
-        Context context = createContext();
-
-        doMocks(context);
-        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        when(maturityLevelJpaAdapter.loadByKitIdWithCompetences(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
-            .thenReturn(maturityLevels);
-
-        var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
-
-        assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
-
-        assertAssessment(context.assessmentResultEntity().getAssessment(), loadedAssessmentResult.getAssessment());
-
-        assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues());
-
-        var resultAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
-            .flatMap(sv -> sv.getQualityAttributeValues().stream())
-            .toList();
-        assertAttributeValues(context.qualityAttributeValues, resultAttributeValues);
-
-        List<Answer> answers = new ArrayList<>(resultAttributeValues.stream()
-            .flatMap(qav -> qav.getAnswers().stream())
-            .collect(Collectors.toMap(Answer::getId, Function.identity(), (a, b) -> a))
-            .values());
-
-        assertAnswers(context.answerEntities, answers);
-
-    }
 
     private static void assertAssessment(AssessmentJpaEntity assessmentEntity, Assessment resultAssessment) {
         assertEquals(assessmentEntity.getId(), resultAssessment.getId());
@@ -182,34 +154,85 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var subjectDto3 = createSubjectDto(subjectValue3.getSubjectId(), List.of(qav5, qav6));
         List<SubjectDto> subjectDtos = List.of(subjectDto1, subjectDto2, subjectDto3);
 
-        var questionDto1 = createQuestionDtoWithAffectedLevelAndAttributes(1L, LEVEL_ONE_ID, attribute1Id, attribute2Id, attribute3Id);
-        var questionDto2 = createQuestionDtoWithAffectedLevelAndAttributes(2L, LEVEL_ONE_ID, attribute4Id, attribute5Id, attribute6Id);
-        var questionDto3 = createQuestionDtoWithAffectedLevelAndAttributes(3L, LEVEL_TWO_ID, attribute1Id, attribute2Id, attribute3Id);
-        var questionDto4 = createQuestionDtoWithAffectedLevelAndAttributes(4L, LEVEL_TWO_ID, attribute4Id, attribute5Id, attribute6Id);
-        var questionDto5 = createQuestionDtoWithAffectedLevelAndAttributes(5L, LEVEL_THREE_ID, attribute1Id, attribute2Id, attribute3Id);
-        var questionDto6 = createQuestionDtoWithAffectedLevelAndAttributes(6L, LEVEL_THREE_ID, attribute4Id, attribute5Id, attribute6Id);
-        var questionDto7 = createQuestionDtoWithAffectedLevelAndAttributes(7L, LEVEL_FOUR_ID, attribute1Id, attribute2Id, attribute3Id);
-        var questionDto8 = createQuestionDtoWithAffectedLevelAndAttributes(8L, LEVEL_FOUR_ID, attribute4Id, attribute5Id, attribute6Id);
-        var questionDto9 = createQuestionDtoWithAffectedLevelAndAttributes(9L, LEVEL_FIVE_ID, attribute1Id, attribute2Id, attribute3Id);
-        var questionDto10 = createQuestionDtoWithAffectedLevelAndAttributes(10L, LEVEL_FIVE_ID, attribute4Id, attribute5Id, attribute6Id);
+        var question1 = questionEntity(1L, 1L, Boolean.FALSE);
+        var question2 = questionEntity(2L, 1L, Boolean.FALSE);
+        var question3 = questionEntity(3L, 1L, Boolean.FALSE);
+        var question4 = questionEntity(4L, 1L, Boolean.FALSE);
+        var question5 = questionEntity(5L, 1L, Boolean.FALSE);
+        var question6 = questionEntity(6L, 1L, Boolean.FALSE);
+        var question7 = questionEntity(7L, 1L, Boolean.FALSE);
+        var question8 = questionEntity(8L, 1L, Boolean.FALSE);
+        var question9 = questionEntity(9L, 1L, Boolean.FALSE);
+        var question10 = questionEntity(10L, 1L, Boolean.FALSE);
+        List<QuestionJpaEntity> questions = List.of(question1, question2, question3, question4, question5, question6, question7, question8, question9, question10);
 
-        List<QuestionDto> questionDtos = List.of(questionDto1, questionDto2, questionDto3, questionDto4, questionDto5, questionDto6, questionDto7, questionDto8, questionDto9, questionDto10);
+        Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap = new HashMap<>();
+        var impact11 = questionImpactEntity(LEVEL_ONE_ID, question1.getId(), attribute1Id);
+        var impact12 = questionImpactEntity(LEVEL_ONE_ID, question1.getId(), attribute2Id);
+        var impact13 = questionImpactEntity(LEVEL_ONE_ID, question1.getId(), attribute3Id);
+        questionIdToImpactsMap.put(question1.getId(), List.of(impact11, impact12, impact13));
 
-        var answerQ1 = answerEntityWithOption(assessmentResultEntity, questionDto1.id(), 1L);
-        var answerQ2 = answerEntityWithOption(assessmentResultEntity, questionDto2.id(), 2L);
+        var impact21 = questionImpactEntity(LEVEL_ONE_ID, question2.getId(), attribute4Id);
+        var impact22 = questionImpactEntity(LEVEL_ONE_ID, question2.getId(), attribute5Id);
+        var impact23 = questionImpactEntity(LEVEL_ONE_ID, question2.getId(), attribute6Id);
+        questionIdToImpactsMap.put(question2.getId(), List.of(impact21, impact22, impact23));
+
+        var impact31 = questionImpactEntity(LEVEL_TWO_ID, question3.getId(), attribute1Id);
+        var impact32 = questionImpactEntity(LEVEL_TWO_ID, question3.getId(), attribute2Id);
+        var impact33 = questionImpactEntity(LEVEL_TWO_ID, question3.getId(), attribute3Id);
+        questionIdToImpactsMap.put(question3.getId(), List.of(impact31, impact32, impact33));
+
+        var impact41 = questionImpactEntity(LEVEL_TWO_ID, question4.getId(), attribute4Id);
+        var impact42 = questionImpactEntity(LEVEL_TWO_ID, question4.getId(), attribute5Id);
+        var impact43 = questionImpactEntity(LEVEL_TWO_ID, question4.getId(), attribute6Id);
+        questionIdToImpactsMap.put(question4.getId(), List.of(impact41, impact42, impact43));
+
+        var impact51 = questionImpactEntity(LEVEL_THREE_ID, question5.getId(), attribute1Id);
+        var impact52 = questionImpactEntity(LEVEL_THREE_ID, question5.getId(), attribute2Id);
+        var impact53 = questionImpactEntity(LEVEL_THREE_ID, question5.getId(), attribute3Id);
+        questionIdToImpactsMap.put(question5.getId(), List.of(impact51, impact52, impact53));
+
+        var impact61 = questionImpactEntity(LEVEL_THREE_ID, question6.getId(), attribute4Id);
+        var impact62 = questionImpactEntity(LEVEL_THREE_ID, question6.getId(), attribute5Id);
+        var impact63 = questionImpactEntity(LEVEL_THREE_ID, question6.getId(), attribute6Id);
+        questionIdToImpactsMap.put(question6.getId(), List.of(impact61, impact62, impact63));
+
+        var impact71 = questionImpactEntity(LEVEL_FOUR_ID, question7.getId(), attribute1Id);
+        var impact72 = questionImpactEntity(LEVEL_FOUR_ID, question7.getId(), attribute2Id);
+        var impact73 = questionImpactEntity(LEVEL_FOUR_ID, question7.getId(), attribute3Id);
+        questionIdToImpactsMap.put(question7.getId(), List.of(impact71, impact72, impact73));
+
+        var impact81 = questionImpactEntity(LEVEL_FOUR_ID, question8.getId(), attribute4Id);
+        var impact82 = questionImpactEntity(LEVEL_FOUR_ID, question8.getId(), attribute5Id);
+        var impact83 = questionImpactEntity(LEVEL_FOUR_ID, question8.getId(), attribute6Id);
+        questionIdToImpactsMap.put(question8.getId(), List.of(impact81, impact82, impact83));
+
+        var impact91 = questionImpactEntity(LEVEL_FIVE_ID, question9.getId(), attribute1Id);
+        var impact92 = questionImpactEntity(LEVEL_FIVE_ID, question9.getId(), attribute2Id);
+        var impact93 = questionImpactEntity(LEVEL_FIVE_ID, question9.getId(), attribute3Id);
+        questionIdToImpactsMap.put(question9.getId(), List.of(impact91, impact92, impact93));
+
+        var impact101 = questionImpactEntity(LEVEL_FIVE_ID, question10.getId(), attribute4Id);
+        var impact102 = questionImpactEntity(LEVEL_FIVE_ID, question10.getId(), attribute5Id);
+        var impact103 = questionImpactEntity(LEVEL_FIVE_ID, question10.getId(), attribute6Id);
+        questionIdToImpactsMap.put(question10.getId(), List.of(impact101, impact102, impact103));
+
+
+        var answerQ1 = answerEntityWithOption(assessmentResultEntity, question1.getId(), 1L);
+        var answerQ2 = answerEntityWithOption(assessmentResultEntity, question2.getId(), 2L);
         // no answer for question 3
-        var answerQ4 = answerEntityWithNoOption(assessmentResultEntity, questionDto4.id());
-        var answerQ5 = answerEntityWithOption(assessmentResultEntity, questionDto5.id(), 5L);
-        var answerQ6 = answerEntityWithIsNotApplicableTrue(assessmentResultEntity, questionDto6.id());
+        var answerQ4 = answerEntityWithNoOption(assessmentResultEntity, question4.getId());
+        var answerQ5 = answerEntityWithOption(assessmentResultEntity, question5.getId(), 5L);
+        var answerQ6 = answerEntityWithIsNotApplicableTrue(assessmentResultEntity, question6.getId());
         // no answer question 7, 8
-        var answerQ9 = answerEntityWithIsNotApplicableTrue(assessmentResultEntity, questionDto9.id());
-        var answerQ10 = answerEntityWithNoOption(assessmentResultEntity, questionDto10.id());
+        var answerQ9 = answerEntityWithIsNotApplicableTrue(assessmentResultEntity, question9.getId());
+        var answerQ10 = answerEntityWithNoOption(assessmentResultEntity, question10.getId());
 
         List<AnswerJpaEntity> answerEntities = new ArrayList<>(List.of(answerQ1, answerQ2, answerQ4, answerQ5, answerQ6, answerQ9, answerQ10));
 
-        var answerOptionDto1 = createAnswerOptionDto(1L, questionDto1);
-        var answerOptionDto2 = createAnswerOptionDto(2L, questionDto2);
-        var answerOptionDto3 = createAnswerOptionDto(5L, questionDto5);
+        var answerOptionDto1 = answerOptionDto(1L, question1.getId(), questionIdToImpactsMap.get(question1.getId()));
+        var answerOptionDto2 = answerOptionDto(2L, question2.getId(), questionIdToImpactsMap.get(question2.getId()));
+        var answerOptionDto3 = answerOptionDto(5L, question5.getId(), questionIdToImpactsMap.get(question5.getId()));
         List<AnswerOptionDto> answerOptionDtos = new ArrayList<>(List.of(answerOptionDto1, answerOptionDto2, answerOptionDto3));
 
         return new Context(
@@ -217,9 +240,41 @@ class AssessmentCalculateInfoLoadAdapterTest {
             subjectValues,
             qualityAttributeValues,
             subjectDtos,
-            questionDtos,
+            questions,
+            questionIdToImpactsMap,
             answerEntities,
             answerOptionDtos);
+    }
+
+    @Test
+    void testLoad() {
+        Context context = createContext();
+
+        doMocks(context);
+        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
+        when(maturityLevelJpaAdapter.loadByKitIdWithCompetences(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
+            .thenReturn(maturityLevels);
+
+        var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
+
+        assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
+
+        assertAssessment(context.assessmentResultEntity().getAssessment(), loadedAssessmentResult.getAssessment());
+
+        assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues());
+
+        var resultAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
+            .flatMap(sv -> sv.getQualityAttributeValues().stream())
+            .toList();
+        assertAttributeValues(context.qualityAttributeValues, resultAttributeValues);
+
+        List<Answer> answers = new ArrayList<>(resultAttributeValues.stream()
+            .flatMap(qav -> qav.getAnswers().stream())
+            .collect(toMap(Answer::getId, Function.identity(), (a, b) -> a))
+            .values());
+
+        assertAnswers(context.answerEntities, answers);
+
     }
 
     private void doMocks(Context context) {
@@ -231,12 +286,29 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.qualityAttributeValues());
         when(subjectRestAdapter.loadSubjectsDtoByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
             .thenReturn(context.subjectDtos());
-        when(questionRestAdapter.loadByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
-            .thenReturn(context.questionDtos());
+        when(questionRepository.loadByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
+            .thenReturn(questionJoinImpactView(context.questionEntities, context.questionIdToImpactsMap));
         when(answerRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.answerEntities());
         when(answerOptionRestAdapter.loadAnswerOptionByIds(any()))
             .thenReturn(context.answerOptionDtos());
+    }
+
+    private List<QuestionJoinQuestionImpactView> questionJoinImpactView(List<QuestionJpaEntity> questionEntities, Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap) {
+        Map<Long, QuestionJpaEntity> questionIdToQuestionEntityMap = questionEntities.stream()
+            .collect(toMap(QuestionJpaEntity::getId, x -> x));
+        List<QuestionImpactJpaEntity> impacts = questionIdToImpactsMap.values().stream().flatMap(Collection::stream).toList();
+
+        ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
+
+        return impacts.stream()
+            .map(x -> {
+                var projection = factory.createProjection(QuestionJoinQuestionImpactView.class);
+                var questionEntity = questionIdToQuestionEntityMap.get(x.getQuestionId());
+                projection.setQuestion(questionEntity);
+                projection.setQuestionImpact(x);
+                return projection;
+            }).toList();
     }
 
     record Context(
@@ -244,7 +316,8 @@ class AssessmentCalculateInfoLoadAdapterTest {
         List<SubjectValueJpaEntity> subjectValues,
         List<QualityAttributeValueJpaEntity> qualityAttributeValues,
         List<SubjectDto> subjectDtos,
-        List<QuestionDto> questionDtos,
+        List<QuestionJpaEntity> questionEntities,
+        Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap,
         List<AnswerJpaEntity> answerEntities,
         List<AnswerOptionDto> answerOptionDtos
     ) {

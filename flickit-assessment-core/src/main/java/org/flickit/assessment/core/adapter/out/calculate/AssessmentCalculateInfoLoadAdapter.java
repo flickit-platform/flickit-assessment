@@ -3,11 +3,12 @@ package org.flickit.assessment.core.adapter.out.calculate;
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
+import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMother;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.qualityattribute.QualityAttributeDto;
-import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
-import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
@@ -21,12 +22,14 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
 
@@ -38,19 +41,20 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private final AnswerJpaRepository answerRepo;
     private final QualityAttributeValueJpaRepository qualityAttrValueRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
+    private final QuestionJpaRepository questionRepository;
 
     private final SubjectRestAdapter subjectRestAdapter;
-    private final QuestionRestAdapter questionRestAdapter;
     private final AnswerOptionRestAdapter answerOptionRestAdapter;
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
-    record Context(List<QuestionDto> allQuestionsDto,
+    record Context(List<QuestionJpaEntity> allQuestionsEntities,
                    List<AnswerJpaEntity> allAnswerEntities,
                    List<AnswerOptionDto> allAnswerOptionsDto,
                    List<QualityAttributeValueJpaEntity> allQualityAttributeValueEntities,
                    List<SubjectValueJpaEntity> subjectValueEntities,
                    Map<Long, SubjectDto> subjectIdToDto,
-                   Map<Long, Integer> qaIdToWeightMap) {
+                   Map<Long, Integer> qaIdToWeightMap,
+                   Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactMap) {
     }
 
     @Override
@@ -79,7 +83,15 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .collect(toMap(SubjectDto::id, x -> x));
 
         // load all questions with their impacts (by assessmentKit)
-        List<QuestionDto> allQuestionsDto = questionRestAdapter.loadByAssessmentKitId(assessmentKitId);
+        List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByAssessmentKitId(assessmentKitId);
+        List<QuestionJpaEntity> allQuestionsEntities = allQuestionsJoinImpactViews.stream()
+            .map(QuestionJoinQuestionImpactView::getQuestion)
+            .toList();
+        Map<Long, List<QuestionJoinQuestionImpactView>> questionIdToViewMap = allQuestionsJoinImpactViews.stream()
+            .collect(groupingBy(x -> x.getQuestion().getId()));
+        Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactMap = questionIdToViewMap.values().stream()
+            .collect(toMap(map -> map.stream().findFirst().orElseThrow().getQuestion().getId(),
+                map -> map.stream().map(QuestionJoinQuestionImpactView::getQuestionImpact).filter(Objects::nonNull).toList()));
 
         // load all answers submitted with this assessmentResult
         List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
@@ -91,13 +103,14 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         List<Long> allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
         List<AnswerOptionDto> allAnswerOptionsDto = answerOptionRestAdapter.loadAnswerOptionByIds(allAnswerOptionIds);
 
-        Context context = new Context(allQuestionsDto,
+        Context context = new Context(allQuestionsEntities,
             allAnswerEntities,
             allAnswerOptionsDto,
             allQualityAttributeValueEntities,
             subjectValueEntities,
             subjectIdToDto,
-            qaIdToWeightMap);
+            qaIdToWeightMap,
+            questionIdToImpactMap);
 
         Map<Long, QualityAttributeValue> qualityAttrIdToValue = buildQualityAttributeValues(context);
 
@@ -139,9 +152,9 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * @return list of questions with at least one impact on the given attribute
      */
     private List<Question> questionsWithImpact(Long qualityAttributeId, Context context) {
-        return context.allQuestionsDto.stream()
-            .filter(q -> q.questionImpacts().stream().anyMatch(f -> f.qualityAttributeId().equals(qualityAttributeId)))
-            .map(QuestionDto::dtoToDomain)
+        return context.questionIdToImpactMap.entrySet().stream()
+            .filter(q -> q.getValue().stream().anyMatch(i -> i.getQualityAttributeId().equals(qualityAttributeId)))
+            .map(q -> QuestionMapper.mapToDomainModel(q.getKey(), q.getValue().stream().map(QuestionImpactMother::mapToDomainModel).toList()))
             .toList();
     }
 

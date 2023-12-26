@@ -29,4 +29,10 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 @Param("mayNotBeApplicable") Boolean mayNotBeApplicable,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime);
 
+    @Query("SELECT q as question, qi as questionImpact " +
+        "FROM QuestionJpaEntity q " +
+        "LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId " +
+        "WHERE q.assessmentKitId = (SELECT qu.assessmentKitId FROM QuestionnaireJpaEntity qu " +
+        "WHERE qu.id = q.questionnaireId)")
+    List<QuestionJoinQuestionImpactView> loadByAssessmentKitId(Long assessmentKitId);
 }
