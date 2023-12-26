@@ -43,7 +43,7 @@ public interface GetKitUserListUseCase {
         }
     }
 
-    record UserListItem(String name, String email) {
+    record UserListItem(UUID id, String name, String email) {
     }
 
 }

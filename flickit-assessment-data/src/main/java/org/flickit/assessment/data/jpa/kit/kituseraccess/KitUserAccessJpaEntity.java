@@ -21,7 +21,7 @@ public class KitUserAccessJpaEntity {
     @Embeddable
     @AllArgsConstructor
     @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-    class KitUserAccessKey {
+    public static class KitUserAccessKey {
 
         @Column(name = "kit_id", nullable = false)
         private Long kitId;
@@ -30,5 +30,3 @@ public class KitUserAccessJpaEntity {
         private UUID userId;
     }
 }
-
-
