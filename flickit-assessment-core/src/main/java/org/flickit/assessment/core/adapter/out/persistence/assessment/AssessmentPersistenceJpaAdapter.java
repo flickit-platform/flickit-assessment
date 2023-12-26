@@ -144,6 +144,6 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public boolean hasAccess(UUID assessmentId, UUID userId) {
-        return repository.checkUserAccess(assessmentId, userId) > 0;
+        return repository.checkUserAccess(assessmentId, userId).isPresent();
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID>, JpaSpecificationExecutor<AssessmentJpaEntity> {
@@ -55,15 +56,17 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime);
 
     @Query("""
-        SELECT
-            count(*)
-        FROM AssessmentJpaEntity a
-        LEFT JOIN SpaceUserAccessJpaEntity su ON a.spaceId = su.spaceId
-        WHERE a.id = :assessmentId
-            AND su.userId = :userId
+            SELECT a.id
+            FROM AssessmentJpaEntity a
+            WHERE
+              a.id = :assessmentId AND
+            EXISTS (
+              SELECT 1 FROM SpaceUserAccessJpaEntity su
+              WHERE a.spaceId = su.spaceId AND su.userId = :userId
+            )
         """)
-    int checkUserAccess(@Param(value = "assessmentId") UUID assessmentId,
-                         @Param(value = "userId") UUID userId);
+    Optional<UUID> checkUserAccess(@Param(value = "assessmentId") UUID assessmentId,
+                                   @Param(value = "userId") UUID userId);
 }
 
 
