@@ -28,6 +28,6 @@ public class GrantUserAccessToKitController {
     }
 
     private GrantUserAccessToKitUseCase.Param toParam(Long kitId, GrantUserAccessToKitRequestDto request, UUID currentUserId) {
-        return new GrantUserAccessToKitUseCase.Param(kitId, request.email(), currentUserId);
+        return new GrantUserAccessToKitUseCase.Param(kitId, request.userId(), currentUserId);
     }
 }
