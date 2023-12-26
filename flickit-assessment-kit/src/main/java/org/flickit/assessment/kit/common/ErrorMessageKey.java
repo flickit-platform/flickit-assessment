@@ -28,8 +28,14 @@ public class ErrorMessageKey {
 
     public static final String GET_KIT_USER_LIST_KIT_ID_NOT_NULL = "get-kit-user-list.kit-id.notNull";
     public static final String GET_KIT_USER_LIST_PAGE_MIN = "get-kit-user-list.page.min";
+
+    public static final String GET_EXPERT_GROUP_LIST_PAGE_MIN = "get-expert-group-list.page.min";
+
     public static final String GET_KIT_USER_LIST_SIZE_MIN = "get-kit-user-list.size.min";
     public static final String GET_KIT_USER_LIST_SIZE_MAX = "get-kit-user-list.size.max";
+
+    public static final String GET_EXPERT_GROUP_LIST_SIZE_MIN = "get-expert-group-list.size.min";
+    public static final String GET_EXPERT_GROUP_LIST_SIZE_MAX = "get-expert-group-list.size.max";
 
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_NULL = "get-kit-minimal-info.kitId.notNull";
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_FOUND = "get-kit-minimal-info.kitId.notFound";
