@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
+import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -36,8 +38,18 @@ public class AttributePersistenceJpaAdapter implements LoadAttributeScoreDetailP
                 view.getOptionIndex(),
                 view.getOptionTitle(),
                 view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
-                view.getOptionImpact() == null ? null : view.getOptionImpact().getValue(),
+                getScore(view.getAnswer(), view.getOptionImpact()),
                 view.getOptionImpact() == null ? 0 : view.getOptionImpact().getValue() * view.getQuestionImpact().getWeight()
             )).toList();
+    }
+
+    private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact) {
+        if (answer == null) // if no answer is submitted for the question
+            return 0.0;
+        if(Boolean.TRUE.equals(answer.getIsNotApplicable())) // if there is an answer and notApplicable == true
+            return null;
+        if(optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
+            return 0.0;
+        return optionImpact.getValue();
     }
 }
