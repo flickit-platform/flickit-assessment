@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
-import org.flickit.assessment.core.adapter.out.persistence.kit.qualityattribute.QualityAttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.qualityattributevalue.QualityAttributeValuePersistenceJpaAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.exception.CalculateNotValidException;
@@ -13,11 +12,12 @@ import org.flickit.assessment.core.application.port.out.subject.LoadSubjectRepor
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
@@ -30,10 +30,8 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
-    private final SubjectJpaRepository subjectRepository;
 
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
-
     private final QualityAttributeValuePersistenceJpaAdapter attributeValuePersistenceJpaAdapter;
 
     @Override
@@ -62,7 +60,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             .stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
 
-        var attributeValues = buildAttributeValues(maturityLevels, assessmentResultId, kitId, subjectId);
+        var attributeValues = attributeValuePersistenceJpaAdapter.loadBySubjectId(assessmentResultId, subjectId, maturityLevels);
         SubjectValue subjectValue = new SubjectValue(svEntity.getId(),
             new Subject(svEntity.getSubjectId()),
             attributeValues,
@@ -79,18 +77,6 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             assessmentResultEntity.getIsCalculateValid(),
             assessmentResultEntity.getIsConfidenceValid(),
             assessmentResultEntity.getLastModificationTime());
-    }
-
-    private List<QualityAttributeValue> buildAttributeValues(Map<Long, MaturityLevel> maturityLevels, UUID assessmentResultId, Long kitId, Long subjectId) {
-        List<SubjectJoinAttributeView> subjectJoinAttributes = subjectRepository.loadByAssessmentKitId(kitId);
-        Map<Long, QualityAttribute> qualityAttributeMap = subjectJoinAttributes
-            .stream()
-            .filter(x -> Objects.equals(x.getSubject().getId(), subjectId))
-            .collect(toMap(x -> x.getAttribute().getId(), x -> QualityAttributeMapper.mapToDomainModel(x.getAttribute())));
-        return attributeValuePersistenceJpaAdapter.loadAttributeValues(assessmentResultId, maturityLevels)
-            .stream()
-            .filter(x -> qualityAttributeMap.containsKey(x.getQualityAttribute().getId()))
-            .toList();
     }
 
     private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, Map<Long, MaturityLevel> maturityLevels) {
