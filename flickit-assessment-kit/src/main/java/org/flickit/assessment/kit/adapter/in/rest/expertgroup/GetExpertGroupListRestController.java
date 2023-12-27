@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.ExpertGroupListItem;
+import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 
 @Validated
 @RestController
@@ -18,10 +18,10 @@ public class GetExpertGroupListRestController {
 
     private final GetExpertGroupListUseCase useCase;
 
-    @GetMapping("/api/expert-groups")
-    public ResponseEntity<PaginatedResponse<ExpertGroupListItem>> getExpertGroupList(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
-        PaginatedResponse<ExpertGroupListItem> result = useCase.getExpertGroupList(toParam(size, page));
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    @GetMapping("/expert-groups")
+    public ResponseEntity<PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem>> getExpertGroupList(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
+        var expertGroupList = useCase.getExpertGroupList(toParam(size, page));
+        return new ResponseEntity<>(expertGroupList, HttpStatus.OK);
     }
 
     private GetExpertGroupListUseCase.Param toParam(int size, int page) {

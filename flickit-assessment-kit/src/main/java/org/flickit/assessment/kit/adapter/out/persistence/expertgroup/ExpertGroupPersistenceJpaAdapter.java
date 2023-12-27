@@ -1,8 +1,10 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupList;
+import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
-    LoadExpertGroupList {
+    LoadExpertGroupListPort {
 
     private final ExpertGroupJpaRepository repository;
 
@@ -23,7 +25,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<UUID> loadExpertGroupList() {
-        return Optional.empty();
+    public PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem> loadExpertGroupList(Param param) {
+        return null;
     }
 }
