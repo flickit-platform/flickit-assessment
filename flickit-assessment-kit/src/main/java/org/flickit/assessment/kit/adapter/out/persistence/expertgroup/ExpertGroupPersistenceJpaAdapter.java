@@ -6,6 +6,7 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -26,6 +27,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem> loadExpertGroupList(Param param) {
+        var pageResult = repository.findAllExpertGroup(PageRequest.of(param.page(), param.size()));
         return null;
     }
 }
