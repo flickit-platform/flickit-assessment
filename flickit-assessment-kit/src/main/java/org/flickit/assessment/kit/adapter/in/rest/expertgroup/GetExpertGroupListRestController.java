@@ -19,9 +19,7 @@ public class GetExpertGroupListRestController {
     private final GetExpertGroupListUseCase useCase;
 
     @GetMapping("/api/expert-groups")
-    public ResponseEntity<PaginatedResponse<ExpertGroupListItem>> getExpertGroupList(
-        @RequestParam(defaultValue = "10") int size,
-        @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<PaginatedResponse<ExpertGroupListItem>> getExpertGroupList(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
         PaginatedResponse<ExpertGroupListItem> result = useCase.getExpertGroupList(toParam(size, page));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

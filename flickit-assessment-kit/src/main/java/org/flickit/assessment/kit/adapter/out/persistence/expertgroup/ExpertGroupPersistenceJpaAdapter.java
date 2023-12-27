@@ -10,8 +10,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class ExpertGroupPersistenceJpaAdapter implements
-    LoadExpertGroupOwnerPort {
+public class ExpertGroupPersistenceJpaAdapter implements LoadExpertGroupOwnerPort {
 
     private final ExpertGroupJpaRepository repository;
 
