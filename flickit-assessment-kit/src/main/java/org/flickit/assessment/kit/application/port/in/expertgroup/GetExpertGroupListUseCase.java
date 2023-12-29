@@ -21,9 +21,12 @@ public interface GetExpertGroupListUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @Min(value = 1, message = GET_EXPERT_GROUP_LIST_SIZE_MIN) @Max(value = 100, message = GET_EXPERT_GROUP_LIST_SIZE_MAX) int size;
+        @Min(value = 1, message = GET_EXPERT_GROUP_LIST_SIZE_MIN)
+        @Max(value = 100, message = GET_EXPERT_GROUP_LIST_SIZE_MAX)
+        int size;
 
-        @Min(value = 0, message = GET_EXPERT_GROUP_LIST_PAGE_MIN) int page;
+        @Min(value = 0, message = GET_EXPERT_GROUP_LIST_PAGE_MIN)
+        int page;
 
         public Param(int size, int page) {
             this.size = size;
@@ -33,6 +36,6 @@ public interface GetExpertGroupListUseCase {
     }
 
     record ExpertGroupListItem(long id, String name, String bio, String picture, List<User> users,
-                               Long numberOfAssessmentKits, UUID ownerId) {
+                               Long publishedKitsCount, UUID ownerId) {
     }
 }
