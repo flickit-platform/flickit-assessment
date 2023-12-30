@@ -40,11 +40,14 @@ public interface GetAttributeScoreDetailUseCase {
         }
     }
 
-    record Result(double totalScore, double gainedScore, List<QuestionScore> questionScores) {
+    record Result(double maxPossibleScore, double gainedScore, double gainedScorePercentage,
+                  int questionsCount, List<Questionnaire> questionnaires) {
     }
 
-    record QuestionScore(String questionnaireTitle,
-                         int questionIndex,
+    record Questionnaire(String title, List<QuestionScore> questionScores) {
+    }
+
+    record QuestionScore(int questionIndex,
                          String questionTitle,
                          int questionWeight,
                          Integer answerOptionIndex,
