@@ -35,12 +35,12 @@ public class ExpertGroupPersistenceJpaAdapter implements
 // If I change the type of the returned method to 'Object[]' in the repository, the results will be displayed in 'pageResult,' but not with the correct class.
 
         var pageResult = repository.getExpertGroupSummaries(PageRequest.of(param.page(), param.size()));
-        //List<GetExpertGroupListUseCase.ExpertGroupListItem> items = pageResult.getContent().stream()
-            //.map(ExpertGroupMapper::mapToExpertGroupListItem)
-            //.toList();
+        List<GetExpertGroupListUseCase.ExpertGroupListItem> items = pageResult.getContent().stream()
+            .map(ExpertGroupMapper::mapToExpertGroupListItem)
+            .toList();
 
         return new PaginatedResponse<>(
-            null,
+            items,
             pageResult.getNumber(),
             pageResult.getSize(),
             ExpertGroupJpaEntity.Fields.NAME,
