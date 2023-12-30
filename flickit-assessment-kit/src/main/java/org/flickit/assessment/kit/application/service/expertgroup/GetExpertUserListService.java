@@ -15,7 +15,7 @@ public class GetExpertUserListService implements GetExpertGroupListUseCase {
     private final LoadExpertGroupListPort loadExpertGroupListPort;
     @Override
     public PaginatedResponse<ExpertGroupListItem> getExpertGroupList(Param param) {
-        return loadExpertGroupListPort.loadExpertGroupList(toParam(param.getSize(), param.getPage()));
+        return loadExpertGroupListPort.loadExpertGroupList(toParam(param.getPage(), param.getSize()));
     }
 
     private LoadExpertGroupListPort.Param toParam(int page, int size){
