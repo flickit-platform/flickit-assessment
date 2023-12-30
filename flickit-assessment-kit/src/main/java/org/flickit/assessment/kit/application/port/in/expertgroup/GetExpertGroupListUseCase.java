@@ -36,6 +36,6 @@ public interface GetExpertGroupListUseCase {
     }
 
     record ExpertGroupListItem(Long id, String name, String about,String bio, String picture, String website, List<User> users,
-                               Long publishedKitsCount, UUID ownerId) {
+                               Long publishedKitsCount, UUID ownerId, boolean editable) {
     }
 }

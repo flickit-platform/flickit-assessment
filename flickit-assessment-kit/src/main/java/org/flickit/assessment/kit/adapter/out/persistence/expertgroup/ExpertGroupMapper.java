@@ -22,6 +22,7 @@ public class ExpertGroupMapper {
             entity.getWebsite(),
             null,
             entity.getPublishedKitsCount(),
-            entity.getOwnerId());
+            entity.getOwnerId(),
+            true);
     }
 }
