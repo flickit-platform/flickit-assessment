@@ -30,13 +30,17 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem> loadExpertGroupList(LoadExpertGroupListPort.Param param) {
-        var pageResult = repository.findAllExpertGroup(PageRequest.of(param.page(), param.size()));
-        List<GetExpertGroupListUseCase.ExpertGroupListItem> items = pageResult.getContent().stream()
-            .map(ExpertGroupMapper::mapToExpertGroupListItem)
-            .toList();
+        // 3) Afterwards, I implemented it in the adapter, and I anticipate that the 'pageResult' will represent the results of the query.
+// Note: I intentionally made a temporary field change. The 'pageResult' comprises a list with 'TupleConverters' objects, which is not readable.
+// If I change the type of the returned method to 'Object[]' in the repository, the results will be displayed in 'pageResult,' but not with the correct class.
+
+        var pageResult = repository.getExpertGroupSummaries(PageRequest.of(param.page(), param.size()));
+        //List<GetExpertGroupListUseCase.ExpertGroupListItem> items = pageResult.getContent().stream()
+            //.map(ExpertGroupMapper::mapToExpertGroupListItem)
+            //.toList();
 
         return new PaginatedResponse<>(
-            items,
+            null,
             pageResult.getNumber(),
             pageResult.getSize(),
             ExpertGroupJpaEntity.Fields.NAME,

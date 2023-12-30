@@ -13,6 +13,20 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id")
     UUID loadOwnerIdById(@Param("id") Long id);
 
-    @Query("SELECT e FROM ExpertGroupJpaEntity as e")
-    Page<ExpertGroupJpaEntity> findAllExpertGroup(Pageable pageable);
+    // 2) Next, I utilized it in the repository. Note: The query has been tested.
+
+    @Query("""
+        SELECT
+            e.id,
+            e.name,
+            e.about,
+            e.picture,
+            e.website,
+            e.bio,
+            e.ownerId,
+             COUNT(ak) as publishedKitsCount
+        FROM ExpertGroupJpaEntity e
+        LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.isActive = true
+        GROUP BY e.id""")
+    Page<ExpertGroupWithAssessmentKitCountView> getExpertGroupSummaries(Pageable pageable);
 }
