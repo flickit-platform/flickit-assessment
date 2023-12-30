@@ -34,6 +34,11 @@ public class GetAttributeScoreDetailRestController {
     }
 
     private GetAttributeScoreDetailResponseDto toResponse(GetAttributeScoreDetailUseCase.Result result) {
-        return new GetAttributeScoreDetailResponseDto(result);
+        return new GetAttributeScoreDetailResponseDto(
+            result.maxPossibleScore(),
+            result.gainedScore(),
+            result.gainedScorePercentage(),
+            result.questionsCount(),
+            result.questionnaires());
     }
 }

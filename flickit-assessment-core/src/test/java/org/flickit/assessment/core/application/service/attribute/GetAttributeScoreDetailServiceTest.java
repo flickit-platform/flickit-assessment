@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
+import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Questionnaire;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.core.test.fixture.application.QuestionScoreMother;
@@ -53,29 +54,30 @@ class GetAttributeScoreDetailServiceTest {
         QuestionScore questionWithoutAnswer = questionWithoutAnswer(4);
         QuestionScore questionMarkedAsNotApplicable = QuestionScoreMother.questionMarkedAsNotApplicable();
 
-        List<QuestionScore> scores = List.of(
-            questionWithFullScore,
-            questionWithHalfScore,
-            questionWithoutScore,
-            questionWithoutAnswer,
-            questionMarkedAsNotApplicable
-            );
+        Questionnaire devOpsQuestionnaire = new Questionnaire("DevOps",
+            List.of(questionWithFullScore, questionWithHalfScore));
+        Questionnaire testQuestionnaire = new Questionnaire("Test",
+            List.of(questionWithoutScore, questionWithoutAnswer, questionMarkedAsNotApplicable));
 
-        when(loadAttributeScoreDetailPort.loadScoreDetail(assessmentId, attributeId, maturityLevelId)).thenReturn(scores);
+        List<Questionnaire> questionnaires = List.of(devOpsQuestionnaire, testQuestionnaire);
+
+        when(loadAttributeScoreDetailPort.loadScoreDetail(assessmentId, attributeId, maturityLevelId)).thenReturn(questionnaires);
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
 
         GetAttributeScoreDetailUseCase.Result result = service.getAttributeScoreDetail(param);
 
         assertNotNull(result);
         assertEquals(5, result.gainedScore());
-        assertEquals(11, result.totalScore());
-        assertEquals(5, result.questionScores().size());
+        assertEquals(11, result.maxPossibleScore());
+        assertEquals(5.0 / 11.0, result.gainedScorePercentage());
+        assertEquals(5, result.questionsCount());
+        assertEquals(2, result.questionnaires().size());
         //order of QuestionScore items should be equal to order of port items
-        assertEquals(questionWithFullScore, result.questionScores().get(0));
-        assertEquals(questionWithHalfScore, result.questionScores().get(1));
-        assertEquals(questionWithoutScore, result.questionScores().get(2));
-        assertEquals(questionWithoutAnswer, result.questionScores().get(3));
-        assertEquals(questionMarkedAsNotApplicable, result.questionScores().get(4));
+        assertEquals(questionWithFullScore, result.questionnaires().get(0).questionScores().get(0));
+        assertEquals(questionWithHalfScore, result.questionnaires().get(0).questionScores().get(1));
+        assertEquals(questionWithoutScore, result.questionnaires().get(1).questionScores().get(0));
+        assertEquals(questionWithoutAnswer, result.questionnaires().get(1).questionScores().get(1));
+        assertEquals(questionMarkedAsNotApplicable, result.questionnaires().get(1).questionScores().get(2));
     }
 
     @Test
@@ -90,16 +92,16 @@ class GetAttributeScoreDetailServiceTest {
             maturityLevelId,
             currentUserId);
 
-        List<QuestionScore> scores = List.of();
-        when(loadAttributeScoreDetailPort.loadScoreDetail(assessmentId, attributeId, maturityLevelId)).thenReturn(scores);
+        List<Questionnaire> questionnaires = List.of();
+        when(loadAttributeScoreDetailPort.loadScoreDetail(assessmentId, attributeId, maturityLevelId)).thenReturn(questionnaires);
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
 
         GetAttributeScoreDetailUseCase.Result result = service.getAttributeScoreDetail(param);
 
         assertNotNull(result);
         assertEquals(0, result.gainedScore());
-        assertEquals(0, result.totalScore());
-        assertTrue(result.questionScores().isEmpty());
+        assertEquals(0, result.maxPossibleScore());
+        assertTrue(result.questionnaires().isEmpty());
     }
 
     @Test
