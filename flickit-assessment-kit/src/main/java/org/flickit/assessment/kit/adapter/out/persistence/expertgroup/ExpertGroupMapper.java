@@ -6,6 +6,8 @@ import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 
 public class ExpertGroupMapper {
+
+    private ExpertGroupMapper(){}
     public static ExpertGroup mapToDomainModel(ExpertGroupJpaEntity entity) {
         return new ExpertGroup(entity.getId());
     }
