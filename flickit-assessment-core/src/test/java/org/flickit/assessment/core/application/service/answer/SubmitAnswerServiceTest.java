@@ -171,7 +171,7 @@ class SubmitAnswerServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
-        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), null, ConfidenceLevel.getDefault().getId(), isNotApplicable);
+        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), null, ConfidenceLevel.getDefault().getId(), isNotApplicable, currentUserId);
         doNothing().when(updateAnswerPort).update(updateParam);
 
         var param = new SubmitAnswerUseCase.Param(assessmentResult.getId(), QUESTIONNAIRE_ID, QUESTION_ID, oldAnswerOption.getId(), ConfidenceLevel.getDefault().getId(), isNotApplicable, currentUserId);
