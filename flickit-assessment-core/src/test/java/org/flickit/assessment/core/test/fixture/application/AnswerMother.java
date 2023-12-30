@@ -90,7 +90,7 @@ public class AnswerMother {
 
     public static Answer answerWithNotApplicableTrue(AnswerOption option) {
         Long questionId = option != null ? option.getQuestionId() : 1L;
-        Integer confidenceLevelId = option != null ? ConfidenceLevel.getDefault().getId() : null;
+        Integer confidenceLevelId = ConfidenceLevel.getDefault().getId();
         return new Answer(UUID.randomUUID(), option, questionId, confidenceLevelId, Boolean.TRUE);
     }
 
