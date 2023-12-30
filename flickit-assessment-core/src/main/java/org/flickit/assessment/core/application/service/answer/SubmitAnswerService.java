@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.answer;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
@@ -34,7 +35,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
-        var confidenceLevelId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getConfidenceLevelId();
+        Integer confidenceLevelId = param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
+        confidenceLevelId = (answerOptionId != null || Objects.equals(Boolean.TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
 
         if (loadedAnswer.isEmpty()) {
             return saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId);
@@ -44,7 +46,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         var isNotApplicableChanged = !Objects.equals(param.getIsNotApplicable(), loadedAnswer.get().getIsNotApplicable());
         var isAnswerOptionChanged = Objects.equals(Boolean.TRUE, param.getIsNotApplicable()) ? Boolean.FALSE : !Objects.equals(answerOptionId, loadedAnswerOptionId);
-        var isConfidenceLevelChanged = Objects.equals(Boolean.TRUE, param.getIsNotApplicable()) ? Boolean.FALSE : !Objects.equals(confidenceLevelId, loadedAnswer.get().getConfidenceLevelId());
+        var isConfidenceLevelChanged = !Objects.equals(confidenceLevelId, loadedAnswer.get().getConfidenceLevelId());
 
         if (isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged) {
             var updateParam = toUpdateAnswerParam(loadedAnswer.get().getId(), answerOptionId, confidenceLevelId, param.getIsNotApplicable(), param.getCurrentUserId());
