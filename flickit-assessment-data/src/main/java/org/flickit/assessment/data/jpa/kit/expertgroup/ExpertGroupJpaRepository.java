@@ -17,13 +17,13 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
 
     @Query("""
         SELECT
-            e.id,
-            e.name,
-            e.about,
-            e.picture,
-            e.website,
-            e.bio,
-            e.ownerId,
+            e.id as id,
+            e.name as name,
+            e.about as about,
+            e.picture as picture,
+            e.website as website,
+            e.bio as bio,
+            e.ownerId as ownerId,
              COUNT(ak) as publishedKitsCount
         FROM ExpertGroupJpaEntity e
         LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.isActive = true
