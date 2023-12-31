@@ -43,7 +43,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         String code = generateSlugCode(param.getTitle());
         LocalDateTime creationTime = LocalDateTime.now();
         LocalDateTime lastModificationTime = LocalDateTime.now();
-
         return new CreateAssessmentPort.Param(
             code,
             param.getTitle(),
@@ -53,7 +52,8 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             creationTime,
             lastModificationTime,
             NOT_DELETED_DELETION_TIME,
-            false
+            false,
+            param.getCreatedBy()
         );
     }
 

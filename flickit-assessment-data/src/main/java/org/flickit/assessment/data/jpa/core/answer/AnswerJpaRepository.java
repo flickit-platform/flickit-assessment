@@ -36,7 +36,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     @Query("UPDATE AnswerJpaEntity a SET " +
         "a.answerOptionId = :answerOptionId, " +
         "a.confidenceLevelId = :confidenceLevelId, " +
-        "a.isNotApplicable = :isNotApplicable " +
+        "a.isNotApplicable = :isNotApplicable, " +
+        "a.lastModifiedBy = :currentUserId " +
         "WHERE a.id = :answerId")
-    void update(UUID answerId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable);
+    void update(UUID answerId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable, UUID currentUserId);
 }
