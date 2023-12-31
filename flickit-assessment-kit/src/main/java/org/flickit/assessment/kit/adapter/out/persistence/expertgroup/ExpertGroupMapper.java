@@ -23,6 +23,6 @@ public class ExpertGroupMapper {
             null,
             entity.getPublishedKitsCount(),
             entity.getOwnerId(),
-            true);
+            entity.getEditable());
     }
 }

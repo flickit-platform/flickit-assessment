@@ -17,4 +17,5 @@ public interface ExpertGroupWithAssessmentKitCountView {
 
     UUID getOwnerId();
     Long getPublishedKitsCount();
+    Boolean getEditable();
 }
