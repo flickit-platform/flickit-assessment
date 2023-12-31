@@ -8,6 +8,7 @@ import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeS
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -24,23 +25,28 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
     public Result getAttributeScoreDetail(Param param) {
         checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
-        var impactFullQuestionScores = loadAttributeScoreDetailPort.loadScoreDetail(
+        List<Questionnaire> questionnaires = loadAttributeScoreDetailPort.loadScoreDetail(
             param.getAssessmentId(),
             param.getAttributeId(),
             param.getMaturityLevelId());
 
-        double totalScore = 0.0;
+        double maxPossibleScore = 0.0;
         double gainedScore = 0.0;
 
-        for (QuestionScore qs : impactFullQuestionScores) {
-            if(Boolean.TRUE.equals(qs.answerIsNotApplicable()))
+        List<QuestionScore> questionScores = questionnaires.stream()
+            .flatMap(a -> a.questionScores().stream())
+            .toList();
+
+        for (QuestionScore qs : questionScores) {
+            if (Boolean.TRUE.equals(qs.answerIsNotApplicable()))
                 continue;
-            totalScore += qs.questionWeight();
+            maxPossibleScore += qs.questionWeight();
             if (qs.answerScore() != null)
                 gainedScore += qs.weightedScore();
         }
 
-        return new Result(totalScore, gainedScore, impactFullQuestionScores);
+        double gainedScorePercentage = maxPossibleScore > 0 ? gainedScore / maxPossibleScore : 0.0;
+        return new Result(maxPossibleScore, gainedScore, gainedScorePercentage, questionScores.size(), questionnaires);
     }
 
     private void checkUserAccess(UUID assessmentId, UUID currentUserId) {

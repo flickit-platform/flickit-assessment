@@ -15,6 +15,7 @@ public interface CreateAssessmentPort {
                  LocalDateTime creationTime,
                  LocalDateTime lastModificationTime,
                  Long deletionTime,
-                 boolean deleted) {
+                 boolean deleted,
+                 UUID createdBy) {
     }
 }

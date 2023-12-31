@@ -46,14 +46,15 @@ class CreateAssessmentServiceTest {
     @Mock
     private CreateQualityAttributeValuePort createQualityAttributeValuePort;
 
-
     @Test
     void testCreateAssessment_ValidParam_PersistsAndReturnsId() {
+        UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
-            1
+            1,
+            createdBy
         );
         UUID expectedId = UUID.randomUUID();
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
@@ -76,11 +77,13 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_ValidParam_PersistsAssessmentResult() {
+        UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
-            1
+            1,
+            createdBy
         );
         UUID assessmentId = UUID.randomUUID();
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(assessmentId);
@@ -102,11 +105,13 @@ class CreateAssessmentServiceTest {
     @Test
     void testCreateAssessment_ValidParam_PersistsSubjectValues() {
         Long assessmentKitId = 1L;
+        UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             assessmentKitId,
-            1
+            1,
+            createdBy
         );
 
         QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
@@ -130,11 +135,13 @@ class CreateAssessmentServiceTest {
     @Test
     void testCreateAssessment_ValidCommand_PersistsQualityAttributeValue() {
         Long assessmentKitId = 1L;
+        UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             assessmentKitId,
-            1
+            1,
+            createdBy
         );
         QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
         QualityAttribute qa2 = QualityAttributeMother.simpleAttribute();
@@ -156,11 +163,13 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_InvalidColor_UseDefaultColor() {
+        UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
-            7
+            7,
+            createdBy
         );
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
