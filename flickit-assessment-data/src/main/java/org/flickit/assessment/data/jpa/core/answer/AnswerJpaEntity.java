@@ -44,6 +44,12 @@ public class AnswerJpaEntity {
     @Column(name = "is_not_applicable")
     private Boolean isNotApplicable;
 
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
+
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
+
     @Override
     public String toString() {
         return id.toString();
