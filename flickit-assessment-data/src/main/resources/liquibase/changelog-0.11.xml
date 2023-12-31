@@ -104,11 +104,11 @@
                               tableName="fac_answer"/>
     </changeSet>
 
-    <changeSet id="0.11-20" author="MKouhestani">
+    <changeSet id="0.11-15" author="MKouhestani">
         <dropNotNullConstraint tableName="account_useraccess" columnName="user_id"/>
     </changeSet>
 
-    <changeSet id="0.11-21" author="MKouhestani">
+    <changeSet id="0.11-16" author="MKouhestani">
         <dropNotNullConstraint tableName="baseinfo_expertgroupaccess" columnName="user_id"/>
     </changeSet>
 
