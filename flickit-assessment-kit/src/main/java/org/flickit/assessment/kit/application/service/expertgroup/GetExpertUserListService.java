@@ -7,6 +7,8 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -15,10 +17,10 @@ public class GetExpertUserListService implements GetExpertGroupListUseCase {
     private final LoadExpertGroupListPort loadExpertGroupListPort;
     @Override
     public PaginatedResponse<ExpertGroupListItem> getExpertGroupList(Param param) {
-        return loadExpertGroupListPort.loadExpertGroupList(toParam(param.getPage(), param.getSize()));
+        return loadExpertGroupListPort.loadExpertGroupList(toParam(param.getPage(), param.getSize(), param.getCurrentUserID()));
     }
 
-    private LoadExpertGroupListPort.Param toParam(int page, int size){
-        return  new LoadExpertGroupListPort.Param(page, size);
+    private LoadExpertGroupListPort.Param toParam(int page, int size, UUID currentUserID){
+        return  new LoadExpertGroupListPort.Param(page, size, currentUserID);
     }
 }

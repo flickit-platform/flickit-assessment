@@ -25,6 +25,9 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
              COUNT(ak) as publishedKitsCount
         FROM ExpertGroupJpaEntity e
         LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.isActive = true
+        LEFT JOIN ExpertGroupAccessJpaEntity ac ON ac.expertGroupId = e.id
+        WHERE ac.userId = :currentUserId
         GROUP BY e.id""")
-    Page<ExpertGroupWithAssessmentKitCountView> getExpertGroupSummaries(Pageable pageable);
+    Page<ExpertGroupWithAssessmentKitCountView> getExpertGroupSummaries(Pageable pageable,
+                                                                        @Param(value = "currentUserId") UUID currentUseId);
 }

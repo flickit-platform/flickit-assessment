@@ -28,9 +28,12 @@ public interface GetExpertGroupListUseCase {
         @Min(value = 0, message = GET_EXPERT_GROUP_LIST_PAGE_MIN)
         int page;
 
-        public Param(int size, int page) {
+        UUID currentUserID;
+
+        public Param(int size, int page, UUID currentUserID) {
             this.size = size;
             this.page = page;
+            this.currentUserID = currentUserID;
             this.validateSelf();
         }
     }

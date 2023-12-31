@@ -31,7 +31,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem> loadExpertGroupList(LoadExpertGroupListPort.Param param) {
 
-        var pageResult = repository.getExpertGroupSummaries(PageRequest.of(param.page(), param.size()));
+        var pageResult = repository.getExpertGroupSummaries(PageRequest.of(param.page(), param.size()),param.currentUserID());
         List<GetExpertGroupListUseCase.ExpertGroupListItem> items = pageResult.getContent().stream()
             .map(ExpertGroupMapper::mapToExpertGroupListItem)
             .toList();
