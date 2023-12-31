@@ -13,8 +13,6 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id")
     UUID loadOwnerIdById(@Param("id") Long id);
 
-    // 2) Next, I utilized it in the repository. Note: The query has been tested.
-
     @Query("""
         SELECT
             e.id as id,
