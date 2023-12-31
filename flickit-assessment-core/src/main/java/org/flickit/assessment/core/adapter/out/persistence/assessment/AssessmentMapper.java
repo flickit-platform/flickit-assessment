@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.port.out.assessment.CreateAssessm
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentListItemView;
 
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentMapper {
 
@@ -24,7 +25,9 @@ public class AssessmentMapper {
             param.creationTime(),
             param.lastModificationTime(),
             param.deletionTime(),
-            param.deleted()
+            param.deleted(),
+            param.createdBy(),
+            param.createdBy()
         );
     }
 

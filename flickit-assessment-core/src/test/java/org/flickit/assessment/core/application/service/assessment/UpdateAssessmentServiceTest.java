@@ -33,6 +33,7 @@ class UpdateAssessmentServiceTest {
     @Test
     void testUpdateAssessment_ValidParam_UpdatedAndReturnsId() {
         UUID id = UUID.randomUUID();
+        UUID lastModifiedBy = UUID.randomUUID();
 
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
@@ -40,7 +41,8 @@ class UpdateAssessmentServiceTest {
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
             "new title",
-            AssessmentColor.EMERALD.getId()
+            AssessmentColor.EMERALD.getId(),
+            lastModifiedBy
         );
         UUID resultId = service.updateAssessment(param).id();
         assertEquals(id, resultId);
@@ -51,6 +53,7 @@ class UpdateAssessmentServiceTest {
         assertEquals(param.getId(), updatePortParam.getValue().id());
         assertEquals(param.getTitle(), updatePortParam.getValue().title());
         assertEquals(param.getColorId(), updatePortParam.getValue().colorId());
+        assertEquals(param.getLastModifiedBy(), updatePortParam.getValue().lastModifiedBy());
         assertNotNull(updatePortParam.getValue().title());
         assertNotNull(updatePortParam.getValue().colorId());
         assertNotNull(updatePortParam.getValue().lastModificationTime());
@@ -59,10 +62,12 @@ class UpdateAssessmentServiceTest {
     @Test
     void testUpdateAssessment_InvalidColor_UseDefaultColor() {
         UUID id = UUID.randomUUID();
+        UUID lastModifiedBy = UUID.randomUUID();
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
             "title example",
-            7
+            7,
+            lastModifiedBy
         );
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
@@ -78,13 +83,15 @@ class UpdateAssessmentServiceTest {
     @Test
     void testUpdateAssessment_InvalidAssessmentId_ThrowNotFoundException() {
         UUID id = UUID.randomUUID();
+        UUID lastModifiedBy = UUID.randomUUID();
 
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(false);
 
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
             "new title",
-            AssessmentColor.EMERALD.getId()
+            AssessmentColor.EMERALD.getId(),
+            lastModifiedBy
         );
         assertThrows(ResourceNotFoundException.class, () -> service.updateAssessment(param));
 
@@ -94,4 +101,5 @@ class UpdateAssessmentServiceTest {
         assertEquals(param.getId(), portIdParam.getValue());
         verify(updateAssessmentPort, never()).update(any());
     }
+
 }

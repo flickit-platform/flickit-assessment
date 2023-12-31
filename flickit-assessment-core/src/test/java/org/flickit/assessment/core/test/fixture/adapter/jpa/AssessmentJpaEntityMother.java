@@ -15,6 +15,7 @@ public class AssessmentJpaEntityMother {
 
     public static AssessmentJpaEntity assessmentEntityWithKit() {
         assessmentCounter++;
+        UUID createdBy = UUID.randomUUID();
         return new AssessmentJpaEntity(
             UUID.randomUUID(),
             "assessment-code" + assessmentCounter,
@@ -25,7 +26,9 @@ public class AssessmentJpaEntityMother {
             LocalDateTime.now(),
             LocalDateTime.now(),
             NOT_DELETED_DELETION_TIME,
-            Boolean.FALSE
+            Boolean.FALSE,
+            createdBy,
+            createdBy
         );
     }
 }
