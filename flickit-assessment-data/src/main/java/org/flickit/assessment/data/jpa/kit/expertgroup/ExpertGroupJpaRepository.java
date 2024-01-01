@@ -30,6 +30,6 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     GROUP BY e.id
 """)
 
-    Page<ExpertGroupWithAssessmentKitCountView> getExpertGroupSummaries(Pageable pageable,
-                                                                        @Param(value = "currentUserId") UUID currentUseId);
+    Page<ExpertGroupWithDetailsView> getExpertGroupSummaries(Pageable pageable,
+                                                             @Param(value = "currentUserId") UUID currentUseId);
 }
