@@ -14,8 +14,9 @@ public class GetAssessmentKitListService implements GetAssessmentKitListUseCase 
 
     private final LoadAssessmentKitListPort loadAssessmentKitListPort;
 
+
     @Override
-    public PaginatedResponse<AssessmentKitListItem> getAssessmentKitList() {
-        return null;
+    public PaginatedResponse<AssessmentKitListItem> getAssessmentKitList(Param param) {
+        return loadAssessmentKitListPort.loadKitList(param);
     }
 }

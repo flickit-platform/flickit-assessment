@@ -53,6 +53,8 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         "a.lastModificationTime = :lastModificationTime " +
         "WHERE a.id = :id")
     void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime);
+
+    List<AssessmentJpaEntity> findAllByAssessmentKitId(Long assessmentKitId);
 }
 
 
