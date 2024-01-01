@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -49,13 +48,16 @@ public class GetExpertUserListService implements GetExpertGroupListUseCase {
 
 class PaginatedResponseUtil {
 
+    private PaginatedResponseUtil() {
+    }
+
     public static <T, R> PaginatedResponse<R> mapPaginatedResponse(
         PaginatedResponse<T> input,
         Function<T, R> mapper
     ) {
         List<R> mappedItems = input.getItems().stream()
             .map(mapper)
-            .collect(Collectors.toList());
+            .toList();
 
         return new PaginatedResponse<>(
             mappedItems,
