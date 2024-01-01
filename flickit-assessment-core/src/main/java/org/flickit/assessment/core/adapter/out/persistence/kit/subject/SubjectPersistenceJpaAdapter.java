@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.adapter.out.persistence.kit.subject;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.adapter.out.persistence.kit.qualityattribute.QualityAttributeMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
@@ -22,7 +22,7 @@ public class SubjectPersistenceJpaAdapter implements LoadSubjectPort {
 
         return views.stream().map(entity -> {
             List<QualityAttribute> attributes = entity.getAttributes().stream()
-                .map(QualityAttributeMapper::mapToDomainModel)
+                .map(AttributeMapper::mapToDomainModel)
                 .toList();
 
             return SubjectMapper.mapToDomainModel(entity, attributes);

@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.out.calculate;
 
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.persistence.kit.qualityattribute.QualityAttributeMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
@@ -75,7 +75,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
         Map<Long, List<QualityAttribute>> subjectIdToAttribute = subjectsWithAttributes.stream()
             .collect(toMap(SubjectJpaEntity::getId,
-                map -> map.getAttributes().stream().map(QualityAttributeMapper::mapToDomainModel).toList()
+                map -> map.getAttributes().stream().map(AttributeMapper::mapToDomainModel).toList()
             ));
 
         // load all questions with their impacts (by assessmentKit)

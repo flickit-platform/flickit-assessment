@@ -3,7 +3,7 @@ package org.flickit.assessment.core.adapter.out.calculate;
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
-import org.flickit.assessment.core.adapter.out.persistence.kit.qualityattribute.QualityAttributeMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
@@ -185,7 +185,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
         for (Map.Entry<Long, SubjectJpaEntity> sEntity : subjectIdToEntity.entrySet()) {
             List<QualityAttribute> attributes = sEntity.getValue().getAttributes().stream()
-                .map(QualityAttributeMapper::mapToDomainModel).toList();
+                .map(AttributeMapper::mapToDomainModel).toList();
             List<QualityAttributeValue> qavList = attributes.stream()
                 .map(q -> qualityAttrIdToValue.get(q.getId()))
                 .filter(Objects::nonNull)
