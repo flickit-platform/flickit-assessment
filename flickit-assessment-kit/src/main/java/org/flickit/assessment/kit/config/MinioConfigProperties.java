@@ -19,8 +19,8 @@ public class MinioConfigProperties {
 
 /*    private String url = "https://flickit-test-cdn.darkube.app:9000";
     private int port = 9000;
-    private String accessKey = "jsSamVF3lQ5OSCpwc2SDdGXPY8jd05zC";
-    private String accessSecret = "aL8VxtbLyvKCd25uoUA4dx8OfXVZgqRp";
+    private String accessKey = "";
+    private String accessSecret = "";
     private String bucketName = "media";
     private String objectName = "assessment_kit/dsl";
     private Boolean secure = true;*/
