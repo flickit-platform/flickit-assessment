@@ -21,14 +21,14 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
 
@@ -50,9 +50,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                    List<AnswerJpaEntity> allAnswerEntities,
                    List<AnswerOptionDto> allAnswerOptionsDto,
                    List<QualityAttributeValueJpaEntity> allQualityAttributeValueEntities,
-                   List<SubjectValueJpaEntity> subjectValueEntities,
-                   Map<Long, SubjectJpaEntity> subjectIdToEntity,
-                   Map<Long, Integer> qaIdToWeightMap) {
+                   Map<Long, SubjectJpaEntity> subjectIdToEntity) {
     }
 
     @Override
@@ -67,25 +65,14 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
          that are already saved with this assessmentResult
          */
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
-        List<QualityAttributeValueJpaEntity> allQualityAttributeValueEntities = qualityAttrValueRepo.findByAssessmentResultId(assessmentResultId);
+        List<QualityAttributeValueJpaEntity> allAttributeValueEntities = qualityAttrValueRepo.findByAssessmentResultId(assessmentResultId);
 
         /*
         load all subjects and their related attributes (by assessmentKit)
         and create some useful utility maps
         */
-        List<SubjectJoinAttributeView> subjectsWithAttributes = subjectRepository.loadByAssessmentKitId(assessmentKitId);
-        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectsWithAttributes.stream()
-            .map(SubjectJoinAttributeView::getSubject)
+        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByAssessmentKitId(assessmentKitId).stream()
             .collect(toMap(SubjectJpaEntity::getId, x -> x, (s1, s2) -> s1));
-        Map<Long, Integer> qaIdToWeightMap = subjectsWithAttributes.stream()
-            .map(SubjectJoinAttributeView::getAttribute)
-            .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
-        Map<Long, List<SubjectJoinAttributeView>> subjectIdToJoinView = subjectsWithAttributes.stream()
-            .collect(groupingBy(x -> x.getSubject().getId()));
-        Map<Long, List<QualityAttribute>> subjectIdToAttribute = subjectIdToJoinView.values().stream()
-            .collect(toMap(map -> map.stream().findFirst().orElseThrow().getSubject().getId(),
-                map -> map.stream().map(SubjectJoinAttributeView::getAttribute).filter(Objects::nonNull).map(QualityAttributeMapper::mapToDomainModel).toList()
-            ));
 
         // load all questions with their impacts (by assessmentKit)
         List<QuestionDto> allQuestionsDto = questionRestAdapter.loadByAssessmentKitId(assessmentKitId);
@@ -103,14 +90,12 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         Context context = new Context(allQuestionsDto,
             allAnswerEntities,
             allAnswerOptionsDto,
-            allQualityAttributeValueEntities,
-            subjectValueEntities,
-            subjectIdToEntity,
-            qaIdToWeightMap);
+            allAttributeValueEntities,
+            subjectIdToEntity);
 
         Map<Long, QualityAttributeValue> qualityAttrIdToValue = buildQualityAttributeValues(context);
 
-        List<SubjectValue> subjectValues = buildSubjectValues(qualityAttrIdToValue, subjectIdToAttribute, context);
+        List<SubjectValue> subjectValues = buildSubjectValues(qualityAttrIdToValue, subjectIdToEntity, subjectValueEntities);
 
         return new AssessmentResult(
             assessmentResultId,
@@ -125,19 +110,23 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * @return a map of each attributeId to it's corresponding attributeValue
      */
     private Map<Long, QualityAttributeValue> buildQualityAttributeValues(Context context) {
+        Map<Long, Integer> qaIdToWeightMap = context.subjectIdToEntity().values().stream()
+            .flatMap(x -> x.getAttributes().stream())
+            .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
+
         Map<Long, QualityAttributeValue> qualityAttrIdToValue = new HashMap<>();
         for (QualityAttributeValueJpaEntity qavEntity : context.allQualityAttributeValueEntities) {
             List<Question> impactfulQuestions = questionsWithImpact(qavEntity.getQualityAttributeId(), context);
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            QualityAttribute qualityAttribute = new QualityAttribute(
+            QualityAttribute attribute = new QualityAttribute(
                 qavEntity.getQualityAttributeId(),
-                context.qaIdToWeightMap.get(qavEntity.getQualityAttributeId()),
+                qaIdToWeightMap.get(qavEntity.getQualityAttributeId()),
                 impactfulQuestions
             );
 
-            QualityAttributeValue qualityAttributeValue = new QualityAttributeValue(qavEntity.getId(), qualityAttribute, impactfulAnswers);
+            QualityAttributeValue attributeValue = new QualityAttributeValue(qavEntity.getId(), attribute, impactfulAnswers);
 
-            qualityAttrIdToValue.put(qualityAttribute.getId(), qualityAttributeValue);
+            qualityAttrIdToValue.put(attribute.getId(), attributeValue);
         }
         return qualityAttrIdToValue;
     }
@@ -149,7 +138,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      */
     private List<Question> questionsWithImpact(Long qualityAttributeId, Context context) {
         return context.allQuestionsDto.stream()
-            .filter(q -> q.questionImpacts().stream().anyMatch(f -> f.qualityAttributeId().equals(qualityAttributeId)))
+            .filter(q -> q.questionImpacts().stream()
+                .anyMatch(f -> f.qualityAttributeId().equals(qualityAttributeId)))
             .map(QuestionDto::dtoToDomain)
             .toList();
     }
@@ -185,23 +175,25 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * build subjectValues domain with all information needed for calculate their maturity levels
      *
      * @param qualityAttrIdToValue map of attributeIds to their corresponding value
-     * @param subjectIdToAttribute
-     * @param context              all previously loaded data
      * @return list of subjectValues
      */
-    private static List<SubjectValue> buildSubjectValues(Map<Long, QualityAttributeValue> qualityAttrIdToValue, Map<Long, List<QualityAttribute>> subjectIdToAttribute, Context context) {
+    private static List<SubjectValue> buildSubjectValues(Map<Long, QualityAttributeValue> qualityAttrIdToValue, Map<Long, SubjectJpaEntity> subjectIdToEntity,
+                                                         List<SubjectValueJpaEntity> subjectValueEntities) {
         List<SubjectValue> subjectValues = new ArrayList<>();
-        for (SubjectValueJpaEntity svEntity : context.subjectValueEntities) {
-            SubjectJpaEntity entity = context.subjectIdToEntity.get(svEntity.getSubjectId());
-            List<QualityAttribute> attributes = subjectIdToAttribute.get(entity.getId());
+        Map<Long, SubjectValueJpaEntity> subjectIdToValue = subjectValueEntities.stream()
+            .collect(toMap(SubjectValueJpaEntity::getSubjectId, sv -> sv));
+
+        for (Map.Entry<Long, SubjectJpaEntity> sEntity : subjectIdToEntity.entrySet()) {
+            List<QualityAttribute> attributes = sEntity.getValue().getAttributes().stream()
+                .map(QualityAttributeMapper::mapToDomainModel).toList();
             List<QualityAttributeValue> qavList = attributes.stream()
                 .map(q -> qualityAttrIdToValue.get(q.getId()))
                 .filter(Objects::nonNull)
                 .toList();
-            if (qavList.isEmpty()) {
+            if (qavList.isEmpty())
                 continue;
-            }
-            subjectValues.add(new SubjectValue(svEntity.getId(), SubjectMapper.mapToDomainModel(entity, attributes), qavList));
+            SubjectValueJpaEntity svEntity = subjectIdToValue.get(sEntity.getKey());
+            subjectValues.add(new SubjectValue(svEntity.getId(), SubjectMapper.mapToDomainModel(sEntity.getValue(), attributes), qavList));
         }
         return subjectValues;
     }

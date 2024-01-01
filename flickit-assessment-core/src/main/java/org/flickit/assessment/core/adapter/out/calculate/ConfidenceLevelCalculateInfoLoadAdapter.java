@@ -18,14 +18,14 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND;
 
@@ -67,18 +67,15 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         load all subjects and their related attributes (by assessmentKit)
         and create some useful utility maps
         */
-        List<SubjectJoinAttributeView> subjectsWithAttributes = subjectRepository.loadByAssessmentKitId(assessmentKitId);
+        List<SubjectJpaEntity> subjectsWithAttributes = subjectRepository.loadByAssessmentKitId(assessmentKitId);
         Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectsWithAttributes.stream()
-            .map(SubjectJoinAttributeView::getSubject)
             .collect(toMap(SubjectJpaEntity::getId, x -> x, (s1, s2) -> s1));
         Map<Long, Integer> qaIdToWeightMap = subjectsWithAttributes.stream()
-            .map(SubjectJoinAttributeView::getAttribute)
+            .flatMap(x -> x.getAttributes().stream())
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
-        Map<Long, List<SubjectJoinAttributeView>> subjectIdToJoinView = subjectsWithAttributes.stream()
-            .collect(groupingBy(x -> x.getSubject().getId()));
-        Map<Long, List<QualityAttribute>> subjectIdToAttribute = subjectIdToJoinView.values().stream()
-            .collect(toMap(map -> map.stream().findFirst().orElseThrow().getSubject().getId(),
-                map -> map.stream().map(SubjectJoinAttributeView::getAttribute).filter(Objects::nonNull).map(QualityAttributeMapper::mapToDomainModel).toList()
+        Map<Long, List<QualityAttribute>> subjectIdToAttribute = subjectsWithAttributes.stream()
+            .collect(toMap(SubjectJpaEntity::getId,
+                map -> map.getAttributes().stream().map(QualityAttributeMapper::mapToDomainModel).toList()
             ));
 
         // load all questions with their impacts (by assessmentKit)
@@ -172,7 +169,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * build subjectValues domain with all information needed for calculate their maturity levels
      *
      * @param attributeIdToValueMap map of attributeIds to their corresponding value
-     * @param subjectIdToAttribute
+     * @param subjectIdToAttribute map of subjectId to list of it's attributes
      * @param context               all previously loaded data
      * @return list of subjectValues
      */
