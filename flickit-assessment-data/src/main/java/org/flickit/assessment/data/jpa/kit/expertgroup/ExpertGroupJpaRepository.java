@@ -21,8 +21,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         e.website as website,
         e.bio as bio,
         e.ownerId as ownerId,
-        COUNT(ak) as publishedKitsCount,
-        CASE WHEN e.ownerId = :currentUserId THEN true ELSE false END as editable
+        COUNT(ak) as publishedKitsCount
     FROM ExpertGroupJpaEntity e
     LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.isActive = true
     LEFT JOIN ExpertGroupAccessJpaEntity ac ON ac.expertGroupId = e.id

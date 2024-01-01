@@ -7,7 +7,10 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -17,10 +20,52 @@ public class GetExpertUserListService implements GetExpertGroupListUseCase {
     private final LoadExpertGroupListPort loadExpertGroupListPort;
     @Override
     public PaginatedResponse<ExpertGroupListItem> getExpertGroupList(Param param) {
-        return loadExpertGroupListPort.loadExpertGroupList(toParam(param.getPage(), param.getSize(), param.getCurrentUserID()));
+
+        var pageResult = loadExpertGroupListPort.loadExpertGroupList(toParam(param.getPage(), param.getSize(), param.getCurrentUserID()));
+        return PaginatedResponseUtil.mapPaginatedResponse(
+            pageResult,
+            expertGroupListItem -> {
+                boolean isEditable = expertGroupListItem.ownerId().equals(param.getCurrentUserID());
+
+                return new ExpertGroupListItem(
+                    expertGroupListItem.id(),
+                    expertGroupListItem.title(),
+                    expertGroupListItem.bio(),
+                    expertGroupListItem.picture(),
+                    expertGroupListItem.members(),
+                    expertGroupListItem.membersCount(),
+                    expertGroupListItem.publishedKitsCount(),
+                    expertGroupListItem.ownerId(),
+                    isEditable
+                );
+            }
+        );
+
     }
 
     private LoadExpertGroupListPort.Param toParam(int page, int size, UUID currentUserID){
         return  new LoadExpertGroupListPort.Param(page, size, currentUserID);
+    }
+}
+
+
+class PaginatedResponseUtil {
+
+    public static <T, R> PaginatedResponse<R> mapPaginatedResponse(
+        PaginatedResponse<T> input,
+        Function<T, R> mapper
+    ) {
+        List<R> mappedItems = input.getItems().stream()
+            .map(mapper)
+            .collect(Collectors.toList());
+
+        return new PaginatedResponse<>(
+            mappedItems,
+            input.getPage(),
+            input.getSize(),
+            input.getSort(),
+            input.getOrder(),
+            input.getTotal()
+        );
     }
 }
