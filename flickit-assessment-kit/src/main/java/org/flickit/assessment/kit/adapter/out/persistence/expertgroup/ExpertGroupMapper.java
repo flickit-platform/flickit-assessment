@@ -16,13 +16,11 @@ public class ExpertGroupMapper {
         return new GetExpertGroupListUseCase.ExpertGroupListItem(
             entity.getId(),
             entity.getName(),
-            entity.getAbout(),
             entity.getBio(),
             entity.getPicture(),
-            entity.getWebsite(),
+            null,
             null,
             entity.getPublishedKitsCount(),
-            entity.getOwnerId(),
             entity.getEditable());
     }
 }
