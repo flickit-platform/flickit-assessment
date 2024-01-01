@@ -26,4 +26,13 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
         @Param(value = "description") String description,
         @Param(value = "lastModificationTime") LocalDateTime lastModificationTime
     );
+
+    @Query("""
+            SELECT s as subject
+            FROM SubjectJpaEntity s
+            JOIN FETCH s.attributes a
+            WHERE s.assessmentKitId = :kitId
+    """)
+    List<SubjectJpaEntity> loadByKitIdWithAttributes(Long kitId);
+
 }

@@ -22,7 +22,9 @@ public class AnswerMapper {
             param.questionId(),
             param.answerOptionId(),
             param.confidenceLevelId(),
-            param.isNotApplicable()
+            param.isNotApplicable(),
+            param.currentUserId(),
+            param.currentUserId()
         );
     }
 

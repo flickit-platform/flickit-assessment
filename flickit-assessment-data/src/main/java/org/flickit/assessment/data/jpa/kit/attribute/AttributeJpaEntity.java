@@ -3,6 +3,7 @@ package org.flickit.assessment.data.jpa.kit.attribute;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 
 import java.time.LocalDateTime;
 
@@ -43,9 +44,23 @@ public class AttributeJpaEntity {
     @Column(name = "last_modification_date", nullable = false)
     private LocalDateTime lastModificationTime;
 
-    @Column(name = "assessment_subject_id", nullable = false)
-    private Long subjectId;
-
     @Column(name = "assessment_kit_id", nullable = false)
     private Long assessmentKitId;
+
+    public AttributeJpaEntity(Long id, String code, String title, Integer index, String description, Integer weight,
+                              LocalDateTime creationTime, LocalDateTime lastModificationTime, Long assessmentKitId) {
+        this.id = id;
+        this.code = code;
+        this.title = title;
+        this.index = index;
+        this.description = description;
+        this.weight = weight;
+        this.creationTime = creationTime;
+        this.lastModificationTime = lastModificationTime;
+        this.assessmentKitId = assessmentKitId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "assessment_subject_id", referencedColumnName = "id")
+    private SubjectJpaEntity subject;
 }

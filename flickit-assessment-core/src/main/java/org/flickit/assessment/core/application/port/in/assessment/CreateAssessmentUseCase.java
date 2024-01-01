@@ -9,6 +9,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface CreateAssessmentUseCase {
@@ -33,11 +34,15 @@ public interface CreateAssessmentUseCase {
         @NotNull(message = CREATE_ASSESSMENT_COLOR_ID_NOT_NULL)
         Integer colorId;
 
-        public Param(Long spaceId, String title, Long assessmentKitId, Integer colorId) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID createdBy;
+
+        public Param(Long spaceId, String title, Long assessmentKitId, Integer colorId, UUID createdBy) {
             this.title = title != null ? title.strip() : null;
             this.spaceId = spaceId;
             this.assessmentKitId = assessmentKitId;
             this.colorId = colorId;
+            this.createdBy = createdBy;
             this.validateSelf();
         }
     }
