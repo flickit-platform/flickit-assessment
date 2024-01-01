@@ -13,6 +13,7 @@ public class EvidenceMother {
             "description",
             UUID.randomUUID(),
             UUID.randomUUID(),
+            UUID.randomUUID(),
             1L,
             LocalDateTime.now(),
             LocalDateTime.now(),

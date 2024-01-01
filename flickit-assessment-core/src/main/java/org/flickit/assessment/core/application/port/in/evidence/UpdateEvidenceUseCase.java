@@ -9,11 +9,12 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface UpdateEvidenceUseCase {
 
-       Result updateEvidence(Param param);
+    Result updateEvidence(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -27,9 +28,13 @@ public interface UpdateEvidenceUseCase {
         @Size(max = 1000, message = UPDATE_EVIDENCE_DESC_MAX_SIZE)
         String description;
 
-        public Param(UUID id, String description) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID lastModifiedById;
+
+        public Param(UUID id, String description, UUID lastModifiedById) {
             this.id = id;
             this.description = description;
+            this.lastModifiedById = lastModifiedById;
             this.validateSelf();
         }
     }

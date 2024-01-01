@@ -36,6 +36,9 @@ public class EvidenceJpaEntity {
     @Column(name = "created_by_id", nullable = false)
     private UUID createdById;
 
+    @Column(name = "last_modified_by_id", nullable = false)
+    private UUID lastModifiedById;
+
     @Column(name = "assessment_id", nullable = false)
     private UUID assessmentId;
 
