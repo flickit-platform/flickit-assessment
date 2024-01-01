@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public class AttributeJapEntityMother {
 
-    public static AttributeJpaEntity createAttributeEntity(Long id, Integer index, Long subjectId) {
+    public static AttributeJpaEntity createAttributeEntity(Long id, Integer index, Long kitId) {
         return new AttributeJpaEntity(
             id,
             "code" + id,
@@ -16,8 +16,7 @@ public class AttributeJapEntityMother {
             1,
             LocalDateTime.now(),
             LocalDateTime.now(),
-            subjectId,
-            1L
+            kitId
         );
     }
 }

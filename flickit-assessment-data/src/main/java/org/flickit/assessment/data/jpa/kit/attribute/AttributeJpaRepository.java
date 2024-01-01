@@ -19,7 +19,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
         "a.description = :description, " +
         "a.weight = :weight, " +
         "a.lastModificationTime = :lastModificationTime, " +
-        "a.subjectId = :subjectId " +
+        "a.subject.id = :subjectId " +
         "WHERE a.id = :id")
     void update(@Param("id") long id,
                 @Param("title") String title,

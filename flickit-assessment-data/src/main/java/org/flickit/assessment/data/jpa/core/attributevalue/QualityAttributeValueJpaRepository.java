@@ -16,7 +16,7 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
         SELECT av
         FROM QualityAttributeValueJpaEntity av
         LEFT JOIN AttributeJpaEntity att ON av.qualityAttributeId = att.id and av.assessmentResult.id = :resultId
-        WHERE att.subjectId = :subjectId
+        WHERE att.subject.id = :subjectId
         """)
     List<QualityAttributeValueJpaEntity> findByAssessmentResultIdAndSubjectId(UUID resultId, Long subjectId);
 

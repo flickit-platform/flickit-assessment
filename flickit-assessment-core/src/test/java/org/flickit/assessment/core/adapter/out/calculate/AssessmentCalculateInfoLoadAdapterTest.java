@@ -18,7 +18,6 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.junit.jupiter.api.Assertions;
@@ -39,10 +38,9 @@ import static org.flickit.assessment.core.test.fixture.adapter.dto.QuestionDtoMo
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeJapEntityMother.createAttributeEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
-import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEntityMother.createSubject;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEntityMother.subjectWithAttributes;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
-import static org.flickit.assessment.core.test.fixture.application.SubjectJoinAttributeViewMother.subjectJoinAttributeView;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -137,6 +135,15 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var attribute5Id = attributeId++;
         var attribute6Id = attributeId;
 
+        Long kitId = 123L;
+
+        AttributeJpaEntity attribute1 = createAttributeEntity(attribute1Id, 1, kitId);
+        AttributeJpaEntity attribute2 = createAttributeEntity(attribute2Id, 2, kitId);
+        AttributeJpaEntity attribute3 = createAttributeEntity(attribute3Id, 3, kitId);
+        AttributeJpaEntity attribute4 = createAttributeEntity(attribute4Id, 4, kitId);
+        AttributeJpaEntity attribute5 = createAttributeEntity(attribute5Id, 5, kitId);
+        AttributeJpaEntity attribute6 = createAttributeEntity(attribute6Id, 6, kitId);
+
         var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1Id);
         var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2Id);
         var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3Id);
@@ -150,9 +157,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var subjectValue3 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
         List<SubjectValueJpaEntity> subjectValues = List.of(subjectValue1, subjectValue2, subjectValue3);
 
-        var subject1 = createSubject(subjectValue1.getSubjectId(), 1);
-        var subject2 = createSubject(subjectValue2.getSubjectId(), 2);
-        var subject3 = createSubject(subjectValue3.getSubjectId(), 3);
+        var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(), 1, List.of(attribute1, attribute2));
+        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(), 1, List.of(attribute3, attribute4));
+        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), 1, List.of(attribute5, attribute6));
         List<SubjectJpaEntity> subjects = List.of(subject1, subject2, subject3);
 
         var questionDto1 = createQuestionDtoWithAffectedLevelAndAttributes(1L, LEVEL_ONE_ID, attribute1Id, attribute2Id, attribute3Id);
@@ -234,33 +241,13 @@ class AssessmentCalculateInfoLoadAdapterTest {
         when(qualityAttrValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.qualityAttributeValues());
         when(subjectRepository.loadByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
-            .thenReturn(createSubjectJoinAttributes(context.subjects, context.qualityAttributeValues));
+            .thenReturn(context.subjects);
         when(questionRestAdapter.loadByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
             .thenReturn(context.questionDtos());
         when(answerRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.answerEntities());
         when(answerOptionRestAdapter.loadAnswerOptionByIds(any()))
             .thenReturn(context.answerOptionDtos());
-    }
-
-    private List<SubjectJoinAttributeView> createSubjectJoinAttributes(List<SubjectJpaEntity> subjects, List<QualityAttributeValueJpaEntity> qualityAttributeValues) {
-        SubjectJpaEntity subject1 = subjects.get(0);
-        SubjectJpaEntity subject2 = subjects.get(1);
-        SubjectJpaEntity subject3 = subjects.get(2);
-        AttributeJpaEntity attribute1 = createAttributeEntity(qualityAttributeValues.get(0).getQualityAttributeId(), 1, subject1.getId());
-        AttributeJpaEntity attribute2 = createAttributeEntity(qualityAttributeValues.get(1).getQualityAttributeId(), 2, subject1.getId());
-        AttributeJpaEntity attribute3 = createAttributeEntity(qualityAttributeValues.get(2).getQualityAttributeId(), 3, subject2.getId());
-        AttributeJpaEntity attribute4 = createAttributeEntity(qualityAttributeValues.get(3).getQualityAttributeId(), 4, subject2.getId());
-        AttributeJpaEntity attribute5 = createAttributeEntity(qualityAttributeValues.get(4).getQualityAttributeId(), 5, subject3.getId());
-        AttributeJpaEntity attribute6 = createAttributeEntity(qualityAttributeValues.get(5).getQualityAttributeId(), 6, subject3.getId());
-        var projection1 = subjectJoinAttributeView(subject1, attribute1);
-        var projection2 = subjectJoinAttributeView(subject1, attribute2);
-        var projection3 = subjectJoinAttributeView(subject2, attribute3);
-        var projection4 = subjectJoinAttributeView(subject2, attribute4);
-        var projection5 = subjectJoinAttributeView(subject3, attribute5);
-        var projection6 = subjectJoinAttributeView(subject3, attribute6);
-
-        return List.of(projection1, projection2, projection3, projection4, projection5, projection6);
     }
 
     record Context(
