@@ -33,6 +33,6 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
             JOIN FETCH s.attributes a
             WHERE s.assessmentKitId = :kitId
     """)
-    List<SubjectJpaEntity> loadByAssessmentKitId(Long kitId);
+    List<SubjectJpaEntity> loadByKitIdWithAttributes(Long kitId);
 
 }

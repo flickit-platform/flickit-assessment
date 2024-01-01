@@ -67,7 +67,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         load all subjects and their related attributes (by assessmentKit)
         and create some useful utility maps
         */
-        List<SubjectJpaEntity> subjectsWithAttributes = subjectRepository.loadByAssessmentKitId(assessmentKitId);
+        List<SubjectJpaEntity> subjectsWithAttributes = subjectRepository.loadByKitIdWithAttributes(assessmentKitId);
         Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectsWithAttributes.stream()
             .collect(toMap(SubjectJpaEntity::getId, x -> x, (s1, s2) -> s1));
         Map<Long, Integer> qaIdToWeightMap = subjectsWithAttributes.stream()

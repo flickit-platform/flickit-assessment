@@ -71,7 +71,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         load all subjects and their related attributes (by assessmentKit)
         and create some useful utility maps
         */
-        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByAssessmentKitId(assessmentKitId).stream()
+        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByKitIdWithAttributes(assessmentKitId).stream()
             .collect(toMap(SubjectJpaEntity::getId, x -> x, (s1, s2) -> s1));
 
         // load all questions with their impacts (by assessmentKit)
