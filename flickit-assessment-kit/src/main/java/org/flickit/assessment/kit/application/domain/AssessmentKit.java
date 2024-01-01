@@ -25,4 +25,6 @@ public class AssessmentKit {
     private final List<Subject> subjects;
     private final List<MaturityLevel> maturityLevels;
     private final List<Questionnaire> questionnaires;
+    private final List<Tag> tags;
+    private final List<Like> likes;
 }
