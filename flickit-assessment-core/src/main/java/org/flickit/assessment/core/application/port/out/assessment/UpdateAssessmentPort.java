@@ -13,7 +13,8 @@ public interface UpdateAssessmentPort {
                     String title,
                     String code,
                     Integer colorId,
-                    LocalDateTime lastModificationTime) {}
+                    LocalDateTime lastModificationTime,
+                    UUID lastModifiedBy) {}
 
     record Result(UUID id) {}
 }

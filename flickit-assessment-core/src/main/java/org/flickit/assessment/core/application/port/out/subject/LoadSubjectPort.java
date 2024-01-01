@@ -4,7 +4,7 @@ import org.flickit.assessment.core.application.domain.Subject;
 
 import java.util.List;
 
-public interface LoadSubjectByAssessmentKitIdPort {
+public interface LoadSubjectPort {
 
-    List<Subject> loadByAssessmentKitId(Long assessmentKitId);
+    List<Subject> loadByKitIdWithAttributes(Long kitId);
 }

@@ -50,6 +50,4 @@
     <changeSet id="0.10-06" author="MKouhestani">
         <addNotNullConstraint tableName="baseinfo_assessmentkit" columnName="expert_group_id"/>
     </changeSet>
-
-
 </databaseChangeLog>

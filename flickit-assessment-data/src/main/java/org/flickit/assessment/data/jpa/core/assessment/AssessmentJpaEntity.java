@@ -53,6 +53,12 @@ public class AssessmentJpaEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
+
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
+
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
         public static final String ASSESSMENT_KIT_ID = "assessmentKitId";

@@ -9,6 +9,6 @@ import java.util.UUID;
 
 public interface LoadAttributeValueListPort {
 
-    List<QualityAttributeValue> loadAttributeValues(UUID assessmentResultId, Map<Long, MaturityLevel> maturityLevels);
+    List<QualityAttributeValue> loadAll(UUID assessmentResultId, Map<Long, MaturityLevel> maturityLevels);
 }
 

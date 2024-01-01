@@ -12,6 +12,7 @@ public class Evidence {
     private final UUID id;
     private final String description;
     private final UUID createdById;
+    private final UUID lastModifiedById;
     private final UUID assessmentId;
     private final long questionId;
     private final LocalDateTime creationTime;

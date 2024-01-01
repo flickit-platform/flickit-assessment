@@ -36,7 +36,8 @@ public class AssessmentPersistenceJpaAdapter implements
     GetAssessmentPort,
     DeleteAssessmentPort,
     CheckAssessmentExistencePort,
-    CountAssessmentsPort {
+    CountAssessmentsPort,
+    CheckUserAssessmentAccessPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -72,7 +73,8 @@ public class AssessmentPersistenceJpaAdapter implements
             param.title(),
             param.code(),
             param.colorId(),
-            param.lastModificationTime());
+            param.lastModificationTime(),
+            param.lastModifiedBy());
         return new UpdateAssessmentPort.Result(param.id());
     }
 
@@ -139,5 +141,10 @@ public class AssessmentPersistenceJpaAdapter implements
     @Override
     public void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime) {
         repository.updateLastModificationTime(id, lastModificationTime);
+    }
+
+    @Override
+    public boolean hasAccess(UUID assessmentId, UUID userId) {
+        return repository.checkUserAccess(assessmentId, userId).isPresent();
     }
 }
