@@ -31,7 +31,6 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .toList();
     }
 
-    @Override
     public List<MaturityLevel> loadByKitIdWithCompetences(Long kitId) {
         List<MaturityJoinCompetenceView> results = repository.findAllByKitIdWithCompetence(kitId);
 
