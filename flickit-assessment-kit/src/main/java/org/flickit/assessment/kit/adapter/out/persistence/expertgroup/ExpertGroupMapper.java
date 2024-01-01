@@ -18,8 +18,6 @@ public class ExpertGroupMapper {
             entity.getName(),
             entity.getBio(),
             entity.getPicture(),
-            null,
-            null,
             entity.getPublishedKitsCount(),
             entity.getOwnerId(),
             entity.getEditable());

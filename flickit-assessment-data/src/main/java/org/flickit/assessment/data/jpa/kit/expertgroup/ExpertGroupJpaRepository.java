@@ -16,9 +16,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     SELECT
         e.id as id,
         e.name as name,
-        e.about as about,
         e.picture as picture,
-        e.website as website,
         e.bio as bio,
         e.ownerId as ownerId,
         COUNT(ak) as publishedKitsCount

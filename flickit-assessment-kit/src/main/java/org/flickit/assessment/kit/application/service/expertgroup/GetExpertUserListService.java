@@ -32,8 +32,6 @@ public class GetExpertUserListService implements GetExpertGroupListUseCase {
                     expertGroupListItem.title(),
                     expertGroupListItem.bio(),
                     expertGroupListItem.picture(),
-                    expertGroupListItem.members(),
-                    expertGroupListItem.membersCount(),
                     expertGroupListItem.publishedKitsCount(),
                     expertGroupListItem.ownerId(),
                     isEditable

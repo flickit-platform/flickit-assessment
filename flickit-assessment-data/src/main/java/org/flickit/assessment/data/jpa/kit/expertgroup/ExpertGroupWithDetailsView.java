@@ -1,8 +1,5 @@
 package org.flickit.assessment.data.jpa.kit.expertgroup;
 
-import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
-
-import java.util.List;
 import java.util.UUID;
 
 public interface ExpertGroupWithDetailsView {
@@ -19,5 +16,4 @@ public interface ExpertGroupWithDetailsView {
 
     UUID getOwnerId();
 
-    List<UserJpaEntity> getUsers();
 }
