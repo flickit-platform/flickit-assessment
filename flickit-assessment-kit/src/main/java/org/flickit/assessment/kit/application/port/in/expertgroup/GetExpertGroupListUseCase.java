@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 import java.util.List;
@@ -37,7 +38,9 @@ public interface GetExpertGroupListUseCase {
     }
 
     record ExpertGroupListItem(Long id, String title, String bio, String picture, Integer publishedKitsCount,
-                               int membersCount, UUID ownerId, Boolean editable) {
+                               int membersCount, List<Member> members, UUID ownerId, Boolean editable) {
     }
+
+    record Member(String displayName){}
 
 }

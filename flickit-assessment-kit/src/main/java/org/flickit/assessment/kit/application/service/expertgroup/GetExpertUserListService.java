@@ -33,6 +33,7 @@ public class GetExpertUserListService implements GetExpertGroupListUseCase {
                     expertGroupListItem.picture(),
                     expertGroupListItem.publishedKitsCount(),
                     expertGroupListItem.membersCount(),
+                    expertGroupListItem.members(),
                     expertGroupListItem.ownerId(),
                     isEditable
                 );

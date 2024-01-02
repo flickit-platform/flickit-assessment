@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,8 +37,27 @@ public class ExpertGroupPersistenceJpaAdapter implements
             .map(ExpertGroupMapper::mapToExpertGroupListItem)
             .toList();
 
+
+        List<GetExpertGroupListUseCase.ExpertGroupListItem> itemsWithMembers = new ArrayList<>();
+        for (var item: items) {
+            var members = repository.getMembersByExpert(item.id()).stream()
+                .map(ExpertGroupMapper::mapToMember)
+                .toList();
+            itemsWithMembers.add(new GetExpertGroupListUseCase.ExpertGroupListItem(
+                item.id(),
+                item.title(),
+                item.bio(),
+                item.picture(),
+                item.publishedKitsCount(),
+                item.membersCount(),
+                members,
+                item.ownerId(),
+                item.editable())
+            );
+        }
+
         return new PaginatedResponse<>(
-            items,
+            itemsWithMembers,
             pageResult.getNumber(),
             pageResult.getSize(),
             ExpertGroupJpaEntity.Fields.NAME,

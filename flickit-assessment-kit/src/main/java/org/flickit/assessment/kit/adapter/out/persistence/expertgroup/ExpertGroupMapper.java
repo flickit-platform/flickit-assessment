@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
+import org.flickit.assessment.data.jpa.kit.expertgroup.MemberView;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 
@@ -20,7 +21,13 @@ public class ExpertGroupMapper {
             entity.getPicture(),
             entity.getPublishedKitsCount(),
             entity.getMembersCount(),
+            null,
             entity.getOwnerId(),
             entity.getEditable());
+    }
+
+    public static GetExpertGroupListUseCase.Member mapToMember(MemberView entity) {
+        return new GetExpertGroupListUseCase.Member(
+            entity.getDisplayName());
     }
 }
