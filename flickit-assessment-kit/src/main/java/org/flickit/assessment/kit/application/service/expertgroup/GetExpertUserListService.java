@@ -33,7 +33,7 @@ public class GetExpertUserListService implements GetExpertGroupListUseCase {
                     expertGroupListItem.picture(),
                     expertGroupListItem.publishedKitsCount(),
                     expertGroupListItem.members().size(),
-                    expertGroupListItem.members().stream().limit(5).toList(),
+                    expertGroupListItem.members().stream().limit(5).toList(), //TODO: Correct this har coded limit
                     isEditable
                 );
             }
