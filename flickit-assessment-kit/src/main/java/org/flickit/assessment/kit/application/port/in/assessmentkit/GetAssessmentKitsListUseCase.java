@@ -14,9 +14,9 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
-public interface GetAssessmentKitListUseCase {
+public interface GetAssessmentKitsListUseCase {
 
-    PaginatedResponse<AssessmentKitListItem> getAssessmentKitList(Param param);
+    PaginatedResponse<KitsListItem> getKitsList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -36,18 +36,18 @@ public interface GetAssessmentKitListUseCase {
         UUID currentUserId;
     }
 
-    record AssessmentKitListItem(
+    record KitsListItem(
         Long id,
         String title,
         String summary,
-        List<KitListItemTag> tags,
-        KitListItemExpertGroup expertGroup,
+        List<KitsListItemTag> tags,
+        KitsListItemExpertGroup expertGroup,
         int likesNumber,
         int numberOfAssessments,
         boolean isPrivate
     ) {}
 
-    record KitListItemTag(Long id, String code, String title) {}
+    record KitsListItemTag(Long id, String code, String title) {}
 
-    record KitListItemExpertGroup(Long id, String name, String picture) {}
+    record KitsListItemExpertGroup(Long id, String name, String picture) {}
 }

@@ -15,10 +15,10 @@ import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.tag.TagMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetAssessmentKitListUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetAssessmentKitsListUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitListPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitsListPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitMinimalInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
@@ -37,13 +37,13 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentKitPersistenceJpaAdapter implements
+public class KitsPersistenceJpaAdapter implements
     GrantUserAccessToKitPort,
     LoadKitExpertGroupPort,
     LoadKitUsersPort,
     DeleteKitUserAccessPort,
     LoadKitMinimalInfoPort,
-    LoadAssessmentKitListPort {
+    LoadAssessmentKitsListPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -120,7 +120,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<GetAssessmentKitListUseCase.AssessmentKitListItem> loadKitList(LoadAssessmentKitListPort.Param param) {
+    public PaginatedResponse<GetAssessmentKitsListUseCase.KitsListItem> loadKitsList(LoadAssessmentKitsListPort.Param param) {
         Page<AssessmentKitJpaEntity> pageResult;
         if (param.isPrivate()) {
             pageResult =
@@ -129,17 +129,17 @@ public class AssessmentKitPersistenceJpaAdapter implements
             pageResult = repository.findAllActivePublicKits(PageRequest.of(param.page(), param.size()));
         }
 
-        List<GetAssessmentKitListUseCase.AssessmentKitListItem> items = pageResult.getContent().stream()
+        List<GetAssessmentKitsListUseCase.KitsListItem> items = pageResult.getContent().stream()
             .map((AssessmentKitJpaEntity e) -> {
                 Set<AssessmentKitTagJpaEntity> tags = e.getTags();
                 ExpertGroupJpaEntity expertGroupEntity = expertGroupRepository.findById(e.getExpertGroupId()).get();
                 List<AssessmentJpaEntity> assessmentEntities = assessmentRepository.findAllByAssessmentKitId(e.getId());
                 int likesNumber = e.getLikes().size();
                 int numberOfAssessments = assessmentEntities.size();
-                List<GetAssessmentKitListUseCase.KitListItemTag> kitListItemTags = TagMapper.mapToKitListItemTags(tags);
-                GetAssessmentKitListUseCase.KitListItemExpertGroup kitListItemExpertGroup =
+                List<GetAssessmentKitsListUseCase.KitsListItemTag> kitsListItemTags = TagMapper.mapToKitListItemTags(tags);
+                GetAssessmentKitsListUseCase.KitsListItemExpertGroup kitsListItemExpertGroup =
                     ExpertGroupMapper.mapToKitListItemExpertGroup(expertGroupEntity);
-                return KitMapper.mapToKitListItem(e, kitListItemTags, kitListItemExpertGroup, likesNumber, numberOfAssessments);
+                return KitMapper.mapToKitListItem(e, kitsListItemTags, kitsListItemExpertGroup, likesNumber, numberOfAssessments);
             })
             .toList();
 

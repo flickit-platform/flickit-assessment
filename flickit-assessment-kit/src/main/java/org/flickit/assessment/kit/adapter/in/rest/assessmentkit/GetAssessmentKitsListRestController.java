@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetAssessmentKitListUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetAssessmentKitsListUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,23 +14,23 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class GetKitListRestController {
+public class GetAssessmentKitsListRestController {
 
-    private final GetAssessmentKitListUseCase useCase;
+    private final GetAssessmentKitsListUseCase useCase;
     private final UserContext userContext;
 
     @GetMapping("assessment-kits")
-    public ResponseEntity<PaginatedResponse<GetAssessmentKitListUseCase.AssessmentKitListItem>> getKitList(
+    public ResponseEntity<PaginatedResponse<GetAssessmentKitsListUseCase.KitsListItem>> getKitList(
         @RequestParam("isPrivate") Boolean isPrivate,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size) {
 
         var currentUserId = userContext.getUser().id();
-        var assessmentKitList = useCase.getAssessmentKitList(toParam(isPrivate, page, size, currentUserId));
+        var assessmentKitList = useCase.getKitsList(toParam(isPrivate, page, size, currentUserId));
         return new ResponseEntity<>(assessmentKitList, HttpStatus.OK);
     }
 
-    private GetAssessmentKitListUseCase.Param toParam(Boolean isPrivate, int page, int size, UUID currentUserId) {
-        return new GetAssessmentKitListUseCase.Param(isPrivate, page, size, currentUserId);
+    private GetAssessmentKitsListUseCase.Param toParam(Boolean isPrivate, int page, int size, UUID currentUserId) {
+        return new GetAssessmentKitsListUseCase.Param(isPrivate, page, size, currentUserId);
     }
 }
