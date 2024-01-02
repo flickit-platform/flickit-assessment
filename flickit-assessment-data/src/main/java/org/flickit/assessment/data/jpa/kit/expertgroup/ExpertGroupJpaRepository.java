@@ -13,25 +13,22 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
 
     @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id")
     UUID loadOwnerIdById(@Param("id") Long id);
+
     @Query("""
-    SELECT
-        e.id as id,
-        e.name as name,
-        e.picture as picture,
-        e.bio as bio,
-        e.ownerId as ownerId,
-        COUNT(ak) as publishedKitsCount
-    FROM ExpertGroupJpaEntity e
-    LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.isActive = true
-    LEFT JOIN ExpertGroupAccessJpaEntity ac ON ac.expertGroupId = e.id
-    WHERE ac.userId = :currentUserId
-    GROUP BY e.id, e.name, e.picture, e.bio, e.ownerId
-""")
-
-
-
-    Page<ExpertGroupWithDetailsView> getExpertGroupSummaries(Pageable pageable,
-                                                             @Param(value = "currentUserId") UUID currentUseId);
+        SELECT
+            e.id as id,
+            e.name as name,
+            e.picture as picture,
+            e.bio as bio,
+            e.ownerId as ownerId,
+            COUNT(ak) as publishedKitsCount
+        FROM ExpertGroupJpaEntity e
+        LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.isActive = true
+        LEFT JOIN ExpertGroupAccessJpaEntity ac ON ac.expertGroupId = e.id
+        WHERE ac.userId = :currentUserId
+        GROUP BY e.id, e.name, e.picture, e.bio, e.ownerId
+    """)
+    Page<ExpertGroupWithDetailsView> getExpertGroupSummaries(@Param(value = "currentUserId") UUID currentUseId, Pageable pageable);
 
     @Query("""
         SELECT
