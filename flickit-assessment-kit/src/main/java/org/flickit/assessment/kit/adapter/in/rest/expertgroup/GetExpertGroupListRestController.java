@@ -22,7 +22,7 @@ public class GetExpertGroupListRestController {
     private final UserContext userContext;
 
     @GetMapping("/expert-groups")
-    public ResponseEntity<PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem>> getExpertGroupList(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItemResult>> getExpertGroupList(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
         var currentUserID = UUID.fromString("428f8bc2-f47f-4190-b620-3dad8bd8a20b"); //TODO: Remove it
         //var currentUserID = userContext.getUser().id();
         System.out.println(currentUserID); //TODO: Remove it
