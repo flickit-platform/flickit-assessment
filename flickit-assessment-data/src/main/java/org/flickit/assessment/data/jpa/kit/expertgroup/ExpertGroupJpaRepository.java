@@ -31,4 +31,13 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
 
     Page<ExpertGroupWithDetailsView> getExpertGroupSummaries(Pageable pageable,
                                                              @Param(value = "currentUserId") UUID currentUseId);
+
+    @Query("""
+        SELECT
+        u.displayName
+        FROM ExpertGroupAccessJpaEntity e
+        LEFT JOIN UserJpaEntity u on e.userId = u.id
+        WHERE e.id = :expertGroupId""")
+    List<MemberView> getMembersByExpertID(@Param(value = "currentUserId") Integer count,
+                                          @Param(value = "expertGroupId") Long expertGroupID);
 }
