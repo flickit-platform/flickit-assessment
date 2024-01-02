@@ -8,6 +8,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface GetExpertGroupListUseCase {
@@ -35,8 +36,8 @@ public interface GetExpertGroupListUseCase {
         }
     }
 
-    record ExpertGroupListItem(Long id, String title, String bio, String picture,
-                               Integer publishedKitsCount, UUID ownerId, Boolean editable) {
+    record ExpertGroupListItem(Long id, String title, String bio, String picture, Integer publishedKitsCount,
+                               int membersCount, UUID ownerId, Boolean editable) {
     }
 
 }

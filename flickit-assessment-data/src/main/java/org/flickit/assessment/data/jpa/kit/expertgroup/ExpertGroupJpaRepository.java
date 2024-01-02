@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
@@ -19,7 +20,8 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         e.picture as picture,
         e.bio as bio,
         e.ownerId as ownerId,
-        COUNT(ak) as publishedKitsCount
+        COUNT(ak) as publishedKitsCount,
+        COUNT(ac) as membersCount
     FROM ExpertGroupJpaEntity e
     LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.isActive = true
     LEFT JOIN ExpertGroupAccessJpaEntity ac ON ac.expertGroupId = e.id
