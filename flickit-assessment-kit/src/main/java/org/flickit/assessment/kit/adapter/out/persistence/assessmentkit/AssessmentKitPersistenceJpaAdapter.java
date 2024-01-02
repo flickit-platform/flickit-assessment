@@ -120,15 +120,17 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<GetAssessmentKitListUseCase.AssessmentKitListItem> loadKitList(GetAssessmentKitListUseCase.Param param) {
-        var pageResult = repository.findAllKits(param.getIsPrivate(),
-            param.getCurrentUserId(),
-            PageRequest.of(param.getPage(), param.getSize()));
+    public PaginatedResponse<GetAssessmentKitListUseCase.AssessmentKitListItem> loadKitList(LoadAssessmentKitListPort.Param param) {
+        Page<AssessmentKitJpaEntity> pageResult;
+        if (param.isPrivate()) {
+            pageResult =
+                repository.findCurrentUserActivePrivateKits(param.currentUserId(), PageRequest.of(param.page(), param.size()));
+        } else {
+            pageResult = repository.findAllActivePublicKits(PageRequest.of(param.page(), param.size()));
+        }
 
-        List<AssessmentKitJpaEntity> kitEntities = pageResult.getContent();
-
-        List<GetAssessmentKitListUseCase.AssessmentKitListItem> items = kitEntities.stream()
-            .map(e -> {
+        List<GetAssessmentKitListUseCase.AssessmentKitListItem> items = pageResult.getContent().stream()
+            .map((AssessmentKitJpaEntity e) -> {
                 Set<AssessmentKitTagJpaEntity> tags = e.getTags();
                 ExpertGroupJpaEntity expertGroupEntity = expertGroupRepository.findById(e.getExpertGroupId()).get();
                 List<AssessmentJpaEntity> assessmentEntities = assessmentRepository.findAllByAssessmentKitId(e.getId());

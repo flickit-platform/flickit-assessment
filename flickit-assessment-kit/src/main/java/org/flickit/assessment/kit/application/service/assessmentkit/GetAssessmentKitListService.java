@@ -14,9 +14,17 @@ public class GetAssessmentKitListService implements GetAssessmentKitListUseCase 
 
     private final LoadAssessmentKitListPort loadAssessmentKitListPort;
 
-
     @Override
-    public PaginatedResponse<AssessmentKitListItem> getAssessmentKitList(Param param) {
-        return loadAssessmentKitListPort.loadKitList(param);
+        public PaginatedResponse<AssessmentKitListItem> getAssessmentKitList(Param param) {
+        return loadAssessmentKitListPort.loadKitList(toPortParam(param));
+    }
+
+    private LoadAssessmentKitListPort.Param toPortParam(Param param) {
+        return new LoadAssessmentKitListPort.Param(
+            param.getIsPrivate(),
+            param.getPage(),
+            param.getSize(),
+            param.getCurrentUserId()
+        );
     }
 }

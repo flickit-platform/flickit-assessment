@@ -19,7 +19,17 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
         "WHERE u.id IN (SELECT ku.id.userId FROM KitUserAccessJpaEntity ku WHERE ku.id.kitId = :kitId)")
     Page<UserJpaEntity> findAllKitUsers(Long kitId, Pageable pageable);
 
-    @Query("SELECT k FROM AssessmentKitJpaEntity k JOIN KitUserAccessJpaEntity ku ON k.id = ku.id.kitId " +
-        "WHERE k.isPrivate = :isPrivate AND ku.id.userId = :currentUserId")
-    Page<AssessmentKitJpaEntity> findAllKits(Boolean isPrivate, UUID currentUserId, Pageable pageable);
+    @Query("""
+        SELECT k
+        FROM AssessmentKitJpaEntity k JOIN KitUserAccessJpaEntity ku ON k.id = ku.id.kitId
+        WHERE k.isActive = true AND k.isPrivate = true AND ku.id.userId = :currentUserId
+        """)
+    Page<AssessmentKitJpaEntity> findCurrentUserActivePrivateKits(UUID currentUserId, Pageable pageable);
+
+    @Query("""
+        SELECT k
+        FROM AssessmentKitJpaEntity k
+        WHERE k.isActive = true AND k.isPrivate = false
+        """)
+    Page<AssessmentKitJpaEntity> findAllActivePublicKits(Pageable pageable);
 }
