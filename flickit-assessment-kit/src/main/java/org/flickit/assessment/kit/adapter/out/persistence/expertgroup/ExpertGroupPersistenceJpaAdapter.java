@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,29 +34,27 @@ public class ExpertGroupPersistenceJpaAdapter implements
         var pageResult = repository.getExpertGroupSummaries(param.currentUserID(),PageRequest.of(param.page(), param.size()));
         List<GetExpertGroupListUseCase.ExpertGroupListItem> items = pageResult.getContent().stream()
             .map(ExpertGroupMapper::mapToExpertGroupListItem)
+            .map(item -> {
+                var members = repository.getMembersByExpert(item.id()).stream()
+                    .map(ExpertGroupMapper::mapToMember)
+                    .toList();
+
+                return new GetExpertGroupListUseCase.ExpertGroupListItem(
+                    item.id(),
+                    item.title(),
+                    item.bio(),
+                    item.picture(),
+                    item.publishedKitsCount(),
+                    item.membersCount(),
+                    members,
+                    item.ownerId(),
+                    item.editable()
+                );
+            })
             .toList();
 
-
-        List<GetExpertGroupListUseCase.ExpertGroupListItem> itemsWithMembers = new ArrayList<>();
-        for (var item: items) {
-            var members = repository.getMembersByExpert(item.id()).stream()
-                .map(ExpertGroupMapper::mapToMember)
-                .toList();
-            itemsWithMembers.add(new GetExpertGroupListUseCase.ExpertGroupListItem(
-                item.id(),
-                item.title(),
-                item.bio(),
-                item.picture(),
-                item.publishedKitsCount(),
-                item.membersCount(),
-                members,
-                item.ownerId(),
-                item.editable())
-            );
-        }
-
         return new PaginatedResponse<>(
-            itemsWithMembers,
+            items,
             pageResult.getNumber(),
             pageResult.getSize(),
             ExpertGroupJpaEntity.Fields.NAME,
