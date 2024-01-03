@@ -46,4 +46,95 @@
                               tableName="fac_evidence"/>
     </changeSet>
 
+    <changeSet id="0.12-07" author="Ali Sedaghat">
+        <renameTable oldTableName="baseinfo_assessmentkit" newTableName="fak_assessment_kit"/>
+    </changeSet>
+
+    <changeSet id="0.12-08" author="Ali Sedaghat">
+        <renameColumn tableName="fak_assessment_kit" oldColumnName="is_active" newColumnName="published"/>
+    </changeSet>
+
+    <changeSet id="0.12-09" author="Ali Sedaghat">
+        <sql>alter table fak_assessment_kit rename constraint baseinfo_assessmentprofile_pkey to pk_fak_assessment_kit;</sql>
+    </changeSet>
+
+    <changeSet id="0.12-10" author="Ali Sedaghat">
+        <dropAllForeignKeyConstraints baseTableName="fak_assessment_kit"/>
+    </changeSet>
+
+    <changeSet id="0.12-11" author="Ali Sedaghat">
+        <dropUniqueConstraint constraintName="baseinfo_assessmentprofile_code_5a9ff625_uniq" tableName="fak_assessment_kit"/>
+    </changeSet>
+
+    <changeSet id="0.12-12" author="Ali Sedaghat">
+        <dropUniqueConstraint constraintName="baseinfo_assessmentprofile_title_0279319f_uniq" tableName="fak_assessment_kit"/>
+    </changeSet>
+
+    <changeSet id="0.12-14" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_assessment_kit"
+                                 baseColumnNames="expert_group_id"
+                                 referencedTableName="baseinfo_expertgroup"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_assessment_kit_fak_expert_group_expert_group_id"/>
+    </changeSet>
+
+    <changeSet id="0.12-15" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_assessment_kit" columnNames="code" constraintName="uq_fak_kit_assessment_code"/>
+    </changeSet>
+
+    <changeSet id="0.12-16" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_assessment_kit" columnNames="title" constraintName="uq_fak_kit_assessment_title"/>
+    </changeSet>
+
+    <changeSet id="0.12-17" author="Ali Sedaghat">
+        <renameSequence oldSequenceName="baseinfo_assessmentprofile_id_seq" newSequenceName="fak_assessment_kit_id_seq"/>
+    </changeSet>
+
+    <changeSet id="0.12-18" author="Ali Sedaghat">
+        <addColumn tableName="fak_assessment_kit">
+            <column name="created_by" type="uuid"/>
+            <column name="last_modified_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-19" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_assessment_kit"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_assessment_kit_account_user_created_by"/>
+    </changeSet>
+
+    <changeSet id="0.12-20" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_assessment_kit"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_assessment_kit_account_user_last_modified_by"/>
+    </changeSet>
+
+    <changeSet id="0.12-21" author="Ali Sedaghat">
+        <update tableName="fak_assessment_kit">
+            <column name="created_by"
+                    valueComputed="baseinfo_expertgroup.owner_id FROM baseinfo_expertgroup
+                     WHERE fak_assessment_kit.expert_group_id = baseinfo_expertgroup.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-22" author="Ali Sedaghat">
+        <update tableName="fak_assessment_kit">
+            <column name="last_modified_by"
+                    valueComputed="baseinfo_expertgroup.owner_id FROM baseinfo_expertgroup
+                     WHERE fak_assessment_kit.expert_group_id = baseinfo_expertgroup.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-23" author="Ali Sedaghat">
+        <addNotNullConstraint columnName="created_by" tableName="fak_assessment_kit"/>
+    </changeSet>
+
+    <changeSet id="0.12-24" author="Ali Sedaghat">
+        <addNotNullConstraint columnName="last_modified_by" tableName="fak_assessment_kit"/>
+    </changeSet>
+
 </databaseChangeLog>
