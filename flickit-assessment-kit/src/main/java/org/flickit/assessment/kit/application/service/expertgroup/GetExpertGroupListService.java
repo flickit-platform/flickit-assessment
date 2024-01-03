@@ -14,7 +14,7 @@ import java.util.function.Function;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetExpertUserListService implements GetExpertGroupListUseCase {
+public class GetExpertGroupListService implements GetExpertGroupListUseCase {
 
     private final LoadExpertGroupListPort loadExpertGroupListPort;
     @Override
