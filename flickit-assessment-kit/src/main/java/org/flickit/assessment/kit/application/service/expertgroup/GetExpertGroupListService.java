@@ -18,7 +18,7 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
 
     private final LoadExpertGroupListPort loadExpertGroupListPort;
     @Override
-    public PaginatedResponse<ExpertGroupListItem> getExpertGroupList(Param param) {
+    public PaginatedResponse<ExpertGroupListItemFinal> getExpertGroupList(Param param) {
 
         var pageResult = loadExpertGroupListPort.loadExpertGroupList(toParam(param.getPage(), param.getSize(), param.getCurrentUserID()));
         return PaginatedResponseUtil.mapPaginatedResponse(
@@ -26,7 +26,7 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
             expertGroupListItem -> {
                 boolean isEditable = expertGroupListItem.ownerId().equals(param.getCurrentUserID());
 
-                return new ExpertGroupListItem(
+                return new ExpertGroupListItemFinal(
                     expertGroupListItem.id(),
                     expertGroupListItem.title(),
                     expertGroupListItem.bio(),
@@ -34,7 +34,6 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
                     expertGroupListItem.publishedKitsCount(),
                     expertGroupListItem.members().size(),
                     expertGroupListItem.members().stream().limit(5).toList(),
-                    null,
                     isEditable
                 );
             }

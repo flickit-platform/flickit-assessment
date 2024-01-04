@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public interface GetExpertGroupListUseCase {
 
-    PaginatedResponse<ExpertGroupListItem> getExpertGroupList(Param param);
+    PaginatedResponse<ExpertGroupListItemFinal> getExpertGroupList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -38,8 +38,10 @@ public interface GetExpertGroupListUseCase {
     }
 
     record ExpertGroupListItem(Long id, String title, String bio, String picture, Integer publishedKitsCount,
-                               Integer membersCount, List<Member> members, UUID ownerId, Boolean editable) {
-    }
+                               Integer membersCount, List<Member> members, UUID ownerId, Boolean editable) {}
+
+    record ExpertGroupListItemFinal(Long id, String title, String bio, String picture, Integer publishedKitsCount,
+                               Integer membersCount, List<Member> members, Boolean editable) {}
 
     record Member(String displayName){}
 }
