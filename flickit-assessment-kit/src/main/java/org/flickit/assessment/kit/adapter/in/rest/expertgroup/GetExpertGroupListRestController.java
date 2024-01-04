@@ -22,7 +22,7 @@ public class GetExpertGroupListRestController {
     private final UserContext userContext;
 
     @GetMapping("/expert-groups")
-    public ResponseEntity<PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem>> getExpertGroupList(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItemFinal>> getExpertGroupList(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
         var currentUserID = userContext.getUser().id();
         var expertGroupList = useCase.getExpertGroupList(toParam(size, page, currentUserID));
         return new ResponseEntity<>(expertGroupList, HttpStatus.OK);
