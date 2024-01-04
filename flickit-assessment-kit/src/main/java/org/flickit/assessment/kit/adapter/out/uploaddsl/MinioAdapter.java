@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.uploaddsl;
 
 import io.minio.*;
-import io.minio.errors.*;
+import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import io.minio.messages.VersioningConfiguration;
 import io.minio.messages.VersioningConfiguration.Status;
@@ -13,10 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -32,36 +29,30 @@ public class MinioAdapter implements UploadKitPort {
     @Override
     public void upload(MultipartFile dslZipFile, String dslJsonFile) {
         String bucketName = properties.getBucketName();
+        String dslFileNameNoSuffix = Objects.requireNonNull(dslZipFile.getOriginalFilename()).replace(".zip", "");
+        String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + "/" + dslFileNameNoSuffix + "/";
+        String zipFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
+        String zipJsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
+
         try {
-            minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
-                .bucket(bucketName)
-                .config(new VersioningConfiguration(Status.ENABLED, false))
-                .build());
             checkBucketExistence(bucketName);
+            setBucketVersioning(bucketName);
+            boolean objectExistence = checkObjectExistence(bucketName, zipFileObjectName);
 
             InputStream zipFileInputStream = dslZipFile.getInputStream();
-            String dslFileNameNoSuffix = Objects.requireNonNull(dslZipFile.getOriginalFilename()).replace(".zip", "");
-            String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + "/" + dslFileNameNoSuffix + "/";
-            String zipFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
-            String zipJsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
-
-            boolean objectExistence = checkObjectExistence(dslZipFile, bucketName, zipFileObjectName);
-
             ObjectWriteResponse dslZipFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
                 .bucket(bucketName)
                 .object(zipFileObjectName)
                 .stream(zipFileInputStream, zipFileInputStream.available(), -1)
                 .build());
+            String zipFileVersionId = dslZipFileWriteResponse.versionId();
 
             String zipFileUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                 .bucket(bucketName)
                 .object(zipFileObjectName)
-                    .expiry(5, TimeUnit.MINUTES)
-                    .method(Method.GET)
+                .expiry(5, TimeUnit.MINUTES)
+                .method(Method.GET)
                 .build());
-
-            log.warn("zipFileUrl:");
-            log.warn(zipFileUrl);
 
             InputStream jsonFileInputStream = new ByteArrayInputStream(dslJsonFile.getBytes());
             ObjectWriteResponse dslJsonFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
@@ -69,6 +60,7 @@ public class MinioAdapter implements UploadKitPort {
                 .object(zipJsonFileObjectName)
                 .stream(jsonFileInputStream, jsonFileInputStream.available(), -1)
                 .build());
+            String jsonFileVersionId = dslJsonFileWriteResponse.versionId();
 
             String jsonFileUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                 .bucket(bucketName)
@@ -77,17 +69,21 @@ public class MinioAdapter implements UploadKitPort {
                 .method(Method.GET)
                 .build());
 
-            log.warn("jsonFileUrl:");
-            log.warn(jsonFileUrl);
-
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    private boolean checkObjectExistence(MultipartFile dslZipFile, String bucketName, String objectName) throws ErrorResponseException, InsufficientDataException, InternalException, InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException, ServerException, XmlParserException {
+    private void setBucketVersioning(String bucketName) throws Exception {
+        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
+            .bucket(bucketName)
+            .config(new VersioningConfiguration(Status.ENABLED, false))
+            .build());
+    }
+
+    private boolean checkObjectExistence(String bucketName, String objectName) throws Exception {
         try {
-            StatObjectResponse statObjectResponse = minioClient.statObject(StatObjectArgs.builder()
+            minioClient.statObject(StatObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
                 .build());
