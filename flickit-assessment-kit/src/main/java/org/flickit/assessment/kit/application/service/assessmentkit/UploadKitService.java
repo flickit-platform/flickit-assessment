@@ -17,7 +17,12 @@ public class UploadKitService implements UploadKitUseCase {
 
     @Override
     public String upload(Param param) {
-        uploadKitPort.upload(param.getDslFile());
-        return getDslContentPort.getDslContent(param.getDslFile());
+//        String dslContentJson = getDslContentPort.getDslContent(param.getDslFile());
+        String dslContentJson = "{ \"dslContentJson\": \"sample\", \"new\": \"sample\" }";
+        if (dslContentJson != null) {
+            uploadKitPort.upload(param.getDslFile(), dslContentJson);
+            // persist in data base
+        }
+        return dslContentJson;
     }
 }

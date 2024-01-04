@@ -60,15 +60,15 @@ public class DslParserAdapter implements GetDslContentPort {
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 String name = entry.getName();
                 if (name.endsWith(".ak")) {
-                    String fileBaseName = name.substring(name.lastIndexOf('/') + 1); // Use the appropriate logic to get the base name
+                    String fileBaseName = name.substring(name.lastIndexOf('/') + 1);
                     String content = StreamUtils.copyToString(zipInputStream, StandardCharsets.UTF_8);
                     String trimContent = trimContent(content);
                     allContent.append("\n")
                         .append("// BEGIN FILE ").append(fileBaseName)
                         .append(trimContent);
                 }
-                zipInputStream.closeEntry();
             }
+            zipInputStream.closeEntry();
             return allContent.toString();
         } catch (IOException e) {
             throw new RuntimeException(e);

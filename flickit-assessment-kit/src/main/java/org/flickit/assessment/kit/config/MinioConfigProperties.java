@@ -14,7 +14,7 @@ public class MinioConfigProperties {
     private String accessKey = "minioadmin";
     private String accessSecret = "minioadmin";
     private String bucketName = "test";
-    private String objectName = "assessmentKit/";
+    private String objectName = "assessmentKit/dsl/";
     private Boolean secure = false;
 
 /*    private String url = "https://flickit-test-cdn.darkube.app:9000";

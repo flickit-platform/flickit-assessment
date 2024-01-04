@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan("org.flickit.assessment.kit")
-@EnableConfigurationProperties(MinioConfigProperties.class)
+@EnableConfigurationProperties({MinioConfigProperties.class, DslParserRestProperties.class})
 public class AssessmentKitAutoConfig {
 
     @Bean
