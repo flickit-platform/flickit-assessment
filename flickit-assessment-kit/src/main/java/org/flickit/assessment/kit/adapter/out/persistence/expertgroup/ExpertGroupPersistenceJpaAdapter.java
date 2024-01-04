@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 @Component
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem> loadExpertGroupList(LoadExpertGroupListPort.Param param) {
 
-        Function<GetExpertGroupListUseCase.ExpertGroupListItem, GetExpertGroupListUseCase.ExpertGroupListItem> mapMembersWithRepository
+        UnaryOperator<GetExpertGroupListUseCase.ExpertGroupListItem> mapMembersWithRepository
             = item -> ExpertGroupMapper.mapMembers.apply(repository, item);
 
         var pageResult = repository.getExpertGroupSummaries(param.currentUserID(),PageRequest.of(param.page(), param.size()));
