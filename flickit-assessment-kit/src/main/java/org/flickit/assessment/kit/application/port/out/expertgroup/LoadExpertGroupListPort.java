@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public interface LoadExpertGroupListPort {
     PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem> loadExpertGroupList(Param param);
+
     record Param(int page, int size, UUID currentUserID) {
     }
 }

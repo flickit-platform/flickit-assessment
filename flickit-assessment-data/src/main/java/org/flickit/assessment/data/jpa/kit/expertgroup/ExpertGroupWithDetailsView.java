@@ -12,6 +12,7 @@ public interface ExpertGroupWithDetailsView {
     String getBio();
 
     Integer getPublishedKitsCount();
+
     Boolean getEditable();
 
     UUID getOwnerId();

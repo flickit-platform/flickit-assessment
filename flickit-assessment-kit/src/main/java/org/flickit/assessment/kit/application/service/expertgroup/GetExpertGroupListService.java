@@ -17,6 +17,7 @@ import java.util.function.Function;
 public class GetExpertGroupListService implements GetExpertGroupListUseCase {
 
     private final LoadExpertGroupListPort loadExpertGroupListPort;
+
     @Override
     public PaginatedResponse<ExpertGroupListItemFinal> getExpertGroupList(Param param) {
 
@@ -41,8 +42,8 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
 
     }
 
-    private LoadExpertGroupListPort.Param toParam(int page, int size, UUID currentUserID){
-        return  new LoadExpertGroupListPort.Param(page, size, currentUserID);
+    private LoadExpertGroupListPort.Param toParam(int page, int size, UUID currentUserID) {
+        return new LoadExpertGroupListPort.Param(page, size, currentUserID);
     }
 }
 

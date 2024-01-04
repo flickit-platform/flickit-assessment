@@ -7,10 +7,10 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-
 import java.util.List;
 import java.util.UUID;
+
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetExpertGroupListUseCase {
 
@@ -38,10 +38,13 @@ public interface GetExpertGroupListUseCase {
     }
 
     record ExpertGroupListItem(Long id, String title, String bio, String picture, Integer publishedKitsCount,
-                               Integer membersCount, List<Member> members, UUID ownerId, Boolean editable) {}
+                               Integer membersCount, List<Member> members, UUID ownerId, Boolean editable) {
+    }
 
     record ExpertGroupListItemFinal(Long id, String title, String bio, String picture, Integer publishedKitsCount,
-                               Integer membersCount, List<Member> members, Boolean editable) {}
+                                    Integer membersCount, List<Member> members, Boolean editable) {
+    }
 
-    record Member(String displayName){}
+    record Member(String displayName) {
+    }
 }
