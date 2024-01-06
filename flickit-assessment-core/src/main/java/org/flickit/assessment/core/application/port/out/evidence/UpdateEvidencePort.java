@@ -9,7 +9,8 @@ public interface UpdateEvidencePort {
 
     record Param(UUID id,
                  String description,
-                 LocalDateTime lastModificationTime) {
+                 LocalDateTime lastModificationTime,
+                 UUID lastModifiedById) {
     }
 
     record Result(UUID id) {

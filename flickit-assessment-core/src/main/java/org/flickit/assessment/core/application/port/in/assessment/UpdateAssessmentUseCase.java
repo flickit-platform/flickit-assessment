@@ -10,6 +10,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface UpdateAssessmentUseCase {
@@ -34,10 +35,14 @@ public interface UpdateAssessmentUseCase {
         @NotNull(message = UPDATE_ASSESSMENT_COLOR_ID_NOT_NULL)
         Integer colorId;
 
-        public Param(UUID id, String title, Integer colorId) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID lastModifiedBy;
+
+        public Param(UUID id, String title, Integer colorId, UUID lastModifiedBy) {
             this.id = id;
             this.title = title;
             this.colorId = colorId;
+            this.lastModifiedBy = lastModifiedBy;
             this.validateSelf();
         }
     }

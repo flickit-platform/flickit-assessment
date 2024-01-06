@@ -2,8 +2,10 @@ package org.flickit.assessment.data.jpa.kit.subject;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "baseinfo_assessmentsubject")
@@ -41,4 +43,19 @@ public class SubjectJpaEntity {
 
     @Column(name = "index", nullable = false)
     private Integer index;
+
+    public SubjectJpaEntity(Long id, String code, String title, String description, LocalDateTime creationTime,
+                            LocalDateTime lastModificationTime, Long assessmentKitId, Integer index) {
+        this.id = id;
+        this.code = code;
+        this.title = title;
+        this.description = description;
+        this.creationTime = creationTime;
+        this.lastModificationTime = lastModificationTime;
+        this.assessmentKitId = assessmentKitId;
+        this.index = index;
+    }
+
+    @OneToMany(mappedBy = "subject")
+    private List<AttributeJpaEntity> attributes;
 }

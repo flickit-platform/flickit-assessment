@@ -255,7 +255,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"description\": \"description\",\n    \"createdById\": \"70c58eab-3d5f-48aa-9ffb-07802e5ea48f\",\n    \"assessmentId\": \"3b39ed16-9478-464f-a295-955f69f89ec2\",\n    \"questionId\": 1\n}",
+					"raw": "{\n    \"description\": \"description\",\n    \"assessmentId\": \"3b39ed16-9478-464f-a295-955f69f89ec2\",\n    \"questionId\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"

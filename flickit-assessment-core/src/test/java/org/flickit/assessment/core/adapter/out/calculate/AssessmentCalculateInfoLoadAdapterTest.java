@@ -5,8 +5,6 @@ import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
 import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
-import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
-import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -19,6 +17,9 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,13 +31,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.test.fixture.adapter.dto.AnswerOptionDtoMother.createAnswerOptionDto;
 import static org.flickit.assessment.core.test.fixture.adapter.dto.QuestionDtoMother.createQuestionDtoWithAffectedLevelAndAttributes;
-import static org.flickit.assessment.core.test.fixture.adapter.dto.SubjectDtoMother.createSubjectDto;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeJapEntityMother.createAttributeEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEntityMother.subjectWithAttributes;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,44 +59,13 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private SubjectValueJpaRepository subjectValueRepo;
     @Mock
-    private SubjectRestAdapter subjectRestAdapter;
+    private SubjectJpaRepository subjectRepository;
     @Mock
     private QuestionRestAdapter questionRestAdapter;
     @Mock
     private AnswerOptionRestAdapter answerOptionRestAdapter;
     @Mock
     private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
-
-    @Test
-    void testLoad() {
-        Context context = createContext();
-
-        doMocks(context);
-        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        when(maturityLevelJpaAdapter.loadByKitIdWithCompetences(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
-            .thenReturn(maturityLevels);
-
-        var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
-
-        assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
-
-        assertAssessment(context.assessmentResultEntity().getAssessment(), loadedAssessmentResult.getAssessment());
-
-        assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues());
-
-        var resultAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
-            .flatMap(sv -> sv.getQualityAttributeValues().stream())
-            .toList();
-        assertAttributeValues(context.qualityAttributeValues, resultAttributeValues);
-
-        List<Answer> answers = new ArrayList<>(resultAttributeValues.stream()
-            .flatMap(qav -> qav.getAnswers().stream())
-            .collect(Collectors.toMap(Answer::getId, Function.identity(), (a, b) -> a))
-            .values());
-
-        assertAnswers(context.answerEntities, answers);
-
-    }
 
     private static void assertAssessment(AssessmentJpaEntity assessmentEntity, Assessment resultAssessment) {
         assertEquals(assessmentEntity.getId(), resultAssessment.getId());
@@ -164,6 +135,15 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var attribute5Id = attributeId++;
         var attribute6Id = attributeId;
 
+        Long kitId = 123L;
+
+        AttributeJpaEntity attribute1 = createAttributeEntity(attribute1Id, 1, kitId);
+        AttributeJpaEntity attribute2 = createAttributeEntity(attribute2Id, 2, kitId);
+        AttributeJpaEntity attribute3 = createAttributeEntity(attribute3Id, 3, kitId);
+        AttributeJpaEntity attribute4 = createAttributeEntity(attribute4Id, 4, kitId);
+        AttributeJpaEntity attribute5 = createAttributeEntity(attribute5Id, 5, kitId);
+        AttributeJpaEntity attribute6 = createAttributeEntity(attribute6Id, 6, kitId);
+
         var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1Id);
         var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2Id);
         var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3Id);
@@ -177,10 +157,10 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var subjectValue3 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
         List<SubjectValueJpaEntity> subjectValues = List.of(subjectValue1, subjectValue2, subjectValue3);
 
-        var subjectDto1 = createSubjectDto(subjectValue1.getSubjectId(), List.of(qav1, qav2));
-        var subjectDto2 = createSubjectDto(subjectValue2.getSubjectId(), List.of(qav3, qav4));
-        var subjectDto3 = createSubjectDto(subjectValue3.getSubjectId(), List.of(qav5, qav6));
-        List<SubjectDto> subjectDtos = List.of(subjectDto1, subjectDto2, subjectDto3);
+        var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(), 1, List.of(attribute1, attribute2));
+        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(), 1, List.of(attribute3, attribute4));
+        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), 1, List.of(attribute5, attribute6));
+        List<SubjectJpaEntity> subjects = List.of(subject1, subject2, subject3);
 
         var questionDto1 = createQuestionDtoWithAffectedLevelAndAttributes(1L, LEVEL_ONE_ID, attribute1Id, attribute2Id, attribute3Id);
         var questionDto2 = createQuestionDtoWithAffectedLevelAndAttributes(2L, LEVEL_ONE_ID, attribute4Id, attribute5Id, attribute6Id);
@@ -216,10 +196,41 @@ class AssessmentCalculateInfoLoadAdapterTest {
             assessmentResultEntity,
             subjectValues,
             qualityAttributeValues,
-            subjectDtos,
+            subjects,
             questionDtos,
             answerEntities,
             answerOptionDtos);
+    }
+
+    @Test
+    void testLoad() {
+        Context context = createContext();
+
+        doMocks(context);
+        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
+        when(maturityLevelJpaAdapter.loadByKitIdWithCompetences(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
+            .thenReturn(maturityLevels);
+
+        var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
+
+        assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
+
+        assertAssessment(context.assessmentResultEntity().getAssessment(), loadedAssessmentResult.getAssessment());
+
+        assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues());
+
+        var resultAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
+            .flatMap(sv -> sv.getQualityAttributeValues().stream())
+            .toList();
+        assertAttributeValues(context.qualityAttributeValues, resultAttributeValues);
+
+        List<Answer> answers = new ArrayList<>(resultAttributeValues.stream()
+            .flatMap(qav -> qav.getAnswers().stream())
+            .collect(toMap(Answer::getId, Function.identity(), (a, b) -> a))
+            .values());
+
+        assertAnswers(context.answerEntities, answers);
+
     }
 
     private void doMocks(Context context) {
@@ -229,8 +240,8 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.subjectValues());
         when(qualityAttrValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.qualityAttributeValues());
-        when(subjectRestAdapter.loadSubjectsDtoByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
-            .thenReturn(context.subjectDtos());
+        when(subjectRepository.loadByKitIdWithAttributes(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
+            .thenReturn(context.subjects);
         when(questionRestAdapter.loadByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
             .thenReturn(context.questionDtos());
         when(answerRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
@@ -243,7 +254,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
         AssessmentResultJpaEntity assessmentResultEntity,
         List<SubjectValueJpaEntity> subjectValues,
         List<QualityAttributeValueJpaEntity> qualityAttributeValues,
-        List<SubjectDto> subjectDtos,
+        List<SubjectJpaEntity> subjects,
         List<QuestionDto> questionDtos,
         List<AnswerJpaEntity> answerEntities,
         List<AnswerOptionDto> answerOptionDtos

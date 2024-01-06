@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.port.in.assessment.CreateAssessme
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.subject.LoadSubjectByAssessmentKitIdPort;
+import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.assessment.core.test.fixture.application.QualityAttributeMother;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class CreateAssessmentServiceTest {
     private CreateAssessmentResultPort createAssessmentResultPort;
 
     @Mock
-    private LoadSubjectByAssessmentKitIdPort loadSubjectsPort;
+    private LoadSubjectPort loadSubjectsPort;
 
     @Mock
     private CreateSubjectValuePort createSubjectValuePort;
@@ -46,19 +46,20 @@ class CreateAssessmentServiceTest {
     @Mock
     private CreateQualityAttributeValuePort createQualityAttributeValuePort;
 
-
     @Test
     void testCreateAssessment_ValidParam_PersistsAndReturnsId() {
+        UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
-            1
+            1,
+            createdBy
         );
         UUID expectedId = UUID.randomUUID();
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
         List<Subject> expectedResponse = List.of();
-        when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
+        when(loadSubjectsPort.loadByKitIdWithAttributes(any())).thenReturn(expectedResponse);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
         assertEquals(expectedId, result.id());
@@ -76,18 +77,20 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_ValidParam_PersistsAssessmentResult() {
+        UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
-            1
+            1,
+            createdBy
         );
         UUID assessmentId = UUID.randomUUID();
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(assessmentId);
         UUID expectedResultId = UUID.randomUUID();
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(expectedResultId);
         List<Subject> expectedResponse = List.of();
-        when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
+        when(loadSubjectsPort.loadByKitIdWithAttributes(any())).thenReturn(expectedResponse);
 
         service.createAssessment(param);
 
@@ -102,11 +105,13 @@ class CreateAssessmentServiceTest {
     @Test
     void testCreateAssessment_ValidParam_PersistsSubjectValues() {
         Long assessmentKitId = 1L;
+        UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             assessmentKitId,
-            1
+            1,
+            createdBy
         );
 
         QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
@@ -120,7 +125,7 @@ class CreateAssessmentServiceTest {
             new Subject(2L, List.of(qa3, qa4)),
             new Subject(3L, List.of(qa5))
         );
-        when(loadSubjectsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedSubjects);
+        when(loadSubjectsPort.loadByKitIdWithAttributes(assessmentKitId)).thenReturn(expectedSubjects);
 
         service.createAssessment(param);
 
@@ -130,11 +135,13 @@ class CreateAssessmentServiceTest {
     @Test
     void testCreateAssessment_ValidCommand_PersistsQualityAttributeValue() {
         Long assessmentKitId = 1L;
+        UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             assessmentKitId,
-            1
+            1,
+            createdBy
         );
         QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
         QualityAttribute qa2 = QualityAttributeMother.simpleAttribute();
@@ -147,7 +154,7 @@ class CreateAssessmentServiceTest {
             new Subject(2L, List.of(qa3, qa4)),
             new Subject(3L, List.of(qa5))
         );
-        when(loadSubjectsPort.loadByAssessmentKitId(assessmentKitId)).thenReturn(expectedSubjects);
+        when(loadSubjectsPort.loadByKitIdWithAttributes(assessmentKitId)).thenReturn(expectedSubjects);
 
         service.createAssessment(param);
 
@@ -156,14 +163,16 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_InvalidColor_UseDefaultColor() {
+        UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
-            7
+            7,
+            createdBy
         );
         List<Subject> expectedResponse = List.of();
-        when(loadSubjectsPort.loadByAssessmentKitId(any())).thenReturn(expectedResponse);
+        when(loadSubjectsPort.loadByKitIdWithAttributes(any())).thenReturn(expectedResponse);
 
         service.createAssessment(param);
 

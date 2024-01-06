@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.11-01" author="MKouhestani">
+        <addColumn tableName="fac_assessment">
+            <column name="created_by" type="uuid"/>
+            <column name="last_modified_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.11-02" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fac_assessment"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessment_account_user_created_by"/>
+    </changeSet>
+
+    <changeSet id="0.11-03" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fac_assessment"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessment_account_user_last_modified_by"/>
+    </changeSet>
+
+    <changeSet id="0.11-04" author="MKouhestani">
+        <update tableName="fac_assessment">
+            <column name="created_by"
+                    valueComputed="account_space.owner_id FROM account_space WHERE fac_assessment.space_id = account_space.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.11-05" author="MKouhestani">
+        <update tableName="fac_assessment">
+            <column name="last_modified_by"
+                    valueComputed="account_space.owner_id FROM account_space WHERE fac_assessment.space_id = account_space.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.11-06" author="MKouhestani">
+        <addNotNullConstraint columnName="created_by"
+                              constraintName="created_by_not_null"
+                              tableName="fac_assessment"/>
+    </changeSet>
+
+    <changeSet id="0.11-07" author="MKouhestani">
+        <addNotNullConstraint columnName="last_modified_by"
+                              constraintName="last_modified_by_not_null"
+                              tableName="fac_assessment"/>
+    </changeSet>
+
+    <changeSet id="0.11-08" author="MKouhestani">
+        <addColumn tableName="fac_answer">
+            <column name="created_by" type="uuid"/>
+            <column name="last_modified_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.11-09" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fac_answer"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_answer_account_user_created_by"/>
+    </changeSet>
+
+    <changeSet id="0.11-10" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fac_answer"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_answer_account_user_last_modified_by"/>
+    </changeSet>
+
+    <changeSet id="0.11-11" author="MKouhestani">
+        <update tableName="fac_answer">
+            <column name="created_by" valueComputed="fac_assessment.created_by FROM fac_assessment WHERE
+            fac_assessment.id = (SELECT fac_assessment_result.assessment_id FROM fac_assessment_result WHERE
+            fac_assessment_result.id = fac_answer.assessment_result_id)"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.11-12" author="MKouhestani">
+        <update tableName="fac_answer">
+            <column name="last_modified_by" valueComputed="fac_assessment.created_by FROM fac_assessment WHERE
+            fac_assessment.id = (SELECT fac_assessment_result.assessment_id FROM fac_assessment_result WHERE
+            fac_assessment_result.id = fac_answer.assessment_result_id)"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.11-13" author="MKouhestani">
+        <addNotNullConstraint columnName="created_by"
+                              constraintName="created_by_not_null"
+                              tableName="fac_answer"/>
+    </changeSet>
+
+    <changeSet id="0.11-14" author="MKouhestani">
+        <addNotNullConstraint columnName="last_modified_by"
+                              constraintName="last_modified_by_not_null"
+                              tableName="fac_answer"/>
+    </changeSet>
+
+    <changeSet id="0.11-15" author="MKouhestani">
+        <dropNotNullConstraint tableName="account_useraccess" columnName="user_id"/>
+    </changeSet>
+
+    <changeSet id="0.11-16" author="MKouhestani">
+        <dropNotNullConstraint tableName="baseinfo_expertgroupaccess" columnName="user_id"/>
+    </changeSet>
+</databaseChangeLog>
