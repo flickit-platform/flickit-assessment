@@ -75,15 +75,15 @@
                                  baseColumnNames="expert_group_id"
                                  referencedTableName="baseinfo_expertgroup"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_assessment_kit_fak_expert_group_expert_group_id"/>
+                                 constraintName="fk_fak_assessmentkit_expertgroup"/>
     </changeSet>
 
     <changeSet id="0.12-15" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_assessment_kit" columnNames="code" constraintName="uq_fak_kit_assessment_code"/>
+        <addUniqueConstraint tableName="fak_assessment_kit" columnNames="code" constraintName="uq_fak_assessmentkit_code"/>
     </changeSet>
 
     <changeSet id="0.12-16" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_assessment_kit" columnNames="title" constraintName="uq_fak_kit_assessment_title"/>
+        <addUniqueConstraint tableName="fak_assessment_kit" columnNames="title" constraintName="uq_fak_assessmentkit_title"/>
     </changeSet>
 
     <changeSet id="0.12-17" author="Ali Sedaghat">
@@ -102,7 +102,7 @@
                                  baseColumnNames="created_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_assessment_kit_account_user_created_by"/>
+                                 constraintName="fk_fak_assessmentkit_user_createdby"/>
     </changeSet>
 
     <changeSet id="0.12-20" author="Ali Sedaghat">
@@ -110,7 +110,7 @@
                                  baseColumnNames="last_modified_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_assessment_kit_account_user_last_modified_by"/>
+                                 constraintName="fk_fak_assessmentkit_user_lastmodifiedby"/>
     </changeSet>
 
     <changeSet id="0.12-21" author="Ali Sedaghat">
