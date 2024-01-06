@@ -51,7 +51,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
             () -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
-        List<Subject> subjects = subjectRepository.findAllByAssessmentKitId(kitId).stream()
+        List<Subject> subjects = subjectRepository.findAllByKitId(kitId).stream()
             .map(e -> {
                 List<Attribute> attributes = attributeRepository.findAllBySubjectId(e.getId()).stream()
                     .map(AttributeMapper::mapToDomainModel)
