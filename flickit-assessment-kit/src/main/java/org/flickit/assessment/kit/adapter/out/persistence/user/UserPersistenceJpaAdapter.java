@@ -1,11 +1,9 @@
 package org.flickit.assessment.kit.adapter.out.persistence.user;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.application.domain.User;
 import org.flickit.assessment.kit.application.port.out.user.LoadUserByEmailPort;
-import org.flickit.assessment.kit.application.port.out.user.LoadUserListByExpertGroupUseCase;
 import org.flickit.assessment.kit.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserPersistenceJpaAdapter implements
     LoadUserPort,
-    LoadUserByEmailPort,
-    LoadUserListByExpertGroupUseCase {
+    LoadUserByEmailPort {
 
     private final UserJpaRepository repository;
 
@@ -29,10 +26,5 @@ public class UserPersistenceJpaAdapter implements
     @Override
     public Optional<User> loadByEmail(String email) {
         return repository.findByEmailIgnoreCase(email).map(UserMapper::mapToDomainModel);
-    }
-
-    @Override
-    public Optional<UserJpaEntity> UsersOfExpertGroups() {
-        return repository.findUsersOfExpertGroups();
     }
 }
