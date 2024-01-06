@@ -169,12 +169,16 @@
     </changeSet>
 
     <changeSet id="0.12-31" author="Ali Sedaghat">
-        <sql>alter table fak_subject rename constraint baseinfo_assessmentsubject_index_check to fak_subject_index_check;</sql>
+        <sql>alter table fak_subject drop constraint if exists baseinfo_assessmentsubject_index_check;</sql>
     </changeSet>
 
     <changeSet id="0.12-32" author="Ali Sedaghat">
+        <renameColumn tableName="fak_subject" oldColumnName="assessment_kit_id" newColumnName="kit_id"/>
+    </changeSet>
+
+    <changeSet id="0.12-33" author="Ali Sedaghat">
         <addForeignKeyConstraint baseTableName="fak_subject"
-                                 baseColumnNames="assessment_kit_id"
+                                 baseColumnNames="kit_id"
                                  referencedTableName="fak_assessment_kit"
                                  referencedColumnNames="id"
                                  constraintName="fk_fak_subject_assessmentkit"
@@ -182,27 +186,27 @@
                                  initiallyDeferred="true"/>
     </changeSet>
 
-    <changeSet id="0.12-33" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_subject"
-                             columnNames="index,assessment_kit_id"
-                             constraintName="uq_fak_subject_index_assessmentkit_id"
-                             deferrable="true" initiallyDeferred="true"/>
-    </changeSet>
-
     <changeSet id="0.12-34" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_subject"
-                             columnNames="title,assessment_kit_id"
-                             constraintName="uq_fak_subject_title_assessmentkit_id"
+                             columnNames="index,kit_id"
+                             constraintName="uq_fak_subject_index_kit_id"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-35" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_subject"
-                             columnNames="code,assessment_kit_id"
-                             constraintName="uq_fak_subject_code_assessmentkit_id"/>
+                             columnNames="title,kit_id"
+                             constraintName="uq_fak_subject_title_kit_id"
+                             deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-36" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_subject"
+                             columnNames="code,kit_id"
+                             constraintName="uq_fak_subject_code_kit_id"/>
+    </changeSet>
+
+    <changeSet id="0.12-37" author="Ali Sedaghat">
         <addColumn tableName="fak_subject">
             <column name="weight" defaultValue="1" type="int">
                 <constraints nullable="false" />
@@ -210,19 +214,19 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.12-37" author="Ali Sedaghat">
+    <changeSet id="0.12-38" author="Ali Sedaghat">
         <addColumn tableName="fak_subject">
             <column name="created_by" type="uuid"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.12-38" author="Ali Sedaghat">
+    <changeSet id="0.12-39" author="Ali Sedaghat">
         <addColumn tableName="fak_subject">
             <column name="last_modified_by" type="uuid"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.12-39" author="Ali Sedaghat">
+    <changeSet id="0.12-40" author="Ali Sedaghat">
         <addForeignKeyConstraint baseTableName="fak_subject"
                                  baseColumnNames="created_by"
                                  referencedTableName="account_user"
@@ -230,7 +234,7 @@
                                  constraintName="fk_fak_subject_user_createdby"/>
     </changeSet>
 
-    <changeSet id="0.12-40" author="Ali Sedaghat">
+    <changeSet id="0.12-41" author="Ali Sedaghat">
         <addForeignKeyConstraint baseTableName="fak_subject"
                                  baseColumnNames="last_modified_by"
                                  referencedTableName="account_user"
@@ -238,29 +242,29 @@
                                  constraintName="fk_fak_subject_user_lastmodifiedby"/>
     </changeSet>
 
-    <changeSet id="0.12-41" author="Ali Sedaghat">
-        <update tableName="fak_subject">
-            <column name="created_by" valueComputed="fak_assessment_kit.created_by FROM fak_assessment_kit
-             WHERE fak_subject.assessment_kit_id = fak_assessment_kit.id"/>
-        </update>
-    </changeSet>
-
     <changeSet id="0.12-42" author="Ali Sedaghat">
         <update tableName="fak_subject">
-            <column name="last_modified_by" valueComputed="fak_assessment_kit.last_modified_by FROM fak_assessment_kit
-             WHERE fak_subject.assessment_kit_id = fak_assessment_kit.id"/>
+            <column name="created_by" valueComputed="fak_assessment_kit.created_by FROM fak_assessment_kit
+             WHERE fak_subject.kit_id = fak_assessment_kit.id"/>
         </update>
     </changeSet>
 
     <changeSet id="0.12-43" author="Ali Sedaghat">
-        <addNotNullConstraint tableName="fak_subject" columnName="created_by"/>
+        <update tableName="fak_subject">
+            <column name="last_modified_by" valueComputed="fak_assessment_kit.last_modified_by FROM fak_assessment_kit
+             WHERE fak_subject.kit_id = fak_assessment_kit.id"/>
+        </update>
     </changeSet>
 
     <changeSet id="0.12-44" author="Ali Sedaghat">
-        <addNotNullConstraint tableName="fak_subject" columnName="last_modified_by"/>
+        <addNotNullConstraint tableName="fak_subject" columnName="created_by"/>
     </changeSet>
 
     <changeSet id="0.12-45" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_subject" columnName="last_modified_by"/>
+    </changeSet>
+
+    <changeSet id="0.12-46" author="Ali Sedaghat">
         <renameSequence oldSequenceName="baseinfo_assessmentsubject_id_seq" newSequenceName="fak_subject_id_seq"/>
     </changeSet>
 
