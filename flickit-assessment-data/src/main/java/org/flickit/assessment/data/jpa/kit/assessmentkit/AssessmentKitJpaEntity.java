@@ -6,9 +6,10 @@ import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
-@Table(name = "baseinfo_assessmentkit")
+@Table(name = "fak_assessment_kit")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,6 +19,8 @@ public class AssessmentKitJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_assessment_kit_id_seq")
+    @SequenceGenerator(name = "fak_assessment_kit_id_seq", sequenceName = "fak_assessment_kit_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
@@ -30,23 +33,29 @@ public class AssessmentKitJpaEntity {
     @Column(name = "summary", nullable = false)
     private String summary;
 
+    @Column(name = "about", nullable = false)
+    private String about;
+
+    @Column(name = "published", nullable = false)
+    private Boolean published;
+
+    @Column(name = "is_private", nullable = false)
+    private Boolean isPrivate;
+
+    @Column(name = "expert_group_id", nullable = false)
+    private Long expertGroupId;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
     @Column(name = "last_modification_date", nullable = false)
     private LocalDateTime lastModificationTime;
 
-    @Column(name = "expert_group_id", nullable = false)
-    private Long expertGroupId;
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
-
-    @Column(name = "is_private", nullable = false)
-    private Boolean isPrivate;
-
-    @Column(name = "about", nullable = false)
-    private String about;
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
 
     @ManyToMany
     @JoinTable(
