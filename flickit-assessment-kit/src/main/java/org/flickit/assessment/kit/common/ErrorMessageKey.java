@@ -43,6 +43,11 @@ public class ErrorMessageKey {
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_NULL = "get-user-by-email.email.notNull";
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_FOUND = "get-user-by-email.email.notFound";
 
+    public static final String GET_KIT_LIST_IS_PRIVATE_NOT_NULL = "get-kit-list.isPrivate.notNull";
+    public static final String GET_KIT_LIST_PAGE_MIN = "get-kit-list.page.min";
+    public static final String GET_KIT_LIST_SIZE_MIN = "get-kit-list.size.min";
+    public static final String GET_KIT_LIST_SIZE_MAX = "get-kit-list.size.max";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }

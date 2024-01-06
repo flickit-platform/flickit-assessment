@@ -69,6 +69,8 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         """)
     Optional<UUID> checkUserAccess(@Param(value = "assessmentId") UUID assessmentId,
                                    @Param(value = "userId") UUID userId);
+
+    List<AssessmentJpaEntity> findAllByAssessmentKitId(Long assessmentKitId);
 }
 
 

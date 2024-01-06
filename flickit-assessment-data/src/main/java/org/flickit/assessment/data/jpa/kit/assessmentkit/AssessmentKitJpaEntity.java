@@ -2,11 +2,16 @@ package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.jpa.kit.like.AssessmentKitLikeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.tag.AssessmentKitTagJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Table(name = "fak_assessment_kit")
@@ -63,4 +68,20 @@ public class AssessmentKitJpaEntity {
         joinColumns = @JoinColumn(name = "kit_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<UserJpaEntity> accessGrantedUsers;
+
+    @ManyToMany
+    @JoinTable(
+        name = "baseinfo_assessmentkittag_assessmentkits",
+        joinColumns = @JoinColumn(name = "assessmentkit_id"),
+        inverseJoinColumns = @JoinColumn(name = "assessmentkittag_id")
+    )
+    private Set<AssessmentKitTagJpaEntity> tags;
+
+    @OneToMany(mappedBy = "kit")
+    private List<AssessmentKitLikeJpaEntity> likes;
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String TITLE = "title";
+    }
 }

@@ -75,106 +75,161 @@
 				}
 			},
 			"response": []
-		}, {
-          "name": "Get Kit User Access List",
-          "request": {
-            "method": "GET",
-            "header": [
-                {
-                  "key": "Authorization",
-                  "value": "{{authorization_header}}",
-                  "type": "text"
-                }
-            ],
-            "url": {
-              "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?page=0&size=10",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "{{api_path}}",
-                "assessment-kits",
-                "302",
-                "users"
-              ],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "10"
-                }
-              ]
-            }
-          },
-          "response": []
-        }, {
-        "name": "Delete Kit User Access",
-        "request": {
-          "method": "DELETE",
-          "header": [
-            {
-              "key": "Authorization",
-              "value": "{{authorization_header}}",
-              "type": "text"
-            }
-          ],
-          "url": {
-            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users/df92a05f-3b00-4bcf-86fc-e0960174b481",
-            "host": [
-              "{{base_url}}"
-            ],
-            "path": [
-              "{{api_path}}",
-              "assessment-kits",
-              "302",
-              "users",
-              "df92a05f-3b00-4bcf-86fc-e0960174b481"
-            ]
-          }
-        },
-        "response": []
-      }, {
-        "name": "Get User By Email",
-        "request": {
-          "method": "GET",
-          "header": [],
-          "url": {
-            "raw": "{{base_url}}/{{api_path}}/users/emails/example@gmail.com",
-            "host": [
-              "{{base_url}}"
-            ],
-            "path": [
-              "{{api_path}}",
-              "users",
-              "emails",
-              "example@gmail.com"
-            ]
-          }
-        },
-        "response": []
-      }, {
-        "name": "Get Kit Minimal Info",
-        "request": {
-          "method": "GET",
-          "header": [],
-          "url": {
-            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/min-info",
-            "host": [
-              "{{base_url}}"
-            ],
-            "path": [
-              "{{api_path}}",
-              "assessment-kits",
-              "302",
-              "min-info"
-            ]
-          }
-        },
-        "response": []
-      }
+		},
+		{
+			"name": "Get Kit User Access List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?page=0&size=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Grant User Access to Kit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"alibalaei@asta.ir\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Kit User Access",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?email=example@asta.ir",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302",
+						"users"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "example@asta.ir"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Kit Minimal Info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/min-info",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302",
+						"min-info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Assessment Kits",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits?isPrivate=false",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits"
+					],
+					"query": [
+						{
+							"key": "isPrivate",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		}
 	],
 	"event": [
 		{
