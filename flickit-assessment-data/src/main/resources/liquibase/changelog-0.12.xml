@@ -189,21 +189,21 @@
     <changeSet id="0.12-34" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_subject"
                              columnNames="index,kit_id"
-                             constraintName="uq_fak_subject_index_kit_id"
+                             constraintName="uq_fak_subject_index_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-35" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_subject"
                              columnNames="title,kit_id"
-                             constraintName="uq_fak_subject_title_kit_id"
+                             constraintName="uq_fak_subject_title_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-36" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_subject"
                              columnNames="code,kit_id"
-                             constraintName="uq_fak_subject_code_kit_id"/>
+                             constraintName="uq_fak_subject_code_kitid"/>
     </changeSet>
 
     <changeSet id="0.12-37" author="Ali Sedaghat">
