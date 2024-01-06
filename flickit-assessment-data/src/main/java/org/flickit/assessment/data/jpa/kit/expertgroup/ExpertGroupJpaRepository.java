@@ -44,8 +44,8 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         u.displayName as displayName
         FROM ExpertGroupAccessJpaEntity e
         LEFT JOIN UserJpaEntity u on e.userId = u.id
-        WHERE e.expertGroupId = :expertGroup
+        WHERE e.expertGroupId = :expertGroupId
         ORDER BY u.displayName ASC
             LIMIT 5""")
-    List<MemberView> getMembersByExpert(@Param(value = "expertGroup") Long expertGroup);
+    List<MemberView> getMembersByExpert(@Param(value = "expertGroupId") Long expertGroup);
 }
