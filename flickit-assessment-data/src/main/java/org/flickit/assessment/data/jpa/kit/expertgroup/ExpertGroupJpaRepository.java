@@ -21,14 +21,23 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 e.picture as picture,
                 e.bio as bio,
                 e.ownerId as ownerId,
-                COUNT(ak) as publishedKitsCount
+                COUNT(DISTINCT e.id) as publishedKitsCount,
+                COUNT(DISTINCT ac.userId) as membersCount
             FROM ExpertGroupJpaEntity e
-            LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.published = true
-            LEFT JOIN ExpertGroupAccessJpaEntity ac ON ac.expertGroupId = e.id
-            WHERE ac.userId = :currentUserId
-            GROUP BY e.id, e.name, e.picture, e.bio, e.ownerId
+            LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId AND ak.published = true
+            LEFT JOIN ExpertGroupAccessJpaEntity ac on e.id = ac.expertGroupId
+            WHERE EXISTS (
+                SELECT 1 FROM ExpertGroupAccessJpaEntity ac
+                WHERE ac.expertGroupId = e.id AND ac.userId = :currentUserId
+            )
+            GROUP BY
+                e.id,
+                e.name,
+                e.picture,
+                e.bio,
+                e.ownerId
         """)
-    Page<ExpertGroupWithDetailsView> getExpertGroupSummaries(@Param(value = "currentUserId") UUID currentUseId, Pageable pageable);
+    Page<ExpertGroupWithDetailsView> getExpertGroupSummaries(@Param(value = "currentUserId") UUID currentUserId, Pageable pageable);
 
     @Query("""
         SELECT
