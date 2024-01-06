@@ -13,13 +13,13 @@ public class ExpertGroupMapper {
 
     static BiFunction<ExpertGroupJpaRepository, GetExpertGroupListUseCase.ExpertGroupListItem, GetExpertGroupListUseCase.ExpertGroupListItem>
         mapMembers = (repository, item) -> {
-        var members = repository.getMembersByExpert(item.id())
+        var members = repository.getMembersByExpert(item.expertGroupId())
             .stream()
             .map(ExpertGroupMapper::mapToMember)
             .toList();
 
         return new GetExpertGroupListUseCase.ExpertGroupListItem(
-            item.id(),
+            item.expertGroupId(),
             item.title(),
             item.bio(),
             item.picture(),
@@ -40,7 +40,7 @@ public class ExpertGroupMapper {
 
     public static GetExpertGroupListUseCase.ExpertGroupListItem mapToExpertGroupListItem(ExpertGroupWithDetailsView entity) {
         return new GetExpertGroupListUseCase.ExpertGroupListItem(
-            entity.getId(),
+            entity.getExpertGroupId(),
             entity.getName(),
             entity.getBio(),
             entity.getPicture(),

@@ -28,7 +28,7 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
                 boolean isEditable = expertGroupListItem.ownerId().equals(param.getCurrentUserID());
 
                 return new ExpertGroupListItemFinal(
-                    expertGroupListItem.id(),
+                    expertGroupListItem.expertGroupId(),
                     expertGroupListItem.title(),
                     expertGroupListItem.bio(),
                     expertGroupListItem.picture(),
