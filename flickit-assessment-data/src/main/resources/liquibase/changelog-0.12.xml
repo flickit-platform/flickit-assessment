@@ -324,23 +324,22 @@
                                  referencedTableName="fak_assessment_kit"
                                  referencedColumnNames="id"
                                  constraintName="fk_fak_attribute_assessmentkit"
-                                 deferrable="true" initiallyDeferred="true"
-                                 onDelete="CASCADE"/>
+                                 deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-59" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_attribute" columnNames="code,subject_id"
-                             constraintName="uq_fak_attribute_code_subject_id"/>
+                             constraintName="uq_fak_attribute_code_subjectid"/>
     </changeSet>
 
     <changeSet id="0.12-60" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_attribute" columnNames="code,kit_id"
-                             constraintName="uq_fak_attribute_code_kit_id"/>
+                             constraintName="uq_fak_attribute_code_kitid"/>
     </changeSet>
 
     <changeSet id="0.12-61" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_attribute" columnNames="index, subject_id"
-                             constraintName="uq_fak_attribute_index_subject_id"
+        <addUniqueConstraint tableName="fak_attribute" columnNames="index,subject_id"
+                             constraintName="uq_fak_attribute_index_subjectid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
