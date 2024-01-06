@@ -35,27 +35,10 @@ public class ExpertGroupPersistenceJpaAdapter implements
         UnaryOperator<GetExpertGroupListUseCase.ExpertGroupListItem> mapMembersWithRepository
             = item -> ExpertGroupMapper.mapMembers.apply(repository, item);
 
-        var pageResult = repository.getExpertGroupSummaries(param.currentUserID(), PageRequest.of(param.page(), param.size()));
+        var pageResult = repository.getExpertGroupSummaries(param.currentUserID(),PageRequest.of(param.page(), param.size()));
         List<GetExpertGroupListUseCase.ExpertGroupListItem> items = pageResult.getContent().stream()
             .map(ExpertGroupMapper::mapToExpertGroupListItem)
             .map(mapMembersWithRepository)
-            .map(item -> {
-                var members = repository.getMembersByExpert(item.id()).stream()
-                    .map(ExpertGroupMapper::mapToMember)
-                    .toList();
-
-                return new GetExpertGroupListUseCase.ExpertGroupListItem(
-                    item.id(),
-                    item.title(),
-                    item.bio(),
-                    item.picture(),
-                    item.publishedKitsCount(),
-                    item.membersCount(),
-                    members,
-                    item.ownerId(),
-                    item.editable()
-                );
-            })
             .toList();
 
         return new PaginatedResponse<>(
