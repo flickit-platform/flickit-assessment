@@ -6,31 +6,31 @@
 
     <changeSet id="0.12-01" author="MKouhestani">
         <addColumn tableName="fac_evidence">
-            <column name="last_modified_by_id" type="uuid"/>
+            <column name="last_modified_by" type="uuid"/>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.12-02" author="MKouhestani">
         <update tableName="fac_evidence">
-            <column name="created_by_id" valueComputed="fac_assessment.created_by FROM fac_assessment WHERE
+            <column name="created_by" valueComputed="fac_assessment.created_by FROM fac_assessment WHERE
             fac_assessment.id = assessment_id"/>
         </update>
     </changeSet>
 
     <changeSet id="0.12-03" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fac_evidence"
-                                 baseColumnNames="created_by_id"
+                                 baseColumnNames="created_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fac_evidence_account_user_created_by"/>
+                                 constraintName="fk_fac_evidence_user_createdby"/>
     </changeSet>
 
     <changeSet id="0.12-04" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fac_evidence"
-                                 baseColumnNames="last_modified_by_id"
+                                 baseColumnNames="last_modified_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fac_evidence_account_user_last_modified_by_id"/>
+                                 constraintName="fk_fac_evidence_user_lastmodifiedby"/>
     </changeSet>
 
     <changeSet id="0.12-05" author="MKouhestani">
@@ -42,7 +42,7 @@
 
     <changeSet id="0.12-06" author="MKouhestani">
         <addNotNullConstraint columnName="last_modified_by_id"
-                              constraintName="last_modified_by_id_not_null"
+                              constraintName="last_modified_by_not_null"
                               tableName="fac_evidence"/>
     </changeSet>
 
