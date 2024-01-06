@@ -4,5 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UploadKitPort {
 
-    void upload(MultipartFile dslZipFile, String dslJsonFile);
+    Result upload(MultipartFile dslZipFile, String dslJsonFile);
+
+    record Result(String zipFileUrl, String zipFileVersionId, String jsonFileUrl,String jsonFileVersionId, String filePath) {}
 }

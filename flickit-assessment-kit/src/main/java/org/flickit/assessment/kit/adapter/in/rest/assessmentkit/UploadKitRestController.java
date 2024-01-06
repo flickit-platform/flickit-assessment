@@ -17,15 +17,15 @@ public class UploadKitRestController {
 
     @PostMapping("assessment-kits/upload")
     public ResponseEntity<UploadKitResponseDto> upload(@RequestParam("dslFile") MultipartFile dslFile) {
-        String dslContent = useCase.upload(toParam(dslFile));
-        return new ResponseEntity<>(toResponse(dslContent), HttpStatus.OK);
+        var result = useCase.upload(toParam(dslFile));
+        return new ResponseEntity<>(toResponse(result), HttpStatus.OK);
     }
 
     private UploadKitUseCase.Param toParam(MultipartFile dslFile) {
         return new UploadKitUseCase.Param(dslFile);
     }
 
-    private UploadKitResponseDto toResponse(String dslContent) {
-        return new UploadKitResponseDto(dslContent);
+    private UploadKitResponseDto toResponse(UploadKitUseCase.Result result) {
+        return new UploadKitResponseDto(result.kitDslId(), result.syntaxError());
     }
 }

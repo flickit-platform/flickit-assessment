@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.uploaddsl;
 
 import io.minio.*;
-import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import io.minio.messages.VersioningConfiguration;
 import io.minio.messages.VersioningConfiguration.Status;
@@ -27,17 +26,17 @@ public class MinioAdapter implements UploadKitPort {
     private final MinioConfigProperties properties;
 
     @Override
-    public void upload(MultipartFile dslZipFile, String dslJsonFile) {
+    public Result upload(MultipartFile dslZipFile, String dslJsonFile) {
         String bucketName = properties.getBucketName();
         String dslFileNameNoSuffix = Objects.requireNonNull(dslZipFile.getOriginalFilename()).replace(".zip", "");
         String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + "/" + dslFileNameNoSuffix + "/";
         String zipFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
         String zipJsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
+        Result result;
 
         try {
             checkBucketExistence(bucketName);
             setBucketVersioning(bucketName);
-            boolean objectExistence = checkObjectExistence(bucketName, zipFileObjectName);
 
             InputStream zipFileInputStream = dslZipFile.getInputStream();
             ObjectWriteResponse dslZipFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
@@ -69,9 +68,12 @@ public class MinioAdapter implements UploadKitPort {
                 .method(Method.GET)
                 .build());
 
+            result = new Result(zipFileUrl, zipFileVersionId, jsonFileUrl, jsonFileVersionId, zipFileObjectName);
+
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+        return result;
     }
 
     private void setBucketVersioning(String bucketName) throws Exception {
@@ -79,18 +81,6 @@ public class MinioAdapter implements UploadKitPort {
             .bucket(bucketName)
             .config(new VersioningConfiguration(Status.ENABLED, false))
             .build());
-    }
-
-    private boolean checkObjectExistence(String bucketName, String objectName) throws Exception {
-        try {
-            minioClient.statObject(StatObjectArgs.builder()
-                .bucket(bucketName)
-                .object(objectName)
-                .build());
-            return true;
-        } catch (ErrorResponseException e) {
-            return false;
-        }
     }
 
     private void checkBucketExistence(String bucketName) throws Exception {

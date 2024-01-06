@@ -46,4 +46,12 @@
                               tableName="fac_evidence"/>
     </changeSet>
 
+    <changeSet id="0.12-07" author="MKouhestani">
+        <addColumn tableName="baseinfo_assessmentkitdsl">
+            <column name="creation_time" type="timestamp" defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

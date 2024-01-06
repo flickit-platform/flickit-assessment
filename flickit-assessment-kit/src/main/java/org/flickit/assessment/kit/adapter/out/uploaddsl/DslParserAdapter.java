@@ -1,15 +1,17 @@
 package org.flickit.assessment.kit.adapter.out.uploaddsl;
 
 import lombok.AllArgsConstructor;
+import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DSLHasSyntaxErrorException;
+import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.GetDslContentPort;
 import org.flickit.assessment.kit.config.DslParserRestProperties;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,29 +29,23 @@ public class DslParserAdapter implements GetDslContentPort {
     private final DslParserRestProperties properties;
 
     @Override
-    public String getDslContent(MultipartFile dslFile) {
+    public AssessmentKitDslModel getDslContent(MultipartFile dslFile) {
         String dslContent = uniteDslFiles(dslFile);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(dslContent, headers);
-        var responseEntity = dslParserRestTemplate.exchange(
-            properties.getUrl(),
-            HttpMethod.POST,
-            requestEntity,
-            new ParameterizedTypeReference<String>() {
-            }
-        );
-
-        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
-
+        HttpEntity<AssessmentKitRequest> requestEntity = new HttpEntity<>(new AssessmentKitRequest(dslContent), headers);
+        try {
+            var responseEntity = dslParserRestTemplate.exchange(
+                properties.getUrl(),
+                HttpMethod.POST,
+                requestEntity,
+                AssessmentKitDslModel.class
+            );
+            return responseEntity.getBody();
+        } catch (HttpClientErrorException e) {
+            throw new DSLHasSyntaxErrorException(e.getMessage());
         }
-
-        if (responseEntity.getBody() != null) {
-
-        }
-
-        return responseEntity.getBody();
     }
 
     private String uniteDslFiles(MultipartFile dslFile) {
@@ -85,6 +81,9 @@ public class DslParserAdapter implements GetDslContentPort {
             }
         }
         return newContent.toString();
+    }
+
+    record AssessmentKitRequest(String dslContent) {
     }
 
 }
