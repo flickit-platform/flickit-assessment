@@ -23,7 +23,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 e.ownerId as ownerId,
                 COUNT(ak) as publishedKitsCount
             FROM ExpertGroupJpaEntity e
-            LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.isActive = true
+            LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.published = true
             LEFT JOIN ExpertGroupAccessJpaEntity ac ON ac.expertGroupId = e.id
             WHERE ac.userId = :currentUserId
             GROUP BY e.id, e.name, e.picture, e.bio, e.ownerId
