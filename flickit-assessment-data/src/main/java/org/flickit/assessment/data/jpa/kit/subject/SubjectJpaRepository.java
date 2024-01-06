@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Long> {
 
-    List<SubjectJpaEntity> findAllByAssessmentKitId(Long assessmentKitId);
+    List<SubjectJpaEntity> findAllByKitId(Long kitId);
 
     @Modifying
     @Query("UPDATE SubjectJpaEntity s SET " +
@@ -31,7 +31,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
             SELECT s as subject
             FROM SubjectJpaEntity s
             JOIN FETCH s.attributes a
-            WHERE s.assessmentKitId = :kitId
+            WHERE s.kitId = :kitId
     """)
     List<SubjectJpaEntity> loadByKitIdWithAttributes(Long kitId);
 
