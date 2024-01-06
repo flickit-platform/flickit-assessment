@@ -21,7 +21,7 @@ public class ExpertGroupAccessJpaEntity {
     private Long id;
 
     @Column(name = "expert_group_id", nullable = false)
-    private UUID expertGroupId;
+    private Long expertGroupId;
 
     @Column(name = "invite_email")
     private UUID inviteEmail;

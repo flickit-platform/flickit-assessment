@@ -6,16 +6,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.kit.application.domain.User;
-
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+
 public interface GetExpertGroupListUseCase {
 
-    PaginatedResponse<ExpertGroupListItem> getExpertGroupList(Param param);
+    PaginatedResponse<ExpertGroupListItemFinal> getExpertGroupList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -38,7 +37,14 @@ public interface GetExpertGroupListUseCase {
         }
     }
 
-    record ExpertGroupListItem(Long id, String name, String about,String bio, String picture, String website, List<User> users,
-                               Long publishedKitsCount, UUID ownerId, boolean editable) {
+    record ExpertGroupListItem(Long id, String title, String bio, String picture, Integer publishedKitsCount,
+                               Integer membersCount, List<Member> members, UUID ownerId, Boolean editable) {
+    }
+
+    record ExpertGroupListItemFinal(Long id, String title, String bio, String picture, Integer publishedKitsCount,
+                                    Integer membersCount, List<Member> members, Boolean editable) {
+    }
+
+    record Member(String displayName) {
     }
 }

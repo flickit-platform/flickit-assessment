@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
@@ -14,20 +15,27 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     UUID loadOwnerIdById(@Param("id") Long id);
 
     @Query("""
+            SELECT
+                e.id as id,
+                e.name as name,
+                e.picture as picture,
+                e.bio as bio,
+                e.ownerId as ownerId,
+                COUNT(ak) as publishedKitsCount
+            FROM ExpertGroupJpaEntity e
+            LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.isActive = true
+            LEFT JOIN ExpertGroupAccessJpaEntity ac ON ac.expertGroupId = e.id
+            WHERE ac.userId = :currentUserId
+            GROUP BY e.id, e.name, e.picture, e.bio, e.ownerId
+        """)
+    Page<ExpertGroupWithDetailsView> getExpertGroupSummaries(@Param(value = "currentUserId") UUID currentUseId, Pageable pageable);
+
+    @Query("""
         SELECT
-            e.id as id,
-            e.name as name,
-            e.about as about,
-            e.picture as picture,
-            e.website as website,
-            e.bio as bio,
-            e.ownerId as ownerId,
-             COUNT(ak) as publishedKitsCount
-        FROM ExpertGroupJpaEntity e
-        LEFT JOIN AssessmentKitJpaEntity ak ON e.id = ak.expertGroupId AND ak.isActive = true
-        LEFT JOIN ExpertGroupAccessJpaEntity ac ON ac.expertGroupId = e.id
-        WHERE ac.userId = :currentUserId
-        GROUP BY e.id""")
-    Page<ExpertGroupWithAssessmentKitCountView> getExpertGroupSummaries(Pageable pageable,
-                                                                        @Param(value = "currentUserId") UUID currentUseId);
+        u.displayName as displayName
+        FROM ExpertGroupAccessJpaEntity e
+        LEFT JOIN UserJpaEntity u on e.userId = u.id
+        WHERE e.expertGroupId = :expertGroup""")
+    List<MemberView> getMembersByExpert(@Param(value = "expertGroup") Long expertGroup);
+
 }

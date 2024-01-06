@@ -2,19 +2,19 @@ package org.flickit.assessment.data.jpa.kit.expertgroup;
 
 import java.util.UUID;
 
-public interface ExpertGroupWithAssessmentKitCountView {
+public interface ExpertGroupWithDetailsView {
     Long getId();
 
     String getName();
 
-    String getAbout();
-
     String getPicture();
-
-    String getWebsite();
 
     String getBio();
 
+    Integer getPublishedKitsCount();
+
+    Boolean getEditable();
+
     UUID getOwnerId();
-    Long getPublishedKitsCount();
+
 }
