@@ -37,7 +37,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 e.bio,
                 e.ownerId
         """)
-    Page<ExpertGroupWithDetailsView> getExpertGroupSummaries(@Param(value = "currentUserId") UUID currentUserId, Pageable pageable);
+    Page<ExpertGroupWithDetailsView> findByCurrentUserId(@Param(value = "currentUserId") UUID currentUserId, Pageable pageable);
 
     @Query("""
         SELECT
