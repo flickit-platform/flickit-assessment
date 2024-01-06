@@ -47,5 +47,5 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         WHERE e.expertGroupId = :expertGroupId
         ORDER BY u.displayName ASC
             LIMIT 5""")
-    List<MemberView> getMembersByExpert(@Param(value = "expertGroupId") Long expertGroup);
+    List<MemberView> findMembersByExpertId(@Param(value = "expertGroupId") Long expertGroup);
 }
