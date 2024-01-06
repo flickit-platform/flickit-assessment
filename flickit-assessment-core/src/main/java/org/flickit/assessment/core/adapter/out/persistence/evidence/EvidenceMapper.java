@@ -16,6 +16,7 @@ public class EvidenceMapper {
             param.creationTime(),
             param.lastModificationTime(),
             param.createdById(),
+            param.createdById(),
             param.assessmentId(),
             param.questionId(),
             false
