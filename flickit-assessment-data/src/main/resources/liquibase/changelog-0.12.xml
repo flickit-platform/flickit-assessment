@@ -10,14 +10,18 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.12-02" author="MKouhestani">
+    <changeSet id="0.12-02" author="Ali Sedaghat">
+        <renameColumn tableName="fac_evidence" oldColumnName="created_by_id" newColumnName="created_by"/>
+    </changeSet>
+
+    <changeSet id="0.12-03" author="MKouhestani">
         <update tableName="fac_evidence">
             <column name="created_by" valueComputed="fac_assessment.created_by FROM fac_assessment WHERE
             fac_assessment.id = assessment_id"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.12-03" author="MKouhestani">
+    <changeSet id="0.12-04" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fac_evidence"
                                  baseColumnNames="created_by"
                                  referencedTableName="account_user"
@@ -25,7 +29,7 @@
                                  constraintName="fk_fac_evidence_user_createdby"/>
     </changeSet>
 
-    <changeSet id="0.12-04" author="MKouhestani">
+    <changeSet id="0.12-05" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fac_evidence"
                                  baseColumnNames="last_modified_by"
                                  referencedTableName="account_user"
@@ -33,40 +37,40 @@
                                  constraintName="fk_fac_evidence_user_lastmodifiedby"/>
     </changeSet>
 
-    <changeSet id="0.12-05" author="MKouhestani">
+    <changeSet id="0.12-06" author="MKouhestani">
         <update tableName="fac_evidence">
-            <column name="last_modified_by_id" valueComputed="fac_assessment.created_by FROM fac_assessment WHERE
+            <column name="last_modified_by" valueComputed="fac_assessment.created_by FROM fac_assessment WHERE
             fac_assessment.id = assessment_id"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.12-06" author="MKouhestani">
-        <addNotNullConstraint columnName="last_modified_by_id"
+    <changeSet id="0.12-07" author="MKouhestani">
+        <addNotNullConstraint columnName="last_modified_by"
                               constraintName="last_modified_by_not_null"
                               tableName="fac_evidence"/>
     </changeSet>
 
-    <changeSet id="0.12-07" author="Ali Sedaghat">
+    <changeSet id="0.12-08" author="Ali Sedaghat">
         <renameTable oldTableName="baseinfo_assessmentkit" newTableName="fak_assessment_kit"/>
     </changeSet>
 
-    <changeSet id="0.12-08" author="Ali Sedaghat">
+    <changeSet id="0.12-09" author="Ali Sedaghat">
         <renameColumn tableName="fak_assessment_kit" oldColumnName="is_active" newColumnName="published"/>
     </changeSet>
 
-    <changeSet id="0.12-09" author="Ali Sedaghat">
+    <changeSet id="0.12-10" author="Ali Sedaghat">
         <sql>alter table fak_assessment_kit rename constraint baseinfo_assessmentprofile_pkey to pk_fak_assessment_kit;</sql>
     </changeSet>
 
-    <changeSet id="0.12-10" author="Ali Sedaghat">
+    <changeSet id="0.12-11" author="Ali Sedaghat">
         <dropAllForeignKeyConstraints baseTableName="fak_assessment_kit"/>
     </changeSet>
 
-    <changeSet id="0.12-11" author="Ali Sedaghat">
+    <changeSet id="0.12-12" author="Ali Sedaghat">
         <dropUniqueConstraint constraintName="baseinfo_assessmentprofile_code_5a9ff625_uniq" tableName="fak_assessment_kit"/>
     </changeSet>
 
-    <changeSet id="0.12-12" author="Ali Sedaghat">
+    <changeSet id="0.12-13" author="Ali Sedaghat">
         <dropUniqueConstraint constraintName="baseinfo_assessmentprofile_title_0279319f_uniq" tableName="fak_assessment_kit"/>
     </changeSet>
 
