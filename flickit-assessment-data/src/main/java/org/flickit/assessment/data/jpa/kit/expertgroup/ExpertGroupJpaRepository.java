@@ -16,7 +16,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
 
     @Query("""
             SELECT
-                e.id as expertGroupId,
+                e.id as id,
                 e.name as name,
                 e.picture as picture,
                 e.bio as bio,
