@@ -51,7 +51,7 @@ public class SubjectJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @Column(name = "assessment_kit_id", nullable = false)
+    @Column(name = "kit_id", nullable = false)
     private Long kitId;
 
     public SubjectJpaEntity(Long id, String code, String title, String description, LocalDateTime creationTime,
