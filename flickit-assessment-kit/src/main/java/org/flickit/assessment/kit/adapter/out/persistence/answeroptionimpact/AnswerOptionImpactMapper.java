@@ -24,9 +24,13 @@ public class AnswerOptionImpactMapper {
                                                              Optional<QuestionImpactJpaEntity> questionImpactEntity) {
         return new AnswerOptionImpactJpaEntity(
             null,
-            questionImpactEntity.orElse(null),
             param.optionId(),
-            param.value()
+            questionImpactEntity.orElse(null),
+            param.value(),
+            null,
+            null,
+            null,
+            null
         );
     }
 }
