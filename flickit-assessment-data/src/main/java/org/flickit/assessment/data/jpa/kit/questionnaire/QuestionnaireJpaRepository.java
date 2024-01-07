@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, Long> {
 
-    List<QuestionnaireJpaEntity> findAllByKitId(Long assessmentKitId);
+    List<QuestionnaireJpaEntity> findAllByKitId(Long kitId);
 
     @Modifying
     @Query("UPDATE QuestionnaireJpaEntity q SET " +

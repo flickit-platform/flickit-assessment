@@ -440,19 +440,19 @@
     </changeSet>
 
     <changeSet id="0.12-80" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_questionnaire" columnNames="kit_id,code"
-                             constraintName="uq_fak_questionnaire_kit_id_code"/>
+        <addUniqueConstraint tableName="fak_questionnaire" columnNames="code,kit_id"
+                             constraintName="uq_fak_questionnaire_code_kitid"/>
     </changeSet>
 
     <changeSet id="0.12-81" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_questionnaire" columnNames="kit_id,index"
-                             constraintName="uq_fak_questionnaire_kit_id_index"
+        <addUniqueConstraint tableName="fak_questionnaire" columnNames="index,kit_id"
+                             constraintName="uq_fak_questionnaire_index_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-82" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_questionnaire" columnNames="kit_id,title"
-                             constraintName="uq_fak_questionnaire_kit_id_title"
+        <addUniqueConstraint tableName="fak_questionnaire" columnNames="title,kit_id"
+                             constraintName="uq_fak_questionnaire_title_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
@@ -539,13 +539,13 @@
         <addForeignKeyConstraint baseTableName="fak_answer_option" baseColumnNames="question_id"
                                  referencedTableName="baseinfo_question"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_answer_option_question"
+                                 constraintName="fk_fak_answeroption_question"
                                  deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-99" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_answer_option" columnNames="index,question_id"
-                             constraintName="uq_fak_answer_option_index_question_id"/>
+                             constraintName="uq_fak_answeroption_index_questionid"/>
     </changeSet>
 
     <changeSet id="0.12-100" author="Ali Sedaghat">
@@ -609,7 +609,7 @@
                                  baseColumnNames="created_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_answer_option_user_createdby"/>
+                                 constraintName="fk_fak_answeroption_user_createdby"/>
     </changeSet>
 
     <changeSet id="0.12-111" author="Ali Sedaghat">
@@ -617,7 +617,7 @@
                                  baseColumnNames="last_modified_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_answer_option_user_lastmodifiedby"/>
+                                 constraintName="fk_fak_answeroption_user_lastmodifiedby"/>
     </changeSet>
 
     <changeSet id="0.12-112" author="Ali Sedaghat">
@@ -666,7 +666,8 @@
                                  referencedTableName="baseinfo_questionimpact"
                                  referencedColumnNames="id"
                                  constraintName="fk_fak_answeroptionimpact_questionimpact"
-                                 deferrable="true" initiallyDeferred="true"/>
+                                 deferrable="true" initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
     </changeSet>
 
     <changeSet id="0.12-121" author="Ali Sedaghat">
