@@ -968,6 +968,40 @@
     </changeSet>
 
     <changeSet id="0.12-172" author="Ali Sedaghat">
+        <addColumn tableName="fak_question_impact">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-173" author="Ali Sedaghat">
+        <addColumn tableName="fak_question_impact">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-174" author="Ali Sedaghat">
+        <update tableName="fak_question_impact">
+            <column name="creation_time" valueComputed="fak_question.creation_time FROM fak_question
+             WHERE fak_question_impact.question_id = fak_question.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-175" author="Ali Sedaghat">
+        <update tableName="fak_question_impact">
+            <column name="last_modification_time" valueComputed="fak_question.last_modification_time FROM fak_question
+             WHERE fak_question_impact.question_id = fak_question.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-176" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_question_impact" columnName="creation_time"/>
+    </changeSet>
+
+    <changeSet id="0.12-177" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_question_impact" columnName="last_modification_time"/>
+    </changeSet>
+
+    <changeSet id="0.12-178" author="Ali Sedaghat">
         <renameSequence oldSequenceName="baseinfo_metricimpact_id_seq" newSequenceName="fak_question_impact_id_seq"/>
     </changeSet>
 
