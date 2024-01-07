@@ -11,7 +11,7 @@ import java.util.List;
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, Long> {
 
     @Query("SELECT q FROM QuestionJpaEntity q " +
-        "WHERE q.questionnaireId IN (SELECT i.id FROM QuestionnaireJpaEntity i WHERE i.assessmentKitId = :kitId)")
+        "WHERE q.questionnaireId IN (SELECT i.id FROM QuestionnaireJpaEntity i WHERE i.kitId = :kitId)")
     List<QuestionJpaEntity> findByKitId(@Param("kitId") Long kitId);
 
     @Modifying
