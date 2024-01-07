@@ -31,6 +31,14 @@ public class ErrorMessageKey {
     public static final String GET_KIT_USER_LIST_SIZE_MIN = "get-kit-user-list.size.min";
     public static final String GET_KIT_USER_LIST_SIZE_MAX = "get-kit-user-list.size.max";
 
+    public static final String CREATE_EXPERT_GROUP_NAME_NOT_BLANK = "create-expert-group.name.notBlank";
+    public static final String CREATE_EXPERT_GROUP_NAME_SIZE_MAX = "create-expert-group.name.size.max";
+    public static final String CREATE_EXPERT_GROUP_NAME_SIZE_MIN = "create-expert-group.name.size.min";
+    public static final String CREATE_EXPERT_GROUP_BIO_NOT_BLANK = "create-expert-group.bio.notBlank";
+    public static final String CREATE_EXPERT_GROUP_PICTURE_NOT_BLANK = "create-expert-group.picture.notBlank";
+    public static final String CREATE_EXPERT_GROUP_ABOUT_NOT_BLANK = "create-expert-group.about.notBlank";
+    public static final String CREATE_EXPERT_GROUP_WEBSITE_NOT_BLANK = "create-expert-group.website.notBlank";
+
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_NULL = "get-kit-minimal-info.kitId.notNull";
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_FOUND = "get-kit-minimal-info.kitId.notFound";
 
