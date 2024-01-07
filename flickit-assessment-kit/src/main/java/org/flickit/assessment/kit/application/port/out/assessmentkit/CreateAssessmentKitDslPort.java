@@ -4,5 +4,5 @@ public interface CreateAssessmentKitDslPort {
 
     Long create(Param param);
 
-    record Param(String zipFileUrl, String zipFileVersionId, String jsonFileUrl,String jsonFileVersionId, String filePath) {}
+    record Param(String zipFilePath, String jsonFilePath) {}
 }

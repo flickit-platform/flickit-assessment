@@ -40,11 +40,8 @@ public class UploadKitService implements UploadKitUseCase {
 
     private CreateAssessmentKitDslPort.Param toCreateAssessmentKitDslParam(UploadKitPort.Result result) {
         return new CreateAssessmentKitDslPort.Param(
-            result.zipFileUrl(),
-            result.zipFileVersionId(),
-            result.jsonFileUrl(),
-            result.jsonFileVersionId(),
-            result.filePath()
+            result.zipFilePath(),
+            result.jsonFilePath()
         );
     }
 }

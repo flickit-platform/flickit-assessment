@@ -13,6 +13,9 @@ public class AssessmentKitDslPersistenceJpaAdapter implements CreateAssessmentKi
 
     @Override
     public Long create(Param param) {
-        return repository.save(AssessmentKitDslMapper.toJpaEntity(param.filePath())).getId();
+        //Save json file
+        repository.save(AssessmentKitDslMapper.toJpaEntity(param.jsonFilePath()));
+        //Save zip file
+        return repository.save(AssessmentKitDslMapper.toJpaEntity(param.zipFilePath())).getId();
     }
 }

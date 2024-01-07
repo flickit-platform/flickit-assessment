@@ -53,29 +53,38 @@ public class DslParserAdapter implements GetDslContentPort {
         try (InputStream dslFileStream = dslFile.getInputStream();
              ZipInputStream zipInputStream = new ZipInputStream(dslFileStream)) {
             StringBuilder allContent = new StringBuilder();
-            ZipEntry entry;
-            while ((entry = zipInputStream.getNextEntry()) != null) {
+            ZipEntry entry = checkZipBombAttack(zipInputStream);
+            while (entry != null) {
+                long decompressedSize = entry.getSize();
+                if (decompressedSize > 100_000_000) {
+                    throw new ZipBombException();
+                }
+
                 String name = entry.getName();
                 if (name.endsWith(".ak")) {
                     String fileBaseName = name.substring(name.lastIndexOf('/') + 1);
-
-                    long decompressedSize = entry.getSize();
-                    if (decompressedSize > 1000_000_000) {
-                        throw new ZipBombException();
-                    }
-
                     String content = StreamUtils.copyToString(zipInputStream, StandardCharsets.UTF_8);
                     String trimContent = trimContent(content);
                     allContent.append("\n")
                             .append("// BEGIN FILE ").append(fileBaseName)
                             .append(trimContent);
                 }
+
+                entry = checkZipBombAttack(zipInputStream);
             }
             zipInputStream.closeEntry();
             return allContent.toString();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private ZipEntry checkZipBombAttack(ZipInputStream zipInputStream) throws IOException {
+        ZipEntry entry;
+        if ((entry = zipInputStream.getNextEntry()) != null && entry.getSize() > 100_000_000) {
+            throw new ZipBombException();
+        }
+        return entry;
     }
 
     private String trimContent(String content) {

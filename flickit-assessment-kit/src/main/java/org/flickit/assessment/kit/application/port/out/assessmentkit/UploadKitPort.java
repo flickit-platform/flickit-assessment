@@ -6,5 +6,5 @@ public interface UploadKitPort {
 
     Result upload(MultipartFile dslZipFile, String dslJsonFile);
 
-    record Result(String zipFileUrl, String zipFileVersionId, String jsonFileUrl,String jsonFileVersionId, String filePath) {}
+    record Result(String zipFilePath, String jsonFilePath) {}
 }

@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.uploaddsl;
 
 import io.minio.*;
-import io.minio.http.Method;
 import io.minio.messages.VersioningConfiguration;
 import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -46,13 +44,6 @@ public class MinioAdapter implements UploadKitPort {
                 .build());
             String zipFileVersionId = dslZipFileWriteResponse.versionId();
 
-            String zipFileUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-                .bucket(bucketName)
-                .object(zipFileObjectName)
-                .expiry(5, TimeUnit.MINUTES)
-                .method(Method.GET)
-                .build());
-
             InputStream jsonFileInputStream = new ByteArrayInputStream(dslJsonFile.getBytes());
             ObjectWriteResponse dslJsonFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
                 .bucket(bucketName)
@@ -61,14 +52,8 @@ public class MinioAdapter implements UploadKitPort {
                 .build());
             String jsonFileVersionId = dslJsonFileWriteResponse.versionId();
 
-            String jsonFileUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-                .bucket(bucketName)
-                .object(zipJsonFileObjectName)
-                .expiry(5, TimeUnit.MINUTES)
-                .method(Method.GET)
-                .build());
-
-            result = new Result(zipFileUrl, zipFileVersionId, jsonFileUrl, jsonFileVersionId, zipFileObjectName);
+            result = new Result(zipFileObjectName + "/" + zipFileVersionId,
+                zipJsonFileObjectName + "/" + jsonFileVersionId);
 
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
