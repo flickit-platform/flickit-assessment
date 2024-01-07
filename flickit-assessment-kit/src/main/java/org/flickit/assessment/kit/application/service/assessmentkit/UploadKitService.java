@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public class UploadKitService implements UploadKitUseCase {
     private final CreateAssessmentKitDslPort createAssessmentKitDslPort;
 
     @Override
-    public UploadKitUseCase.Result upload(UploadKitUseCase.Param param) {
+    public UploadKitUseCase.Result upload(UploadKitUseCase.Param param) throws Exception {
         try {
             AssessmentKitDslModel dslContentJson = getDslContentPort.getDslContent(param.getDslFile());
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
@@ -33,8 +32,6 @@ public class UploadKitService implements UploadKitUseCase {
             return new UploadKitUseCase.Result(kitDslId, null);
         } catch (DSLHasSyntaxErrorException e) {
             return new UploadKitUseCase.Result(null, e.getMessage());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
     }
 

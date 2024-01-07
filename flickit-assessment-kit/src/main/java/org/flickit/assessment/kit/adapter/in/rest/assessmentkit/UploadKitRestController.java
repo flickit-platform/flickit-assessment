@@ -16,7 +16,7 @@ public class UploadKitRestController {
     private final UploadKitUseCase useCase;
 
     @PostMapping("assessment-kits/upload")
-    public ResponseEntity<UploadKitResponseDto> upload(@RequestParam("dslFile") MultipartFile dslFile) {
+    public ResponseEntity<UploadKitResponseDto> upload(@RequestParam("dslFile") MultipartFile dslFile) throws Exception {
         var result = useCase.upload(toParam(dslFile));
         return new ResponseEntity<>(toResponse(result), HttpStatus.OK);
     }

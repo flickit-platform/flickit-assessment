@@ -10,7 +10,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.UPLOAD_KIT_DSL_K
 
 public interface UploadKitUseCase {
 
-    Result upload(Param param);
+    Result upload(Param param) throws Exception;
 
     @Value
     @EqualsAndHashCode(callSuper = false)

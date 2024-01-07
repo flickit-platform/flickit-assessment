@@ -20,44 +20,41 @@ import java.util.Objects;
 @AllArgsConstructor
 public class MinioAdapter implements UploadKitPort {
 
+    public static final String SLASH = "/";
     private final MinioClient minioClient;
     private final MinioConfigProperties properties;
 
     @Override
-    public Result upload(MultipartFile dslZipFile, String dslJsonFile) {
+    public Result upload(MultipartFile dslZipFile, String dslJsonFile) throws Exception {
         String bucketName = properties.getBucketName();
         String dslFileNameNoSuffix = Objects.requireNonNull(dslZipFile.getOriginalFilename()).replace(".zip", "");
-        String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + "/" + dslFileNameNoSuffix + "/";
+        String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + SLASH + dslFileNameNoSuffix + SLASH;
         String zipFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
         String zipJsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
         Result result;
 
-        try {
-            checkBucketExistence(bucketName);
-            setBucketVersioning(bucketName);
+        checkBucketExistence(bucketName);
+        setBucketVersioning(bucketName);
 
-            InputStream zipFileInputStream = dslZipFile.getInputStream();
-            ObjectWriteResponse dslZipFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
-                .bucket(bucketName)
-                .object(zipFileObjectName)
-                .stream(zipFileInputStream, zipFileInputStream.available(), -1)
-                .build());
-            String zipFileVersionId = dslZipFileWriteResponse.versionId();
+        InputStream zipFileInputStream = dslZipFile.getInputStream();
+        ObjectWriteResponse dslZipFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
+            .bucket(bucketName)
+            .object(zipFileObjectName)
+            .stream(zipFileInputStream, zipFileInputStream.available(), -1)
+            .build());
+        String zipFileVersionId = dslZipFileWriteResponse.versionId();
 
-            InputStream jsonFileInputStream = new ByteArrayInputStream(dslJsonFile.getBytes());
-            ObjectWriteResponse dslJsonFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
-                .bucket(bucketName)
-                .object(zipJsonFileObjectName)
-                .stream(jsonFileInputStream, jsonFileInputStream.available(), -1)
-                .build());
-            String jsonFileVersionId = dslJsonFileWriteResponse.versionId();
+        InputStream jsonFileInputStream = new ByteArrayInputStream(dslJsonFile.getBytes());
+        ObjectWriteResponse dslJsonFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
+            .bucket(bucketName)
+            .object(zipJsonFileObjectName)
+            .stream(jsonFileInputStream, jsonFileInputStream.available(), -1)
+            .build());
+        String jsonFileVersionId = dslJsonFileWriteResponse.versionId();
 
-            result = new Result(zipFileObjectName + "/" + zipFileVersionId,
-                zipJsonFileObjectName + "/" + jsonFileVersionId);
+        result = new Result(zipFileObjectName + SLASH + zipFileVersionId,
+            zipJsonFileObjectName + SLASH + jsonFileVersionId);
 
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
         return result;
     }
 
