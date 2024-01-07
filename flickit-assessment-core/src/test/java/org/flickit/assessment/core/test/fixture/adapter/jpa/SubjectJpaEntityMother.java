@@ -12,12 +12,15 @@ public class SubjectJpaEntityMother {
         return new SubjectJpaEntity(
             subjectId,
             "code" + subjectId,
+            index,
             "title" + subjectId,
             "description" + subjectId,
+            1,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
+            null,
             1L,
-            index,
             attributes
         );
     }
