@@ -666,7 +666,8 @@
                                  referencedTableName="baseinfo_questionimpact"
                                  referencedColumnNames="id"
                                  constraintName="fk_fak_answeroptionimpact_questionimpact"
-                                 deferrable="true" initiallyDeferred="true"/>
+                                 deferrable="true" initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
     </changeSet>
 
     <changeSet id="0.12-121" author="Ali Sedaghat">
