@@ -9,7 +9,7 @@ public interface UpdateQuestionPort {
     record Param(Long id,
                  String title,
                  Integer index,
-                 String description,
+                 String hint,
                  Boolean mayNotBeApplicable,
                  LocalDateTime lastModificationTime) {
     }
