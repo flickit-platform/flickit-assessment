@@ -440,19 +440,19 @@
     </changeSet>
 
     <changeSet id="0.12-80" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_questionnaire" columnNames="kit_id,code"
-                             constraintName="uq_fak_questionnaire_kit_id_code"/>
+        <addUniqueConstraint tableName="fak_questionnaire" columnNames="code,kit_id"
+                             constraintName="uq_fak_questionnaire_code_kitid"/>
     </changeSet>
 
     <changeSet id="0.12-81" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_questionnaire" columnNames="kit_id,index"
-                             constraintName="uq_fak_questionnaire_kit_id_index"
+        <addUniqueConstraint tableName="fak_questionnaire" columnNames="index,kit_id"
+                             constraintName="uq_fak_questionnaire_index_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-82" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_questionnaire" columnNames="kit_id,title"
-                             constraintName="uq_fak_questionnaire_kit_id_title"
+        <addUniqueConstraint tableName="fak_questionnaire" columnNames="title,kit_id"
+                             constraintName="uq_fak_questionnaire_title_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
