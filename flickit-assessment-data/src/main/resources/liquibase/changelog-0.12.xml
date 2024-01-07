@@ -648,4 +648,38 @@
         <renameSequence oldSequenceName="baseinfo_answertemplate_id_seq" newSequenceName="fak_answer_option_id_seq"/>
     </changeSet>
 
+    <changeSet id="0.12-117" author="Ali Sedaghat">
+        <renameTable oldTableName="baseinfo_optionvalue" newTableName="fak_answer_option_impact"/>
+    </changeSet>
+
+    <changeSet id="0.12-118" author="Ali Sedaghat">
+        <sql>alter table fak_answer_option_impact rename constraint baseinfo_optionvalue_pkey to pk_fak_answer_option_impact;</sql>
+    </changeSet>
+
+    <changeSet id="0.12-119" author="Ali Sedaghat">
+        <dropAllForeignKeyConstraints baseTableName="fak_answer_option_impact"/>
+    </changeSet>
+
+    <changeSet id="0.12-120" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_answer_option_impact"
+                                 baseColumnNames="question_impact_id"
+                                 referencedTableName="baseinfo_questionimpact"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_answeroptionimpact_questionimpact"
+                                 deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-121" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_answer_option_impact"
+                                 baseColumnNames="option_id"
+                                 referencedTableName="fak_answer_option"
+                                 referencedColumnNames="id"
+                                 constraintName="fak_answeroptionimpact_answeroption"
+                                 deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-122" author="Ali Sedaghat">
+        <renameSequence oldSequenceName="baseinfo_optionvalue_id_seq" newSequenceName="fak_answer_option_impact_id_seq"/>
+    </changeSet>
+
 </databaseChangeLog>
