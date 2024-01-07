@@ -397,4 +397,117 @@
         <renameSequence oldSequenceName="baseinfo_qualityattribute_id_seq" newSequenceName="fak_attribute_id_seq"/>
     </changeSet>
 
+    <changeSet id="0.12-71" author="Ali Sedaghat">
+        <renameTable oldTableName="baseinfo_questionnaire" newTableName="fak_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.12-72" author="Ali Sedaghat">
+        <sql>alter table fak_questionnaire rename constraint baseinfo_questionnaire_pkey to pk_fak_questionnaire;</sql>
+    </changeSet>
+
+    <changeSet id="0.12-73" author="Ali Sedaghat">
+        <sql>alter table fak_questionnaire drop constraint if exists baseinfo_questionnaire_index_check;</sql>
+    </changeSet>
+
+    <changeSet id="0.12-74" author="Ali Sedaghat">
+        <dropAllForeignKeyConstraints baseTableName="fak_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.12-75" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_questionnaire" constraintName="baseinfo_questionnaire_code_04aa0ba7_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.12-76" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_questionnaire"
+                              constraintName="baseinfo_questionnaire_index_assessment_profile_18f9d6f7_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.12-77" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_questionnaire"
+                              constraintName="baseinfo_questionnaire_title_assessment_profile_24316390_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.12-78" author="Ali Sedaghat">
+        <renameColumn tableName="fak_questionnaire" oldColumnName="assessment_kit_id" newColumnName="kit_id"/>
+    </changeSet>
+
+    <changeSet id="0.12-79" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_questionnaire" baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_questionnaire_assessmentkit"
+                                 deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-80" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_questionnaire" columnNames="code,kit_id"
+                             constraintName="uq_fak_questionnaire_code_kitid"/>
+    </changeSet>
+
+    <changeSet id="0.12-81" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_questionnaire" columnNames="index,kit_id"
+                             constraintName="uq_fak_questionnaire_index_kitid"
+                             deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-82" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_questionnaire" columnNames="title,kit_id"
+                             constraintName="uq_fak_questionnaire_title_kitid"
+                             deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-83" author="Ali Sedaghat">
+        <addColumn tableName="fak_questionnaire">
+            <column name="created_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-84" author="Ali Sedaghat">
+        <addColumn tableName="fak_questionnaire">
+            <column name="last_modified_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-85" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_questionnaire"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_questionnaire_user_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.12-86" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_questionnaire"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_questionnaire_user_lastmodifiedby"/>
+    </changeSet>
+
+    <changeSet id="0.12-87" author="Ali Sedaghat">
+        <update tableName="fak_questionnaire">
+            <column name="created_by" valueComputed="fak_assessment_kit.created_by FROM fak_assessment_kit
+             WHERE fak_questionnaire.kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-88" author="Ali Sedaghat">
+        <update tableName="fak_questionnaire">
+            <column name="last_modified_by" valueComputed="fak_assessment_kit.last_modified_by FROM fak_assessment_kit
+             WHERE fak_questionnaire.kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-89" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_questionnaire" columnName="created_by"/>
+    </changeSet>
+
+    <changeSet id="0.12-90" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_questionnaire" columnName="last_modified_by"/>
+    </changeSet>
+
+    <changeSet id="0.12-91" author="Ali Sedaghat">
+        <renameSequence oldSequenceName="baseinfo_questionnaire_id_seq" newSequenceName="fak_questionnaire_id_seq"/>
+    </changeSet>
+
 </databaseChangeLog>

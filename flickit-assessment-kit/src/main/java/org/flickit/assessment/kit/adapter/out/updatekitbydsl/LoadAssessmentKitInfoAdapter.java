@@ -70,7 +70,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
         setQuestionImpacts(questions);
         setQuestionOptions(questions);
 
-        List<Questionnaire> questionnaires = questionnaireRepository.findAllByAssessmentKitId(kitId).stream()
+        List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitId(kitId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
             .toList();
         setQuestions(questionnaires, questions);

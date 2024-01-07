@@ -4,9 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "baseinfo_questionnaire")
+@Table(name = "fak_questionnaire")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,13 +17,16 @@ public class QuestionnaireJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_questionnaire_id_seq")
-    @SequenceGenerator(name = "baseinfo_questionnaire_id_seq", sequenceName = "baseinfo_questionnaire_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_questionnaire_id_seq")
+    @SequenceGenerator(name = "fak_questionnaire_id_seq", sequenceName = "fak_questionnaire_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     @Column(name = "code", length = 50, nullable = false)
     private String code;
+
+    @Column(name = "index", nullable = false)
+    private Integer index;
 
     @Column(name = "title", length = 100, nullable = false)
     private String title;
@@ -35,10 +39,13 @@ public class QuestionnaireJpaEntity {
 
     @Column(name = "last_modification_date", nullable = false)
     private LocalDateTime lastModificationTime;
+    
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
 
-    @Column(name = "index", nullable = false)
-    private Integer index;
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
 
-    @Column(name = "assessment_kit_id", nullable = false)
-    private Long assessmentKitId;
+    @Column(name = "kit_id", nullable = false)
+    private Long kitId;
 }
