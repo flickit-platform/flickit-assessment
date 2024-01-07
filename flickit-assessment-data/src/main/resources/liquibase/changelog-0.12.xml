@@ -566,7 +566,7 @@
 
     <changeSet id="0.12-103" author="Ali Sedaghat">
         <addColumn tableName="fak_answer_option">
-            <column name="last_modification_date" type="${datetime_with_time_zone_type}"/>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"/>
         </addColumn>
     </changeSet>
 
@@ -579,7 +579,7 @@
 
     <changeSet id="0.12-105" author="Ali Sedaghat">
         <update tableName="fak_answer_option">
-            <column name="last_modification_date" valueComputed="baseinfo_question.last_modification_date FROM baseinfo_question
+            <column name="last_modification_time" valueComputed="baseinfo_question.last_modification_date FROM baseinfo_question
              WHERE fak_answer_option.question_id = baseinfo_question.id"/>
         </update>
     </changeSet>
@@ -589,7 +589,7 @@
     </changeSet>
 
     <changeSet id="0.12-107" author="Ali Sedaghat">
-        <addNotNullConstraint tableName="fak_answer_option" columnName="last_modification_date"/>
+        <addNotNullConstraint tableName="fak_answer_option" columnName="last_modification_time"/>
     </changeSet>
 
     <changeSet id="0.12-108" author="Ali Sedaghat">
