@@ -14,9 +14,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface CreateExpertGroupUseCase {
 
-
     Result createExpertGroup(Param param);
-
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
@@ -54,5 +52,4 @@ public interface CreateExpertGroupUseCase {
 
     record Result(Long id) {
     }
-
 }
