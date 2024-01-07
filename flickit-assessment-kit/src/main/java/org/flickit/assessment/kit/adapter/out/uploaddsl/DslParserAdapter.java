@@ -55,7 +55,7 @@ public class DslParserAdapter implements GetDslContentPort {
     }
 
     private String uniteDslFiles(MultipartFile dslFile) {
-        checkZipFileSecurity(dslFile);
+//        checkZipFileSecurity(dslFile);
         try (InputStream dslFileStream = dslFile.getInputStream();
              ZipInputStream zipInputStream = new ZipInputStream(dslFileStream)) {
             StringBuilder allContent = new StringBuilder();
@@ -64,6 +64,12 @@ public class DslParserAdapter implements GetDslContentPort {
                 String name = entry.getName();
                 if (name.endsWith(".ak")) {
                     String fileBaseName = name.substring(name.lastIndexOf('/') + 1);
+
+                    long decompressedSize = entry.getSize();
+                    if (decompressedSize > 1000_000_000) {
+                        throw new ZipBombException();
+                    }
+
                     String content = StreamUtils.copyToString(zipInputStream, StandardCharsets.UTF_8);
                     String trimContent = trimContent(content);
                     allContent.append("\n")
