@@ -4,6 +4,7 @@ import io.minio.*;
 import io.minio.messages.VersioningConfiguration;
 import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitPort;
 import org.flickit.assessment.kit.config.MinioConfigProperties;
@@ -24,8 +25,9 @@ public class MinioAdapter implements UploadKitPort {
     private final MinioClient minioClient;
     private final MinioConfigProperties properties;
 
+    @SneakyThrows
     @Override
-    public Result upload(MultipartFile dslZipFile, String dslJsonFile) throws Exception {
+    public Result upload(MultipartFile dslZipFile, String dslJsonFile) {
         String bucketName = properties.getBucketName();
         String dslFileNameNoSuffix = Objects.requireNonNull(dslZipFile.getOriginalFilename()).replace(".zip", "");
         String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + SLASH + dslFileNameNoSuffix + SLASH;
@@ -58,14 +60,16 @@ public class MinioAdapter implements UploadKitPort {
         return result;
     }
 
-    private void setBucketVersioning(String bucketName) throws Exception {
+    @SneakyThrows
+    private void setBucketVersioning(String bucketName) {
         minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
             .bucket(bucketName)
             .config(new VersioningConfiguration(Status.ENABLED, false))
             .build());
     }
 
-    private void checkBucketExistence(String bucketName) throws Exception {
+    @SneakyThrows
+    private void checkBucketExistence(String bucketName) {
         if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
             minioClient.makeBucket(MakeBucketArgs.builder()
                 .bucket(bucketName)

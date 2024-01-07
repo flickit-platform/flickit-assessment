@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DSLHasSyntaxErrorException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UploadKitUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,16 +17,20 @@ public class UploadKitRestController {
     private final UploadKitUseCase useCase;
 
     @PostMapping("assessment-kits/upload")
-    public ResponseEntity<UploadKitResponseDto> upload(@RequestParam("dslFile") MultipartFile dslFile) throws Exception {
-        var result = useCase.upload(toParam(dslFile));
-        return new ResponseEntity<>(toResponse(result), HttpStatus.OK);
+    public ResponseEntity<UploadKitResponseDto> upload(@RequestParam("dslFile") MultipartFile dslFile) {
+        try {
+            Long kitDslId = useCase.upload(toParam(dslFile));
+            return new ResponseEntity<>(toResponse(kitDslId, null), HttpStatus.OK);
+        } catch (DSLHasSyntaxErrorException e) {
+            return new ResponseEntity<>(toResponse(null, e.getMessage()), HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     private UploadKitUseCase.Param toParam(MultipartFile dslFile) {
         return new UploadKitUseCase.Param(dslFile);
     }
 
-    private UploadKitResponseDto toResponse(UploadKitUseCase.Result result) {
-        return new UploadKitResponseDto(result.kitDslId(), result.syntaxError());
+    private UploadKitResponseDto toResponse(Long kitDslId, String dslError) {
+        return new UploadKitResponseDto(kitDslId, dslError);
     }
 }

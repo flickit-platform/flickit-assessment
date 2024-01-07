@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DSLHasSyntaxErrorException;
+import lombok.SneakyThrows;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UploadKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitDslPort;
@@ -21,18 +21,14 @@ public class UploadKitService implements UploadKitUseCase {
     private final GetDslContentPort getDslContentPort;
     private final CreateAssessmentKitDslPort createAssessmentKitDslPort;
 
+    @SneakyThrows
     @Override
-    public UploadKitUseCase.Result upload(UploadKitUseCase.Param param) throws Exception {
-        try {
-            AssessmentKitDslModel dslContentJson = getDslContentPort.getDslContent(param.getDslFile());
-            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-            String json = ow.writeValueAsString(dslContentJson);
-            UploadKitPort.Result uploadedFilesInformation = uploadKitPort.upload(param.getDslFile(), json);
-            Long kitDslId = createAssessmentKitDslPort.create(toCreateAssessmentKitDslParam(uploadedFilesInformation));
-            return new UploadKitUseCase.Result(kitDslId, null);
-        } catch (DSLHasSyntaxErrorException e) {
-            return new UploadKitUseCase.Result(null, e.getMessage());
-        }
+    public Long upload(UploadKitUseCase.Param param) {
+        AssessmentKitDslModel dslContentJson = getDslContentPort.getDslContent(param.getDslFile());
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(dslContentJson);
+        UploadKitPort.Result uploadedFilesInformation = uploadKitPort.upload(param.getDslFile(), json);
+        return createAssessmentKitDslPort.create(toCreateAssessmentKitDslParam(uploadedFilesInformation));
     }
 
     private CreateAssessmentKitDslPort.Param toCreateAssessmentKitDslParam(UploadKitPort.Result result) {
