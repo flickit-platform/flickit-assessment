@@ -5,7 +5,7 @@ import lombok.*;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 
 @Entity
-@Table(name = "baseinfo_optionvalue")
+@Table(name = "fak_answer_option_impact")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,8 +15,8 @@ public class AnswerOptionImpactJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_optionvalue_id_seq")
-    @SequenceGenerator(name = "baseinfo_optionvalue_id_seq", sequenceName = "baseinfo_optionvalue_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_answer_option_impact_id_seq")
+    @SequenceGenerator(name = "fak_answer_option_impact_id_seq", sequenceName = "fak_answer_option_impact_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
