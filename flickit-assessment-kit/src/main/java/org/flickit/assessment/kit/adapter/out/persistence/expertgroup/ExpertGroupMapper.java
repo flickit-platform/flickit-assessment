@@ -1,10 +1,8 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.ExpertGroupListItem;
 
@@ -32,11 +30,6 @@ public class ExpertGroupMapper {
             item.editable()
         );
     };
-
-    public static ExpertGroup mapToDomainModel(ExpertGroupJpaEntity entity) {
-
-        return new ExpertGroup(entity.getId());
-    }
 
     public static ExpertGroupListItem mapToExpertGroupListItem(ExpertGroupWithDetailsView entity) {
 
