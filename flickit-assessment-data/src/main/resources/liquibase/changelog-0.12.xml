@@ -794,7 +794,7 @@
 
     <changeSet id="0.12-142" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_question" columnNames="code,questionnaire_id"
-                             constraintName="uq_fak_question_code_questionnaire_id"/>
+                             constraintName="uq_fak_question_code_questionnaireid"/>
     </changeSet>
 
     <changeSet id="0.12-143" author="Ali Sedaghat">
