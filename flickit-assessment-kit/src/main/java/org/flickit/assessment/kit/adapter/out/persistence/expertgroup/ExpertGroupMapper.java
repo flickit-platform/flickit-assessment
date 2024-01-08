@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
@@ -8,7 +9,7 @@ import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroup
 
 import java.util.function.BiFunction;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExpertGroupMapper {
 
     static BiFunction<ExpertGroupJpaRepository, ExpertGroupListItem, ExpertGroupListItem>
