@@ -1049,19 +1049,19 @@
 
     <changeSet id="0.12-188" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_maturity_level" columnNames="title,kit_id"
-                             constraintName="fak_maturitylevel_title_kit_id"
+                             constraintName="uq_fak_maturitylevel_title_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-189" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_maturity_level" columnNames="index,kit_id"
-                             constraintName="fak_maturitylevel_index_kit_id"
+                             constraintName="uq_fak_maturitylevel_index_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-190" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_maturity_level" columnNames="code,kit_id"
-                             constraintName="fak_maturitylevel_code_kit_id"/>
+                             constraintName="uq_fak_maturitylevel_code_kitid"/>
     </changeSet>
 
     <changeSet id="0.12-191" author="Ali Sedaghat">
@@ -1153,28 +1153,34 @@
     </changeSet>
 
     <changeSet id="0.12-206" author="Ali Sedaghat">
-        <renameTable oldTableName="baseinfo_levelcompetence" newTableName="fak_level_competence"/>
+        <addUniqueConstraint tableName="fak_maturity_level" columnNames="value,kit_id"
+                             constraintName="uq_fak_maturitylevel_value_kitid"
+                             deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-207" author="Ali Sedaghat">
-        <sql>alter table fak_level_competence rename constraint baseinfo_levelcompetence_pkey to pk_fak_level_competence;</sql>
+        <renameTable oldTableName="baseinfo_levelcompetence" newTableName="fak_level_competence"/>
     </changeSet>
 
     <changeSet id="0.12-208" author="Ali Sedaghat">
-        <dropAllForeignKeyConstraints baseTableName="fak_level_competence"/>
+        <sql>alter table fak_level_competence rename constraint baseinfo_levelcompetence_pkey to pk_fak_level_competence;</sql>
     </changeSet>
 
     <changeSet id="0.12-209" author="Ali Sedaghat">
+        <dropAllForeignKeyConstraints baseTableName="fak_level_competence"/>
+    </changeSet>
+
+    <changeSet id="0.12-210" author="Ali Sedaghat">
         <renameColumn tableName="fak_level_competence" oldColumnName="maturity_level_id"
                       newColumnName="affected_level_id"/>
     </changeSet>
 
-    <changeSet id="0.12-210" author="Ali Sedaghat">
+    <changeSet id="0.12-211" author="Ali Sedaghat">
         <renameColumn tableName="fak_level_competence" oldColumnName="maturity_level_competence_id"
                       newColumnName="effective_level_id"/>
     </changeSet>
 
-    <changeSet id="0.12-211" author="Ali Sedaghat">
+    <changeSet id="0.12-212" author="Ali Sedaghat">
         <addForeignKeyConstraint baseTableName="fak_level_competence"
                                  baseColumnNames="affected_level_id"
                                  referencedTableName="fak_maturity_level"
@@ -1183,7 +1189,7 @@
                                  deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
-    <changeSet id="0.12-212" author="Ali Sedaghat">
+    <changeSet id="0.12-213" author="Ali Sedaghat">
         <addForeignKeyConstraint baseTableName="fak_level_competence"
                                  baseColumnNames="effective_level_id"
                                  referencedTableName="fak_maturity_level"
@@ -1192,23 +1198,23 @@
                                  deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
-    <changeSet id="0.12-213" author="Ali Sedaghat">
+    <changeSet id="0.12-214" author="Ali Sedaghat">
         <sql>alter table fak_level_competence drop constraint if exists baseinfo_levelcompetence_value_check;</sql>
     </changeSet>
 
-    <changeSet id="0.12-214" author="Ali Sedaghat">
+    <changeSet id="0.12-215" author="Ali Sedaghat">
         <addColumn tableName="fak_level_competence">
             <column name="created_by" type="uuid"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.12-215" author="Ali Sedaghat">
+    <changeSet id="0.12-216" author="Ali Sedaghat">
         <addColumn tableName="fak_level_competence">
             <column name="last_modified_by" type="uuid"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.12-216" author="Ali Sedaghat">
+    <changeSet id="0.12-217" author="Ali Sedaghat">
         <addForeignKeyConstraint baseTableName="fak_level_competence"
                                  baseColumnNames="created_by"
                                  referencedTableName="account_user"
@@ -1216,7 +1222,7 @@
                                  constraintName="fk_fak_levelcompetence_user_createdby"/>
     </changeSet>
 
-    <changeSet id="0.12-217" author="Ali Sedaghat">
+    <changeSet id="0.12-218" author="Ali Sedaghat">
         <addForeignKeyConstraint baseTableName="fak_level_competence"
                                  baseColumnNames="last_modified_by"
                                  referencedTableName="account_user"
@@ -1224,63 +1230,63 @@
                                  constraintName="fk_fak_levelcompetence_user_lastmodifiedby"/>
     </changeSet>
 
-    <changeSet id="0.12-218" author="Ali Sedaghat">
+    <changeSet id="0.12-219" author="Ali Sedaghat">
         <update tableName="fak_level_competence">
             <column name="created_by" valueComputed="fak_maturity_level.created_by FROM fak_maturity_level
              WHERE fak_level_competence.affected_level_id = fak_maturity_level.id"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.12-219" author="Ali Sedaghat">
+    <changeSet id="0.12-220" author="Ali Sedaghat">
         <update tableName="fak_level_competence">
             <column name="last_modified_by" valueComputed="fak_maturity_level.last_modified_by FROM fak_maturity_level
              WHERE fak_level_competence.affected_level_id = fak_maturity_level.id"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.12-220" author="Ali Sedaghat">
+    <changeSet id="0.12-221" author="Ali Sedaghat">
         <addNotNullConstraint tableName="fak_level_competence" columnName="created_by"/>
     </changeSet>
 
-    <changeSet id="0.12-221" author="Ali Sedaghat">
+    <changeSet id="0.12-222" author="Ali Sedaghat">
         <addNotNullConstraint tableName="fak_level_competence" columnName="last_modified_by"/>
     </changeSet>
 
-    <changeSet id="0.12-222" author="Ali Sedaghat">
+    <changeSet id="0.12-223" author="Ali Sedaghat">
         <addColumn tableName="fak_level_competence">
             <column name="creation_time" type="${datetime_with_time_zone_type}"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.12-223" author="Ali Sedaghat">
+    <changeSet id="0.12-224" author="Ali Sedaghat">
         <addColumn tableName="fak_level_competence">
             <column name="last_modification_time" type="${datetime_with_time_zone_type}"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.12-224" author="Ali Sedaghat">
+    <changeSet id="0.12-225" author="Ali Sedaghat">
         <update tableName="fak_level_competence">
             <column name="creation_time" valueComputed="fak_maturity_level.creation_time FROM fak_maturity_level
              WHERE fak_level_competence.affected_level_id = fak_maturity_level.id"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.12-225" author="Ali Sedaghat">
+    <changeSet id="0.12-226" author="Ali Sedaghat">
         <update tableName="fak_level_competence">
             <column name="last_modification_time" valueComputed="fak_maturity_level.last_modification_time FROM fak_maturity_level
              WHERE fak_level_competence.affected_level_id = fak_maturity_level.id"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.12-226" author="Ali Sedaghat">
+    <changeSet id="0.12-227" author="Ali Sedaghat">
         <addNotNullConstraint tableName="fak_level_competence" columnName="creation_time"/>
     </changeSet>
 
-    <changeSet id="0.12-227" author="Ali Sedaghat">
+    <changeSet id="0.12-228" author="Ali Sedaghat">
         <addNotNullConstraint tableName="fak_level_competence" columnName="last_modification_time"/>
     </changeSet>
 
-    <changeSet id="0.12-228" author="Ali Sedaghat">
+    <changeSet id="0.12-229" author="Ali Sedaghat">
         <renameSequence oldSequenceName="baseinfo_levelcompetence_id_seq" newSequenceName="fak_level_competence_id_seq"/>
     </changeSet>
 

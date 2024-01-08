@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, Long> {
 
-    List<MaturityLevelJpaEntity> findAllByKitId(Long assessmentKitId);
+    List<MaturityLevelJpaEntity> findAllByKitId(Long kitId);
 
 
     @Query("""

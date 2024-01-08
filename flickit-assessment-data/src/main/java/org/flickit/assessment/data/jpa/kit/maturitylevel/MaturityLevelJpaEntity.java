@@ -40,7 +40,7 @@ public class MaturityLevelJpaEntity {
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
-    @Column(name = "last_modification_date", nullable = false)
+    @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 
     @Column(name = "created_by", nullable = false)
