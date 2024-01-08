@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -41,13 +42,13 @@ class GetExpertGroupListServiceTest {
         members.add("Member 1");
         members.add("Member 2");
 
-        List<GetExpertGroupListUseCase.ExpertGroupListItem> expertGroupListItems = List.of(
-            new GetExpertGroupListUseCase.ExpertGroupListItem(expertGroupId1, "ExpertGroup title 1",
+        List<Result> expertGroupListItems = List.of(
+            new Result(expertGroupId1, "ExpertGroup title 1",
                 "ExpertGroup bio 1", "ExpertGroup picture 1", 3, 2,
-                members,UUID.randomUUID(),null),
-            new GetExpertGroupListUseCase.ExpertGroupListItem(expertGroupId2, "ExpertGroup title 2",
+                members,UUID.randomUUID()),
+            new Result(expertGroupId2, "ExpertGroup title 2",
                 "ExpertGroup bio 2", "ExpertGroup picture 2", 3, 2,
-                members,currentUserId,null)
+                members,currentUserId)
         );
 
         List<GetExpertGroupListUseCase.ExpertGroupListItemFinal> expertGroupListItemsFinal = List.of(
@@ -59,7 +60,7 @@ class GetExpertGroupListServiceTest {
                 members,true)
         );
 
-        PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem> paginatedResponse = new PaginatedResponse<>(
+        PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
             expertGroupListItems,
             page,
             size,
@@ -90,17 +91,17 @@ class GetExpertGroupListServiceTest {
         UUID currentUserId = UUID.randomUUID();
 
 
-        List<GetExpertGroupListUseCase.ExpertGroupListItem> expertGroupListItems = Collections.emptyList();
+        List<Result> expertGroupListItems = Collections.emptyList();
 
         List<GetExpertGroupListUseCase.ExpertGroupListItemFinal> expertGroupListItemsFinal = Collections.emptyList();
 
-        PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem> paginatedResponse = new PaginatedResponse<>(
+        PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
             expertGroupListItems,
             page,
             size,
             UserJpaEntity.Fields.NAME,
             Sort.Direction.ASC.name().toLowerCase(),
-            expertGroupListItems.size());
+            0);
         when(loadExpertGroupListPort.loadExpertGroupList(any (LoadExpertGroupListPort.Param.class)))
             .thenReturn(paginatedResponse);
 
