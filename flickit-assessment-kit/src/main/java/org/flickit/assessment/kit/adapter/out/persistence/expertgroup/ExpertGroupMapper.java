@@ -1,21 +1,21 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
+import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
-import org.flickit.assessment.data.jpa.kit.expertgroup.MemberView;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 
 import java.util.function.BiFunction;
 
+@NoArgsConstructor
 public class ExpertGroupMapper {
 
     static BiFunction<ExpertGroupJpaRepository, GetExpertGroupListUseCase.ExpertGroupListItem, GetExpertGroupListUseCase.ExpertGroupListItem>
         mapMembers = (repository, item) -> {
         var members = repository.findMembersByExpertId(item.id())
             .stream()
-            .map(ExpertGroupMapper::mapToMember)
             .toList();
 
         return new GetExpertGroupListUseCase.ExpertGroupListItem(
@@ -30,9 +30,6 @@ public class ExpertGroupMapper {
             item.editable()
         );
     };
-
-    private ExpertGroupMapper() {
-    }
 
     public static ExpertGroup mapToDomainModel(ExpertGroupJpaEntity entity) {
         return new ExpertGroup(entity.getId());
@@ -49,10 +46,5 @@ public class ExpertGroupMapper {
             null,
             entity.getOwnerId(),
             entity.getEditable());
-    }
-
-    public static GetExpertGroupListUseCase.Member mapToMember(MemberView entity) {
-        return new GetExpertGroupListUseCase.Member(
-            entity.getDisplayName());
     }
 }

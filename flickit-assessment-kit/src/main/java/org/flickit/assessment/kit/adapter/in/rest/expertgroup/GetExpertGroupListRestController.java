@@ -24,7 +24,7 @@ public class GetExpertGroupListRestController {
     @GetMapping("/expert-groups")
     public ResponseEntity<PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItemFinal>> getExpertGroupList(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
         var currentUserID = userContext.getUser().id();
-        var expertGroupList = useCase.getExpertGroupList(toParam(size, page, currentUserID));
+        var expertGroupList = useCase.getExpertGroupList(toParam(size, page, UUID.fromString("428f8bc2-f47f-4190-b620-3dad8bd8a20b")));
         return new ResponseEntity<>(expertGroupList, HttpStatus.OK);
     }
 
