@@ -6,7 +6,7 @@ public interface CreateQuestionPort {
 
     record Param(String code,
                  String title,
-                 String description,
+                 String hint,
                  Integer index,
                  Long questionnaireId,
                  Boolean mayNotBeApplicable) {

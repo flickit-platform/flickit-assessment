@@ -17,7 +17,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     @Modifying
     @Query("UPDATE QuestionJpaEntity q SET " +
         "q.title = :title, " +
-        "q.description = :description, " +
+        "q.hint = :hint, " +
         "q.index = :index, " +
         "q.mayNotBeApplicable = :mayNotBeApplicable," +
         "q.lastModificationTime = :lastModificationTime " +
@@ -25,7 +25,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     void update(@Param("id") Long id,
                 @Param("title") String title,
                 @Param("index") Integer index,
-                @Param("description") String description,
+                @Param("hint") String hint,
                 @Param("mayNotBeApplicable") Boolean mayNotBeApplicable,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime);
 
