@@ -3,6 +3,7 @@ package org.flickit.assessment.data.jpa.kit.expertgroup;
 import java.util.UUID;
 
 public interface ExpertGroupWithDetailsView {
+
     Long getId();
 
     String getName();
