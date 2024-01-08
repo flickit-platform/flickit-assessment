@@ -7,14 +7,14 @@ import java.util.List;
 
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, Long> {
 
-    List<MaturityLevelJpaEntity> findAllByAssessmentKitId(Long assessmentKitId);
+    List<MaturityLevelJpaEntity> findAllByKitId(Long assessmentKitId);
 
 
     @Query("""
             SELECT l as maturityLevel, c as levelCompetence
             FROM MaturityLevelJpaEntity l
             LEFT JOIN LevelCompetenceJpaEntity c ON l.id = c.affectedLevel.id
-            WHERE l.assessmentKitId = :kitId
+            WHERE l.kitId = :kitId
         """)
     List<MaturityJoinCompetenceView> findAllByKitIdWithCompetence(Long kitId);
 }
