@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.ExpertGroupListItemFinal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +23,10 @@ public class GetExpertGroupListRestController {
     private final UserContext userContext;
 
     @GetMapping("/expert-groups")
-    public ResponseEntity<PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItemFinal>> getExpertGroupList(@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<PaginatedResponse<ExpertGroupListItemFinal>> getExpertGroupList(
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "0") int page) {
+
         var currentUserID = userContext.getUser().id();
         var expertGroupList = useCase.getExpertGroupList(toParam(size, page, currentUserID));
         return new ResponseEntity<>(expertGroupList, HttpStatus.OK);
