@@ -1004,4 +1004,152 @@
         <renameSequence oldSequenceName="baseinfo_metricimpact_id_seq" newSequenceName="fak_question_impact_id_seq"/>
     </changeSet>
 
+    <changeSet id="0.12-179" author="Ali Sedaghat">
+        <renameTable oldTableName="baseinfo_maturitylevel" newTableName="fak_maturity_level"/>
+    </changeSet>
+
+    <changeSet id="0.12-180" author="Ali Sedaghat">
+        <sql>alter table fak_maturity_level rename constraint baseinfo_maturitylevel_pkey to pk_fak_maturity_level;</sql>
+    </changeSet>
+
+    <changeSet id="0.12-181" author="Ali Sedaghat">
+        <sql>alter table fak_maturity_level drop constraint if exists baseinfo_maturitylevel_value_check;</sql>
+    </changeSet>
+
+    <changeSet id="0.12-182" author="Ali Sedaghat">
+        <dropAllForeignKeyConstraints baseTableName="fak_maturity_level"/>
+    </changeSet>
+
+    <changeSet id="0.12-183" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_maturity_level"
+                              constraintName="baseinfo_maturitylevel_title_profile_id_2682c3b0_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.12-184" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_maturity_level"
+                              constraintName="baseinfo_maturitylevel_value_profile_id_ddb3a964_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.12-185" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_maturity_level" constraintName="uq_baseinfo_maturitylevel_code_kit_id"/>
+    </changeSet>
+
+    <changeSet id="0.12-186" author="Ali Sedaghat">
+        <renameColumn tableName="fak_maturity_level" oldColumnName="assessment_kit_id" newColumnName="kit_id"/>
+    </changeSet>
+
+    <changeSet id="0.12-187" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_maturity_level"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_maturitylevel_assessmentkit"
+                                 deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-188" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_maturity_level" columnNames="title,kit_id"
+                             constraintName="fak_maturitylevel_title_kit_id"
+                             deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-189" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_maturity_level" columnNames="index,kit_id"
+                             constraintName="fak_maturitylevel_index_kit_id"
+                             deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-190" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_maturity_level" columnNames="code,kit_id"
+                             constraintName="fak_maturitylevel_code_kit_id"/>
+    </changeSet>
+
+    <changeSet id="0.12-191" author="Ali Sedaghat">
+        <addColumn tableName="fak_maturity_level">
+            <column name="created_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-192" author="Ali Sedaghat">
+        <addColumn tableName="fak_maturity_level">
+            <column name="last_modified_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-193" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_maturity_level"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_maturitylevel_user_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.12-194" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_maturity_level"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_maturitylevel_user_lastmodifiedby"/>
+    </changeSet>
+
+    <changeSet id="0.12-195" author="Ali Sedaghat">
+        <update tableName="fak_maturity_level">
+            <column name="created_by" valueComputed="fak_assessment_kit.created_by FROM fak_assessment_kit
+             WHERE fak_maturity_level.kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-196" author="Ali Sedaghat">
+        <update tableName="fak_maturity_level">
+            <column name="last_modified_by" valueComputed="fak_assessment_kit.last_modified_by FROM fak_assessment_kit
+             WHERE fak_maturity_level.kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-197" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_maturity_level" columnName="created_by"/>
+    </changeSet>
+
+    <changeSet id="0.12-198" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_maturity_level" columnName="last_modified_by"/>
+    </changeSet>
+
+    <changeSet id="0.12-199" author="Ali Sedaghat">
+        <addColumn tableName="fak_maturity_level">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-200" author="Ali Sedaghat">
+        <addColumn tableName="fak_maturity_level">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-201" author="Ali Sedaghat">
+        <update tableName="fak_maturity_level">
+            <column name="creation_time" valueComputed="fak_assessment_kit.creation_time FROM fak_assessment_kit
+             WHERE fak_maturity_level.kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-202" author="Ali Sedaghat">
+        <update tableName="fak_maturity_level">
+            <column name="last_modification_time" valueComputed="fak_assessment_kit.last_modification_date FROM fak_assessment_kit
+             WHERE fak_maturity_level.kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-203" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_maturity_level" columnName="creation_time"/>
+    </changeSet>
+
+    <changeSet id="0.12-204" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_maturity_level" columnName="last_modification_time"/>
+    </changeSet>
+
+    <changeSet id="0.12-205" author="Ali Sedaghat">
+        <renameSequence oldSequenceName="baseinfo_maturitylevel_id_seq" newSequenceName="fak_maturity_level_id_seq"/>
+    </changeSet>
+
 </databaseChangeLog>
