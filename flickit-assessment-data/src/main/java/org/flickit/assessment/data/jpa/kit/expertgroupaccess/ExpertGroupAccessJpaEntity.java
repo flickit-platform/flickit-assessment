@@ -16,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ExpertGroupAccessJpaEntity {
+
     @Id
     @Column(name = "id", nullable = false)
     private Long id;

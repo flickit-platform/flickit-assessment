@@ -37,9 +37,9 @@ class GetExpertGroupListServiceTest {
         long expertGroupId1 = new Random().nextLong();
         long expertGroupId2 = new Random().nextLong();
 
-        List<GetExpertGroupListUseCase.Member> members = new LinkedList<>();
-        members.add(new GetExpertGroupListUseCase.Member("Member 1"));
-        members.add(new GetExpertGroupListUseCase.Member("Member 2"));
+        List<String> members = new LinkedList<>();
+        members.add("Member 1");
+        members.add("Member 2");
 
         List<GetExpertGroupListUseCase.ExpertGroupListItem> expertGroupListItems = List.of(
             new GetExpertGroupListUseCase.ExpertGroupListItem(expertGroupId1, "ExpertGroup title 1",
@@ -88,7 +88,7 @@ class GetExpertGroupListServiceTest {
         int page = 0;
         int size = 10;
         UUID currentUserId = UUID.randomUUID();
-        
+
 
         List<GetExpertGroupListUseCase.ExpertGroupListItem> expertGroupListItems = Collections.emptyList();
 
