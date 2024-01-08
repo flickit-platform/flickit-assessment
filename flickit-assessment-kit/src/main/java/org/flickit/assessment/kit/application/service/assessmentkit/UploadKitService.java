@@ -23,12 +23,17 @@ public class UploadKitService implements UploadKitUseCase {
 
     @SneakyThrows
     @Override
-    public Long upload(UploadKitUseCase.Param param) {
+    public UploadKitUseCase.Result upload(UploadKitUseCase.Param param) {
         AssessmentKitDslModel dslContentJson = getDslContentPort.getDslContent(param.getDslFile());
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(dslContentJson);
         UploadKitPort.Result uploadedFilesInformation = uploadKitPort.upload(param.getDslFile(), json);
-        return createAssessmentKitDslPort.create(toCreateAssessmentKitDslParam(uploadedFilesInformation));
+        CreateAssessmentKitDslPort.Result persistedDataIds = createAssessmentKitDslPort.create(toCreateAssessmentKitDslParam(uploadedFilesInformation));
+        return toResult(persistedDataIds);
+    }
+
+    private Result toResult(CreateAssessmentKitDslPort.Result persistedDataIds) {
+        return new UploadKitUseCase.Result(persistedDataIds.kitZipDslId(), persistedDataIds.kitJsonDslId());
     }
 
     private CreateAssessmentKitDslPort.Param toCreateAssessmentKitDslParam(UploadKitPort.Result result) {

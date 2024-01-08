@@ -12,10 +12,9 @@ public class AssessmentKitDslPersistenceJpaAdapter implements CreateAssessmentKi
     private final AssessmentKitDslJpaRepository repository;
 
     @Override
-    public Long create(Param param) {
-        //Save json file
-        repository.save(AssessmentKitDslMapper.toJpaEntity(param.jsonFilePath()));
-        //Save zip file
-        return repository.save(AssessmentKitDslMapper.toJpaEntity(param.zipFilePath())).getId();
+    public CreateAssessmentKitDslPort.Result create(Param param) {
+        Long kitZipDslId = repository.save(AssessmentKitDslMapper.toJpaEntity(param.zipFilePath())).getId();
+        Long kitJsonDslId = repository.save(AssessmentKitDslMapper.toJpaEntity(param.jsonFilePath())).getId();
+        return new CreateAssessmentKitDslPort.Result(kitZipDslId, kitJsonDslId);
     }
 }

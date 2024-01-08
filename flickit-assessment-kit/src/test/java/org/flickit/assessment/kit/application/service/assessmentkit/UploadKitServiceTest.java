@@ -67,16 +67,18 @@ class UploadKitServiceTest {
         String jsonFilePath = "sample/json/file/path";
         when(uploadKitPort.upload(dslFile, json)).thenReturn(new UploadKitPort.Result(zipFilePath, jsonFilePath));
 
-        long kitDslId = 1L;
+        long kitZipDslId = 1L;
+        long kitJsonDslId = 2L;
         when(createAssessmentKitDslPort.create(new CreateAssessmentKitDslPort.Param(zipFilePath, jsonFilePath)))
-            .thenReturn(kitDslId);
+            .thenReturn(new CreateAssessmentKitDslPort.Result(kitZipDslId, kitJsonDslId));
 
         when(getDslContentPort.getDslContent(dslFile)).thenReturn(kitDslModel);
 
         var param = new UploadKitUseCase.Param(dslFile);
-        Long uploadedKitInformation = service.upload(param);
+        var uploadedKitInformation = service.upload(param);
 
-        assertEquals(kitDslId, uploadedKitInformation);
+        assertEquals(kitZipDslId, uploadedKitInformation.kitZipDslId());
+        assertEquals(kitJsonDslId, uploadedKitInformation.kitJsonDslId());
     }
 
     @SneakyThrows

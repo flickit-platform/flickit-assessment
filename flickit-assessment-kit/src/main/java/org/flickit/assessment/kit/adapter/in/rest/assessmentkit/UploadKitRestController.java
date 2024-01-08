@@ -19,10 +19,10 @@ public class UploadKitRestController {
     @PostMapping("assessment-kits/upload")
     public ResponseEntity<UploadKitResponseDto> upload(@RequestParam("dslFile") MultipartFile dslFile) {
         try {
-            Long kitDslId = useCase.upload(toParam(dslFile));
-            return new ResponseEntity<>(toResponse(kitDslId, null), HttpStatus.OK);
+            UploadKitUseCase.Result uploadResult = useCase.upload(toParam(dslFile));
+            return new ResponseEntity<>(toResponse(uploadResult.kitZipDslId(), uploadResult.kitJsonDslId(), null), HttpStatus.OK);
         } catch (DSLHasSyntaxErrorException e) {
-            return new ResponseEntity<>(toResponse(null, e.getMessage()), HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(toResponse(null, null, e.getMessage()), HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
@@ -30,7 +30,7 @@ public class UploadKitRestController {
         return new UploadKitUseCase.Param(dslFile);
     }
 
-    private UploadKitResponseDto toResponse(Long kitDslId, String dslError) {
-        return new UploadKitResponseDto(kitDslId, dslError);
+    private UploadKitResponseDto toResponse(Long kitZipDslId, Long kitJsonDslId, String dslError) {
+        return new UploadKitResponseDto(kitZipDslId, kitJsonDslId, dslError);
     }
 }

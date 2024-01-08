@@ -10,7 +10,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.UPLOAD_KIT_DSL_K
 
 public interface UploadKitUseCase {
 
-    Long upload(Param param);
+    Result upload(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -24,5 +24,7 @@ public interface UploadKitUseCase {
             this.validateSelf();
         }
     }
+
+    record Result(Long kitZipDslId, Long kitJsonDslId) {}
 
 }
