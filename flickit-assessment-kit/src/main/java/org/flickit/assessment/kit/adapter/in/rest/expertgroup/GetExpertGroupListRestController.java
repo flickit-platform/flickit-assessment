@@ -27,12 +27,12 @@ public class GetExpertGroupListRestController {
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page) {
 
-        var currentUserID = userContext.getUser().id();
-        var expertGroupList = useCase.getExpertGroupList(toParam(size, page, currentUserID));
+        var currentUserId = userContext.getUser().id();
+        var expertGroupList = useCase.getExpertGroupList(toParam(size, page, currentUserId));
         return new ResponseEntity<>(expertGroupList, HttpStatus.OK);
     }
 
-    private GetExpertGroupListUseCase.Param toParam(int size, int page, UUID currentUserID) {
-        return new GetExpertGroupListUseCase.Param(size, page, currentUserID);
+    private GetExpertGroupListUseCase.Param toParam(int size, int page, UUID currentUserId) {
+        return new GetExpertGroupListUseCase.Param(size, page, currentUserId);
     }
 }

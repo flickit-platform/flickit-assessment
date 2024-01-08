@@ -9,6 +9,6 @@ public interface LoadExpertGroupListPort {
 
     PaginatedResponse<ExpertGroupListItem> loadExpertGroupList(Param param);
 
-    record Param(int page, int size, UUID currentUserID) {
+    record Param(int page, int size, UUID currentUserId) {
     }
 }

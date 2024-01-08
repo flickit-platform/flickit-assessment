@@ -27,12 +27,12 @@ public interface GetExpertGroupListUseCase {
         @Min(value = 0, message = GET_EXPERT_GROUP_LIST_PAGE_MIN)
         int page;
 
-        UUID currentUserID;
+        UUID currentUserId;
 
-        public Param(int size, int page, UUID currentUserID) {
+        public Param(int size, int page, UUID currentUserId) {
             this.size = size;
             this.page = page;
-            this.currentUserID = currentUserID;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
@@ -43,8 +43,5 @@ public interface GetExpertGroupListUseCase {
 
     record ExpertGroupListItemFinal(Long id, String title, String bio, String picture, Integer publishedKitsCount,
                                     Integer membersCount, List<String> members, Boolean editable) {
-    }
-
-    record Member(String displayName) {
     }
 }
