@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.expertgroup;
 
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
@@ -47,11 +48,8 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
     }
 }
 
-
+@NoArgsConstructor
 class PaginatedResponseUtil {
-
-    private PaginatedResponseUtil() {
-    }
 
     public static <T, R> PaginatedResponse<R> mapPaginatedResponse(
         PaginatedResponse<T> input,
