@@ -1049,19 +1049,19 @@
 
     <changeSet id="0.12-188" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_maturity_level" columnNames="title,kit_id"
-                             constraintName="fak_maturitylevel_title_kit_id"
+                             constraintName="fak_maturitylevel_title_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-189" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_maturity_level" columnNames="index,kit_id"
-                             constraintName="fak_maturitylevel_index_kit_id"
+                             constraintName="fak_maturitylevel_index_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-190" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_maturity_level" columnNames="code,kit_id"
-                             constraintName="fak_maturitylevel_code_kit_id"/>
+                             constraintName="fak_maturitylevel_code_kitid"/>
     </changeSet>
 
     <changeSet id="0.12-191" author="Ali Sedaghat">
