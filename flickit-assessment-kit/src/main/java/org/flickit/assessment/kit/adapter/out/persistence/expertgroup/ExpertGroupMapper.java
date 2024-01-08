@@ -4,22 +4,21 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.ExpertGroupListItem;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
 
 import java.util.function.BiFunction;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExpertGroupMapper {
 
-    static BiFunction<ExpertGroupJpaRepository, ExpertGroupListItem, ExpertGroupListItem>
+    static BiFunction<ExpertGroupJpaRepository, Result, Result>
         mapMembers = (repository, item) -> {
 
         var members = repository.findMembersByExpertId(item.id())
             .stream()
             .toList();
 
-        return new GetExpertGroupListUseCase.ExpertGroupListItem(
+        return new Result(
             item.id(),
             item.title(),
             item.bio(),
@@ -27,14 +26,13 @@ public class ExpertGroupMapper {
             item.publishedKitsCount(),
             item.membersCount(),
             members,
-            item.ownerId(),
-            item.editable()
+            item.ownerId()
         );
     };
 
-    public static ExpertGroupListItem mapToExpertGroupListItem(ExpertGroupWithDetailsView entity) {
+    public static Result mapToExpertGroupListItem(ExpertGroupWithDetailsView entity) {
 
-        return new ExpertGroupListItem(
+        return new Result(
             entity.getId(),
             entity.getName(),
             entity.getBio(),
@@ -42,7 +40,6 @@ public class ExpertGroupMapper {
             entity.getPublishedKitsCount(),
             entity.getMembersCount(),
             null,
-            entity.getOwnerId(),
-            null);
+            entity.getOwnerId());
     }
 }

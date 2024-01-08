@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.ExpertGroupListItem;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.data.domain.PageRequest;
@@ -30,9 +29,9 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<ExpertGroupListItem> loadExpertGroupList(Param param) {
+    public PaginatedResponse<Result> loadExpertGroupList(Param param) {
 
-        UnaryOperator<ExpertGroupListItem> mapMembersWithRepository
+        UnaryOperator<Result> mapMembersWithRepository
             = item -> ExpertGroupMapper.mapMembers.apply(repository, item);
 
         var pageResult = repository.findByCurrentUserId(
@@ -40,7 +39,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
             PageRequest.of(param.page(),
                 param.size()));
 
-        List<ExpertGroupListItem> items = pageResult.getContent().stream()
+        List<Result> items = pageResult.getContent().stream()
             .map(ExpertGroupMapper::mapToExpertGroupListItem)
             .map(mapMembersWithRepository)
             .toList();
