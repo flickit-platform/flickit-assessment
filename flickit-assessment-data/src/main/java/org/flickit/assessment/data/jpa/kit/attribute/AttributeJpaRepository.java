@@ -48,7 +48,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId
             LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id and ov.optionId = ans.answerOptionId
             WHERE
-              qi.qualityAttributeId = :attributeId
+              qi.attributeId = :attributeId
               AND qi.maturityLevel.id = :maturityLevelId
             ORDER BY qr.title asc, qsn.index asc
         """)

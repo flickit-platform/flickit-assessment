@@ -666,8 +666,7 @@
                                  referencedTableName="baseinfo_questionimpact"
                                  referencedColumnNames="id"
                                  constraintName="fk_fak_answeroptionimpact_questionimpact"
-                                 deferrable="true" initiallyDeferred="true"
-                                 onDelete="CASCADE"/>
+                                 deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-121" author="Ali Sedaghat">
@@ -861,6 +860,148 @@
 
     <changeSet id="0.12-154" author="Ali Sedaghat">
         <renameSequence oldSequenceName="baseinfo_metric_id_seq" newSequenceName="fak_question_id_seq"/>
+    </changeSet>
+
+    <changeSet id="0.12-155" author="Ali Sedaghat">
+        <renameTable oldTableName="baseinfo_questionimpact" newTableName="fak_question_impact"/>
+    </changeSet>
+
+    <changeSet id="0.12-156" author="Ali Sedaghat">
+        <sql>alter table fak_question_impact rename constraint baseinfo_metricimpact_pkey to pk_fak_question_impact;</sql>
+    </changeSet>
+
+    <changeSet id="0.12-157" author="Ali Sedaghat">
+        <dropAllForeignKeyConstraints baseTableName="fak_question_impact"/>
+    </changeSet>
+
+    <changeSet id="0.12-158" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_question_impact"
+                                 baseColumnNames="question_id"
+                                 referencedTableName="fak_question"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_questionimpact_question"
+                                 deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-159" author="Ali Sedaghat">
+        <renameColumn tableName="fak_question_impact"
+                      oldColumnName="quality_attribute_id" newColumnName="attribute_id"/>
+    </changeSet>
+
+    <changeSet id="0.12-160" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_question_impact"
+                                 baseColumnNames="attribute_id"
+                                 referencedTableName="fak_attribute"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_questionimpact_attribute"
+                                 deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-161" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_question_impact"
+                                 baseColumnNames="maturity_level_id"
+                                 referencedTableName="baseinfo_maturitylevel"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_questionimpact_maturitylevel"
+                                 deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-162" author="Ali Sedaghat">
+        <dropColumn tableName="fak_question_impact">
+            <column name="level"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.12-163" author="Ali Sedaghat">
+        <sql>alter table fak_question_impact drop constraint if exists baseinfo_metricimpact_weight_check;</sql>
+    </changeSet>
+
+    <changeSet id="0.12-164" author="Ali Sedaghat">
+        <addColumn tableName="fak_question_impact">
+            <column name="created_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-165" author="Ali Sedaghat">
+        <addColumn tableName="fak_question_impact">
+            <column name="last_modified_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-166" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_question_impact"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_questionimpact_user_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.12-167" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_question_impact"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_questionimpact_user_lastmodifiedby"/>
+    </changeSet>
+
+    <changeSet id="0.12-168" author="Ali Sedaghat">
+        <update tableName="fak_question_impact">
+            <column name="created_by" valueComputed="fak_question.created_by FROM fak_question
+             WHERE fak_question_impact.question_id = fak_question.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-169" author="Ali Sedaghat">
+        <update tableName="fak_question_impact">
+            <column name="last_modified_by" valueComputed="fak_question.last_modified_by FROM fak_question
+             WHERE fak_question_impact.question_id = fak_question.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-170" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_question_impact" columnName="created_by"/>
+    </changeSet>
+
+    <changeSet id="0.12-171" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_question_impact" columnName="last_modified_by"/>
+    </changeSet>
+
+    <changeSet id="0.12-172" author="Ali Sedaghat">
+        <addColumn tableName="fak_question_impact">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-173" author="Ali Sedaghat">
+        <addColumn tableName="fak_question_impact">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-174" author="Ali Sedaghat">
+        <update tableName="fak_question_impact">
+            <column name="creation_time" valueComputed="fak_question.creation_time FROM fak_question
+             WHERE fak_question_impact.question_id = fak_question.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-175" author="Ali Sedaghat">
+        <update tableName="fak_question_impact">
+            <column name="last_modification_time" valueComputed="fak_question.last_modification_time FROM fak_question
+             WHERE fak_question_impact.question_id = fak_question.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.12-176" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_question_impact" columnName="creation_time"/>
+    </changeSet>
+
+    <changeSet id="0.12-177" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_question_impact" columnName="last_modification_time"/>
+    </changeSet>
+
+    <changeSet id="0.12-178" author="Ali Sedaghat">
+        <renameSequence oldSequenceName="baseinfo_metricimpact_id_seq" newSequenceName="fak_question_impact_id_seq"/>
     </changeSet>
 
 </databaseChangeLog>
