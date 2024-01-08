@@ -11,7 +11,7 @@ public class QuestionImpactMapper {
     public static QuestionImpact mapToDomainModel(QuestionImpactJpaEntity entity) {
         return new QuestionImpact(
             entity.getId(),
-            entity.getQualityAttributeId(),
+            entity.getAttributeId(),
             entity.getMaturityLevel().getId(),
             entity.getWeight(),
             entity.getQuestionId()
