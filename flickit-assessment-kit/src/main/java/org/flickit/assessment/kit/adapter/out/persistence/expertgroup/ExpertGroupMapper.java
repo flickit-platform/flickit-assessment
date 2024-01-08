@@ -6,14 +6,16 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.ExpertGroupListItem;
 
 import java.util.function.BiFunction;
 
 @NoArgsConstructor
 public class ExpertGroupMapper {
 
-    static BiFunction<ExpertGroupJpaRepository, GetExpertGroupListUseCase.ExpertGroupListItem, GetExpertGroupListUseCase.ExpertGroupListItem>
+    static BiFunction<ExpertGroupJpaRepository, ExpertGroupListItem, ExpertGroupListItem>
         mapMembers = (repository, item) -> {
+
         var members = repository.findMembersByExpertId(item.id())
             .stream()
             .toList();
@@ -32,11 +34,13 @@ public class ExpertGroupMapper {
     };
 
     public static ExpertGroup mapToDomainModel(ExpertGroupJpaEntity entity) {
+
         return new ExpertGroup(entity.getId());
     }
 
-    public static GetExpertGroupListUseCase.ExpertGroupListItem mapToExpertGroupListItem(ExpertGroupWithDetailsView entity) {
-        return new GetExpertGroupListUseCase.ExpertGroupListItem(
+    public static ExpertGroupListItem mapToExpertGroupListItem(ExpertGroupWithDetailsView entity) {
+
+        return new ExpertGroupListItem(
             entity.getId(),
             entity.getName(),
             entity.getBio(),

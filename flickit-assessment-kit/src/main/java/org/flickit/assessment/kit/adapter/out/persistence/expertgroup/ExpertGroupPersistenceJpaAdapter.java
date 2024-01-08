@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.ExpertGroupListItem;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.data.domain.PageRequest;
@@ -30,13 +30,17 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<GetExpertGroupListUseCase.ExpertGroupListItem> loadExpertGroupList(LoadExpertGroupListPort.Param param) {
+    public PaginatedResponse<ExpertGroupListItem> loadExpertGroupList(Param param) {
 
-        UnaryOperator<GetExpertGroupListUseCase.ExpertGroupListItem> mapMembersWithRepository
+        UnaryOperator<ExpertGroupListItem> mapMembersWithRepository
             = item -> ExpertGroupMapper.mapMembers.apply(repository, item);
 
-        var pageResult = repository.findByCurrentUserId(param.currentUserID(),PageRequest.of(param.page(), param.size()));
-        List<GetExpertGroupListUseCase.ExpertGroupListItem> items = pageResult.getContent().stream()
+        var pageResult = repository.findByCurrentUserId(
+            param.currentUserID(),
+            PageRequest.of(param.page(),
+                param.size()));
+
+        List<ExpertGroupListItem> items = pageResult.getContent().stream()
             .map(ExpertGroupMapper::mapToExpertGroupListItem)
             .map(mapMembersWithRepository)
             .toList();
