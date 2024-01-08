@@ -1290,4 +1290,12 @@
         <renameSequence oldSequenceName="baseinfo_levelcompetence_id_seq" newSequenceName="fak_level_competence_id_seq"/>
     </changeSet>
 
+    <changeSet id="0.12-230" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_level_competence" columnName="value"/>
+    </changeSet>
+
+    <changeSet id="0.12-231" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_level_competence" columnName="effective_level_id"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -28,16 +28,16 @@ public class LevelCompetenceJpaEntity {
     private MaturityLevelJpaEntity affectedLevel;
 
     @ManyToOne
-    @JoinColumn(name = "effective_level_id", referencedColumnName = "id")
+    @JoinColumn(name = "effective_level_id", referencedColumnName = "id", nullable = false)
     private MaturityLevelJpaEntity effectiveLevel;
 
-    @Column(name = "value")
+    @Column(name = "value", nullable = false)
     private Integer value;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
-    @Column(name = "last_modification_date", nullable = false)
+    @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 
     @Column(name = "created_by", nullable = false)
