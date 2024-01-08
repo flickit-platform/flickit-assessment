@@ -1,7 +1,5 @@
 package org.flickit.assessment.kit.application.service.expertgroup;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
@@ -11,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,50 +20,34 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
     @Override
     public PaginatedResponse<ExpertGroupListItemFinal> getExpertGroupList(Param param) {
 
-        var pageResult = loadExpertGroupListPort.loadExpertGroupList(toParam(param.getPage(), param.getSize(), param.getCurrentUserId()));
-        return PaginatedResponseUtil.mapPaginatedResponse(
-            pageResult,
-            expertGroupListItem -> {
-                boolean isEditable = expertGroupListItem.ownerId().equals(param.getCurrentUserId());
+        var portResult = loadExpertGroupListPort.loadExpertGroupList(toParam(param.getPage(), param.getSize(), param.getCurrentUserId()));
 
-                return new ExpertGroupListItemFinal(
-                    expertGroupListItem.id(),
-                    expertGroupListItem.title(),
-                    expertGroupListItem.bio(),
-                    expertGroupListItem.picture(),
-                    expertGroupListItem.publishedKitsCount(),
-                    expertGroupListItem.membersCount(),
-                    expertGroupListItem.members().stream().limit(5).toList(),
-                    isEditable
-                );
-            }
+        return new PaginatedResponse<>(
+            mapToExpertGroupListItems(portResult.getItems(), param.getCurrentUserId()),
+            portResult.getPage(),
+            portResult.getSize(),
+            portResult.getSort(),
+            portResult.getOrder(),
+            portResult.getTotal()
         );
-
     }
 
     private LoadExpertGroupListPort.Param toParam(int page, int size, UUID currentUserId) {
         return new LoadExpertGroupListPort.Param(page, size, currentUserId);
     }
-}
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-class PaginatedResponseUtil {
-
-    public static <T, R> PaginatedResponse<R> mapPaginatedResponse(
-        PaginatedResponse<T> input,
-        Function<T, R> mapper
-    ) {
-        List<R> mappedItems = input.getItems().stream()
-            .map(mapper)
+    private List<ExpertGroupListItemFinal> mapToExpertGroupListItems(List<LoadExpertGroupListPort.Result> items, UUID currentUserId) {
+        return items.stream()
+            .map(item -> new ExpertGroupListItemFinal(
+                item.id(),
+                item.title(),
+                item.bio(),
+                item.picture(),
+                item.publishedKitsCount(),
+                item.membersCount(),
+                item.members(),
+                item.ownerId().equals(currentUserId)
+            ))
             .toList();
-
-        return new PaginatedResponse<>(
-            mappedItems,
-            input.getPage(),
-            input.getSize(),
-            input.getSort(),
-            input.getOrder(),
-            input.getTotal()
-        );
     }
 }
