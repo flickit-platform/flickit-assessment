@@ -14,10 +14,7 @@ public interface ExpertGroupWithDetailsView {
 
     Integer getPublishedKitsCount();
 
-    Boolean getEditable();
-
     UUID getOwnerId();
 
     Integer getMembersCount();
-
 }

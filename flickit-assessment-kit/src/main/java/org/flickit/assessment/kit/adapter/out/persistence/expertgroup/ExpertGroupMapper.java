@@ -42,6 +42,6 @@ public class ExpertGroupMapper {
             entity.getMembersCount(),
             null,
             entity.getOwnerId(),
-            entity.getEditable());
+            null);
     }
 }
