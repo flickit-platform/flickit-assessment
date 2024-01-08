@@ -1154,7 +1154,8 @@
 
     <changeSet id="0.12-206" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_maturity_level" columnNames="value,kit_id"
-                             constraintName="uq_fak_maturitylevel_value_kitid"/>
+                             constraintName="uq_fak_maturitylevel_value_kitid"
+                             deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
 </databaseChangeLog>
