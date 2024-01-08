@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
+import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.Member;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
 
 import java.util.function.BiFunction;
@@ -13,9 +14,9 @@ public class ExpertGroupMapper {
 
     static BiFunction<ExpertGroupJpaRepository, Result, Result>
         mapMembers = (repository, item) -> {
-
         var members = repository.findMembersByExpertId(item.id())
             .stream()
+            .map(ExpertGroupMapper::mapStringListToMember)
             .toList();
 
         return new Result(
@@ -31,7 +32,6 @@ public class ExpertGroupMapper {
     };
 
     public static Result mapToExpertGroupListItem(ExpertGroupWithDetailsView entity) {
-
         return new Result(
             entity.getId(),
             entity.getName(),
@@ -41,5 +41,10 @@ public class ExpertGroupMapper {
             entity.getMembersCount(),
             null,
             entity.getOwnerId());
+    }
+
+    public static Member mapStringListToMember(String displayName) {
+        return new Member(
+            displayName);
     }
 }

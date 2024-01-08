@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.out.expertgroup;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.Member;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,6 @@ public interface LoadExpertGroupListPort {
     }
 
     record Result(Long id, String title, String bio, String picture, Integer publishedKitsCount,
-                               Integer membersCount, List<String> members, UUID ownerId) {
+                  Integer membersCount, List<Member> members, UUID ownerId) {
     }
 }

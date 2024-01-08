@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.expertgroup;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.Member;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
 import org.junit.jupiter.api.Test;
@@ -38,9 +39,9 @@ class GetExpertGroupListServiceTest {
         long expertGroupId1 = new Random().nextLong();
         long expertGroupId2 = new Random().nextLong();
 
-        List<String> members = new LinkedList<>();
-        members.add("Member 1");
-        members.add("Member 2");
+        List<Member> members = new LinkedList<>();
+        members.add(new Member("Member 1"));
+        members.add(new Member("Member 2"));
 
         List<Result> expertGroupListItems = List.of(
             new Result(expertGroupId1, "ExpertGroup title 1",

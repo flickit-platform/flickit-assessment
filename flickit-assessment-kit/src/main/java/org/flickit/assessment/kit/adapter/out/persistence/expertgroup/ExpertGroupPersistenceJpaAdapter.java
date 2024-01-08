@@ -36,8 +36,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
         var pageResult = repository.findByCurrentUserId(
             param.currentUserId(),
-            PageRequest.of(param.page(),
-                param.size()));
+            PageRequest.of(param.page(), param.size()));
 
         List<Result> items = pageResult.getContent().stream()
             .map(ExpertGroupMapper::mapToExpertGroupListItem)
