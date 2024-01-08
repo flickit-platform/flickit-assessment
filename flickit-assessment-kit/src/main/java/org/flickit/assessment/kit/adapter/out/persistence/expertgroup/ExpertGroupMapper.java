@@ -5,7 +5,9 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertG
 
 public class ExpertGroupMapper {
 
-    private ExpertGroupMapper(){}
+    private ExpertGroupMapper() {
+    }
+
     static ExpertGroupJpaEntity mapCreateParamToJpaEntity(CreateExpertGroupPort.Param param) {
         return new ExpertGroupJpaEntity(
             null,

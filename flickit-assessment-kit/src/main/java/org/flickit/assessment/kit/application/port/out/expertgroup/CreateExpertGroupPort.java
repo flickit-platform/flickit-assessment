@@ -11,5 +11,6 @@ public interface CreateExpertGroupPort {
                  String picture,
                  String website,
                  String bio,
-                 UUID currentUserId) {}
+                 UUID currentUserId) {
+    }
 }

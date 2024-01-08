@@ -4,4 +4,5 @@ public record CreateExpertGroupRequestDto(String name,
                                           String bio,
                                           String about,
                                           String website,
-                                          String picture) { }
+                                          String picture) {
+}
