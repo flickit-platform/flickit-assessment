@@ -1049,19 +1049,19 @@
 
     <changeSet id="0.12-188" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_maturity_level" columnNames="title,kit_id"
-                             constraintName="uq_fak_maturitylevel_title_kitid"
+                             constraintName="fak_maturitylevel_title_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-189" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_maturity_level" columnNames="index,kit_id"
-                             constraintName="uq_fak_maturitylevel_index_kitid"
+                             constraintName="fak_maturitylevel_index_kitid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.12-190" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_maturity_level" columnNames="code,kit_id"
-                             constraintName="uq_fak_maturitylevel_code_kitid"/>
+                             constraintName="fak_maturitylevel_code_kitid"/>
     </changeSet>
 
     <changeSet id="0.12-191" author="Ali Sedaghat">
@@ -1296,6 +1296,56 @@
 
     <changeSet id="0.12-231" author="Ali Sedaghat">
         <addNotNullConstraint tableName="fak_level_competence" columnName="effective_level_id"/>
+    </changeSet>
+
+    <changeSet id="0.12-232" author="Ali Sedaghat">
+        <renameTable oldTableName="baseinfo_assessmentsubject_questionnaires" newTableName="fak_subject_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.12-233" author="Ali Sedaghat">
+        <sql>alter table fak_subject_questionnaire
+            rename constraint baseinfo_assessmentsubject_questionnaires_pkey to pk_fak_subject_questionnaire;</sql>
+    </changeSet>
+
+    <changeSet id="0.12-234" author="Ali Sedaghat">
+        <renameColumn tableName="fak_subject_questionnaire" oldColumnName="assessmentsubject_id" newColumnName="subject_id"/>
+    </changeSet>
+
+    <changeSet id="0.12-235" author="Ali Sedaghat">
+        <dropAllForeignKeyConstraints baseTableName="fak_subject_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.12-236" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_subject_questionnaire"
+                              constraintName="baseinfo_assessmentsubje_assessmentsubject_id_que_cc480566_uniq"/>
+    </changeSet>
+
+    <changeSet id="0.12-237" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_subject_questionnaire"
+                                 baseColumnNames="subject_id"
+                                 referencedTableName="fak_subject"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_subjectquestionnaire_subject"
+                                 deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-238" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_subject_questionnaire"
+                                 baseColumnNames="questionnaire_id"
+                                 referencedTableName="fak_questionnaire"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_subjectquestionnaire_questionnaire"
+                                 deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.12-239" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_subject_questionnaire" columnNames="subject_id,questionnaire_id"
+                             constraintName="uq_fak_subjectquestionnaire_subjectid_questionnaireid"/>
+    </changeSet>
+
+    <changeSet id="0.12-240" author="Ali Sedaghat">
+        <renameSequence oldSequenceName="baseinfo_assessmentsubject_questionnaires_id_seq"
+                        newSequenceName="fak_subject_questionnaire_id_seq"/>
     </changeSet>
 
 </databaseChangeLog>
