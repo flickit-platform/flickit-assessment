@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
+import java.util.List;
+
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface CreateKitByDslUseCase {
@@ -34,10 +36,10 @@ public interface CreateKitByDslUseCase {
         @NotBlank(message = CREATE_KIT_BY_DSL_ABOUT_NOT_NULL)
         String about;
 
-        @NotBlank(message = CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL)
-        String[] tagIds;
+        @NotNull(message = CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL)
+        List<Long> tagIds;
 
-        public Param(Long kitJsonDslId, boolean isPrivate, Long expertGroupId, String title, String summary, String about, String[] tagIds) {
+        public Param(Long kitJsonDslId, boolean isPrivate, Long expertGroupId, String title, String summary, String about, List<Long> tagIds) {
             this.kitJsonDslId = kitJsonDslId;
             this.isPrivate = isPrivate;
             this.expertGroupId = expertGroupId;
