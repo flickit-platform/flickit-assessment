@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.expertgroup;
 import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase;
 import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,9 @@ class CreateExpertGroupServiceTest {
     @Mock
     private CreateExpertGroupPort createExpertGroupPort;
 
+    @Mock
+    private CreateExpertGroupAccessPort createExpertGroupAccessPort;
+
     @Test
     void testCreateExpertGroup_validParams_persistResult() {
         UUID currentUserId = UUID.randomUUID();
@@ -33,6 +37,7 @@ class CreateExpertGroupServiceTest {
             currentUserId);
         long expectedId = new  Random().nextLong();
         when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(expectedId);
+        when(createExpertGroupAccessPort.persist(any(CreateExpertGroupAccessPort.Param.class))).thenReturn(new Random().nextLong());
 
         CreateExpertGroupUseCase.Result result = service.createExpertGroup(param);
         assertEquals(expectedId, result.id(), "The result should be long ID");
