@@ -52,11 +52,11 @@ class GetExpertGroupListServiceTest {
                 members,currentUserId)
         );
 
-        List<GetExpertGroupListUseCase.ExpertGroupListItemFinal> expertGroupListItemsFinal = List.of(
-            new GetExpertGroupListUseCase.ExpertGroupListItemFinal(expertGroupId1, "ExpertGroup title 1",
+        List<GetExpertGroupListUseCase.ExpertGroupListItem> expertGroupListItemsFinal = List.of(
+            new GetExpertGroupListUseCase.ExpertGroupListItem(expertGroupId1, "ExpertGroup title 1",
                 "ExpertGroup bio 1", "ExpertGroup picture 1", 3, 2,
                 members,false),
-            new GetExpertGroupListUseCase.ExpertGroupListItemFinal(expertGroupId2, "ExpertGroup title 2",
+            new GetExpertGroupListUseCase.ExpertGroupListItem(expertGroupId2, "ExpertGroup title 2",
                 "ExpertGroup bio 2", "ExpertGroup picture 2", 3, 2,
                 members,true)
         );
@@ -94,7 +94,7 @@ class GetExpertGroupListServiceTest {
 
         List<Result> expertGroupListItems = Collections.emptyList();
 
-        List<GetExpertGroupListUseCase.ExpertGroupListItemFinal> expertGroupListItemsFinal = Collections.emptyList();
+        List<GetExpertGroupListUseCase.ExpertGroupListItem> expertGroupListItemsFinal = Collections.emptyList();
 
         PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
             expertGroupListItems,

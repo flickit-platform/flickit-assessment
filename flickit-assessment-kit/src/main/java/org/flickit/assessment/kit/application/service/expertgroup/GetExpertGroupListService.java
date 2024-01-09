@@ -19,7 +19,7 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
     private final LoadExpertGroupListPort loadExpertGroupListPort;
 
     @Override
-    public PaginatedResponse<ExpertGroupListItemFinal> getExpertGroupList(Param param) {
+    public PaginatedResponse<ExpertGroupListItem> getExpertGroupList(Param param) {
 
         var portResult = loadExpertGroupListPort.loadExpertGroupList(toParam(param.getPage(), param.getSize(), param.getCurrentUserId()));
 
@@ -37,9 +37,9 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
         return new LoadExpertGroupListPort.Param(page, size, currentUserId);
     }
 
-    private List<ExpertGroupListItemFinal> mapToExpertGroupListItems(List<Result> items, UUID currentUserId) {
+    private List<ExpertGroupListItem> mapToExpertGroupListItems(List<Result> items, UUID currentUserId) {
         return items.stream()
-            .map(item -> new ExpertGroupListItemFinal(
+            .map(item -> new ExpertGroupListItem(
                 item.id(),
                 item.title(),
                 item.bio(),

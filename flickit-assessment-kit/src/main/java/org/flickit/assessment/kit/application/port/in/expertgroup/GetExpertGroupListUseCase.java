@@ -14,7 +14,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetExpertGroupListUseCase {
 
-    PaginatedResponse<ExpertGroupListItemFinal> getExpertGroupList(Param param);
+    PaginatedResponse<ExpertGroupListItem> getExpertGroupList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -37,8 +37,8 @@ public interface GetExpertGroupListUseCase {
         }
     }
 
-    record ExpertGroupListItemFinal(Long id, String title, String bio, String picture, Integer publishedKitsCount,
-                                    Integer membersCount, List<Member> members, Boolean editable) {
+    record ExpertGroupListItem(Long id, String title, String bio, String picture, Integer publishedKitsCount,
+                               Integer membersCount, List<Member> members, Boolean editable) {
     }
 
     record Member(String displayName) {
