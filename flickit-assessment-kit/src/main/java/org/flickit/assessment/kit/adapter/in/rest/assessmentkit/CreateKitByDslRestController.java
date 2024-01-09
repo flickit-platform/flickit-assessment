@@ -15,16 +15,18 @@ public class CreateKitByDslRestController {
     private final CreateKitByDslUseCase useCase;
 
     @PostMapping("/assessment-kits/create-by-dsl")
-    public ResponseEntity<Void> create(@RequestBody CreateKitByDslRequestDto request) {
-        useCase.create(toParam(request));
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<Long> create(@RequestBody CreateKitByDslRequestDto request) {
+        Long kitId = useCase.create(toParam(request));
+        return new ResponseEntity<>(kitId, HttpStatus.CREATED);
     }
 
     private CreateKitByDslUseCase.Param toParam(CreateKitByDslRequestDto request) {
         return new CreateKitByDslUseCase.Param(request.kitJsonDslId(),
+            request.isPrivate(),
+            request.expertGroupId(),
             request.title(),
             request.summary(),
             request.about(),
-            request.tags());
+            request.tagIds());
     }
 }

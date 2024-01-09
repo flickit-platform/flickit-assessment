@@ -44,10 +44,12 @@ public class ErrorMessageKey {
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_FOUND = "get-user-by-email.email.notFound";
 
     public static final String CREATE_KIT_BY_DSL_KIT_DSL_JSON_ID_NOT_NULL = "create-kit-by-dsl.kit-dsl-json-id.notNull";
+    public static final String CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL = "create-kit-by-dsl.isPrivate.notNull";
+    public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
     public static final String CREATE_KIT_BY_DSL_TITLE_NOT_NULL = "create-kit-by-dsl.title.notNull";
     public static final String CREATE_KIT_BY_DSL_SUMMARY_NOT_NULL = "create-kit-by-dsl.summary.notNull";
     public static final String CREATE_KIT_BY_DSL_ABOUT_NOT_NULL = "create-kit-by-dsl.about.notNull";
-    public static final String CREATE_KIT_BY_DSL_TAGS_NOT_NULL = "create-kit-by-dsl.tags.notNull";
+    public static final String CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL = "create-kit-by-dsl.tag-ids.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);

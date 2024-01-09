@@ -10,7 +10,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface CreateKitByDslUseCase {
 
-    void create(Param param);
+    Long create(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -18,6 +18,12 @@ public interface CreateKitByDslUseCase {
 
         @NotNull(message = CREATE_KIT_BY_DSL_KIT_DSL_JSON_ID_NOT_NULL)
         Long kitJsonDslId;
+
+        @NotNull(message = CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL)
+        boolean isPrivate;
+
+        @NotNull(message = CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL)
+        Long expertGroupId;
 
         @NotBlank(message = CREATE_KIT_BY_DSL_TITLE_NOT_NULL)
         String title;
@@ -28,15 +34,17 @@ public interface CreateKitByDslUseCase {
         @NotBlank(message = CREATE_KIT_BY_DSL_ABOUT_NOT_NULL)
         String about;
 
-        @NotBlank(message = CREATE_KIT_BY_DSL_TAGS_NOT_NULL)
-        String tags;
+        @NotBlank(message = CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL)
+        String[] tagIds;
 
-        public Param(Long kitJsonDslId, String title, String summary, String about, String tags) {
+        public Param(Long kitJsonDslId, boolean isPrivate, Long expertGroupId, String title, String summary, String about, String[] tagIds) {
             this.kitJsonDslId = kitJsonDslId;
+            this.isPrivate = isPrivate;
+            this.expertGroupId = expertGroupId;
             this.title = title;
             this.summary = summary;
             this.about = about;
-            this.tags = tags;
+            this.tagIds = tagIds;
             this.validateSelf();
         }
     }
