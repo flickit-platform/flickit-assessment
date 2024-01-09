@@ -39,7 +39,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
             PageRequest.of(param.page(), param.size()));
 
         List<Result> items = pageResult.getContent().stream()
-            .map(ExpertGroupMapper::mapToExpertGroupListItem)
+            .map(ExpertGroupMapper::mapToPortResult)
             .map(mapMembersWithRepository)
             .toList();
 

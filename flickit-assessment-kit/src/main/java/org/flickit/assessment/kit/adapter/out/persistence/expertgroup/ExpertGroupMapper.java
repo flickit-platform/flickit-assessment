@@ -31,7 +31,7 @@ public class ExpertGroupMapper {
         );
     };
 
-    public static Result mapToExpertGroupListItem(ExpertGroupWithDetailsView entity) {
+    public static Result mapToPortResult(ExpertGroupWithDetailsView entity) {
         return new Result(
             entity.getId(),
             entity.getName(),
