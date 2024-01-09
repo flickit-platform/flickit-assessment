@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.function.TriFunction;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
 
 @Component
@@ -34,7 +34,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     public PaginatedResponse<Result> loadExpertGroupList(Param param) {
 
         UnaryOperator<Result> mapMembersWithRepository
-            = item -> resultWithMembers.apply(repository, item);
+            = item -> resultWithMembers.apply(repository,param, item);
 
         var pageResult = repository.findByUserId(
             param.currentUserId(),
@@ -55,9 +55,9 @@ public class ExpertGroupPersistenceJpaAdapter implements
         );
     }
 
-    static BiFunction<ExpertGroupJpaRepository, Result, Result>
-        resultWithMembers = (repository, item) -> {
-        var members = repository.findMembersByExpertId(item.id())
+    static TriFunction<ExpertGroupJpaRepository,Param, Result, Result>
+        resultWithMembers = (repository,param, item) -> {
+        var members = repository.findMembersByExpertId(item.id(),PageRequest.of(0, param.sizeOfMembers()))
             .stream()
             .map(GetExpertGroupListUseCase.Member::new)
             .toList();

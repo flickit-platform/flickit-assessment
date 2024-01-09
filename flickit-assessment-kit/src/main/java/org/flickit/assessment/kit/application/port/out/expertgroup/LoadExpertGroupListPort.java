@@ -10,7 +10,7 @@ public interface LoadExpertGroupListPort {
 
     PaginatedResponse<Result> loadExpertGroupList(Param param);
 
-    record Param(int page, int size, UUID currentUserId) {
+    record Param(int page, int size, UUID currentUserId, int sizeOfMembers) {
     }
 
     record Result(Long id, String title, String bio, String picture, Integer publishedKitsCount,
