@@ -34,7 +34,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
         UnaryOperator<Result> mapMembersWithRepository
             = item -> ExpertGroupMapper.mapMembers.apply(repository, item);
 
-        var pageResult = repository.findByCurrentUserId(
+        var pageResult = repository.findByUserId(
             param.currentUserId(),
             PageRequest.of(param.page(), param.size()));
 

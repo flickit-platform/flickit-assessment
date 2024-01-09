@@ -28,7 +28,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             LEFT JOIN ExpertGroupAccessJpaEntity ac on e.id = ac.expertGroupId
             WHERE EXISTS (
                 SELECT 1 FROM ExpertGroupAccessJpaEntity ac
-                WHERE ac.expertGroupId = e.id AND ac.userId = :currentUserId
+                WHERE ac.expertGroupId = e.id AND ac.userId = :userId
             )
             GROUP BY
                 e.id,
@@ -37,7 +37,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 e.bio,
                 e.ownerId
         """)
-    Page<ExpertGroupWithDetailsView> findByCurrentUserId(@Param(value = "currentUserId") UUID currentUserId, Pageable pageable);
+    Page<ExpertGroupWithDetailsView> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
 
     @Query("""
         SELECT
