@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.application.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadJsonKitDslPort;
 
 import java.time.LocalDateTime;
 

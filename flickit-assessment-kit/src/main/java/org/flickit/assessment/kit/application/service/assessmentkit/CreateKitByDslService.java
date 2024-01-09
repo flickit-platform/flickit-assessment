@@ -14,12 +14,8 @@ import org.flickit.assessment.kit.application.port.out.minio.LoadJsonFilePort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CompositeCreateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CreateKitPersisterContext;
-import org.flickit.assessment.kit.common.ErrorMessageKey;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.File;
-import java.nio.file.Files;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.create.CreateKitPersisterContext.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
