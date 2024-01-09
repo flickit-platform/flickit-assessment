@@ -7,7 +7,9 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.List;
+import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface CreateKitByDslUseCase {
@@ -39,7 +41,10 @@ public interface CreateKitByDslUseCase {
         @NotNull(message = CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL)
         List<Long> tagIds;
 
-        public Param(Long kitJsonDslId, boolean isPrivate, Long expertGroupId, String title, String summary, String about, List<Long> tagIds) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(Long kitJsonDslId, boolean isPrivate, Long expertGroupId, String title, String summary, String about, List<Long> tagIds, UUID currentUserId) {
             this.kitJsonDslId = kitJsonDslId;
             this.isPrivate = isPrivate;
             this.expertGroupId = expertGroupId;
@@ -47,6 +52,7 @@ public interface CreateKitByDslUseCase {
             this.summary = summary;
             this.about = about;
             this.tagIds = tagIds;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

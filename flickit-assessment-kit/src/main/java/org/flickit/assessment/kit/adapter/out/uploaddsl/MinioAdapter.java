@@ -1,12 +1,16 @@
 package org.flickit.assessment.kit.adapter.out.uploaddsl;
 
 import io.minio.*;
+import io.minio.errors.ErrorResponseException;
 import io.minio.messages.VersioningConfiguration;
 import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.NotSuchFileUploadedException;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitPort;
+import org.flickit.assessment.kit.application.port.out.minio.LoadJsonFilePort;
+import org.flickit.assessment.kit.common.ErrorMessageKey;
 import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,10 +20,14 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND;
+
 @Slf4j
 @Component
 @AllArgsConstructor
-public class MinioAdapter implements UploadKitPort {
+public class MinioAdapter implements
+    UploadKitPort,
+    LoadJsonFilePort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
@@ -75,5 +83,30 @@ public class MinioAdapter implements UploadKitPort {
                 .bucket(bucketName)
                 .build());
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public String load(String path, String versionId) {
+        String bucketName = properties.getBucketName();
+
+        try {
+            minioClient.statObject(StatObjectArgs.builder()
+                .bucket(bucketName)
+                .object(path)
+                .versionId(versionId)
+                .build());
+        } catch (ErrorResponseException e) {
+            throw new NotSuchFileUploadedException(CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND);
+        }
+
+        InputStream stream = minioClient
+            .getObject(GetObjectArgs.builder()
+                .bucket(bucketName)
+                .object(path)
+                .versionId(versionId)
+                .build());
+
+        return new String(stream.readAllBytes());
     }
 }

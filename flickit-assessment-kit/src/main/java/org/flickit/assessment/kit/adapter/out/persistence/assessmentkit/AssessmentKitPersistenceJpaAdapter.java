@@ -12,6 +12,7 @@ import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitMinimalInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
@@ -34,7 +35,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     LoadKitExpertGroupPort,
     LoadKitUsersPort,
     DeleteKitUserAccessPort,
-    LoadKitMinimalInfoPort {
+    LoadKitMinimalInfoPort,
+    CreateAssessmentKitPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -107,5 +109,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
                         expertGroupEntity.getName()
                 )
         );
+    }
+
+    @Override
+    public Long persist(CreateAssessmentKitPort.Param param) {
+        return repository.save(AssessmentKitMapper.toJpaEntity(param)).getId();
     }
 }

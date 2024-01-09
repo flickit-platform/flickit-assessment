@@ -1,0 +1,26 @@
+package org.flickit.assessment.kit.application.port.out.assessmentkit;
+
+import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.Subject;
+
+import java.util.List;
+import java.util.UUID;
+
+public interface CreateAssessmentKitPort {
+
+    Long persist(Param param);
+
+    record Param(String code,
+                 String title,
+                 String summary,
+                 String about,
+                 boolean published,
+                 boolean isPrivate,
+                 long expertGroupId,
+                 List<Subject> subjects,
+                 List<MaturityLevel> maturityLevels,
+                 List<Questionnaire> questionnaires,
+                 UUID currentUserId) {
+    }
+}
