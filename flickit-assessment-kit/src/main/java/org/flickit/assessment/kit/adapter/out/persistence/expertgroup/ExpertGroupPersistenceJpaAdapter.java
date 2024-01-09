@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
 
 @Component
@@ -32,7 +33,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     public PaginatedResponse<Result> loadExpertGroupList(Param param) {
 
         UnaryOperator<Result> mapMembersWithRepository
-            = item -> ExpertGroupMapper.mapMembers.apply(repository, item);
+            = item -> resultWithMembers.apply(repository, item);
 
         var pageResult = repository.findByUserId(
             param.currentUserId(),
@@ -52,4 +53,24 @@ public class ExpertGroupPersistenceJpaAdapter implements
             (int) pageResult.getTotalElements()
         );
     }
+
+
+    static BiFunction<ExpertGroupJpaRepository, Result, Result>
+        resultWithMembers = (repository, item) -> {
+        var members = repository.findMembersByExpertId(item.id())
+            .stream()
+            .map(ExpertGroupMapper::mapStringListToMember)
+            .toList();
+
+        return new Result(
+            item.id(),
+            item.title(),
+            item.bio(),
+            item.picture(),
+            item.publishedKitsCount(),
+            item.membersCount(),
+            members,
+            item.ownerId()
+        );
+    };
 }
