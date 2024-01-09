@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessJpaRepository;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,8 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     @Override
     public Long persist(Param param) {
         System.out.println("++" + param);
-        return 0l;
+        ExpertGroupAccessJpaEntity unsavedEntity = ExpertGroupAccessMapper.mapCreateParamToJpaEntity(param);
+        ExpertGroupAccessJpaEntity savedEntity = repository.save(unsavedEntity);
+        return savedEntity.getId();
     }
 }
