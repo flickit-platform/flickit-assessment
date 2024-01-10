@@ -1,11 +1,13 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.SneakyThrows;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentresult.InvalidateAssessmentResultByKitPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.CompositeUpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.flickit.assessment.kit.application.service.assessmentkit.validate.CompositeUpdateKitValidator;
@@ -18,8 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,6 +45,8 @@ class UpdateKitByDslServiceTest {
     @Mock
     private LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
     @Mock
+    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    @Mock
     private InvalidateAssessmentResultByKitPort invalidateResultByKitPort;
     @Mock
     private CompositeUpdateKitValidator validator;
@@ -54,12 +60,15 @@ class UpdateKitByDslServiceTest {
         Long kitId = 1L;
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKit savedKit = simpleKit();
+        Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
 
         when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
+        when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(currentUserId);
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new Notification());
-        when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class), any(UUID.class))).thenReturn(new UpdateKitPersisterResult(false));
+        when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class), any(UUID.class)))
+            .thenReturn(new UpdateKitPersisterResult(false));
 
-        var param = new UpdateKitByDslUseCase.Param(kitId, UUID.randomUUID(), dslContent);
+        var param = new UpdateKitByDslUseCase.Param(kitId, currentUserId.get(), dslContent);
         service.update(param);
     }
 
@@ -68,13 +77,15 @@ class UpdateKitByDslServiceTest {
     void testUpdate_ValidChanges_NeedsToInvalidateResult() {
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKit savedKit = simpleKit();
+        Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
 
         when(loadAssessmentKitInfoPort.load(savedKit.getId())).thenReturn(savedKit);
+        when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(currentUserId);
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new Notification());
         when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class), any(UUID.class))).thenReturn(new UpdateKitPersisterResult(true));
         doNothing().when(invalidateResultByKitPort).invalidateByKitId(savedKit.getId());
 
-        var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), UUID.randomUUID(), dslContent);
+        var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), currentUserId.get(), dslContent);
         service.update(param);
     }
 
@@ -84,14 +95,16 @@ class UpdateKitByDslServiceTest {
         Long kitId = 1L;
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKit savedKit = simpleKit();
+        Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
 
         when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
+        when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(currentUserId);
 
         Notification notification = new Notification();
         notification.add(new InvalidAdditionError(SUBJECT, Set.of("Team")));
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(notification);
 
-        var param = new UpdateKitByDslUseCase.Param(kitId, UUID.randomUUID(), dslContent);
+        var param = new UpdateKitByDslUseCase.Param(kitId, currentUserId.get(), dslContent);
 
         var throwable = assertThrows(ValidationException.class,
             () -> service.update(param));
@@ -104,5 +117,22 @@ class UpdateKitByDslServiceTest {
                 assertThat(x.fieldName()).isEqualTo(SUBJECT);
                 assertThat(x.addedItems()).contains("Team");
             });
+    }
+
+
+    @Test
+    @SneakyThrows
+    void testUpdate_UserIsNotExpertGroupOwner_ThrowException() {
+        Long kitId = 1L;
+        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
+        AssessmentKit savedKit = simpleKit();
+        Optional<UUID> ownerId = Optional.of(UUID.randomUUID());
+        UUID currentUserId = UUID.randomUUID();
+
+        when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
+        when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(ownerId);
+
+        var param = new UpdateKitByDslUseCase.Param(kitId, currentUserId, dslContent);
+        assertThrows(AccessDeniedException.class, () -> service.update(param));
     }
 }
