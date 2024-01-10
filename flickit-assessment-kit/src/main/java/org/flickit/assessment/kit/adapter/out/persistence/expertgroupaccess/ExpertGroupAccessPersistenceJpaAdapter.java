@@ -16,7 +16,6 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
     @Override
     public Long persist(Param param) {
-        System.out.println("++" + param);
         ExpertGroupAccessJpaEntity unsavedEntity = ExpertGroupAccessMapper.mapCreateParamToJpaEntity(param);
         ExpertGroupAccessJpaEntity savedEntity = repository.save(unsavedEntity);
         return savedEntity.getId();
