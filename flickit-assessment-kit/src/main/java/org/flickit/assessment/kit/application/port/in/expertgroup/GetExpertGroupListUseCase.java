@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.port.in.expertgroup;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -10,6 +11,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetExpertGroupListUseCase {
@@ -27,6 +29,7 @@ public interface GetExpertGroupListUseCase {
         @Min(value = 0, message = GET_EXPERT_GROUP_LIST_PAGE_MIN)
         int page;
 
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         public Param(int size, int page, UUID currentUserId) {
