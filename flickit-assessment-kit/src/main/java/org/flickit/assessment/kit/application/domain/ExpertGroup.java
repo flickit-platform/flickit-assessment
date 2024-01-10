@@ -1,23 +1,19 @@
 package org.flickit.assessment.kit.application.domain;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
-import org.springframework.boot.actuate.endpoint.web.Link;
-@NoArgsConstructor
-@AllArgsConstructor
+import java.util.UUID;
+
+@Getter
+@RequiredArgsConstructor
 public class ExpertGroup {
 
-    long id;
-    String name;
-    String bio;
-    Link picture;
-    GetKitUserListUseCase.UserListItem members;
-    int membersCount;
-    int publishedKitsCount;
-    boolean editable;
-    public ExpertGroup(Long id) {
-        this.id = id;
-    }
+    private final long id;
+    private final String title;
+    private final String bio;
+    private final String about;
+    private final String picture;
+    private final String website;
+    private final UUID ownerId;
 }

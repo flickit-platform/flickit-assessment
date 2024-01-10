@@ -14,13 +14,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetExpertGroupListServiceTest {
@@ -31,44 +32,41 @@ class GetExpertGroupListServiceTest {
     @Mock
     private LoadExpertGroupListPort loadExpertGroupListPort;
 
+    private static GetExpertGroupListUseCase.ExpertGroupListItem portToUseCaseResult(Result portResult, boolean editable) {
+        return new GetExpertGroupListUseCase.ExpertGroupListItem(
+            portResult.id(),
+            portResult.title(),
+            portResult.bio(),
+            portResult.picture(),
+            portResult.publishedKitsCount(),
+            portResult.membersCount(),
+            portResult.members(),
+            editable
+        );
+    }
+
     @Test
     void testGetExpertGroupList_ValidInputs_ValidResults() {
         int page = 0;
         int size = 10;
         UUID currentUserId = UUID.randomUUID();
-        long expertGroupId1 = new Random().nextLong();
-        long expertGroupId2 = new Random().nextLong();
 
-        List<Member> members = new LinkedList<>();
-        members.add(new Member("Member 1"));
-        members.add(new Member("Member 2"));
+        var expertGroup1 = createExpertGroup(UUID.randomUUID());
+        var expertGroup2 = createExpertGroup(currentUserId);
+        List<Result> expertGroups = List.of(expertGroup1, expertGroup2);
 
-        List<Result> expertGroupListItems = List.of(
-            new Result(expertGroupId1, "ExpertGroup title 1",
-                "ExpertGroup bio 1", "ExpertGroup picture 1", 3, 2,
-                members,UUID.randomUUID()),
-            new Result(expertGroupId2, "ExpertGroup title 2",
-                "ExpertGroup bio 2", "ExpertGroup picture 2", 3, 2,
-                members,currentUserId)
-        );
-
-        List<GetExpertGroupListUseCase.ExpertGroupListItem> expertGroupListItemsFinal = List.of(
-            new GetExpertGroupListUseCase.ExpertGroupListItem(expertGroupId1, "ExpertGroup title 1",
-                "ExpertGroup bio 1", "ExpertGroup picture 1", 3, 2,
-                members,false),
-            new GetExpertGroupListUseCase.ExpertGroupListItem(expertGroupId2, "ExpertGroup title 2",
-                "ExpertGroup bio 2", "ExpertGroup picture 2", 3, 2,
-                members,true)
-        );
+        List<GetExpertGroupListUseCase.ExpertGroupListItem> expertGroupListItems = List.of(
+            portToUseCaseResult(expertGroup1, false),
+            portToUseCaseResult(expertGroup2, true));
 
         PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
-            expertGroupListItems,
+            expertGroups,
             page,
             size,
             UserJpaEntity.Fields.NAME,
             Sort.Direction.ASC.name().toLowerCase(),
-            expertGroupListItems.size());
-        when(loadExpertGroupListPort.loadExpertGroupList(any (LoadExpertGroupListPort.Param.class)))
+            expertGroups.size());
+        when(loadExpertGroupListPort.loadExpertGroupList(any(LoadExpertGroupListPort.Param.class)))
             .thenReturn(paginatedResponse);
 
         var param = new GetExpertGroupListUseCase.Param(size, page, currentUserId);
@@ -82,7 +80,7 @@ class GetExpertGroupListServiceTest {
         assertNotNull(paginatedResponse);
         assertNotNull(result.getItems());
         assertNotEquals(0, result.getItems().size());
-        assertEquals(expertGroupListItemsFinal,result.getItems());
+        assertEquals(expertGroupListItems, result.getItems());
     }
 
     @Test
@@ -117,8 +115,21 @@ class GetExpertGroupListServiceTest {
         assertNotNull(paginatedResponse);
         assertNotNull(result.getItems());
         assertEquals(0, result.getItems().size());
-        assertEquals(expertGroupListItemsFinal,result.getItems());
+        assertEquals(expertGroupListItemsFinal, result.getItems());
     }
 
+    private static long expertGroupId = 123;
+
+    private static Result createExpertGroup(UUID ownerId) {
+        long id = expertGroupId++;
+        return new Result(id,
+            "Title" + id,
+            "Bio" + id,
+            "Picture" + id,
+            2,
+            10,
+            List.of(new Member("name" + id)),
+            ownerId);
+    }
 }
 
