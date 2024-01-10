@@ -17,7 +17,7 @@ import java.util.UUID;
 public class GetExpertGroupListService implements GetExpertGroupListUseCase {
 
     private final LoadExpertGroupListPort loadExpertGroupListPort;
-    private final int SIZE_OF_MEMBERS=5;
+    private final static int sizeOfMembers =5;
 
     @Override
     public PaginatedResponse<ExpertGroupListItem> getExpertGroupList(Param param) {
@@ -36,7 +36,7 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
     }
 
     private LoadExpertGroupListPort.Param toParam(int page, int size, UUID currentUserId) {
-        return new LoadExpertGroupListPort.Param(page, size, currentUserId, SIZE_OF_MEMBERS);
+        return new LoadExpertGroupListPort.Param(page, size, currentUserId, sizeOfMembers);
     }
 
     private List<ExpertGroupListItem> mapToExpertGroupListItems(List<Result> items, UUID currentUserId) {

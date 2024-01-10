@@ -56,8 +56,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     static TriFunction<ExpertGroupJpaRepository,Param, Result, Result>
-        resultWithMembers = (repository,param, item) -> {
-        var members = repository.findMembersByExpertId(item.id(),PageRequest.of(0, param.sizeOfMembers()))
+        resultWithMembers = (repo,param, item) -> {
+        var members = repo.findMembersByExpertId(item.id(),PageRequest.of(0, param.sizeOfMembers()))
             .stream()
             .map(GetExpertGroupListUseCase.Member::new)
             .toList();
