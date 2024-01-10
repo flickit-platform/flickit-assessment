@@ -17,7 +17,6 @@ import org.flickit.assessment.kit.application.service.assessmentkit.create.Creat
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.flickit.assessment.kit.application.service.assessmentkit.create.CreateKitPersisterContext.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
 
 @Slf4j

@@ -14,7 +14,6 @@ import org.flickit.assessment.kit.application.service.assessmentkit.create.Creat
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.Set;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.*;

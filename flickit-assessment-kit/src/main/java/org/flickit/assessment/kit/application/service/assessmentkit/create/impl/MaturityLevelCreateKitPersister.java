@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,5 +94,4 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
         log.debug("LevelCompetence[affectedId={}, effectiveId={}, value={}] created.", affectedLevelId, effectiveLevelId, value);
     }
 
-    public record LevelCompetence(MaturityLevel affectedLevel, MaturityLevel effectiveLevel, int value) {}
 }

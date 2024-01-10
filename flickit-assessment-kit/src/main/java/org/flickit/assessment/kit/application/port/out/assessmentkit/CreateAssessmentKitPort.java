@@ -1,10 +1,5 @@
 package org.flickit.assessment.kit.application.port.out.assessmentkit;
 
-import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.domain.Subject;
-
-import java.util.List;
 import java.util.UUID;
 
 public interface CreateAssessmentKitPort {

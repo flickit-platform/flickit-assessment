@@ -10,15 +10,12 @@ import org.flickit.assessment.kit.application.port.out.attribute.CreateAttribute
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CreateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CreateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
