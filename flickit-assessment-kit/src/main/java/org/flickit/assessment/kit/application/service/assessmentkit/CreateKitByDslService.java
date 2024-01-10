@@ -31,7 +31,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     private final LoadJsonFilePort loadJsonFilePort;
     private final CompositeCreateKitPersister persister; // TODO: implement
     private final CreateAssessmentKitPort createAssessmentKitPort;
-    private final CreateAssessmentKitTagKitPort createAssessmentKitTagKitPort; // TODO: implement
+    private final CreateAssessmentKitTagKitPort createAssessmentKitTagKitPort;
     private final UpdateAssessmentKitDslPort updateAssessmentKitDslPort;
 
     @SneakyThrows
@@ -46,7 +46,6 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
         String dslContent = loadJsonFilePort.load(dslFilePath, versionId);
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
         // TODO: validate dsl kit
-        CreateKitPersisterContext context = persister.persist(dslKit);
 
         String code = param.getTitle().toLowerCase().replace(' ', '-');
         var createKitParam = new CreateAssessmentKitPort.Param(
@@ -57,12 +56,11 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
             Boolean.FALSE,
             param.isPrivate(),
             param.getExpertGroupId(),
-            context.get(KEY_SUBJECTS),
-            context.get(KEY_MATURITY_LEVELS),
-            context.get(KEY_QUESTIONNAIRES),
             param.getCurrentUserId()
         );
-        Long kitId = createAssessmentKitPort.persist(createKitParam); // TODO: where is the inner entities?
+        Long kitId = createAssessmentKitPort.persist(createKitParam);
+
+        CreateKitPersisterContext context = persister.persist(dslKit, kitId);
 
         param.getTagIds().forEach(tagId ->
             createAssessmentKitTagKitPort.persist(new CreateAssessmentKitTagKitPort.Param(tagId, kitId)));

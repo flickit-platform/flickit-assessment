@@ -18,9 +18,6 @@ public interface CreateAssessmentKitPort {
                  boolean published,
                  boolean isPrivate,
                  long expertGroupId,
-                 List<Subject> subjects,
-                 List<MaturityLevel> maturityLevels,
-                 List<Questionnaire> questionnaires,
                  UUID currentUserId) {
     }
 }
