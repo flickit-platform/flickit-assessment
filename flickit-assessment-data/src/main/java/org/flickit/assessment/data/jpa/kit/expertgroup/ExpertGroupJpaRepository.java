@@ -45,7 +45,6 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         FROM ExpertGroupAccessJpaEntity e
         LEFT JOIN UserJpaEntity u on e.userId = u.id
         WHERE e.expertGroupId = :expertGroupId
-        ORDER BY u.displayName ASC
         """)
     List<String> findMembersByExpertId(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
 }
