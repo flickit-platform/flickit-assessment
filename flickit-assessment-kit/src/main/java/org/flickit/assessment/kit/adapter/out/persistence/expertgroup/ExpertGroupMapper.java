@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 
 import java.util.List;
 
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExpertGroupMapper {
 

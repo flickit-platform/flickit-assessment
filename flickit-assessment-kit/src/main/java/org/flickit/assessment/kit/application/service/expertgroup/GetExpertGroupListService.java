@@ -16,8 +16,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GetExpertGroupListService implements GetExpertGroupListUseCase {
 
-    private final LoadExpertGroupListPort loadExpertGroupListPort;
     private static final int SIZE_OF_MEMBERS =5;
+    private final LoadExpertGroupListPort loadExpertGroupListPort;
+
 
     @Override
     public PaginatedResponse<ExpertGroupListItem> getExpertGroupList(Param param) {
