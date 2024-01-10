@@ -30,6 +30,8 @@
 		<java.version>17</java.version>
 		<spring-boot.version>3.0.6</spring-boot.version>
 
+		<sentry.version>7.1.0</sentry.version>
+		<sentry-maven-plugin.version>0.0.6</sentry-maven-plugin.version>
 		<archunit.version>1.1.0</archunit.version>
 
 		<jib-maven-plugin.version>3.3.1</jib-maven-plugin.version>
