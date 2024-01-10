@@ -13,7 +13,6 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
         private final ExpertGroupAccessJpaRepository repository;
 
-
     @Override
     public Long persist(Param param) {
         ExpertGroupAccessJpaEntity unsavedEntity = ExpertGroupAccessMapper.mapCreateParamToJpaEntity(param);

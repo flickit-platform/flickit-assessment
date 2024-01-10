@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CreateE
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExpertGroupAccessMapper {
+
     static ExpertGroupAccessJpaEntity mapCreateParamToJpaEntity(CreateExpertGroupAccessPort.Param param) {
         return new ExpertGroupAccessJpaEntity(
             null,

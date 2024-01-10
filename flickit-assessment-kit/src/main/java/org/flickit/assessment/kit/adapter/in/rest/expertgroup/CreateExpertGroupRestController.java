@@ -22,7 +22,6 @@ public class CreateExpertGroupRestController {
     private final CreateExpertGroupUseCase useCase;
     private final UserContext userContext;
 
-
     @PostMapping("/expert-groups")
     public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(@RequestBody CreateExpertGroupRequestDto request) {
         UUID currentUserId = userContext.getUser().id();

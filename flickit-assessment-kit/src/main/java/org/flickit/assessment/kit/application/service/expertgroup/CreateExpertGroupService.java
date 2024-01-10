@@ -24,7 +24,6 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
     }
 
     private CreateExpertGroupPort.Param toExpertGroupParam(Param param) {
-
         return new CreateExpertGroupPort.Param(
             param.getName(),
             param.getAbout(),
@@ -36,7 +35,6 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
     }
 
     private CreateExpertGroupAccessPort.Param toExpertGroupAccessParam(Param param, Long idExpertGroup) {
-
         return new CreateExpertGroupAccessPort.Param(
             idExpertGroup,
             null,

@@ -24,15 +24,19 @@ public interface CreateExpertGroupUseCase {
         @Size(max = 100, message = CREATE_EXPERT_GROUP_NAME_SIZE_MAX)
         String name;
 
+        @Size(max = 200, message = CREATE_EXPERT_GROUP_BIO_SIZE_MAX)
         @NotBlank(message = CREATE_EXPERT_GROUP_BIO_NOT_BLANK)
         String bio;
 
+        @Size(max = 500, message = CREATE_EXPERT_GROUP_ABOUT_SIZE_MAX)
         @NotBlank(message = CREATE_EXPERT_GROUP_ABOUT_NOT_BLANK)
         String about;
 
+        @Size(max = 200, message = CREATE_EXPERT_GROUP_WEBSITE_SIZE_MAX)
         @NotBlank(message = CREATE_EXPERT_GROUP_WEBSITE_NOT_BLANK)
         String website;
 
+        @Size(max = 100, message = CREATE_EXPERT_GROUP_PICTURE_SIZE_MAX)
         @NotBlank(message = CREATE_EXPERT_GROUP_PICTURE_NOT_BLANK)
         String picture;
 
