@@ -43,6 +43,6 @@ public class ExpertGroupJpaEntity {
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
-        public static final String NAME = "name";
+        public static final String NAME = "title";
     }
 }
