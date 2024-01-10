@@ -68,6 +68,6 @@ public class AttributeJpaEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "assessment_subject_id", referencedColumnName = "id")
+    @JoinColumn(name = "subject_id", referencedColumnName = "id")
     private SubjectJpaEntity subject;
 }
