@@ -36,7 +36,7 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
         validateChanges(savedKit, dslKit);
 
-        UpdateKitPersisterResult persistResult = persister.persist(savedKit, dslKit);
+        UpdateKitPersisterResult persistResult = persister.persist(savedKit, dslKit, param.getCurrentUserId());
         if (persistResult.shouldInvalidateCalcResult())
             invalidateAssessmentResultByKitPort.invalidateByKitId(savedKit.getId());
     }

@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompetenceJpaEntity, Long> {
 
@@ -18,9 +20,14 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
     void delete(@Param(value = "affectedLevelId") Long affectedLevelId, @Param(value = "effectiveLevelId") Long effectiveLevelId);
 
     @Modifying
-    @Query("UPDATE LevelCompetenceJpaEntity l SET " +
-        "l.value = :value " +
-        "WHERE l.affectedLevel.id = :affectedLevelId " +
-        "AND l.effectiveLevel.id = :effectiveLevelId")
-    void update(Long affectedLevelId, Long effectiveLevelId, Integer value);
+    @Query("""
+           UPDATE LevelCompetenceJpaEntity l
+           SET l.value = :value, l.lastModificationTime = :lastModificationTime, l.lastModifiedBy = :currentUserId
+           WHERE l.affectedLevel.id = :affectedLevelId AND l.effectiveLevel.id = :effectiveLevelId
+           """)
+    void update(Long affectedLevelId,
+                Long effectiveLevelId,
+                Integer value,
+                LocalDateTime lastModificationTime,
+                UUID currentUserId);
 }

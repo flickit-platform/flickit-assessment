@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.application.port.out.question;
 
+import java.util.UUID;
+
 public interface CreateQuestionPort {
 
     Long persist(Param param);
@@ -9,6 +11,7 @@ public interface CreateQuestionPort {
                  String hint,
                  Integer index,
                  Long questionnaireId,
+                 UUID currentUserId,
                  Boolean mayNotBeApplicable) {
     }
 }

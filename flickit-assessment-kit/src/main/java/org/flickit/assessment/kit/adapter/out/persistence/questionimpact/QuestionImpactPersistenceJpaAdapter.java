@@ -8,6 +8,8 @@ import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQues
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class QuestionImpactPersistenceJpaAdapter implements
@@ -18,8 +20,8 @@ public class QuestionImpactPersistenceJpaAdapter implements
     private final QuestionImpactJpaRepository repository;
 
     @Override
-    public Long persist(QuestionImpact impact) {
-        return repository.save(QuestionImpactMapper.mapToJpaEntity(impact)).getId();
+    public Long persist(QuestionImpact impact, UUID currentUserId) {
+        return repository.save(QuestionImpactMapper.mapToJpaEntity(impact, currentUserId)).getId();
     }
 
     @Override
@@ -29,7 +31,11 @@ public class QuestionImpactPersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateQuestionImpactPort.Param param) {
-        repository.update(param.id(), param.weight(), param.questionId());
+        repository.update(param.id(),
+            param.weight(),
+            param.questionId(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
     }
 
 }

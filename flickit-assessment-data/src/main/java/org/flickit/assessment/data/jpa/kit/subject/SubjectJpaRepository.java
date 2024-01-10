@@ -7,25 +7,29 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Long> {
 
     List<SubjectJpaEntity> findAllByKitId(Long kitId);
 
     @Modifying
-    @Query("UPDATE SubjectJpaEntity s SET " +
-        "s.title = :title, " +
-        "s.index = :index, " +
-        "s.description = :description, " +
-        "s.lastModificationTime = :lastModificationTime " +
-        "WHERE s.id = :id")
+    @Query("""
+        UPDATE SubjectJpaEntity s
+        SET s.title = :title,
+        s.index = :index,
+        s.description = :description,
+        s.lastModificationTime = :lastModificationTime,
+        s.lastModifiedBy = :lastModifiedBy
+        WHERE s.id = :id""")
     void update(
         @Param(value = "id") long id,
         @Param(value = "title") String title,
         @Param(value = "index") int index,
         @Param(value = "description") String description,
-        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime
-    );
+        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
+        @Param(value = "lastModifiedBy") UUID lastModifiedBy
+        );
 
     @Query("""
             SELECT s as subject

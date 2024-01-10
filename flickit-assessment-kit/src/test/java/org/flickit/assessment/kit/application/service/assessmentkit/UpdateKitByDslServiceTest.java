@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,9 +57,9 @@ class UpdateKitByDslServiceTest {
 
         when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new Notification());
-        when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new UpdateKitPersisterResult(false));
+        when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class), any(UUID.class))).thenReturn(new UpdateKitPersisterResult(false));
 
-        var param = new UpdateKitByDslUseCase.Param(kitId, dslContent);
+        var param = new UpdateKitByDslUseCase.Param(kitId, UUID.randomUUID(), dslContent);
         service.update(param);
     }
 
@@ -70,10 +71,10 @@ class UpdateKitByDslServiceTest {
 
         when(loadAssessmentKitInfoPort.load(savedKit.getId())).thenReturn(savedKit);
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new Notification());
-        when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new UpdateKitPersisterResult(true));
+        when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class), any(UUID.class))).thenReturn(new UpdateKitPersisterResult(true));
         doNothing().when(invalidateResultByKitPort).invalidateByKitId(savedKit.getId());
 
-        var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), dslContent);
+        var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), UUID.randomUUID(), dslContent);
         service.update(param);
     }
 
@@ -90,7 +91,7 @@ class UpdateKitByDslServiceTest {
         notification.add(new InvalidAdditionError(SUBJECT, Set.of("Team")));
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(notification);
 
-        var param = new UpdateKitByDslUseCase.Param(kitId, dslContent);
+        var param = new UpdateKitByDslUseCase.Param(kitId, UUID.randomUUID(), dslContent);
 
         var throwable = assertThrows(ValidationException.class,
             () -> service.update(param));

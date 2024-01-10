@@ -52,12 +52,25 @@ public class MaturityLevelJpaEntity {
     @Column(name = "kit_id")
     private Long kitId;
 
-    public MaturityLevelJpaEntity(Long id, String code, String title, Integer value, Integer index, Long kitId) {
+    public MaturityLevelJpaEntity(Long id,
+                                  String code,
+                                  Integer index,
+                                  String title,
+                                  Integer value,
+                                  LocalDateTime creationTime,
+                                  LocalDateTime lastModificationTime,
+                                  UUID createdBy,
+                                  UUID lastModifiedBy,
+                                  Long kitId) {
         this.id = id;
         this.code = code;
         this.index = index;
         this.title = title;
         this.value = value;
+        this.creationTime = creationTime;
+        this.lastModificationTime = lastModificationTime;
+        this.createdBy = createdBy;
+        this.lastModifiedBy = lastModifiedBy;
         this.kitId = kitId;
     }
 

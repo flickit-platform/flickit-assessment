@@ -7,6 +7,8 @@ import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuest
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class QuestionnairePersistenceJpaAdapter implements
@@ -16,12 +18,17 @@ public class QuestionnairePersistenceJpaAdapter implements
     private final QuestionnaireJpaRepository repository;
 
     @Override
-    public Long persist(Questionnaire questionnaire, long kitId) {
-        return repository.save(QuestionnaireMapper.mapToJpaEntity(questionnaire, kitId)).getId();
+    public Long persist(Questionnaire questionnaire, long kitId, UUID currentUserId) {
+        return repository.save(QuestionnaireMapper.mapToJpaEntity(questionnaire, kitId, currentUserId)).getId();
     }
 
     @Override
     public void update(UpdateQuestionnairePort.Param param) {
-        repository.update(param.id(), param.title(), param.index(), param.description(), param.lastModificationTime());
+        repository.update(param.id(),
+            param.title(),
+            param.index(),
+            param.description(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
     }
 }

@@ -19,6 +19,7 @@ public class AttributePersistenceJpaAdapter implements UpdateAttributePort {
             param.description(),
             param.weight(),
             param.lastModificationTime(),
+            param.currentUserId(),
             param.subjectId());
     }
 }

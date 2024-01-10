@@ -31,7 +31,7 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public Long persist(Long affectedLevelId, Long effectiveLevelId, int value) {
+    public Long persist(Long affectedLevelId, Long effectiveLevelId, int value, UUID currentUserId) {
         LevelCompetenceJpaEntity entity = new LevelCompetenceJpaEntity(
             null,
             maturityLevelJpaRepository.findById(affectedLevelId).orElseThrow(() -> new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND)),
@@ -39,17 +39,19 @@ public class LevelCompetencePersistenceJpaAdapter implements
             value,
             LocalDateTime.now(),
             LocalDateTime.now(),
-            UUID.randomUUID(),
-            UUID.randomUUID()
+            currentUserId,
+            currentUserId
         );
         return repository.save(entity).getId();
     }
 
     @Override
-    public void update(Long affectedLevelId, Long effectiveLevelId, Integer value) {
+    public void update(Long affectedLevelId, Long effectiveLevelId, Integer value, UUID currentUserId) {
         repository.update(
             affectedLevelId,
             effectiveLevelId,
-            value);
+            value,
+            LocalDateTime.now(),
+            currentUserId);
     }
 }
