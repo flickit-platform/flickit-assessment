@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.service.expertgroup;
 
-import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase;
 import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
@@ -39,7 +38,9 @@ class CreateExpertGroupServiceTest {
         when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(expectedId);
         when(createExpertGroupAccessPort.persist(any(CreateExpertGroupAccessPort.Param.class))).thenReturn(new Random().nextLong());
 
-        CreateExpertGroupUseCase.Result result = service.createExpertGroup(param);
+        var result = service.createExpertGroup(param);
+        assertNotNull(result, "The result of createExpertGroup service" +
+            "should be CreateExpertGroupUseCase.Result");
         assertEquals(expectedId, result.id(), "The result should be long ID");
     }
 }
