@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class ExpertGroupAccessPersistenceJpaAdapter implements
     CreateExpertGroupAccessPort {
 
-        private final ExpertGroupAccessJpaRepository repository;
+    private final ExpertGroupAccessJpaRepository repository;
 
     @Override
     public Long persist(Param param) {

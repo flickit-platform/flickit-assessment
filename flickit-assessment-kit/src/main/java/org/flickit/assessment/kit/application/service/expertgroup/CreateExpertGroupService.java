@@ -13,13 +13,14 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
     private final CreateExpertGroupPort createExpertGroupPort;
     private final CreateExpertGroupAccessPort createExpertGroupAccessPort;
+
     @Override
     @Transactional
     public Result createExpertGroup(Param param) {
         CreateExpertGroupPort.Param expertGroupPortParam = toExpertGroupParam(param);
         long idExpertGroup = createExpertGroupPort.persist(expertGroupPortParam);
-        CreateExpertGroupAccessPort.Param expertGroupAccessPortParam = toExpertGroupAccessParam(param,idExpertGroup);
-        createExpertGroupAccessPort.persist (expertGroupAccessPortParam);
+        CreateExpertGroupAccessPort.Param expertGroupAccessPortParam = toExpertGroupAccessParam(param, idExpertGroup);
+        createExpertGroupAccessPort.persist(expertGroupAccessPortParam);
         return new Result(idExpertGroup);
     }
 
