@@ -32,19 +32,6 @@ class GetExpertGroupListServiceTest {
     @Mock
     private LoadExpertGroupListPort loadExpertGroupListPort;
 
-    private static GetExpertGroupListUseCase.ExpertGroupListItem portToUseCaseResult(Result portResult, boolean editable) {
-        return new GetExpertGroupListUseCase.ExpertGroupListItem(
-            portResult.id(),
-            portResult.title(),
-            portResult.bio(),
-            portResult.picture(),
-            portResult.publishedKitsCount(),
-            portResult.membersCount(),
-            portResult.members(),
-            editable
-        );
-    }
-
     @Test
     void testGetExpertGroupList_ValidInputs_ValidResults() {
         int page = 0;
@@ -101,7 +88,7 @@ class GetExpertGroupListServiceTest {
             UserJpaEntity.Fields.NAME,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
-        when(loadExpertGroupListPort.loadExpertGroupList(any (LoadExpertGroupListPort.Param.class)))
+        when(loadExpertGroupListPort.loadExpertGroupList(any(LoadExpertGroupListPort.Param.class)))
             .thenReturn(paginatedResponse);
 
         var param = new GetExpertGroupListUseCase.Param(size, page, currentUserId);
@@ -130,6 +117,19 @@ class GetExpertGroupListServiceTest {
             10,
             List.of(new Member("name" + id)),
             ownerId);
+    }
+
+    private static GetExpertGroupListUseCase.ExpertGroupListItem portToUseCaseResult(Result portResult, boolean editable) {
+        return new GetExpertGroupListUseCase.ExpertGroupListItem(
+            portResult.id(),
+            portResult.title(),
+            portResult.bio(),
+            portResult.picture(),
+            portResult.publishedKitsCount(),
+            portResult.membersCount(),
+            portResult.members(),
+            editable
+        );
     }
 }
 
