@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.adapter.in.rest.expertgroup;
 
-
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase;
