@@ -46,6 +46,20 @@ public class ErrorMessageKey {
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MIN = "get-expert-group-list.size.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MAX = "get-expert-group-list.size.max";
 
+    public static final String UPDATE_EXPERT_GROUP_ID_NOT_NULL = "update-expert-group.id.notNull";
+    public static final String UPDATE_EXPERT_GROUP_NAME_NOT_BLANK = "update-expert-group.name.notBlank";
+    public static final String UPDATE_EXPERT_GROUP_NAME_SIZE_MIN = "update-expert-group.name.size.min";
+    public static final String UPDATE_EXPERT_GROUP_NAME_SIZE_MAX = "update-expert-group.name.size.max";
+    public static final String UPDATE_EXPERT_GROUP_BIO_SIZE_MAX = "update-expert-group.bio.size.max";
+    public static final String UPDATE_EXPERT_GROUP_BIO_NOT_BLANK = "update-expert-group.bio.notBlank";
+    public static final String UPDATE_EXPERT_GROUP_ABOUT_SIZE_MAX = "update-expert-group.about.size.max";
+    public static final String UPDATE_EXPERT_GROUP_ABOUT_NOT_BLANK = "update-expert-group.about.notBlank";
+    public static final String UPDATE_EXPERT_GROUP_WEBSITE_SIZE_MAX = "update-expert-group.website.size.max";
+    public static final String UPDATE_EXPERT_GROUP_WEBSITE_NOT_BLANK = "update-expert-group.website.notBlank";
+    public static final String UPDATE_EXPERT_GROUP_PICTURE_NOT_BLANK = "update-expert-group.picture.notBlank";
+    public static final String UPDATE_EXPERT_GROUP_PICTURE_SIZE_MAX = "update-expert-group.picture.size.max";
+
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
