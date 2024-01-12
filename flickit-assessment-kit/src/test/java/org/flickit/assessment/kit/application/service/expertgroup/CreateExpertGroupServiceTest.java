@@ -21,7 +21,6 @@ class CreateExpertGroupServiceTest {
     private CreateExpertGroupService service;
     @Mock
     private CreateExpertGroupPort createExpertGroupPort;
-
     @Mock
     private CreateExpertGroupAccessPort createExpertGroupAccessPort;
 
@@ -42,5 +41,27 @@ class CreateExpertGroupServiceTest {
         assertNotNull(result, "The result of createExpertGroup service" +
             "should be CreateExpertGroupUseCase.Result");
         assertEquals(expectedId, result.id(), "The result should be long ID");
+    }
+
+    @Test
+    void testCreateExpertGroup_expertGroupPersistProblem_transactionRollback() {
+        UUID currentUserId = UUID.randomUUID();
+        Param param = new Param(
+            "Expert Group Name",
+            "Expert Group Bio",
+            "Expert Group About",
+            "Expert Group Website",
+            "Expert Group About picture",
+            currentUserId
+        );
+
+        when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(new Random().nextLong());
+        when(createExpertGroupAccessPort.persist(any(CreateExpertGroupAccessPort.Param.class)))
+            .thenThrow(new RuntimeException("Simulated exception"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> service.createExpertGroup(param));
+        assertNotNull(exception);
+
+        verify(createExpertGroupPort, times(1)).persist(any(CreateExpertGroupPort.Param.class));
     }
 }
