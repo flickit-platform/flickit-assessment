@@ -7,8 +7,10 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -23,7 +25,8 @@ import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.Exp
 @RequiredArgsConstructor
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
-    LoadExpertGroupListPort {
+    LoadExpertGroupListPort,
+    LoadExpertGroupPort {
 
     private final ExpertGroupJpaRepository repository;
 
@@ -52,12 +55,31 @@ public class ExpertGroupPersistenceJpaAdapter implements
         );
     }
 
-    private Result resultWithMembers(ExpertGroupWithDetailsView item, int membersCount) {
+    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersCount) {
         var members = repository.findMembersByExpertId(item.getId(),
                 PageRequest.of(0, membersCount, Sort.Direction.ASC, UserJpaEntity.Fields.NAME))
             .stream()
             .map(GetExpertGroupListUseCase.Member::new)
             .toList();
         return mapToPortResult(item, members);
+    }
+
+    @Override
+    public LoadExpertGroupPort.Result loadExpertGroup(LoadExpertGroupPort.Param param) {
+        var resultWithoutMembers = repository.findByExpertGroupId(param.id());
+        List<String> membersQueryResult = repository.findAllMembersByExpertId(param.id());
+        List<GetExpertGroupUseCase.Member> members = membersQueryResult.stream().map(GetExpertGroupUseCase.Member::new)
+            .toList();
+        return new LoadExpertGroupPort.Result(resultWithoutMembers.getId(),
+            resultWithoutMembers.getName(),
+            resultWithoutMembers.getBio(),
+            resultWithoutMembers.getWebsite(),
+            resultWithoutMembers.getPicture(),
+            resultWithoutMembers.getWebsite(),
+            resultWithoutMembers.getPublishedKitsCount(),
+            resultWithoutMembers.getMembersCount(),
+            members,
+            resultWithoutMembers.getOwnerId()
+        );
     }
 }

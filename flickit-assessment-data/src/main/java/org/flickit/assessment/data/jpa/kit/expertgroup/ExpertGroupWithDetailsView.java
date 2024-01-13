@@ -10,6 +10,8 @@ public interface ExpertGroupWithDetailsView {
 
     String getPicture();
 
+    String getWebsite();
+
     String getBio();
 
     Integer getPublishedKitsCount();

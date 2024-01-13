@@ -40,6 +40,32 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     Page<ExpertGroupWithDetailsView> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
 
     @Query("""
+            SELECT
+                e.id as id,
+                e.name as name,
+                e.picture as picture,
+                e.website as website,
+                e.bio as bio,
+                e.ownerId as ownerId,
+                COUNT(DISTINCT e.id) as publishedKitsCount,
+                COUNT(DISTINCT ac.userId) as membersCount
+            FROM ExpertGroupJpaEntity e
+            LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId AND ak.published = true
+            LEFT JOIN ExpertGroupAccessJpaEntity ac on e.id = ac.expertGroupId
+            WHERE EXISTS (
+                SELECT 1 FROM ExpertGroupAccessJpaEntity ac
+                WHERE ac.expertGroupId = e.id
+            ) AND e.id = :expertGroupId
+            GROUP BY
+                e.id,
+                e.name,
+                e.picture,
+                e.bio,
+                e.ownerId
+        """)
+    ExpertGroupWithDetailsView findByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId);
+
+    @Query("""
         SELECT
         u.displayName as displayName
         FROM ExpertGroupAccessJpaEntity e
@@ -47,4 +73,13 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         WHERE e.expertGroupId = :expertGroupId
         """)
     List<String> findMembersByExpertId(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
+
+    @Query("""
+        SELECT
+        u.displayName as displayName
+        FROM ExpertGroupAccessJpaEntity e
+        LEFT JOIN UserJpaEntity u on e.userId = u.id
+        WHERE e.expertGroupId = :expertGroupId
+        """)
+    List<String> findAllMembersByExpertId(@Param(value = "expertGroupId") Long id);
 }
