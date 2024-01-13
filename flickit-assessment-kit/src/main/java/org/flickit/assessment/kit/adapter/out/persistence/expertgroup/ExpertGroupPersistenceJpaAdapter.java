@@ -54,7 +54,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
         );
     }
 
-    private Result resultWithMembers(ExpertGroupWithDetailsView item, int membersCount) {
+    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersCount) {
         var members = repository.findMembersByExpertId(item.getId(),
                 PageRequest.of(0, membersCount, Sort.Direction.ASC, UserJpaEntity.Fields.NAME))
             .stream()
