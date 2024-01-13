@@ -24,7 +24,8 @@ public class UpdateExpertGroupService implements
     UpdateExpertGroupUseCase {
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-    private  final UpdateExpertGroupPort updateExpertGroupPort;
+    private final UpdateExpertGroupPort updateExpertGroupPort;
+
     @Override
     public void updateExpertGroup(Param param) {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
