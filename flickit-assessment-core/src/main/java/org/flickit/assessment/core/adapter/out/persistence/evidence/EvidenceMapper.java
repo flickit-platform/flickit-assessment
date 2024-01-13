@@ -27,7 +27,7 @@ public class EvidenceMapper {
         return new EvidenceListItem(
             entity.getId(),
             entity.getDescription(),
-            entity.getCreatedById(),
+            entity.getCreatedBy(),
             entity.getAssessmentId(),
             entity.getLastModificationTime()
         );

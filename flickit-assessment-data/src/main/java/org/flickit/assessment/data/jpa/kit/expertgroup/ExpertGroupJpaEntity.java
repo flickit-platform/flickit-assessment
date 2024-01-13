@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Table(name = "baseinfo_expertgroup")
 @Getter
@@ -38,4 +40,9 @@ public class ExpertGroupJpaEntity {
 
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String NAME = "title";
+    }
 }
