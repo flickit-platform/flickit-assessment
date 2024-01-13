@@ -87,7 +87,7 @@
     </changeSet>
 
     <changeSet id="0.12-16" author="Ali Sedaghat">
-        <renameSequence oldSequenceName="baseinfo_assessmentprofile_id_seq" newSequenceName="fak_assessment_kit_id_seq"/>
+        <renameSequence oldSequenceName="baseinfo_assessmentkit_id_seq" newSequenceName="fak_assessment_kit_id_seq"/>
     </changeSet>
 
     <changeSet id="0.12-17" author="Ali Sedaghat">
@@ -859,7 +859,7 @@
     </changeSet>
 
     <changeSet id="0.12-154" author="Ali Sedaghat">
-        <renameSequence oldSequenceName="baseinfo_metric_id_seq" newSequenceName="fak_question_id_seq"/>
+        <renameSequence oldSequenceName="baseinfo_question_id_seq" newSequenceName="fak_question_id_seq"/>
     </changeSet>
 
     <changeSet id="0.12-155" author="Ali Sedaghat">
@@ -1001,7 +1001,7 @@
     </changeSet>
 
     <changeSet id="0.12-178" author="Ali Sedaghat">
-        <renameSequence oldSequenceName="baseinfo_metricimpact_id_seq" newSequenceName="fak_question_impact_id_seq"/>
+        <renameSequence oldSequenceName="baseinfo_questionimpact_id_seq" newSequenceName="fak_question_impact_id_seq"/>
     </changeSet>
 
     <changeSet id="0.12-179" author="Ali Sedaghat">
