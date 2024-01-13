@@ -47,7 +47,7 @@ public interface UpdateExpertGroupUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long id,String name, String bio, String about, String website, String picture, UUID currentUserId) {
+        public Param(Long id, String name, String bio, String about, String website, String picture, UUID currentUserId) {
             this.id = id;
             this.name = name != null ? name.strip() : null;
             this.bio = bio;

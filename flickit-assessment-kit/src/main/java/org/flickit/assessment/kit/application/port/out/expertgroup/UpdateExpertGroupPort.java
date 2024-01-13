@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public interface UpdateExpertGroupPort {
 
-    void update (Param param);
+    void update(Param param);
 
     record Param(Long id,
                  String title,
@@ -12,6 +12,6 @@ public interface UpdateExpertGroupPort {
                  String picture,
                  String website,
                  String bio,
-                 UUID owner_id){
+                 UUID owner_id) {
     }
 }

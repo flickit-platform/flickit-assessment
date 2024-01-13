@@ -24,7 +24,6 @@ public class UpdateExpertGroupController {
     @PutMapping("/expert-groups/{id}")
     public ResponseEntity<Void> updateExpertGroupList(@PathVariable long id,
                                                       @RequestBody UpdateExpertGroupRequestDto request) {
-
         var currentUserId = userContext.getUser().id();
         useCase.updateExpertGroup(toParam(id, request, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
