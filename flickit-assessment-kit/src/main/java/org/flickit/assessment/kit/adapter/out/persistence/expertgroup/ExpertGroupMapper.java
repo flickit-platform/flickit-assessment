@@ -31,7 +31,7 @@ public class ExpertGroupMapper {
             param.title(),
             param.about(),
             param.picture(),
-            param.picture(),
+            param.website(),
             param.bio(),
             param.owner_id());
     }
