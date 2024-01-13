@@ -1348,9 +1348,14 @@
                         newSequenceName="fak_subject_questionnaire_id_seq"/>
     </changeSet>
 
+
     <changeSet id="0.12-241" author="MKouhestani">
         <addColumn tableName="baseinfo_assessmentkitdsl">
-            <column name="creation_time" type="timestamp" defaultValueComputed="current_timestamp">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"
+                    defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="json_path" type="varchar(100)" valueComputed="dsl_file">
                 <constraints nullable="false"/>
             </column>
         </addColumn>

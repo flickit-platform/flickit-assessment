@@ -179,40 +179,40 @@
 			},
 			"response": []
 		},
-		{
-			"name": "Get Expert Group List",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups?page=0&size=20",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "0"
-						},
-						{
-							"key": "size",
-							"value": "20"
-						}
-					]
-				}
-			},
-			"response": []
-		}, {
+      {
+        "name": "Get Expert Group List",
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "{{authorization_header}}",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/expert-groups?page=0&size=20",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "expert-groups"
+            ],
+            "query": [
+              {
+                "key": "page",
+                "value": "0"
+              },
+              {
+                "key": "size",
+                "value": "20"
+              }
+            ]
+          }
+        },
+        "response": []
+      }, {
           "name": "Get Kit User Access List",
           "request": {
             "method": "GET",
@@ -315,20 +315,25 @@
         "name": "Upload Kit",
         "request": {
           "method": "POST",
-          "header": [],
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "{{authorization_header}}",
+              "type": "text"
+            }
+          ],
           "body": {
             "mode": "formdata",
             "formdata": [
               {
-                "key": "",
-                "type": "file",
-                "src": [],
-                "disabled": true
-              },
-              {
                 "key": "dslFile",
                 "type": "file",
-                "src": "/home/user/kits/kit.zip"
+                "src": "/zip/file/path/kit.zip"
+              },
+              {
+                "key": "expertGroupId",
+                "value": "1",
+                "type": "text"
               }
             ]
           },

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class AssessmentKitDslMapper {
 
 
-    public static AssessmentKitDslJpaEntity toJpaEntity(String dslFile) {
-        return new AssessmentKitDslJpaEntity(null, dslFile, null, LocalDateTime.now());
+    public static AssessmentKitDslJpaEntity toJpaEntity(String dslPath, String jsonPath) {
+        return new AssessmentKitDslJpaEntity(null, dslPath, jsonPath, null, LocalDateTime.now());
     }
 }

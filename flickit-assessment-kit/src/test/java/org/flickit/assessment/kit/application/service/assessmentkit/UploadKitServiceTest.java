@@ -3,14 +3,16 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.SneakyThrows;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DSLHasSyntaxErrorException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UploadKitUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitDslPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.GetDslContentPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitDslToFileStoragePort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,33 +26,43 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UploadKitServiceTest {
+public class UploadKitServiceTest {
 
     public static final String ZIP_FILE_ADDR = "src/test/java/org/flickit/assessment/kit/correct-kit.zip";
     @InjectMocks
     private UploadKitService service;
 
     @Mock
-    private UploadKitPort uploadKitPort;
+    private UploadKitDslToFileStoragePort uploadKitDslToFileStoragePort;
 
     @Mock
     private GetDslContentPort getDslContentPort;
 
     @Mock
-    private CreateAssessmentKitDslPort createAssessmentKitDslPort;
+    private CreateKitDslPort createKitDslPort;
+
+    @Mock
+    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @SneakyThrows
     @Test
     void testUploadKit_ValidKitFile_ValidResult() {
+        UUID currentUserId = UUID.randomUUID();
+        Long expertGroupId = 1L;
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+
         MultipartFile dslFile = convertZipFileToMultipartFile(ZIP_FILE_ADDR);
         QuestionnaireDslModel q1 = QuestionnaireDslModel.builder().title("Clean Architecture").description("desc").build();
         QuestionnaireDslModel q2 = QuestionnaireDslModel.builder().title("Code Quality").description("desc").build();
@@ -65,37 +77,52 @@ class UploadKitServiceTest {
         String json = ow.writeValueAsString(kitDslModel);
         String zipFilePath = "sample/zip/file/path";
         String jsonFilePath = "sample/json/file/path";
-        when(uploadKitPort.upload(dslFile, json)).thenReturn(new UploadKitPort.Result(zipFilePath, jsonFilePath));
+        when(uploadKitDslToFileStoragePort.upload(dslFile, json)).thenReturn(new UploadKitDslToFileStoragePort.Result(zipFilePath, jsonFilePath));
 
-        long kitZipDslId = 1L;
-        long kitJsonDslId = 2L;
-        when(createAssessmentKitDslPort.create(new CreateAssessmentKitDslPort.Param(zipFilePath, jsonFilePath)))
-            .thenReturn(new CreateAssessmentKitDslPort.Result(kitZipDslId, kitJsonDslId));
+        long kitDslId = 1L;
+        when(createKitDslPort.create(new CreateKitDslPort.Param(zipFilePath, jsonFilePath)))
+            .thenReturn(kitDslId);
 
         when(getDslContentPort.getDslContent(dslFile)).thenReturn(kitDslModel);
 
-        var param = new UploadKitUseCase.Param(dslFile);
-        var uploadedKitInformation = service.upload(param);
+        var param = new UploadKitUseCase.Param(dslFile, expertGroupId, currentUserId);
+        Long resultKitDslId = service.upload(param);
 
-        assertEquals(kitZipDslId, uploadedKitInformation.kitZipDslId());
-        assertEquals(kitJsonDslId, uploadedKitInformation.kitJsonDslId());
+        assertEquals(kitDslId, resultKitDslId);
     }
 
     @SneakyThrows
     @Test
     void testUploadKit_InvalidKitFile_DslSyntaxError() {
+        UUID currentUserId = UUID.randomUUID();
+        Long expertGroupId = 1L;
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
         MultipartFile dslFile = convertZipFileToMultipartFile(ZIP_FILE_ADDR);
 
         String message = "Some custom syntax error.";
         when(getDslContentPort.getDslContent(dslFile)).thenThrow(new DSLHasSyntaxErrorException(message));
 
-        var param = new UploadKitUseCase.Param(dslFile);
+        var param = new UploadKitUseCase.Param(dslFile, expertGroupId, currentUserId);
 
         var throwable = assertThrows(DSLHasSyntaxErrorException.class, () -> service.upload(param));
         assertThat(throwable).hasMessage(message);
     }
 
-    public MultipartFile convertZipFileToMultipartFile(String zipFilePath) throws IOException {
+    @SneakyThrows
+    @Test
+    void testUploadKit_CurrentUserNotExpertGroupOwner_CurrentUserValidationFail() {
+        UUID currentUserId = UUID.randomUUID();
+        Long expertGroupId = 1L;
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(UUID.randomUUID()));
+        MultipartFile dslFile = convertZipFileToMultipartFile(ZIP_FILE_ADDR);
+
+        var param = new UploadKitUseCase.Param(dslFile, expertGroupId, currentUserId);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.upload(param));
+        assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
+    }
+
+    public static MultipartFile convertZipFileToMultipartFile(String zipFilePath) throws IOException {
         try (ZipFile zipFile = new ZipFile(zipFilePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

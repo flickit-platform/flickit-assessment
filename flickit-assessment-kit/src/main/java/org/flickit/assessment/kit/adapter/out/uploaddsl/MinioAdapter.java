@@ -6,7 +6,7 @@ import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +19,7 @@ import java.util.Objects;
 @Slf4j
 @Component
 @AllArgsConstructor
-public class MinioAdapter implements UploadKitPort {
+public class MinioAdapter implements UploadKitDslToFileStoragePort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
@@ -27,7 +27,7 @@ public class MinioAdapter implements UploadKitPort {
 
     @SneakyThrows
     @Override
-    public Result upload(MultipartFile dslZipFile, String dslJsonFile) {
+    public UploadKitDslToFileStoragePort.Result upload(MultipartFile dslZipFile, String dslJsonFile) {
         String bucketName = properties.getBucketName();
         String dslFileNameNoSuffix = Objects.requireNonNull(dslZipFile.getOriginalFilename()).replace(".zip", "");
         String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + SLASH + dslFileNameNoSuffix + SLASH;

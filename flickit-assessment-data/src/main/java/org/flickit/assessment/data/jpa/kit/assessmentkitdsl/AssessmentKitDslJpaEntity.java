@@ -22,7 +22,10 @@ public class AssessmentKitDslJpaEntity {
     private Long id;
 
     @Column(name = "dsl_file", length = 100, nullable = false)
-    private String dslFile;
+    private String dslPath;
+
+    @Column(name = "json_path", length = 100, nullable = false)
+    private String jsonPath;
 
     @Column(name = "assessment_kit_id")
     private Long assessmentKitId;

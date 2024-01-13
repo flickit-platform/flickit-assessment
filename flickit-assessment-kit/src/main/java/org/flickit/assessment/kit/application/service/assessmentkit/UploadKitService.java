@@ -4,40 +4,55 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UploadKitUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitDslPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.GetDslContentPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitDslToFileStoragePort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
+import java.util.UUID;
+
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UploadKitService implements UploadKitUseCase {
 
-    private final UploadKitPort uploadKitPort;
+    private final UploadKitDslToFileStoragePort uploadKitDslToFileStoragePort;
     private final GetDslContentPort getDslContentPort;
-    private final CreateAssessmentKitDslPort createAssessmentKitDslPort;
+    private final CreateKitDslPort createKitDslPort;
+    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @SneakyThrows
     @Override
-    public UploadKitUseCase.Result upload(UploadKitUseCase.Param param) {
+    public Long upload(UploadKitUseCase.Param param) {
+        validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
+
         AssessmentKitDslModel dslContentJson = getDslContentPort.getDslContent(param.getDslFile());
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(dslContentJson);
-        UploadKitPort.Result uploadedFilesInformation = uploadKitPort.upload(param.getDslFile(), json);
-        CreateAssessmentKitDslPort.Result persistedDataIds = createAssessmentKitDslPort.create(toCreateAssessmentKitDslParam(uploadedFilesInformation));
-        return toResult(persistedDataIds);
+        UploadKitDslToFileStoragePort.Result uploadedFilesInformation = uploadKitDslToFileStoragePort.upload(param.getDslFile(), json);
+        return createKitDslPort.create(toCreateAssessmentKitDslParam(uploadedFilesInformation));
     }
 
-    private Result toResult(CreateAssessmentKitDslPort.Result persistedDataIds) {
-        return new UploadKitUseCase.Result(persistedDataIds.kitZipDslId(), persistedDataIds.kitJsonDslId());
+    private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
+        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
+            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
+        if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+        }
     }
 
-    private CreateAssessmentKitDslPort.Param toCreateAssessmentKitDslParam(UploadKitPort.Result result) {
-        return new CreateAssessmentKitDslPort.Param(
+    private CreateKitDslPort.Param toCreateAssessmentKitDslParam(UploadKitDslToFileStoragePort.Result result) {
+        return new CreateKitDslPort.Param(
             result.zipFilePath(),
             result.jsonFilePath()
         );

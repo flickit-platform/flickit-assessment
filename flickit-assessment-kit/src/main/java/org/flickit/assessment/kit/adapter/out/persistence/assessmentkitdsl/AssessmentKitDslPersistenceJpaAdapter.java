@@ -2,19 +2,17 @@ package org.flickit.assessment.kit.adapter.out.persistence.assessmentkitdsl;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.AssessmentKitDslJpaRepository;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitDslPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateKitDslPort;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentKitDslPersistenceJpaAdapter implements CreateAssessmentKitDslPort {
+public class AssessmentKitDslPersistenceJpaAdapter implements CreateKitDslPort {
 
     private final AssessmentKitDslJpaRepository repository;
 
     @Override
-    public CreateAssessmentKitDslPort.Result create(Param param) {
-        Long kitZipDslId = repository.save(AssessmentKitDslMapper.toJpaEntity(param.zipFilePath())).getId();
-        Long kitJsonDslId = repository.save(AssessmentKitDslMapper.toJpaEntity(param.jsonFilePath())).getId();
-        return new CreateAssessmentKitDslPort.Result(kitZipDslId, kitJsonDslId);
+    public Long create(Param param) {
+        return repository.save(AssessmentKitDslMapper.toJpaEntity(param.zipFilePath(), param.jsonFilePath())).getId();
     }
 }
