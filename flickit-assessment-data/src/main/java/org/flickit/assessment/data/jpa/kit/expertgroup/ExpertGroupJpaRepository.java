@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
@@ -63,7 +64,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 e.bio,
                 e.ownerId
         """)
-    ExpertGroupWithDetailsView findByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId);
+    Optional<ExpertGroupWithDetailsView> findByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId);
 
     @Query("""
         SELECT

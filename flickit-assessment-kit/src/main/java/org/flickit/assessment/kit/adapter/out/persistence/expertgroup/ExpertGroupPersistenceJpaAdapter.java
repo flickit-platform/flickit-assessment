@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP_BY_ID_EXPERT_GROUP_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -66,7 +68,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
     @Override
     public LoadExpertGroupPort.Result loadExpertGroup(LoadExpertGroupPort.Param param) {
-        var resultWithoutMembers = repository.findByExpertGroupId(param.id());
+        var resultWithoutMembers = repository.findByExpertGroupId(param.id()).orElseThrow(() -> new ResourceNotFoundException(GET_EXPERT_GROUP_BY_ID_EXPERT_GROUP_NOT_FOUND));
         List<String> membersQueryResult = repository.findAllMembersByExpertId(param.id());
         List<GetExpertGroupUseCase.Member> members = membersQueryResult.stream().map(GetExpertGroupUseCase.Member::new)
             .toList();
