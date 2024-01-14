@@ -1,8 +1,8 @@
 package org.flickit.assessment.kit.application.service.expertgroup;
 
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupUseCase.Member;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -28,11 +28,11 @@ class GetExpertGroupServiceTest {
 
     @Mock
     private LoadExpertGroupPort loadExpertGroupPort;
+    @Mock
+    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Test
     void testGetExpertGroup_ValidInputs_ValidResults() {
-        long expertGroupId = new Random().nextLong();
-        UUID currentUserId = UUID.randomUUID();
 
         var portResult = createPortResult(expertGroupId, currentUserId);
         var useCaseResul = portToUseCaseResult(portResult);
@@ -40,7 +40,9 @@ class GetExpertGroupServiceTest {
         when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class)))
             .thenReturn(portResult);
 
-        var param = new GetExpertGroupUseCase.Param(expertGroupId);
+        when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(Optional.ofNullable(currentUserId));
+
+        var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
         var result = service.getExpertGroup(param);
 
         ArgumentCaptor<LoadExpertGroupPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadExpertGroupPort.Param.class);
@@ -48,8 +50,11 @@ class GetExpertGroupServiceTest {
 
         assertNotNull(result);
         assertEquals(useCaseResul.getId(),result.getId());
-        assertEquals(useCaseResul.getOwnerId(),result.getOwnerId());
+        assertTrue(result.isOwner());
     }
+
+    long expertGroupId = new Random().nextLong();
+    static UUID currentUserId = UUID.randomUUID();
 
     private static LoadExpertGroupPort.Result createPortResult(long id,UUID ownerId) {
         return new LoadExpertGroupPort.Result(id,
@@ -58,9 +63,6 @@ class GetExpertGroupServiceTest {
             "About" + id,
             "Picture" + id,
             "Website" + id,
-            10,
-            20,
-            List.of(new Member("name" + id)),
             ownerId);
     }
 
@@ -72,10 +74,7 @@ class GetExpertGroupServiceTest {
             portResult.about(),
             portResult.picture(),
             portResult.website(),
-            portResult.membersCount(),
-            portResult.publishedKitsCount(),
-            portResult.members(),
-            portResult.ownerId()
+            portResult.ownerId().equals(currentUserId)
         );
     }
 }
