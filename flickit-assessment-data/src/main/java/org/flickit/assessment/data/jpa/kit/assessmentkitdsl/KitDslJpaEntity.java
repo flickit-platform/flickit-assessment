@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class AssessmentKitDslJpaEntity {
+public class KitDslJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -28,7 +28,7 @@ public class AssessmentKitDslJpaEntity {
     private String jsonPath;
 
     @Column(name = "assessment_kit_id")
-    private Long assessmentKitId;
+    private Long kitId;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
