@@ -29,38 +29,31 @@ public class MinioAdapter implements UploadKitDslToFileStoragePort {
         String bucketName = properties.getBucketName();
         String dslFileNameNoSuffix = Objects.requireNonNull(dslZipFile.getOriginalFilename()).replace(".zip", "");
         String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + SLASH + dslFileNameNoSuffix + SLASH;
-        String zipFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
-        String zipJsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
+        String dslFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
+        String jsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
 
         checkBucketExistence(bucketName);
         setBucketVersioning(bucketName);
 
         InputStream zipFileInputStream = dslZipFile.getInputStream();
-        ObjectWriteResponse dslZipFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
-            .bucket(bucketName)
-            .object(zipFileObjectName)
-            .stream(zipFileInputStream, zipFileInputStream.available(), -1)
-            .build());
-        String zipFileVersionId = dslZipFileWriteResponse.versionId();
+        String zipFileVersionId = writeFile(bucketName, dslFileObjectName, zipFileInputStream);
 
         InputStream jsonFileInputStream = new ByteArrayInputStream(dslJsonFile.getBytes());
-        ObjectWriteResponse dslJsonFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
-            .bucket(bucketName)
-            .object(zipJsonFileObjectName)
-            .stream(jsonFileInputStream, jsonFileInputStream.available(), -1)
-            .build());
-        String jsonFileVersionId = dslJsonFileWriteResponse.versionId();
+        String jsonFileVersionId = writeFile(bucketName, jsonFileObjectName, jsonFileInputStream);
 
-        return new Result(zipFileObjectName + SLASH + zipFileVersionId,
-            zipJsonFileObjectName + SLASH + jsonFileVersionId);
+        return new UploadKitDslToFileStoragePort.Result(
+            dslFileObjectName + SLASH + zipFileVersionId,
+            jsonFileObjectName + SLASH + jsonFileVersionId);
     }
 
     @SneakyThrows
-    private void setBucketVersioning(String bucketName) {
-        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
-            .bucket(bucketName)
-            .config(new VersioningConfiguration(Status.ENABLED, false))
-            .build());
+    private String writeFile(String bucketName, String dslFileObjectName, InputStream zipFileInputStream) {
+        return minioClient.putObject(PutObjectArgs.builder()
+                .bucket(bucketName)
+                .object(dslFileObjectName)
+                .stream(zipFileInputStream, zipFileInputStream.available(), -1)
+                .build())
+            .versionId();
     }
 
     @SneakyThrows
@@ -70,5 +63,13 @@ public class MinioAdapter implements UploadKitDslToFileStoragePort {
                 .bucket(bucketName)
                 .build());
         }
+    }
+
+    @SneakyThrows
+    private void setBucketVersioning(String bucketName) {
+        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
+            .bucket(bucketName)
+            .config(new VersioningConfiguration(Status.ENABLED, false))
+            .build());
     }
 }
