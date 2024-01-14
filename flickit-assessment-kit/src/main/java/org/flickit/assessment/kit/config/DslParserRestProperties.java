@@ -6,8 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
-@ConfigurationProperties("dsl.parser")
+@ConfigurationProperties("app.dsl.parser")
 public class DslParserRestProperties {
 
-    private String url = "http://dsl:8080/extract/";
+    private String url;
 }
