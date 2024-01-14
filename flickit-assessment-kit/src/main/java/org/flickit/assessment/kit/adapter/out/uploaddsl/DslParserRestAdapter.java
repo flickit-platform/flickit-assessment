@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.uploaddsl;
 
 import lombok.AllArgsConstructor;
-import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DSLHasSyntaxErrorException;
+import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DSLSyntaxErrorException;
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DslParserRestException;
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.ZipBombException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
@@ -47,7 +47,8 @@ public class DslParserRestAdapter implements ParsDslFilePort {
 
             return responseEntity.getBody();
         } catch (HttpClientErrorException e) {
-            throw new DSLHasSyntaxErrorException(e.getMessage(), e);
+            String responseBody = e.getResponseBodyAsString();
+            throw new DSLSyntaxErrorException(e, responseBody);
         }
     }
 
