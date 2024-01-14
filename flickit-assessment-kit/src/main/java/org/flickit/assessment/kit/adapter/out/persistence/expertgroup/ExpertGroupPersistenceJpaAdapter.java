@@ -8,7 +8,6 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPort;
@@ -68,20 +67,14 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
     @Override
     public LoadExpertGroupPort.Result loadExpertGroup(LoadExpertGroupPort.Param param) {
-        var resultWithoutMembers = repository.findByExpertGroupId(param.id()).orElseThrow(
+        var resultWithoutMembers = repository.findById(param.id()).orElseThrow(
             () -> new ResourceNotFoundException(GET_EXPERT_GROUP_BY_ID_EXPERT_GROUP_NOT_FOUND));
-        List<String> membersQueryResult = repository.findAllMembersByExpertId(param.id());
-        List<GetExpertGroupUseCase.Member> members = membersQueryResult.stream().map(GetExpertGroupUseCase.Member::new)
-            .toList();
         return new LoadExpertGroupPort.Result(resultWithoutMembers.getId(),
             resultWithoutMembers.getName(),
             resultWithoutMembers.getBio(),
             resultWithoutMembers.getWebsite(),
             resultWithoutMembers.getPicture(),
             resultWithoutMembers.getWebsite(),
-            resultWithoutMembers.getPublishedKitsCount(),
-            resultWithoutMembers.getMembersCount(),
-            members,
             resultWithoutMembers.getOwnerId()
         );
     }
