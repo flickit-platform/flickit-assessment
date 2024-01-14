@@ -5,7 +5,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparingInt;
 
 @Service
 public class CompositeCreateKitPersister {
@@ -13,7 +16,7 @@ public class CompositeCreateKitPersister {
     private final List<CreateKitPersister> persisters;
 
     public CompositeCreateKitPersister(List<CreateKitPersister> persisters) {
-        this.persisters = persisters;
+        this.persisters = persisters.stream().sorted(comparingInt(CreateKitPersister::order)).toList();
         checkDuplicateOrders(this.persisters);
     }
 
@@ -23,10 +26,10 @@ public class CompositeCreateKitPersister {
             throw new IllegalStateException();
     }
 
-    public CreateKitPersisterContext persist(AssessmentKitDslModel dslKit, Long kitId) {
+    public CreateKitPersisterContext persist(AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
         CreateKitPersisterContext ctx = new CreateKitPersisterContext();
         for (CreateKitPersister p : persisters) {
-            p.persist(ctx, dslKit, kitId);
+            p.persist(ctx, dslKit, kitId, currentUserId);
         }
         return ctx;
     }

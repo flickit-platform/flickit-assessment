@@ -18,7 +18,8 @@ public class AssessmentKitDslMapper {
     public static AssessmentKitDsl toDomainModel(AssessmentKitDslJpaEntity entity) {
         return new AssessmentKitDsl(
             entity.getId(),
-            entity.getDslFile(),
+            entity.getDslPath(),
+            entity.getJsonPath(),
             entity.getAssessmentKitId(),
             entity.getCreationTime()
         );

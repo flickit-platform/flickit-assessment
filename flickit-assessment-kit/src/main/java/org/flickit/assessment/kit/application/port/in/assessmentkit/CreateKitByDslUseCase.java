@@ -21,7 +21,7 @@ public interface CreateKitByDslUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = CREATE_KIT_BY_DSL_KIT_DSL_JSON_ID_NOT_NULL)
-        Long kitJsonDslId;
+        Long kitDslId;
 
         @NotNull(message = CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL)
         boolean isPrivate;
@@ -44,8 +44,8 @@ public interface CreateKitByDslUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitJsonDslId, boolean isPrivate, Long expertGroupId, String title, String summary, String about, List<Long> tagIds, UUID currentUserId) {
-            this.kitJsonDslId = kitJsonDslId;
+        public Param(Long kitDslId, boolean isPrivate, Long expertGroupId, String title, String summary, String about, List<Long> tagIds, UUID currentUserId) {
+            this.kitDslId = kitDslId;
             this.isPrivate = isPrivate;
             this.expertGroupId = expertGroupId;
             this.title = title;

@@ -5,6 +5,9 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MaturityLevelMapper {
 
@@ -19,14 +22,21 @@ public class MaturityLevelMapper {
         );
     }
 
-    public static MaturityLevelJpaEntity mapToJpaEntity(MaturityLevel level, Long kitId) {
+    public static MaturityLevelJpaEntity mapToJpaEntity(MaturityLevel level, Long kitId, UUID currentUserId) {
         return new MaturityLevelJpaEntity(
             null,
             level.getCode(),
+            level.getIndex(),
             level.getTitle(),
             level.getValue(),
-            level.getIndex(),
-            kitId
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            currentUserId,
+            currentUserId,
+            kitId,
+            null,
+            null,
+            null
         );
     }
 }

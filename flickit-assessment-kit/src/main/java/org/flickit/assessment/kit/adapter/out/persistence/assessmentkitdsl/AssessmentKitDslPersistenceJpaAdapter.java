@@ -2,14 +2,20 @@ package org.flickit.assessment.kit.adapter.out.persistence.assessmentkitdsl;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.AssessmentKitDslJpaRepository;
+import org.flickit.assessment.kit.application.domain.AssessmentKitDsl;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateKitDslPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadJsonKitDslPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateAssessmentKitDslPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentKitDslPersistenceJpaAdapter implements CreateKitDslPort {
+public class AssessmentKitDslPersistenceJpaAdapter implements
+    CreateKitDslPort,
+    LoadJsonKitDslPort,
+    UpdateAssessmentKitDslPort{
 
     private final AssessmentKitDslJpaRepository repository;
 

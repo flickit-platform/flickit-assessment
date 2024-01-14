@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -37,12 +38,12 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId) {
+    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
         List<MaturityLevelDslModel> dslLevels = dslKit.getMaturityLevels();
         Map<String, MaturityLevelDslModel> dslLevelCodesMap = dslLevels.stream().collect(toMap(BaseDslModel::getCode, i -> i));
         Map<String, MaturityLevel> codeToPersistedLevels = new HashMap<>();
         dslLevels.forEach(ml -> {
-            MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(ml.getCode()), kitId);
+            MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(ml.getCode()), kitId, currentUserId);
             codeToPersistedLevels.put(createdLevel.getCode(), createdLevel);
         });
 
@@ -56,7 +57,7 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
 
             dslLevelCompetenceCodes.forEach((key, value) -> {
                 Long effectiveLevelId = codeToPersistedLevels.get(key).getId();
-                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value);
+                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, currentUserId);
             });
         });
 
@@ -66,7 +67,7 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
         log.debug("Final Levels: {}", levelCodeToIdMap);
     }
 
-    private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId) {
+    private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId, UUID currentUserId) {
         MaturityLevel newDomainLevel = new MaturityLevel(
             null,
             newLevel.getCode(),
@@ -76,8 +77,8 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
             null
         );
 
-        Long persistedLevelId = createMaturityLevelPort.persist(newDomainLevel, kitId);
-        log.debug("MaturityLevel[id={}, code={}] created.", persistedLevelId, newLevel.getCode());
+        Long persistedLevelId = createMaturityLevelPort.persist(newDomainLevel, kitId, currentUserId);
+        log.warn("MaturityLevel[id={}, code={}] created.", persistedLevelId, newLevel.getCode()); //TODO
 
         return new MaturityLevel(
             persistedLevelId,
@@ -89,9 +90,9 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
         );
     }
 
-    private void createLevelCompetence(long affectedLevelId, long effectiveLevelId, int value) {
-        createLevelCompetencePort.persist(affectedLevelId, effectiveLevelId, value);
-        log.debug("LevelCompetence[affectedId={}, effectiveId={}, value={}] created.", affectedLevelId, effectiveLevelId, value);
+    private void createLevelCompetence(long affectedLevelId, long effectiveLevelId, int value, UUID currentUserId) {
+        createLevelCompetencePort.persist(affectedLevelId, effectiveLevelId, value, currentUserId);
+        log.warn("LevelCompetence[affectedId={}, effectiveId={}, value={}] created.", affectedLevelId, effectiveLevelId, value); //TODO
     }
 
 }

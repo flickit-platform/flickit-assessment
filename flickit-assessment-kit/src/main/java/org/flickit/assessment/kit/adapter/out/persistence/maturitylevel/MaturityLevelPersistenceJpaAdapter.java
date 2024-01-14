@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -24,8 +25,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
     private final MaturityLevelJpaRepository repository;
 
     @Override
-    public Long persist(MaturityLevel level, Long kitId) {
-        return repository.save(MaturityLevelMapper.mapToJpaEntity(level, kitId)).getId();
+    public Long persist(MaturityLevel level, Long kitId, UUID currentUserId) {
+        return repository.save(MaturityLevelMapper.mapToJpaEntity(level, kitId, currentUserId)).getId();
     }
 
     @Override

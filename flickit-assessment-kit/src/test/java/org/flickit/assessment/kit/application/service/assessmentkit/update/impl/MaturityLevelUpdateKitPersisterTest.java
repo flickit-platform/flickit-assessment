@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_MATURITY_LEVELS;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithMaturityLevels;
@@ -99,9 +100,10 @@ class MaturityLevelUpdateKitPersisterTest {
             .build();
 
         Long persistedLevelId = levelThree().getId();
-        when(createMaturityLevelPort.persist(any(), eq(savedKit.getId()))).thenReturn(persistedLevelId);
-        when(createLevelCompetencePort.persist(persistedLevelId, levelTwo().getId(), 75)).thenReturn(1L);
-        when(createLevelCompetencePort.persist(persistedLevelId, levelThree().getId(), 60)).thenReturn(2L);
+        UUID currentUserId = UUID.randomUUID();
+        when(createMaturityLevelPort.persist(any(), eq(savedKit.getId()), currentUserId)).thenReturn(persistedLevelId);
+        when(createLevelCompetencePort.persist(persistedLevelId, levelTwo().getId(), 75, currentUserId)).thenReturn(1L);
+        when(createLevelCompetencePort.persist(persistedLevelId, levelThree().getId(), 60, currentUserId)).thenReturn(2L);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
@@ -198,7 +200,8 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevelOne, dslLevelTwo))
             .build();
 
-        when(createLevelCompetencePort.persist(levelTwo().getId(), levelOne().getId(), 90)).thenReturn(1L);
+        UUID currentUserId = UUID.randomUUID();
+        when(createLevelCompetencePort.persist(levelTwo().getId(), levelOne().getId(), 90, currentUserId)).thenReturn(1L);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);

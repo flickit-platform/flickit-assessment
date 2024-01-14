@@ -13,7 +13,6 @@ import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateAs
 import org.flickit.assessment.kit.application.port.out.minio.LoadJsonFilePort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CompositeCreateKitPersister;
-import org.flickit.assessment.kit.application.service.assessmentkit.create.CreateKitPersisterContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,11 +35,11 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     @SneakyThrows
     @Override
     public Long create(CreateKitByDslUseCase.Param param) {
-        var assessmentKitDsl = loadJsonKitDslPort.load(param.getKitJsonDslId())
+        var assessmentKitDsl = loadJsonKitDslPort.load(param.getKitDslId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND));
-        String dslFile = assessmentKitDsl.getDslFile();
-        String dslFilePath = dslFile.substring(0, dslFile.lastIndexOf(SLASH));
-        String versionId = dslFile.substring(dslFile.lastIndexOf(SLASH));
+        String dslJson = assessmentKitDsl.getDslJson();
+        String dslFilePath = dslJson.substring(0, dslJson.lastIndexOf(SLASH));
+        String versionId = dslJson.substring(dslJson.lastIndexOf(SLASH) + 1);
 
         String dslContent = loadJsonFilePort.load(dslFilePath, versionId);
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
@@ -59,7 +58,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
         );
         Long kitId = createAssessmentKitPort.persist(createKitParam);
 
-        CreateKitPersisterContext context = persister.persist(dslKit, kitId);
+        persister.persist(dslKit, kitId, param.getCurrentUserId());
 
         param.getTagIds().forEach(tagId ->
             createAssessmentKitTagKitPort.persist(new CreateAssessmentKitTagKitPort.Param(tagId, kitId)));

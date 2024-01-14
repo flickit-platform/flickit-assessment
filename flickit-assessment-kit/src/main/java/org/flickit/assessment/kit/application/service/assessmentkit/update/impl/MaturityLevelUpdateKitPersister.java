@@ -82,7 +82,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         updateMaturityLevelPort.update(updatedLevels);
 
         newLevels.forEach(code -> {
-            MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(code), savedKit.getId());
+            MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(code), savedKit.getId(), UUID.randomUUID()); // TODO: Fix currentUserId
             codeToPersistedLevels.put(createdLevel.getCode(), createdLevel);
         });
 
@@ -99,7 +99,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
 
             dslLevelCompetenceCodes.forEach((key, value) -> {
                 Long effectiveLevelId = codeToPersistedLevels.get(key).getId();
-                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value);
+                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, UUID.randomUUID()); // TODO: Fix currentUserId
             });
         });
 
@@ -114,7 +114,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         return new UpdateKitPersisterResult(invalidateResults);
     }
 
-    private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId) {
+    private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId, UUID currentUserId) {
         MaturityLevel newDomainLevel = new MaturityLevel(
             null,
             newLevel.getCode(),
@@ -124,7 +124,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             null
         );
 
-        Long persistedLevelId = createMaturityLevelPort.persist(newDomainLevel, kitId);
+        Long persistedLevelId = createMaturityLevelPort.persist(newDomainLevel, kitId, currentUserId);
         log.debug("MaturityLevel[id={}, code={}] created.", persistedLevelId, newLevel.getTitle());
 
         return new MaturityLevel(
@@ -184,7 +184,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             newCompetences.forEach(cmpCode -> {
                 Long effectiveLevelId = codeToPersistedLevels.get(cmpCode).getId();
                 Integer value = dslLevel.getCompetencesCodeToValueMap().get(cmpCode);
-                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value);
+                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, UUID.randomUUID()); // TODO: Fix currentUserId
             });
 
             // delete removed competences
@@ -210,8 +210,8 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         return isCompetencesChanged;
     }
 
-    private void createLevelCompetence(long affectedLevelId, long effectiveLevelId, int value) {
-        createLevelCompetencePort.persist(affectedLevelId, effectiveLevelId, value);
+    private void createLevelCompetence(long affectedLevelId, long effectiveLevelId, int value, UUID currentUserId) {
+        createLevelCompetencePort.persist(affectedLevelId, effectiveLevelId, value, currentUserId);
         log.debug("LevelCompetence[affectedId={}, effectiveId={}, value={}] created.", affectedLevelId, effectiveLevelId, value);
     }
 

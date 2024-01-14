@@ -13,6 +13,7 @@ public class AssessmentKitDsl {
 
     private final Long id;
     private final String dslFile;
+    private final String dslJson;
     private final Long assessmentKitId;
     private final LocalDateTime creationTime;
 }
