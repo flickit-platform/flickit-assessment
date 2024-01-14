@@ -5,7 +5,7 @@ import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DSLSyntaxError
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DslParserRestException;
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.ZipBombException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.ParsDslFilePort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.ParsDslFilePort;
 import org.flickit.assessment.kit.config.DslParserRestProperties;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;

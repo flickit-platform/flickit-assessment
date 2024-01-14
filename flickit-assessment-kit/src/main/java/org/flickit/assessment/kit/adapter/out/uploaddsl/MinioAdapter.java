@@ -5,8 +5,7 @@ import io.minio.messages.VersioningConfiguration;
 import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitDslToFileStoragePort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +15,6 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@Slf4j
 @Component
 @AllArgsConstructor
 public class MinioAdapter implements UploadKitDslToFileStoragePort {

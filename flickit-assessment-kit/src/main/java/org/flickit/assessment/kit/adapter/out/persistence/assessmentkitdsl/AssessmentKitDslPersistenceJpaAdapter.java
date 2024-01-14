@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.assessmentkitdsl;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.AssessmentKitDslJpaRepository;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateKitDslPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
 import org.springframework.stereotype.Component;
 
 @Component
