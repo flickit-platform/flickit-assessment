@@ -23,6 +23,9 @@ public class GetExpertGroupService implements GetExpertGroupUseCase {
             portResult.about(),
             portResult.picture(),
             portResult.website(),
+            portResult.membersCount(),
+            portResult.publishedKitsCount(),
+            portResult.members(),
             portResult.ownerId());
     }
     private LoadExpertGroupPort.Param toParam(long id) {
