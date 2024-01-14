@@ -30,6 +30,7 @@ public class GetExpertGroupService implements GetExpertGroupUseCase {
             portResult.website(),
             isOwner);
     }
+
     private LoadExpertGroupPort.Param toParam(long id) {
         return new LoadExpertGroupPort.Param(id);
     }

@@ -24,7 +24,4 @@ public interface GetExpertGroupUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
     }
-
-    record Member(String displayName) {
-    }
 }

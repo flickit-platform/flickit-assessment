@@ -15,6 +15,7 @@ public class ExpertGroup {
     private final String picture;
     private final String website;
     private final boolean isOwner;
+
     @JsonProperty("isOwner")
     public boolean isOwner() {
         return isOwner;
