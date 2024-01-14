@@ -1355,10 +1355,15 @@
                     defaultValueComputed="current_timestamp">
                 <constraints nullable="false"/>
             </column>
-            <column name="json_path" type="varchar(100)" valueComputed="dsl_file">
-                <constraints nullable="false"/>
-            </column>
+            <column name="json_path" type="varchar(200)" valueComputed="dsl_file"/>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-242" author="MKouhestani">
+        <modifyDataType
+                columnName="dsl_file"
+                newDataType="varchar(200)"
+                tableName="baseinfo_assessmentkitdsl"/>
     </changeSet>
 
 </databaseChangeLog>

@@ -9,7 +9,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UploadKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateKitDslPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.GetDslContentPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.ParsDslFilePort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_
 public class UploadKitService implements UploadKitUseCase {
 
     private final UploadKitDslToFileStoragePort uploadKitDslToFileStoragePort;
-    private final GetDslContentPort getDslContentPort;
+    private final ParsDslFilePort parsDslFilePort;
     private final CreateKitDslPort createKitDslPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
@@ -36,11 +36,11 @@ public class UploadKitService implements UploadKitUseCase {
     public Long upload(UploadKitUseCase.Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
 
-        AssessmentKitDslModel dslContentJson = getDslContentPort.getDslContent(param.getDslFile());
+        AssessmentKitDslModel dslContentJson = parsDslFilePort.parsToDslModel(param.getDslFile());
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(dslContentJson);
-        UploadKitDslToFileStoragePort.Result uploadedFilesInformation = uploadKitDslToFileStoragePort.upload(param.getDslFile(), json);
-        return createKitDslPort.create(toCreateAssessmentKitDslParam(uploadedFilesInformation));
+        UploadKitDslToFileStoragePort.Result filesInfo = uploadKitDslToFileStoragePort.upload(param.getDslFile(), json);
+        return createKitDslPort.create(filesInfo.dslFilePath(), filesInfo.jsonFilePath());
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
@@ -51,10 +51,4 @@ public class UploadKitService implements UploadKitUseCase {
         }
     }
 
-    private CreateKitDslPort.Param toCreateAssessmentKitDslParam(UploadKitDslToFileStoragePort.Result result) {
-        return new CreateKitDslPort.Param(
-            result.zipFilePath(),
-            result.jsonFilePath()
-        );
-    }
 }

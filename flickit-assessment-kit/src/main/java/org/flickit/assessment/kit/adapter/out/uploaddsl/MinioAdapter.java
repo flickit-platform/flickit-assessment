@@ -33,7 +33,6 @@ public class MinioAdapter implements UploadKitDslToFileStoragePort {
         String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + SLASH + dslFileNameNoSuffix + SLASH;
         String zipFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
         String zipJsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
-        Result result;
 
         checkBucketExistence(bucketName);
         setBucketVersioning(bucketName);
@@ -54,10 +53,8 @@ public class MinioAdapter implements UploadKitDslToFileStoragePort {
             .build());
         String jsonFileVersionId = dslJsonFileWriteResponse.versionId();
 
-        result = new Result(zipFileObjectName + SLASH + zipFileVersionId,
+        return new Result(zipFileObjectName + SLASH + zipFileVersionId,
             zipJsonFileObjectName + SLASH + jsonFileVersionId);
-
-        return result;
     }
 
     @SneakyThrows

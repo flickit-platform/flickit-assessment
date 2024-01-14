@@ -12,7 +12,7 @@ public class AssessmentKitDslPersistenceJpaAdapter implements CreateKitDslPort {
     private final AssessmentKitDslJpaRepository repository;
 
     @Override
-    public Long create(Param param) {
-        return repository.save(AssessmentKitDslMapper.toJpaEntity(param.zipFilePath(), param.jsonFilePath())).getId();
+    public Long create(String dslFilePath, String jsonFilePath) {
+        return repository.save(AssessmentKitDslMapper.toJpaEntity(dslFilePath, jsonFilePath)).getId();
     }
 }
