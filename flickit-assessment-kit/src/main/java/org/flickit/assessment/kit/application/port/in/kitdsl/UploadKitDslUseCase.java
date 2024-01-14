@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.in.assessmentkit;
+package org.flickit.assessment.kit.application.port.in.kitdsl;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -12,7 +12,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPLOAD_KIT_DSL_EXPERT_GROUP_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPLOAD_KIT_DSL_KIT_NOT_NULL;
 
-public interface UploadKitUseCase {
+public interface UploadKitDslUseCase {
 
     Long upload(Param param);
 

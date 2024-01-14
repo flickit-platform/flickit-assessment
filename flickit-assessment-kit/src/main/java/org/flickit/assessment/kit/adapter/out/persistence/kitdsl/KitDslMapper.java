@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.persistence.assessmentkitdsl;
+package org.flickit.assessment.kit.adapter.out.persistence.kitdsl;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
