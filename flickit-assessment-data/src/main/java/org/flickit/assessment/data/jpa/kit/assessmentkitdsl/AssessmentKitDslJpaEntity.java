@@ -21,8 +21,11 @@ public class AssessmentKitDslJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "dsl_file", length = 100, nullable = false)
-    private String dslFile;
+    @Column(name = "dsl_file", length = 200, nullable = false)
+    private String dslPath;
+
+    @Column(name = "json_path", length = 200)
+    private String jsonPath;
 
     @Column(name = "assessment_kit_id")
     private Long assessmentKitId;

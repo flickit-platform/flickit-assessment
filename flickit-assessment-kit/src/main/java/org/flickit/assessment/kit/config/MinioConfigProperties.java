@@ -6,14 +6,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
-@ConfigurationProperties("minio")
+@ConfigurationProperties("app.minio")
 public class MinioConfigProperties {
 
-    private String url = "https://flickit-test-cdn.darkube.app:9000";
-    private int port = 9000;
-    private String accessKey = "test";
-    private String accessSecret = "test";
-    private String bucketName = "media";
-    private String objectName = "assessment_kit/dsl";
-    private Boolean secure = true;
+    private String url;
+    private int port;
+    private String accessKey;
+    private String accessSecret;
+    private String bucketName;
+    private String objectName;
+    private Boolean secure;
 }

@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class DSLHasSyntaxErrorException extends RuntimeException {
 
-    public DSLHasSyntaxErrorException(String message) {
-        super(message);
+    public DSLHasSyntaxErrorException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

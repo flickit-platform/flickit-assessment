@@ -7,8 +7,7 @@ import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.NotSuchFileUploadedException;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadJsonFilePort;
 import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
@@ -24,8 +23,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DS
 @Slf4j
 @Component
 @AllArgsConstructor
-public class MinioAdapter implements
-    UploadKitPort,
+public class MinioAdapter implements UploadKitDslToFileStoragePort,
     LoadJsonFilePort {
 
     public static final String SLASH = "/";
@@ -34,13 +32,12 @@ public class MinioAdapter implements
 
     @SneakyThrows
     @Override
-    public Result upload(MultipartFile dslZipFile, String dslJsonFile) {
+    public UploadKitDslToFileStoragePort.Result upload(MultipartFile dslZipFile, String dslJsonFile) {
         String bucketName = properties.getBucketName();
         String dslFileNameNoSuffix = Objects.requireNonNull(dslZipFile.getOriginalFilename()).replace(".zip", "");
         String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + SLASH + dslFileNameNoSuffix + SLASH;
         String zipFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
         String zipJsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
-        Result result;
 
         checkBucketExistence(bucketName);
         setBucketVersioning(bucketName);
@@ -61,10 +58,8 @@ public class MinioAdapter implements
             .build());
         String jsonFileVersionId = dslJsonFileWriteResponse.versionId();
 
-        result = new Result(zipFileObjectName + SLASH + zipFileVersionId,
+        return new Result(zipFileObjectName + SLASH + zipFileVersionId,
             zipJsonFileObjectName + SLASH + jsonFileVersionId);
-
-        return result;
     }
 
     @SneakyThrows

@@ -179,40 +179,178 @@
 			},
 			"response": []
 		},
-		{
-			"name": "Get Expert Group List",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups?page=0&size=20",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "0"
-						},
-						{
-							"key": "size",
-							"value": "20"
-						}
-					]
-				}
-			},
-			"response": []
-		}
+      {
+        "name": "Get Expert Group List",
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "{{authorization_header}}",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/expert-groups?page=0&size=20",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "expert-groups"
+            ],
+            "query": [
+              {
+                "key": "page",
+                "value": "0"
+              },
+              {
+                "key": "size",
+                "value": "20"
+              }
+            ]
+          }
+        },
+        "response": []
+      }, {
+          "name": "Get Kit User Access List",
+          "request": {
+            "method": "GET",
+            "header": [
+                {
+                  "key": "Authorization",
+                  "value": "{{authorization_header}}",
+                  "type": "text"
+                }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?page=0&size=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "assessment-kits",
+                "302",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }, {
+        "name": "Delete Kit User Access",
+        "request": {
+          "method": "DELETE",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "{{authorization_header}}",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users/df92a05f-3b00-4bcf-86fc-e0960174b481",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessment-kits",
+              "302",
+              "users",
+              "df92a05f-3b00-4bcf-86fc-e0960174b481"
+            ]
+          }
+        },
+        "response": []
+      }, {
+        "name": "Get User By Email",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/users/emails/example@gmail.com",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "users",
+              "emails",
+              "example@gmail.com"
+            ]
+          }
+        },
+        "response": []
+      }, {
+        "name": "Get Kit Minimal Info",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/min-info",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessment-kits",
+              "302",
+              "min-info"
+            ]
+          }
+        },
+        "response": []
+      }, {
+        "name": "Upload Kit",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "{{authorization_header}}",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "formdata",
+            "formdata": [
+              {
+                "key": "dslFile",
+                "type": "file",
+                "src": "/zip/file/path/kit.zip"
+              },
+              {
+                "key": "expertGroupId",
+                "value": "1",
+                "type": "text"
+              }
+            ]
+          },
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/upload",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessment-kits",
+              "upload"
+            ]
+          }
+        },
+        "response": []
+      }
 	],
 	"event": [
 		{

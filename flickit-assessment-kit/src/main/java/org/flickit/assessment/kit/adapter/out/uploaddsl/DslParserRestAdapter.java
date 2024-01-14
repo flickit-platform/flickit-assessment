@@ -2,14 +2,12 @@ package org.flickit.assessment.kit.adapter.out.uploaddsl;
 
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DSLHasSyntaxErrorException;
+import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DslParserRestException;
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.ZipBombException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.GetDslContentPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.ParsDslFilePort;
 import org.flickit.assessment.kit.config.DslParserRestProperties;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -24,13 +22,13 @@ import java.util.zip.ZipInputStream;
 
 @Component
 @AllArgsConstructor
-public class DslParserAdapter implements GetDslContentPort {
+public class DslParserRestAdapter implements ParsDslFilePort {
 
     private final RestTemplate dslParserRestTemplate;
     private final DslParserRestProperties properties;
 
     @Override
-    public AssessmentKitDslModel getDslContent(MultipartFile dslFile) throws IOException {
+    public AssessmentKitDslModel parsToDslModel(MultipartFile dslFile) throws IOException {
         String dslContent = uniteDslFiles(dslFile);
 
         HttpHeaders headers = new HttpHeaders();
@@ -43,9 +41,13 @@ public class DslParserAdapter implements GetDslContentPort {
                 requestEntity,
                 AssessmentKitDslModel.class
             );
+
+            if (!responseEntity.getStatusCode().is2xxSuccessful())
+                throw new DslParserRestException(responseEntity.getStatusCode().value());
+
             return responseEntity.getBody();
         } catch (HttpClientErrorException e) {
-            throw new DSLHasSyntaxErrorException(e.getMessage());
+            throw new DSLHasSyntaxErrorException(e.getMessage(), e);
         }
     }
 
