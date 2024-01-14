@@ -68,7 +68,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
     @Override
     public LoadExpertGroupPort.Result loadExpertGroup(LoadExpertGroupPort.Param param) {
-        var resultWithoutMembers = repository.findByExpertGroupId(param.id()).orElseThrow(() -> new ResourceNotFoundException(GET_EXPERT_GROUP_BY_ID_EXPERT_GROUP_NOT_FOUND));
+        var resultWithoutMembers = repository.findByExpertGroupId(param.id()).orElseThrow(
+            () -> new ResourceNotFoundException(GET_EXPERT_GROUP_BY_ID_EXPERT_GROUP_NOT_FOUND));
         List<String> membersQueryResult = repository.findAllMembersByExpertId(param.id());
         List<GetExpertGroupUseCase.Member> members = membersQueryResult.stream().map(GetExpertGroupUseCase.Member::new)
             .toList();
