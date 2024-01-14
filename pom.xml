@@ -22,7 +22,8 @@
 		<module>flickit-assessment-data</module>
 		<module>flickit-assessment-server</module>
 		<module>flickit-assessment-common</module>
-	</modules>
+        <module>flickit-advice-engine</module>
+    </modules>
 
 	<properties>
 		<revision>0.12.0-SNAPSHOT</revision>
