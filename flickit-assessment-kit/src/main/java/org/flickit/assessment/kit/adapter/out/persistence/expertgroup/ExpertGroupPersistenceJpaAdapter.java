@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
+import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapViewToPortResult;
 
 @Component
 @RequiredArgsConstructor
@@ -60,12 +60,11 @@ public class ExpertGroupPersistenceJpaAdapter implements
             .stream()
             .map(GetExpertGroupListUseCase.Member::new)
             .toList();
-        return mapToPortResult(item, members);
+        return mapViewToPortResult(item, members);
     }
 
     @Override
     public void update(UpdateExpertGroupPort.Param param) {
-        ExpertGroupJpaEntity entity = ExpertGroupMapper.mapUpdateParamToJpaEntity(param);
-        repository.save(entity);
+        repository.save(ExpertGroupMapper.mapUpdateParamToJpaEntity(param));
     }
 }

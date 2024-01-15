@@ -13,10 +13,10 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExpertGroupMapper {
 
-    public static Result mapToPortResult(ExpertGroupWithDetailsView entity, List<GetExpertGroupListUseCase.Member> members) {
+    public static Result mapViewToPortResult(ExpertGroupWithDetailsView entity, List<GetExpertGroupListUseCase.Member> members) {
         return new Result(
             entity.getId(),
-            entity.getName(),
+            entity.getTitle(),
             entity.getBio(),
             entity.getPicture(),
             entity.getPublishedKitsCount(),

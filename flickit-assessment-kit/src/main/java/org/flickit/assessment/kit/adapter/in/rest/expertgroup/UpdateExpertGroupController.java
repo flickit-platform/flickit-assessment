@@ -34,7 +34,7 @@ public class UpdateExpertGroupController {
                                                    UUID currentUserId) {
         return new UpdateExpertGroupUseCase.Param(
             id,
-            requestDto.name(),
+            requestDto.title(),
             requestDto.bio(),
             requestDto.about(),
             requestDto.website(),
