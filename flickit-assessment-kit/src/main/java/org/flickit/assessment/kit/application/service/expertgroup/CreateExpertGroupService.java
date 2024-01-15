@@ -7,6 +7,8 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertG
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -17,28 +19,31 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
     @Override
     public Result createExpertGroup(Param param) {
-        long expertGroupId = createExpertGroupPort.persist(toExpertGroupParam(param));
-        CreateExpertGroupAccessPort.Param expertGroupAccessPortParam = toExpertGroupAccessParam(param, expertGroupId);
-        createExpertGroupAccessPort.persist(expertGroupAccessPortParam);
+        long expertGroupId = createExpertGroupPort.persist(toCreateExpertGroupParam(param));
+
+        UUID ownerId = param.getCurrentUserId();
+        createOwnerAccessToGroup(expertGroupId, ownerId);
+
         return new Result(expertGroupId);
     }
 
-    private CreateExpertGroupPort.Param toExpertGroupParam(Param param) {
+    private void createOwnerAccessToGroup(Long expertGroupId, UUID ownerId) {
+        CreateExpertGroupAccessPort.Param param = new CreateExpertGroupAccessPort.Param(
+            expertGroupId,
+            null,
+            null,
+            ownerId
+        );
+        createExpertGroupAccessPort.persist(param);
+    }
+
+    private CreateExpertGroupPort.Param toCreateExpertGroupParam(Param param) {
         return new CreateExpertGroupPort.Param(
             param.getTitle(),
             param.getAbout(),
             param.getPicture(),
             param.getWebsite(),
             param.getBio(),
-            param.getCurrentUserId()
-        );
-    }
-
-    private CreateExpertGroupAccessPort.Param toExpertGroupAccessParam(Param param, Long expertGroupId) {
-        return new CreateExpertGroupAccessPort.Param(
-            expertGroupId,
-            null,
-            null,
             param.getCurrentUserId()
         );
     }
