@@ -40,31 +40,32 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
     @Transactional(propagation = Propagation.MANDATORY)
     public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
         List<MaturityLevelDslModel> dslLevels = dslKit.getMaturityLevels();
-        Map<String, MaturityLevelDslModel> dslLevelCodesMap = dslLevels.stream().collect(toMap(BaseDslModel::getCode, i -> i));
-        Map<String, MaturityLevel> codeToPersistedLevels = new HashMap<>();
+
+        Map<String, Map<String, Integer>> dslLevelCodeToCompetencesMap = dslLevels.stream().collect(toMap(
+            BaseDslModel::getCode,
+            l -> l.getCompetencesCodeToValueMap() != null ? l.getCompetencesCodeToValueMap() : Map.of()));
+
+        Map<String, MaturityLevel> levelCodeToPersistedLevels = new HashMap<>();
         dslLevels.forEach(ml -> {
-            MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(ml.getCode()), kitId, currentUserId);
-            codeToPersistedLevels.put(createdLevel.getCode(), createdLevel);
+            MaturityLevel createdLevel = createMaturityLevel(ml, kitId, currentUserId);
+            levelCodeToPersistedLevels.put(createdLevel.getCode(), createdLevel);
         });
 
         // create competences of new levels
-        dslLevels.forEach(ml -> {
-            MaturityLevel affectedLevel = codeToPersistedLevels.get(ml.getCode());
-            MaturityLevelDslModel dslLevel = dslLevelCodesMap.get(ml.getCode());
+        dslLevelCodeToCompetencesMap.keySet().forEach(levelCode -> {
+            MaturityLevel affectedLevel = levelCodeToPersistedLevels.get(levelCode);
+            Map<String, Integer> dslCompetenceCodes = dslLevelCodeToCompetencesMap.get(levelCode);
 
-            Map<String, Integer> dslLevelCompetenceCodes = dslLevel.getCompetencesCodeToValueMap() != null ?
-                dslLevel.getCompetencesCodeToValueMap() : Map.of();
-
-            dslLevelCompetenceCodes.forEach((key, value) -> {
-                Long effectiveLevelId = codeToPersistedLevels.get(key).getId();
+            dslCompetenceCodes.forEach((key, value) -> {
+                Long effectiveLevelId = levelCodeToPersistedLevels.get(key).getId();
                 createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, currentUserId);
             });
         });
 
-        Map<String, MaturityLevel> levelCodeToIdMap = codeToPersistedLevels.entrySet().stream()
+        Map<String, MaturityLevel> levelCodeToLevelMap = levelCodeToPersistedLevels.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        ctx.put(KEY_MATURITY_LEVELS, levelCodeToIdMap);
-        log.debug("Final Levels: {}", levelCodeToIdMap);
+        ctx.put(KEY_MATURITY_LEVELS, levelCodeToLevelMap);
+        log.debug("Final Levels: {}", levelCodeToLevelMap);
     }
 
     private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId, UUID currentUserId) {
@@ -78,7 +79,7 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
         );
 
         Long persistedLevelId = createMaturityLevelPort.persist(newDomainLevel, kitId, currentUserId);
-        log.warn("MaturityLevel[id={}, code={}] created.", persistedLevelId, newLevel.getCode()); //TODO
+        log.debug("MaturityLevel[id={}, code={}] created.", persistedLevelId, newLevel.getCode());
 
         return new MaturityLevel(
             persistedLevelId,
@@ -92,7 +93,7 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
 
     private void createLevelCompetence(long affectedLevelId, long effectiveLevelId, int value, UUID currentUserId) {
         createLevelCompetencePort.persist(affectedLevelId, effectiveLevelId, value, currentUserId);
-        log.warn("LevelCompetence[affectedId={}, effectiveId={}, value={}] created.", affectedLevelId, effectiveLevelId, value); //TODO
+        log.debug("LevelCompetence[affectedId={}, effectiveId={}, value={}] created.", affectedLevelId, effectiveLevelId, value);
     }
 
 }
