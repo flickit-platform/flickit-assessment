@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.application.service.assessmentkit.create.impl
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
 import org.flickit.assessment.kit.application.port.out.attribute.CreateAttributePort;
@@ -36,16 +35,16 @@ public class AttributeCreateKitPersister implements CreateKitPersister {
     public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
         List<AttributeDslModel> dslAttributes = dslKit.getAttributes();
 
-        Map<String, Subject> savedSubjectCodesMap = ctx.get(KEY_SUBJECTS);
+        Map<String, Long> savedSubjectCodesMap = ctx.get(KEY_SUBJECTS);
 
-        Map<String, Attribute> codeToPersistedAttributes = new HashMap<>();
+        Map<String, Long> codeToPersistedAttributeIds = new HashMap<>();
         dslAttributes.forEach(a -> {
-            Attribute attribute = createAttribute(a, savedSubjectCodesMap.get(a.getSubjectCode()).getId(), kitId, currentUserId);
-            codeToPersistedAttributes.put(a.getCode(), attribute);
+            Attribute attribute = createAttribute(a, savedSubjectCodesMap.get(a.getSubjectCode()), kitId, currentUserId);
+            codeToPersistedAttributeIds.put(a.getCode(), attribute.getId());
         });
 
-        ctx.put(KEY_ATTRIBUTES, codeToPersistedAttributes);
-        log.debug("Final attributes: {}", codeToPersistedAttributes);
+        ctx.put(KEY_ATTRIBUTES, codeToPersistedAttributeIds);
+        log.debug("Final attributes: {}", codeToPersistedAttributeIds);
     }
 
     private Attribute createAttribute(AttributeDslModel dslAttribute, Long subjectId, Long kitId, UUID currentUserId) {

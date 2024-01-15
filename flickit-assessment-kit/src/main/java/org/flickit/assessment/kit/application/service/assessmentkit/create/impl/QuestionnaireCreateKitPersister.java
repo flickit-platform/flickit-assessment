@@ -38,10 +38,10 @@ public class QuestionnaireCreateKitPersister implements CreateKitPersister {
         List<Questionnaire> finalQuestionnaires = new ArrayList<>();
         dslQuestionnaires.forEach(q -> finalQuestionnaires.add(createQuestionnaire(q, kitId, currentUserId)));
 
-        Map<String, Questionnaire> questionnaireCodeToQuestionnaireMap = finalQuestionnaires.stream()
-            .collect(Collectors.toMap(Questionnaire::getCode, i -> i));
-        ctx.put(KEY_QUESTIONNAIRES, questionnaireCodeToQuestionnaireMap);
-        log.debug("Final questionnaires: {}", questionnaireCodeToQuestionnaireMap);
+        Map<String, Long> questionnaireCodeToIdMap = finalQuestionnaires.stream()
+            .collect(Collectors.toMap(Questionnaire::getCode, Questionnaire::getId));
+        ctx.put(KEY_QUESTIONNAIRES, questionnaireCodeToIdMap);
+        log.debug("Final questionnaires: {}", questionnaireCodeToIdMap);
     }
 
     private Questionnaire createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitId, UUID currentUserId) {

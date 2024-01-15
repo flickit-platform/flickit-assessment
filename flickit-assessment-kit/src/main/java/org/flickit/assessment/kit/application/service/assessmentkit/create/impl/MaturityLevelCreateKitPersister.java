@@ -62,10 +62,10 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
             });
         });
 
-        Map<String, MaturityLevel> levelCodeToLevelMap = levelCodeToPersistedLevels.entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        ctx.put(KEY_MATURITY_LEVELS, levelCodeToLevelMap);
-        log.debug("Final Levels: {}", levelCodeToLevelMap);
+        Map<String, Long> levelCodeToIdMap = levelCodeToPersistedLevels.entrySet().stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getId()));
+        ctx.put(KEY_MATURITY_LEVELS, levelCodeToIdMap);
+        log.debug("Final Levels: {}", levelCodeToIdMap);
     }
 
     private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId, UUID currentUserId) {

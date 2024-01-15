@@ -40,9 +40,9 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
 
     @Override
     public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
-        Map<String, Questionnaire> questionnaires = ctx.get(KEY_QUESTIONNAIRES);
-        Map<String, Attribute> attributes = ctx.get(KEY_ATTRIBUTES);
-        Map<String, MaturityLevel> maturityLevels = ctx.get(KEY_MATURITY_LEVELS);
+        Map<String, Long> questionnaires = ctx.get(KEY_QUESTIONNAIRES);
+        Map<String, Long> attributes = ctx.get(KEY_ATTRIBUTES);
+        Map<String, Long> maturityLevels = ctx.get(KEY_MATURITY_LEVELS);
 
         Map<String, Map<String, QuestionDslModel>> dslQuestionnaireToQuestionsMap = dslKit.getQuestions().stream()
             .collect(groupingBy(QuestionDslModel::getQuestionnaireCode, toMap(QuestionDslModel::getCode, model -> model)));
@@ -58,23 +58,23 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
     }
 
     private void createQuestions(Map<String, QuestionDslModel> dslQuestions,
-                                 Map<String, Questionnaire> questionnaires,
-                                 Map<String, Attribute> attributes,
-                                 Map<String, MaturityLevel> maturityLevels,
+                                 Map<String, Long> questionnaires,
+                                 Map<String, Long> attributes,
+                                 Map<String, Long> maturityLevels,
                                  UUID currentUserId) {
 
         if (dslQuestions == null || dslQuestions.isEmpty())
             return;
 
         dslQuestions.values().forEach(dslQuestion -> {
-            Long questionnaireId = questionnaires.get(dslQuestion.getQuestionnaireCode()).getId();
+            Long questionnaireId = questionnaires.get(dslQuestion.getQuestionnaireCode());
             createQuestion(questionnaireId, attributes, maturityLevels, dslQuestion, currentUserId);
         });
     }
 
     private void createQuestion(Long questionnaireId,
-                                Map<String, Attribute> attributes,
-                                Map<String, MaturityLevel> maturityLevels,
+                                Map<String, Long> attributes,
+                                Map<String, Long> maturityLevels,
                                 QuestionDslModel dslQuestion,
                                 UUID currentUserId) {
 
@@ -94,8 +94,8 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         Map<Integer, Long> optionIndexToIdMap = createAnswerOptions(dslQuestion, currentUserId, questionId);
 
         dslQuestion.getQuestionImpacts().forEach(impact -> {
-            Long attributeId = attributes.get(impact.getAttributeCode()).getId();
-            Long maturityLevelId = maturityLevels.get(impact.getMaturityLevel().getTitle()).getId();
+            Long attributeId = attributes.get(impact.getAttributeCode());
+            Long maturityLevelId = maturityLevels.get(impact.getMaturityLevel().getTitle());
             createImpact(impact, questionId, attributeId, maturityLevelId, optionIndexToIdMap, currentUserId);
         });
     }

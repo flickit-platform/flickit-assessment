@@ -34,10 +34,10 @@ public class SubjectCreateKitPersister implements CreateKitPersister {
     public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
         List<SubjectDslModel> dslSubjects = dslKit.getSubjects();
 
-        Map<String, Subject> savedSubjectCodesMap = new HashMap<>();
+        Map<String, Long> savedSubjectCodesMap = new HashMap<>();
         dslSubjects.forEach(s -> {
             Subject createdSubject = createSubject(s, kitId, currentUserId);
-            savedSubjectCodesMap.put(createdSubject.getCode(), createdSubject);
+            savedSubjectCodesMap.put(createdSubject.getCode(), createdSubject.getId());
         });
 
         ctx.put(KEY_SUBJECTS, savedSubjectCodesMap);
