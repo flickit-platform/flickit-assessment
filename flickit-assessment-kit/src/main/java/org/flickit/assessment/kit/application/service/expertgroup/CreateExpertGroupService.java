@@ -9,19 +9,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
     private final CreateExpertGroupPort createExpertGroupPort;
     private final CreateExpertGroupAccessPort createExpertGroupAccessPort;
 
     @Override
-    @Transactional
     public Result createExpertGroup(Param param) {
-        CreateExpertGroupPort.Param expertGroupPortParam = toExpertGroupParam(param);
-        long idExpertGroup = createExpertGroupPort.persist(expertGroupPortParam);
-        CreateExpertGroupAccessPort.Param expertGroupAccessPortParam = toExpertGroupAccessParam(param, idExpertGroup);
+        long expertGroupId = createExpertGroupPort.persist(toExpertGroupParam(param));
+        CreateExpertGroupAccessPort.Param expertGroupAccessPortParam = toExpertGroupAccessParam(param, expertGroupId);
         createExpertGroupAccessPort.persist(expertGroupAccessPortParam);
-        return new Result(idExpertGroup);
+        return new Result(expertGroupId);
     }
 
     private CreateExpertGroupPort.Param toExpertGroupParam(Param param) {
