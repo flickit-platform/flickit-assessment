@@ -87,7 +87,7 @@
     </changeSet>
 
     <changeSet id="0.12-16" author="Ali Sedaghat">
-        <renameSequence oldSequenceName="baseinfo_assessmentprofile_id_seq" newSequenceName="fak_assessment_kit_id_seq"/>
+        <renameSequence oldSequenceName="baseinfo_assessmentkit_id_seq" newSequenceName="fak_assessment_kit_id_seq"/>
     </changeSet>
 
     <changeSet id="0.12-17" author="Ali Sedaghat">
@@ -859,7 +859,7 @@
     </changeSet>
 
     <changeSet id="0.12-154" author="Ali Sedaghat">
-        <renameSequence oldSequenceName="baseinfo_metric_id_seq" newSequenceName="fak_question_id_seq"/>
+        <renameSequence oldSequenceName="baseinfo_question_id_seq" newSequenceName="fak_question_id_seq"/>
     </changeSet>
 
     <changeSet id="0.12-155" author="Ali Sedaghat">
@@ -1001,7 +1001,7 @@
     </changeSet>
 
     <changeSet id="0.12-178" author="Ali Sedaghat">
-        <renameSequence oldSequenceName="baseinfo_metricimpact_id_seq" newSequenceName="fak_question_impact_id_seq"/>
+        <renameSequence oldSequenceName="baseinfo_questionimpact_id_seq" newSequenceName="fak_question_impact_id_seq"/>
     </changeSet>
 
     <changeSet id="0.12-179" author="Ali Sedaghat">
@@ -1346,6 +1346,24 @@
     <changeSet id="0.12-240" author="Ali Sedaghat">
         <renameSequence oldSequenceName="baseinfo_assessmentsubject_questionnaires_id_seq"
                         newSequenceName="fak_subject_questionnaire_id_seq"/>
+    </changeSet>
+
+
+    <changeSet id="0.12-241" author="MKouhestani">
+        <addColumn tableName="baseinfo_assessmentkitdsl">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"
+                    defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="json_path" type="varchar(200)" valueComputed="dsl_file"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.12-242" author="MKouhestani">
+        <modifyDataType
+                columnName="dsl_file"
+                newDataType="varchar(200)"
+                tableName="baseinfo_assessmentkitdsl"/>
     </changeSet>
 
 </databaseChangeLog>
