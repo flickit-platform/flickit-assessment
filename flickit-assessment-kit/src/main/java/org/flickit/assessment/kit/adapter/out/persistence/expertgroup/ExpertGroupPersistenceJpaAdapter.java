@@ -7,6 +7,7 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.UpdateExpertGroupPort;
@@ -25,7 +26,8 @@ import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.Exp
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
-    UpdateExpertGroupPort {
+    UpdateExpertGroupPort,
+    LoadExpertGroupIdPort {
 
     private final ExpertGroupJpaRepository repository;
 
@@ -66,5 +68,10 @@ public class ExpertGroupPersistenceJpaAdapter implements
     @Override
     public void update(UpdateExpertGroupPort.Param param) {
         repository.save(ExpertGroupMapper.mapUpdateParamToJpaEntity(param));
+    }
+
+    @Override
+    public Optional<Long> loadId(Long expertGroupId) {
+        return repository.findExpertGroupId(expertGroupId);
     }
 }

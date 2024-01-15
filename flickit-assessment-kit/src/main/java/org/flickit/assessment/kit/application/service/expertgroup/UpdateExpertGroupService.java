@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.expertgroup.UpdateExpertGroupUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.UpdateExpertGroupPort;
 import org.springframework.stereotype.Service;
@@ -24,13 +25,21 @@ public class UpdateExpertGroupService implements
     UpdateExpertGroupUseCase {
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final LoadExpertGroupIdPort loadExpertGroupIdPort;
     private final UpdateExpertGroupPort updateExpertGroupPort;
 
     @Override
     public void updateExpertGroup(Param param) {
+        validateExpertGroup(param.getId());
         validateCurrentUser(param.getId(), param.getCurrentUserId());
+
         updateExpertGroupPort.update(toExpertGroupParam(param));
-        log.debug("User [{}] access to Expert Group [{}] denied.", param.getCurrentUserId(), param.getId());
+        log.debug("User [{}] access to updating Expert Group [{}] denied.", param.getCurrentUserId(), param.getId());
+    }
+
+    private void validateExpertGroup(Long expertGroupId) {
+        loadExpertGroupIdPort.loadId(expertGroupId)
+            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
