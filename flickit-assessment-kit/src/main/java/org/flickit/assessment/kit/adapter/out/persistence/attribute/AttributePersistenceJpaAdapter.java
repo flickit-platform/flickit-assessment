@@ -2,6 +2,8 @@ package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.port.out.attribute.CreateAttributePort;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
@@ -16,6 +18,7 @@ public class AttributePersistenceJpaAdapter implements
     CreateAttributePort {
 
     private final AttributeJpaRepository repository;
+    private final SubjectJpaRepository subjectRepository;
 
     @Override
     public void update(Param param) {
@@ -30,6 +33,7 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public Long persist(Attribute attribute, Long subjectId, Long kitId, UUID currentUserId) {
-        return repository.save(AttributeMapper.mapToJpaEntity(attribute, subjectId, kitId, currentUserId)).getId();
+        SubjectJpaEntity subjectJpaEntity = subjectRepository.getReferenceById(subjectId);
+        return repository.save(AttributeMapper.mapToJpaEntity(attribute, subjectJpaEntity, kitId, currentUserId)).getId();
     }
 }

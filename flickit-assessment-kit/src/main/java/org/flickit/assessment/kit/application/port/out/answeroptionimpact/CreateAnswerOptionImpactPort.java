@@ -4,5 +4,5 @@ public interface CreateAnswerOptionImpactPort {
 
     Long persist(Param param);
 
-    record Param(Long questionImpactId, Long optionId, Double value) {}
+    record Param(Long questionImpactId, Long optionId, Double value, java.util.UUID currentUserId) {}
 }

@@ -28,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
@@ -257,7 +258,7 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(attribute))), List.of(levelTwo, levelThree), List.of(savedQuestionnaire));
 
-        when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(1L);
+        when(createQuestionImpactPort.persist(any(QuestionImpact.class), UUID.randomUUID())).thenReturn(1L);
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(1L);
         when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any())).thenReturn(List.of(answerOption1, answerOption2));
 

@@ -35,8 +35,8 @@ public class QuestionMapper {
             param.questionnaireId(),
             LocalDateTime.now(),
             LocalDateTime.now(),
-            null,
-            null
+            param.currentUserId(),
+            param.currentUserId()
         );
     }
 }

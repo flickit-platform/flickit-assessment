@@ -24,7 +24,7 @@ public class AttributeMapper {
         );
     }
 
-    public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, Long subjectId, Long kitId, UUID currentUserId) {
+    public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, SubjectJpaEntity subjectJpaEntity, Long kitId, UUID currentUserId) {
         return new AttributeJpaEntity(
             null,
             attribute.getCode(),
@@ -37,7 +37,7 @@ public class AttributeMapper {
             currentUserId,
             currentUserId,
             kitId,
-            new SubjectJpaEntity(subjectId)
+            subjectJpaEntity
         );
     }
 }

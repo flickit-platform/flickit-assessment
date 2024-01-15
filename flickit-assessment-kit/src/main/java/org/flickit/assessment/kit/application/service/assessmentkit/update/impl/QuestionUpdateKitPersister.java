@@ -116,7 +116,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 dslQuestion.getDescription(),
                 dslQuestion.getIndex(),
                 questionnaires.get(dslQuestion.getQuestionnaireCode()),
-                dslQuestion.isMayNotBeApplicable());
+                dslQuestion.isMayNotBeApplicable(),
+                UUID.randomUUID()); // TODO: Fix currentUserId
             Long questionId = createQuestionPort.persist(createParam);
             log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
                 questionId, dslQuestion.getCode(), questionnaires.get(dslQuestion.getQuestionnaireCode()));
@@ -128,7 +129,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private void createAnswerOption(AnswerOptionDslModel option, Long questionId) {
-        var createOptionParam = new CreateAnswerOptionPort.Param(option.getCaption(), questionId, option.getIndex());
+        var createOptionParam = new CreateAnswerOptionPort.Param(option.getCaption(), questionId, option.getIndex(), UUID.randomUUID()); // TODO: Fix currentUserId
         var optionId = createAnswerOptionPort.persist(createOptionParam);
         log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",
             optionId, option.getIndex(), option.getCaption(), questionId);
@@ -143,7 +144,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             dslQuestionImpact.getWeight(),
             questionId
         );
-        Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
+        Long impactId = createQuestionImpactPort.persist(newQuestionImpact, UUID.randomUUID()); // TODO: Fix currentUserId
         log.debug("QuestionImpact[impactId={}, questionId={}] created.", impactId, questionId);
 
         Map<Integer, Long> optionIndexToIdMap = loadAnswerOptionsByQuestionPort.loadByQuestionId(questionId).stream()
@@ -158,7 +159,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private void createAnswerOptionImpact(Long questionImpactId, Long optionId, Double value) {
-        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value);
+        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value, UUID.randomUUID()); // TODO: Fix currentUserId
         Long optionImpactId = createAnswerOptionImpactPort.persist(createParam);
         log.debug("AnswerOptionImpact[id={}, questionImpactId={}, optionId={}] created.", optionImpactId, questionImpactId, optionId);
     }
