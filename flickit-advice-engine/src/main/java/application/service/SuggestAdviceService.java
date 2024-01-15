@@ -7,11 +7,13 @@ import application.domain.Plan;
 import application.domain.Question;
 import application.domain.Target;
 import application.port.in.SuggestAdviceUseCase;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class SuggestAdviceService implements SuggestAdviceUseCase {
     @Override
     public void suggestAdvice() {
@@ -36,13 +38,12 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
     }
 
     private static void printPlan(Plan solution) {
-        System.out.println("score is: " + solution.getScore());
+        log.info("score is: " + solution.getScore());
 
         List<Question> questions = solution.getQuestions().stream()
             .filter(q -> q.getGainRatio() != 0)
             .toList();
-        questions.forEach(System.out::println);
-
+        questions.forEach(question -> log.info(question.toString()));
     }
 
     public static Plan generateDemoData() {

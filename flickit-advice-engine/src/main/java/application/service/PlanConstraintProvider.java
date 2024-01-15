@@ -47,8 +47,8 @@ public class PlanConstraintProvider implements ConstraintProvider {
             .filter(isQuestionOnPlan())
             .groupBy(
                 Question::getTarget,
-                sum((q) -> (int) (Math.round(q.getGain() * q.getGainRatio()))),
-                sum((q) -> (int) (Math.round(q.getCost() * q.getGainRatio()))))
+                sum(q -> (int) (Math.round(q.getGain() * q.getGainRatio()))),
+                sum(q -> (int) (Math.round(q.getCost() * q.getGainRatio()))))
             .reward(HardSoftScore.ONE_SOFT,
                 (target, totalGain, totalCost) -> Math.round(((float) totalGain / totalCost) * 100))
             .asConstraint("totalBenefit");
