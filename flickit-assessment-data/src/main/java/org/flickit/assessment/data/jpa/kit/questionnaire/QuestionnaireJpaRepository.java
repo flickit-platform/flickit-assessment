@@ -7,23 +7,28 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, Long> {
 
     List<QuestionnaireJpaEntity> findAllByKitId(Long kitId);
 
     @Modifying
-    @Query("UPDATE QuestionnaireJpaEntity q SET " +
-        "q.title = :title, " +
-        "q.index = :index, " +
-        "q.description = :description, " +
-        "q.lastModificationTime = :lastModificationTime " +
-        "WHERE q.id = :id")
+    @Query("""
+        UPDATE QuestionnaireJpaEntity q
+        SET q.title = :title,
+        q.index = :index,
+        q.description = :description,
+        q.lastModificationTime = :lastModificationTime,
+        q.lastModifiedBy = :lastModifiedBy
+        WHERE q.id = :id
+        """)
     void update(
         @Param(value = "id") long id,
         @Param(value = "title") String title,
         @Param(value = "index") int index,
         @Param(value = "description") String description,
-        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime
-    );
+        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
+        @Param(value = "lastModifiedBy") UUID lastModifiedBy
+        );
 }

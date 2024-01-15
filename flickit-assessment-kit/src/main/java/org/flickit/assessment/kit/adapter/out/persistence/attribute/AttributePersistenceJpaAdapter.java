@@ -12,13 +12,14 @@ public class AttributePersistenceJpaAdapter implements UpdateAttributePort {
     private final AttributeJpaRepository repository;
 
     @Override
-    public void update(Param param) {
+    public void update(UpdateAttributePort.Param param) {
         repository.update(param.id(),
             param.title(),
             param.index(),
             param.description(),
             param.weight(),
             param.lastModificationTime(),
+            param.lastModifiedBy(),
             param.subjectId());
     }
 }
