@@ -17,17 +17,20 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
     @Query("DELETE LevelCompetenceJpaEntity l WHERE " +
         "l.effectiveLevel.id = :effectiveLevelId AND " +
         "l.affectedLevel.id = :affectedLevelId")
-    void delete(@Param(value = "affectedLevelId") Long affectedLevelId, @Param(value = "effectiveLevelId") Long effectiveLevelId);
+    void delete(@Param(value = "affectedLevelId") Long affectedLevelId,
+                @Param(value = "effectiveLevelId") Long effectiveLevelId);
 
     @Modifying
     @Query("""
-           UPDATE LevelCompetenceJpaEntity l
-           SET l.value = :value, l.lastModificationTime = :lastModificationTime, l.lastModifiedBy = :currentUserId
+           UPDATE LevelCompetenceJpaEntity l SET
+            l.value = :value,
+            l.lastModificationTime = :lastModificationTime,
+            l.lastModifiedBy = :lastModifiedBy
            WHERE l.affectedLevel.id = :affectedLevelId AND l.effectiveLevel.id = :effectiveLevelId
            """)
-    void update(Long affectedLevelId,
-                Long effectiveLevelId,
-                Integer value,
-                LocalDateTime lastModificationTime,
-                UUID currentUserId);
+    void update(@Param(value = "affectedLevelId") Long affectedLevelId,
+                @Param(value = "effectiveLevelId") Long effectiveLevelId,
+                @Param(value = "value") Integer value,
+                @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
+                @Param(value = "lastModifiedBy") UUID lastModifiedBy);
 }

@@ -15,11 +15,12 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
 
     @Modifying
     @Query("""
-        UPDATE QuestionImpactJpaEntity q
-        SET q.weight = :weight,
-        q.lastModificationTime = :lastModificationTime,
-        q.lastModifiedBy = :lastModifiedBy
-        WHERE q.id = :id AND q.questionId = :questionId""")
+            UPDATE QuestionImpactJpaEntity q SET
+                q.weight = :weight,
+                q.lastModificationTime = :lastModificationTime,
+                q.lastModifiedBy = :lastModifiedBy
+            WHERE q.id = :id AND q.questionId = :questionId
+        """)
     void update(@Param("id") Long id,
                 @Param("weight") int weight,
                 @Param("questionId") Long questionId,

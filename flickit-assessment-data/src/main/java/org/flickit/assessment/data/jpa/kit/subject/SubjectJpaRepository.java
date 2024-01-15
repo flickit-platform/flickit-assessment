@@ -15,13 +15,14 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
 
     @Modifying
     @Query("""
-        UPDATE SubjectJpaEntity s
-        SET s.title = :title,
-        s.index = :index,
-        s.description = :description,
-        s.lastModificationTime = :lastModificationTime,
-        s.lastModifiedBy = :lastModifiedBy
-        WHERE s.id = :id""")
+        UPDATE SubjectJpaEntity s SET
+            s.title = :title,
+            s.index = :index,
+            s.description = :description,
+            s.lastModificationTime = :lastModificationTime,
+            s.lastModifiedBy = :lastModifiedBy
+            WHERE s.id = :id
+        """)
     void update(
         @Param(value = "id") long id,
         @Param(value = "title") String title,
@@ -29,14 +30,14 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
         @Param(value = "description") String description,
         @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
         @Param(value = "lastModifiedBy") UUID lastModifiedBy
-        );
+    );
 
     @Query("""
             SELECT s as subject
             FROM SubjectJpaEntity s
-            JOIN FETCH s.attributes a
+                JOIN FETCH s.attributes a
             WHERE s.kitId = :kitId
-    """)
+        """)
     List<SubjectJpaEntity> loadByKitIdWithAttributes(Long kitId);
 
 }

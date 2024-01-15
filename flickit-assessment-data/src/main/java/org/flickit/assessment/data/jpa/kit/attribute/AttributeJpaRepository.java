@@ -15,15 +15,15 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     @Modifying
     @Query("""
-        UPDATE AttributeJpaEntity a SET
-        a.title = :title,
-        a.index = :index,
-        a.description = :description,
-        a.weight = :weight,
-        a.lastModificationTime = :lastModificationTime,
-        a.lastModifiedBy = :currentUserId,
-        a.subject.id = :subjectId
-        WHERE a.id = :id
+            UPDATE AttributeJpaEntity a SET
+                a.title = :title,
+                a.index = :index,
+                a.description = :description,
+                a.weight = :weight,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastModifiedBy = :lastModifiedBy,
+                a.subject.id = :subjectId
+            WHERE a.id = :id
         """)
     void update(@Param("id") long id,
                 @Param("title") String title,
@@ -31,7 +31,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 @Param("description") String description,
                 @Param("weight") int weight,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
-                @Param("currentUserId") UUID currentUserId,
+                @Param("lastModifiedBy") UUID lastModifiedBy,
                 @Param("subjectId") long subjectId);
 
     @Query("""
