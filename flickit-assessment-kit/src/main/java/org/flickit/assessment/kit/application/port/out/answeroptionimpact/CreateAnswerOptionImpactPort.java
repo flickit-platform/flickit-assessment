@@ -6,5 +6,5 @@ public interface CreateAnswerOptionImpactPort {
 
     Long persist(Param param);
 
-    record Param(Long questionImpactId, Long optionId, Double value, UUID currentUserId) {}
+    record Param(Long questionImpactId, Long optionId, Double value, UUID createdBy) {}
 }

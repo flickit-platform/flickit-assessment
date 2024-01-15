@@ -6,6 +6,8 @@ import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPo
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.springframework.stereotype.Component;
 
+import static org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper.mapToJpaEntity;
+
 @Component
 @RequiredArgsConstructor
 public class QuestionPersistenceJpaAdapter implements
@@ -27,7 +29,7 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public Long persist(CreateQuestionPort.Param param) {
-        return repository.save(QuestionMapper.mapToJpaEntity(param)).getId();
+        return repository.save(mapToJpaEntity(param)).getId();
     }
 
 }

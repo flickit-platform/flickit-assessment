@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface UpdateLevelCompetencePort {
 
-    void update(Long affectedLevelId, Long effectiveLevelId, Integer value, UUID currentUserId);
+    void update(Long affectedLevelId, Long effectiveLevelId, Integer value, UUID lastModifiedBy);
 }

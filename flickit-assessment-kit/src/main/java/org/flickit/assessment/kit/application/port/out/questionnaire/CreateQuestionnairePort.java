@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface CreateQuestionnairePort {
 
-    Long persist(Questionnaire questionnaire, long kitId, UUID currentUserId);
+    Long persist(Questionnaire questionnaire, long kitId, UUID createdBy);
 }

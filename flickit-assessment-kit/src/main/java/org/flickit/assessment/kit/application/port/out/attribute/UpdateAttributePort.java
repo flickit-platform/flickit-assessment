@@ -14,7 +14,7 @@ public interface UpdateAttributePort {
         String description,
         int weight,
         LocalDateTime lastModificationTime,
-        UUID currentUserId,
+        UUID lastModifiedBy,
         long subjectId
     ) {}
 }

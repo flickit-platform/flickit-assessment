@@ -22,7 +22,7 @@ public class QuestionnaireMapper {
         );
     }
 
-    static QuestionnaireJpaEntity mapToJpaEntity(Questionnaire questionnaire, Long kitId, UUID currentUserId) {
+    static QuestionnaireJpaEntity mapToJpaEntityToPersist(Questionnaire questionnaire, Long kitId, UUID createdBy) {
         return new QuestionnaireJpaEntity(
             null,
             questionnaire.getCode(),
@@ -31,8 +31,8 @@ public class QuestionnaireMapper {
             questionnaire.getDescription(),
             questionnaire.getCreationTime(),
             questionnaire.getLastModificationTime(),
-            currentUserId,
-            currentUserId,
+            createdBy,
+            createdBy,
             kitId
         );
     }

@@ -52,6 +52,10 @@ public class MaturityLevelJpaEntity {
     @Column(name = "kit_id")
     private Long kitId;
 
+    public MaturityLevelJpaEntity(Long id) {
+        this.id = id;
+    }
+
     public MaturityLevelJpaEntity(Long id,
                                   String code,
                                   Integer index,

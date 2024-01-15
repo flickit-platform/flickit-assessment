@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper.mapToJpaEntityToPersist;
+
 @Component
 @RequiredArgsConstructor
 public class QuestionImpactPersistenceJpaAdapter implements
@@ -20,8 +22,8 @@ public class QuestionImpactPersistenceJpaAdapter implements
     private final QuestionImpactJpaRepository repository;
 
     @Override
-    public Long persist(QuestionImpact impact, UUID currentUserId) {
-        return repository.save(QuestionImpactMapper.mapToJpaEntity(impact, currentUserId)).getId();
+    public Long persist(QuestionImpact impact, UUID createdBy) {
+        return repository.save(mapToJpaEntityToPersist(impact, createdBy)).getId();
     }
 
     @Override
