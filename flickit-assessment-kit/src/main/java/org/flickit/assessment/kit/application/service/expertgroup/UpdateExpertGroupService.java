@@ -44,7 +44,7 @@ public class UpdateExpertGroupService implements
     private UpdateExpertGroupPort.Param toExpertGroupParam(Param param) {
         return new UpdateExpertGroupPort.Param(
             param.getId(),
-            param.getName(),
+            param.getTitle(),
             param.getAbout(),
             param.getPicture(),
             param.getWebsite(),
