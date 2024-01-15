@@ -8,6 +8,7 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsVie
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMembersPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,7 +24,8 @@ import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.Exp
 @RequiredArgsConstructor
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
-    LoadExpertGroupListPort {
+    LoadExpertGroupListPort,
+    LoadExpertGroupMembersPort {
 
     private final ExpertGroupJpaRepository repository;
 
@@ -52,12 +54,34 @@ public class ExpertGroupPersistenceJpaAdapter implements
         );
     }
 
-    private Result resultWithMembers(ExpertGroupWithDetailsView item, int membersCount) {
+    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersCount) {
         var members = repository.findMembersByExpertId(item.getId(),
                 PageRequest.of(0, membersCount, Sort.Direction.ASC, UserJpaEntity.Fields.NAME))
             .stream()
             .map(GetExpertGroupListUseCase.Member::new)
             .toList();
         return mapToPortResult(item, members);
+    }
+
+    @Override
+    public PaginatedResponse<LoadExpertGroupMembersPort.Result> loadExpertGroupMembers(LoadExpertGroupMembersPort.Param param) {
+        var pageResult = repository.findExpertGroupMembers(param.expertGroupId(),
+                PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, UserJpaEntity.Fields.NAME));
+
+        var items = pageResult
+            .stream()
+            .map(MembersMapper::mapToResult)
+            .toList();
+
+
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            ExpertGroupJpaEntity.Fields.NAME,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
+
     }
 }
