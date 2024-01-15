@@ -17,15 +17,17 @@ class UpdateKitByDslUseCaseParamTest {
 
     @Test
     void testMaturityLevelUpdateKitPersister_kitIdIsNull_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateKitByDslUseCase.Param(null, UUID.randomUUID(), "dslContent"));
+            () -> new UpdateKitByDslUseCase.Param(null, "dslContent", currentUserId));
         assertThat(throwable).hasMessage("kitId: " + UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL);
     }
 
     @Test
     void testMaturityLevelUpdateKitPersister_dslContentIdBlank_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateKitByDslUseCase.Param(1L, UUID.randomUUID(), ""));
+            () -> new UpdateKitByDslUseCase.Param(1L, "", currentUserId));
         assertThat(throwable).hasMessage("dslContent: " + UPDATE_KIT_BY_DSL_DSL_CONTENT_NOT_NULL);
     }
 

@@ -29,7 +29,7 @@ public interface UpdateKitByDslUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitId, UUID currentUserId, String dslContent) {
+        public Param(Long kitId, String dslContent, UUID currentUserId) {
             this.kitId = kitId;
             this.currentUserId = currentUserId;
             this.dslContent = dslContent;

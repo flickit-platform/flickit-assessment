@@ -23,11 +23,11 @@ public class UpdateKitByDslRestController {
     public ResponseEntity<Void> updateKit(@PathVariable("kitId") Long kitId,
                                           @RequestBody UpdateKitByDslRequestDto request) {
         var currentUserId = userContext.getUser().id();
-        useCase.update(toParam(kitId, currentUserId, request));
+        useCase.update(toParam(kitId, request, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private UpdateKitByDslUseCase.Param toParam(Long kitId, UUID currentUserId, UpdateKitByDslRequestDto request) {
-        return new UpdateKitByDslUseCase.Param(kitId, currentUserId, request.dslContent());
+    private UpdateKitByDslUseCase.Param toParam(Long kitId, UpdateKitByDslRequestDto request, UUID currentUserId) {
+        return new UpdateKitByDslUseCase.Param(kitId, request.dslContent(), currentUserId);
     }
 }
