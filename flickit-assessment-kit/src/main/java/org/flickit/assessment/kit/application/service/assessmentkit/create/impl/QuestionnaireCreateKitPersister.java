@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CreateKitPersister;
@@ -36,19 +35,16 @@ public class QuestionnaireCreateKitPersister implements CreateKitPersister {
     public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
         List<QuestionnaireDslModel> dslQuestionnaires = dslKit.getQuestionnaires();
 
-        Map<String, QuestionnaireDslModel> dslQuestionnaireCodesMap = dslQuestionnaires.stream().collect(Collectors.toMap(BaseDslModel::getCode, i -> i));
-
         List<Questionnaire> finalQuestionnaires = new ArrayList<>();
+        dslQuestionnaires.forEach(q -> finalQuestionnaires.add(createQuestionnaire(q, kitId, currentUserId)));
 
-        dslQuestionnaireCodesMap.keySet().forEach(i -> finalQuestionnaires.add(createQuestionnaire(dslQuestionnaireCodesMap.get(i), kitId)));
-
-        Map<String, Questionnaire> questionnaireCodeToIdMap = finalQuestionnaires.stream()
+        Map<String, Questionnaire> questionnaireCodeToQuestionnaireMap = finalQuestionnaires.stream()
             .collect(Collectors.toMap(Questionnaire::getCode, i -> i));
-        ctx.put(KEY_QUESTIONNAIRES, questionnaireCodeToIdMap);
-        log.debug("Final questionnaires: {}", questionnaireCodeToIdMap);
+        ctx.put(KEY_QUESTIONNAIRES, questionnaireCodeToQuestionnaireMap);
+        log.debug("Final questionnaires: {}", questionnaireCodeToQuestionnaireMap);
     }
 
-    private Questionnaire createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitId) {
+    private Questionnaire createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitId, UUID currentUserId) {
         var createParam = new Questionnaire(
             null,
             newQuestionnaire.getCode(),
@@ -59,7 +55,7 @@ public class QuestionnaireCreateKitPersister implements CreateKitPersister {
             LocalDateTime.now()
         );
 
-        long persistedId = createQuestionnairePort.persist(createParam, kitId);
+        long persistedId = createQuestionnairePort.persist(createParam, kitId, currentUserId);
         log.debug("Questionnaire[id={}, code={}] created.", persistedId, newQuestionnaire.getCode());
 
         return new Questionnaire(

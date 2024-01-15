@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
@@ -76,7 +77,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             LocalDateTime.now()
         );
 
-        long persistedId = createQuestionnairePort.persist(createParam, kitId);
+        long persistedId = createQuestionnairePort.persist(createParam, kitId, UUID.randomUUID()); // TODO: Fix currentUserId
         log.debug("Questionnaire[id={}, code={}] created.", persistedId, newQuestionnaire.getCode());
 
         return new Questionnaire(
