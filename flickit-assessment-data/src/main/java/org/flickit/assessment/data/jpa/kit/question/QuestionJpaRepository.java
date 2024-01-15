@@ -11,13 +11,13 @@ import java.util.List;
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, Long> {
 
     @Query("SELECT q FROM QuestionJpaEntity q " +
-        "WHERE q.questionnaireId IN (SELECT i.id FROM QuestionnaireJpaEntity i WHERE i.assessmentKitId = :kitId)")
+        "WHERE q.questionnaireId IN (SELECT i.id FROM QuestionnaireJpaEntity i WHERE i.kitId = :kitId)")
     List<QuestionJpaEntity> findByKitId(@Param("kitId") Long kitId);
 
     @Modifying
     @Query("UPDATE QuestionJpaEntity q SET " +
         "q.title = :title, " +
-        "q.description = :description, " +
+        "q.hint = :hint, " +
         "q.index = :index, " +
         "q.mayNotBeApplicable = :mayNotBeApplicable," +
         "q.lastModificationTime = :lastModificationTime " +
@@ -25,7 +25,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     void update(@Param("id") Long id,
                 @Param("title") String title,
                 @Param("index") Integer index,
-                @Param("description") String description,
+                @Param("hint") String hint,
                 @Param("mayNotBeApplicable") Boolean mayNotBeApplicable,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime);
 

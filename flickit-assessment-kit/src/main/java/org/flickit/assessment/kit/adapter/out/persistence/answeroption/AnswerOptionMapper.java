@@ -21,9 +21,13 @@ public class AnswerOptionMapper {
     public static AnswerOptionJpaEntity mapToJpaEntity(CreateAnswerOptionPort.Param param) {
         return new AnswerOptionJpaEntity(
             null,
+            param.index(),
             param.title(),
             param.questionId(),
-            param.index()
+            null,
+            null,
+            null,
+            null
         );
     }
 }

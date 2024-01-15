@@ -24,11 +24,13 @@ public class QuestionnaireMapper {
         return new QuestionnaireJpaEntity(
             null,
             questionnaire.getCode(),
+            questionnaire.getIndex(),
             questionnaire.getTitle(),
             questionnaire.getDescription(),
             questionnaire.getCreationTime(),
             questionnaire.getLastModificationTime(),
-            questionnaire.getIndex(),
+            null,
+            null,
             kitId
         );
     }

@@ -10,6 +10,9 @@ import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLev
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import static org.flickit.assessment.kit.common.ErrorMessageKey.FIND_MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Component
@@ -33,7 +36,11 @@ public class LevelCompetencePersistenceJpaAdapter implements
             null,
             maturityLevelJpaRepository.findById(affectedLevelId).orElseThrow(() -> new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND)),
             maturityLevelJpaRepository.findById(effectiveLevelId).orElseThrow(() -> new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND)),
-            value
+            value,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
         );
         return repository.save(entity).getId();
     }
