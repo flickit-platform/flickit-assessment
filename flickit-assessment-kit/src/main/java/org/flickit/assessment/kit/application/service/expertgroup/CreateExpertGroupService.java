@@ -26,7 +26,7 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
     private CreateExpertGroupPort.Param toExpertGroupParam(Param param) {
         return new CreateExpertGroupPort.Param(
-            param.getName(),
+            param.getTitle(),
             param.getAbout(),
             param.getPicture(),
             param.getWebsite(),
@@ -35,9 +35,9 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
         );
     }
 
-    private CreateExpertGroupAccessPort.Param toExpertGroupAccessParam(Param param, Long idExpertGroup) {
+    private CreateExpertGroupAccessPort.Param toExpertGroupAccessParam(Param param, Long expertGroupId) {
         return new CreateExpertGroupAccessPort.Param(
-            idExpertGroup,
+            expertGroupId,
             null,
             null,
             param.getCurrentUserId()

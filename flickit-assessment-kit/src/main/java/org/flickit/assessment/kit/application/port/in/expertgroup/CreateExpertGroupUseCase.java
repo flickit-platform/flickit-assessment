@@ -20,10 +20,10 @@ public interface CreateExpertGroupUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotBlank(message = CREATE_EXPERT_GROUP_NAME_NOT_BLANK)
-        @Size(min = 3, message = CREATE_EXPERT_GROUP_NAME_SIZE_MIN)
-        @Size(max = 100, message = CREATE_EXPERT_GROUP_NAME_SIZE_MAX)
-        String name;
+        @NotBlank(message = CREATE_EXPERT_GROUP_TITLE_NOT_BLANK)
+        @Size(min = 3, message = CREATE_EXPERT_GROUP_TITLE_SIZE_MIN)
+        @Size(max = 100, message = CREATE_EXPERT_GROUP_TITLE_SIZE_MAX)
+        String title;
 
         @Size(max = 200, message = CREATE_EXPERT_GROUP_BIO_SIZE_MAX)
         @NotBlank(message = CREATE_EXPERT_GROUP_BIO_NOT_BLANK)
@@ -44,8 +44,8 @@ public interface CreateExpertGroupUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(String name, String bio, String about, String website, String picture, UUID currentUserId) {
-            this.name = name != null ? name.strip() : null;
+        public Param(String title, String bio, String about, String website, String picture, UUID currentUserId) {
+            this.title = title != null ? title.strip() : null;
             this.bio = bio;
             this.about = about;
             this.website = website;

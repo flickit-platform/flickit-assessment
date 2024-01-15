@@ -30,7 +30,7 @@ public class CreateExpertGroupRestController {
 
     private Param toParam(CreateExpertGroupRequestDto requestDto, UUID currentUserId) {
         return new CreateExpertGroupUseCase.Param(
-            requestDto.name(),
+            requestDto.title(),
             requestDto.bio(),
             requestDto.about(),
             requestDto.website(),

@@ -16,7 +16,7 @@ public class ExpertGroupMapper {
     public static Result mapToPortResult(ExpertGroupWithDetailsView entity, List<GetExpertGroupListUseCase.Member> members) {
         return new Result(
             entity.getId(),
-            entity.getName(),
+            entity.getTitle(),
             entity.getBio(),
             entity.getPicture(),
             entity.getPublishedKitsCount(),
@@ -28,7 +28,7 @@ public class ExpertGroupMapper {
     static ExpertGroupJpaEntity mapCreateParamToJpaEntity(Param param) {
         return new ExpertGroupJpaEntity(
             null,
-            param.name(),
+            param.title(),
             param.about(),
             param.picture(),
             param.website(),

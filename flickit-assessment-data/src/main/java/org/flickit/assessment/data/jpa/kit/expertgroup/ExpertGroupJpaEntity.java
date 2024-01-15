@@ -24,7 +24,7 @@ public class ExpertGroupJpaEntity {
     private Long id;
 
     @Column(name = "name", length = 100, unique = true, nullable = false)
-    private String name;
+    private String title;
 
     @Column(name = "about", nullable = false, columnDefinition = "TEXT")
     private String about;

@@ -30,19 +30,6 @@ public class ErrorMessageKey {
     public static final String GET_KIT_USER_LIST_PAGE_MIN = "get-kit-user-list.page.min";
     public static final String GET_KIT_USER_LIST_SIZE_MIN = "get-kit-user-list.size.min";
     public static final String GET_KIT_USER_LIST_SIZE_MAX = "get-kit-user-list.size.max";
-
-    public static final String CREATE_EXPERT_GROUP_NAME_NOT_BLANK = "create-expert-group.name.notBlank";
-    public static final String CREATE_EXPERT_GROUP_NAME_SIZE_MAX = "create-expert-group.name.size.max";
-    public static final String CREATE_EXPERT_GROUP_NAME_SIZE_MIN = "create-expert-group.name.size.min";
-    public static final String CREATE_EXPERT_GROUP_BIO_NOT_BLANK = "create-expert-group.bio.notBlank";
-    public static final String CREATE_EXPERT_GROUP_BIO_SIZE_MAX = "create-expert-group.bio.size.max";
-    public static final String CREATE_EXPERT_GROUP_PICTURE_NOT_BLANK = "create-expert-group.picture.notBlank";
-    public static final String CREATE_EXPERT_GROUP_PICTURE_SIZE_MAX = "create-expert-group.picture.size.max";
-    public static final String CREATE_EXPERT_GROUP_ABOUT_NOT_BLANK = "create-expert-group.about.notBlank";
-    public static final String CREATE_EXPERT_GROUP_ABOUT_SIZE_MAX = "create-expert-group.about.size.max";
-    public static final String CREATE_EXPERT_GROUP_WEBSITE_NOT_BLANK = "create-expert-group.website.notBlank";
-    public static final String CREATE_EXPERT_GROUP_WEBSITE_SIZE_MAX = "create-expert-group.website.size.max";
-
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_NULL = "get-kit-minimal-info.kitId.notNull";
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_FOUND = "get-kit-minimal-info.kitId.notFound";
 
@@ -58,6 +45,18 @@ public class ErrorMessageKey {
     public static final String GET_EXPERT_GROUP_LIST_PAGE_MIN = "get-expert-group-list.page.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MIN = "get-expert-group-list.size.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MAX = "get-expert-group-list.size.max";
+
+    public static final String CREATE_EXPERT_GROUP_TITLE_NOT_BLANK = "create-expert-group.title.notBlank";
+    public static final String CREATE_EXPERT_GROUP_TITLE_SIZE_MAX = "create-expert-group.title.size.max";
+    public static final String CREATE_EXPERT_GROUP_TITLE_SIZE_MIN = "create-expert-group.title.size.min";
+    public static final String CREATE_EXPERT_GROUP_BIO_NOT_BLANK = "create-expert-group.bio.notBlank";
+    public static final String CREATE_EXPERT_GROUP_BIO_SIZE_MAX = "create-expert-group.bio.size.max";
+    public static final String CREATE_EXPERT_GROUP_PICTURE_NOT_BLANK = "create-expert-group.picture.notBlank";
+    public static final String CREATE_EXPERT_GROUP_PICTURE_SIZE_MAX = "create-expert-group.picture.size.max";
+    public static final String CREATE_EXPERT_GROUP_ABOUT_NOT_BLANK = "create-expert-group.about.notBlank";
+    public static final String CREATE_EXPERT_GROUP_ABOUT_SIZE_MAX = "create-expert-group.about.size.max";
+    public static final String CREATE_EXPERT_GROUP_WEBSITE_NOT_BLANK = "create-expert-group.website.notBlank";
+    public static final String CREATE_EXPERT_GROUP_WEBSITE_SIZE_MAX = "create-expert-group.website.size.max";
 
     public static final String UPLOAD_KIT_DSL_KIT_NOT_NULL = "upload-kit.dsl-file.notNull";
     public static final String UPLOAD_KIT_DSL_EXPERT_GROUP_ID_NOT_NULL = "upload-kit.expert-group-id.notNull";

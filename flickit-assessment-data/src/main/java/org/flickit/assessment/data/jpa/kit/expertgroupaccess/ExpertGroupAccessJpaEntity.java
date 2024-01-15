@@ -32,5 +32,5 @@ public class ExpertGroupAccessJpaEntity {
     private LocalDate inviteExpirationDate;
 
     @Column(name = "user_id", nullable = false)
-    private UUID ownerId;
+    private UUID userId;
 }
