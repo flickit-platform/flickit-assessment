@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_SUBJECTS;
@@ -32,7 +33,7 @@ public class SubjectCreateKitPersister implements CreateKitPersister {
     }
 
     @Override
-    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId) {
+    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
         List<SubjectDslModel> dslSubjects = dslKit.getSubjects();
         Map<String, SubjectDslModel> subjectDslCodesMap = dslSubjects.stream().collect(toMap(BaseDslModel::getCode, i -> i));
         Map<String, Subject> savedSubjectCodesMap = new HashMap<>();

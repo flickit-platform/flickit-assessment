@@ -14,6 +14,7 @@ import org.flickit.assessment.kit.application.service.assessmentkit.create.Creat
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.*;
@@ -35,7 +36,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
     }
 
     @Override
-    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId) {
+    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
         Map<String, Questionnaire> questionnaires = ctx.get(KEY_QUESTIONNAIRES);
         Map<String, Attribute> attributes = ctx.get(KEY_ATTRIBUTES);
         Map<String, MaturityLevel> maturityLevels = ctx.get(KEY_MATURITY_LEVELS);

@@ -7,9 +7,7 @@ import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
-import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.NotSuchFileUploadedException;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadJsonFilePort;
 import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
@@ -24,7 +22,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DS
 
 @Component
 @AllArgsConstructor
-public class MinioAdapter implements UploadKitDslToFileStoragePort,
+public class MinioAdapter implements
+    UploadKitDslToFileStoragePort,
     LoadJsonFilePort {
 
     public static final String SLASH = "/";
