@@ -60,6 +60,9 @@ public class ErrorMessageKey {
     public static final String UPDATE_EXPERT_GROUP_PICTURE_SIZE_MAX = "update-expert-group.picture.size.max";
 
 
+    public static final String UPLOAD_KIT_DSL_KIT_NOT_NULL = "upload-kit.dsl-file.notNull";
+    public static final String UPLOAD_KIT_DSL_EXPERT_GROUP_ID_NOT_NULL = "upload-kit.expert-group-id.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }

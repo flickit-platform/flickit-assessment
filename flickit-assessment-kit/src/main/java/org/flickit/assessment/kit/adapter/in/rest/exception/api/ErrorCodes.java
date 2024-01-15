@@ -8,4 +8,5 @@ public class ErrorCodes {
 
     public static final String INVALID_DSL_CONTENT = "INVALID_DSL_CONTENT";
     public static final String UNSUPPORTED_DSL_CONTENT_CHANGE = "UNSUPPORTED_DSL_CONTENT_CHANGE";
+    public static final String DSL_SYNTAX_ERROR = "DSL_SYNTAX_ERROR";
 }
