@@ -5,7 +5,9 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
+import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -21,6 +23,23 @@ public class SubjectMapper {
             attributes,
             entity.getCreationTime(),
             entity.getLastModificationTime()
+        );
+    }
+
+    public static SubjectJpaEntity mapToJpaEntity(CreateSubjectPort.Param param) {
+        return new SubjectJpaEntity(
+            null,
+            param.code(),
+            param.index(),
+            param.title(),
+            param.description(),
+            param.weight(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            param.currentUserId(),
+            param.currentUserId(),
+            param.kitId(),
+            null
         );
     }
 }

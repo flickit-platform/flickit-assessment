@@ -1,8 +1,19 @@
 package org.flickit.assessment.kit.application.port.out.subject;
 
-import org.flickit.assessment.kit.application.domain.Subject;
+import java.util.UUID;
 
 public interface CreateSubjectPort {
 
-    Long persist(Subject subject, Long kitId);
+    Long persist(Param param);
+
+    record Param(
+        String code,
+        String title,
+        int index,
+        int weight,
+        String description,
+        Long kitId,
+        UUID currentUserId
+    ) {
+    }
 }

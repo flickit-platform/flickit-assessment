@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.adapter.out.persistence.subject;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
-import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
 import org.springframework.stereotype.Component;
@@ -17,7 +16,7 @@ public class SubjectPersistenceJpaAdapter implements
     private final SubjectJpaRepository repository;
 
     @Override
-    public void update(Param param) {
+    public void update(UpdateSubjectPort.Param param) {
         repository.update(param.id(),
             param.title(),
             param.index(),
@@ -27,7 +26,8 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public Long persist(Subject subject, Long kitId) {
-        return null; //TODO
+    public Long persist(CreateSubjectPort.Param param) {
+        return repository.save(SubjectMapper.mapToJpaEntity(param)).getId();
     }
+
 }

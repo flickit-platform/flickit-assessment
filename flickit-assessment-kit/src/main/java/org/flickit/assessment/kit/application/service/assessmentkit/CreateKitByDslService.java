@@ -27,7 +27,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     public static final char SLASH = '/';
     private final LoadJsonKitDslPort loadJsonKitDslPort;
     private final LoadJsonFilePort loadJsonFilePort;
-    private final CompositeCreateKitPersister persister; // TODO: implement
+    private final CompositeCreateKitPersister persister;
     private final CreateAssessmentKitPort createAssessmentKitPort;
     private final CreateAssessmentKitTagKitPort createAssessmentKitTagKitPort;
     private final UpdateAssessmentKitDslPort updateAssessmentKitDslPort;
