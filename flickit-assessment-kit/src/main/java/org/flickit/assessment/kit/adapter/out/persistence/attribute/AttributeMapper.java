@@ -3,7 +3,10 @@ package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.kit.application.domain.Attribute;
+
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AttributeMapper {
@@ -18,6 +21,23 @@ public class AttributeMapper {
             entity.getWeight(),
             entity.getCreationTime(),
             entity.getLastModificationTime()
+        );
+    }
+
+    public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, Long subjectId, Long kitId, UUID currentUserId) {
+        return new AttributeJpaEntity(
+            null,
+            attribute.getCode(),
+            attribute.getIndex(),
+            attribute.getTitle(),
+            attribute.getDescription(),
+            attribute.getWeight(),
+            attribute.getCreationTime(),
+            attribute.getLastModificationTime(),
+            currentUserId,
+            currentUserId,
+            kitId,
+            new SubjectJpaEntity(subjectId)
         );
     }
 }

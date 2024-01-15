@@ -9,17 +9,15 @@ import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
 import org.flickit.assessment.kit.application.port.out.attribute.CreateAttributePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CreateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CreateKitPersisterContext;
-import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_ATTRIBUTES;
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_SUBJECTS;
 
 @Slf4j
@@ -27,7 +25,7 @@ import static org.flickit.assessment.kit.application.service.assessmentkit.updat
 @RequiredArgsConstructor
 public class AttributeCreateKitPersister implements CreateKitPersister {
 
-    private final CreateAttributePort createAttributePort; // TODO
+    private final CreateAttributePort createAttributePort;
 
     @Override
     public int order() {
@@ -40,24 +38,40 @@ public class AttributeCreateKitPersister implements CreateKitPersister {
 
         Map<String, Subject> savedSubjectCodesMap = ctx.get(KEY_SUBJECTS);
 
-        Map<String, List<AttributeDslModel>> subjectCodeToAttributeMap = dslAttributes.stream()
-            .collect(groupingBy(AttributeDslModel::getSubjectCode));
+        Map<String, Attribute> codeToPersistedAttributes = new HashMap<>();
+        dslAttributes.forEach(a -> {
+            Attribute attribute = createAttribute(a, savedSubjectCodesMap.get(a.getSubjectCode()).getId(), kitId, currentUserId);
+            codeToPersistedAttributes.put(a.getCode(), attribute);
+        });
 
-        for (Subject subject : savedSubjectCodesMap.values()) {
-            String subjectCode = subject.getCode();
-            List<Attribute> subjectAttributes = subjectCodeToAttributeMap.get(subjectCode).stream().map(AttributeCreateKitPersister::toAttribute).toList();
-            subject.setAttributes(subjectAttributes);
-        }
-
-        Map<String, Attribute> attrCodeToAttr = savedSubjectCodesMap.values().stream()
-            .map(Subject::getAttributes)
-            .flatMap(Collection::stream)
-            .collect(toMap(Attribute::getCode, a -> a));
-        ctx.put(UpdateKitPersisterContext.KEY_ATTRIBUTES, attrCodeToAttr);
-        log.debug("Final attributes: {}", attrCodeToAttr);
+        ctx.put(KEY_ATTRIBUTES, codeToPersistedAttributes);
+        log.debug("Final attributes: {}", codeToPersistedAttributes);
     }
 
-    private static Attribute toAttribute(AttributeDslModel a) {
-        return new Attribute(null, a.getCode(), a.getTitle(), a.getIndex(), a.getDescription(), a.getWeight(), LocalDateTime.now(), LocalDateTime.now());
+    private Attribute createAttribute(AttributeDslModel dslAttribute, Long subjectId, Long kitId, UUID currentUserId) {
+        Attribute attribute = new Attribute(
+            null,
+            dslAttribute.getCode(),
+            dslAttribute.getTitle(),
+            dslAttribute.getIndex(),
+            dslAttribute.getDescription(),
+            dslAttribute.getWeight(),
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+
+        Long persistedAttributeId = createAttributePort.persist(attribute, subjectId, kitId, currentUserId);
+        log.debug("Attribute[id={}, code={}] created.", persistedAttributeId, attribute.getCode());
+
+        return new Attribute(
+            persistedAttributeId,
+            attribute.getCode(),
+            attribute.getTitle(),
+            attribute.getIndex(),
+            attribute.getDescription(),
+            attribute.getWeight(),
+            attribute.getCreationTime(),
+            attribute.getLastModificationTime()
+        );
     }
 }
