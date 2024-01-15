@@ -24,7 +24,7 @@ public interface CreateKitByDslUseCase {
         Long kitDslId;
 
         @NotNull(message = CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL)
-        boolean isPrivate;
+        Boolean isPrivate;
 
         @NotNull(message = CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL)
         Long expertGroupId;
@@ -44,7 +44,7 @@ public interface CreateKitByDslUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitDslId, boolean isPrivate, Long expertGroupId, String title, String summary, String about, List<Long> tagIds, UUID currentUserId) {
+        public Param(Long kitDslId, Boolean isPrivate, Long expertGroupId, String title, String summary, String about, List<Long> tagIds, UUID currentUserId) {
             this.kitDslId = kitDslId;
             this.isPrivate = isPrivate;
             this.expertGroupId = expertGroupId;
