@@ -1,14 +1,13 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +35,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public Long persist(Param param) {
+    public Long persist(CreateExpertGroupPort.Param param) {
         ExpertGroupJpaEntity unsavedEntity = ExpertGroupMapper.mapCreateParamToJpaEntity(param);
         ExpertGroupJpaEntity savedEntity = repository.save(unsavedEntity);
         return savedEntity.getId();
