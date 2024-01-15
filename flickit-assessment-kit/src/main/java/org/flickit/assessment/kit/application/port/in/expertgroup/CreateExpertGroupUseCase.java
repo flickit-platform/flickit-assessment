@@ -25,20 +25,24 @@ public interface CreateExpertGroupUseCase {
         @Size(max = 100, message = CREATE_EXPERT_GROUP_TITLE_SIZE_MAX)
         String title;
 
-        @Size(max = 200, message = CREATE_EXPERT_GROUP_BIO_SIZE_MAX)
         @NotBlank(message = CREATE_EXPERT_GROUP_BIO_NOT_BLANK)
+        @Size(min = 3, message = CREATE_EXPERT_GROUP_BIO_SIZE_MIN)
+        @Size(max = 200, message = CREATE_EXPERT_GROUP_BIO_SIZE_MAX)
         String bio;
 
-        @Size(max = 500, message = CREATE_EXPERT_GROUP_ABOUT_SIZE_MAX)
         @NotBlank(message = CREATE_EXPERT_GROUP_ABOUT_NOT_BLANK)
+        @Size(min = 3, message = CREATE_EXPERT_GROUP_ABOUT_SIZE_MIN)
+        @Size(max = 500, message = CREATE_EXPERT_GROUP_ABOUT_SIZE_MAX)
         String about;
 
-        @Size(max = 200, message = CREATE_EXPERT_GROUP_WEBSITE_SIZE_MAX)
         @NotBlank(message = CREATE_EXPERT_GROUP_WEBSITE_NOT_BLANK)
+        @Size(min = 3, message = CREATE_EXPERT_GROUP_WEBSITE_SIZE_MIN)
+        @Size(max = 200, message = CREATE_EXPERT_GROUP_WEBSITE_SIZE_MAX)
         String website;
 
-        @Size(max = 100, message = CREATE_EXPERT_GROUP_PICTURE_SIZE_MAX)
         @NotBlank(message = CREATE_EXPERT_GROUP_PICTURE_NOT_BLANK)
+        @Size(min = 3, message = CREATE_EXPERT_GROUP_PICTURE_SIZE_MIN)
+        @Size(max = 100, message = CREATE_EXPERT_GROUP_PICTURE_SIZE_MAX)
         String picture;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
