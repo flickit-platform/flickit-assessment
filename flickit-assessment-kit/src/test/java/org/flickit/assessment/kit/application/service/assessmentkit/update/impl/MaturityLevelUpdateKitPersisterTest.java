@@ -100,10 +100,9 @@ class MaturityLevelUpdateKitPersisterTest {
             .build();
 
         Long persistedLevelId = levelThree().getId();
-        UUID currentUserId = UUID.randomUUID();
-        when(createMaturityLevelPort.persist(any(), eq(savedKit.getId()), currentUserId)).thenReturn(persistedLevelId);
-        when(createLevelCompetencePort.persist(persistedLevelId, levelTwo().getId(), 75, currentUserId)).thenReturn(1L);
-        when(createLevelCompetencePort.persist(persistedLevelId, levelThree().getId(), 60, currentUserId)).thenReturn(2L);
+        when(createMaturityLevelPort.persist(any(), eq(savedKit.getId()), any(UUID.class))).thenReturn(persistedLevelId);
+        when(createLevelCompetencePort.persist(eq(persistedLevelId), eq(levelTwo().getId()), eq(75), any(UUID.class))).thenReturn(1L);
+        when(createLevelCompetencePort.persist(eq(persistedLevelId), eq(levelThree().getId()), eq(60), any(UUID.class))).thenReturn(2L);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
@@ -200,8 +199,7 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevelOne, dslLevelTwo))
             .build();
 
-        UUID currentUserId = UUID.randomUUID();
-        when(createLevelCompetencePort.persist(levelTwo().getId(), levelOne().getId(), 90, currentUserId)).thenReturn(1L);
+        when(createLevelCompetencePort.persist(eq(levelTwo().getId()), eq(levelOne().getId()), eq(90), any())).thenReturn(1L);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);

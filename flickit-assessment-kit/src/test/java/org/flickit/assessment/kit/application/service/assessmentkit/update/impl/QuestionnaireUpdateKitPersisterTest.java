@@ -78,8 +78,7 @@ class QuestionnaireUpdateKitPersisterTest {
             .questionnaires(List.of(dslQOne, dslQTwo))
             .build();
 
-        UUID currentUserId = UUID.randomUUID();
-        when(createQuestionnairePort.persist(any(Questionnaire.class), eq(savedKit.getId()), currentUserId)).thenReturn(1L);
+        when(createQuestionnairePort.persist(any(Questionnaire.class), eq(savedKit.getId()), any(UUID.class))).thenReturn(1L);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
