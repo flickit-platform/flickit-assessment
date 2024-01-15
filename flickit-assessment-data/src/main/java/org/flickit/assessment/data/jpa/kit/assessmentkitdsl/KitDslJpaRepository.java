@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-public interface AssessmentKitDslJpaRepository extends JpaRepository<AssessmentKitDslJpaEntity, Long> {
+public interface KitDslJpaRepository extends JpaRepository<KitDslJpaEntity, Long> {
 
     @Modifying
     @Query("UPDATE AssessmentKitDslJpaEntity a SET " +

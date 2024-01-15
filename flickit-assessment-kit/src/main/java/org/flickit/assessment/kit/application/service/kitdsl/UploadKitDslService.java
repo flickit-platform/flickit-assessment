@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.service.assessmentkit;
+package org.flickit.assessment.kit.application.service.kitdsl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -7,10 +7,10 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.UploadKitUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateKitDslPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.ParsDslFilePort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitDslToFileStoragePort;
+import org.flickit.assessment.kit.application.port.in.kitdsl.UploadKitDslUseCase;
+import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.ParsDslFilePort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,16 +24,16 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UploadKitService implements UploadKitUseCase {
+public class UploadKitDslService implements UploadKitDslUseCase {
 
-    private final UploadKitDslToFileStoragePort uploadKitDslToFileStoragePort;
     private final ParsDslFilePort parsDslFilePort;
+    private final UploadKitDslToFileStoragePort uploadKitDslToFileStoragePort;
     private final CreateKitDslPort createKitDslPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @SneakyThrows
     @Override
-    public Long upload(UploadKitUseCase.Param param) {
+    public Long upload(UploadKitDslUseCase.Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
 
         AssessmentKitDslModel dslContentJson = parsDslFilePort.parsToDslModel(param.getDslFile());

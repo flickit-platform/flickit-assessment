@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.service.assessmentkit;
+package org.flickit.assessment.kit.application.service.kitdsl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -7,11 +7,11 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.UploadKitUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateKitDslPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.ParsDslFilePort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitDslToFileStoragePort;
+import org.flickit.assessment.kit.application.port.in.kitdsl.UploadKitDslUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.ParsDslFilePort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,7 +41,7 @@ public class UploadKitServiceTest {
 
     public static final String ZIP_FILE_ADDR = "src/test/java/org/flickit/assessment/kit/correct-kit.zip";
     @InjectMocks
-    private UploadKitService service;
+    private UploadKitDslService service;
 
     @Mock
     private UploadKitDslToFileStoragePort uploadKitDslToFileStoragePort;
@@ -84,7 +84,7 @@ public class UploadKitServiceTest {
 
         when(parsDslFilePort.parsToDslModel(dslFile)).thenReturn(kitDslModel);
 
-        var param = new UploadKitUseCase.Param(dslFile, expertGroupId, currentUserId);
+        var param = new UploadKitDslUseCase.Param(dslFile, expertGroupId, currentUserId);
         Long resultKitDslId = service.upload(param);
 
         assertEquals(kitDslId, resultKitDslId);
@@ -98,7 +98,7 @@ public class UploadKitServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(UUID.randomUUID()));
         MultipartFile dslFile = convertZipFileToMultipartFile(ZIP_FILE_ADDR);
 
-        var param = new UploadKitUseCase.Param(dslFile, expertGroupId, currentUserId);
+        var param = new UploadKitDslUseCase.Param(dslFile, expertGroupId, currentUserId);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.upload(param));
         assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);

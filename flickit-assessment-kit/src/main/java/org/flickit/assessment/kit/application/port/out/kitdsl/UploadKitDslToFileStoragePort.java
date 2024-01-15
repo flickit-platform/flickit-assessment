@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.out.assessmentkit;
+package org.flickit.assessment.kit.application.port.out.kitdsl;
 
 import org.springframework.web.multipart.MultipartFile;
 

@@ -6,6 +6,7 @@ import io.minio.messages.VersioningConfiguration;
 import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.NotSuchFileUploadedException;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UploadKitDslToFileStoragePort;
@@ -21,7 +22,6 @@ import java.util.Objects;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND;
 
-@Slf4j
 @Component
 @AllArgsConstructor
 public class MinioAdapter implements UploadKitDslToFileStoragePort,
@@ -37,38 +37,31 @@ public class MinioAdapter implements UploadKitDslToFileStoragePort,
         String bucketName = properties.getBucketName();
         String dslFileNameNoSuffix = Objects.requireNonNull(dslZipFile.getOriginalFilename()).replace(".zip", "");
         String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + SLASH + dslFileNameNoSuffix + SLASH;
-        String zipFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
-        String zipJsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
+        String dslFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
+        String jsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
 
         checkBucketExistence(bucketName);
         setBucketVersioning(bucketName);
 
         InputStream zipFileInputStream = dslZipFile.getInputStream();
-        ObjectWriteResponse dslZipFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
-            .bucket(bucketName)
-            .object(zipFileObjectName)
-            .stream(zipFileInputStream, zipFileInputStream.available(), -1)
-            .build());
-        String zipFileVersionId = dslZipFileWriteResponse.versionId();
+        String zipFileVersionId = writeFile(bucketName, dslFileObjectName, zipFileInputStream);
 
         InputStream jsonFileInputStream = new ByteArrayInputStream(dslJsonFile.getBytes());
-        ObjectWriteResponse dslJsonFileWriteResponse = minioClient.putObject(PutObjectArgs.builder()
-            .bucket(bucketName)
-            .object(zipJsonFileObjectName)
-            .stream(jsonFileInputStream, jsonFileInputStream.available(), -1)
-            .build());
-        String jsonFileVersionId = dslJsonFileWriteResponse.versionId();
+        String jsonFileVersionId = writeFile(bucketName, jsonFileObjectName, jsonFileInputStream);
 
-        return new Result(zipFileObjectName + SLASH + zipFileVersionId,
-            zipJsonFileObjectName + SLASH + jsonFileVersionId);
+        return new UploadKitDslToFileStoragePort.Result(
+            dslFileObjectName + SLASH + zipFileVersionId,
+            jsonFileObjectName + SLASH + jsonFileVersionId);
     }
 
     @SneakyThrows
-    private void setBucketVersioning(String bucketName) {
-        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
-            .bucket(bucketName)
-            .config(new VersioningConfiguration(Status.ENABLED, false))
-            .build());
+    private String writeFile(String bucketName, String dslFileObjectName, InputStream zipFileInputStream) {
+        return minioClient.putObject(PutObjectArgs.builder()
+                .bucket(bucketName)
+                .object(dslFileObjectName)
+                .stream(zipFileInputStream, zipFileInputStream.available(), -1)
+                .build())
+            .versionId();
     }
 
     @SneakyThrows
@@ -78,6 +71,14 @@ public class MinioAdapter implements UploadKitDslToFileStoragePort,
                 .bucket(bucketName)
                 .build());
         }
+    }
+
+    @SneakyThrows
+    private void setBucketVersioning(String bucketName) {
+        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
+            .bucket(bucketName)
+            .config(new VersioningConfiguration(Status.ENABLED, false))
+            .build());
     }
 
     @SneakyThrows
