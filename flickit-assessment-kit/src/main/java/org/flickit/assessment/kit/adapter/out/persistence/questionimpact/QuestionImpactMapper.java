@@ -21,7 +21,7 @@ public class QuestionImpactMapper {
         );
     }
 
-    public static QuestionImpactJpaEntity mapToJpaEntity(QuestionImpact impact, MaturityLevelJpaEntity maturityLevelJpaEntity, UUID currentUserId) {
+    public static QuestionImpactJpaEntity mapToJpaEntityToPersist(QuestionImpact impact, MaturityLevelJpaEntity maturityLevelJpaEntity, UUID createdBy) {
         return new QuestionImpactJpaEntity(
             null,
             impact.getWeight(),
@@ -31,8 +31,8 @@ public class QuestionImpactMapper {
             null,
             LocalDateTime.now(),
             LocalDateTime.now(),
-            currentUserId,
-            currentUserId
+            createdBy,
+            createdBy
         );
     }
 }

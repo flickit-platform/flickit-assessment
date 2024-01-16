@@ -9,11 +9,13 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMatur
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 
 @Component
 @RequiredArgsConstructor
@@ -25,8 +27,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
     private final MaturityLevelJpaRepository repository;
 
     @Override
-    public Long persist(MaturityLevel level, Long kitId, UUID currentUserId) {
-        return repository.save(MaturityLevelMapper.mapToJpaEntity(level, kitId, currentUserId)).getId();
+    public Long persist(MaturityLevel level, Long kitId, UUID createdBy) {
+        return repository.save(mapToJpaEntityToPersist(level, kitId, createdBy)).getId();
     }
 
     @Override
@@ -35,7 +37,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(List<MaturityLevel> maturityLevels) {
+    public void update(List<MaturityLevel> maturityLevels, UUID lastModifiedBy) {
         Map<Long, MaturityLevel> idToModel = maturityLevels.stream().collect(toMap(MaturityLevel::getId, x -> x));
         List<MaturityLevelJpaEntity> entities = repository.findAllById(idToModel.keySet());
         entities.forEach(x -> {
@@ -43,6 +45,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
             x.setIndex(newLevel.getIndex());
             x.setTitle(newLevel.getTitle());
             x.setValue(newLevel.getValue());
+            x.setLastModificationTime(LocalDateTime.now());
+            x.setLastModifiedBy(lastModifiedBy);
         });
         repository.saveAll(entities);
         repository.flush();

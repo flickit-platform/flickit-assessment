@@ -72,7 +72,7 @@ class MaturityLevelUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         assertFalse(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
@@ -101,11 +101,12 @@ class MaturityLevelUpdateKitPersisterTest {
 
         Long persistedLevelId = levelThree().getId();
         when(createMaturityLevelPort.persist(any(), eq(savedKit.getId()), any(UUID.class))).thenReturn(persistedLevelId);
-        when(createLevelCompetencePort.persist(eq(persistedLevelId), eq(levelTwo().getId()), eq(75), any(UUID.class))).thenReturn(1L);
-        when(createLevelCompetencePort.persist(eq(persistedLevelId), eq(levelThree().getId()), eq(60), any(UUID.class))).thenReturn(2L);
+        UUID currentUserId = UUID.randomUUID();
+        when(createLevelCompetencePort.persist(persistedLevelId, levelTwo().getId(), 75, currentUserId)).thenReturn(1L);
+        when(createLevelCompetencePort.persist(persistedLevelId, levelThree().getId(), 60, currentUserId)).thenReturn(2L);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, currentUserId);
 
         assertTrue(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
@@ -132,7 +133,7 @@ class MaturityLevelUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         assertTrue(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
@@ -155,13 +156,14 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevel))
             .build();
 
-        doNothing().when(updateMaturityLevelPort).update(anyList());
+        doNothing().when(updateMaturityLevelPort).update(anyList(), any(UUID.class));
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         ArgumentCaptor<List<MaturityLevel>> updateCaptor = ArgumentCaptor.forClass(List.class);
-        verify(updateMaturityLevelPort).update(updateCaptor.capture());
+        ArgumentCaptor<UUID> uuidCaptor = ArgumentCaptor.forClass(UUID.class);
+        verify(updateMaturityLevelPort).update(updateCaptor.capture(), uuidCaptor.capture());
 
         var updatedMaturityLevel = new MaturityLevel(
             levelTwo().getId(), levelTwo().getCode(), dslLevel.getTitle(), dslLevel.getIndex(), dslLevel.getValue(), levelTwo().getCompetences()
@@ -199,10 +201,11 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevelOne, dslLevelTwo))
             .build();
 
-        when(createLevelCompetencePort.persist(eq(levelTwo().getId()), eq(levelOne().getId()), eq(90), any())).thenReturn(1L);
+        UUID currentUserId = UUID.randomUUID();
+        when(createLevelCompetencePort.persist(levelTwo().getId(), levelOne().getId(), 90, currentUserId)).thenReturn(1L);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, currentUserId);
 
         assertTrue(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
@@ -236,7 +239,7 @@ class MaturityLevelUpdateKitPersisterTest {
         doNothing().when(deleteLevelCompetencePort).delete(levelThree().getId(), levelTwo().getId());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         assertTrue(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
@@ -265,10 +268,12 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevelOne, dslLevelTwo))
             .build();
 
-        doNothing().when(updateLevelCompetencePort).update(levelTwo().getId(), levelTwo().getId(), 100);
+        UUID uuid = UUID.randomUUID();
+
+        doNothing().when(updateLevelCompetencePort).update(levelTwo().getId(), levelTwo().getId(), 100, uuid);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, uuid);
 
         assertTrue(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);

@@ -28,8 +28,8 @@ public class AnswerOptionMapper {
             param.questionId(),
             LocalDateTime.now(),
             LocalDateTime.now(),
-            param.currentUserId(),
-            param.currentUserId()
+            param.createdBy(),
+            param.createdBy()
         );
     }
 }

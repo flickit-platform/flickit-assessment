@@ -40,7 +40,10 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx,
+                                            AssessmentKit savedKit,
+                                            AssessmentKitDslModel dslKit,
+                                            UUID currentUserId) {
         List<Questionnaire> savedQuestionnaires = savedKit.getQuestionnaires();
         List<QuestionnaireDslModel> dslQuestionnaires = dslKit.getQuestionnaires();
 
@@ -56,8 +59,14 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
         List<Questionnaire> finalQuestionnaires = new ArrayList<>();
 
-        newQuestionnairesCodes.forEach(i -> finalQuestionnaires.add(createQuestionnaire(dslQuestionnaireCodesMap.get(i), savedKit.getId())));
-        sameQuestionnairesCodes.forEach(i -> finalQuestionnaires.add(updateQuestionnaire(savedQuestionnaireCodesMap.get(i), dslQuestionnaireCodesMap.get(i))));
+        newQuestionnairesCodes.forEach(i ->
+            finalQuestionnaires.add(createQuestionnaire(dslQuestionnaireCodesMap.get(i),
+                savedKit.getId(),
+                currentUserId)));
+        sameQuestionnairesCodes.forEach(i ->
+            finalQuestionnaires.add(updateQuestionnaire(savedQuestionnaireCodesMap.get(i),
+                dslQuestionnaireCodesMap.get(i),
+                currentUserId)));
 
         Map<String, Long> questionnaireCodeToIdMap = finalQuestionnaires.stream().collect(Collectors.toMap(Questionnaire::getCode, Questionnaire::getId));
         ctx.put(KEY_QUESTIONNAIRES, questionnaireCodeToIdMap);
@@ -66,7 +75,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         return new UpdateKitPersisterResult(!newQuestionnairesCodes.isEmpty());
     }
 
-    private Questionnaire createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitId) {
+    private Questionnaire createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitId, UUID currentUserId) {
         var createParam = new Questionnaire(
             null,
             newQuestionnaire.getCode(),
@@ -77,7 +86,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             LocalDateTime.now()
         );
 
-        long persistedId = createQuestionnairePort.persist(createParam, kitId, UUID.randomUUID()); // TODO: Fix currentUserId
+        long persistedId = createQuestionnairePort.persist(createParam, kitId, currentUserId);
         log.debug("Questionnaire[id={}, code={}] created.", persistedId, newQuestionnaire.getCode());
 
         return new Questionnaire(
@@ -91,7 +100,9 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private Questionnaire updateQuestionnaire(Questionnaire savedQuestionnaire, QuestionnaireDslModel dslQuestionnaire) {
+    private Questionnaire updateQuestionnaire(Questionnaire savedQuestionnaire,
+                                              QuestionnaireDslModel dslQuestionnaire,
+                                              UUID currentUserId) {
         if (!savedQuestionnaire.getTitle().equals(dslQuestionnaire.getTitle()) ||
             !savedQuestionnaire.getDescription().equals(dslQuestionnaire.getDescription()) ||
             savedQuestionnaire.getIndex() != dslQuestionnaire.getIndex()) {
@@ -100,7 +111,8 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
                 dslQuestionnaire.getTitle(),
                 dslQuestionnaire.getIndex(),
                 dslQuestionnaire.getDescription(),
-                LocalDateTime.now());
+                LocalDateTime.now(),
+                currentUserId);
 
             updateQuestionnairePort.update(updateParam);
             log.debug("Questionnaire[id={}, code={}] updated.", savedQuestionnaire.getId(), savedQuestionnaire.getCode());

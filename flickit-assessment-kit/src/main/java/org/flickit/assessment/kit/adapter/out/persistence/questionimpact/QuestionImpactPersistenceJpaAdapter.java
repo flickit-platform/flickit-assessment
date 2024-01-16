@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper.mapToJpaEntityToPersist;
+
 @Component
 @RequiredArgsConstructor
 public class QuestionImpactPersistenceJpaAdapter implements
@@ -23,9 +25,9 @@ public class QuestionImpactPersistenceJpaAdapter implements
     private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
-    public Long persist(QuestionImpact impact, UUID currentUserId) {
+    public Long persist(QuestionImpact impact, UUID createdBy) {
         MaturityLevelJpaEntity maturityLevelJpaEntity = maturityLevelRepository.getReferenceById(impact.getMaturityLevelId());
-        return repository.save(QuestionImpactMapper.mapToJpaEntity(impact, maturityLevelJpaEntity, currentUserId)).getId();
+        return repository.save(mapToJpaEntityToPersist(impact, maturityLevelJpaEntity, createdBy)).getId();
     }
 
     @Override
@@ -35,7 +37,11 @@ public class QuestionImpactPersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateQuestionImpactPort.Param param) {
-        repository.update(param.id(), param.weight(), param.questionId());
+        repository.update(param.id(),
+            param.weight(),
+            param.questionId(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
     }
 
 }

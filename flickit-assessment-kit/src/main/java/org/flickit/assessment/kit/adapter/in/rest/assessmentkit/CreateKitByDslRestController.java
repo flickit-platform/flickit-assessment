@@ -26,12 +26,13 @@ public class CreateKitByDslRestController {
     }
 
     private CreateKitByDslUseCase.Param toParam(CreateKitByDslRequestDto request, UUID currentUserId) {
-        return new CreateKitByDslUseCase.Param(request.kitDslId(),
-            request.isPrivate(),
-            request.expertGroupId(),
+        return new CreateKitByDslUseCase.Param(
             request.title(),
             request.summary(),
             request.about(),
+            request.isPrivate(),
+            request.kitDslId(),
+            request.expertGroupId(),
             request.tagIds(),
             currentUserId);
     }

@@ -20,15 +20,6 @@ public interface CreateKitByDslUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = CREATE_KIT_BY_DSL_KIT_DSL_JSON_ID_NOT_NULL)
-        Long kitDslId;
-
-        @NotNull(message = CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL)
-        Boolean isPrivate;
-
-        @NotNull(message = CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL)
-        Long expertGroupId;
-
         @NotBlank(message = CREATE_KIT_BY_DSL_TITLE_NOT_NULL)
         String title;
 
@@ -38,19 +29,29 @@ public interface CreateKitByDslUseCase {
         @NotBlank(message = CREATE_KIT_BY_DSL_ABOUT_NOT_NULL)
         String about;
 
+        @NotNull(message = CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL)
+        Boolean isPrivate;
+
+        @NotNull(message = CREATE_KIT_BY_DSL_KIT_DSL_JSON_ID_NOT_NULL)
+        Long kitDslId;
+
+        @NotNull(message = CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL)
+        Long expertGroupId;
+
         @NotNull(message = CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL)
         List<Long> tagIds;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitDslId, Boolean isPrivate, Long expertGroupId, String title, String summary, String about, List<Long> tagIds, UUID currentUserId) {
-            this.kitDslId = kitDslId;
-            this.isPrivate = isPrivate;
-            this.expertGroupId = expertGroupId;
+        public Param(String title, String summary, String about, boolean isPrivate,
+                     Long kitDslId, Long expertGroupId, List<Long> tagIds, UUID currentUserId) {
             this.title = title;
             this.summary = summary;
             this.about = about;
+            this.isPrivate = isPrivate;
+            this.kitDslId = kitDslId;
+            this.expertGroupId = expertGroupId;
             this.tagIds = tagIds;
             this.currentUserId = currentUserId;
             this.validateSelf();

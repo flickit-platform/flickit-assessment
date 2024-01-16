@@ -55,7 +55,7 @@ class QuestionnaireUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         assertFalse(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
@@ -81,7 +81,7 @@ class QuestionnaireUpdateKitPersisterTest {
         when(createQuestionnairePort.persist(any(Questionnaire.class), eq(savedKit.getId()), any(UUID.class))).thenReturn(1L);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         assertTrue(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
@@ -104,7 +104,7 @@ class QuestionnaireUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         assertFalse(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);

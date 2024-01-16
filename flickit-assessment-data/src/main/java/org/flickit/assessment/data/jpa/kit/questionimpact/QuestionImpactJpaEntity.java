@@ -38,12 +38,24 @@ public class QuestionImpactJpaEntity {
     @JoinColumn(name = "maturity_level_id", referencedColumnName = "id")
     private MaturityLevelJpaEntity maturityLevel;
 
-    public QuestionImpactJpaEntity(Long id, Integer weight, Long questionId, Long attributeId, MaturityLevelJpaEntity maturityLevel) {
+    public QuestionImpactJpaEntity(Long id,
+                                   Integer weight,
+                                   Long questionId,
+                                   Long attributeId,
+                                   MaturityLevelJpaEntity maturityLevel,
+                                   LocalDateTime creationTime,
+                                   LocalDateTime lastModificationTime,
+                                   UUID createdBy,
+                                   UUID lastModifiedBy) {
         this.id = id;
         this.weight = weight;
         this.questionId = questionId;
         this.attributeId = attributeId;
         this.maturityLevel = maturityLevel;
+        this.creationTime = creationTime;
+        this.lastModificationTime = lastModificationTime;
+        this.createdBy = createdBy;
+        this.lastModifiedBy = lastModifiedBy;
     }
 
     @OneToMany(mappedBy = "questionImpact", cascade = CascadeType.REMOVE)

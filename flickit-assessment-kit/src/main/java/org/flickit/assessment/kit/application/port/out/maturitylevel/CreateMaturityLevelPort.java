@@ -6,6 +6,5 @@ import java.util.UUID;
 
 public interface CreateMaturityLevelPort {
 
-    Long persist(MaturityLevel level, Long kitId, UUID currentUserId);
-
+    Long persist(MaturityLevel level, Long kitId, UUID createdBy);
 }

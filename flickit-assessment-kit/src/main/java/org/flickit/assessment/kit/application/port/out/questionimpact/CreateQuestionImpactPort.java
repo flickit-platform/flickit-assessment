@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface CreateQuestionImpactPort {
 
-    Long persist(QuestionImpact impact, UUID currentUserId);
+    Long persist(QuestionImpact impact, UUID createdBy);
 }
