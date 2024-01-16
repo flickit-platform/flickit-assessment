@@ -68,8 +68,4 @@ public class SubjectJpaEntity {
 
     @OneToMany(mappedBy = "subject")
     private List<AttributeJpaEntity> attributes;
-
-    public SubjectJpaEntity(Long subjectId) {
-        this.id = subjectId;
-    }
 }
