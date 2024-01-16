@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -21,12 +22,18 @@ public interface CreateKitByDslUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotBlank(message = CREATE_KIT_BY_DSL_TITLE_NOT_NULL)
+        @Size(min = 3, message = CREATE_KIT_BY_DSL_TITLE_SIZE_MIN)
+        @Size(max = 100, message = CREATE_KIT_BY_DSL_TITLE_SIZE_MAX)
         String title;
 
         @NotBlank(message = CREATE_KIT_BY_DSL_SUMMARY_NOT_NULL)
+        @Size(min = 3, message = CREATE_KIT_BY_DSL_SUMMARY_SIZE_MIN)
+        @Size(max = 1000, message = CREATE_KIT_BY_DSL_SUMMARY_SIZE_MAX)
         String summary;
 
         @NotBlank(message = CREATE_KIT_BY_DSL_ABOUT_NOT_NULL)
+        @Size(min = 3, message = CREATE_KIT_BY_DSL_ABOUT_SIZE_MIN)
+        @Size(max = 1000, message = CREATE_KIT_BY_DSL_ABOUT_SIZE_MAX)
         String about;
 
         @NotNull(message = CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL)
