@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.kitdsl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaEntity;
-import org.flickit.assessment.kit.application.domain.AssessmentKitDsl;
+import org.flickit.assessment.kit.application.domain.KitDsl;
 
 import java.time.LocalDateTime;
 
@@ -14,8 +14,8 @@ public class KitDslMapper {
         return new KitDslJpaEntity(null, dslPath, jsonPath, null, LocalDateTime.now());
     }
 
-    public static AssessmentKitDsl toDomainModel(KitDslJpaEntity entity) {
-        return new AssessmentKitDsl(
+    public static KitDsl toDomainModel(KitDslJpaEntity entity) {
+        return new KitDsl(
             entity.getId(),
             entity.getDslPath(),
             entity.getJsonPath(),

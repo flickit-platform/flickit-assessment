@@ -1,10 +1,10 @@
 package org.flickit.assessment.kit.application.port.out.assessmentkitdsl;
 
-import org.flickit.assessment.kit.application.domain.AssessmentKitDsl;
+import org.flickit.assessment.kit.application.domain.KitDsl;
 
 import java.util.Optional;
 
 public interface LoadJsonKitDslPort {
 
-    Optional<AssessmentKitDsl> load(Long id);
+    Optional<KitDsl> load(Long id);
 }

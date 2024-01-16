@@ -3,14 +3,14 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.NotSuchFileUploadedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKitDsl;
+import org.flickit.assessment.kit.application.domain.KitDsl;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadJsonKitDslPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateAssessmentKitDslPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateAssessmentKitTagKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.minio.LoadJsonFilePort;
+import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CompositeCreateKitPersister;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,8 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateKitByDslServiceTest {
@@ -58,7 +57,7 @@ class CreateKitByDslServiceTest {
     @Mock
     private LoadJsonKitDslPort loadJsonKitDslPort;
     @Mock
-    private LoadJsonFilePort loadJsonFilePort;
+    private LoadKitDSLJsonFilePort loadKitDSLJsonFilePort;
     @Mock
     private CreateAssessmentKitPort createAssessmentKitPort;
     @Mock
@@ -66,17 +65,17 @@ class CreateKitByDslServiceTest {
     @Mock
     private CreateAssessmentKitTagKitPort createAssessmentKitTagKitPort;
     @Mock
-    private UpdateAssessmentKitDslPort updateAssessmentKitDslPort;
+    private UpdateKitDslPort updateKitDslPort;
 
     @Test
     void testCreateKitByDsl_ValidInputs_CreateAndSaveKit() {
         when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
 
-        AssessmentKitDsl kitDsl = new AssessmentKitDsl(KIT_DSL_ID, DSL_FILE, DSL_JSON, null, LocalDateTime.now());
+        KitDsl kitDsl = new KitDsl(KIT_DSL_ID, DSL_FILE, DSL_JSON, null, LocalDateTime.now());
         when(loadJsonKitDslPort.load(KIT_DSL_ID)).thenReturn(Optional.of(kitDsl));
 
         String dslContent = "{\"questionnaireModels\" : [ {\"code\" : \"CleanArchitecture\",\"index\" : 1,\"title\" : \"Clean Architecture\",\"description\" : \"desc\"}, {\"code\" : \"CodeQuality\",\"index\" : 2,    \"title\" : \"Code Quality\",\"description\" : \"desc\"} ],\"attributeModels\" : [ ],\"questionModels\" : [ ],\"subjectModels\" : [ {\"code\" : \"Software\",\"index\" : 1,\"title\" : \"Software\",\"description\" : \"desc\",\"weight\" : 0,\"questionnaireCodes\" : null}, {\"code\" : \"Team\",\"index\" : 2,\"title\" : \"Team\",\"description\" : \"desc\",\"weight\" : 0,\"questionnaireCodes\" : null} ],\"levelModels\" : [ ],\"hasError\" : false}";
-        when(loadJsonFilePort.load(DSL_JSON.substring(0, DSL_JSON.lastIndexOf("/")), DSL_JSON_VERSION_ID.toString())).thenReturn(dslContent);
+        when(loadKitDSLJsonFilePort.load(DSL_JSON.substring(0, DSL_JSON.lastIndexOf("/")), DSL_JSON_VERSION_ID.toString())).thenReturn(dslContent);
 
         String code = TITLE;
         UUID currentUserId = EXPERT_GROUP_OWNER_ID;
@@ -88,7 +87,7 @@ class CreateKitByDslServiceTest {
         var kitTagCreateParam = new CreateAssessmentKitTagKitPort.Param(TAG_ID, KIT_ID);
         when(createAssessmentKitTagKitPort.persist(kitTagCreateParam)).thenReturn(KIT_TAG_ID);
 
-        doNothing().when(updateAssessmentKitDslPort).update(any());
+        doNothing().when(updateKitDslPort).update(any());
 
         var param = new CreateKitByDslUseCase.Param(TITLE, SUMMARY, ABOUT, Boolean.FALSE, KIT_DSL_ID, EXPERT_GROUP_ID, List.of(1L), currentUserId);
         Long savedKitId = service.create(param);
@@ -124,10 +123,10 @@ class CreateKitByDslServiceTest {
     void testCreateKitByDsl_JsonFileIsNotUploaded_ThrowException() {
         when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
 
-        AssessmentKitDsl kitDsl = new AssessmentKitDsl(KIT_DSL_ID, DSL_FILE, DSL_JSON, null, LocalDateTime.now());
+        KitDsl kitDsl = new KitDsl(KIT_DSL_ID, DSL_FILE, DSL_JSON, null, LocalDateTime.now());
         when(loadJsonKitDslPort.load(KIT_DSL_ID)).thenReturn(Optional.of(kitDsl));
 
-        when(loadJsonFilePort.load(any(), any())).thenThrow(new NotSuchFileUploadedException(CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND));
+        when(loadKitDSLJsonFilePort.load(any(), any())).thenThrow(new NotSuchFileUploadedException(CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND));
 
         UUID currentUserId = EXPERT_GROUP_OWNER_ID;
         var param = new CreateKitByDslUseCase.Param(TITLE, SUMMARY, ABOUT, Boolean.FALSE, KIT_DSL_ID, EXPERT_GROUP_ID, List.of(1L), currentUserId);
@@ -135,5 +134,4 @@ class CreateKitByDslServiceTest {
         var throwable = assertThrows(NotSuchFileUploadedException.class, () -> service.create(param));
         assertThat(throwable).hasMessage(CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND);
     }
-
 }

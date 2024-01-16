@@ -9,10 +9,10 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadJsonKitDslPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateAssessmentKitDslPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateAssessmentKitTagKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.minio.LoadJsonFilePort;
+import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CompositeCreateKitPersister;
 import org.springframework.stereotype.Service;
@@ -34,11 +34,11 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     public static final char SLASH = '/';
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadJsonKitDslPort loadJsonKitDslPort;
-    private final LoadJsonFilePort loadJsonFilePort;
+    private final LoadKitDSLJsonFilePort loadKitDSLJsonFilePort;
     private final CreateAssessmentKitPort createAssessmentKitPort;
     private final CompositeCreateKitPersister persister;
     private final CreateAssessmentKitTagKitPort createAssessmentKitTagKitPort;
-    private final UpdateAssessmentKitDslPort updateAssessmentKitDslPort;
+    private final UpdateKitDslPort updateKitDslPort;
 
     @SneakyThrows
     @Override
@@ -47,11 +47,11 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
 
         var assessmentKitDsl = loadJsonKitDslPort.load(param.getKitDslId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND));
-        String dslJson = assessmentKitDsl.getDslJson();
-        String dslFilePath = dslJson.substring(0, dslJson.lastIndexOf(SLASH));
-        String versionId = dslJson.substring(dslJson.lastIndexOf(SLASH) + 1);
+        String dslJsonPath = assessmentKitDsl.getJsonPath();
+        String dslFilePath = dslJsonPath.substring(0, dslJsonPath.lastIndexOf(SLASH));
+        String versionId = dslJsonPath.substring(dslJsonPath.lastIndexOf(SLASH) + 1);
 
-        String dslContent = loadJsonFilePort.load(dslFilePath, versionId);
+        String dslContent = loadKitDSLJsonFilePort.load(dslFilePath, versionId);
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
         // TODO: validate dsl kit
 
@@ -73,7 +73,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
         param.getTagIds().forEach(tagId ->
             createAssessmentKitTagKitPort.persist(new CreateAssessmentKitTagKitPort.Param(tagId, kitId)));
 
-        updateAssessmentKitDslPort.update(new UpdateAssessmentKitDslPort.Param(assessmentKitDsl.getId(), kitId));
+        updateKitDslPort.update(new UpdateKitDslPort.Param(assessmentKitDsl.getId(), kitId));
 
         return kitId;
     }

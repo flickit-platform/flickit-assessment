@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentKitMapper {
+
     public static AssessmentKitJpaEntity toJpaEntity(CreateAssessmentKitPort.Param param) {
         return new AssessmentKitJpaEntity(
             null,
@@ -21,8 +22,8 @@ public class AssessmentKitMapper {
             param.expertGroupId(),
             LocalDateTime.now(),
             LocalDateTime.now(),
-            param.currentUserId(),
-            param.currentUserId(),
+            param.createdBy(),
+            param.createdBy(),
             null
         );
     }

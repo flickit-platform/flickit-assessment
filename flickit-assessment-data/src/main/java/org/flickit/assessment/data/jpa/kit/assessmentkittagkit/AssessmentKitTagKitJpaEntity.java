@@ -20,8 +20,8 @@ public class AssessmentKitTagKitJpaEntity {
     private Long id;
 
     @Column(name = "assessmentkittag_id")
-    private Long assessmentKitTagId;
+    private Long tagId;
 
     @Column(name = "assessmentkit_id")
-    private Long assessmentKitId;
+    private Long kitId;
 }

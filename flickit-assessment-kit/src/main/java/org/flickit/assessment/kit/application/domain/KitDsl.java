@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 @Getter
 @Builder(toBuilder = true)
 @RequiredArgsConstructor
-public class AssessmentKitDsl {
+public class KitDsl {
 
     private final Long id;
-    private final String dslFile;
-    private final String dslJson;
-    private final Long assessmentKitId;
+    private final String dslPath;
+    private final String jsonPath;
+    private final Long kitId;
     private final LocalDateTime creationTime;
 }

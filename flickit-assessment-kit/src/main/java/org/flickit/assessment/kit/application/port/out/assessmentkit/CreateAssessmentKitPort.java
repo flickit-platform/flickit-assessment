@@ -13,6 +13,6 @@ public interface CreateAssessmentKitPort {
                  boolean published,
                  boolean isPrivate,
                  long expertGroupId,
-                 UUID currentUserId) {
+                 UUID createdBy) {
     }
 }

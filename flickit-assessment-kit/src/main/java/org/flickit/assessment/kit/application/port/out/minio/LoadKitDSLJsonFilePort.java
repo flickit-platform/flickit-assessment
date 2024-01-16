@@ -1,6 +1,6 @@
 package org.flickit.assessment.kit.application.port.out.minio;
 
-public interface LoadJsonFilePort {
+public interface LoadKitDSLJsonFilePort {
 
     String load(String path, String versionId);
 }
