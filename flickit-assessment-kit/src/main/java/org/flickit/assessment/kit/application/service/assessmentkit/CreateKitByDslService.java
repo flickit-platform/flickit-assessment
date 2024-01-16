@@ -72,7 +72,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
 
         createAssessmentKitTagKitPort.persist(param.getTagIds(), kitId);
 
-        updateKitDslPort.update(new UpdateKitDslPort.Param(assessmentKitDsl.getId(), kitId));
+        updateKitDslPort.update(assessmentKitDsl.getId(), kitId);
 
         return kitId;
     }

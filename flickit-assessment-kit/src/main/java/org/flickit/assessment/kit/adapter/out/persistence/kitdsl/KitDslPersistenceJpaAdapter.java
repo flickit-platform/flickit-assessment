@@ -32,7 +32,7 @@ public class KitDslPersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(UpdateKitDslPort.Param param) {
-        repository.updateById(param.id(), param.kitId());
+    public void update(Long id, Long kitId) {
+        repository.updateById(id, kitId);
     }
 }

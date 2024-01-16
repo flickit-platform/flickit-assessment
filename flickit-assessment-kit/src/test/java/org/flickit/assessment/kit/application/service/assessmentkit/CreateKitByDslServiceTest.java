@@ -84,7 +84,7 @@ class CreateKitByDslServiceTest {
         doNothing().when(persister).persist(any(), eq(KIT_ID), eq(currentUserId));
 
 
-        doNothing().when(updateKitDslPort).update(any());
+        doNothing().when(updateKitDslPort).update(KIT_DSL_ID, KIT_ID);
 
         var param = new CreateKitByDslUseCase.Param(TITLE, SUMMARY, ABOUT, Boolean.FALSE, KIT_DSL_ID, EXPERT_GROUP_ID, List.of(1L), currentUserId);
         Long savedKitId = service.create(param);
