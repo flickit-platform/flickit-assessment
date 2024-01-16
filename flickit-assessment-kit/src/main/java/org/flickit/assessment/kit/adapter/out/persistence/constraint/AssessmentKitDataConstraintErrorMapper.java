@@ -5,10 +5,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+import static java.util.Map.entry;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DUPLICATE_TITLE;
+
 @Component
 public class AssessmentKitDataConstraintErrorMapper implements DataConstraintErrorMapper {
 
-    Map<String, String> constraintToErrorMsg = Map.of();
+    Map<String, String> constraintToErrorMsg = Map.ofEntries(
+        entry("uq_fak_assessmentkit_code", CREATE_KIT_BY_DSL_KIT_DUPLICATE_TITLE)
+    );
 
     @Override
     public boolean contains(String constraintName) {
