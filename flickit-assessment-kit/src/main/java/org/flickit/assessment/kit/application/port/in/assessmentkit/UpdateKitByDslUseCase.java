@@ -31,8 +31,8 @@ public interface UpdateKitByDslUseCase {
 
         public Param(Long kitId, String dslContent, UUID currentUserId) {
             this.kitId = kitId;
-            this.currentUserId = currentUserId;
             this.dslContent = dslContent;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

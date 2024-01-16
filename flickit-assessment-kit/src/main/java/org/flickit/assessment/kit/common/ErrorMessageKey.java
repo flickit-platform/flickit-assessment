@@ -30,6 +30,7 @@ public class ErrorMessageKey {
     public static final String GET_KIT_USER_LIST_PAGE_MIN = "get-kit-user-list.page.min";
     public static final String GET_KIT_USER_LIST_SIZE_MIN = "get-kit-user-list.size.min";
     public static final String GET_KIT_USER_LIST_SIZE_MAX = "get-kit-user-list.size.max";
+
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_NULL = "get-kit-minimal-info.kitId.notNull";
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_FOUND = "get-kit-minimal-info.kitId.notFound";
 
@@ -48,6 +49,14 @@ public class ErrorMessageKey {
 
     public static final String UPLOAD_KIT_DSL_KIT_NOT_NULL = "upload-kit.dsl-file.notNull";
     public static final String UPLOAD_KIT_DSL_EXPERT_GROUP_ID_NOT_NULL = "upload-kit.expert-group-id.notNull";
+
+    public static final String CREATE_KIT_BY_DSL_TITLE_NOT_NULL = "create-kit-by-dsl.title.notNull";
+    public static final String CREATE_KIT_BY_DSL_SUMMARY_NOT_NULL = "create-kit-by-dsl.summary.notNull";
+    public static final String CREATE_KIT_BY_DSL_ABOUT_NOT_NULL = "create-kit-by-dsl.about.notNull";
+    public static final String CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL = "create-kit-by-dsl.isPrivate.notNull";
+    public static final String CREATE_KIT_BY_DSL_KIT_DSL_JSON_ID_NOT_NULL = "create-kit-by-dsl.kit-dsl-json-id.notNull";
+    public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
+    public static final String CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL = "create-kit-by-dsl.tag-ids.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
