@@ -44,7 +44,7 @@ public interface CreateKitByDslUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(String title, String summary, String about, boolean isPrivate,
+        public Param(String title, String summary, String about, Boolean isPrivate,
                      Long kitDslId, Long expertGroupId, List<Long> tagIds, UUID currentUserId) {
             this.title = title;
             this.summary = summary;

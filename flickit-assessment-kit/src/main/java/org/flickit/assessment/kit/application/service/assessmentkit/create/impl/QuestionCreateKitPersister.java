@@ -84,8 +84,9 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             dslQuestion.getDescription(),
             dslQuestion.getIndex(),
             questionnaireId,
-            dslQuestion.isMayNotBeApplicable(),
-            currentUserId);
+            currentUserId,
+            dslQuestion.isMayNotBeApplicable()
+        );
 
         Long questionId = createQuestionPort.persist(createParam);
         log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
