@@ -7,8 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 public interface KitDslJpaRepository extends JpaRepository<KitDslJpaEntity, Long> {
 
     @Modifying
-    @Query("UPDATE KitDslJpaEntity a SET " +
-        "a.kitId = :kitId " +
-        "WHERE a.id = :id")
+    @Query("""
+            UPDATE KitDslJpaEntity a SET
+                a.kitId = :kitId
+            WHERE a.id = :id
+        """)
     void updateById(Long id, Long kitId);
 }
