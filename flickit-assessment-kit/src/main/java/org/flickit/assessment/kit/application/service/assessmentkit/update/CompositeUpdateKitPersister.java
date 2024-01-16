@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
@@ -26,11 +27,11 @@ public class CompositeUpdateKitPersister {
             throw new IllegalStateException();
     }
 
-    public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit, UUID currentUserId) {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         boolean shouldInvalidateCalcResult = false;
         for (UpdateKitPersister p : persisters) {
-            UpdateKitPersisterResult result = p.persist(ctx, savedKit, dslKit);
+            UpdateKitPersisterResult result = p.persist(ctx, savedKit, dslKit, currentUserId);
             shouldInvalidateCalcResult = shouldInvalidateCalcResult || result.shouldInvalidateCalcResult();
         }
         return new UpdateKitPersisterResult(shouldInvalidateCalcResult);

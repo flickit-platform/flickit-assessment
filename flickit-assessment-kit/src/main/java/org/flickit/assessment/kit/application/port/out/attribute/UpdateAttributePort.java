@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.out.attribute;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public interface UpdateAttributePort {
 
@@ -13,6 +14,7 @@ public interface UpdateAttributePort {
         String description,
         int weight,
         LocalDateTime lastModificationTime,
+        UUID lastModifiedBy,
         long subjectId
     ) {}
 }
