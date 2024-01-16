@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.hibernate.validator.constraints.URL;
 
 import java.util.UUID;
 
@@ -35,6 +36,7 @@ public interface CreateExpertGroupUseCase {
         @Size(max = 500, message = CREATE_EXPERT_GROUP_ABOUT_SIZE_MAX)
         String about;
 
+        @URL(message = CREATE_EXPERT_GROUP_WEBSITE_NOT_URL)
         @Size(min = 3, message = CREATE_EXPERT_GROUP_WEBSITE_SIZE_MIN)
         @Size(max = 200, message = CREATE_EXPERT_GROUP_WEBSITE_SIZE_MAX)
         String website;
