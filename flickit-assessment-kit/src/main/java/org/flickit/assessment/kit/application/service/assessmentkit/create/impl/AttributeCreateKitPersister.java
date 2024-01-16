@@ -39,15 +39,15 @@ public class AttributeCreateKitPersister implements CreateKitPersister {
 
         Map<String, Long> codeToPersistedAttributeIds = new HashMap<>();
         dslAttributes.forEach(a -> {
-            Attribute attribute = createAttribute(a, savedSubjectCodesMap.get(a.getSubjectCode()), kitId, currentUserId);
-            codeToPersistedAttributeIds.put(a.getCode(), attribute.getId());
+            Long persistedAttributeId = createAttribute(a, savedSubjectCodesMap.get(a.getSubjectCode()), kitId, currentUserId);
+            codeToPersistedAttributeIds.put(a.getCode(), persistedAttributeId);
         });
 
         ctx.put(KEY_ATTRIBUTES, codeToPersistedAttributeIds);
         log.debug("Final attributes: {}", codeToPersistedAttributeIds);
     }
 
-    private Attribute createAttribute(AttributeDslModel dslAttribute, Long subjectId, Long kitId, UUID currentUserId) {
+    private Long createAttribute(AttributeDslModel dslAttribute, Long subjectId, Long kitId, UUID currentUserId) {
         Attribute attribute = new Attribute(
             null,
             dslAttribute.getCode(),
@@ -56,21 +56,14 @@ public class AttributeCreateKitPersister implements CreateKitPersister {
             dslAttribute.getDescription(),
             dslAttribute.getWeight(),
             LocalDateTime.now(),
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            currentUserId,
+            currentUserId
         );
 
-        Long persistedAttributeId = createAttributePort.persist(attribute, subjectId, kitId, currentUserId);
+        Long persistedAttributeId = createAttributePort.persist(attribute, subjectId, kitId);
         log.debug("Attribute[id={}, code={}] created.", persistedAttributeId, attribute.getCode());
 
-        return new Attribute(
-            persistedAttributeId,
-            attribute.getCode(),
-            attribute.getTitle(),
-            attribute.getIndex(),
-            attribute.getDescription(),
-            attribute.getWeight(),
-            attribute.getCreationTime(),
-            attribute.getLastModificationTime()
-        );
+        return persistedAttributeId;
     }
 }

@@ -6,8 +6,6 @@ import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.kit.application.domain.Attribute;
 
-import java.util.UUID;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AttributeMapper {
 
@@ -20,11 +18,13 @@ public class AttributeMapper {
             entity.getDescription(),
             entity.getWeight(),
             entity.getCreationTime(),
-            entity.getLastModificationTime()
+            entity.getLastModificationTime(),
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy()
         );
     }
 
-    public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, SubjectJpaEntity subjectJpaEntity, Long kitId, UUID currentUserId) {
+    public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, SubjectJpaEntity subjectJpaEntity, Long kitId) {
         return new AttributeJpaEntity(
             null,
             attribute.getCode(),
@@ -34,8 +34,8 @@ public class AttributeMapper {
             attribute.getWeight(),
             attribute.getCreationTime(),
             attribute.getLastModificationTime(),
-            currentUserId,
-            currentUserId,
+            attribute.getCreatedBy(),
+            attribute.getLastModifiedBy(),
             kitId,
             subjectJpaEntity
         );

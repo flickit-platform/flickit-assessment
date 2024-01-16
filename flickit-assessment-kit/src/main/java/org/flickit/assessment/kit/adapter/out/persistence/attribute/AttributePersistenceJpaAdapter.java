@@ -9,7 +9,7 @@ import org.flickit.assessment.kit.application.port.out.attribute.CreateAttribute
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
+import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
 
 @Component
 @RequiredArgsConstructor
@@ -33,8 +33,8 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public Long persist(Attribute attribute, Long subjectId, Long kitId, UUID currentUserId) {
+    public Long persist(Attribute attribute, Long subjectId, Long kitId) {
         SubjectJpaEntity subjectJpaEntity = subjectRepository.getReferenceById(subjectId);
-        return repository.save(AttributeMapper.mapToJpaEntity(attribute, subjectJpaEntity, kitId, currentUserId)).getId();
+        return repository.save(mapToJpaEntity(attribute, subjectJpaEntity, kitId)).getId();
     }
 }
