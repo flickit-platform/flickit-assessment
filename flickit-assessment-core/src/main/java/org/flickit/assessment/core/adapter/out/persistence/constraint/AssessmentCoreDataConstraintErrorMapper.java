@@ -8,6 +8,7 @@ import java.util.Map;
 import static java.util.Map.entry;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DUPLICATE_TITLE;
 
 @Component
 public class AssessmentCoreDataConstraintErrorMapper implements DataConstraintErrorMapper {
@@ -24,7 +25,8 @@ public class AssessmentCoreDataConstraintErrorMapper implements DataConstraintEr
         entry("fk_fac_assessment_account_user_created_by", COMMON_CURRENT_USER_NOT_FOUND),
         entry("fk_fac_assessment_account_user_last_modified_by", COMMON_CURRENT_USER_NOT_FOUND),
         entry("fk_fac_evidence_account_user_created_by", COMMON_CURRENT_USER_NOT_FOUND),
-        entry("fk_fac_evidence_account_user_last_modified_by_id", COMMON_CURRENT_USER_NOT_FOUND));
+        entry("fk_fac_evidence_account_user_last_modified_by_id", COMMON_CURRENT_USER_NOT_FOUND),
+        entry("uq_fak_assessmentkit_code", CREATE_KIT_BY_DSL_KIT_DUPLICATE_TITLE));
 
     @Override
     public boolean contains(String constraintName) {

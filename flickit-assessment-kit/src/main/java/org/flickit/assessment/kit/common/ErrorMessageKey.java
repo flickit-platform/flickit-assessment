@@ -59,6 +59,7 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_SUMMARY_NOT_NULL = "create-kit-by-dsl.summary.notNull";
     public static final String CREATE_KIT_BY_DSL_ABOUT_NOT_NULL = "create-kit-by-dsl.about.notNull";
     public static final String CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL = "create-kit-by-dsl.tag-ids.notNull";
+    public static final String CREATE_KIT_BY_DSL_KIT_DUPLICATE_TITLE = "create-kit-by-dsl.duplicate.title";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
