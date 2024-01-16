@@ -32,13 +32,13 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_
 public class CreateKitByDslService implements CreateKitByDslUseCase {
 
     public static final char SLASH = '/';
+    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadJsonKitDslPort loadJsonKitDslPort;
     private final LoadJsonFilePort loadJsonFilePort;
-    private final CompositeCreateKitPersister persister;
     private final CreateAssessmentKitPort createAssessmentKitPort;
+    private final CompositeCreateKitPersister persister;
     private final CreateAssessmentKitTagKitPort createAssessmentKitTagKitPort;
     private final UpdateAssessmentKitDslPort updateAssessmentKitDslPort;
-    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @SneakyThrows
     @Override
