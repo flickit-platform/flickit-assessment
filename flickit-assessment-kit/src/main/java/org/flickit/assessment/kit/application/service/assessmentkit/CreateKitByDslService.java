@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
@@ -10,13 +11,19 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAsses
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadJsonKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateAssessmentKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateAssessmentKitTagKitPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadJsonFilePort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CompositeCreateKitPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+import java.util.UUID;
+
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -31,10 +38,13 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     private final CreateAssessmentKitPort createAssessmentKitPort;
     private final CreateAssessmentKitTagKitPort createAssessmentKitTagKitPort;
     private final UpdateAssessmentKitDslPort updateAssessmentKitDslPort;
+    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @SneakyThrows
     @Override
     public Long create(CreateKitByDslUseCase.Param param) {
+        validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
+
         var assessmentKitDsl = loadJsonKitDslPort.load(param.getKitDslId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND));
         String dslJson = assessmentKitDsl.getDslJson();
@@ -66,6 +76,14 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
         updateAssessmentKitDslPort.update(new UpdateAssessmentKitDslPort.Param(assessmentKitDsl.getId(), kitId));
 
         return kitId;
+    }
+
+    private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
+        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
+            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
+        if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+        }
     }
 
 }
