@@ -22,7 +22,8 @@
 		<module>flickit-assessment-data</module>
 		<module>flickit-assessment-server</module>
 		<module>flickit-assessment-common</module>
-	</modules>
+        <module>flickit-advice-engine</module>
+    </modules>
 
 	<properties>
 		<revision>0.12.0-SNAPSHOT</revision>
@@ -154,12 +155,12 @@
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
 						<labels>
 							<org.opencontainers.image.source>
-								https://github.com/avansoft/flickit-assessment-core
+								https://github.com/flickit-platform/flickit-assessment
 							</org.opencontainers.image.source>
 						</labels>
 					</container>
 					<from>
-						<image>ghcr.io/avansoft/flickit-assessment-core/jdk:17.0.7</image>
+						<image>ghcr.io/flickit-platform/jdk:17.0.7</image>
 					</from>
 				</configuration>
 			</plugin>

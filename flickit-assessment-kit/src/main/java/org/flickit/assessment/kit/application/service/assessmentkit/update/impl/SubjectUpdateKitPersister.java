@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -36,7 +37,10 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx,
+                                            AssessmentKit savedKit,
+                                            AssessmentKitDslModel dslKit,
+                                            UUID currentUserId) {
         Map<String, Subject> savedSubjectCodesMap = savedKit.getSubjects().stream().collect(toMap(Subject::getCode, i -> i));
 
         dslKit.getSubjects().forEach(dslSubject -> {
@@ -45,7 +49,7 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
                 savedSubject.getIndex() != dslSubject.getIndex() ||
                 !savedSubject.getDescription().equals(dslSubject.getDescription())) {
-                updateSubjectPort.update(toUpdateParam(savedSubject.getId(), dslSubject));
+                updateSubjectPort.update(toUpdateParam(savedSubject.getId(), dslSubject, currentUserId));
                 log.debug("Subject[id={}, code={}] updated", savedSubject.getId(), savedSubject.getCode());
             }
         });
@@ -58,12 +62,13 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
         return new UpdateKitPersisterResult(false);
     }
 
-    private UpdateSubjectPort.Param toUpdateParam(long id, SubjectDslModel dslSubject) {
+    private UpdateSubjectPort.Param toUpdateParam(long id, SubjectDslModel dslSubject, UUID currentUserId) {
         return new UpdateSubjectPort.Param(id,
             dslSubject.getTitle(),
             dslSubject.getIndex(),
             dslSubject.getDescription(),
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            currentUserId
         );
     }
 }
