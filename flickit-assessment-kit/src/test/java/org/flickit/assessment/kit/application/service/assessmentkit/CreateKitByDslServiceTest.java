@@ -48,7 +48,6 @@ class CreateKitByDslServiceTest {
     private static final String SUMMARY = "summary";
     private static final String ABOUT = "about";
     private static final Long TAG_ID = 1L;
-    private static final Long KIT_TAG_ID = 1L;
 
     @InjectMocks
     private CreateKitByDslService service;
@@ -84,8 +83,6 @@ class CreateKitByDslServiceTest {
 
         doNothing().when(persister).persist(any(), eq(KIT_ID), eq(currentUserId));
 
-        var kitTagCreateParam = new CreateAssessmentKitTagKitPort.Param(TAG_ID, KIT_ID);
-        when(createAssessmentKitTagKitPort.persist(kitTagCreateParam)).thenReturn(KIT_TAG_ID);
 
         doNothing().when(updateKitDslPort).update(any());
 
@@ -93,6 +90,8 @@ class CreateKitByDslServiceTest {
         Long savedKitId = service.create(param);
 
         assertEquals(KIT_ID, savedKitId);
+
+        verify(createAssessmentKitTagKitPort, times(1)).persist(List.of(TAG_ID), KIT_ID);
     }
 
     @Test

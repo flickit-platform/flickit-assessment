@@ -1,8 +1,8 @@
 package org.flickit.assessment.kit.application.port.out.assessmentkittag;
 
+import java.util.List;
+
 public interface CreateAssessmentKitTagKitPort {
 
-    Long persist(Param param);
-
-    record Param(Long tagId, Long kitId) {}
+    void persist(List<Long> tagIds, Long kitId);
 }
