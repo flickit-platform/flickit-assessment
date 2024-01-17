@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +17,14 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
     private final CreateExpertGroupPort createExpertGroupPort;
     private final CreateExpertGroupAccessPort createExpertGroupAccessPort;
+    private final UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
 
     @Override
     public Result createExpertGroup(Param param) {
-        long expertGroupId = createExpertGroupPort.persist(toCreateExpertGroupParam(param));
+        var uploadResult = uploadExpertGroupPicturePort.upload(null);
+        long expertGroupId = createExpertGroupPort.persist(toCreateExpertGroupParam(param,uploadResult.pictureFilePath()));
 
-        UUID ownerId = param.getCurrentUserId();
-        createOwnerAccessToGroup(expertGroupId, ownerId);
+        createOwnerAccessToGroup(expertGroupId, param.getCurrentUserId());
 
         return new Result(expertGroupId);
     }
@@ -37,11 +39,11 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
         createExpertGroupAccessPort.persist(param);
     }
 
-    private CreateExpertGroupPort.Param toCreateExpertGroupParam(Param param) {
+    private CreateExpertGroupPort.Param toCreateExpertGroupParam(Param param, String pictureFilePath) {
         return new CreateExpertGroupPort.Param(
             param.getTitle(),
             param.getAbout(),
-            param.getPicture(),
+            pictureFilePath,
             param.getWebsite(),
             param.getBio(),
             param.getCurrentUserId()
