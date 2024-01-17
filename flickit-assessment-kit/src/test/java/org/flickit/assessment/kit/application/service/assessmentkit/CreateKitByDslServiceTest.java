@@ -6,7 +6,7 @@ import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.NotSuchFileUpl
 import org.flickit.assessment.kit.application.domain.KitDsl;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadJsonKitDslPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslJsonPathPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateAssessmentKitTagKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -54,7 +54,7 @@ class CreateKitByDslServiceTest {
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     @Mock
-    private LoadJsonKitDslPort loadJsonKitDslPort;
+    private LoadDslJsonPathPort loadDslJsonPathPort;
     @Mock
     private LoadKitDSLJsonFilePort loadKitDSLJsonFilePort;
     @Mock
@@ -71,10 +71,10 @@ class CreateKitByDslServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
 
         KitDsl kitDsl = new KitDsl(KIT_DSL_ID, DSL_FILE, DSL_JSON, null, LocalDateTime.now());
-        when(loadJsonKitDslPort.load(KIT_DSL_ID)).thenReturn(Optional.of(kitDsl));
+        when(loadDslJsonPathPort.loadJsonPath(KIT_DSL_ID)).thenReturn(DSL_JSON);
 
         String dslContent = "{\"questionnaireModels\" : [ {\"code\" : \"CleanArchitecture\",\"index\" : 1,\"title\" : \"Clean Architecture\",\"description\" : \"desc\"}, {\"code\" : \"CodeQuality\",\"index\" : 2,    \"title\" : \"Code Quality\",\"description\" : \"desc\"} ],\"attributeModels\" : [ ],\"questionModels\" : [ ],\"subjectModels\" : [ {\"code\" : \"Software\",\"index\" : 1,\"title\" : \"Software\",\"description\" : \"desc\",\"weight\" : 0,\"questionnaireCodes\" : null}, {\"code\" : \"Team\",\"index\" : 2,\"title\" : \"Team\",\"description\" : \"desc\",\"weight\" : 0,\"questionnaireCodes\" : null} ],\"levelModels\" : [ ],\"hasError\" : false}";
-        when(loadKitDSLJsonFilePort.load(DSL_JSON.substring(0, DSL_JSON.lastIndexOf("/")), DSL_JSON_VERSION_ID.toString())).thenReturn(dslContent);
+        when(loadKitDSLJsonFilePort.loadDslJson(DSL_JSON)).thenReturn(dslContent);
 
         String code = TITLE;
         UUID currentUserId = EXPERT_GROUP_OWNER_ID;
@@ -109,7 +109,7 @@ class CreateKitByDslServiceTest {
     void testCreateKitByDsl_KitDslDoesNotExist_ThrowException() {
         when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
 
-        when(loadJsonKitDslPort.load(KIT_DSL_ID)).thenReturn(Optional.empty());
+        when(loadDslJsonPathPort.loadJsonPath(KIT_DSL_ID)).thenThrow(new ResourceNotFoundException(CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND));
 
         UUID currentUserId = EXPERT_GROUP_OWNER_ID;
         var param = new CreateKitByDslUseCase.Param(TITLE, SUMMARY, ABOUT, Boolean.FALSE, KIT_DSL_ID, EXPERT_GROUP_ID, List.of(1L), currentUserId);
@@ -123,9 +123,9 @@ class CreateKitByDslServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
 
         KitDsl kitDsl = new KitDsl(KIT_DSL_ID, DSL_FILE, DSL_JSON, null, LocalDateTime.now());
-        when(loadJsonKitDslPort.load(KIT_DSL_ID)).thenReturn(Optional.of(kitDsl));
+        when(loadDslJsonPathPort.loadJsonPath(KIT_DSL_ID)).thenReturn(DSL_JSON);
 
-        when(loadKitDSLJsonFilePort.load(any(), any())).thenThrow(new NotSuchFileUploadedException(CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND));
+        when(loadKitDSLJsonFilePort.loadDslJson(any())).thenThrow(new NotSuchFileUploadedException(CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND));
 
         UUID currentUserId = EXPERT_GROUP_OWNER_ID;
         var param = new CreateKitByDslUseCase.Param(TITLE, SUMMARY, ABOUT, Boolean.FALSE, KIT_DSL_ID, EXPERT_GROUP_ID, List.of(1L), currentUserId);

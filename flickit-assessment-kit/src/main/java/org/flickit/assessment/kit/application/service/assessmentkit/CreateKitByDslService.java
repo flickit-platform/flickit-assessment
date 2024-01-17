@@ -8,7 +8,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadJsonKitDslPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslJsonPathPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateAssessmentKitTagKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 
 @Slf4j
@@ -31,9 +30,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_
 @RequiredArgsConstructor
 public class CreateKitByDslService implements CreateKitByDslUseCase {
 
-    public static final char SLASH = '/';
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-    private final LoadJsonKitDslPort loadJsonKitDslPort;
+    private final LoadDslJsonPathPort loadDslJsonPathPort;
     private final LoadKitDSLJsonFilePort loadKitDSLJsonFilePort;
     private final CreateAssessmentKitPort createAssessmentKitPort;
     private final CompositeCreateKitPersister persister;
@@ -45,13 +43,10 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     public Long create(CreateKitByDslUseCase.Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
 
-        var assessmentKitDsl = loadJsonKitDslPort.load(param.getKitDslId())
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND));
-        String dslJsonPath = assessmentKitDsl.getJsonPath();
-        String dslFilePath = dslJsonPath.substring(0, dslJsonPath.lastIndexOf(SLASH));
-        String versionId = dslJsonPath.substring(dslJsonPath.lastIndexOf(SLASH) + 1);
+        String dslJsonPath = loadDslJsonPathPort.loadJsonPath(param.getKitDslId());
 
-        String dslContent = loadKitDSLJsonFilePort.load(dslFilePath, versionId);
+
+        String dslContent = loadKitDSLJsonFilePort.loadDslJson(dslJsonPath);
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
         // TODO: validate dsl kit
 
@@ -72,7 +67,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
 
         createAssessmentKitTagKitPort.persist(param.getTagIds(), kitId);
 
-        updateKitDslPort.update(assessmentKitDsl.getId(), kitId);
+        updateKitDslPort.update(param.getKitDslId(), kitId);
 
         return kitId;
     }

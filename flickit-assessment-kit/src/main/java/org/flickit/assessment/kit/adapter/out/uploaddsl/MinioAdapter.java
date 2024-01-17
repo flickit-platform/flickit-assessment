@@ -82,7 +82,9 @@ public class MinioAdapter implements
 
     @SneakyThrows
     @Override
-    public String load(String path, String versionId) {
+    public String loadDslJson(String dslJsonFullPath) {
+        String path = dslJsonFullPath.substring(0, dslJsonFullPath.lastIndexOf(SLASH));
+        String versionId = dslJsonFullPath.substring(dslJsonFullPath.lastIndexOf(SLASH) + 1);
         String bucketName = properties.getBucketName();
 
         try {

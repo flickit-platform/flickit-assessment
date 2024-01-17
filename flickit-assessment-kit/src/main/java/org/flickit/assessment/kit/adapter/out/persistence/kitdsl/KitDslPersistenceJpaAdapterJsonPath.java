@@ -1,22 +1,22 @@
 package org.flickit.assessment.kit.adapter.out.persistence.kitdsl;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaRepository;
-import org.flickit.assessment.kit.application.domain.KitDsl;
-import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadJsonKitDslPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslJsonPathPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.KitDslMapper.toJpaEntity;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
-public class KitDslPersistenceJpaAdapter implements
+public class KitDslPersistenceJpaAdapterJsonPath implements
     CreateKitDslPort,
-    LoadJsonKitDslPort,
+    LoadDslJsonPathPort,
     UpdateKitDslPort {
 
     private final KitDslJpaRepository repository;
@@ -27,8 +27,10 @@ public class KitDslPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<KitDsl> load(Long id) {
-        return repository.findById(id).map(KitDslMapper::toDomainModel);
+    public String loadJsonPath(Long kitDslId) {
+        KitDslJpaEntity kitDslEntity = repository.findById(kitDslId)
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND));
+        return kitDslEntity.getJsonPath();
     }
 
     @Override
