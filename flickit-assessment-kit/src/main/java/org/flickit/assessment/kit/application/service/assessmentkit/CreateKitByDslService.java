@@ -12,6 +12,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslJ
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateAssessmentKitTagKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CompositeCreateKitPersister;
@@ -37,6 +38,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     private final CompositeCreateKitPersister persister;
     private final CreateAssessmentKitTagKitPort createAssessmentKitTagKitPort;
     private final UpdateKitDslPort updateKitDslPort;
+    private final GrantUserAccessToKitPort grantUserAccessToKitPort;
 
     @SneakyThrows
     @Override
@@ -68,6 +70,8 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
         createAssessmentKitTagKitPort.persist(param.getTagIds(), kitId);
 
         updateKitDslPort.update(param.getKitDslId(), kitId);
+
+        grantUserAccessToKitPort.grantUserAccess(kitId, param.getCurrentUserId());
 
         return kitId;
     }

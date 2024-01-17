@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslJ
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateAssessmentKitTagKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CompositeCreateKitPersister;
 import org.junit.jupiter.api.Test;
@@ -65,12 +66,13 @@ class CreateKitByDslServiceTest {
     private CreateAssessmentKitTagKitPort createAssessmentKitTagKitPort;
     @Mock
     private UpdateKitDslPort updateKitDslPort;
+    @Mock
+    private GrantUserAccessToKitPort grantUserAccessToKitPort;
 
     @Test
     void testCreateKitByDsl_ValidInputs_CreateAndSaveKit() {
         when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
 
-        KitDsl kitDsl = new KitDsl(KIT_DSL_ID, DSL_FILE, DSL_JSON, null, LocalDateTime.now());
         when(loadDslJsonPathPort.loadJsonPath(KIT_DSL_ID)).thenReturn(DSL_JSON);
 
         String dslContent = "{\"questionnaireModels\" : [ {\"code\" : \"CleanArchitecture\",\"index\" : 1,\"title\" : \"Clean Architecture\",\"description\" : \"desc\"}, {\"code\" : \"CodeQuality\",\"index\" : 2,    \"title\" : \"Code Quality\",\"description\" : \"desc\"} ],\"attributeModels\" : [ ],\"questionModels\" : [ ],\"subjectModels\" : [ {\"code\" : \"Software\",\"index\" : 1,\"title\" : \"Software\",\"description\" : \"desc\",\"weight\" : 0,\"questionnaireCodes\" : null}, {\"code\" : \"Team\",\"index\" : 2,\"title\" : \"Team\",\"description\" : \"desc\",\"weight\" : 0,\"questionnaireCodes\" : null} ],\"levelModels\" : [ ],\"hasError\" : false}";
@@ -85,6 +87,7 @@ class CreateKitByDslServiceTest {
 
 
         doNothing().when(updateKitDslPort).update(KIT_DSL_ID, KIT_ID);
+        when(grantUserAccessToKitPort.grantUserAccess(KIT_ID, currentUserId)).thenReturn(true);
 
         var param = new CreateKitByDslUseCase.Param(TITLE, SUMMARY, ABOUT, Boolean.FALSE, KIT_DSL_ID, EXPERT_GROUP_ID, List.of(1L), currentUserId);
         Long savedKitId = service.create(param);
