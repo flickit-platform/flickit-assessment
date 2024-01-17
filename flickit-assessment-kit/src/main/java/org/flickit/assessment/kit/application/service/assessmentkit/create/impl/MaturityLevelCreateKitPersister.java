@@ -45,30 +45,30 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
             BaseDslModel::getCode,
             l -> l.getCompetencesCodeToValueMap() != null ? l.getCompetencesCodeToValueMap() : Map.of()));
 
-        Map<String, MaturityLevel> levelCodeToPersistedLevels = new HashMap<>();
+        Map<String, Long> levelCodeToPersistedLevelId = new HashMap<>();
         dslLevels.forEach(ml -> {
-            MaturityLevel createdLevel = createMaturityLevel(ml, kitId, currentUserId);
-            levelCodeToPersistedLevels.put(createdLevel.getCode(), createdLevel);
+            Long persistedLevelId = createMaturityLevel(ml, kitId, currentUserId);
+            levelCodeToPersistedLevelId.put(ml.getCode(), persistedLevelId);
         });
 
         // create competences of new levels
         dslLevelCodeToCompetencesMap.keySet().forEach(levelCode -> {
-            MaturityLevel affectedLevel = levelCodeToPersistedLevels.get(levelCode);
+            Long affectedLevelId = levelCodeToPersistedLevelId.get(levelCode);
             Map<String, Integer> dslCompetenceCodes = dslLevelCodeToCompetencesMap.get(levelCode);
 
             dslCompetenceCodes.forEach((key, value) -> {
-                Long effectiveLevelId = levelCodeToPersistedLevels.get(key).getId();
-                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, currentUserId);
+                Long effectiveLevelId = levelCodeToPersistedLevelId.get(key);
+                createLevelCompetence(affectedLevelId, effectiveLevelId, value, currentUserId);
             });
         });
 
-        Map<String, Long> levelCodeToIdMap = levelCodeToPersistedLevels.entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getId()));
+        Map<String, Long> levelCodeToIdMap = levelCodeToPersistedLevelId.entrySet().stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         ctx.put(KEY_MATURITY_LEVELS, levelCodeToIdMap);
         log.debug("Final Levels: {}", levelCodeToIdMap);
     }
 
-    private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId, UUID currentUserId) {
+    private Long createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId, UUID currentUserId) {
         MaturityLevel newDomainLevel = new MaturityLevel(
             null,
             newLevel.getCode(),
@@ -81,14 +81,7 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
         Long persistedLevelId = createMaturityLevelPort.persist(newDomainLevel, kitId, currentUserId);
         log.debug("MaturityLevel[id={}, code={}] created.", persistedLevelId, newLevel.getCode());
 
-        return new MaturityLevel(
-            persistedLevelId,
-            newLevel.getCode(),
-            newLevel.getTitle(),
-            newLevel.getIndex(),
-            newLevel.getValue(),
-            null
-        );
+        return persistedLevelId;
     }
 
     private void createLevelCompetence(long affectedLevelId, long effectiveLevelId, int value, UUID currentUserId) {
