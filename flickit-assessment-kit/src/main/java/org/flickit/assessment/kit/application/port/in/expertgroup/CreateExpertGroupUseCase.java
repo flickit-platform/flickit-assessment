@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -40,15 +41,13 @@ public interface CreateExpertGroupUseCase {
         @Size(min = 3, message = CREATE_EXPERT_GROUP_WEBSITE_SIZE_MIN)
         @Size(max = 200, message = CREATE_EXPERT_GROUP_WEBSITE_SIZE_MAX)
         String website;
-
-        @Size(min = 3, message = CREATE_EXPERT_GROUP_PICTURE_SIZE_MIN)
-        @Size(max = 100, message = CREATE_EXPERT_GROUP_PICTURE_SIZE_MAX)
-        String picture;
+        @NotNull
+        MultipartFile picture;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(String title, String bio, String about, String website, String picture, UUID currentUserId) {
+        public Param(String title, String bio, String about, String website, MultipartFile picture, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
             this.bio = bio;
             this.about = about;

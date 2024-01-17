@@ -6,14 +6,11 @@ import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGr
 import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
-@Validated
 @RestController
 @RequiredArgsConstructor
 public class CreateExpertGroupRestController {
@@ -22,19 +19,25 @@ public class CreateExpertGroupRestController {
     private final UserContext userContext;
 
     @PostMapping("/expert-groups")
-    public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(@RequestBody CreateExpertGroupRequestDto request) {
+    public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(
+        @RequestParam("title") String title, @RequestParam("bio") String bio, @RequestParam("about") String about,
+        @RequestParam("picture") MultipartFile picture, @RequestParam("website") String website) {
+
         UUID currentUserId = userContext.getUser().id();
-        CreateExpertGroupResponseDto response = toResponseDto(useCase.createExpertGroup(toParam(request, currentUserId)));
+        CreateExpertGroupResponseDto response =
+            toResponseDto(useCase.createExpertGroup(toParam(title,bio,about,website,picture,currentUserId)));
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    private Param toParam(CreateExpertGroupRequestDto requestDto, UUID currentUserId) {
+    private Param toParam(String title, String bio,String about, String website, MultipartFile picture, UUID currentUserId) {
+
         return new CreateExpertGroupUseCase.Param(
-            requestDto.title(),
-            requestDto.bio(),
-            requestDto.about(),
-            requestDto.website(),
-            requestDto.picture(),
+            title,
+            bio,
+            about,
+            website,
+            picture,
             currentUserId
         );
     }

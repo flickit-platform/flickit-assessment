@@ -21,7 +21,7 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
     @Override
     public Result createExpertGroup(Param param) {
-        var uploadResult = uploadExpertGroupPicturePort.upload(null);
+        var uploadResult = uploadExpertGroupPicturePort.upload(param.getPicture());
         long expertGroupId = createExpertGroupPort.persist(toCreateExpertGroupParam(param,uploadResult.pictureFilePath()));
 
         createOwnerAccessToGroup(expertGroupId, param.getCurrentUserId());

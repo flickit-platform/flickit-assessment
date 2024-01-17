@@ -1,41 +1,58 @@
 package org.flickit.assessment.kit.adapter.out.uploadfile.expertgroup;
 
 import io.minio.*;
+import io.minio.messages.VersioningConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.kit.application.port.out.expertgroup.UploadExpertGroupPicturePort;
+import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
 
 
 @Component
 @AllArgsConstructor
 public class ExpertGroupUploadFileAdapter implements
     UploadExpertGroupPicturePort {
+
+    private final MinioClient minioClient;
+    private final MinioConfigProperties properties;
     @Override
     @SneakyThrows
     public Result upload(MultipartFile pictureFile){
-            MinioClient minioClient =
-                MinioClient.builder()
-                    .endpoint("http://127.0.0.1:9000")
-                    .credentials("minioadmin", "minioadmin")
-                    .build();
-            boolean found =
-                minioClient.bucketExists(BucketExistsArgs.builder().bucket("asiatrip").build());
-            if (!found) {
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket("asiatrip").build());
-            } else {
-                System.out.println("Bucket 'asiatrip' already exists.");
-            }
+        createBucket(properties.getBucketName());
+        setBucketVersioning(properties.getBucketName());
 
-            ObjectWriteResponse ifo = minioClient.uploadObject(
-                UploadObjectArgs.builder()
-                    .bucket("asiatrip")
-                    .object("asiaphotos-2015.zip")
-                    .filename("/home/maziyar/Documents/edqp.pdf")
-                    .build());
-            String fullPath = "http://127.0.0.1:9000" + "/" + ifo.bucket() + "/" + ifo.object();
+        String uploadedFilePath = writeFile(properties.getBucketName(), pictureFile.getOriginalFilename(), pictureFile.getInputStream());
+        return new Result(uploadedFilePath);
+    }
 
-        return new Result(fullPath);
+    @SneakyThrows
+    private void createBucket(String bucketName) {
+        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
+            minioClient.makeBucket(MakeBucketArgs.builder()
+                .bucket(bucketName)
+                .build());
+        }
+    }
+
+    @SneakyThrows
+    private String writeFile(String bucketName, String pictureName, InputStream pictureStream) {
+        var result = minioClient.putObject(PutObjectArgs.builder()
+                .bucket(bucketName)
+                .object(pictureName)
+                .stream(pictureStream, pictureStream.available(), -1)
+                .build());
+        return properties.getUrl()+"/"+result.bucket()+"/"+result.object();
+    }
+
+    @SneakyThrows
+    private void setBucketVersioning(String bucketName) {
+        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
+            .bucket(bucketName)
+            .config(new VersioningConfiguration(VersioningConfiguration.Status.ENABLED, false))
+            .build());
     }
 }
