@@ -6,9 +6,6 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionImpactMapper {
     public static QuestionImpact mapToDomainModel(QuestionImpactJpaEntity entity) {
@@ -17,11 +14,15 @@ public class QuestionImpactMapper {
             entity.getAttributeId(),
             entity.getMaturityLevel().getId(),
             entity.getWeight(),
-            entity.getQuestionId()
+            entity.getQuestionId(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime(),
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy()
         );
     }
 
-    public static QuestionImpactJpaEntity mapToJpaEntityToPersist(QuestionImpact impact, MaturityLevelJpaEntity maturityLevelJpaEntity, UUID createdBy) {
+    public static QuestionImpactJpaEntity mapToJpaEntityToPersist(QuestionImpact impact, MaturityLevelJpaEntity maturityLevelJpaEntity) {
         return new QuestionImpactJpaEntity(
             null,
             impact.getWeight(),
@@ -29,10 +30,10 @@ public class QuestionImpactMapper {
             impact.getAttributeId(),
             maturityLevelJpaEntity,
             null,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            createdBy,
-            createdBy
+            impact.getCreationTime(),
+            impact.getLastModificationTime(),
+            impact.getCreatedBy(),
+            impact.getLastModifiedBy()
         );
     }
 }

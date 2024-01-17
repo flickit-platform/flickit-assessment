@@ -154,9 +154,13 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             attributes.get(dslQuestionImpact.getAttributeCode()),
             maturityLevels.get(dslQuestionImpact.getMaturityLevel().getTitle()),
             dslQuestionImpact.getWeight(),
-            questionId
+            questionId,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            currentUserId,
+            currentUserId
         );
-        Long impactId = createQuestionImpactPort.persist(newQuestionImpact, currentUserId);
+        Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
         log.debug("QuestionImpact[impactId={}, questionId={}] created.", impactId, questionId);
 
         Map<Integer, Long> optionIndexToIdMap = loadAnswerOptionsByQuestionPort.loadByQuestionId(questionId).stream()

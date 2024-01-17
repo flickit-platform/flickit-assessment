@@ -10,8 +10,6 @@ import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQues
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 import static org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper.mapToJpaEntityToPersist;
 
 @Component
@@ -25,9 +23,9 @@ public class QuestionImpactPersistenceJpaAdapter implements
     private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
-    public Long persist(QuestionImpact impact, UUID createdBy) {
+    public Long persist(QuestionImpact impact) {
         MaturityLevelJpaEntity maturityLevelJpaEntity = maturityLevelRepository.getReferenceById(impact.getMaturityLevelId());
-        return repository.save(mapToJpaEntityToPersist(impact, maturityLevelJpaEntity, createdBy)).getId();
+        return repository.save(mapToJpaEntityToPersist(impact, maturityLevelJpaEntity)).getId();
     }
 
     @Override
