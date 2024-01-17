@@ -10,6 +10,8 @@ import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.Load
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 @Component
@@ -39,5 +41,14 @@ public class SubjectQuestionnairePersistenceJpaAdapter implements
             subjectId,
             questionnaireId));
         return entity.getId();
+    }
+
+    @Override
+    public void persistAll(Map<Long, Set<Long>> subjectQuestionnaireIdsMap) {
+        List<SubjectQuestionnaireJpaEntity> entities = subjectQuestionnaireIdsMap.keySet().stream()
+            .flatMap(questionnaireId -> subjectQuestionnaireIdsMap.get(questionnaireId).stream()
+                .map(subjectId -> SubjectQuestionnaireMapper.mapToJpaEntity(questionnaireId, subjectId)))
+            .toList();
+        repository.saveAll(entities);
     }
 }

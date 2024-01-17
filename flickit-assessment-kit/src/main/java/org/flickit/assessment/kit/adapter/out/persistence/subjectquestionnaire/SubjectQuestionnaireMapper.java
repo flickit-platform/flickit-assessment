@@ -14,4 +14,12 @@ public class SubjectQuestionnaireMapper {
             entity.getSubjectId(),
             entity.getQuestionnaireId());
     }
+
+    public static SubjectQuestionnaireJpaEntity mapToJpaEntity(Long questionnaireId, Long subjectId) {
+        return new SubjectQuestionnaireJpaEntity(
+            null,
+            subjectId,
+            questionnaireId
+        );
+    }
 }

@@ -98,7 +98,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
 
         dslQuestion.getQuestionImpacts().forEach(impact -> {
             Long attributeId = attributes.get(impact.getAttributeCode());
-            Long maturityLevelId = maturityLevels.get(impact.getMaturityLevel().getCode());
+            Long maturityLevelId = maturityLevels.get(impact.getMaturityLevel().getTitle());
             createImpact(impact, questionId, attributeId, maturityLevelId, optionIndexToIdMap, currentUserId);
         });
     }
