@@ -41,7 +41,7 @@ public interface CreateExpertGroupUseCase {
         @Size(min = 3, message = CREATE_EXPERT_GROUP_WEBSITE_SIZE_MIN)
         @Size(max = 200, message = CREATE_EXPERT_GROUP_WEBSITE_SIZE_MAX)
         String website;
-        @NotNull
+
         MultipartFile picture;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

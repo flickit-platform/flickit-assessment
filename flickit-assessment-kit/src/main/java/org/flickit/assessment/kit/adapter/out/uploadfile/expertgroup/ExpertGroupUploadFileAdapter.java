@@ -21,12 +21,11 @@ public class ExpertGroupUploadFileAdapter implements
     private final MinioConfigProperties properties;
     @Override
     @SneakyThrows
-    public Result upload(MultipartFile pictureFile){
+    public String upload(MultipartFile pictureFile){
         createBucket(properties.getBucketName());
         setBucketVersioning(properties.getBucketName());
 
-        String uploadedFilePath = writeFile(properties.getBucketName(), pictureFile.getOriginalFilename(), pictureFile.getInputStream());
-        return new Result(uploadedFilePath);
+        return writeFile(properties.getBucketName(), pictureFile.getOriginalFilename(), pictureFile.getInputStream());
     }
 
     @SneakyThrows

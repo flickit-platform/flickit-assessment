@@ -20,8 +20,7 @@ public class CreateExpertGroupRestController {
 
     @PostMapping("/expert-groups")
     public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(
-        @RequestParam("title") String title, @RequestParam("bio") String bio, @RequestParam("about") String about,
-        @RequestParam("picture") MultipartFile picture, @RequestParam("website") String website) {
+        @ModelAttribute CreateExpertGroupRequestDto request) {
 
         UUID currentUserId = userContext.getUser().id();
         CreateExpertGroupResponseDto response =
@@ -30,14 +29,15 @@ public class CreateExpertGroupRestController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    private Param toParam(String title, String bio,String about, String website, MultipartFile picture, UUID currentUserId) {
+    private Param toParam(CreateExpertGroupRequestDto request, UUID currentUserId) {
+        String website = request.website().trim();
 
         return new CreateExpertGroupUseCase.Param(
-            title,
-            bio,
-            about,
-            website,
-            picture,
+            request.title(),
+            request.bio(),
+            request.about(),
+            website.isEmpty() ? null : website,
+            request.picture().getOriginalFilename().isEmpty() ? null : request.picture(),
             currentUserId
         );
     }
