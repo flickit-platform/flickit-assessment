@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, Long> {
 
@@ -28,5 +29,28 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 @Param("hint") String hint,
                 @Param("mayNotBeApplicable") Boolean mayNotBeApplicable,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Query("""
+           SELECT q
+           FROM QuestionJpaEntity q
+           JOIN QuestionImpactJpaEntity qi
+           ON q.id = qi.questionId
+           JOIN AnswerOptionJpaEntity ao
+           ON ao.questionId = q.id
+           JOIN AnswerJpaEntity a
+           ON a.answerOptionId  = ao.id
+           JOIN AssessmentResultJpaEntity ar
+           ON a.assessmentResult.id = ar.id
+           JOIN AssessmentJpaEntity  asm
+           ON ar.assessment.id = asm.id
+           WHERE qi.attributeId =:attributeId
+           AND qi.maturityLevel.id =:maturityLevelId
+           AND asm.id =:assessmentId
+           AND ao.index NOT IN (SELECT max(aoe.index) FROM AnswerOptionJpaEntity aoe where aoe.questionId =  q.id)
+            """)
+    List<QuestionView> findAssessedQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
+
+
+
 
 }
