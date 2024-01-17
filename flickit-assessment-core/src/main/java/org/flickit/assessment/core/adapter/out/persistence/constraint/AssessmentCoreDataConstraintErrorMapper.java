@@ -8,7 +8,6 @@ import java.util.Map;
 import static java.util.Map.entry;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DUPLICATE_TITLE;
 
 @Component
 public class AssessmentCoreDataConstraintErrorMapper implements DataConstraintErrorMapper {
