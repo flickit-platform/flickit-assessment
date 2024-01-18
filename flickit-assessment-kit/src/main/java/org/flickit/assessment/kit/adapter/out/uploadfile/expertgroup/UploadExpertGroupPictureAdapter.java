@@ -14,7 +14,7 @@ import java.io.InputStream;
 
 @Component
 @AllArgsConstructor
-public class ExpertGroupUploadFileAdapter implements
+public class UploadExpertGroupPictureAdapter implements
     UploadExpertGroupPicturePort {
 
     private final MinioClient minioClient;
