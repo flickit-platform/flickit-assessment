@@ -33,7 +33,7 @@ public class CreateExpertGroupRestController {
     }
 
     private Param toParam(CreateExpertGroupRequestDto request, UUID currentUserId) {
-        String website = (request.website() != null) ? request.website().trim() : null;
+        String website = (request.website() != null) ? request.website().strip() : null;
 
         MultipartFile picture = request.picture();
         String fileName;
