@@ -25,7 +25,7 @@ public class CreateExpertGroupRestController {
 
         UUID currentUserId = userContext.getUser().id();
         CreateExpertGroupResponseDto response =
-            toResponseDto(useCase.createExpertGroup(toParam(title,bio,about,website,picture,currentUserId)));
+            toResponseDto(useCase.createExpertGroup(toParam(request, currentUserId)));
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -37,8 +37,8 @@ public class CreateExpertGroupRestController {
             request.title(),
             request.bio(),
             request.about(),
-            website.isEmpty() ? null : website,
             request.picture().getOriginalFilename().isEmpty() ? null : request.picture(),
+            website.isEmpty() ? null : website,
             currentUserId
         );
     }
