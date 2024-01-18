@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -75,7 +76,7 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
         questionnairesCodeToIdMap.put(cleanArchitecture.getCode(), cleanArchitecture.getId());
         ctx.put(KEY_QUESTIONNAIRES, questionnairesCodeToIdMap);
 
-        var result = persister.persist(ctx, savedKit, dslKit);
+        var result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         assertFalse(result.shouldInvalidateCalcResult());
         verifyNoInteractions(
@@ -131,7 +132,7 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
         questionnairesCodeToIdMap.put(teamLearning.getCode(), teamLearning.getId());
         ctx.put(KEY_QUESTIONNAIRES, questionnairesCodeToIdMap);
 
-        var result = persister.persist(ctx, savedKit, dslKit);
+        var result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
         assertFalse(result.shouldInvalidateCalcResult());
 
         verify(deletePort, times(1)).delete(subjectQuestionnaire2.getId());
