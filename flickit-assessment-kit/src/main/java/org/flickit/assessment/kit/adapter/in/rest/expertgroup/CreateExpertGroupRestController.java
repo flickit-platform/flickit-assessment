@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -26,7 +27,7 @@ public class CreateExpertGroupRestController {
 
         UUID currentUserId = userContext.getUser().id();
         CreateExpertGroupResponseDto response =
-            toResponseDto(useCase.createExpertGroup(toParam(request, currentUserId)));
+            toResponseDto(useCase.createExpertGroup(toParam(request, UUID.fromString("428f8bc2-f47f-4190-b620-3dad8bd8a20b"))));
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -35,7 +36,13 @@ public class CreateExpertGroupRestController {
         String website = (request.website() != null) ? request.website().trim() : null;
 
         MultipartFile picture = request.picture();
-        picture = (picture != null && picture.getOriginalFilename() != null && !picture.getOriginalFilename().isEmpty()) ? picture : null;
+        String fileName;
+        try {
+            fileName = picture.getOriginalFilename();
+            picture = !Objects.requireNonNull(fileName).isEmpty() ? picture : null;
+        } catch (NullPointerException e) {
+            picture = null;
+        }
 
         return new CreateExpertGroupUseCase.Param(
             request.title(),
