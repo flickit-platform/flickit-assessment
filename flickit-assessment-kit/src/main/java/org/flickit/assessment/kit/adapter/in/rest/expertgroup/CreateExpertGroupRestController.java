@@ -6,8 +6,9 @@ import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGr
 import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
