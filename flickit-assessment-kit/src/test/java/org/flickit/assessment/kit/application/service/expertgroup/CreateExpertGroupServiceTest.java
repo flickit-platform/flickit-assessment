@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class CreateExpertGroupServiceTest {
 
@@ -52,7 +53,7 @@ class CreateExpertGroupServiceTest {
     private final Param param = new Param("Expert Group Name",
         "Expert Group Bio",
         "Expert Group About",
-        "http://www.example.com",
         null,
+        "http://www.example.com",
         currentUserId);
 }

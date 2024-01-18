@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
     private final CreateExpertGroupPort createExpertGroupPort;
@@ -32,16 +32,6 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
         return new Result(expertGroupId);
     }
 
-    private void createOwnerAccessToGroup(Long expertGroupId, UUID ownerId) {
-        CreateExpertGroupAccessPort.Param param = new CreateExpertGroupAccessPort.Param(
-            expertGroupId,
-            null,
-            null,
-            ownerId
-        );
-        createExpertGroupAccessPort.persist(param);
-    }
-
     private CreateExpertGroupPort.Param toCreateExpertGroupParam(Param param, String pictureFilePath) {
         return new CreateExpertGroupPort.Param(
             param.getTitle(),
@@ -51,5 +41,15 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
             param.getWebsite(),
             param.getCurrentUserId()
         );
+    }
+
+    private void createOwnerAccessToGroup(Long expertGroupId, UUID ownerId) {
+        CreateExpertGroupAccessPort.Param param = new CreateExpertGroupAccessPort.Param(
+            expertGroupId,
+            null,
+            null,
+            ownerId
+        );
+        createExpertGroupAccessPort.persist(param);
     }
 }
