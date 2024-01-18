@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.application.domain.AssessmentKit.generateSlugCode;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 
 @Slf4j
@@ -47,12 +48,10 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
 
         String dslJsonPath = loadDslJsonPathPort.loadJsonPath(param.getKitDslId());
 
-
         String dslContent = loadKitDSLJsonFilePort.loadDslJson(dslJsonPath);
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
-        // TODO: validate dsl kit
 
-        String code = param.getTitle().toLowerCase().replace(' ', '-');
+        String code = generateSlugCode(param.getTitle());
         var createKitParam = new CreateAssessmentKitPort.Param(
             code,
             param.getTitle(),
@@ -79,9 +78,8 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
         UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
             .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
-        if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
+        if (!Objects.equals(expertGroupOwnerId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        }
     }
 
 }
