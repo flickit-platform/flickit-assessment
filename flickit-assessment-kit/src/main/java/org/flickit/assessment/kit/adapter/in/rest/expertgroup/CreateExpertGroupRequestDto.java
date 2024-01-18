@@ -5,6 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 public record CreateExpertGroupRequestDto(String title,
                                           String bio,
                                           String about,
-                                          MultipartFile picture,
-                                          String website) {
+                                          String website,
+                                          MultipartFile picture) {
 }

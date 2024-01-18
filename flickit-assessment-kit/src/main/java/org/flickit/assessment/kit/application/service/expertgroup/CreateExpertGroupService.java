@@ -27,7 +27,6 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
             pictureFilePath = uploadExpertGroupPicturePort.upload(param.getPicture());
 
         long expertGroupId = createExpertGroupPort.persist(toCreateExpertGroupParam(param, pictureFilePath));
-
         createOwnerAccessToGroup(expertGroupId, param.getCurrentUserId());
 
         return new Result(expertGroupId);
@@ -46,10 +45,10 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
     private CreateExpertGroupPort.Param toCreateExpertGroupParam(Param param, String pictureFilePath) {
         return new CreateExpertGroupPort.Param(
             param.getTitle(),
+            param.getBio(),
             param.getAbout(),
             pictureFilePath,
             param.getWebsite(),
-            param.getBio(),
             param.getCurrentUserId()
         );
     }

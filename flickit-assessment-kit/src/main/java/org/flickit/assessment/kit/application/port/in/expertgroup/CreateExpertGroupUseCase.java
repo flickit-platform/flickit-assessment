@@ -47,12 +47,12 @@ public interface CreateExpertGroupUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(String title, String bio, String about, String website, MultipartFile picture, UUID currentUserId) {
+        public Param(String title, String bio, String about, MultipartFile picture, String website, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
             this.bio = bio;
             this.about = about;
-            this.website = website;
             this.picture = picture;
+            this.website = website;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
