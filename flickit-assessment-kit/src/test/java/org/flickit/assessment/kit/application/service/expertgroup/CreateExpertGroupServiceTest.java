@@ -52,7 +52,7 @@ class CreateExpertGroupServiceTest {
     private final Param param = new Param("Expert Group Name",
         "Expert Group Bio",
         "Expert Group About",
-        "Expert Group Website",
-        "Expert Group About picture",
+        "http://www.example.com",
+        null,
         currentUserId);
 }

@@ -19,9 +19,10 @@ public class ExpertGroupUploadFileAdapter implements
 
     private final MinioClient minioClient;
     private final MinioConfigProperties properties;
+
     @Override
     @SneakyThrows
-    public String upload(MultipartFile pictureFile){
+    public String upload(MultipartFile pictureFile) {
         createBucket(properties.getBucketName());
         setBucketVersioning(properties.getBucketName());
 
@@ -40,11 +41,11 @@ public class ExpertGroupUploadFileAdapter implements
     @SneakyThrows
     private String writeFile(String bucketName, String pictureName, InputStream pictureStream) {
         var result = minioClient.putObject(PutObjectArgs.builder()
-                .bucket(bucketName)
-                .object(pictureName)
-                .stream(pictureStream, pictureStream.available(), -1)
-                .build());
-        return properties.getUrl()+"/"+result.bucket()+"/"+result.object();
+            .bucket(bucketName)
+            .object(pictureName)
+            .stream(pictureStream, pictureStream.available(), -1)
+            .build());
+        return properties.getUrl() + "/" + result.bucket() + "/" + result.object();
     }
 
     @SneakyThrows
