@@ -8,10 +8,10 @@ public interface UpdateExpertGroupPort {
 
     record Param(Long id,
                  String title,
+                 String bio,
                  String about,
                  String picture,
                  String website,
-                 String bio,
                  UUID owner_id) {
     }
 }

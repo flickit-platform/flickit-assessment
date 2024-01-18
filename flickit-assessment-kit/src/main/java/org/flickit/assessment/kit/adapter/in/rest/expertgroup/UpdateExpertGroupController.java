@@ -6,10 +6,7 @@ import org.flickit.assessment.kit.application.port.in.expertgroup.UpdateExpertGr
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -23,7 +20,7 @@ public class UpdateExpertGroupController {
 
     @PutMapping("/expert-groups/{id}")
     public ResponseEntity<Void> updateExpertGroupList(@PathVariable long id,
-                                                      @RequestBody UpdateExpertGroupRequestDto request) {
+                                                      @ModelAttribute UpdateExpertGroupRequestDto request) {
         var currentUserId = userContext.getUser().id();
         useCase.updateExpertGroup(toParam(id, request, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
@@ -37,8 +34,8 @@ public class UpdateExpertGroupController {
             requestDto.title(),
             requestDto.bio(),
             requestDto.about(),
-            requestDto.website(),
             requestDto.picture(),
+            requestDto.website(),
             currentUserId
         );
     }
