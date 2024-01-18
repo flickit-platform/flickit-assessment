@@ -14,7 +14,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DS
 
 @Component
 @RequiredArgsConstructor
-public class KitDslPersistenceJpaAdapterJsonPath implements
+public class KitDslPersistenceJpaAdapter implements
     CreateKitDslPort,
     LoadDslJsonPathPort,
     UpdateKitDslPort {

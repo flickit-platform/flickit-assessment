@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.flickit.assessment.kit.adapter.out.persistence.subjectquestionnaire.SubjectQuestionnaireMapper.mapToJpaEntity;
+
 
 @Component
 @RequiredArgsConstructor
@@ -36,18 +38,14 @@ public class SubjectQuestionnairePersistenceJpaAdapter implements
 
     @Override
     public long persist(long subjectId, long questionnaireId) {
-        SubjectQuestionnaireJpaEntity entity = repository.save(new SubjectQuestionnaireJpaEntity(
-            null,
-            subjectId,
-            questionnaireId));
-        return entity.getId();
+        return  repository.save(mapToJpaEntity(subjectId, questionnaireId)).getId();
     }
 
     @Override
-    public void persistAll(Map<Long, Set<Long>> subjectQuestionnaireIdsMap) {
-        List<SubjectQuestionnaireJpaEntity> entities = subjectQuestionnaireIdsMap.keySet().stream()
-            .flatMap(questionnaireId -> subjectQuestionnaireIdsMap.get(questionnaireId).stream()
-                .map(subjectId -> SubjectQuestionnaireMapper.mapToJpaEntity(questionnaireId, subjectId)))
+    public void persistAll(Map<Long, Set<Long>> questionnaireIdToSubjectIdsMap) {
+        List<SubjectQuestionnaireJpaEntity> entities = questionnaireIdToSubjectIdsMap.keySet().stream()
+            .flatMap(questionnaireId -> questionnaireIdToSubjectIdsMap.get(questionnaireId).stream()
+                .map(subjectId -> mapToJpaEntity(subjectId, questionnaireId)))
             .toList();
         repository.saveAll(entities);
     }

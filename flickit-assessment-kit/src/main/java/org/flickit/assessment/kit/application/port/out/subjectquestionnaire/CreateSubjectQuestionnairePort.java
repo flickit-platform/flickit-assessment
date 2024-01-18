@@ -7,5 +7,5 @@ public interface CreateSubjectQuestionnairePort {
 
     long persist(long subjectId, long questionnaireId);
 
-    void persistAll(Map<Long, Set<Long>> subjectQuestionnaireIdsMap);
+    void persistAll(Map<Long, Set<Long>> questionnaireIdToSubjectIdsMap);
 }
