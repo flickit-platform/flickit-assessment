@@ -27,7 +27,7 @@ public class CreateExpertGroupRestController {
 
         UUID currentUserId = userContext.getUser().id();
         CreateExpertGroupResponseDto response =
-            toResponseDto(useCase.createExpertGroup(toParam(request, UUID.fromString("428f8bc2-f47f-4190-b620-3dad8bd8a20b"))));
+            toResponseDto(useCase.createExpertGroup(toParam(request, currentUserId)));
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
