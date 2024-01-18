@@ -29,10 +29,10 @@ public class ExpertGroupMapper {
         return new ExpertGroupJpaEntity(
             null,
             param.title(),
+            param.bio(),
             param.about(),
             param.picture(),
             param.website(),
-            param.bio(),
             param.currentUserId()
         );
     }

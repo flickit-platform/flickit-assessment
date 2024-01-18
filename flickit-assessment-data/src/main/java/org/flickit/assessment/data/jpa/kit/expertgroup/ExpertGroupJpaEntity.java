@@ -26,6 +26,9 @@ public class ExpertGroupJpaEntity {
     @Column(name = "name", length = 100, unique = true, nullable = false)
     private String title;
 
+    @Column(name = "bio", length = 200, nullable = false)
+    private String bio;
+
     @Column(name = "about", nullable = false, columnDefinition = "TEXT")
     private String about;
 
@@ -34,9 +37,6 @@ public class ExpertGroupJpaEntity {
 
     @Column(name = "website", length = 200)
     private String website;
-
-    @Column(name = "bio", length = 200, nullable = false)
-    private String bio;
 
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
