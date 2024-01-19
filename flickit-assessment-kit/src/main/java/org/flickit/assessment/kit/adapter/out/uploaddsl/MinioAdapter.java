@@ -6,7 +6,7 @@ import io.minio.messages.VersioningConfiguration;
 import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.NotSuchFileUploadedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.config.MinioConfigProperties;
@@ -94,7 +94,7 @@ public class MinioAdapter implements
                 .versionId(versionId)
                 .build());
         } catch (ErrorResponseException e) {
-            throw new NotSuchFileUploadedException(CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND);
+            throw new ResourceNotFoundException(CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND);
         }
 
         InputStream stream = minioClient

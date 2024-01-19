@@ -39,7 +39,7 @@ public interface CreateKitByDslUseCase {
         @NotNull(message = CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL)
         Boolean isPrivate;
 
-        @NotNull(message = CREATE_KIT_BY_DSL_KIT_DSL_JSON_ID_NOT_NULL)
+        @NotNull(message = CREATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL)
         Long kitDslId;
 
         @NotNull(message = CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL)

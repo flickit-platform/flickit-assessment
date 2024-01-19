@@ -50,7 +50,7 @@ public class ErrorMessageKey {
     public static final String UPLOAD_KIT_DSL_KIT_NOT_NULL = "upload-kit.dsl-file.notNull";
     public static final String UPLOAD_KIT_DSL_EXPERT_GROUP_ID_NOT_NULL = "upload-kit.expert-group-id.notNull";
 
-    public static final String CREATE_KIT_BY_DSL_KIT_DSL_JSON_ID_NOT_NULL = "create-kit-by-dsl.kit-dsl-id.notNull";
+    public static final String CREATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "create-kit-by-dsl.kit-dsl-id.notNull";
     public static final String CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND = "create-kit-by-dsl.kit-dsl.notFound";
     public static final String CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND = "create-kit-by-dsl.kit-dsl-file.notFound";
     public static final String CREATE_KIT_BY_DSL_TITLE_NOT_NULL = "create-kit-by-dsl.title.notNull";

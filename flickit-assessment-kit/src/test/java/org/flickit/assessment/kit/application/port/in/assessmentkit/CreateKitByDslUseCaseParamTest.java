@@ -36,7 +36,7 @@ class CreateKitByDslUseCaseParamTest {
     void testCreateKitByDsl_kitDslIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateKitByDslUseCase.Param(TITLE, SUMMARY, ABOUT, IS_PRIVATE, null, EXPERT_GROUP_ID, TAG_IDS, CURRENT_USER_ID));
-        assertThat(throwable).hasMessage("kitDslId: " + CREATE_KIT_BY_DSL_KIT_DSL_JSON_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitDslId: " + CREATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL);
     }
 
     @Test
