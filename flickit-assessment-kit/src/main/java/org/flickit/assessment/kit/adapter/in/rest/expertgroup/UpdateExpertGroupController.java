@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Validated
@@ -27,15 +29,25 @@ public class UpdateExpertGroupController {
     }
 
     private UpdateExpertGroupUseCase.Param toParam(long id,
-                                                   UpdateExpertGroupRequestDto requestDto,
+                                                   UpdateExpertGroupRequestDto request,
                                                    UUID currentUserId) {
+        String website = (request.website() != null && !request.website().isEmpty()) ? request.website().strip() : null;
+        MultipartFile picture = request.picture();
+        String fileName;
+        try {
+            fileName = picture.getOriginalFilename();
+            picture = !Objects.requireNonNull(fileName).isEmpty() ? picture : null;
+        } catch (NullPointerException e) {
+            picture = null;
+        }
+
         return new UpdateExpertGroupUseCase.Param(
             id,
-            requestDto.title(),
-            requestDto.bio(),
-            requestDto.about(),
-            requestDto.picture(),
-            requestDto.website(),
+            request.title(),
+            request.bio(),
+            request.about(),
+            picture,
+            website,
             currentUserId
         );
     }

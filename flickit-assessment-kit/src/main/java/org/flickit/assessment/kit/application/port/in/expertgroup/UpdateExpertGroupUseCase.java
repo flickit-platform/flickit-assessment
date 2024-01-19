@@ -41,7 +41,6 @@ public interface UpdateExpertGroupUseCase {
 
         MultipartFile picture;
 
-        @NotBlank(message = UPDATE_EXPERT_GROUP_WEBSITE_NOT_BLANK)
         @Size(min = 3, message = UPDATE_EXPERT_GROUP_WEBSITE_SIZE_MIN)
         @Size(max = 200, message = UPDATE_EXPERT_GROUP_WEBSITE_SIZE_MAX)
         String website;

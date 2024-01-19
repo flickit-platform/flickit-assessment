@@ -104,7 +104,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
                 kitEntity.getTitle(),
                 new GetKitMinimalInfoUseCase.MinimalExpertGroup(
                         expertGroupEntity.getId(),
-                        expertGroupEntity.getName()
+                        expertGroupEntity.getTitle()
                 )
         );
     }
