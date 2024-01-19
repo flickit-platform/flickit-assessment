@@ -49,8 +49,7 @@ class UpdateExpertGroupServiceTest {
 
     @Test
     void testUpdateExpertGroup_InvalidExpertGroupId_ThrowsResourceNotFoundException() {
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.empty());
-        when(checkExpertGroupIdPort.existsById(expertGroupId)).thenReturn(true);
+        when(checkExpertGroupIdPort.existsById(expertGroupId)).thenReturn(false);
         assertThrows(ResourceNotFoundException.class, () -> service.updateExpertGroup(param));
     }
 
