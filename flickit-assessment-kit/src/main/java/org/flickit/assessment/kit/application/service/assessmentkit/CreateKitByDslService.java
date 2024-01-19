@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -20,6 +19,7 @@ import org.flickit.assessment.kit.application.service.assessmentkit.create.Compo
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -40,9 +40,9 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     private final CompositeCreateKitPersister persister;
     private final CreateKitTagRelationPort createKitTagRelationPort;
     private final UpdateKitDslPort updateKitDslPort;
+    private final LoadExpertGroupMemberIdsPort loadExpertGroupMemberIdsPort;
     private final GrantUserAccessToKitPort grantUserAccessToKitPort;
 
-    @SneakyThrows
     @Override
     public Long create(CreateKitByDslUseCase.Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
@@ -71,7 +71,11 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
 
         updateKitDslPort.update(param.getKitDslId(), kitId);
 
-        grantUserAccessToKitPort.grantUserAccess(kitId, param.getCurrentUserId());
+        List<UUID> expertGroupMemberIds = loadExpertGroupMemberIdsPort.loadMemberIds(param.getExpertGroupId())
+            .stream()
+            .map(LoadExpertGroupMemberIdsPort.Result::userId)
+            .toList();
+        grantUserAccessToKitPort.grantUsersAccess(kitId, expertGroupMemberIds);
 
         return kitId;
     }

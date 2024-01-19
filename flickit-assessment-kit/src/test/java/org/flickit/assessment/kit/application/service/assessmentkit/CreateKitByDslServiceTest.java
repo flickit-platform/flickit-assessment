@@ -9,6 +9,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAsses
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslJsonPathPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateKitTagRelationPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
@@ -68,6 +69,8 @@ class CreateKitByDslServiceTest {
     private UpdateKitDslPort updateKitDslPort;
     @Mock
     private GrantUserAccessToKitPort grantUserAccessToKitPort;
+    @Mock
+    private LoadExpertGroupMemberIdsPort loadExpertGroupMemberIdsPort;
 
     @Test
     void testCreateKitByDsl_ValidInputs_CreateAndSaveKit() {
@@ -85,9 +88,15 @@ class CreateKitByDslServiceTest {
 
         doNothing().when(persister).persist(any(), eq(KIT_ID), eq(currentUserId));
 
-
         doNothing().when(updateKitDslPort).update(KIT_DSL_ID, KIT_ID);
-        when(grantUserAccessToKitPort.grantUserAccess(KIT_ID, currentUserId)).thenReturn(true);
+
+        UUID expertGroupMemberId = UUID.randomUUID();
+        List<LoadExpertGroupMemberIdsPort.Result> expertGroupMembers = List.of(
+            new LoadExpertGroupMemberIdsPort.Result(currentUserId),
+            new LoadExpertGroupMemberIdsPort.Result(expertGroupMemberId));
+        List<UUID> expertGroupMemberIds = List.of(currentUserId, expertGroupMemberId);
+        when(loadExpertGroupMemberIdsPort.loadMemberIds(EXPERT_GROUP_ID)).thenReturn(expertGroupMembers);
+        doNothing().when(grantUserAccessToKitPort).grantUsersAccess(KIT_ID, expertGroupMemberIds);
 
         var param = new CreateKitByDslUseCase.Param(TITLE, SUMMARY, ABOUT, Boolean.FALSE, KIT_DSL_ID, EXPERT_GROUP_ID, List.of(1L), currentUserId);
         Long savedKitId = service.create(param);
