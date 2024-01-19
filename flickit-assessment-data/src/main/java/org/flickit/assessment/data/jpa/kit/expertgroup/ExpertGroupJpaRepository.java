@@ -3,11 +3,11 @@ package org.flickit.assessment.data.jpa.kit.expertgroup;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
@@ -49,6 +49,20 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         """)
     List<String> findMembersByExpertId(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
 
-    @Query("SELECT e.id FROM ExpertGroupJpaEntity as e where e.id = :id")
-    Optional<Long> findExpertGroupId(@Param("id") Long id);
+    @Modifying
+    @Query("""
+            UPDATE ExpertGroupJpaEntity a SET
+                a.name = :title,
+                a.bio = :bio,
+                a.about = :about,
+                a.picture = :picture,
+                a.website = :website
+            WHERE a.id = :id
+        """)
+    void update(@Param("id") long id,
+                @Param("title") String title,
+                @Param("bio") String bio,
+                @Param("about") String about,
+                @Param("picture") String picture,
+                @Param("website") String website);
 }
