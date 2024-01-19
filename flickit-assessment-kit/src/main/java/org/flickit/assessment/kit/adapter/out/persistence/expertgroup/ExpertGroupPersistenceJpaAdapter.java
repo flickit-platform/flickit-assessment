@@ -7,7 +7,7 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupIdPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.UpdateExpertGroupPort;
@@ -27,7 +27,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
     UpdateExpertGroupPort,
-    LoadExpertGroupIdPort {
+    CheckExpertGroupIdPort {
 
     private final ExpertGroupJpaRepository repository;
 
@@ -56,7 +56,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
         );
     }
 
-    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersCount) {
+    private Result resultWithMembers(ExpertGroupWithDetailsView item, int membersCount) {
         var members = repository.findMembersByExpertId(item.getId(),
                 PageRequest.of(0, membersCount, Sort.Direction.ASC, UserJpaEntity.Fields.NAME))
             .stream()
@@ -71,7 +71,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<Long> loadId(Long expertGroupId) {
-        return repository.findExpertGroupId(expertGroupId);
+    public boolean existsById(long id) {
+        return repository.existsById(id);
     }
 }

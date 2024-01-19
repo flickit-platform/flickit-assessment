@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.expertgroup.UpdateExpertGroupUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupIdPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.UpdateExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.UploadExpertGroupPicturePort;
@@ -26,7 +26,7 @@ public class UpdateExpertGroupService implements
     UpdateExpertGroupUseCase {
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-    private final LoadExpertGroupIdPort loadExpertGroupIdPort;
+    private final CheckExpertGroupIdPort checkExpertGroupIdPort;
     private final UpdateExpertGroupPort updateExpertGroupPort;
     private final UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
 
@@ -44,8 +44,8 @@ public class UpdateExpertGroupService implements
     }
 
     private void validateExpertGroup(Long expertGroupId) {
-        loadExpertGroupIdPort.loadId(expertGroupId)
-            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
+        if (!checkExpertGroupIdPort.existsById(expertGroupId))
+            throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
