@@ -17,21 +17,18 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpe
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitMinimalInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
 public class AssessmentKitPersistenceJpaAdapter implements
-    GrantUserAccessToKitPort,
     LoadKitExpertGroupPort,
     LoadKitUsersPort,
     DeleteKitUserAccessPort,
@@ -41,19 +38,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
     private final ExpertGroupJpaRepository expertGroupRepository;
-
-    @Override
-    public boolean grantUserAccess(Long kitId, UUID userId) {
-        AssessmentKitJpaEntity assessmentKit = repository.findById(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND));
-        UserJpaEntity user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException(GRANT_USER_ACCESS_TO_KIT_USER_ID_NOT_FOUND));
-
-        boolean isNew = assessmentKit.getAccessGrantedUsers().add(user);
-        repository.save(assessmentKit);
-
-        return isNew;
-    }
 
     @Override
     public Long loadKitExpertGroupId(Long kitId) {
