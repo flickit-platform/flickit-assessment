@@ -10,7 +10,8 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByD
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslJsonPathPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateAssessmentKitTagKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateKitTagRelationPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
@@ -37,7 +38,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     private final LoadKitDSLJsonFilePort loadKitDSLJsonFilePort;
     private final CreateAssessmentKitPort createAssessmentKitPort;
     private final CompositeCreateKitPersister persister;
-    private final CreateAssessmentKitTagKitPort createAssessmentKitTagKitPort;
+    private final CreateKitTagRelationPort createKitTagRelationPort;
     private final UpdateKitDslPort updateKitDslPort;
     private final GrantUserAccessToKitPort grantUserAccessToKitPort;
 
@@ -66,7 +67,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
 
         persister.persist(dslKit, kitId, param.getCurrentUserId());
 
-        createAssessmentKitTagKitPort.persist(param.getTagIds(), kitId);
+        createKitTagRelationPort.persist(param.getTagIds(), kitId);
 
         updateKitDslPort.update(param.getKitDslId(), kitId);
 

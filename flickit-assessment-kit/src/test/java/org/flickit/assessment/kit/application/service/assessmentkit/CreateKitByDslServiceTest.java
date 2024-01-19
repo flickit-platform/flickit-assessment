@@ -8,7 +8,7 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByD
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslJsonPathPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateAssessmentKitTagKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateKitTagRelationPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
@@ -63,7 +63,7 @@ class CreateKitByDslServiceTest {
     @Mock
     private CompositeCreateKitPersister persister;
     @Mock
-    private CreateAssessmentKitTagKitPort createAssessmentKitTagKitPort;
+    private CreateKitTagRelationPort createKitTagRelationPort;
     @Mock
     private UpdateKitDslPort updateKitDslPort;
     @Mock
@@ -94,7 +94,7 @@ class CreateKitByDslServiceTest {
 
         assertEquals(KIT_ID, savedKitId);
 
-        verify(createAssessmentKitTagKitPort, times(1)).persist(List.of(TAG_ID), KIT_ID);
+        verify(createKitTagRelationPort, times(1)).persist(List.of(TAG_ID), KIT_ID);
     }
 
     @Test

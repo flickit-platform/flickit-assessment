@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.kit.assessmentkittagkit;
+package org.flickit.assessment.data.jpa.kit.kittagrelation;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class AssessmentKitTagKitJpaEntity {
+public class KitTagRelationJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
