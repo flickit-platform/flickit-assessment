@@ -33,25 +33,24 @@ public class CreateExpertGroupRestController {
     }
 
     private Param toParam(CreateExpertGroupRequestDto request, UUID currentUserId) {
-        String website = (request.website() != null) ? request.website().strip() : null;
-
-        MultipartFile picture = request.picture();
-        String fileName;
-        try {
-            fileName = picture.getOriginalFilename();
-            picture = !Objects.requireNonNull(fileName).isEmpty() ? picture : null;
-        } catch (NullPointerException e) {
-            picture = null;
-        }
-
+        String website = request.website();
         return new CreateExpertGroupUseCase.Param(
             request.title(),
             request.bio(),
             request.about(),
-            picture,
-            website,
+            !getFileNameSafely(request.picture()).isEmpty() ? request.picture() : null,
+            (website != null && !website.isBlank()) ? website.strip() : null,
             currentUserId
         );
+    }
+
+    private String getFileNameSafely(MultipartFile picture) {
+        try {
+            String fileName = picture.getOriginalFilename();
+            return Objects.requireNonNullElse(fileName, "");
+        } catch (NullPointerException e) {
+            return "";
+        }
     }
 
     private CreateExpertGroupResponseDto toResponseDto(CreateExpertGroupUseCase.Result result) {
