@@ -511,7 +511,7 @@ class QuestionUpdateKitPersisterTest {
 
     @Test
     @Disabled
-    void testPersister_dslHasOneNewQuestion_SaveQuestionWithItsImpactsAndOptions() {
+    void testQuestionUpdateKitPersister_dslHasOneNewQuestion_SaveQuestionWithItsImpactsAndOptions() {
         var levelTwo = levelTwo();
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var subject = SubjectMother.subjectWithAttributes("subject1", List.of(attribute));
