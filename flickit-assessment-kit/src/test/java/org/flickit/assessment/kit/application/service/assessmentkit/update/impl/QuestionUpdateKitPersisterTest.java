@@ -14,21 +14,16 @@ import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQues
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
-import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
-import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
-import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
-import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionImpactDslModelMother;
-import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionnaireDslModelMother;
+import org.flickit.assessment.kit.test.fixture.application.*;
+import org.flickit.assessment.kit.test.fixture.application.dsl.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
@@ -513,4 +508,57 @@ class QuestionUpdateKitPersisterTest {
         );
     }
 
+
+    @Test
+    @Disabled
+    void testPersister_dslHasOneNewQuestion_SaveQuestionWithItsImpactsAndOptions() {
+        var levelTwo = levelTwo();
+        var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
+        var subject = SubjectMother.subjectWithAttributes("subject1", List.of(attribute));
+        var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
+        questionnaire.setQuestions(List.of());
+        var savedKit = AssessmentKitMother.completeKit(List.of(subject), List.of(levelTwo), List.of(questionnaire));
+
+        var question = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, 1L);
+        var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
+        var answerOption1 = createAnswerOption(question.getId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(question.getId(), OPTION_TITLE, OPTION_INDEX2);
+        var savedOptionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
+        var savedOptionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
+        savedImpact.setOptionImpacts(List.of(savedOptionImpact1, savedOptionImpact2));
+        question.setOptions(List.of(answerOption1, answerOption2));
+        question.setImpacts(List.of(savedImpact));
+
+        var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
+        Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
+        optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
+        optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
+        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslSubject = SubjectDslModelMother.domainToDslModel(subject, b -> b.questionnaireCodes(List.of(questionnaire.getCode())));
+
+        var dslQuestion = QuestionDslModelMother.domainToDslModel(question, q -> q
+            .questionImpacts(List.of(dslImpact))
+            .answerOptions(dslAnswerOptionList)
+            .questionnaireCode(questionnaire.getCode()));
+
+        var dslQuestionnaires = QuestionnaireDslModelMother.domainToDslModel(questionnaire);
+        var dslKit = AssessmentKitDslModel.builder()
+            .questionnaires(List.of(dslQuestionnaires))
+            .questions(List.of(dslQuestion))
+            .subjects(List.of(dslSubject))
+            .build();
+
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(questionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
+        ctx.put(KEY_SUBJECTS, Stream.of(subject).collect(toMap(Subject::getCode, Subject::getId)));
+        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
+
+
+        // TODO: mocks and asserts
+    }
 }

@@ -18,6 +18,7 @@ import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQues
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -105,7 +106,53 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                     invalidateResults = true;
             }
         }
+
+        invalidateResults = invalidateResults ||
+            createNewQuestions(
+                savedQuestionnaireToQuestionsMap,
+                dslQuestionnaireToQuestionsMap,
+                postUpdateQuestionnaires,
+                postUpdateAttributes,
+                postUpdateMaturityLevels,
+                currentUserId);
+
         return new UpdateKitPersisterResult(invalidateResults || !newQuestionnaireCodes.isEmpty());
+    }
+
+    private boolean createNewQuestions(Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap,
+                                       Map<String, Map<String, QuestionDslModel>> dslQuestionnaireToQuestionsMap,
+                                       Map<String, Long> postUpdateQuestionnaires,
+                                       Map<String, Long> postUpdateAttributes,
+                                       Map<String, Long> postUpdateMaturityLevels,
+                                       UUID currentUserId) {
+        boolean invalidateResults = false;
+        for (String questionnaireCode : savedQuestionnaireToQuestionsMap.keySet()) {
+            Map<String, Question> savedQuestions = savedQuestionnaireToQuestionsMap.get(questionnaireCode);
+            Map<String, QuestionDslModel> dslQuestions = dslQuestionnaireToQuestionsMap.get(questionnaireCode);
+
+            if (dslQuestions == null || dslQuestions.isEmpty())
+                continue;
+
+            List<String> newDslQuestionCodes = dslQuestions.keySet().stream()
+                .filter(s -> !savedQuestions.containsKey(s))
+                .toList();
+
+            newDslQuestionCodes.forEach(q -> {
+                var dslQuestion = dslQuestions.get(q);
+                Long questionnaireId = postUpdateQuestionnaires.get(dslQuestion.getQuestionnaireCode());
+                Long persistedQuestionId = createQuestionPort.persist(toCreateQuestionParam(questionnaireId, currentUserId, dslQuestion));
+                log.debug("Question[id={}, code={}, questionnaireCode={}] created.", persistedQuestionId, dslQuestion.getCode(), questionnaireId);
+
+                dslQuestion.getAnswerOptions().forEach(option -> createAnswerOption(option, persistedQuestionId, currentUserId));
+
+                dslQuestion.getQuestionImpacts().forEach(impact -> createImpact(impact, persistedQuestionId, postUpdateAttributes, postUpdateMaturityLevels, currentUserId));
+
+                // TODO: refactor (try to use createQuestionsOfNewQuestionnaires method)
+            });
+
+            if (!newDslQuestionCodes.isEmpty()) invalidateResults = true;
+        }
+        return invalidateResults;
     }
 
     private void createQuestionsOfNewQuestionnaires(Map<String, QuestionDslModel> dslQuestions,
@@ -117,14 +164,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             return;
 
         dslQuestions.values().forEach(dslQuestion -> {
-            var createParam = new CreateQuestionPort.Param(
-                dslQuestion.getCode(),
-                dslQuestion.getTitle(),
-                dslQuestion.getIndex(),
-                dslQuestion.getDescription(),
-                dslQuestion.isMayNotBeApplicable(),
-                currentUserId,
-                questionnaires.get(dslQuestion.getQuestionnaireCode()));
+            var createParam = toCreateQuestionParam(questionnaires.get(dslQuestion.getQuestionnaireCode()), currentUserId, dslQuestion);
 
             Long questionId = createQuestionPort.persist(createParam);
             log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
@@ -135,6 +175,18 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             dslQuestion.getQuestionImpacts().forEach(impact ->
                 createImpact(impact, questionId, attributes, maturityLevels, currentUserId));
         });
+    }
+
+    @NotNull
+    private static CreateQuestionPort.Param toCreateQuestionParam(Long questionnaireId, UUID currentUserId, QuestionDslModel dslQuestion) {
+        return new CreateQuestionPort.Param(
+            dslQuestion.getCode(),
+            dslQuestion.getTitle(),
+            dslQuestion.getIndex(),
+            dslQuestion.getDescription(),
+            dslQuestion.isMayNotBeApplicable(),
+            currentUserId,
+            questionnaireId);
     }
 
     private void createAnswerOption(AnswerOptionDslModel option, Long questionId, UUID currentUserId) {
