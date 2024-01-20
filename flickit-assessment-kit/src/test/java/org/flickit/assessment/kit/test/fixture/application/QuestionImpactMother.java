@@ -2,6 +2,9 @@ package org.flickit.assessment.kit.test.fixture.application;
 
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 public class QuestionImpactMother {
 
     private static Long id = 1340L;
@@ -12,7 +15,11 @@ public class QuestionImpactMother {
             attributeId,
             maturityLevelId,
             weight,
-            questionId
+            questionId,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
         );
     }
 }

@@ -120,11 +120,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             var createParam = new CreateQuestionPort.Param(
                 dslQuestion.getCode(),
                 dslQuestion.getTitle(),
-                dslQuestion.getDescription(),
                 dslQuestion.getIndex(),
-                questionnaires.get(dslQuestion.getQuestionnaireCode()),
+                dslQuestion.getDescription(),
+                dslQuestion.isMayNotBeApplicable(),
                 currentUserId,
-                dslQuestion.isMayNotBeApplicable());
+                questionnaires.get(dslQuestion.getQuestionnaireCode()));
+
             Long questionId = createQuestionPort.persist(createParam);
             log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
                 questionId, dslQuestion.getCode(), questionnaires.get(dslQuestion.getQuestionnaireCode()));
@@ -138,7 +139,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
     private void createAnswerOption(AnswerOptionDslModel option, Long questionId, UUID currentUserId) {
         var createOptionParam =
-            new CreateAnswerOptionPort.Param(option.getCaption(), questionId, option.getIndex(), currentUserId);
+            new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, currentUserId);
         var optionId = createAnswerOptionPort.persist(createOptionParam);
         log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",
             optionId, option.getIndex(), option.getCaption(), questionId);
@@ -154,9 +155,13 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             attributes.get(dslQuestionImpact.getAttributeCode()),
             maturityLevels.get(dslQuestionImpact.getMaturityLevel().getTitle()),
             dslQuestionImpact.getWeight(),
-            questionId
+            questionId,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            currentUserId,
+            currentUserId
         );
-        Long impactId = createQuestionImpactPort.persist(newQuestionImpact, currentUserId);
+        Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
         log.debug("QuestionImpact[impactId={}, questionId={}] created.", impactId, questionId);
 
         Map<Integer, Long> optionIndexToIdMap = loadAnswerOptionsByQuestionPort.loadByQuestionId(questionId).stream()

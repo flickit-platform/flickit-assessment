@@ -10,6 +10,10 @@ import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.Load
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.flickit.assessment.kit.adapter.out.persistence.subjectquestionnaire.SubjectQuestionnaireMapper.mapToJpaEntity;
 
 
 @Component
@@ -34,10 +38,15 @@ public class SubjectQuestionnairePersistenceJpaAdapter implements
 
     @Override
     public long persist(long subjectId, long questionnaireId) {
-        SubjectQuestionnaireJpaEntity entity = repository.save(new SubjectQuestionnaireJpaEntity(
-            null,
-            subjectId,
-            questionnaireId));
-        return entity.getId();
+        return  repository.save(mapToJpaEntity(subjectId, questionnaireId)).getId();
+    }
+
+    @Override
+    public void persistAll(Map<Long, Set<Long>> questionnaireIdToSubjectIdsMap) {
+        List<SubjectQuestionnaireJpaEntity> entities = questionnaireIdToSubjectIdsMap.keySet().stream()
+            .flatMap(questionnaireId -> questionnaireIdToSubjectIdsMap.get(questionnaireId).stream()
+                .map(subjectId -> mapToJpaEntity(subjectId, questionnaireId)))
+            .toList();
+        repository.saveAll(entities);
     }
 }
