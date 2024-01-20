@@ -6,6 +6,7 @@ import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
+import org.flickit.assessment.kit.application.port.out.attribute.CreateAttributePort;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
@@ -30,18 +31,22 @@ import static org.flickit.assessment.kit.application.service.assessmentkit.updat
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AttributeUpdateKitPersisterTest {
 
-    @InjectMocks
-    private AttributeUpdateKitPersister persister;
-
     @Captor
     ArgumentCaptor<UpdateAttributePort.Param> captor;
-
+    @InjectMocks
+    private AttributeUpdateKitPersister persister;
     @Mock
     private UpdateAttributePort updateAttributePort;
+
+    @Mock
+    private CreateAttributePort createAttributePort;
 
     @Test
     void testOrder() {
@@ -57,13 +62,9 @@ class AttributeUpdateKitPersisterTest {
 
         SubjectDslModel subjectDslModel = SubjectDslModelMother.domainToDslModel(subject);
         AttributeDslModel dslAttrOne =
-            AttributeDslModelMother.domainToDslModel(attrOne, e -> {
-                e.subjectCode(subject.getCode());
-            });
+            AttributeDslModelMother.domainToDslModel(attrOne, e -> e.subjectCode(subject.getCode()));
         AttributeDslModel dslAttrTwo =
-            AttributeDslModelMother.domainToDslModel(attrTwo, e -> {
-                e.subjectCode(subject.getCode());
-            });
+            AttributeDslModelMother.domainToDslModel(attrTwo, e -> e.subjectCode(subject.getCode()));
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .subjects(List.of(subjectDslModel))
             .attributes(List.of(dslAttrOne, dslAttrTwo))
@@ -158,9 +159,7 @@ class AttributeUpdateKitPersisterTest {
                 e.subjectCode(subjectOne.getCode());
             });
         AttributeDslModel dslAttrThree =
-            AttributeDslModelMother.domainToDslModel(attrThree, e -> {
-                e.subjectCode(subjectTwo.getCode());
-            });
+            AttributeDslModelMother.domainToDslModel(attrThree, e -> e.subjectCode(subjectTwo.getCode()));
 
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .subjects(List.of(subjectDslModel))
@@ -192,6 +191,52 @@ class AttributeUpdateKitPersisterTest {
         assertEquals(dslAttrTwo.getWeight(), secondAttr.weight());
         assertThat(secondAttr.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
         assertEquals(subjectOne.getId(), secondAttr.subjectId());
+        assertTrue(result.shouldInvalidateCalcResult());
+
+        Map<String, Long> codeToIdMap = ctx.get(KEY_ATTRIBUTES);
+        assertNotNull(codeToIdMap);
+        assertEquals(3, codeToIdMap.keySet().size());
+    }
+
+    @Test
+    void testValidate_DslHasTwoNewAttributes_SaveNewAttributes() {
+        UUID createdById = UUID.randomUUID();
+        Attribute attrOne = AttributeMother.attributeWithTitle("attr1");
+        Attribute attrTwo = AttributeMother.attributeWithTitle("attr2");
+        Subject subject = SubjectMother.subjectWithAttributes("subject1", Arrays.asList(attrOne, attrTwo));
+        AssessmentKit savedKit = AssessmentKitMother.kitWithSubjects(List.of(subject));
+
+        Attribute attrThree = AttributeMother.attributeWithTitle("attr3");
+
+        AttributeDslModel dslAttrOne = AttributeDslModelMother.domainToDslModel(attrOne, b -> b.subjectCode(subject.getCode()));
+        AttributeDslModel dslAttrTwo = AttributeDslModelMother.domainToDslModel(attrTwo, b -> b.subjectCode(subject.getCode()));
+
+        AttributeDslModel dslAttrThree = AttributeDslModelMother.domainToDslModel(attrThree, b -> b.subjectCode(subject.getCode()));
+
+        SubjectDslModel subjectDslModel = SubjectDslModelMother.domainToDslModel(subject);
+
+        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
+            .subjects(List.of(subjectDslModel))
+            .attributes(List.of(dslAttrOne, dslAttrTwo, dslAttrThree))
+            .build();
+
+        when(createAttributePort.persist(any(), eq(subject.getId()), eq(savedKit.getId()))).thenReturn(attrThree.getId());
+
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, createdById);
+
+        ArgumentCaptor<Attribute> attributeCaptor = ArgumentCaptor.forClass(Attribute.class);
+        ArgumentCaptor<Long> subjectIdCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<Long> kitIdCaptor = ArgumentCaptor.forClass(Long.class);
+        Mockito.verify(createAttributePort, Mockito.times(1)).persist(attributeCaptor.capture(), subjectIdCaptor.capture(), kitIdCaptor.capture());
+
+        assertEquals(attrThree.getCode(), attributeCaptor.getValue().getCode());
+        assertEquals(attrThree.getTitle(), attributeCaptor.getValue().getTitle());
+        assertEquals(attrThree.getIndex(), attributeCaptor.getValue().getIndex());
+        assertEquals(attrThree.getDescription(), attributeCaptor.getValue().getDescription());
+        assertEquals(attrThree.getWeight(), attributeCaptor.getValue().getWeight());
+        assertEquals(subject.getId(), subjectIdCaptor.getValue());
+        assertEquals(savedKit.getId(), kitIdCaptor.getValue());
         assertTrue(result.shouldInvalidateCalcResult());
 
         Map<String, Long> codeToIdMap = ctx.get(KEY_ATTRIBUTES);
