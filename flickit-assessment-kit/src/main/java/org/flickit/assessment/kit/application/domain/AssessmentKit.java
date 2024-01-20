@@ -25,4 +25,12 @@ public class AssessmentKit {
     private final List<Subject> subjects;
     private final List<MaturityLevel> maturityLevels;
     private final List<Questionnaire> questionnaires;
+
+
+    public static String generateSlugCode(String title) {
+        return title
+            .toLowerCase()
+            .strip()
+            .replaceAll("\\s+", "-");
+    }
 }
