@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.IntStream;
 
 @PlanningEntity
 @Getter
@@ -18,41 +21,80 @@ import java.util.List;
 public class Question {
 
     @PlanningId
-    private Long id;
-    private int gain;
+    private long id;
+
     private int cost;
 
     @ProblemFactCollectionProperty
+    private List<Option> options;
+
     @ValueRangeProvider
-    private List<Double> options;
+    private List<Integer> optionIndexValues;
 
     @PlanningVariable
-    private Double option;
+    private Integer recommendedOptionIndex;
 
-    private Double currentOption;
+    private int currentOptionIndex;
 
-    private Target target;
-
-    public Question(Long id, Target target, int gain, int cost, Double currentOption, List<Double> options) {
+    public Question(Long id, int cost, List<Option> options, Integer currentOptionIndex) {
         this.id = id;
-        this.gain = gain;
         this.cost = cost;
         this.options = options;
-        this.target = target;
-        this.currentOption = currentOption;
+        this.currentOptionIndex = currentOptionIndex;
+        this.optionIndexValues = IntStream.range(currentOptionIndex, options.size()).boxed().toList();
     }
 
-    public double getGainRatio() {
-        return option - currentOption;
+    public double getTargetGain(Target target) {
+        return getOptionGain(target, recommendedOptionIndex) - getOptionGain(target, currentOptionIndex);
+    }
+
+    public double getCost() {
+        return getOptionCost(recommendedOptionIndex) - getOptionCost(currentOptionIndex);
+    }
+
+    private double getOptionGain(Target target, Integer optionIndex) {
+        return options
+            .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
+            .getTargetGain(target);
+    }
+
+    private double getOptionCost(Integer optionIndex) {
+        return options
+            .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
+            .getCost();
+    }
+
+    public boolean hasGain() {
+        return recommendedOptionIndex != null && recommendedOptionIndex > optionIndexValues.get(0);
+    }
+
+    public double getAllTargetsGain() {
+        double sum = 0;
+        Set<Target> targets = options.get(recommendedOptionIndex).getGains().keySet();
+        for (Target target : targets) {
+            sum += getOptionGain(target, recommendedOptionIndex);
+        }
+        return sum;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Question question)) return false;
+        return id == question.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "Question{" +
-                "gain=" + gain +
-                ", cost=" + cost +
-                ", option=" + option +
-                ", currentOption=" + currentOption +
-                '}';
+            "id=" + id +
+            ", currentOptionIndex=" + currentOptionIndex +
+            ", recommendedOptionIndex=" + recommendedOptionIndex +
+            '}';
     }
 }

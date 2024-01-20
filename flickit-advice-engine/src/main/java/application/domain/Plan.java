@@ -3,10 +3,12 @@ package application.domain;
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
-import ai.timefold.solver.core.api.domain.solution.ProblemFactProperty;
-import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
+import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -16,12 +18,10 @@ import java.util.List;
 @Setter
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 public class Plan {
 
-    @ProblemFactProperty
-    @ValueRangeProvider
-    private Target target;
+    @ProblemFactCollectionProperty
+    private List<Target> targets;
 
     @PlanningEntityCollectionProperty
     private List<Question> questions;
@@ -29,8 +29,8 @@ public class Plan {
     @PlanningScore
     private HardSoftScore score;
 
-    public Plan(Target target, List<Question> questions) {
-        this.target = target;
+    public Plan(List<Target> targets, List<Question> questions) {
+        this.targets = targets;
         this.questions = questions;
     }
 }

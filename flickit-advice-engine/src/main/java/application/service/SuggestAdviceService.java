@@ -5,12 +5,10 @@ import ai.timefold.solver.core.api.solver.SolverFactory;
 import ai.timefold.solver.core.config.solver.SolverConfig;
 import application.domain.Plan;
 import application.domain.Question;
-import application.domain.Target;
 import application.port.in.SuggestAdviceUseCase;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -41,20 +39,21 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
         log.info("score is: " + solution.getScore());
 
         List<Question> questions = solution.getQuestions().stream()
-            .filter(q -> q.getGainRatio() != 0)
+            .filter(Question::hasGain)
             .toList();
         questions.forEach(question -> log.info(question.toString()));
     }
 
     public static Plan generateDemoData() {
-        Target target = new Target(13);
-
-        long id = 0L;
-        List<Question> questions = new ArrayList<>();
-        questions.add(new Question(id++, target, 5, 40, 0.0, List.of((double) 0, 0.25, 0.5, 0.75, 1.0)));
-        questions.add(new Question(id++, target, 6, 4, 0.0, List.of((double) 0, 0.25, 0.5, 0.75, 1.0)));
-        questions.add(new Question(id, target, 4, 4, 0.0, List.of((double) 0, 0.25, 0.5, 0.75, 1.0)));
-
-        return new Plan(target, questions);
+//        Target target = new Target(13);
+//
+//        long id = 0L;
+//        List<Question> questions = new ArrayList<>();
+//        questions.add(new Question(id++, target, 5, 40, 0.0, List.of((double) 0, 0.25, 0.5, 0.75, 1.0)));
+//        questions.add(new Question(id++, target, 6, 4, 0.0, List.of((double) 0, 0.25, 0.5, 0.75, 1.0)));
+//        questions.add(new Question(id, target, 4, 4, 0.0, List.of((double) 0, 0.25, 0.5, 0.75, 1.0)));
+//
+//        return new Plan(target, questions);
+        return null;
     }
 }
