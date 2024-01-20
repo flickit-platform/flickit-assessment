@@ -52,7 +52,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         SELECT
         e.userId as userId
         FROM ExpertGroupAccessJpaEntity e
-        WHERE e.expertGroupId = :expertGroupId
+        WHERE e.expertGroupId = :expertGroupId and e.userId is not null
         """)
     List<UUID> findMemberIdsByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId);
 }
