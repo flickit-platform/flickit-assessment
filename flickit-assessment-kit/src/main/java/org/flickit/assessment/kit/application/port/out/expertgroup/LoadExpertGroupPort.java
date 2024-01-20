@@ -9,6 +9,6 @@ public interface LoadExpertGroupPort {
     record Param(Long id) {
     }
 
-    record Result(Long id, String title, String bio,String about, String picture, String website, UUID ownerId) {
+    record Result(Long id, String title, String bio, String about, String picture, String website, UUID ownerId) {
     }
 }

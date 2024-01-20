@@ -72,7 +72,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
         return new LoadExpertGroupPort.Result(resultWithoutMembers.getId(),
             resultWithoutMembers.getName(),
             resultWithoutMembers.getBio(),
-            resultWithoutMembers.getWebsite(),
+            resultWithoutMembers.getAbout(),
             resultWithoutMembers.getPicture(),
             resultWithoutMembers.getWebsite(),
             resultWithoutMembers.getOwnerId()
