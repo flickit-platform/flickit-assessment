@@ -199,7 +199,7 @@ class AttributeUpdateKitPersisterTest {
     }
 
     @Test
-    void testValidate_DslHasTwoNewAttributes_SaveNewAttributes() {
+    void testPersist_DslHasTwoNewAttributes_SaveNewAttributes() {
         UUID createdById = UUID.randomUUID();
         Attribute attrOne = AttributeMother.attributeWithTitle("attr1");
         Attribute attrTwo = AttributeMother.attributeWithTitle("attr2");
