@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithQuestionnaires;
@@ -54,7 +55,7 @@ class QuestionnaireUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         assertFalse(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
@@ -77,10 +78,10 @@ class QuestionnaireUpdateKitPersisterTest {
             .questionnaires(List.of(dslQOne, dslQTwo))
             .build();
 
-        when(createQuestionnairePort.persist(any(Questionnaire.class), eq(savedKit.getId()))).thenReturn(1L);
+        when(createQuestionnairePort.persist(any(Questionnaire.class), eq(savedKit.getId()), any(UUID.class))).thenReturn(1L);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         assertTrue(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
@@ -103,7 +104,7 @@ class QuestionnaireUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         assertFalse(result.shouldInvalidateCalcResult());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
