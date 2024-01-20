@@ -1,0 +1,15 @@
+version: '3.9'
+
+volumes:
+  dsl-parser-data:
+
+services:
+  dsl:
+    image: ghcr.io/avansoft/flickit-dsl-parser:latest
+    restart: on-failure
+    ports:
+      - 8080:8080
+    volumes:
+      - dsl-parser-data:/opt/dsl-parser
+    environment:
+      LANG: C.UTF-8
