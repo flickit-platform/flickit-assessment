@@ -1,6 +1,7 @@
-package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
+package org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Question;
@@ -8,15 +9,12 @@ import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
-import org.flickit.assessment.kit.application.service.assessmentkit.validate.UpdateKitValidator;
-import org.flickit.assessment.common.exception.api.Notification;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.UpdateKitValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 import static java.util.stream.Collectors.*;
-import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.ANSWER_OPTION;
-import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.QUESTION;
 
 @Service
 @RequiredArgsConstructor
@@ -54,10 +52,10 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
                 .collect(toSet());
 
             if (!deletedQuestions.isEmpty())
-                notification.add(new InvalidDeletionError(QUESTION, deletedQuestions));
+                notification.add(new InvalidDeletionError(DslFieldNames.QUESTION, deletedQuestions));
 
             if (!newQuestions.isEmpty())
-                notification.add(new InvalidAdditionError(QUESTION, newQuestions));
+                notification.add(new InvalidAdditionError(DslFieldNames.QUESTION, newQuestions));
 
             validateAnswerOptions(codeToQuestion, codeToDslQuestion, notification);
         }
@@ -89,10 +87,10 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
                 .collect(toSet());
 
             if (!deletedOptions.isEmpty())
-                notification.add(new InvalidDeletionError(ANSWER_OPTION, deletedOptions));
+                notification.add(new InvalidDeletionError(DslFieldNames.ANSWER_OPTION, deletedOptions));
 
             if (!newOptions.isEmpty())
-                notification.add(new InvalidAdditionError(ANSWER_OPTION, newOptions));
+                notification.add(new InvalidAdditionError(DslFieldNames.ANSWER_OPTION, newOptions));
         }
     }
 }

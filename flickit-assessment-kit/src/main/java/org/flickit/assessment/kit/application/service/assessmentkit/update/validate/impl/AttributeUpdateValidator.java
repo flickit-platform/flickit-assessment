@@ -1,18 +1,16 @@
-package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
+package org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl;
 
+import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
-import org.flickit.assessment.kit.application.service.assessmentkit.validate.UpdateKitValidator;
-import org.flickit.assessment.common.exception.api.Notification;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.UpdateKitValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-
-import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.ATTRIBUTE;
 
 @Service
 public class AttributeUpdateValidator implements UpdateKitValidator {
@@ -40,10 +38,10 @@ public class AttributeUpdateValidator implements UpdateKitValidator {
             .collect(Collectors.toSet());
 
         if (!addedAttributeCodes.isEmpty())
-            notification.add(new InvalidAdditionError(ATTRIBUTE, addedAttributeCodes));
+            notification.add(new InvalidAdditionError(DslFieldNames.ATTRIBUTE, addedAttributeCodes));
 
         if (!deletedAttributeCodes.isEmpty())
-            notification.add(new InvalidDeletionError(ATTRIBUTE, deletedAttributeCodes));
+            notification.add(new InvalidDeletionError(DslFieldNames.ATTRIBUTE, deletedAttributeCodes));
 
         return notification;
     }

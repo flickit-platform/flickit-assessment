@@ -1,12 +1,12 @@
-package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
+package org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl;
 
+import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
-import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
 import org.flickit.assessment.kit.test.fixture.application.SubjectMother;

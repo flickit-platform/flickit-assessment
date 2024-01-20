@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.service.assessmentkit;
+package org.flickit.assessment.kit.application.service.assessmentkit.create;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,6 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
-import org.flickit.assessment.kit.application.service.assessmentkit.create.CompositeCreateKitPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

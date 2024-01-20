@@ -1,16 +1,15 @@
-package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
+package org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
-import org.flickit.assessment.kit.application.service.assessmentkit.validate.UpdateKitValidator;
-import org.flickit.assessment.common.exception.api.Notification;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.UpdateKitValidator;
 import org.springframework.stereotype.Service;
 
 import static java.util.stream.Collectors.toSet;
-import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.QUESTIONNAIRE;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class QuestionnaireUpdateKitValidator implements UpdateKitValidator {
             .collect(toSet());
 
         if (!deletedQuestionnaires.isEmpty())
-            notification.add(new InvalidDeletionError(QUESTIONNAIRE, deletedQuestionnaires));
+            notification.add(new InvalidDeletionError(DslFieldNames.QUESTIONNAIRE, deletedQuestionnaires));
 
         return notification;
     }

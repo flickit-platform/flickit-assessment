@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.service.assessmentkit;
+package org.flickit.assessment.kit.application.service.assessmentkit.create;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -13,7 +13,6 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
-import org.flickit.assessment.kit.application.service.assessmentkit.create.CompositeCreateKitPersister;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

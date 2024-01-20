@@ -1,8 +1,8 @@
-package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
+package org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl;
 
+import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
@@ -19,7 +19,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
-import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.*;
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl.DslFieldNames.ANSWER_OPTION;
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl.DslFieldNames.QUESTION;
 import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 

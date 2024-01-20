@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.service.assessmentkit;
+package org.flickit.assessment.kit.application.service.assessmentkit.update;
 
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -10,10 +10,8 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByD
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentresult.InvalidateAssessmentResultByKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.service.assessmentkit.update.CompositeUpdateKitPersister;
-import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
-import org.flickit.assessment.kit.application.service.assessmentkit.validate.CompositeUpdateKitValidator;
-import org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.InvalidAdditionError;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.CompositeUpdateKitValidator;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl.InvalidAdditionError;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +27,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
-import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.SUBJECT;
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl.DslFieldNames.SUBJECT;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;

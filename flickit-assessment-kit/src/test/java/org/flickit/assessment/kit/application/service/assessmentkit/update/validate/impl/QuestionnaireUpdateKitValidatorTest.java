@@ -1,7 +1,7 @@
-package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
+package org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl;
 
-import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.common.exception.api.Notification;
+import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionnaireDslModelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
-import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.QUESTIONNAIRE;
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl.DslFieldNames.QUESTIONNAIRE;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithQuestionnaires;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
 import static org.junit.jupiter.api.Assertions.assertFalse;

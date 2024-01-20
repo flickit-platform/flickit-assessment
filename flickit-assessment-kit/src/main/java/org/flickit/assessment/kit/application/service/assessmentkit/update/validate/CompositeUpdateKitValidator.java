@@ -1,9 +1,9 @@
-package org.flickit.assessment.kit.application.service.assessmentkit.validate;
+package org.flickit.assessment.kit.application.service.assessmentkit.update.validate;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.common.exception.api.Notification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

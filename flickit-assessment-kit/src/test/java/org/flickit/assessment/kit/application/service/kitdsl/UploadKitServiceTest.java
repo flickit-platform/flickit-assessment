@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class UploadKitServiceTest {
 
-    public static final String ZIP_FILE_ADDR = "src/test/java/org/flickit/assessment/kit/correct-kit.zip";
+    public static final String ZIP_FILE_ADDR = "src/test/resources/correct-kit.zip";
     @InjectMocks
     private UploadKitDslService service;
 

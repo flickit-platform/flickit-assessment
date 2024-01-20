@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
+package org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl;
 
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.api.Notification;

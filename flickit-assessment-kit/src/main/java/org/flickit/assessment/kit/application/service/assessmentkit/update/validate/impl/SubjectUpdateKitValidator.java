@@ -1,16 +1,15 @@
-package org.flickit.assessment.kit.application.service.assessmentkit.validate.impl;
+package org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
-import org.flickit.assessment.kit.application.service.assessmentkit.validate.UpdateKitValidator;
-import org.flickit.assessment.common.exception.api.Notification;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.UpdateKitValidator;
 import org.springframework.stereotype.Service;
 
 import static java.util.stream.Collectors.toSet;
-import static org.flickit.assessment.kit.application.service.assessmentkit.validate.impl.DslFieldNames.SUBJECT;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +26,10 @@ public class SubjectUpdateKitValidator implements UpdateKitValidator {
         var newCodes = dslSubjectCodes.stream().filter(s -> !savedSubjectCodes.contains(s)).collect(toSet());
 
         if (!deletedCodes.isEmpty())
-            notification.add(new InvalidDeletionError(SUBJECT, deletedCodes));
+            notification.add(new InvalidDeletionError(DslFieldNames.SUBJECT, deletedCodes));
 
         if (!newCodes.isEmpty())
-            notification.add(new InvalidAdditionError(SUBJECT, newCodes));
+            notification.add(new InvalidAdditionError(DslFieldNames.SUBJECT, newCodes));
 
         return notification;
     }

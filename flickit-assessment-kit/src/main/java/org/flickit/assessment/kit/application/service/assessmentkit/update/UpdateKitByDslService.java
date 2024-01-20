@@ -1,9 +1,11 @@
-package org.flickit.assessment.kit.application.service.assessmentkit;
+package org.flickit.assessment.kit.application.service.assessmentkit.update;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
@@ -11,11 +13,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.assessmentresult.InvalidateAssessmentResultByKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
-import org.flickit.assessment.kit.application.service.assessmentkit.update.CompositeUpdateKitPersister;
-import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
-import org.flickit.assessment.kit.application.service.assessmentkit.validate.CompositeUpdateKitValidator;
-import org.flickit.assessment.common.exception.api.Notification;
-import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.CompositeUpdateKitValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
