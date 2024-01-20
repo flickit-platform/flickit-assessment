@@ -45,15 +45,6 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
     }
 
     public static Plan generateDemoData() {
-//        Target target = new Target(13);
-//
-//        long id = 0L;
-//        List<Question> questions = new ArrayList<>();
-//        questions.add(new Question(id++, target, 5, 40, 0.0, List.of((double) 0, 0.25, 0.5, 0.75, 1.0)));
-//        questions.add(new Question(id++, target, 6, 4, 0.0, List.of((double) 0, 0.25, 0.5, 0.75, 1.0)));
-//        questions.add(new Question(id, target, 4, 4, 0.0, List.of((double) 0, 0.25, 0.5, 0.75, 1.0)));
-//
-//        return new Plan(target, questions);
         return null;
     }
 }

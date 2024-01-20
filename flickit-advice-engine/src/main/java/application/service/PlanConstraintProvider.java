@@ -28,7 +28,7 @@ public class PlanConstraintProvider implements ConstraintProvider {
     Constraint minGain(ConstraintFactory constraintFactory) {
         return constraintFactory
             .forEach(Target.class)
-            .filter((target) -> target.getScore() > 0)
+            .filter(target -> target.getScore() > 0)
             .penalize(HardSoftScore.ONE_HARD,
                 Target::getScore)
             .asConstraint("minGain");
@@ -39,8 +39,8 @@ public class PlanConstraintProvider implements ConstraintProvider {
             .forEach(Question.class)
             .filter(isQuestionOnPlan())
             .groupBy(
-                sum((q) -> (int) (Math.round(q.getAllTargetsGain()))),
-                sum((q) -> (int) (Math.round(q.getCost())))
+                sum(q -> (int) (Math.round(q.getAllTargetsGain()))),
+                sum(q -> (int) (Math.round(q.getCost())))
             )
             .reward(HardSoftScore.ONE_SOFT,
                 (totalGain, totalCost) -> Math.round(((float) totalGain / totalCost) * 100))
