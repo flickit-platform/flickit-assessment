@@ -252,7 +252,40 @@
 				}
 			},
 			"response": []
-		}
+		}, {
+            "name": "Create kit",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "{{authorization_header}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"kitDslId\": 578,\n    \"isPrivate\": false,\n    \"expertGroupId\": 1,\n    \"title\":\"sample 7\",\n    \"summary\":\"sample\",\n    \"about\":\"summary\",\n    \"tagIds\": [1,2]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/{{api_path}}/assessment-kits/create-by-dsl",
+                "host": [
+                  "{{base_url}}"
+                ],
+                "path": [
+                  "{{api_path}}",
+                  "assessment-kits",
+                  "create-by-dsl"
+                ]
+              }
+            },
+            "response": []
+          }
 	],
 	"event": [
 		{

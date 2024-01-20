@@ -9,6 +9,7 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsVie
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPort;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +28,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
-    LoadExpertGroupPort {
+    LoadExpertGroupMemberIdsPort,
+    LoadExpertGroupPort{
 
     private final ExpertGroupJpaRepository repository;
 
@@ -57,12 +59,20 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersCount) {
-        var members = repository.findMembersByExpertId(item.getId(),
+        var members = repository.findMembersByExpertGroupId(item.getId(),
                 PageRequest.of(0, membersCount, Sort.Direction.ASC, UserJpaEntity.Fields.NAME))
             .stream()
             .map(GetExpertGroupListUseCase.Member::new)
             .toList();
         return mapToPortResult(item, members);
+    }
+
+    @Override
+    public List<LoadExpertGroupMemberIdsPort.Result> loadMemberIds(long expertGroupId) {
+        List<UUID> memberIds = repository.findMemberIdsByExpertGroupId(expertGroupId);
+        return memberIds.stream()
+            .map(LoadExpertGroupMemberIdsPort.Result::new)
+            .toList();
     }
 
     @Override

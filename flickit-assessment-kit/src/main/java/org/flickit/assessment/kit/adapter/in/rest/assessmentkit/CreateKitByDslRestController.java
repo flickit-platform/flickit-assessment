@@ -19,10 +19,10 @@ public class CreateKitByDslRestController {
     private final UserContext userContext;
 
     @PostMapping("/assessment-kits/create-by-dsl")
-    public ResponseEntity<Long> create(@RequestBody CreateKitByDslRequestDto request) {
-        var currentUserId = userContext.getUser().id();
+    public ResponseEntity<CreateKitByDslResponseDto> create(@RequestBody CreateKitByDslRequestDto request) {
+        UUID currentUserId = userContext.getUser().id();
         Long kitId = useCase.create(toParam(request, currentUserId));
-        return new ResponseEntity<>(kitId, HttpStatus.CREATED);
+        return new ResponseEntity<>(toResponse(kitId), HttpStatus.CREATED);
     }
 
     private CreateKitByDslUseCase.Param toParam(CreateKitByDslRequestDto request, UUID currentUserId) {
@@ -31,9 +31,13 @@ public class CreateKitByDslRestController {
             request.summary(),
             request.about(),
             request.isPrivate(),
-            request.kitJsonDslId(),
+            request.kitDslId(),
             request.expertGroupId(),
             request.tagIds(),
             currentUserId);
+    }
+
+    private CreateKitByDslResponseDto toResponse(Long kitId) {
+        return new CreateKitByDslResponseDto(kitId);
     }
 }

@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -21,19 +22,25 @@ public interface CreateKitByDslUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotBlank(message = CREATE_KIT_BY_DSL_TITLE_NOT_NULL)
+        @Size(min = 3, message = CREATE_KIT_BY_DSL_TITLE_SIZE_MIN)
+        @Size(max = 100, message = CREATE_KIT_BY_DSL_TITLE_SIZE_MAX)
         String title;
 
         @NotBlank(message = CREATE_KIT_BY_DSL_SUMMARY_NOT_NULL)
+        @Size(min = 3, message = CREATE_KIT_BY_DSL_SUMMARY_SIZE_MIN)
+        @Size(max = 1000, message = CREATE_KIT_BY_DSL_SUMMARY_SIZE_MAX)
         String summary;
 
         @NotBlank(message = CREATE_KIT_BY_DSL_ABOUT_NOT_NULL)
+        @Size(min = 3, message = CREATE_KIT_BY_DSL_ABOUT_SIZE_MIN)
+        @Size(max = 1000, message = CREATE_KIT_BY_DSL_ABOUT_SIZE_MAX)
         String about;
 
         @NotNull(message = CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL)
         Boolean isPrivate;
 
-        @NotNull(message = CREATE_KIT_BY_DSL_KIT_DSL_JSON_ID_NOT_NULL)
-        Long kitJsonDslId;
+        @NotNull(message = CREATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL)
+        Long kitDslId;
 
         @NotNull(message = CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL)
         Long expertGroupId;
@@ -44,13 +51,13 @@ public interface CreateKitByDslUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(String title, String summary, String about, boolean isPrivate,
-                     Long kitJsonDslId, Long expertGroupId, List<Long> tagIds, UUID currentUserId) {
+        public Param(String title, String summary, String about, Boolean isPrivate,
+                     Long kitDslId, Long expertGroupId, List<Long> tagIds, UUID currentUserId) {
             this.title = title;
             this.summary = summary;
             this.about = about;
             this.isPrivate = isPrivate;
-            this.kitJsonDslId = kitJsonDslId;
+            this.kitDslId = kitDslId;
             this.expertGroupId = expertGroupId;
             this.tagIds = tagIds;
             this.currentUserId = currentUserId;
