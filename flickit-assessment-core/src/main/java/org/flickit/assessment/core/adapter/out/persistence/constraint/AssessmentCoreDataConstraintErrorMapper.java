@@ -24,8 +24,7 @@ public class AssessmentCoreDataConstraintErrorMapper implements DataConstraintEr
         entry("fk_fac_assessment_account_user_created_by", COMMON_CURRENT_USER_NOT_FOUND),
         entry("fk_fac_assessment_account_user_last_modified_by", COMMON_CURRENT_USER_NOT_FOUND),
         entry("fk_fac_evidence_account_user_created_by", COMMON_CURRENT_USER_NOT_FOUND),
-        entry("fk_fac_evidence_account_user_last_modified_by_id", COMMON_CURRENT_USER_NOT_FOUND),
-        entry("baseinfo_expertgroup_name_key", CREATE_EXPERT_GROUP_DUPLICATE_TITLE));
+        entry("fk_fac_evidence_account_user_last_modified_by_id", COMMON_CURRENT_USER_NOT_FOUND));
 
     @Override
     public boolean contains(String constraintName) {
