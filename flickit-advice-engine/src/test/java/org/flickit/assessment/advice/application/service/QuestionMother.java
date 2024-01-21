@@ -1,9 +1,9 @@
-package application.service;
+package org.flickit.assessment.advice.application.service;
 
-import application.domain.Question;
-import application.domain.Target;
+import org.flickit.assessment.advice.application.domain.Question;
+import org.flickit.assessment.advice.application.domain.Target;
 
-import static application.service.OptionMother.createOptions;
+import static org.flickit.assessment.advice.application.service.OptionMother.createOptions;
 
 public class QuestionMother {
 

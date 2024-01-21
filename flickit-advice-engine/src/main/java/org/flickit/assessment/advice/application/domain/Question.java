@@ -1,4 +1,4 @@
-package application.domain;
+package org.flickit.assessment.advice.application.domain;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;

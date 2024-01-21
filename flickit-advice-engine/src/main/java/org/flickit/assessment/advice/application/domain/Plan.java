@@ -1,4 +1,4 @@
-package application.domain;
+package org.flickit.assessment.advice.application.domain;
 
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;

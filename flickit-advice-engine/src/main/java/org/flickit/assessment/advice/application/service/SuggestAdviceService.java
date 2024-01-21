@@ -1,12 +1,12 @@
-package application.service;
+package org.flickit.assessment.advice.application.service;
 
 import ai.timefold.solver.core.api.solver.Solver;
 import ai.timefold.solver.core.api.solver.SolverFactory;
 import ai.timefold.solver.core.config.solver.SolverConfig;
-import application.domain.Plan;
-import application.domain.Question;
-import application.port.in.SuggestAdviceUseCase;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.advice.application.domain.Plan;
+import org.flickit.assessment.advice.application.domain.Question;
+import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase;
 
 import java.time.Duration;
 import java.util.List;

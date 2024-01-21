@@ -1,8 +1,8 @@
-package application.service;
+package org.flickit.assessment.advice.application.service;
 
 
-import application.domain.Option;
-import application.domain.Target;
+import org.flickit.assessment.advice.application.domain.Option;
+import org.flickit.assessment.advice.application.domain.Target;
 
 import java.util.ArrayList;
 import java.util.HashMap;

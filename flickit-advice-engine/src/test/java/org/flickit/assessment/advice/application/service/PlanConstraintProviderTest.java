@@ -1,9 +1,9 @@
-package application.service;
+package org.flickit.assessment.advice.application.service;
 
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
-import application.domain.Plan;
-import application.domain.Question;
-import application.domain.Target;
+import org.flickit.assessment.advice.application.domain.Plan;
+import org.flickit.assessment.advice.application.domain.Question;
+import org.flickit.assessment.advice.application.domain.Target;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

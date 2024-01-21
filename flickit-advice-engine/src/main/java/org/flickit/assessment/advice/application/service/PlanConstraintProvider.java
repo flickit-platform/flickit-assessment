@@ -1,11 +1,11 @@
-package application.service;
+package org.flickit.assessment.advice.application.service;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
-import application.domain.Question;
-import application.domain.Target;
+import org.flickit.assessment.advice.application.domain.Question;
+import org.flickit.assessment.advice.application.domain.Target;
 
 import java.util.function.Predicate;
 

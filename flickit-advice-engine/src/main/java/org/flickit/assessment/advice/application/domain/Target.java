@@ -1,4 +1,4 @@
-package application.domain;
+package org.flickit.assessment.advice.application.domain;
 
 import lombok.Getter;
 import lombok.Setter;
