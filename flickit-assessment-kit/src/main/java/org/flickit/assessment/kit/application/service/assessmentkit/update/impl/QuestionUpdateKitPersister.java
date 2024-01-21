@@ -126,9 +126,9 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                        Map<String, Long> postUpdateMaturityLevels,
                                        UUID currentUserId) {
         boolean invalidateResults = false;
-        for (String questionnaireCode : savedQuestionnaireToQuestionsMap.keySet()) {
-            Map<String, Question> savedQuestions = savedQuestionnaireToQuestionsMap.get(questionnaireCode);
-            Map<String, QuestionDslModel> dslQuestions = dslQuestionnaireToQuestionsMap.get(questionnaireCode);
+        for (Map.Entry<String, Map<String, Question>> questionnaire : savedQuestionnaireToQuestionsMap.entrySet()) {
+            Map<String, Question> savedQuestions = questionnaire.getValue();
+            Map<String, QuestionDslModel> dslQuestions = dslQuestionnaireToQuestionsMap.get(questionnaire.getKey());
 
             if (dslQuestions == null || dslQuestions.isEmpty())
                 continue;
