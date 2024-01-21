@@ -146,8 +146,6 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 dslQuestion.getAnswerOptions().forEach(option -> createAnswerOption(option, persistedQuestionId, currentUserId));
 
                 dslQuestion.getQuestionImpacts().forEach(impact -> createImpact(impact, persistedQuestionId, postUpdateAttributes, postUpdateMaturityLevels, currentUserId));
-
-                // TODO: refactor (try to use createQuestionsOfNewQuestionnaires method)
             });
 
             if (!newDslQuestionCodes.isEmpty()) invalidateResults = true;
