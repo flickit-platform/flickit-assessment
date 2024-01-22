@@ -6,6 +6,7 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
+import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
@@ -29,6 +30,7 @@ import static org.flickit.assessment.kit.application.service.assessmentkit.updat
 public class SubjectUpdateKitPersister implements UpdateKitPersister {
 
     private final UpdateSubjectPort updateSubjectPort;
+    private final CreateSubjectPort createSubjectPort;
 
     @Override
     public int order() {
@@ -46,7 +48,10 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
         dslKit.getSubjects().forEach(dslSubject -> {
             Subject savedSubject = savedSubjectCodesMap.get(dslSubject.getCode());
 
-            if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
+            if (savedSubject == null)
+                createSubjectPort.persist(toCreateParam(savedKit.getId(),dslSubject,currentUserId));
+
+            else if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
                 savedSubject.getIndex() != dslSubject.getIndex() ||
                 !savedSubject.getDescription().equals(dslSubject.getDescription())) {
                 updateSubjectPort.update(toUpdateParam(savedSubject.getId(), dslSubject, currentUserId));
@@ -68,6 +73,18 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             dslSubject.getIndex(),
             dslSubject.getDescription(),
             LocalDateTime.now(),
+            currentUserId
+        );
+    }
+
+    private CreateSubjectPort.Param toCreateParam(long id, SubjectDslModel dslSubject, UUID currentUserId) {
+        return new CreateSubjectPort.Param(
+            dslSubject.getCode(),
+            dslSubject.getTitle(),
+            dslSubject.getIndex(),
+            dslSubject.getWeight(),
+            dslSubject.getDescription(),
+            id,
             currentUserId
         );
     }
