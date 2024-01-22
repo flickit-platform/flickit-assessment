@@ -47,7 +47,10 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx,
+                                            AssessmentKit savedKit,
+                                            AssessmentKitDslModel dslKit,
+                                            UUID currentUserId) {
         List<MaturityLevel> savedLevels = savedKit.getMaturityLevels();
         List<MaturityLevelDslModel> dslLevels = dslKit.getMaturityLevels();
 
@@ -79,15 +82,19 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
                 codeToPersistedLevels.put(existingLevel.getCode(), existingLevel);
             }
         }
-        updateMaturityLevelPort.update(updatedLevels);
+        updateMaturityLevelPort.update(updatedLevels, currentUserId);
 
         newLevels.forEach(code -> {
-            MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(code), savedKit.getId());
+            MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(code), savedKit.getId(), currentUserId);
             codeToPersistedLevels.put(createdLevel.getCode(), createdLevel);
         });
 
         // update competences of existing levels
-        boolean isCompetencesChanged = updateCompetencesToExistingLevels(savedLevelCodesMap, dslLevelCodesMap, existingLevels, codeToPersistedLevels);
+        boolean isCompetencesChanged = updateCompetencesToExistingLevels(savedLevelCodesMap,
+            dslLevelCodesMap,
+            existingLevels,
+            codeToPersistedLevels,
+            currentUserId);
 
         // create competences of new levels
         newLevels.forEach(code -> {
@@ -99,7 +106,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
 
             dslLevelCompetenceCodes.forEach((key, value) -> {
                 Long effectiveLevelId = codeToPersistedLevels.get(key).getId();
-                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value);
+                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, currentUserId);
             });
         });
 
@@ -114,7 +121,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         return new UpdateKitPersisterResult(invalidateResults);
     }
 
-    private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId) {
+    private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId, UUID currentUserId) {
         MaturityLevel newDomainLevel = new MaturityLevel(
             null,
             newLevel.getCode(),
@@ -124,7 +131,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             null
         );
 
-        Long persistedLevelId = createMaturityLevelPort.persist(newDomainLevel, kitId);
+        Long persistedLevelId = createMaturityLevelPort.persist(newDomainLevel, kitId, currentUserId);
         log.debug("MaturityLevel[id={}, code={}] created.", persistedLevelId, newLevel.getTitle());
 
         return new MaturityLevel(
@@ -157,7 +164,8 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
     private boolean updateCompetencesToExistingLevels(Map<String, MaturityLevel> savedLevelCodesMap,
                                                       Map<String, MaturityLevelDslModel> dslLevelCodesMap,
                                                       Set<String> existingLevels,
-                                                      Map<String, MaturityLevel> codeToPersistedLevels) {
+                                                      Map<String, MaturityLevel> codeToPersistedLevels,
+                                                      UUID currentUserId) {
         boolean isCompetencesChanged = false;
         Map<Long, String> idToCodeMap = codeToPersistedLevels.entrySet().stream()
             .collect(Collectors.toMap(
@@ -184,7 +192,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             newCompetences.forEach(cmpCode -> {
                 Long effectiveLevelId = codeToPersistedLevels.get(cmpCode).getId();
                 Integer value = dslLevel.getCompetencesCodeToValueMap().get(cmpCode);
-                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value);
+                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, currentUserId);
             });
 
             // delete removed competences
@@ -201,7 +209,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
                 Long effectiveLevelId = codeToPersistedLevels.get(cmpCode).getId();
                 if (oldValue != newValue) {
                     isCompetencesChanged = true;
-                    updateLevelCompetence(affectedLevel.getId(), effectiveLevelId, newValue);
+                    updateLevelCompetence(affectedLevel.getId(), effectiveLevelId, newValue, currentUserId);
                 }
             }
 
@@ -210,8 +218,8 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         return isCompetencesChanged;
     }
 
-    private void createLevelCompetence(long affectedLevelId, long effectiveLevelId, int value) {
-        createLevelCompetencePort.persist(affectedLevelId, effectiveLevelId, value);
+    private void createLevelCompetence(long affectedLevelId, long effectiveLevelId, int value, UUID currentUserId) {
+        createLevelCompetencePort.persist(affectedLevelId, effectiveLevelId, value, currentUserId);
         log.debug("LevelCompetence[affectedId={}, effectiveId={}, value={}] created.", affectedLevelId, effectiveLevelId, value);
     }
 
@@ -225,8 +233,8 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         log.debug("LevelCompetence[affectedId={}, effectiveId={}] deleted.", affectedLevelId, effectiveLevelId);
     }
 
-    private void updateLevelCompetence(long affectedLevelId, long effectiveLevelId, int value) {
-        updateLevelCompetencePort.update(affectedLevelId, effectiveLevelId, value);
+    private void updateLevelCompetence(long affectedLevelId, long effectiveLevelId, int value, UUID currentUserId) {
+        updateLevelCompetencePort.update(affectedLevelId, effectiveLevelId, value, currentUserId);
         log.debug("LevelCompetence[affectedId={}, effectiveId={}, value={}] updated.", affectedLevelId, effectiveLevelId, value);
     }
 

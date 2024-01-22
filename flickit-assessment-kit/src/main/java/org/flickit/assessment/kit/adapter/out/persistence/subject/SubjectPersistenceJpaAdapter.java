@@ -19,7 +19,8 @@ public class SubjectPersistenceJpaAdapter implements
             param.title(),
             param.index(),
             param.description(),
-            param.lastModificationTime()
+            param.lastModificationTime(),
+            param.lastModifiedBy()
         );
     }
 }

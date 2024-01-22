@@ -16,19 +16,23 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionJpaEntity> findByKitId(@Param("kitId") Long kitId);
 
     @Modifying
-    @Query("UPDATE QuestionJpaEntity q SET " +
-        "q.title = :title, " +
-        "q.hint = :hint, " +
-        "q.index = :index, " +
-        "q.mayNotBeApplicable = :mayNotBeApplicable," +
-        "q.lastModificationTime = :lastModificationTime " +
-        "WHERE q.id = :id")
+    @Query("""
+        UPDATE QuestionJpaEntity q SET
+        q.title = :title,
+        q.hint = :hint,
+        q.index = :index,
+        q.mayNotBeApplicable = :mayNotBeApplicable,
+        q.lastModificationTime = :lastModificationTime,
+        q.lastModifiedBy = :lastModifiedBy
+        WHERE q.id = :id
+        """)
     void update(@Param("id") Long id,
                 @Param("title") String title,
                 @Param("index") Integer index,
                 @Param("hint") String hint,
                 @Param("mayNotBeApplicable") Boolean mayNotBeApplicable,
-                @Param("lastModificationTime") LocalDateTime lastModificationTime);
+                @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
            SELECT q

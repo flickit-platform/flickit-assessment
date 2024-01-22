@@ -38,7 +38,10 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx,
+                                            AssessmentKit savedKit,
+                                            AssessmentKitDslModel dslKit,
+                                            UUID currentUserId) {
         var questionnaireIdToSubjectIdMap = extractQuestionnaireIdToSubjectIdMap(ctx, savedKit, dslKit);
         var savedSubjectQuestionnaires = loadPort.loadByKitId(savedKit.getId());
         var savedQuestionnaireIdToSubjectIdToIdMap =

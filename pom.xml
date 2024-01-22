@@ -37,7 +37,7 @@
 		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
 		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
 
-		<sonar.organization>avansoft</sonar.organization>
+		<sonar.organization>flickit-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
@@ -155,12 +155,12 @@
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
 						<labels>
 							<org.opencontainers.image.source>
-								https://github.com/avansoft/flickit-assessment-core
+								https://github.com/flickit-platform/flickit-assessment
 							</org.opencontainers.image.source>
 						</labels>
 					</container>
 					<from>
-						<image>ghcr.io/avansoft/flickit-assessment-core/jdk:17.0.7</image>
+						<image>ghcr.io/flickit-platform/jdk:17.0.7</image>
 					</from>
 				</configuration>
 			</plugin>
