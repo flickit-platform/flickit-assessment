@@ -5,8 +5,10 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaRepository;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslJsonPathPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadKitDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
+import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.KitDslMapper.toJpaEntity;
@@ -17,9 +19,12 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DS
 public class KitDslPersistenceJpaAdapter implements
     CreateKitDslPort,
     LoadDslJsonPathPort,
-    UpdateKitDslPort {
+    UpdateKitDslPort,
+    LoadKitDownloadLinkPort {
 
     private final KitDslJpaRepository repository;
+
+    private final MinioConfigProperties properties;
 
     @Override
     public Long create(String dslFilePath, String jsonFilePath) {
@@ -36,5 +41,10 @@ public class KitDslPersistenceJpaAdapter implements
     @Override
     public void update(Long id, Long kitId) {
         repository.updateById(id, kitId);
+    }
+
+    @Override
+    public String loadKitDownloadLink(Long kitId) {
+        return properties.getUrl() + "/" + repository.findDslFileByKitId(kitId);
     }
 }
