@@ -54,8 +54,7 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
     public static Plan generateDemoData() {
         Target target = new Target(10, 50);
         Target target2 = new Target(10, 32);
-//
-//        long id = 0L;
+
         List<Question> questions = new ArrayList<>();
         questions.add(createQuestionWithTargetAndOptionIndexes(target, 0));
         questions.add(createQuestionWithTargetAndOptionIndexes(target, 1));
@@ -73,7 +72,6 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
         questions.add(createQuestionWithTargetAndOptionIndexes(target, target2, 0));
 
         return new Plan(List.of(target, target2), questions);
-//        return null;
     }
 
     public static Question createQuestionWithTargetAndOptionIndexes(Target target, int currentOptionIndex) {
