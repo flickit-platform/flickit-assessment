@@ -29,7 +29,8 @@ public class AssessmentCalculateResultPersistAdapter implements
         assessmentResultRepo.updateAfterCalculate(assessmentResult.getId(),
             assessmentResult.getMaturityLevel().getId(),
             assessmentResult.isCalculateValid(),
-            assessmentResult.getLastModificationTime());
+            assessmentResult.getLastModificationTime(),
+            assessmentResult.getLastCalculationTime());
 
         List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
         subjectValues.forEach(s -> subjectValueRepo.updateMaturityLevelById(s.getId(), s.getMaturityLevel().getId()));
@@ -50,7 +51,8 @@ public class AssessmentCalculateResultPersistAdapter implements
             assessmentResult.getId(),
             assessmentResult.getConfidenceValue(),
             assessmentResult.isConfidenceValid(),
-            assessmentResult.getLastModificationTime());
+            assessmentResult.getLastModificationTime(),
+            assessmentResult.getLastConfidenceCalculationTime());
 
         List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
         subjectValues.forEach(s -> subjectValueRepo.updateConfidenceValuelById(s.getId(), s.getConfidenceValue()));

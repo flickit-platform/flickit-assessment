@@ -35,6 +35,12 @@ public class AssessmentResult {
     @Setter
     LocalDateTime lastModificationTime;
 
+    @Setter
+    LocalDateTime lastCalculationTime;
+
+    @Setter
+    LocalDateTime lastConfidenceCalculationTime;
+
 
     public MaturityLevel calculate() {
         List<MaturityLevel> maturityLevels = assessment.getAssessmentKit().getMaturityLevels();

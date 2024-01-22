@@ -13,8 +13,10 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastEffectiveModificationTimePort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,18 +34,21 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
+    private final LoadKitLastEffectiveModificationTimePort loadKitLastEffectiveModificationTimePort;
 
     @Override
     public AssessmentResult load(UUID assessmentId) {
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsCalculateValid())) {
+        LocalDateTime kitLastEffectiveModificationTime = loadKitLastEffectiveModificationTimePort.load(assessmentResultEntity.getAssessment().getAssessmentKitId());
+
+        if (!Boolean.TRUE.equals(isValid(assessmentResultEntity.getIsCalculateValid(), assessmentResultEntity.getLastCalculationTime(), kitLastEffectiveModificationTime))) {
             log.warn("The calculated result is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultEntity.getId());
             throw new CalculateNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
         }
 
-        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsConfidenceValid())) {
+        if (!Boolean.TRUE.equals(isValid(assessmentResultEntity.getIsConfidenceValid(), assessmentResultEntity.getLastCalculationTime(), kitLastEffectiveModificationTime))) {
             log.warn("The calculated confidence value is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultEntity.getId());
             throw new ConfidenceCalculationNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
         }
@@ -64,7 +69,13 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentResultEntity.getConfidenceValue(),
             assessmentResultEntity.getIsCalculateValid(),
             assessmentResultEntity.getIsConfidenceValid(),
-            assessmentResultEntity.getLastModificationTime());
+            assessmentResultEntity.getLastModificationTime(),
+            assessmentResultEntity.getLastCalculationTime(),
+            assessmentResultEntity.getLastConfidenceCalculationTime());
+    }
+
+    private boolean isValid(boolean isValid, LocalDateTime lastCalculationTime, LocalDateTime kitLastEffectiveModificationTime) {
+        return isValid || lastCalculationTime.isBefore(kitLastEffectiveModificationTime);
     }
 
     private List<SubjectValue> buildSubjectValues(List<SubjectValueJpaEntity> subjectValueEntities, Map<Long, MaturityLevel> maturityLevels) {

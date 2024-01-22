@@ -43,6 +43,12 @@ public class AssessmentResultJpaEntity {
     @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 
+    @Column(name = "last_calculation_time", nullable = false)
+    private LocalDateTime lastCalculationTime;
+
+    @Column(name = "last_confidence_calculation_time", nullable = false)
+    private LocalDateTime lastConfidenceCalculationTime;
+
     @Override
     public String toString() {
         return id.toString();

@@ -63,4 +63,7 @@ public class AssessmentKitJpaEntity {
         joinColumns = @JoinColumn(name = "kit_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<UserJpaEntity> accessGrantedUsers;
+
+    @Column(name = "last_effective_modification_time", nullable = false)
+    private LocalDateTime lastEffectiveModificationTime;
 }

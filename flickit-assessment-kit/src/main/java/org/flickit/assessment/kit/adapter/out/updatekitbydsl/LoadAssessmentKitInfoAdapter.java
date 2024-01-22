@@ -23,8 +23,10 @@ import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitByIdPort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,7 +35,9 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND
 
 @Component
 @AllArgsConstructor
-public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
+public class LoadAssessmentKitInfoAdapter implements
+    LoadAssessmentKitInfoPort,
+    UpdateKitByIdPort {
 
     private final AssessmentKitJpaRepository repository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
@@ -124,5 +128,10 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
     private void setQuestions(List<Questionnaire> questionnaires, List<Question> questions) {
         Map<Long, List<Question>> groupedQuestions = questions.stream().collect(Collectors.groupingBy(Question::getQuestionnaireId));
         questionnaires.forEach(q -> q.setQuestions(groupedQuestions.get(q.getId())));
+    }
+
+    @Override
+    public void updateById(Long kitId, LocalDateTime lastEffectiveModificationTime) {
+        repository.updateById(kitId, lastEffectiveModificationTime);
     }
 }
