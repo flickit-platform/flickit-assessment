@@ -11,7 +11,6 @@ import lombok.Setter;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 @PlanningEntity
@@ -52,6 +51,18 @@ public class Question {
         return getOptionCost(recommendedOptionIndex) - getOptionCost(currentOptionIndex);
     }
 
+    public boolean isRecommended() {
+        return recommendedOptionIndex != null && recommendedOptionIndex > optionIndexValues.get(0);
+    }
+
+    public boolean hasImpact(Target target) {
+        return options.stream().anyMatch(op -> op.hasImpact(target));
+    }
+
+    public double getAllGains() {
+        return options.get(recommendedOptionIndex).getAllGains() - options.get(currentOptionIndex).getAllGains();
+    }
+
     private double getOptionGain(Target target, Integer optionIndex) {
         return options
             .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
@@ -62,19 +73,6 @@ public class Question {
         return options
             .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
             .getCost();
-    }
-
-    public boolean hasGain() {
-        return recommendedOptionIndex != null && recommendedOptionIndex > optionIndexValues.get(0);
-    }
-
-    public double getAllTargetsGain() {
-        double sum = 0;
-        Set<Target> targets = options.get(recommendedOptionIndex).getGains().keySet();
-        for (Target target : targets) {
-            sum += getOptionGain(target, recommendedOptionIndex);
-        }
-        return sum;
     }
 
     @Override

@@ -4,6 +4,7 @@ import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
+import ai.timefold.solver.core.api.score.stream.Joiners;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.Target;
 
@@ -28,9 +29,15 @@ public class PlanConstraintProvider implements ConstraintProvider {
     Constraint minGain(ConstraintFactory constraintFactory) {
         return constraintFactory
             .forEach(Target.class)
-            .filter(target -> target.getScore() > 0)
+            .join(Question.class,
+                Joiners.filtering((t, q) -> q.hasImpact(t))
+            )
+            .groupBy(
+                (t, q) -> t,
+                sum((t, q) -> (int) (Math.floor(q.getTargetGain(t)))))
+            .filter((t, sum) -> t.getNeededGain() - sum > 0)
             .penalize(HardSoftScore.ONE_HARD,
-                Target::getScore)
+                (t, sum) -> t.getNeededGain() - sum)
             .asConstraint("minGain");
     }
 
@@ -39,8 +46,8 @@ public class PlanConstraintProvider implements ConstraintProvider {
             .forEach(Question.class)
             .filter(isQuestionOnPlan())
             .groupBy(
-                sum(q -> (int) (Math.round(q.getAllTargetsGain()))),
-                sum(q -> (int) (Math.round(q.getCost())))
+                sum(q -> (int) (Math.floor(q.getAllGains()))),
+                sum(q -> (int) (Math.ceil(q.getCost())))
             )
             .reward(HardSoftScore.ONE_SOFT,
                 (totalGain, totalCost) -> Math.round(((float) totalGain / totalCost) * 100))
@@ -58,6 +65,6 @@ public class PlanConstraintProvider implements ConstraintProvider {
     }
 
     private Predicate<Question> isQuestionOnPlan() {
-        return Question::hasGain;
+        return Question::isRecommended;
     }
 }

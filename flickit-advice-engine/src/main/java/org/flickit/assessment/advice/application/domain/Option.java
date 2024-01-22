@@ -24,4 +24,14 @@ public class Option {
     public double getCost() {
         return progress * questionCost;
     }
+
+    public boolean hasImpact(Target target) {
+        return gains.containsKey(target);
+    }
+
+    public double getAllGains() {
+        return gains.values().stream()
+            .mapToDouble(Double::doubleValue)
+            .sum();
+    }
 }
