@@ -23,13 +23,9 @@ public class SubjectUpdateKitValidator implements UpdateKitValidator {
         var dslSubjectCodes = dslKit.getSubjects().stream().map(BaseDslModel::getCode).collect(toSet());
 
         var deletedCodes = savedSubjectCodes.stream().filter(s -> !dslSubjectCodes.contains(s)).collect(toSet());
-        //var newCodes = dslSubjectCodes.stream().filter(s -> !savedSubjectCodes.contains(s)).collect(toSet());
 
         if (!deletedCodes.isEmpty())
             notification.add(new InvalidDeletionError(DslFieldNames.SUBJECT, deletedCodes));
-
-        //if (!newCodes.isEmpty())
-        //    notification.add(new InvalidAdditionError(DslFieldNames.SUBJECT, newCodes));
 
         return notification;
     }
