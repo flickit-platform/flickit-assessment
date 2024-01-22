@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,14 +45,15 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
                                             AssessmentKitDslModel dslKit,
                                             UUID currentUserId) {
         Map<String, Subject> savedSubjectCodesMap = savedKit.getSubjects().stream().collect(toMap(Subject::getCode, i -> i));
+        Map<String, Long> addedCodeToIdMap = new HashMap<>();
 
         dslKit.getSubjects().forEach(dslSubject -> {
             Subject savedSubject = savedSubjectCodesMap.get(dslSubject.getCode());
 
-            if (savedSubject == null)
-                createSubjectPort.persist(toCreateParam(savedKit.getId(),dslSubject,currentUserId));
-
-            else if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
+            if (savedSubject == null) {
+                Long persistedSubjectId = createSubjectPort.persist(toCreateParam(savedKit.getId(), dslSubject, currentUserId));
+                addedCodeToIdMap.put(dslSubject.getTitle(), persistedSubjectId);
+            } else if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
                 savedSubject.getIndex() != dslSubject.getIndex() ||
                 !savedSubject.getDescription().equals(dslSubject.getDescription())) {
                 updateSubjectPort.update(toUpdateParam(savedSubject.getId(), dslSubject, currentUserId));
@@ -59,22 +61,15 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             }
         });
 
-        Map<String, Long> subjectCodeToIdMap = savedSubjectCodesMap.entrySet().stream()
+        Map<String, Long> updatedCodeToIdMap = savedSubjectCodesMap.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getId()));
+
+        var subjectCodeToIdMap = mergeAddedAndUpdatedMap(addedCodeToIdMap, updatedCodeToIdMap);
+
         ctx.put(KEY_SUBJECTS, subjectCodeToIdMap);
         log.debug("Final subjects: {}", subjectCodeToIdMap);
 
         return new UpdateKitPersisterResult(false);
-    }
-
-    private UpdateSubjectPort.Param toUpdateParam(long id, SubjectDslModel dslSubject, UUID currentUserId) {
-        return new UpdateSubjectPort.Param(id,
-            dslSubject.getTitle(),
-            dslSubject.getIndex(),
-            dslSubject.getDescription(),
-            LocalDateTime.now(),
-            currentUserId
-        );
     }
 
     private CreateSubjectPort.Param toCreateParam(long id, SubjectDslModel dslSubject, UUID currentUserId) {
@@ -87,5 +82,21 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             id,
             currentUserId
         );
+    }
+
+    private UpdateSubjectPort.Param toUpdateParam(long id, SubjectDslModel dslSubject, UUID currentUserId) {
+        return new UpdateSubjectPort.Param(id,
+            dslSubject.getTitle(),
+            dslSubject.getIndex(),
+            dslSubject.getDescription(),
+            LocalDateTime.now(),
+            currentUserId
+        );
+    }
+
+    private HashMap<String, Long> mergeAddedAndUpdatedMap(Map<String, Long> added, Map<String, Long> updated) {
+        HashMap<String, Long> subjectCodeToIdMap = new HashMap<>(added);
+        subjectCodeToIdMap.putAll(updated);
+        return subjectCodeToIdMap;
     }
 }
