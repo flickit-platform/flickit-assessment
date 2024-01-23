@@ -79,18 +79,19 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
     }
 
     public static List<Option> createOptions(Target target) {
+        int index = 1;
         List<Option> options = new ArrayList<>();
-        options.add(createOption(target, 0, 0, 10));
-        options.add(createOption(target, 2, 0.25, 10));
-        options.add(createOption(target, 4, 0.5, 10));
-        options.add(createOption(target, 8, 1.0, 10));
+        options.add(createOption(index++, target, 0, 0, 10));
+        options.add(createOption(index++, target, 2, 0.25, 10));
+        options.add(createOption(index++, target, 4, 0.5, 10));
+        options.add(createOption(index, target, 8, 1.0, 10));
         return options;
     }
 
-    public static Option createOption(Target target, double gainValue, double progress, int questionCost) {
+    public static Option createOption(int index, Target target, double gainValue, double progress, int questionCost) {
         HashMap<Target, Double> gains = new HashMap<>();
         gains.put(target, gainValue);
-        return new Option(gains, progress, questionCost);
+        return new Option(id++, index, gains, progress, questionCost);
     }
 
     public static Question createQuestionWithTargetAndOptionIndexes(Target target1, Target target2, int currentOptionIndex) {
@@ -98,18 +99,19 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
     }
 
     public static List<Option> createOptions(Target target1, Target target2) {
+        int index = 1;
         List<Option> options = new ArrayList<>();
-        options.add(createOption(target1, target2, 0, 0, 10));
-        options.add(createOption(target1, target2, 2, 0.25, 10));
-        options.add(createOption(target1, target2, 4, 0.5, 10));
-        options.add(createOption(target1, target2, 8, 1.0, 10));
+        options.add(createOption(index++, target1, target2, 0, 0, 10));
+        options.add(createOption(index++, target1, target2, 2, 0.25, 10));
+        options.add(createOption(index++, target1, target2, 4, 0.5, 10));
+        options.add(createOption(index, target1, target2, 8, 1.0, 10));
         return options;
     }
 
-    public static Option createOption(Target target1, Target target2, double gainValue, double progress, int questionCost) {
+    public static Option createOption(int index, Target target1, Target target2, double gainValue, double progress, int questionCost) {
         HashMap<Target, Double> gains = new HashMap<>();
         gains.put(target1, gainValue);
         gains.put(target2, gainValue);
-        return new Option(gains, progress, questionCost);
+        return new Option(id++, index, gains, progress, questionCost);
     }
 }
