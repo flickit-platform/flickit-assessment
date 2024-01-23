@@ -24,7 +24,6 @@ public class CreateExpertGroupRestController {
     @PostMapping("/expert-groups")
     public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(
         @ModelAttribute CreateExpertGroupRequestDto request) {
-
         UUID currentUserId = userContext.getUser().id();
         CreateExpertGroupResponseDto response =
             toResponseDto(useCase.createExpertGroup(toParam(request, currentUserId)));
@@ -45,12 +44,10 @@ public class CreateExpertGroupRestController {
     }
 
     private String getFileNameSafely(MultipartFile picture) {
-        try {
-            String fileName = picture.getOriginalFilename();
-            return Objects.requireNonNullElse(fileName, "");
-        } catch (NullPointerException e) {
+        if (picture == null)
             return "";
-        }
+        String fileName = picture.getOriginalFilename();
+        return Objects.requireNonNullElse(fileName, "");
     }
 
     private CreateExpertGroupResponseDto toResponseDto(CreateExpertGroupUseCase.Result result) {
