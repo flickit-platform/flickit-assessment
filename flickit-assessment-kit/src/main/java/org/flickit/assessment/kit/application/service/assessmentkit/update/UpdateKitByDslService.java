@@ -45,7 +45,7 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
         validateUserIsExpertGroupOwner(savedKit.getExpertGroupId(), currentUserId);
         validateChanges(savedKit, dslKit);
         UpdateKitPersisterResult persistResult = persister.persist(savedKit, dslKit, currentUserId);
-        if (persistResult.shouldInvalidateCalcResult())
+        if (persistResult.isKitModificationEffective())
             updateKitByIdPort.updateById(savedKit.getId(), LocalDateTime.now());
     }
 

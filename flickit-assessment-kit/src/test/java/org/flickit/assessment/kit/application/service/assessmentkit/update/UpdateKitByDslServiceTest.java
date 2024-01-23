@@ -54,7 +54,7 @@ class UpdateKitByDslServiceTest {
 
     @Test
     @SneakyThrows
-    void testUpdate_ValidChanges_NoNeedToInvalidateResult() {
+    void testUpdate_ValidChanges_NoNeedToUpdateKitEffectiveModificationTime() {
         Long kitId = 1L;
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKit savedKit = simpleKit();
@@ -72,7 +72,7 @@ class UpdateKitByDslServiceTest {
 
     @Test
     @SneakyThrows
-    void testUpdate_ValidChanges_NeedsToInvalidateResult() {
+    void testUpdate_ValidChanges_NeedsToUpdateKitEffectiveModificationTime() {
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKit savedKit = simpleKit();
         Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());

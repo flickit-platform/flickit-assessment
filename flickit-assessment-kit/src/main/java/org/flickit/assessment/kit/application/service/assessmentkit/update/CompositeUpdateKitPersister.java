@@ -29,11 +29,11 @@ public class CompositeUpdateKitPersister {
 
     public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit, UUID currentUserId) {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        boolean shouldInvalidateCalcResult = false;
+        boolean isKitModificationEffective = false;
         for (UpdateKitPersister p : persisters) {
             UpdateKitPersisterResult result = p.persist(ctx, savedKit, dslKit, currentUserId);
-            shouldInvalidateCalcResult = shouldInvalidateCalcResult || result.shouldInvalidateCalcResult();
+            isKitModificationEffective = isKitModificationEffective || result.isKitModificationEffective();
         }
-        return new UpdateKitPersisterResult(shouldInvalidateCalcResult);
+        return new UpdateKitPersisterResult(isKitModificationEffective);
     }
 }

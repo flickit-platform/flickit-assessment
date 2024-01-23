@@ -73,7 +73,7 @@ class AttributeUpdateKitPersisterTest {
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         Mockito.verify(updateAttributePort, Mockito.times(0)).update(captor.capture());
-        assertFalse(result.shouldInvalidateCalcResult());
+        assertFalse(result.isKitModificationEffective());
 
         Map<String, Long> codeToIdMap = ctx.get(KEY_ATTRIBUTES);
         assertNotNull(codeToIdMap);
@@ -130,7 +130,7 @@ class AttributeUpdateKitPersisterTest {
         assertEquals(attrTwo.getWeight(), secondAttr.weight());
         assertThat(secondAttr.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
         assertEquals(subject.getId(), secondAttr.subjectId());
-        assertFalse(result.shouldInvalidateCalcResult());
+        assertFalse(result.isKitModificationEffective());
 
         Map<String, Long> codeToIdMap = ctx.get(KEY_ATTRIBUTES);
         assertNotNull(codeToIdMap);
@@ -192,7 +192,7 @@ class AttributeUpdateKitPersisterTest {
         assertEquals(dslAttrTwo.getWeight(), secondAttr.weight());
         assertThat(secondAttr.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
         assertEquals(subjectOne.getId(), secondAttr.subjectId());
-        assertTrue(result.shouldInvalidateCalcResult());
+        assertTrue(result.isKitModificationEffective());
 
         Map<String, Long> codeToIdMap = ctx.get(KEY_ATTRIBUTES);
         assertNotNull(codeToIdMap);

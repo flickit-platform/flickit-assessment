@@ -74,7 +74,7 @@ class MaturityLevelUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
-        assertFalse(result.shouldInvalidateCalcResult());
+        assertFalse(result.isKitModificationEffective());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
         assertNotNull(codeToIdMap);
         assertEquals(3, codeToIdMap.keySet().size());
@@ -108,7 +108,7 @@ class MaturityLevelUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, currentUserId);
 
-        assertTrue(result.shouldInvalidateCalcResult());
+        assertTrue(result.isKitModificationEffective());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
         assertNotNull(codeToIdMap);
         assertEquals(3, codeToIdMap.keySet().size());
@@ -135,7 +135,7 @@ class MaturityLevelUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
-        assertTrue(result.shouldInvalidateCalcResult());
+        assertTrue(result.isKitModificationEffective());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());
@@ -173,7 +173,7 @@ class MaturityLevelUpdateKitPersisterTest {
         assertEquals(updatedMaturityLevel.getIndex(), updateCaptor.getValue().get(0).getIndex());
         assertEquals(updatedMaturityLevel.getValue(), updateCaptor.getValue().get(0).getValue());
 
-        assertFalse(result.shouldInvalidateCalcResult());
+        assertFalse(result.isKitModificationEffective());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
         assertNotNull(codeToIdMap);
         assertEquals(1, codeToIdMap.keySet().size());
@@ -207,7 +207,7 @@ class MaturityLevelUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, currentUserId);
 
-        assertTrue(result.shouldInvalidateCalcResult());
+        assertTrue(result.isKitModificationEffective());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());
@@ -241,7 +241,7 @@ class MaturityLevelUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
-        assertTrue(result.shouldInvalidateCalcResult());
+        assertTrue(result.isKitModificationEffective());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
         assertNotNull(codeToIdMap);
         assertEquals(3, codeToIdMap.keySet().size());
@@ -275,7 +275,7 @@ class MaturityLevelUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, uuid);
 
-        assertTrue(result.shouldInvalidateCalcResult());
+        assertTrue(result.isKitModificationEffective());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());
