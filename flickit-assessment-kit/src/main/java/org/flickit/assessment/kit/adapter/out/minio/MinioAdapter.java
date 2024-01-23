@@ -7,6 +7,7 @@ import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.config.MinioConfigProperties;
@@ -24,7 +25,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DS
 @AllArgsConstructor
 public class MinioAdapter implements
     UploadKitDslToFileStoragePort,
-    LoadKitDSLJsonFilePort {
+    LoadKitDSLJsonFilePort,
+    UploadExpertGroupPicturePort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
@@ -32,44 +34,25 @@ public class MinioAdapter implements
 
     @SneakyThrows
     @Override
-    public UploadKitDslToFileStoragePort.Result upload(MultipartFile dslZipFile, String dslJsonFile) {
+    public UploadKitDslToFileStoragePort.Result uploadKitDsl(MultipartFile dslZipFile, String dslJsonFile) {
         String bucketName = properties.getBucketName();
         String dslFileNameNoSuffix = Objects.requireNonNull(dslZipFile.getOriginalFilename()).replace(".zip", "");
         String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + SLASH + dslFileNameNoSuffix + SLASH;
         String dslFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
         String jsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
 
-        checkBucketExistence(bucketName);
+        createBucket(bucketName);
         setBucketVersioning(bucketName);
 
         InputStream zipFileInputStream = dslZipFile.getInputStream();
-        String zipFileVersionId = writeFile(bucketName, dslFileObjectName, zipFileInputStream);
+        String zipFileVersionId = writeFile(bucketName, dslFileObjectName, zipFileInputStream).versionId();
 
         InputStream jsonFileInputStream = new ByteArrayInputStream(dslJsonFile.getBytes());
-        String jsonFileVersionId = writeFile(bucketName, jsonFileObjectName, jsonFileInputStream);
+        String jsonFileVersionId = writeFile(bucketName, jsonFileObjectName, jsonFileInputStream).versionId();
 
         return new UploadKitDslToFileStoragePort.Result(
             dslFileObjectName + SLASH + zipFileVersionId,
             jsonFileObjectName + SLASH + jsonFileVersionId);
-    }
-
-    @SneakyThrows
-    private String writeFile(String bucketName, String dslFileObjectName, InputStream zipFileInputStream) {
-        return minioClient.putObject(PutObjectArgs.builder()
-                .bucket(bucketName)
-                .object(dslFileObjectName)
-                .stream(zipFileInputStream, zipFileInputStream.available(), -1)
-                .build())
-            .versionId();
-    }
-
-    @SneakyThrows
-    private void checkBucketExistence(String bucketName) {
-        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
-            minioClient.makeBucket(MakeBucketArgs.builder()
-                .bucket(bucketName)
-                .build());
-        }
     }
 
     @SneakyThrows
@@ -78,6 +61,15 @@ public class MinioAdapter implements
             .bucket(bucketName)
             .config(new VersioningConfiguration(Status.ENABLED, false))
             .build());
+    }
+
+    @SneakyThrows
+    private ObjectWriteResponse writeFile(String bucketName, String fileObjectName, InputStream fileInputStream) {
+        return minioClient.putObject(PutObjectArgs.builder()
+                .bucket(bucketName)
+                .object(fileObjectName)
+                .stream(fileInputStream, fileInputStream.available(), -1)
+                .build());
     }
 
     @SneakyThrows
@@ -105,5 +97,24 @@ public class MinioAdapter implements
                 .build());
 
         return new String(stream.readAllBytes());
+    }
+
+    @Override
+    @SneakyThrows
+    public String uploadPicture(MultipartFile pictureFile) {
+        createBucket(properties.getBucketName());
+        setBucketVersioning(properties.getBucketName());
+
+        var result = writeFile(properties.getBucketName(), pictureFile.getOriginalFilename(), pictureFile.getInputStream());
+        return result.bucket() + "/" + result.object();
+    }
+
+    @SneakyThrows
+    private void createBucket(String bucketName) {
+        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
+            minioClient.makeBucket(MakeBucketArgs.builder()
+                .bucket(bucketName)
+                .build());
+        }
     }
 }
