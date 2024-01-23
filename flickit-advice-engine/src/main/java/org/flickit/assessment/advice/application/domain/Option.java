@@ -13,6 +13,8 @@ import java.util.Map;
 @AllArgsConstructor
 public class Option {
 
+    private long id;
+    private int index;
     private Map<Target, Double> gains;
     private double progress;
     private int questionCost;

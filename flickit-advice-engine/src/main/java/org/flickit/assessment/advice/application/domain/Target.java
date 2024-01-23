@@ -5,11 +5,11 @@ import lombok.Getter;
 @Getter
 public final class Target {
 
-    private final int currentGain;
-    private final int minGain;
-    private final int neededGain;
+    private final double currentGain;
+    private final double minGain;
+    private final double neededGain;
 
-    public Target(int currentGain, int minGain) {
+    public Target(double currentGain, double minGain) {
         this.currentGain = currentGain;
         this.minGain = minGain;
         this.neededGain = minGain - currentGain;

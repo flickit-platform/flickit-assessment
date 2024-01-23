@@ -37,7 +37,7 @@ public class PlanConstraintProvider implements ConstraintProvider {
                 sum((t, q) -> (int) (Math.floor(q.getTargetGain(t)))))
             .filter((t, sum) -> t.getNeededGain() - sum > 0)
             .penalize(HardSoftScore.ONE_HARD,
-                (t, sum) -> t.getNeededGain() - sum)
+                (t, sum) -> (int) Math.ceil(t.getNeededGain()) - sum)
             .asConstraint("minGain");
     }
 
