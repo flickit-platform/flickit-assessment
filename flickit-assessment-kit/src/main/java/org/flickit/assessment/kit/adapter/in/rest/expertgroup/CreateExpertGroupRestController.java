@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -37,17 +35,10 @@ public class CreateExpertGroupRestController {
             request.title(),
             request.bio(),
             request.about(),
-            !getFileNameSafely(request.picture()).isEmpty() ? request.picture() : null,
+            request.picture(),
             (website != null && !website.isBlank()) ? website.strip() : null,
             currentUserId
         );
-    }
-
-    private String getFileNameSafely(MultipartFile picture) {
-        if (picture == null)
-            return "";
-        String fileName = picture.getOriginalFilename();
-        return Objects.requireNonNullElse(fileName, "");
     }
 
     private CreateExpertGroupResponseDto toResponseDto(CreateExpertGroupUseCase.Result result) {
