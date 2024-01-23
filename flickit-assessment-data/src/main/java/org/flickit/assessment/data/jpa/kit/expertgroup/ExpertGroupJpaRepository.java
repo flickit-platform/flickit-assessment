@@ -17,7 +17,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     @Query("""
             SELECT
                 e.id as id,
-                e.name as name,
+                e.title as title,
                 e.picture as picture,
                 e.bio as bio,
                 e.ownerId as ownerId,
@@ -32,7 +32,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             )
             GROUP BY
                 e.id,
-                e.name,
+                e.title,
                 e.picture,
                 e.bio,
                 e.ownerId
