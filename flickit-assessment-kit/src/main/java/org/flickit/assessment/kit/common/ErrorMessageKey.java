@@ -50,6 +50,7 @@ public class ErrorMessageKey {
     public static final String CREATE_EXPERT_GROUP_TITLE_NOT_BLANK = "create-expert-group.title.notBlank";
     public static final String CREATE_EXPERT_GROUP_TITLE_SIZE_MIN = "create-expert-group.title.size.min";
     public static final String CREATE_EXPERT_GROUP_TITLE_SIZE_MAX = "create-expert-group.title.size.max";
+    public static final String CREATE_EXPERT_GROUP_TITLE_DUPLICATE = "create-expert-group.title.duplicate";
     public static final String CREATE_EXPERT_GROUP_BIO_NOT_BLANK = "create-expert-group.bio.notBlank";
     public static final String CREATE_EXPERT_GROUP_BIO_SIZE_MIN = "create-expert-group.bio.size.min";
     public static final String CREATE_EXPERT_GROUP_BIO_SIZE_MAX = "create-expert-group.bio.size.max";
@@ -79,7 +80,6 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL = "create-kit-by-dsl.isPrivate.notNull";
     public static final String CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL = "create-kit-by-dsl.tag-ids.notNull";
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
-    public static final String CREATE_EXPERT_GROUP_DUPLICATE_TITLE = "create-expert-group.duplicate.title";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
