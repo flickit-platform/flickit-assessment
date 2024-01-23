@@ -3,6 +3,7 @@ package org.flickit.assessment.core.test.fixture.adapter.jpa;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class QuestionJpaEntityMother {
 
@@ -12,13 +13,15 @@ public class QuestionJpaEntityMother {
         return new QuestionJpaEntity(
             questionId,
             "code" + questionId,
+            index++,
             "title" + questionId,
             "description" + questionId,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            index++,
+            mayNotBeApplicable,
             questionnaireId,
-            mayNotBeApplicable
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
         );
     }
 }

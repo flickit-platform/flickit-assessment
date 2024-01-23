@@ -13,7 +13,7 @@ public class AnswerOptionDtoMother {
             answerOptionId,
             questionId,
             impactEntities.stream()
-                .map(i -> AnswerOptionImpactDtoMother.answerOptionImpactDto(new QuestionImpactDto(i.getId(), i.getWeight(), i.getMaturityLevel().getId(), i.getQualityAttributeId())))
+                .map(i -> AnswerOptionImpactDtoMother.answerOptionImpactDto(new QuestionImpactDto(i.getId(), i.getWeight(), i.getMaturityLevel().getId(), i.getAttributeId())))
                 .toList()
         );
     }

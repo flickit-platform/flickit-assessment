@@ -4,13 +4,8 @@ import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
-import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
-import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMother;
-import org.flickit.assessment.core.adapter.out.rest.qualityattribute.QualityAttributeDto;
-import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
-import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
@@ -150,7 +145,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      */
     private List<Question> questionsWithImpact(Long attributeId, Context context) {
         return context.questionIdToImpactMap.entrySet().stream()
-            .filter(q -> q.getValue().stream().anyMatch(i -> i.getQualityAttributeId().equals(attributeId)))
+            .filter(q -> q.getValue().stream().anyMatch(i -> i.getAttributeId().equals(attributeId)))
             .map(q -> QuestionMapper.mapToDomainModel(q.getKey(), q.getValue().stream().map(QuestionImpactMother::mapToDomainModel).toList()))
             .toList();
     }

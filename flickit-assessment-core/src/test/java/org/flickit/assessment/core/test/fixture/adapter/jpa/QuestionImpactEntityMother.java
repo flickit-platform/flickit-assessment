@@ -2,6 +2,9 @@ package org.flickit.assessment.core.test.fixture.adapter.jpa;
 
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 public class QuestionImpactEntityMother {
 
     private static long questionImpactId = 134L;
@@ -12,7 +15,11 @@ public class QuestionImpactEntityMother {
             1,
             questionId,
             qualityAttributeId,
-            MaturityLevelJpaEntityMother.maturityLevelEntity(maturityLevelId)
+            MaturityLevelJpaEntityMother.maturityLevelEntity(maturityLevelId),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
         );
     }
 }
