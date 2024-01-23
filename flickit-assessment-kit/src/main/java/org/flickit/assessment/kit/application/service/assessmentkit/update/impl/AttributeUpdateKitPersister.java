@@ -40,8 +40,6 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
                                             AssessmentKitDslModel dslKit,
                                             UUID currentUserId) {
         Map<String, Long> subjectCodeToSubjectId = ctx.get(KEY_SUBJECTS);
-/*        Map<String, Long> subjectCodeToSubjectId = savedKit.getSubjects().stream()
-            .collect(Collectors.toMap(Subject::getCode, Subject::getId));*/
 
         Map<String, AttributeDslModel> attrCodeToAttrDslModel = dslKit.getAttributes().stream()
             .collect(Collectors.toMap(AttributeDslModel::getCode, Function.identity()));
