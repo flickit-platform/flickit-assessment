@@ -39,20 +39,20 @@ public class UploadExpertGroupPictureAdapter implements
     }
 
     @SneakyThrows
+    private void setBucketVersioning(String bucketName) {
+        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
+            .bucket(bucketName)
+            .config(new VersioningConfiguration(VersioningConfiguration.Status.ENABLED, false))
+            .build());
+    }
+
+    @SneakyThrows
     private String writeFile(String bucketName, String pictureName, InputStream pictureStream) {
         var result = minioClient.putObject(PutObjectArgs.builder()
             .bucket(bucketName)
             .object(pictureName)
             .stream(pictureStream, pictureStream.available(), -1)
             .build());
-        return properties.getUrl() + "/" + result.bucket() + "/" + result.object();
-    }
-
-    @SneakyThrows
-    private void setBucketVersioning(String bucketName) {
-        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
-            .bucket(bucketName)
-            .config(new VersioningConfiguration(VersioningConfiguration.Status.ENABLED, false))
-            .build());
+        return result.bucket() + "/" + result.object();
     }
 }

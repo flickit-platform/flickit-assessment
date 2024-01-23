@@ -53,8 +53,6 @@ public class ErrorMessageKey {
     public static final String CREATE_EXPERT_GROUP_BIO_NOT_BLANK = "create-expert-group.bio.notBlank";
     public static final String CREATE_EXPERT_GROUP_BIO_SIZE_MIN = "create-expert-group.bio.size.min";
     public static final String CREATE_EXPERT_GROUP_BIO_SIZE_MAX = "create-expert-group.bio.size.max";
-    public static final String CREATE_EXPERT_GROUP_PICTURE_FILE_FORMAT = "create-expert-group.picture.file-format";
-    public static final String CREATE_EXPERT_GROUP_PICTURE_SIZE_MAX = "create-expert-group.picture.size.max";
     public static final String CREATE_EXPERT_GROUP_ABOUT_NOT_BLANK = "create-expert-group.about.notBlank";
     public static final String CREATE_EXPERT_GROUP_ABOUT_SIZE_MIN = "create-expert-group.about.size.min";
     public static final String CREATE_EXPERT_GROUP_ABOUT_SIZE_MAX = "create-expert-group.about.size.max";
