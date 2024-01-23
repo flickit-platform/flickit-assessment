@@ -57,13 +57,9 @@ class AttributeUpdateKitPersisterTest {
 
         SubjectDslModel subjectDslModel = SubjectDslModelMother.domainToDslModel(subject);
         AttributeDslModel dslAttrOne =
-            AttributeDslModelMother.domainToDslModel(attrOne, e -> {
-                e.subjectCode(subject.getCode());
-            });
+            AttributeDslModelMother.domainToDslModel(attrOne, e -> e.subjectCode(subject.getCode()));
         AttributeDslModel dslAttrTwo =
-            AttributeDslModelMother.domainToDslModel(attrTwo, e -> {
-                e.subjectCode(subject.getCode());
-            });
+            AttributeDslModelMother.domainToDslModel(attrTwo, e -> e.subjectCode(subject.getCode()));
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .subjects(List.of(subjectDslModel))
             .attributes(List.of(dslAttrOne, dslAttrTwo))
@@ -158,9 +154,7 @@ class AttributeUpdateKitPersisterTest {
                 e.subjectCode(subjectOne.getCode());
             });
         AttributeDslModel dslAttrThree =
-            AttributeDslModelMother.domainToDslModel(attrThree, e -> {
-                e.subjectCode(subjectTwo.getCode());
-            });
+            AttributeDslModelMother.domainToDslModel(attrThree, e -> e.subjectCode(subjectTwo.getCode()));
 
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .subjects(List.of(subjectDslModel))
