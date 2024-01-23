@@ -45,7 +45,7 @@ public class UploadExpertGroupPictureAdapter implements
             .object(pictureName)
             .stream(pictureStream, pictureStream.available(), -1)
             .build());
-        return properties.getUrl() + "/" + result.bucket() + "/" + result.object();
+        return result.bucket() + "/" + result.object();
     }
 
     @SneakyThrows
