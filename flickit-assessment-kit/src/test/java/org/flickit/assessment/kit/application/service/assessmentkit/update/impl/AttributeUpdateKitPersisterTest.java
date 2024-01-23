@@ -26,8 +26,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_ATTRIBUTES;
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_SUBJECTS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,6 +112,8 @@ class AttributeUpdateKitPersisterTest {
         Mockito.doNothing().when(updateAttributePort).update(Mockito.any());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        Map<String, Long> subjectsCodeToIdMap = Stream.of(subject).collect(toMap(Subject::getCode, Subject::getId));
+        ctx.put(KEY_SUBJECTS, subjectsCodeToIdMap);
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         Mockito.verify(updateAttributePort, Mockito.times(2)).update(captor.capture());
@@ -169,6 +174,8 @@ class AttributeUpdateKitPersisterTest {
         Mockito.doNothing().when(updateAttributePort).update(Mockito.any());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        Map<String, Long> subjectsCodeToIdMap = Stream.of(subjectOne, subjectTwo).collect(toMap(Subject::getCode, Subject::getId));
+        ctx.put(KEY_SUBJECTS, subjectsCodeToIdMap);
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         Mockito.verify(updateAttributePort, Mockito.times(2)).update(captor.capture());
@@ -223,6 +230,8 @@ class AttributeUpdateKitPersisterTest {
         when(createAttributePort.persist(any(), eq(subject.getId()), eq(savedKit.getId()))).thenReturn(attrThree.getId());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        Map<String, Long> subjectsCodeToIdMap = Stream.of(subject).collect(toMap(Subject::getCode, Subject::getId));
+        ctx.put(KEY_SUBJECTS, subjectsCodeToIdMap);
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, createdById);
 
         ArgumentCaptor<Attribute> attributeCaptor = ArgumentCaptor.forClass(Attribute.class);

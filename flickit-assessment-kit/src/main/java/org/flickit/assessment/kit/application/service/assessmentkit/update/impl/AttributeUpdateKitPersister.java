@@ -19,6 +19,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_SUBJECTS;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -37,8 +39,9 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
                                             AssessmentKit savedKit,
                                             AssessmentKitDslModel dslKit,
                                             UUID currentUserId) {
-        Map<String, Long> subjectCodeToSubjectId = savedKit.getSubjects().stream()
-            .collect(Collectors.toMap(Subject::getCode, Subject::getId));
+        Map<String, Long> subjectCodeToSubjectId = ctx.get(KEY_SUBJECTS);
+/*        Map<String, Long> subjectCodeToSubjectId = savedKit.getSubjects().stream()
+            .collect(Collectors.toMap(Subject::getCode, Subject::getId));*/
 
         Map<String, AttributeDslModel> attrCodeToAttrDslModel = dslKit.getAttributes().stream()
             .collect(Collectors.toMap(AttributeDslModel::getCode, Function.identity()));
@@ -72,7 +75,8 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
             .filter(e -> !savedAttrCodeToAttr.containsKey(e))
             .collect(Collectors.toSet());
 
-        if (!addedAttributeCodes.isEmpty()) shouldInvalidate = true;
+        if (!addedAttributeCodes.isEmpty())
+            shouldInvalidate = true;
 
         Map<String, Long> savedNewAttrCodeToIdMap = new HashMap<>();
         addedAttributeCodes.forEach(code -> {
