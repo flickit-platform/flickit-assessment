@@ -3,6 +3,8 @@ package org.flickit.assessment.core.adapter.out.calculate;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
+import org.flickit.assessment.core.adapter.out.rest.question.QuestionDto;
+import org.flickit.assessment.core.adapter.out.rest.question.QuestionRestAdapter;
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectDto;
 import org.flickit.assessment.core.adapter.out.rest.subject.SubjectRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
@@ -17,6 +19,9 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -34,10 +39,15 @@ import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.core.test.fixture.adapter.dto.AnswerOptionDtoMother.createAnswerOptionDto;
+import static org.flickit.assessment.core.test.fixture.adapter.dto.QuestionDtoMother.createQuestionDtoWithAffectedLevelAndAttributes;
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.test.fixture.adapter.dto.AnswerOptionDtoMother.answerOptionDto;
 import static org.flickit.assessment.core.test.fixture.adapter.dto.SubjectDtoMother.createSubjectDto;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeJapEntityMother.createAttributeEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEntityMother.subjectWithAttributes;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.QuestionImpactEntityMother.questionImpactEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.QuestionJpaEntityMother.questionEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
@@ -60,7 +70,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private SubjectValueJpaRepository subjectValueRepo;
     @Mock
-    private SubjectRestAdapter subjectRestAdapter;
+    private SubjectJpaRepository subjectRepository;
     @Mock
     private QuestionJpaRepository questionRepository;
     @Mock
@@ -136,6 +146,15 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var attribute5Id = attributeId++;
         var attribute6Id = attributeId;
 
+        Long kitId = 123L;
+
+        AttributeJpaEntity attribute1 = createAttributeEntity(attribute1Id, 1, kitId);
+        AttributeJpaEntity attribute2 = createAttributeEntity(attribute2Id, 2, kitId);
+        AttributeJpaEntity attribute3 = createAttributeEntity(attribute3Id, 3, kitId);
+        AttributeJpaEntity attribute4 = createAttributeEntity(attribute4Id, 4, kitId);
+        AttributeJpaEntity attribute5 = createAttributeEntity(attribute5Id, 5, kitId);
+        AttributeJpaEntity attribute6 = createAttributeEntity(attribute6Id, 6, kitId);
+
         var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1Id);
         var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2Id);
         var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3Id);
@@ -149,10 +168,10 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var subjectValue3 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
         List<SubjectValueJpaEntity> subjectValues = List.of(subjectValue1, subjectValue2, subjectValue3);
 
-        var subjectDto1 = createSubjectDto(subjectValue1.getSubjectId(), List.of(qav1, qav2));
-        var subjectDto2 = createSubjectDto(subjectValue2.getSubjectId(), List.of(qav3, qav4));
-        var subjectDto3 = createSubjectDto(subjectValue3.getSubjectId(), List.of(qav5, qav6));
-        List<SubjectDto> subjectDtos = List.of(subjectDto1, subjectDto2, subjectDto3);
+        var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(), 1, List.of(attribute1, attribute2));
+        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(), 1, List.of(attribute3, attribute4));
+        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), 1, List.of(attribute5, attribute6));
+        List<SubjectJpaEntity> subjects = List.of(subject1, subject2, subject3);
 
         var question1 = questionEntity(1L, 1L, Boolean.FALSE);
         var question2 = questionEntity(2L, 1L, Boolean.FALSE);
@@ -239,7 +258,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             assessmentResultEntity,
             subjectValues,
             qualityAttributeValues,
-            subjectDtos,
+            subjects,
             questions,
             questionIdToImpactsMap,
             answerEntities,
@@ -284,8 +303,8 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.subjectValues());
         when(qualityAttrValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.qualityAttributeValues());
-        when(subjectRestAdapter.loadSubjectsDtoByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
-            .thenReturn(context.subjectDtos());
+        when(subjectRepository.loadByKitIdWithAttributes(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
+            .thenReturn(context.subjects);
         when(questionRepository.loadByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
             .thenReturn(questionJoinImpactView(context.questionEntities, context.questionIdToImpactsMap));
         when(answerRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
@@ -315,7 +334,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
         AssessmentResultJpaEntity assessmentResultEntity,
         List<SubjectValueJpaEntity> subjectValues,
         List<QualityAttributeValueJpaEntity> qualityAttributeValues,
-        List<SubjectDto> subjectDtos,
+        List<SubjectJpaEntity> subjects,
         List<QuestionJpaEntity> questionEntities,
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap,
         List<AnswerJpaEntity> answerEntities,

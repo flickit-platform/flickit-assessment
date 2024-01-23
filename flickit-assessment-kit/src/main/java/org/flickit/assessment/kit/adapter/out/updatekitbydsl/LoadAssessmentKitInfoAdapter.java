@@ -51,7 +51,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
             () -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
-        List<Subject> subjects = subjectRepository.findAllByAssessmentKitId(kitId).stream()
+        List<Subject> subjects = subjectRepository.findAllByKitId(kitId).stream()
             .map(e -> {
                 List<Attribute> attributes = attributeRepository.findAllBySubjectId(e.getId()).stream()
                     .map(AttributeMapper::mapToDomainModel)
@@ -59,7 +59,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
                 return SubjectMapper.mapToDomainModel(e, attributes);})
             .toList();
 
-        List<MaturityLevel> levels = maturityLevelRepository.findAllByAssessmentKitId(kitId).stream()
+        List<MaturityLevel> levels = maturityLevelRepository.findAllByKitId(kitId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
         setLevelCompetences(levels);
@@ -70,7 +70,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
         setQuestionImpacts(questions);
         setQuestionOptions(questions);
 
-        List<Questionnaire> questionnaires = questionnaireRepository.findAllByAssessmentKitId(kitId).stream()
+        List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitId(kitId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
             .toList();
         setQuestions(questionnaires, questions);
@@ -83,7 +83,7 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
             entity.getAbout(),
             entity.getCreationTime(),
             entity.getLastModificationTime(),
-            entity.getIsActive(),
+            entity.getPublished(),
             entity.getIsPrivate(),
             entity.getExpertGroupId(),
             subjects,

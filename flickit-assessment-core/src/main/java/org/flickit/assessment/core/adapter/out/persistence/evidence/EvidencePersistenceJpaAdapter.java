@@ -54,7 +54,8 @@ public class EvidencePersistenceJpaAdapter implements
         repository.update(
             param.id(),
             param.description(),
-            param.lastModificationTime()
+            param.lastModificationTime(),
+            param.lastModifiedById()
         );
         return new UpdateEvidencePort.Result(param.id());
     }

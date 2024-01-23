@@ -16,7 +16,7 @@ public class QuestionMapper {
             entity.getCode(),
             entity.getTitle(),
             entity.getIndex(),
-            entity.getDescription(),
+            entity.getHint(),
             entity.getMayNotBeApplicable(),
             entity.getQuestionnaireId(),
             entity.getCreationTime(),
@@ -28,13 +28,15 @@ public class QuestionMapper {
         return new QuestionJpaEntity(
             null,
             param.code(),
-            param.title(),
-            param.description(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
             param.index(),
+            param.title(),
+            param.hint(),
+            param.mayNotBeApplicable(),
             param.questionnaireId(),
-            param.mayNotBeApplicable()
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            param.createdBy(),
+            param.createdBy()
         );
     }
 }

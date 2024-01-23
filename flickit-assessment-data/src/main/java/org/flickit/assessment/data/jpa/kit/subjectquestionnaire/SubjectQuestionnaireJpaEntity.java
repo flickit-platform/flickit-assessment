@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "baseinfo_assessmentsubject_questionnaires")
+@Table(name = "fak_subject_questionnaire")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,13 +14,13 @@ public class SubjectQuestionnaireJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_assessmentsubject_questionnaires_id_seq")
-    @SequenceGenerator(name = "baseinfo_assessmentsubject_questionnaires_id_seq",
-        sequenceName = "baseinfo_assessmentsubject_questionnaires_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_subject_questionnaire_id_seq")
+    @SequenceGenerator(name = "fak_subject_questionnaire_id_seq",
+        sequenceName = "fak_subject_questionnaire_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "assessmentsubject_id", nullable = false)
+    @Column(name = "subject_id", nullable = false)
     private Long subjectId;
 
     @Column(name = "questionnaire_id", nullable = false)

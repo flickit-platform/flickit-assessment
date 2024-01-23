@@ -10,6 +10,9 @@ import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLev
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import static org.flickit.assessment.kit.common.ErrorMessageKey.FIND_MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Component
@@ -28,21 +31,27 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public Long persist(Long affectedLevelId, Long effectiveLevelId, int value) {
+    public Long persist(Long affectedLevelId, Long effectiveLevelId, int value, UUID createdBy) {
         LevelCompetenceJpaEntity entity = new LevelCompetenceJpaEntity(
             null,
             maturityLevelJpaRepository.findById(affectedLevelId).orElseThrow(() -> new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND)),
             maturityLevelJpaRepository.findById(effectiveLevelId).orElseThrow(() -> new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND)),
-            value
+            value,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            createdBy,
+            createdBy
         );
         return repository.save(entity).getId();
     }
 
     @Override
-    public void update(Long affectedLevelId, Long effectiveLevelId, Integer value) {
+    public void update(Long affectedLevelId, Long effectiveLevelId, Integer value, UUID lastModifiedBy) {
         repository.update(
             affectedLevelId,
             effectiveLevelId,
-            value);
+            value,
+            LocalDateTime.now(),
+            lastModifiedBy);
     }
 }

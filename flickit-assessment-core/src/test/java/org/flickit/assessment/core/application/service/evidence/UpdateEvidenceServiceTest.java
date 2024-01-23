@@ -30,7 +30,8 @@ class UpdateEvidenceServiceTest {
         var savedEvidence = simpleEvidence();
         var param = new UpdateEvidenceUseCase.Param(
             savedEvidence.getId(),
-            "new " + savedEvidence.getDescription()
+            "new " + savedEvidence.getDescription(),
+            savedEvidence.getLastModifiedById()
         );
 
         var updateResult = new UpdateEvidencePort.Result(savedEvidence.getId());

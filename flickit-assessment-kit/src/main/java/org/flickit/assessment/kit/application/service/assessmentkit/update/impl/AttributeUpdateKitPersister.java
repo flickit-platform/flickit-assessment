@@ -31,7 +31,10 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
     }
 
     @Override
-    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx, AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
+    public UpdateKitPersisterResult persist(UpdateKitPersisterContext ctx,
+                                            AssessmentKit savedKit,
+                                            AssessmentKitDslModel dslKit,
+                                            UUID currentUserId) {
         Map<String, Long> subjectCodeToSubjectId = savedKit.getSubjects().stream()
             .collect(Collectors.toMap(Subject::getCode, Subject::getId));
 
@@ -51,7 +54,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
                     savedAttribute.getWeight() != dslAttribute.getWeight()
                     ) {
                     Long newSubjectId = subjectCodeToSubjectId.get(dslAttribute.getSubjectCode());
-                    updateAttribute(savedAttribute, newSubjectId, dslAttribute);
+                    updateAttribute(savedAttribute, newSubjectId, dslAttribute, currentUserId);
                 }
 
                 if (!subjectCode.equals(dslAttribute.getSubjectCode()) ||
@@ -71,13 +74,17 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
         return new UpdateKitPersisterResult(shouldInvalidate);
     }
 
-    private void updateAttribute(Attribute savedAttribute, Long subjectId, AttributeDslModel dslAttribute) {
+    private void updateAttribute(Attribute savedAttribute,
+                                 Long subjectId,
+                                 AttributeDslModel dslAttribute,
+                                 UUID currentUserId) {
         UpdateAttributePort.Param param = new UpdateAttributePort.Param(savedAttribute.getId(),
             dslAttribute.getTitle(),
             dslAttribute.getIndex(),
             dslAttribute.getDescription(),
             dslAttribute.getWeight(),
             LocalDateTime.now(),
+            currentUserId,
             subjectId);
         updateAttributePort.update(param);
         log.debug("Attribute[id={}, code={}] updated", savedAttribute.getId(), savedAttribute.getCode());

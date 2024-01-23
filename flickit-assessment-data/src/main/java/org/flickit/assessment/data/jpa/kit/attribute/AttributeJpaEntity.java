@@ -3,11 +3,13 @@ package org.flickit.assessment.data.jpa.kit.attribute;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "baseinfo_qualityattribute")
+@Table(name = "fak_attribute")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,19 +19,19 @@ public class AttributeJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_qualityattribute_id_seq")
-    @SequenceGenerator(name = "baseinfo_qualityattribute_id_seq", sequenceName = "baseinfo_qualityattribute_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_attribute_id_seq")
+    @SequenceGenerator(name = "fak_attribute_id_seq", sequenceName = "fak_attribute_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     @Column(name = "code", length = 50, nullable = false)
     private String code;
 
-    @Column(name = "title", length = 100, nullable = false)
-    private String title;
-
     @Column(name = "index", nullable = false)
     private Integer index;
+
+    @Column(name = "title", length = 100, nullable = false)
+    private String title;
 
     @Column(name = "description", nullable = false)
     private String description;
@@ -43,9 +45,29 @@ public class AttributeJpaEntity {
     @Column(name = "last_modification_date", nullable = false)
     private LocalDateTime lastModificationTime;
 
-    @Column(name = "assessment_subject_id", nullable = false)
-    private Long subjectId;
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
 
-    @Column(name = "assessment_kit_id", nullable = false)
-    private Long assessmentKitId;
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
+
+    @Column(name = "kit_id", nullable = false)
+    private Long kitId;
+
+    public AttributeJpaEntity(Long id, String code, String title, Integer index, String description, Integer weight,
+                              LocalDateTime creationTime, LocalDateTime lastModificationTime, Long kitId) {
+        this.id = id;
+        this.code = code;
+        this.title = title;
+        this.index = index;
+        this.description = description;
+        this.weight = weight;
+        this.creationTime = creationTime;
+        this.lastModificationTime = lastModificationTime;
+        this.kitId = kitId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "subject_id", referencedColumnName = "id")
+    private SubjectJpaEntity subject;
 }

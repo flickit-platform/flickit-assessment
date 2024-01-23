@@ -28,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
@@ -119,7 +120,7 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
-        persister.persist(ctx, savedKit, dslKit);
+        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -176,7 +177,7 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire1, savedQuestionnaire2).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
-        persister.persist(ctx, savedKit, dslKit);
+        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
             deleteQuestionImpactPort,
@@ -224,7 +225,7 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
-        persister.persist(ctx, savedKit, dslKit);
+        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
             createQuestionImpactPort,
@@ -261,7 +262,6 @@ class QuestionUpdateKitPersisterTest {
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(1L);
         when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any())).thenReturn(List.of(answerOption1, answerOption2));
 
-
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslMaturityLevelThree = MaturityLevelDslModelMother.domainToDslModel(levelThree());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
@@ -283,7 +283,7 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo, levelThree).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
-        persister.persist(ctx, savedKit, dslKit);
+        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
             updateQuestionImpactPort,
@@ -339,7 +339,7 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo, levelThree).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
-        persister.persist(ctx, savedKit, dslKit);
+        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -391,7 +391,7 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute1).collect(toMap(Attribute::getCode, Attribute::getId)));
-        persister.persist(ctx, savedKit, dslKit);
+        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -444,7 +444,7 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
-        persister.persist(ctx, savedKit, dslKit);
+        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
             updateQuestionPort,
@@ -498,7 +498,7 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
-        persister.persist(ctx, savedKit, dslKit);
+        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
             updateQuestionPort,
