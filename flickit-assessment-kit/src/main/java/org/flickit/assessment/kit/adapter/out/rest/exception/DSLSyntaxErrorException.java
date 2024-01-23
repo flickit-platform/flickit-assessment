@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.uploaddsl.exception;
+package org.flickit.assessment.kit.adapter.out.rest.exception;
 
 import lombok.Getter;
 

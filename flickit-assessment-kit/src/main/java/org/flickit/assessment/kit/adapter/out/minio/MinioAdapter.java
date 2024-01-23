@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.uploaddsl;
+package org.flickit.assessment.kit.adapter.out.minio;
 
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;
