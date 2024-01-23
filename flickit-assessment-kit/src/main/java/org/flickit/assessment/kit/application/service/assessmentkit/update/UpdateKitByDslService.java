@@ -11,7 +11,6 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitByIdPort;
-import org.flickit.assessment.kit.application.port.out.assessmentresult.InvalidateAssessmentResultByKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.CompositeUpdateKitValidator;
@@ -32,7 +31,6 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_
 public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
     private final LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
-    private final InvalidateAssessmentResultByKitPort invalidateAssessmentResultByKitPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CompositeUpdateKitValidator validator;
     private final CompositeUpdateKitPersister persister;
@@ -47,10 +45,8 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
         validateUserIsExpertGroupOwner(savedKit.getExpertGroupId(), currentUserId);
         validateChanges(savedKit, dslKit);
         UpdateKitPersisterResult persistResult = persister.persist(savedKit, dslKit, currentUserId);
-        if (persistResult.shouldInvalidateCalcResult()) { // TODO: Rename this?
-//            invalidateAssessmentResultByKitPort.invalidateByKitId(savedKit.getId()); // TODO: Delete this?
+        if (persistResult.shouldInvalidateCalcResult())
             updateKitByIdPort.updateById(savedKit.getId(), LocalDateTime.now());
-        }
     }
 
     private void validateUserIsExpertGroupOwner(long expertGroupId, UUID currentUserId) {

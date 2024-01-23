@@ -4,6 +4,7 @@ import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,8 @@ public class AssessmentResultMother {
         AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessment(), subjectValues);
         assessmentResult.setCalculateValid(true);
         assessmentResult.setMaturityLevel(maturityLevel);
+        assessmentResult.setLastCalculationTime(LocalDateTime.now());
+        assessmentResult.setLastConfidenceCalculationTime(LocalDateTime.now());
         return assessmentResult;
     }
 

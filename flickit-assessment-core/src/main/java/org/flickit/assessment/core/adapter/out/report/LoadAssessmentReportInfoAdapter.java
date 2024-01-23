@@ -75,7 +75,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     }
 
     private boolean isValid(boolean isValid, LocalDateTime lastCalculationTime, LocalDateTime kitLastEffectiveModificationTime) {
-        return isValid || lastCalculationTime.isBefore(kitLastEffectiveModificationTime);
+        return isValid && lastCalculationTime.isAfter(kitLastEffectiveModificationTime);
     }
 
     private List<SubjectValue> buildSubjectValues(List<SubjectValueJpaEntity> subjectValueEntities, Map<Long, MaturityLevel> maturityLevels) {

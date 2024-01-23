@@ -87,7 +87,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
     }
 
     private boolean isValid(boolean isValid, LocalDateTime lastCalculationTime, LocalDateTime kitLastEffectiveModificationTime) {
-        return isValid || lastCalculationTime.isBefore(kitLastEffectiveModificationTime);
+        return isValid && lastCalculationTime.isAfter(kitLastEffectiveModificationTime);
     }
 
     private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, Map<Long, MaturityLevel> maturityLevels) {

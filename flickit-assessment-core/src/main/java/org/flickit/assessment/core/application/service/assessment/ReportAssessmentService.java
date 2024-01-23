@@ -73,7 +73,7 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
     }
 
     private boolean isValid(boolean isValid, LocalDateTime lastCalculationTime, LocalDateTime kitLastEffectiveModificationTime) {
-        return isValid || lastCalculationTime.isBefore(kitLastEffectiveModificationTime);
+        return isValid && lastCalculationTime.isAfter(kitLastEffectiveModificationTime);
     }
 
     private List<SubjectReportItem> buildSubjects(AssessmentResult assessmentResult) {

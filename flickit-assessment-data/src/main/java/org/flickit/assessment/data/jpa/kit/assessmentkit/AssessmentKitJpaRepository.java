@@ -23,14 +23,14 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
     @Modifying
     @Query("""
         UPDATE AssessmentKitJpaEntity a SET
-                a.lastEffectiveModificationTime = :lastEffectiveModificationTime,
+            a.lastEffectiveModificationTime = :lastEffectiveModificationTime
             WHERE a.id = :kitId
         """)
     void updateById(Long kitId, LocalDateTime lastEffectiveModificationTime);
 
     @Query("""
-        SELECT k.lastEffectiveModificationTime FROM AssessmentKitJpaEntity k " +
-        "WHERE k.id = :kitId)
+        SELECT k.lastEffectiveModificationTime FROM AssessmentKitJpaEntity k
+            WHERE k.id = :kitId
         """)
     LocalDateTime loadLastEffectiveModificationTime(Long kitId);
 }

@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.port.in.assessment.ReportAssessme
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastEffectiveModificationTimePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,6 +41,9 @@ class ReportAssessmentServiceTest {
     @Mock
     private LoadAttributeValueListPort loadAttributeValueListPort;
 
+    @Mock
+    private LoadKitLastEffectiveModificationTimePort loadKitLastEffectiveModificationTimePort;
+
     @Test
     void testReportAssessment_ValidResult() {
         List<QualityAttributeValue> qaValues = List.of(
@@ -60,6 +64,8 @@ class ReportAssessmentServiceTest {
 
         when(loadReportInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadAttributeValueListPort.loadAll(assessmentResult.getId(), maturityLevels)).thenReturn(qaValues);
+        when(loadKitLastEffectiveModificationTimePort.load(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastConfidenceCalculationTime().minusDays(2));
 
         AssessmentReport assessmentReport = service.reportAssessment(param);
 
