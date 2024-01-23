@@ -20,5 +20,5 @@ public interface KitDslJpaRepository extends JpaRepository<KitDslJpaEntity, Long
             FROM KitDslJpaEntity a
             WHERE a.kitId = :kitId
         """)
-    String findDslFileByKitId(@Param("kitId") long kitId);
+    String findDslPathByKitId(@Param("kitId") long kitId);
 }

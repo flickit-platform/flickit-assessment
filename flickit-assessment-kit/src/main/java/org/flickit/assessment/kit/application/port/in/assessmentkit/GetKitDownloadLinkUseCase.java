@@ -15,7 +15,7 @@ public interface GetKitDownloadLinkUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_KIT_DOWNLOAD_LINK_KIT_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_DSL_DOWNLOAD_LINK_KIT_ID_NOT_NULL)
         Long kitId;
 
         public Param(Long kitId) {

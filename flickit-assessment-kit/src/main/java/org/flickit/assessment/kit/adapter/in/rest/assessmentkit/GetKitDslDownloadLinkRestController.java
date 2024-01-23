@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class GetKitDownloadLinkRestController {
+public class GetKitDslDownloadLinkRestController {
 
     private final GetKitDownloadLinkUseCase useCase;
 
-    @GetMapping("/assessment-kits/{kitId}/download-dsl")
-    public ResponseEntity<GetKitDownloadLinkResponseDto> getKitDownloadLink(@PathVariable("kitId") Long kitId) {
+    @GetMapping("/assessment-kits/{kitId}/dsl-download-link")
+    public ResponseEntity<GetKitDslDownloadLinkResponseDto> getDslDownloadLink(@PathVariable("kitId") Long kitId) {
         var response = useCase.getKitLink(toParam(kitId));
-        GetKitDownloadLinkResponseDto responseDto = toResponseDto(response);
+        GetKitDslDownloadLinkResponseDto responseDto = toResponseDto(response);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
@@ -25,7 +25,7 @@ public class GetKitDownloadLinkRestController {
         return new GetKitDownloadLinkUseCase.Param(kitId);
     }
 
-    private GetKitDownloadLinkResponseDto toResponseDto(String response) {
-        return new GetKitDownloadLinkResponseDto(response);
+    private GetKitDslDownloadLinkResponseDto toResponseDto(String response) {
+        return new GetKitDslDownloadLinkResponseDto(response);
     }
 }
