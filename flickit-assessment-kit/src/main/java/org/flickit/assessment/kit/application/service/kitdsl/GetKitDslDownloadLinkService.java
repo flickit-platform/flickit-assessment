@@ -20,6 +20,6 @@ public class GetKitDslDownloadLinkService implements GetKitDownloadLinkUseCase {
     @SneakyThrows
     @Override
     public String getKitLink(Param param) {
-        return loadDslFilePathPort.loadDslFilePath(param.getKitId(), EXPIRY_DURATION);
+        return loadDslFilePathPort.loadDslFilePath(param.getKitId(), param.getCurrentUserId() , EXPIRY_DURATION);
     }
 }

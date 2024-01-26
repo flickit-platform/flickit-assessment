@@ -8,14 +8,15 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaRepository;
-import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslJsonPathPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
 import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.KitDslMapper.toJpaEntity;
@@ -52,8 +53,8 @@ public class KitDslPersistenceJpaAdapter implements
 
     @SneakyThrows
     @Override
-    public String loadDslFilePath(Long kitId, Duration expiryDuration) {
-        String filePath = repository.findDslPathByKitId(kitId);
+    public String loadDslFilePath(Long kitId, UUID currentUserId, Duration expiryDuration) {
+        String filePath = repository.findDslPathByKitId(kitId, currentUserId);
 
         return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
             .bucket(properties.getBucketName())

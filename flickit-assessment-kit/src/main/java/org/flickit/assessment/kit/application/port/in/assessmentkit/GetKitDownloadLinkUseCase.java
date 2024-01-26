@@ -5,6 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
+import java.util.UUID;
+
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetKitDownloadLinkUseCase {
@@ -18,8 +21,12 @@ public interface GetKitDownloadLinkUseCase {
         @NotNull(message = GET_KIT_DSL_DOWNLOAD_LINK_KIT_ID_NOT_NULL)
         Long kitId;
 
-        public Param(Long kitId) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(Long kitId, UUID currentUserId) {
             this.kitId = kitId;
+            this.currentUserId = currentUserId;
         }
     }
 }
