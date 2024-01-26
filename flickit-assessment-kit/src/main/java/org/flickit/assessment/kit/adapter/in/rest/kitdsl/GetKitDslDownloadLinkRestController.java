@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
+package org.flickit.assessment.kit.adapter.in.rest.kitdsl;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDownloadLinkUseCase;

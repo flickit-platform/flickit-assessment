@@ -1,9 +1,9 @@
-package org.flickit.assessment.kit.application.service.assessmentkit;
+package org.flickit.assessment.kit.application.service.kitdsl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDownloadLinkUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslFilePathPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
