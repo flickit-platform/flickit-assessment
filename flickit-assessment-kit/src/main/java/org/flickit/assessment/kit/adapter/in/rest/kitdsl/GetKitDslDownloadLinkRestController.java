@@ -16,7 +16,7 @@ import java.util.UUID;
 public class GetKitDslDownloadLinkRestController {
 
     private final GetKitDownloadLinkUseCase useCase;
-    private final UserContext userContext;
+     private final UserContext userContext;
 
     @GetMapping("/assessment-kits/{kitId}/dsl-download-link")
     public ResponseEntity<GetKitDslDownloadLinkResponseDto> getDslDownloadLink(@PathVariable("kitId") Long kitId) {
@@ -26,7 +26,7 @@ public class GetKitDslDownloadLinkRestController {
     }
 
     private GetKitDownloadLinkUseCase.Param toParam(Long kitId, UUID currentUserId) {
-        return new GetKitDownloadLinkUseCase.Param(kitId, currentUserId);
+        return new GetKitDownloadLinkUseCase.Param(kitId,currentUserId);
     }
 
     private GetKitDslDownloadLinkResponseDto toResponseDto(String response) {

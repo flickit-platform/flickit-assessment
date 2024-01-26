@@ -1,8 +1,5 @@
 package org.flickit.assessment.kit.adapter.out.persistence.kitdsl;
 
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.MinioClient;
-import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -12,12 +9,9 @@ import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.LoadDslJ
 import org.flickit.assessment.kit.application.port.out.assessmentkitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
-import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.KitDslMapper.toJpaEntity;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
@@ -31,8 +25,6 @@ public class KitDslPersistenceJpaAdapter implements
     LoadDslFilePathPort {
 
     private final KitDslJpaRepository repository;
-    private final MinioClient minioClient;
-    private final MinioConfigProperties properties;
 
     @Override
     public Long create(String dslFilePath, String jsonFilePath) {
@@ -53,14 +45,7 @@ public class KitDslPersistenceJpaAdapter implements
 
     @SneakyThrows
     @Override
-    public String loadDslFilePath(Long kitId, UUID currentUserId, Duration expiryDuration) {
-        String filePath = repository.findDslPathByKitId(kitId, currentUserId);
-
-        return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-            .bucket(properties.getBucketName())
-            .object(filePath)
-            .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
-            .method(Method.GET)
-            .build());
+    public String loadDslFilePath(Long kitId, UUID currentUserId) {
+        return repository.findDslPathByKitId(kitId, currentUserId);
     }
 }
