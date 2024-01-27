@@ -4,8 +4,8 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDownloadLinkUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.kitdsl.CheckIsMemberPort;
-import org.flickit.assessment.kit.application.port.out.kitdsl.CreateFileDownloadLinkPort;
-import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.CreateDslDownloadLinkPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.CreateDslFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.service.kitdsl.GetKitDslDownloadLinkService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,9 +25,9 @@ import static org.mockito.Mockito.*;
 class GetKitDslDownloadLinkServiceTest {
 
     @Mock
-    private LoadDslFilePathPort loadDslFilePathPort;
+    private CreateDslFileDownloadLinkPort createDslFileDownloadLinkPort;
     @Mock
-    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
+    private CreateDslDownloadLinkPort createDslDownloadLinkPort;
     @Mock
     private CheckIsMemberPort checkIsMemberPort;
     @InjectMocks
@@ -39,11 +39,11 @@ class GetKitDslDownloadLinkServiceTest {
     void getKitLink_whenDslFilePathExists_shouldReturnDownloadLink() {
 
         String expectedFilePath = "/path/to/dsl/file";
-        when(loadDslFilePathPort.loadDslFilePath(param.getKitId()))
+        when(createDslFileDownloadLinkPort.loadDslFilePath(param.getKitId()))
             .thenReturn(Optional.of(expectedFilePath));
 
         String expectedDownloadLink = "http://download.link";
-        when(createFileDownloadLinkPort.createDownloadLink(expectedFilePath, EXPIRY_DURATION))
+        when(createDslDownloadLinkPort.createDownloadLink(expectedFilePath, EXPIRY_DURATION))
             .thenReturn(expectedDownloadLink);
         when(checkIsMemberPort.checkIsMemberByKitId(param.getKitId(), param.getCurrentUserId()))
             .thenReturn(true);
@@ -51,8 +51,8 @@ class GetKitDslDownloadLinkServiceTest {
         String result = service.getKitLink(param);
         assertEquals(expectedDownloadLink, result);
 
-        verify(loadDslFilePathPort).loadDslFilePath(param.getKitId());
-        verify(createFileDownloadLinkPort).createDownloadLink(expectedFilePath, EXPIRY_DURATION);
+        verify(createDslFileDownloadLinkPort).loadDslFilePath(param.getKitId());
+        verify(createDslDownloadLinkPort).createDownloadLink(expectedFilePath, EXPIRY_DURATION);
     }
 
     @Test
@@ -66,13 +66,13 @@ class GetKitDslDownloadLinkServiceTest {
     @Test
     void getKitLink_whenDslFilePathDoesNotExist_shouldThrowResourceNotFoundException() {
 
-        when(loadDslFilePathPort.loadDslFilePath(param.getKitId()))
+        when(createDslFileDownloadLinkPort.loadDslFilePath(param.getKitId()))
             .thenReturn(Optional.empty());
         when(checkIsMemberPort.checkIsMemberByKitId(param.getKitId(), param.getCurrentUserId()))
             .thenReturn(true);
         assertThrows(ResourceNotFoundException.class, () -> service.getKitLink(param),
             GET_KIT_DSL_FILE_PATH_NOT_FOUND);
-        verify(loadDslFilePathPort).loadDslFilePath(param.getKitId());
-        verifyNoInteractions(createFileDownloadLinkPort);
+        verify(createDslFileDownloadLinkPort).loadDslFilePath(param.getKitId());
+        verifyNoInteractions(createDslDownloadLinkPort);
     }
 }

@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.expertgroup.UploadExpertGroupPicturePort;
-import org.flickit.assessment.kit.application.port.out.kitdsl.CreateFileDownloadLinkPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.CreateDslDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.config.MinioConfigProperties;
@@ -31,7 +31,7 @@ public class MinioAdapter implements
     UploadKitDslToFileStoragePort,
     LoadKitDSLJsonFilePort,
     UploadExpertGroupPicturePort,
-    CreateFileDownloadLinkPort {
+    CreateDslDownloadLinkPort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;

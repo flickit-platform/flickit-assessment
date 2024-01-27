@@ -20,7 +20,7 @@ public class KitDslPersistenceJpaAdapter implements
     CreateKitDslPort,
     LoadDslJsonPathPort,
     UpdateKitDslPort,
-    LoadDslFilePathPort,
+    CreateDslFileDownloadLinkPort,
     CheckIsMemberPort {
 
     private final KitDslJpaRepository repository;
