@@ -5,6 +5,7 @@ import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,9 +18,11 @@ import java.util.stream.IntStream;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Question {
 
     @PlanningId
+    @EqualsAndHashCode.Include
     private long id;
 
     private int cost;
@@ -44,8 +47,8 @@ public class Question {
         return IntStream.range(currentOptionIndex, options.size()).boxed().toList();
     }
 
-    public double getTargetGain(AttributeLevelScore attributeLevelScore) {
-        return getOptionGain(attributeLevelScore, recommendedOptionIndex) - getOptionGain(attributeLevelScore, currentOptionIndex);
+    public double calculateGainingScore(AttributeLevelScore attributeLevelScore) {
+        return getOptionScore(attributeLevelScore, recommendedOptionIndex) - getOptionScore(attributeLevelScore, currentOptionIndex);
     }
 
     public double getCost() {
@@ -64,7 +67,7 @@ public class Question {
         return options.get(recommendedOptionIndex).sumScores() - options.get(currentOptionIndex).sumScores();
     }
 
-    private double getOptionGain(AttributeLevelScore attributeLevelScore, Integer optionIndex) {
+    private double getOptionScore(AttributeLevelScore attributeLevelScore, Integer optionIndex) {
         return options
             .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
             .getTargetGain(attributeLevelScore);
@@ -74,17 +77,5 @@ public class Question {
         return options
             .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
             .getCost();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Question question)) return false;
-        return id == question.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }

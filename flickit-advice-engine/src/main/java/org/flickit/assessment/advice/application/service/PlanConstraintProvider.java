@@ -34,7 +34,7 @@ public class PlanConstraintProvider implements ConstraintProvider {
             )
             .groupBy(
                 (t, q) -> t,
-                sum((t, q) -> (int) (Math.floor(q.getTargetGain(t)))))
+                sum((t, q) -> (int) (Math.floor(q.calculateGainingScore(t)))))
             .filter((t, sum) -> t.getRemainingScore() - sum > 0)
             .penalize(HardSoftScore.ONE_HARD,
                 (t, sum) -> (int) Math.ceil(t.getRemainingScore()) - sum)
