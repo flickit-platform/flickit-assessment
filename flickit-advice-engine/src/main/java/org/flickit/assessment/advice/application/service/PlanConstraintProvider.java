@@ -1,16 +1,14 @@
-package application.service;
+package org.flickit.assessment.advice.application.service;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
 import ai.timefold.solver.core.api.score.stream.Joiners;
-import application.domain.Question;
-import application.domain.Target;
+import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
+import org.flickit.assessment.advice.application.domain.Question;
 
-import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.ToIntBiFunction;
 
 import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.count;
 import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.sum;
@@ -30,14 +28,16 @@ public class PlanConstraintProvider implements ConstraintProvider {
 
     Constraint minGain(ConstraintFactory constraintFactory) {
         return constraintFactory
-            .forEach(Question.class)
-            .join(Target.class,
-                Joiners.equal(Question::getTarget, Function.identity())
+            .forEach(AttributeLevelScore.class)
+            .join(Question.class,
+                Joiners.filtering((t, q) -> q.hasImpact(t))
             )
-            .groupBy((question, target) -> target, sum(getQuestionScore()))
-            .filter((target, totalGain) -> totalGain < target.getMinGain())
+            .groupBy(
+                (t, q) -> t,
+                sum((t, q) -> (int) (Math.floor(q.calculateGainingScore(t)))))
+            .filter((t, sum) -> t.getRemainingScore() - sum > 0)
             .penalize(HardSoftScore.ONE_HARD,
-                (target, sum) -> target.getMinGain() - sum)
+                (t, sum) -> (int) Math.ceil(t.getRemainingScore()) - sum)
             .asConstraint("minGain");
     }
 
@@ -46,11 +46,11 @@ public class PlanConstraintProvider implements ConstraintProvider {
             .forEach(Question.class)
             .filter(isQuestionOnPlan())
             .groupBy(
-                Question::getTarget,
-                sum(q -> (int) (Math.round(q.getGain() * q.getGainRatio()))),
-                sum(q -> (int) (Math.round(q.getCost() * q.getGainRatio()))))
+                sum(q -> (int) (Math.floor(q.calculateGainingScore()))),
+                sum(q -> (int) (Math.ceil(q.getCost())))
+            )
             .reward(HardSoftScore.ONE_SOFT,
-                (target, totalGain, totalCost) -> Math.round(((float) totalGain / totalCost) * 100))
+                (totalGain, totalCost) -> Math.round(((float) totalGain / totalCost) * 100))
             .asConstraint("totalBenefit");
     }
 
@@ -65,10 +65,6 @@ public class PlanConstraintProvider implements ConstraintProvider {
     }
 
     private Predicate<Question> isQuestionOnPlan() {
-        return q -> q.getGainRatio() > 0;
-    }
-
-    private ToIntBiFunction<Question, Target> getQuestionScore() {
-        return (q, tgt) -> (int) Math.floor(q.getGain() * q.getGainRatio());
+        return Question::isRecommended;
     }
 }
