@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface LoadAdviceCalculationInfoPort {
 
-    Plan load(UUID assessmentId, Map<Long, Long> targets);
+    Plan loadAdviceCalculationInfo(UUID assessmentId, Map<Long, Long> targets);
 }

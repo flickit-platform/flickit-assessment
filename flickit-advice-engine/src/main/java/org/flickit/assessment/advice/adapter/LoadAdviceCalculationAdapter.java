@@ -3,7 +3,7 @@ package org.flickit.assessment.advice.adapter;
 import org.flickit.assessment.advice.application.domain.Option;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
-import org.flickit.assessment.advice.application.domain.Target;
+import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaEntity;
@@ -13,7 +13,8 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.question.QuestionView;
+import org.flickit.assessment.data.jpa.kit.question.EffectiveQuestionOnAdviceView;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -31,77 +32,111 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
     private static final int DEFAULT_QUESTION_IMPACT_WEIGHT = 1;
     private static final double DEFAULT_ATTRIBUTE_MATURITY_SCORE = 0.0;
     private static final int DEFAULT_QUESTION_COST = 1;
+    private static final int DEFAULT_ANSWER_OPTION_INDEX = 1;
 
     @Override
-    public Plan load(UUID assessmentId, Map<Long, Long> targets) {
-
-
-        List<Target> targetList = new ArrayList<>();
+    public Plan loadAdviceCalculationInfo(UUID assessmentId, Map<Long, Long> attrIdToLevelId) {
+        List<AttributeLevelScore> attributeLevelScores = new ArrayList<>();
         List<Question> questions = new ArrayList<>();
 
-        for (Map.Entry<Long, Long> target: targets.entrySet()) {
-            Long maturityLevelId = target.getValue();
-            List<LevelCompetenceJpaEntity> byAffectedLevelId = levelCompetenceRepository.findByAffectedLevelId(maturityLevelId);
-            for (LevelCompetenceJpaEntity levelCompetenceJpa: byAffectedLevelId) {
-                Long targetMaturityLevelId = levelCompetenceJpa.getEffectiveLevel().getId();
-                Long attributeId = target.getKey();
-                List<QuestionView> assessedQuestions =
-                    questionRepository.findAssessedQuestions(assessmentId, attributeId, targetMaturityLevelId);
+        for (Map.Entry<Long, Long> attrIdToLevelIdEntry: attrIdToLevelId.entrySet()) {
+            Long attributeId = attrIdToLevelIdEntry.getKey();
+            Long maturityLevelId = attrIdToLevelIdEntry.getValue();
 
+            List<LevelCompetenceJpaEntity> levelCompetenceEntities =
+                levelCompetenceRepository.findByAffectedLevelId(maturityLevelId);
+            for (LevelCompetenceJpaEntity levelCompetenceEntity: levelCompetenceEntities) {
+                Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevel().getId();
 
-                Map<Long, List<QuestionView>> collect = assessedQuestions.stream()
-                    .collect(Collectors.groupingBy(QuestionView::getQuestionId));
+                List<EffectiveQuestionOnAdviceView> effectiveQuestions =
+                    questionRepository.findEffectiveQuestionsOnAdvice(assessmentId, attributeId, effectiveLevelId);
 
-                int totalScore = 0;
-                for (List<QuestionView> questionViews: collect.values()) {
-                    Integer i = questionViews.stream().map(QuestionView::getQuestionImpactWeight).findFirst().orElse(DEFAULT_QUESTION_IMPACT_WEIGHT);
-                    totalScore += i;
-                }
-
+                Map<Long, List<EffectiveQuestionOnAdviceView>> questionInfoGroupedById = effectiveQuestions.stream()
+                    .collect(Collectors.groupingBy(EffectiveQuestionOnAdviceView::getQuestionId));
 
                 QualityAttributeValueJpaEntity attributeValueEntity =
-                    attributeValueRepository.findByAssessmentIdAndAttributeIdAndMaturityLevelId(assessmentId, attributeId, targetMaturityLevelId);
+                    attributeValueRepository.findByAssessmentIdAndAttributeIdAndMaturityLevelId(assessmentId ,
+                        attributeId,
+                        effectiveLevelId);
 
-                Double score = attributeMaturityScoreRepository
-                    .findByAttributeValueIdAndMaturityLevelId(attributeValueEntity.getId(), targetMaturityLevelId)
-                    .map(AttributeMaturityScoreJpaEntity::getScore).orElse(DEFAULT_ATTRIBUTE_MATURITY_SCORE);
+                Double gainedScorePercentage = attributeMaturityScoreRepository
+                    .findByAttributeValueIdAndMaturityLevelId(attributeValueEntity.getId(), effectiveLevelId)
+                    .map(AttributeMaturityScoreJpaEntity::getScore)
+                    .orElse(DEFAULT_ATTRIBUTE_MATURITY_SCORE);
 
-                double currentGain = totalScore * score;
-                double minGain = totalScore * (levelCompetenceJpa.getValue()/100.0);
-                Target competenceTarget = new Target(currentGain, minGain);
-                targetList.add(competenceTarget);
+                int totalScore = calculateTotalScore(questionInfoGroupedById);
+                double gainedScore = totalScore * (gainedScorePercentage/100.0);
+                double requiredScore = totalScore * (levelCompetenceEntity.getValue()/100.0);
+                AttributeLevelScore attributeLevelScore =
+                    new AttributeLevelScore(gainedScore, requiredScore, attributeId, effectiveLevelId);
+                attributeLevelScores.add(attributeLevelScore);
 
-                collect.forEach((questionId, questionViews) -> {
-                    Optional<Question> first = questions.stream().filter(e -> e.getId() == questionId).findFirst();
-                    if (first.isPresent()) {
-                        Question question = first.get();
-                        questionViews.forEach(v -> {
-                            Option option = question.getOptions().stream()
-                                .filter(m -> m.getIndex() == v.getAnswerOptionIndex()).findFirst().get();
-                            option.getGains().put(competenceTarget, v.getAnswerOptionImpactValue());
-                        });
+                questionInfoGroupedById.forEach((questionId, questionViews) -> {
+                    Optional<Question> possibleQuestion = questions.stream()
+                        .filter(e -> e.getId() == questionId)
+                        .findFirst();
+                    if (possibleQuestion.isPresent()) {
+                        Question question = possibleQuestion.get();
+                        addAttrLevelScoreToExistedQuestion(questionViews, question, attributeLevelScore);
                     } else {
-                        Integer answerOptionIndex = questionViews.stream()
-                            .map(QuestionView::getCurrentOptionIndex)
-                            .findFirst()
-                            .orElse(1);
-                        List<Option> options = questionViews.stream().map(e -> {
-                            double progress = (e.getAnswerOptionIndex() - 1) * (1.0/(questionViews.size() - 1));
-                            Option option = new Option();
-                            option.setProgress(progress);
-                            option.setQuestionCost(DEFAULT_QUESTION_COST);
-                            option.setId(e.getAnswerOptionId());
-                            option.setIndex(e.getAnswerOptionIndex());
-                            option.setGains(new HashMap<>());
-                            option.getGains().put(competenceTarget, e.getAnswerOptionImpactValue());
-                            return option;
-                        }).toList();
-                        Question question = new Question(questionId, DEFAULT_QUESTION_COST, options, answerOptionIndex);
+                        Question question = mapToQuestion(questionId, questionViews, attributeLevelScore);
                         questions.add(question);
                     }
                 });
             }
         }
-        return new Plan(targetList, questions);
+        return new Plan(attributeLevelScores, questions);
+    }
+
+    private static int calculateTotalScore(Map<Long, List<EffectiveQuestionOnAdviceView>> questionInfoGroupedById) {
+        int totalScore = 0;
+        Collection<List<EffectiveQuestionOnAdviceView>> questionsWithRepetitiveImpact = questionInfoGroupedById.values();
+        for (List<EffectiveQuestionOnAdviceView> questionWithRepetitiveImpact: questionsWithRepetitiveImpact) {
+            Integer questionImpactWeight = questionWithRepetitiveImpact.stream()
+                .map(EffectiveQuestionOnAdviceView::getQuestionImpactWeight)
+                .findFirst()
+                .orElse(DEFAULT_QUESTION_IMPACT_WEIGHT);
+            totalScore += questionImpactWeight;
+        }
+        return totalScore;
+    }
+
+    private static void addAttrLevelScoreToExistedQuestion(List<EffectiveQuestionOnAdviceView> effectiveQuestionOnAdviceViews,
+                                                           Question question,
+                                                           AttributeLevelScore attributeLevelScore) {
+        effectiveQuestionOnAdviceViews.forEach(v -> {
+            Option option = question.getOptions().stream()
+                .filter(m -> m.getIndex() == v.getAnswerOptionIndex())
+                .findFirst()
+                .get();
+            option.getPromisedScores().put(attributeLevelScore, v.getAnswerOptionImpactValue());
+        });
+    }
+
+    @NotNull
+    private static Question mapToQuestion(Long questionId,
+                                          List<EffectiveQuestionOnAdviceView> effectiveQuestionOnAdviceViews,
+                                          AttributeLevelScore attributeLevelScore) {
+        Integer answerOptionIndex = effectiveQuestionOnAdviceViews.stream()
+            .map(EffectiveQuestionOnAdviceView::getCurrentOptionIndex)
+            .findFirst()
+            .orElse(DEFAULT_ANSWER_OPTION_INDEX);
+        List<Option> options = mapToOptions(effectiveQuestionOnAdviceViews, attributeLevelScore);
+        return new Question(questionId, DEFAULT_QUESTION_COST, options, answerOptionIndex);
+    }
+
+    @NotNull
+    private static List<Option> mapToOptions(List<EffectiveQuestionOnAdviceView> effectiveQuestionOnAdviceViews,
+                                             AttributeLevelScore attributeLevelScore) {
+        return effectiveQuestionOnAdviceViews.stream().map(e -> {
+            double progress = (e.getAnswerOptionIndex() - 1) * (1.0/(effectiveQuestionOnAdviceViews.size() - 1));
+            Map<AttributeLevelScore, Double> promisedScores = new HashMap<>();
+            promisedScores.put(attributeLevelScore, e.getAnswerOptionImpactValue());
+            return new Option(e.getAnswerOptionId(),
+                e.getAnswerOptionIndex(),
+                promisedScores,
+                progress,
+                DEFAULT_QUESTION_COST);
+        }).toList();
     }
 }

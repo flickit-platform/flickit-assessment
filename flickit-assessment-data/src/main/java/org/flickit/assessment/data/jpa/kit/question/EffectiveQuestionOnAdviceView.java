@@ -1,6 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.question;
 
-public interface QuestionView {
+public interface EffectiveQuestionOnAdviceView {
     Long getQuestionId();
     Integer getCurrentOptionIndex();
     Long getAnswerOptionId();

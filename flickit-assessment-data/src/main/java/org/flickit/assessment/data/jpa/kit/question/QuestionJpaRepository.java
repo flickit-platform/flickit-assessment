@@ -72,7 +72,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
            AND qi.attributeId = :attributeId)
            AND qi.maturityLevel.id = :maturityLevelId
             """)
-    List<QuestionView> findAssessedQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
+    List<EffectiveQuestionOnAdviceView> findEffectiveQuestionsOnAdvice(UUID assessmentId, Long attributeId, Long maturityLevelId);
 
 
 
