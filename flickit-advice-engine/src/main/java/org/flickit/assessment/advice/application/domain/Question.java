@@ -5,6 +5,7 @@ import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,18 +18,17 @@ import java.util.stream.IntStream;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Question {
 
     @PlanningId
+    @EqualsAndHashCode.Include
     private long id;
 
     private int cost;
 
     @ProblemFactCollectionProperty
     private List<Option> options;
-
-    @ValueRangeProvider
-    private List<Integer> optionIndexValues;
 
     @PlanningVariable
     private Integer recommendedOptionIndex;
@@ -40,11 +40,15 @@ public class Question {
         this.cost = cost;
         this.options = options;
         this.currentOptionIndex = currentOptionIndex;
-        this.optionIndexValues = IntStream.range(currentOptionIndex, options.size()).boxed().toList();
     }
 
-    public double getTargetGain(Target target) {
-        return getOptionGain(target, recommendedOptionIndex) - getOptionGain(target, currentOptionIndex);
+    @ValueRangeProvider
+    private List<Integer> getNextOptionIndexes() {
+        return IntStream.range(currentOptionIndex, options.size()).boxed().toList();
+    }
+
+    public double calculateGainingScore(AttributeLevelScore attributeLevelScore) {
+        return getOptionScore(attributeLevelScore, recommendedOptionIndex) - getOptionScore(attributeLevelScore, currentOptionIndex);
     }
 
     public double getCost() {
@@ -52,47 +56,26 @@ public class Question {
     }
 
     public boolean isRecommended() {
-        return recommendedOptionIndex != null && recommendedOptionIndex > optionIndexValues.get(0);
+        return recommendedOptionIndex != null && recommendedOptionIndex > currentOptionIndex;
     }
 
-    public boolean hasImpact(Target target) {
-        return options.stream().anyMatch(op -> op.hasImpact(target));
+    public boolean hasImpact(AttributeLevelScore attributeLevelScore) {
+        return options.stream().anyMatch(op -> op.hasImpact(attributeLevelScore));
     }
 
-    public double getAllGains() {
-        return options.get(recommendedOptionIndex).getAllGains() - options.get(currentOptionIndex).getAllGains();
+    public double calculateGainingScore() {
+        return options.get(recommendedOptionIndex).sumScores() - options.get(currentOptionIndex).sumScores();
     }
 
-    private double getOptionGain(Target target, Integer optionIndex) {
+    private double getOptionScore(AttributeLevelScore attributeLevelScore, Integer optionIndex) {
         return options
             .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
-            .getTargetGain(target);
+            .getAttributeLevelPromisedScore(attributeLevelScore);
     }
 
     private double getOptionCost(Integer optionIndex) {
         return options
             .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
             .getCost();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Question question)) return false;
-        return id == question.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-            "id=" + id +
-            ", currentOptionIndex=" + currentOptionIndex +
-            ", recommendedOptionIndex=" + recommendedOptionIndex +
-            '}';
     }
 }
