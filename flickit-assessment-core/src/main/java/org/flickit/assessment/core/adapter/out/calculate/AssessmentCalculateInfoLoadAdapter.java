@@ -24,7 +24,6 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaReposito
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.springframework.stereotype.Component;
@@ -49,8 +48,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private final AnswerOptionRestAdapter answerOptionRestAdapter;
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
-    record Context(List<QuestionJpaEntity> allQuestionsEntities,
-                   List<AnswerJpaEntity> allAnswerEntities,
+    record Context(List<AnswerJpaEntity> allAnswerEntities,
                    List<AnswerOptionDto> allAnswerOptionsDto,
                    List<QualityAttributeValueJpaEntity> allQualityAttributeValueEntities,
                    Map<Long, SubjectJpaEntity> subjectIdToEntity,
@@ -80,9 +78,6 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
         // load all questions with their impacts (by assessmentKit)
         List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByAssessmentKitId(assessmentKitId);
-        List<QuestionJpaEntity> allQuestionsEntities = allQuestionsJoinImpactViews.stream()
-            .map(QuestionJoinQuestionImpactView::getQuestion)
-            .toList();
         Map<Long, List<QuestionJoinQuestionImpactView>> questionIdToViewMap = allQuestionsJoinImpactViews.stream()
             .collect(groupingBy(x -> x.getQuestion().getId()));
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactMap = questionIdToViewMap.values().stream()
@@ -99,7 +94,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         List<Long> allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
         List<AnswerOptionDto> allAnswerOptionsDto = answerOptionRestAdapter.loadAnswerOptionByIds(allAnswerOptionIds);
 
-        Context context = new Context(allQuestionsEntities,
+        Context context = new Context(
             allAnswerEntities,
             allAnswerOptionsDto,
             allAttributeValueEntities,

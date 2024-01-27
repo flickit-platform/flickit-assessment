@@ -34,15 +34,19 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
-    @Query("SELECT q as question, qi as questionImpact " +
-        "FROM QuestionJpaEntity q " +
-        "LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId " +
-        "WHERE q.questionnaireId IN (SELECT qu.id FROM QuestionnaireJpaEntity qu " +
-        "WHERE qu.assessmentKitId = :assessmentKitId)")
-    List<QuestionJoinQuestionImpactView> loadByAssessmentKitId(Long assessmentKitId);
+    @Query("""
+        SELECT q as question, qi as questionImpact
+        FROM QuestionJpaEntity q
+        LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
+        WHERE q.questionnaireId IN (SELECT qu.id FROM QuestionnaireJpaEntity qu
+        WHERE qu.assessmentKitId = :assessmentKitId)
+        """)
+    List<QuestionJoinQuestionImpactView> loadByAssessmentKitId(@Param("assessmentKitId") Long assessmentKitId);
 
-    @Query("SELECT q FROM QuestionJpaEntity q " +
-        "WHERE q.questionnaireId IN (SELECT qs.questionnaireId FROM SubjectQuestionnaireJpaEntity qs " +
-        "WHERE qs.subjectId = :subjectId)")
-    List<QuestionJpaEntity> findBySubjectId(long subjectId);
+    @Query("""
+        SELECT q FROM QuestionJpaEntity q
+        WHERE q.questionnaireId IN (SELECT qs.questionnaireId FROM SubjectQuestionnaireJpaEntity qs
+        WHERE qs.subjectId = :subjectId)
+        """)
+    List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 }

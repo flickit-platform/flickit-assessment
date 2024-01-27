@@ -9,6 +9,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionMapper {
+
     public static Question mapToDomainModel(Long id, List<QuestionImpact> impacts) {
         return new Question(id, impacts);
     }

@@ -21,7 +21,6 @@ import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.springframework.stereotype.Component;
@@ -43,8 +42,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
     private final QuestionJpaRepository questionRepository;
     private final SubjectJpaRepository subjectRepository;
 
-    record Context(List<QuestionJpaEntity> allQuestionsEntities,
-                   List<AnswerJpaEntity> allAnswerEntities,
+    record Context(List<AnswerJpaEntity> allAnswerEntities,
                    List<QualityAttributeValueJpaEntity> allAttributeValueEntities,
                    List<SubjectValueJpaEntity> subjectValueEntities,
                    Map<Long, SubjectJpaEntity> subjectIdToDto,
@@ -83,9 +81,6 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
         // load all questions with their impacts (by assessmentKit)
         List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByAssessmentKitId(assessmentKitId);
-        List<QuestionJpaEntity> allQuestionsEntities = allQuestionsJoinImpactViews.stream()
-            .map(QuestionJoinQuestionImpactView::getQuestion)
-            .toList();
         Map<Long, List<QuestionJoinQuestionImpactView>> questionIdToViewMap = allQuestionsJoinImpactViews.stream()
             .collect(groupingBy(x -> x.getQuestion().getId()));
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactMap = questionIdToViewMap.values().stream()
@@ -96,7 +91,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         // load all answers submitted with this assessmentResult
         var allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
 
-        Context context = new Context(allQuestionsEntities,
+        Context context = new Context(
             allAnswerEntities,
             allAttributeValueEntities,
             subjectValueEntities,

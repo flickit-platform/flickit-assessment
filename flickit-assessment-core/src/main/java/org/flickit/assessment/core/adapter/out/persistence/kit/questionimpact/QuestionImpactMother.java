@@ -7,6 +7,7 @@ import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntit
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionImpactMother {
+
     public static QuestionImpact mapToDomainModel(QuestionImpactJpaEntity entity) {
         return new QuestionImpact(
             entity.getId(),
