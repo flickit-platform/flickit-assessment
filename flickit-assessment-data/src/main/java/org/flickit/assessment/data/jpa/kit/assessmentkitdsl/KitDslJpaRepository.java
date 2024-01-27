@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface KitDslJpaRepository extends JpaRepository<KitDslJpaEntity, Long> {
@@ -25,5 +26,5 @@ public interface KitDslJpaRepository extends JpaRepository<KitDslJpaEntity, Long
             LEFT JOIN ExpertGroupAccessJpaEntity ega on ega.expertGroupId =  eg.id
             WHERE kd.kitId = :kitId AND ega.userId = :userId
         """)
-    String findDslPathByKitId(@Param("kitId") long kitId, @Param("userId") UUID userId);
+    Optional<String> findDslPathByKitId(@Param("kitId") long kitId, @Param("userId") UUID userId);
 }

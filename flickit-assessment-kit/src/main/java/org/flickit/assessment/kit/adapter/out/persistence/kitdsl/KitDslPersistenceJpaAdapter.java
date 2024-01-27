@@ -11,6 +11,7 @@ import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.KitDslMapper.toJpaEntity;
@@ -45,7 +46,7 @@ public class KitDslPersistenceJpaAdapter implements
 
     @SneakyThrows
     @Override
-    public String loadDslFilePath(Long kitId, UUID currentUserId) {
+    public Optional<String> loadDslFilePath(Long kitId, UUID currentUserId) {
         return repository.findDslPathByKitId(kitId, currentUserId);
     }
 }
