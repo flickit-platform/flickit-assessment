@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.out.assessmentkitdsl;
+package org.flickit.assessment.kit.application.port.out.kitdsl;
 
 public interface UpdateKitDslPort {
 
