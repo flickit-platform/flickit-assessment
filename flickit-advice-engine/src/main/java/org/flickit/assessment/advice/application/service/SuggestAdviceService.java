@@ -4,10 +4,10 @@ import ai.timefold.solver.core.api.solver.Solver;
 import ai.timefold.solver.core.api.solver.SolverFactory;
 import ai.timefold.solver.core.config.solver.SolverConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.Option;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
-import org.flickit.assessment.advice.application.domain.Target;
 import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase;
 
 import java.time.Duration;
@@ -52,64 +52,66 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
     private static long id = 0L;
 
     public static Plan generateDemoData() {
-        Target target = new Target(10, 50);
-        Target target2 = new Target(10, 32);
+        AttributeLevelScore attributeLevelScore = new AttributeLevelScore(10, 50, 0, 1);
+        AttributeLevelScore attributeLevelScore2 = new AttributeLevelScore(10, 32, 0, 2);
 
         List<Question> questions = new ArrayList<>();
-        questions.add(createQuestionWithTargetAndOptionIndexes(target, 0));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target, 1));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target, 3));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target, 0));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target, 0));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target, 0));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target, 0));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target2, 0));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target2, 0));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target2, 0));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target2, 0));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target2, 0));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target, target2, 1));
-        questions.add(createQuestionWithTargetAndOptionIndexes(target, target2, 0));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 1));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 3));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore2, 0));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore2, 0));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore2, 0));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore2, 0));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore2, 0));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore, attributeLevelScore2, 1));
+        questions.add(createQuestionWithTargetAndOptionIndexes(attributeLevelScore, attributeLevelScore2, 0));
 
-        return new Plan(List.of(target, target2), questions);
+        return new Plan(List.of(attributeLevelScore, attributeLevelScore2), questions);
     }
 
-    public static Question createQuestionWithTargetAndOptionIndexes(Target target, int currentOptionIndex) {
-        return new Question(id++, 10, createOptions(target), currentOptionIndex);
+    public static Question createQuestionWithTargetAndOptionIndexes(AttributeLevelScore attributeLevelScore, int currentOptionIndex) {
+        return new Question(id++, 10, createOptions(attributeLevelScore), currentOptionIndex);
     }
 
-    public static List<Option> createOptions(Target target) {
+    public static List<Option> createOptions(AttributeLevelScore attributeLevelScore) {
+        int index = 1;
         List<Option> options = new ArrayList<>();
-        options.add(createOption(target, 0, 0, 10));
-        options.add(createOption(target, 2, 0.25, 10));
-        options.add(createOption(target, 4, 0.5, 10));
-        options.add(createOption(target, 8, 1.0, 10));
+        options.add(createOption(index++, attributeLevelScore, 0, 0, 10));
+        options.add(createOption(index++, attributeLevelScore, 2, 0.25, 10));
+        options.add(createOption(index++, attributeLevelScore, 4, 0.5, 10));
+        options.add(createOption(index, attributeLevelScore, 8, 1.0, 10));
         return options;
     }
 
-    public static Option createOption(Target target, double gainValue, double progress, int questionCost) {
-        HashMap<Target, Double> gains = new HashMap<>();
-        gains.put(target, gainValue);
-        return new Option(gains, progress, questionCost);
+    public static Option createOption(int index, AttributeLevelScore attributeLevelScore, double gainValue, double progress, int questionCost) {
+        HashMap<AttributeLevelScore, Double> gains = new HashMap<>();
+        gains.put(attributeLevelScore, gainValue);
+        return new Option(id++, index, gains, progress, questionCost);
     }
 
-    public static Question createQuestionWithTargetAndOptionIndexes(Target target1, Target target2, int currentOptionIndex) {
-        return new Question(id++, 10, createOptions(target1, target2), currentOptionIndex);
+    public static Question createQuestionWithTargetAndOptionIndexes(AttributeLevelScore attributeLevelScore1, AttributeLevelScore attributeLevelScore2, int currentOptionIndex) {
+        return new Question(id++, 10, createOptions(attributeLevelScore1, attributeLevelScore2), currentOptionIndex);
     }
 
-    public static List<Option> createOptions(Target target1, Target target2) {
+    public static List<Option> createOptions(AttributeLevelScore attributeLevelScore1, AttributeLevelScore attributeLevelScore2) {
+        int index = 1;
         List<Option> options = new ArrayList<>();
-        options.add(createOption(target1, target2, 0, 0, 10));
-        options.add(createOption(target1, target2, 2, 0.25, 10));
-        options.add(createOption(target1, target2, 4, 0.5, 10));
-        options.add(createOption(target1, target2, 8, 1.0, 10));
+        options.add(createOption(index++, attributeLevelScore1, attributeLevelScore2, 0, 0, 10));
+        options.add(createOption(index++, attributeLevelScore1, attributeLevelScore2, 2, 0.25, 10));
+        options.add(createOption(index++, attributeLevelScore1, attributeLevelScore2, 4, 0.5, 10));
+        options.add(createOption(index, attributeLevelScore1, attributeLevelScore2, 8, 1.0, 10));
         return options;
     }
 
-    public static Option createOption(Target target1, Target target2, double gainValue, double progress, int questionCost) {
-        HashMap<Target, Double> gains = new HashMap<>();
-        gains.put(target1, gainValue);
-        gains.put(target2, gainValue);
-        return new Option(gains, progress, questionCost);
+    public static Option createOption(int index, AttributeLevelScore attributeLevelScore1, AttributeLevelScore attributeLevelScore2, double gainValue, double progress, int questionCost) {
+        HashMap<AttributeLevelScore, Double> gains = new HashMap<>();
+        gains.put(attributeLevelScore1, gainValue);
+        gains.put(attributeLevelScore2, gainValue);
+        return new Option(id++, index, gains, progress, questionCost);
     }
 }

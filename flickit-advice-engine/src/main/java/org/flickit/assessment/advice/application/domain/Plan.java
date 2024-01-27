@@ -21,7 +21,7 @@ import java.util.List;
 public class Plan {
 
     @ProblemFactCollectionProperty
-    private List<Target> targets;
+    private List<AttributeLevelScore> attributeLevelScores;
 
     @PlanningEntityCollectionProperty
     private List<Question> questions;
@@ -29,8 +29,8 @@ public class Plan {
     @PlanningScore
     private HardSoftScore score;
 
-    public Plan(List<Target> targets, List<Question> questions) {
-        this.targets = targets;
+    public Plan(List<AttributeLevelScore> attributeLevelScores, List<Question> questions) {
+        this.attributeLevelScores = attributeLevelScores;
         this.questions = questions;
     }
 }

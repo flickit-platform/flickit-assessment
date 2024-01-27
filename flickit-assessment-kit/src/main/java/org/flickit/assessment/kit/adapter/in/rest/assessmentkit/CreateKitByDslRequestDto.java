@@ -6,7 +6,7 @@ public record CreateKitByDslRequestDto(String title,
                                        String summary,
                                        String about,
                                        boolean isPrivate,
-                                       Long kitJsonDslId,
+                                       Long kitDslId,
                                        Long expertGroupId,
                                        List<Long> tagIds) {
 }

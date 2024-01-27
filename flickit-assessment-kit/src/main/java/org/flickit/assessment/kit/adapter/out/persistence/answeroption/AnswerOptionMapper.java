@@ -14,10 +14,10 @@ public class AnswerOptionMapper {
     public static AnswerOption mapToDomainModel(AnswerOptionJpaEntity entity) {
         return new AnswerOption(
             entity.getId(),
-            entity.getQuestionId(),
             entity.getTitle(),
-            entity.getIndex()
-        );
+            entity.getIndex(),
+            entity.getQuestionId()
+            );
     }
 
     public static AnswerOptionJpaEntity mapToJpaEntity(CreateAnswerOptionPort.Param param) {
