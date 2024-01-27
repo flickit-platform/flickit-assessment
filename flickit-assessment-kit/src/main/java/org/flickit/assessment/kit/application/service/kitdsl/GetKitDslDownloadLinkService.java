@@ -24,7 +24,7 @@ public class GetKitDslDownloadLinkService implements GetKitDownloadLinkUseCase {
     private final CreateDslFileDownloadLinkPort createDslFileDownloadLinkPort;
     private final CreateDslDownloadLinkPort createDslDownloadLinkPort;
     private final CheckIsMemberPort checkIsMemberPort;
-    private final static Duration EXPIRY_DURATION = Duration.ofHours(1);
+    private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
 
     @SneakyThrows
     @Override
