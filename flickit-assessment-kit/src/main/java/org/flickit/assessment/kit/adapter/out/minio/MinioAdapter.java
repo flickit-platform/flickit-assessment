@@ -2,12 +2,14 @@ package org.flickit.assessment.kit.adapter.out.minio;
 
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;
+import io.minio.http.Method;
 import io.minio.messages.VersioningConfiguration;
 import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.expertgroup.UploadExpertGroupPicturePort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.config.MinioConfigProperties;
@@ -16,8 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND;
 
@@ -26,7 +30,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DS
 public class MinioAdapter implements
     UploadKitDslToFileStoragePort,
     LoadKitDSLJsonFilePort,
-    UploadExpertGroupPicturePort {
+    UploadExpertGroupPicturePort,
+    CreateFileDownloadLinkPort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
@@ -66,10 +71,10 @@ public class MinioAdapter implements
     @SneakyThrows
     private ObjectWriteResponse writeFile(String bucketName, String fileObjectName, InputStream fileInputStream) {
         return minioClient.putObject(PutObjectArgs.builder()
-                .bucket(bucketName)
-                .object(fileObjectName)
-                .stream(fileInputStream, fileInputStream.available(), -1)
-                .build());
+            .bucket(bucketName)
+            .object(fileObjectName)
+            .stream(fileInputStream, fileInputStream.available(), -1)
+            .build());
     }
 
     @SneakyThrows
@@ -116,5 +121,16 @@ public class MinioAdapter implements
                 .bucket(bucketName)
                 .build());
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public String createDownloadLink(String filePath, Duration expiryDuration) {
+        return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+            .bucket(properties.getBucketName())
+            .object(filePath)
+            .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
+            .method(Method.GET)
+            .build());
     }
 }
