@@ -39,7 +39,7 @@ public class UploadKitDslService implements UploadKitDslUseCase {
         AssessmentKitDslModel dslContentJson = parsDslFilePort.parsToDslModel(param.getDslFile());
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(dslContentJson);
-        UploadKitDslToFileStoragePort.Result filesInfo = uploadKitDslToFileStoragePort.upload(param.getDslFile(), json);
+        UploadKitDslToFileStoragePort.Result filesInfo = uploadKitDslToFileStoragePort.uploadKitDsl(param.getDslFile(), json);
         return createKitDslPort.create(filesInfo.dslFilePath(), filesInfo.jsonFilePath());
     }
 
