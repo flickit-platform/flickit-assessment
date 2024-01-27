@@ -39,7 +39,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             anso.index AS currentOptionIndex,
             qanso.id AS answerOptionId,
             qanso.index AS answerOptionIndex,
-            qi.weight AS questionImpactWeight
+            qi.weight AS questionImpactWeight,
+            ansoi.value AS answerOptionImpactValue
 
            FROM QuestionJpaEntity q
            JOIN QuestionnaireJpaEntity qn
@@ -54,6 +55,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
            ON q.id = qi.questionId
            JOIN AnswerOptionJpaEntity qanso
            ON q.id = qanso.questionId
+           JOIN  AnswerOptionImpactJpaEntity ansoi
+           ON qanso.id = ansoi.optionId
            LEFT JOIN AnswerJpaEntity ans
            ON ans.assessmentResult.id = asmr.id and q.id = ans.questionId
            LEFT JOIN AnswerOptionJpaEntity anso

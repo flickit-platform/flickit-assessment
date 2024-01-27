@@ -28,55 +28,79 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
     private final AttributeMaturityScoreJpaRepository attributeMaturityScoreRepository;
     private final QualityAttributeValueJpaRepository attributeValueRepository;
 
+    private static final int DEFAULT_QUESTION_IMPACT_WEIGHT = 1;
+    private static final double DEFAULT_ATTRIBUTE_MATURITY_SCORE = 0.0;
+    private static final int DEFAULT_QUESTION_COST = 1;
+
     @Override
     public Plan load(UUID assessmentId, Map<Long, Long> targets) {
 
+
         List<Target> targetList = new ArrayList<>();
-        ArrayList<Question> questions = new ArrayList<>();
+        List<Question> questions = new ArrayList<>();
+
         for (Map.Entry<Long, Long> target: targets.entrySet()) {
-            List<QuestionView> assessedQuestions =
-                questionRepository.findAssessedQuestions(assessmentId, target.getKey(), target.getValue());
+            Long maturityLevelId = target.getValue();
+            List<LevelCompetenceJpaEntity> byAffectedLevelId = levelCompetenceRepository.findByAffectedLevelId(maturityLevelId);
+            for (LevelCompetenceJpaEntity levelCompetenceJpa: byAffectedLevelId) {
+                Long targetMaturityLevelId = levelCompetenceJpa.getEffectiveLevel().getId();
+                Long attributeId = target.getKey();
+                List<QuestionView> assessedQuestions =
+                    questionRepository.findAssessedQuestions(assessmentId, attributeId, targetMaturityLevelId);
 
-            Map<Long, List<QuestionView>> collect = assessedQuestions.stream()
-                .collect(Collectors.groupingBy(QuestionView::getQuestionId));
 
-            int totalScore = 0;
-            for (List<QuestionView> questionViews: collect.values()) {
-                Integer i = questionViews.stream().map(QuestionView::getQuestionImpactWeight).findFirst().get();
-                totalScore += i;
-            }
+                Map<Long, List<QuestionView>> collect = assessedQuestions.stream()
+                    .collect(Collectors.groupingBy(QuestionView::getQuestionId));
 
-            List<LevelCompetenceJpaEntity> byAffectedLevelId = levelCompetenceRepository.findByAffectedLevelId(target.getValue());
+                int totalScore = 0;
+                for (List<QuestionView> questionViews: collect.values()) {
+                    Integer i = questionViews.stream().map(QuestionView::getQuestionImpactWeight).findFirst().orElse(DEFAULT_QUESTION_IMPACT_WEIGHT);
+                    totalScore += i;
+                }
 
-            for (LevelCompetenceJpaEntity levelCompetenceJpaEntity: byAffectedLevelId) {
-                Long id = levelCompetenceJpaEntity.getEffectiveLevel().getId();
+
                 QualityAttributeValueJpaEntity attributeValueEntity =
-                    attributeValueRepository.findByAssessmentIdAndAttributeIdAndMaturityLevelId(assessmentId, target.getKey(), id);
-                AttributeMaturityScoreJpaEntity attributeMaturityScoreEntity =
-                    attributeMaturityScoreRepository.findByAttributeValueIdAndMaturityLevelId(attributeValueEntity.getId(), id).get();
+                    attributeValueRepository.findByAssessmentIdAndAttributeIdAndMaturityLevelId(assessmentId, attributeId, targetMaturityLevelId);
 
-                double currentGain = totalScore * attributeMaturityScoreEntity.getScore();
-                int minGain = totalScore * levelCompetenceJpaEntity.getValue();
-                targetList.add(new Target((int)currentGain, minGain));
+                Double score = attributeMaturityScoreRepository
+                    .findByAttributeValueIdAndMaturityLevelId(attributeValueEntity.getId(), targetMaturityLevelId)
+                    .map(AttributeMaturityScoreJpaEntity::getScore).orElse(DEFAULT_ATTRIBUTE_MATURITY_SCORE);
+
+                double currentGain = totalScore * score;
+                double minGain = totalScore * (levelCompetenceJpa.getValue()/100.0);
+                Target competenceTarget = new Target(currentGain, minGain);
+                targetList.add(competenceTarget);
+
+                collect.forEach((questionId, questionViews) -> {
+                    Optional<Question> first = questions.stream().filter(e -> e.getId() == questionId).findFirst();
+                    if (first.isPresent()) {
+                        Question question = first.get();
+                        questionViews.forEach(v -> {
+                            Option option = question.getOptions().stream()
+                                .filter(m -> m.getIndex() == v.getAnswerOptionIndex()).findFirst().get();
+                            option.getGains().put(competenceTarget, v.getAnswerOptionImpactValue());
+                        });
+                    } else {
+                        Integer answerOptionIndex = questionViews.stream()
+                            .map(QuestionView::getCurrentOptionIndex)
+                            .findFirst()
+                            .orElse(1);
+                        List<Option> options = questionViews.stream().map(e -> {
+                            double progress = (e.getAnswerOptionIndex() - 1) * (1.0/(questionViews.size() - 1));
+                            Option option = new Option();
+                            option.setProgress(progress);
+                            option.setQuestionCost(DEFAULT_QUESTION_COST);
+                            option.setId(e.getAnswerOptionId());
+                            option.setIndex(e.getAnswerOptionIndex());
+                            option.setGains(new HashMap<>());
+                            option.getGains().put(competenceTarget, e.getAnswerOptionImpactValue());
+                            return option;
+                        }).toList();
+                        Question question = new Question(questionId, DEFAULT_QUESTION_COST, options, answerOptionIndex);
+                        questions.add(question);
+                    }
+                });
             }
-
-            collect.forEach((questionId, questionViews) -> {
-                Integer answerOptionIndex = questionViews.stream()
-                    .map(QuestionView::getCurrentOptionIndex)
-                    .findFirst()
-                    .get();
-                List<Option> options = questionViews.stream().map(e -> {
-                    int progress = (e.getAnswerOptionIndex() - 1) * ((questionViews.size() - 1) / 100);
-                    Option option = new Option();
-                    option.setProgress(progress);
-                    option.setQuestionCost(1);
-                    option.setGains(new HashMap<>());
-                    return option;
-                }).toList();
-                Question question = new Question(questionId, 1, options, answerOptionIndex);
-                questions.add(question);
-            });
-
         }
         return new Plan(targetList, questions);
     }

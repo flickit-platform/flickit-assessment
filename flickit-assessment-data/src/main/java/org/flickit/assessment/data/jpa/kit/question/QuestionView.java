@@ -6,4 +6,5 @@ public interface QuestionView {
     Long getAnswerOptionId();
     Integer getAnswerOptionIndex();
     Integer getQuestionImpactWeight();
+    double getAnswerOptionImpactValue();
 }
