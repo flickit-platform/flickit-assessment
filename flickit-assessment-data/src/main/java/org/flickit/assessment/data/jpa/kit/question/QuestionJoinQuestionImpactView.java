@@ -8,7 +8,4 @@ public interface QuestionJoinQuestionImpactView {
 
     QuestionImpactJpaEntity getQuestionImpact();
 
-    void setQuestion(QuestionJpaEntity question);
-
-    void setQuestionImpact(QuestionImpactJpaEntity questionImpact);
 }

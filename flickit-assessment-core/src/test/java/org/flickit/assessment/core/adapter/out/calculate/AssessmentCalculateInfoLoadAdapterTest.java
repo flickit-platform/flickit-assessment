@@ -28,8 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.projection.ProjectionFactory;
-import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 
 import java.util.*;
 import java.util.function.Function;
@@ -310,15 +308,22 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .collect(toMap(QuestionJpaEntity::getId, x -> x));
         List<QuestionImpactJpaEntity> impacts = questionIdToImpactsMap.values().stream().flatMap(Collection::stream).toList();
 
-        ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
-
         return impacts.stream()
             .map(x -> {
-                var projection = factory.createProjection(QuestionJoinQuestionImpactView.class);
                 var questionEntity = questionIdToQuestionEntityMap.get(x.getQuestionId());
-                projection.setQuestion(questionEntity);
-                projection.setQuestionImpact(x);
-                return projection;
+                QuestionJoinQuestionImpactView view = new QuestionJoinQuestionImpactView() {
+                    @Override
+                    public QuestionJpaEntity getQuestion() {
+                        return questionEntity;
+                    }
+
+                    @Override
+                    public QuestionImpactJpaEntity getQuestionImpact() {
+                        return x;
+                    }
+                };
+
+                return view;
             }).toList();
     }
 
