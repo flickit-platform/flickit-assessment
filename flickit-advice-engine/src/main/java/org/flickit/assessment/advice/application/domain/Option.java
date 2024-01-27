@@ -11,12 +11,12 @@ public class Option {
 
     private long id;
     private int index;
-    private Map<AttributeLevelScore, Double> gains;
+    private Map<AttributeLevelScore, Double> promisedScores;
     private double progress;
     private int questionCost;
 
-    public double getTargetGain(AttributeLevelScore attributeLevelScore) {
-        return gains.get(attributeLevelScore);
+    public double getAttributeLevelPromisedScore(AttributeLevelScore attributeLevelScore) {
+        return promisedScores.get(attributeLevelScore);
     }
 
     public double getCost() {
@@ -24,11 +24,11 @@ public class Option {
     }
 
     public boolean hasImpact(AttributeLevelScore attributeLevelScore) {
-        return gains.containsKey(attributeLevelScore);
+        return promisedScores.containsKey(attributeLevelScore);
     }
 
     public double sumScores() {
-        return gains.values().stream()
+        return promisedScores.values().stream()
             .mapToDouble(Double::doubleValue)
             .sum();
     }

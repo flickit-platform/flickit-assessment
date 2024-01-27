@@ -70,7 +70,7 @@ public class Question {
     private double getOptionScore(AttributeLevelScore attributeLevelScore, Integer optionIndex) {
         return options
             .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
-            .getTargetGain(attributeLevelScore);
+            .getAttributeLevelPromisedScore(attributeLevelScore);
     }
 
     private double getOptionCost(Integer optionIndex) {
