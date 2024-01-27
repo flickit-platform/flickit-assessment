@@ -5,10 +5,7 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaRepository;
-import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
-import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
-import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
-import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -23,7 +20,8 @@ public class KitDslPersistenceJpaAdapter implements
     CreateKitDslPort,
     LoadDslJsonPathPort,
     UpdateKitDslPort,
-    LoadDslFilePathPort {
+    LoadDslFilePathPort,
+    CheckIsMemberPort {
 
     private final KitDslJpaRepository repository;
 
@@ -46,7 +44,12 @@ public class KitDslPersistenceJpaAdapter implements
 
     @SneakyThrows
     @Override
-    public Optional<String> loadDslFilePath(Long kitId, UUID currentUserId) {
-        return repository.findDslPathByKitId(kitId, currentUserId);
+    public Optional<String> loadDslFilePath(Long kitId) {
+        return repository.findDslPathByKitId(kitId);
+    }
+
+    @Override
+    public Boolean checkIsMemberByKitId(long kitId, UUID currentUserId) {
+        return repository.checkIsMemberByKitId(kitId, currentUserId);
     }
 }

@@ -23,7 +23,18 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetKitDslDownloadLinkServiceTest {
-    
+
+    @Mock
+    private LoadDslFilePathPort loadDslFilePathPort;
+    @Mock
+    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
+    @Mock
+    private CheckIsMemberPort checkIsMemberPort;
+    @InjectMocks
+    private GetKitDslDownloadLinkService service;
+    private final Duration EXPIRY_DURATION = Duration.ofHours(1);
+    private final Param param = new Param(0L, UUID.randomUUID());
+
     @Test
     void getKitLink_whenDslFilePathExists_shouldReturnDownloadLink() {
 
@@ -49,7 +60,7 @@ class GetKitDslDownloadLinkServiceTest {
 
         when(checkIsMemberPort.checkIsMemberByKitId(param.getKitId(), param.getCurrentUserId()))
             .thenReturn(false);
-        assertThrows(AccessDeniedException.class, ()-> service.getKitLink(param));
+        assertThrows(AccessDeniedException.class, () -> service.getKitLink(param));
     }
 
     @Test
@@ -64,15 +75,4 @@ class GetKitDslDownloadLinkServiceTest {
         verify(loadDslFilePathPort).loadDslFilePath(param.getKitId());
         verifyNoInteractions(createFileDownloadLinkPort);
     }
-
-    @Mock
-    private LoadDslFilePathPort loadDslFilePathPort;
-    @Mock
-    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
-    @Mock
-    private CheckIsMemberPort checkIsMemberPort;
-    @InjectMocks
-    private GetKitDslDownloadLinkService service;
-    private final Duration EXPIRY_DURATION = Duration.ofHours(1);
-    private final Param param = new Param(0L, UUID.randomUUID());
 }

@@ -22,9 +22,18 @@ public interface KitDslJpaRepository extends JpaRepository<KitDslJpaEntity, Long
             SELECT kd.dslPath as url
             FROM KitDslJpaEntity kd
             LEFT JOIN AssessmentKitJpaEntity ak on ak.Id = kd.kitId
+            WHERE kd.kitId = :kitId
+        """)
+    Optional<String> findDslPathByKitId(@Param("kitId") long kitId);
+
+    @Query("""
+            SELECT COALESCE(COUNT(kd.dslPath), 0) > 0 as urlExists
+            FROM KitDslJpaEntity kd
+            LEFT JOIN AssessmentKitJpaEntity ak on ak.Id = kd.kitId
             LEFT JOIN ExpertGroupJpaEntity eg on ak.expertGroupId = eg.id
-            LEFT JOIN ExpertGroupAccessJpaEntity ega on ega.expertGroupId =  eg.id
+            LEFT JOIN ExpertGroupAccessJpaEntity ega on ega.expertGroupId = eg.id
             WHERE kd.kitId = :kitId AND ega.userId = :userId
         """)
-    Optional<String> findDslPathByKitId(@Param("kitId") long kitId, @Param("userId") UUID userId);
+    Boolean checkIsMemberByKitId(@Param(value = "kitId") Long kitId,
+                                 @Param(value = "userId") UUID userId);
 }
