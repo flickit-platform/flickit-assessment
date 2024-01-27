@@ -27,9 +27,6 @@ public class Question {
     @ProblemFactCollectionProperty
     private List<Option> options;
 
-    @ValueRangeProvider
-    private List<Integer> optionIndexValues;
-
     @PlanningVariable
     private Integer recommendedOptionIndex;
 
@@ -40,11 +37,15 @@ public class Question {
         this.cost = cost;
         this.options = options;
         this.currentOptionIndex = currentOptionIndex;
-        this.optionIndexValues = IntStream.range(currentOptionIndex, options.size()).boxed().toList();
     }
 
-    public double getTargetGain(Target target) {
-        return getOptionGain(target, recommendedOptionIndex) - getOptionGain(target, currentOptionIndex);
+    @ValueRangeProvider
+    private List<Integer> getNextOptionIndexes() {
+        return IntStream.range(currentOptionIndex, options.size()).boxed().toList();
+    }
+
+    public double getTargetGain(AttributeLevelScore attributeLevelScore) {
+        return getOptionGain(attributeLevelScore, recommendedOptionIndex) - getOptionGain(attributeLevelScore, currentOptionIndex);
     }
 
     public double getCost() {
@@ -52,21 +53,21 @@ public class Question {
     }
 
     public boolean isRecommended() {
-        return recommendedOptionIndex != null && recommendedOptionIndex > optionIndexValues.get(0);
+        return recommendedOptionIndex != null && recommendedOptionIndex > currentOptionIndex;
     }
 
-    public boolean hasImpact(Target target) {
-        return options.stream().anyMatch(op -> op.hasImpact(target));
+    public boolean hasImpact(AttributeLevelScore attributeLevelScore) {
+        return options.stream().anyMatch(op -> op.hasImpact(attributeLevelScore));
     }
 
-    public double getAllGains() {
-        return options.get(recommendedOptionIndex).getAllGains() - options.get(currentOptionIndex).getAllGains();
+    public double calculateGainingScore() {
+        return options.get(recommendedOptionIndex).sumScores() - options.get(currentOptionIndex).sumScores();
     }
 
-    private double getOptionGain(Target target, Integer optionIndex) {
+    private double getOptionGain(AttributeLevelScore attributeLevelScore, Integer optionIndex) {
         return options
             .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
-            .getTargetGain(target);
+            .getTargetGain(attributeLevelScore);
     }
 
     private double getOptionCost(Integer optionIndex) {
@@ -85,14 +86,5 @@ public class Question {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Question{" +
-            "id=" + id +
-            ", currentOptionIndex=" + currentOptionIndex +
-            ", recommendedOptionIndex=" + recommendedOptionIndex +
-            '}';
     }
 }

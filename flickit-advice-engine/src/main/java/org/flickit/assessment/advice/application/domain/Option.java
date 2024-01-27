@@ -2,36 +2,32 @@ package org.flickit.assessment.advice.application.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.Map;
 
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class Option {
 
     private long id;
     private int index;
-    private Map<Target, Double> gains;
+    private Map<AttributeLevelScore, Double> gains;
     private double progress;
     private int questionCost;
 
-    public double getTargetGain(Target target) {
-        return gains.get(target);
+    public double getTargetGain(AttributeLevelScore attributeLevelScore) {
+        return gains.get(attributeLevelScore);
     }
 
     public double getCost() {
         return progress * questionCost;
     }
 
-    public boolean hasImpact(Target target) {
-        return gains.containsKey(target);
+    public boolean hasImpact(AttributeLevelScore attributeLevelScore) {
+        return gains.containsKey(attributeLevelScore);
     }
 
-    public double getAllGains() {
+    public double sumScores() {
         return gains.values().stream()
             .mapToDouble(Double::doubleValue)
             .sum();
