@@ -36,7 +36,8 @@ public class QuestionMapper {
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.createdBy(),
-            param.createdBy()
+            param.createdBy(),
+            Boolean.FALSE
         );
     }
 }

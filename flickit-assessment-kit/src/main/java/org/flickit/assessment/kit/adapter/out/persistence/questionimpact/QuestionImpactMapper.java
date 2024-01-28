@@ -33,7 +33,8 @@ public class QuestionImpactMapper {
             impact.getCreationTime(),
             impact.getLastModificationTime(),
             impact.getCreatedBy(),
-            impact.getLastModifiedBy()
+            impact.getLastModifiedBy(),
+            Boolean.FALSE
         );
     }
 }

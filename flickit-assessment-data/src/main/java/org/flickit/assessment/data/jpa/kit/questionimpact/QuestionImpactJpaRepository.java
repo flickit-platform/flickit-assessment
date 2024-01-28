@@ -27,4 +27,11 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
+    @Modifying
+    @Query("""
+            UPDATE QuestionImpactJpaEntity q SET
+                q.deleted = true
+            WHERE q.id = :id
+        """)
+    void updateDeleted(@Param("id") Long id);
 }

@@ -26,4 +26,11 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     List<AnswerOptionJpaEntity> findByQuestionId(Long questionId);
 
+    @Modifying
+    @Query("""
+        UPDATE AnswerOptionJpaEntity a
+        SET a.deleted = true
+        WHERE a.id = :id AND a.questionId = :questionId
+        """)
+    void updateDeleted(@Param("id") Long id, @Param("questionId") Long questionId);
 }

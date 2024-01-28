@@ -5,6 +5,7 @@ import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpact
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
+import org.flickit.assessment.kit.application.port.out.answeroptionimpact.DeleteAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AnswerOptionImpactPersistenceJpaAdapter implements
     CreateAnswerOptionImpactPort,
-    UpdateAnswerOptionImpactPort {
+    UpdateAnswerOptionImpactPort,
+    DeleteAnswerOptionImpactPort {
 
     private final AnswerOptionImpactJpaRepository repository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -29,5 +31,10 @@ public class AnswerOptionImpactPersistenceJpaAdapter implements
             param.value(),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public void delete(Long id, Long impactId) {
+        repository.updateDeleted(id, impactId);
     }
 }

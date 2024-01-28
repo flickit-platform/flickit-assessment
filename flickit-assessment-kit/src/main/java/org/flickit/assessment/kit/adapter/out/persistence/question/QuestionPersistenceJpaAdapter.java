@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.question;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.DeleteQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,8 @@ import static org.flickit.assessment.kit.adapter.out.persistence.question.Questi
 @RequiredArgsConstructor
 public class QuestionPersistenceJpaAdapter implements
     UpdateQuestionPort,
-    CreateQuestionPort {
+    CreateQuestionPort,
+    DeleteQuestionPort {
 
     private final QuestionJpaRepository repository;
 
@@ -32,4 +34,8 @@ public class QuestionPersistenceJpaAdapter implements
         return repository.save(mapToJpaEntity(param)).getId();
     }
 
+    @Override
+    public void delete(Long id) {
+        repository.updateDeleted(id);
+    }
 }

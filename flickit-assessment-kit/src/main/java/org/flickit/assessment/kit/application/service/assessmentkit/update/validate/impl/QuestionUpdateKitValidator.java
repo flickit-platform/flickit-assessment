@@ -5,7 +5,6 @@ import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Question;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
@@ -24,7 +23,7 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
     public Notification validate(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Notification notification = new Notification();
 
-        Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap = savedKit.getQuestionnaires().stream()
+/*        Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap = savedKit.getQuestionnaires().stream()
             .collect(toMap(Questionnaire::getCode, q -> {
                 if (q.getQuestions() == null)
                     return Map.of();
@@ -58,7 +57,7 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
                 notification.add(new InvalidAdditionError(DslFieldNames.QUESTION, newQuestions));
 
             validateAnswerOptions(codeToQuestion, codeToDslQuestion, notification);
-        }
+        }*/
 
         return notification;
     }

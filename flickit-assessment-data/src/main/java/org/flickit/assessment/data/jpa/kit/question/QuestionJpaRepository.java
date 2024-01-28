@@ -34,4 +34,11 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
+    @Modifying
+    @Query("""
+        UPDATE QuestionJpaEntity q SET
+        q.deleted = true
+        WHERE q.id = :id
+        """)
+    void updateDeleted(@Param("id") Long id);
 }

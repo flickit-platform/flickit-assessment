@@ -30,7 +30,7 @@ public class QuestionImpactPersistenceJpaAdapter implements
 
     @Override
     public void delete(Long id) {
-        repository.deleteById(id);
+        repository.updateDeleted(id);
     }
 
     @Override

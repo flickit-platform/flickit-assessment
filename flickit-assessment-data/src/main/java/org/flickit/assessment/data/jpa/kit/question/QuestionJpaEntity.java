@@ -45,10 +45,13 @@ public class QuestionJpaEntity {
 
     @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
-    
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted;
 }
