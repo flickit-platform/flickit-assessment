@@ -22,10 +22,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_DOWNLOAD_LINK_DSK_FILE_NOT_FOUND;
 
 @Component
 @AllArgsConstructor
@@ -128,28 +127,29 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
-
-        String versionIdRegex = "(.*)\\/([^/]+)\\.zip$";
-        Pattern pattern = Pattern.compile(versionIdRegex);
-        Matcher matcher = pattern.matcher(filePath);
-
         String path;
         String versionId;
-        if (matcher.find()) {
-            path = matcher.group(1);
-            versionId = matcher.group(2);
+
+        int zipExtensionIndex = filePath.lastIndexOf(".zip");
+        if (zipExtensionIndex != -1) {
+            int lastSlashIndex = filePath.lastIndexOf("/");
+            if (lastSlashIndex != -1 && zipExtensionIndex < lastSlashIndex) {
+                path = filePath.substring(0, lastSlashIndex);
+                versionId = filePath.substring(lastSlashIndex + 1);
+            } else {
+                path = filePath;
+                versionId = "";
+            }
         } else {
-            path = filePath;
-            versionId = "";
+            throw new ResourceNotFoundException(GET_KIT_DSL_DOWNLOAD_LINK_DSK_FILE_NOT_FOUND);
         }
+
         return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
             .bucket(properties.getBucketName())
             .object(path)
             .versionId(versionId)
-            .expiry(10000, TimeUnit.SECONDS)
+            .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
             .method(Method.GET)
-            .build()
-
-        );
+            .build());
     }
 }
