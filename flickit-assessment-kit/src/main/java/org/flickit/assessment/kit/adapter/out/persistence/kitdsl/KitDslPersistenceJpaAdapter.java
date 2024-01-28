@@ -9,7 +9,6 @@ import org.flickit.assessment.kit.application.port.out.kitdsl.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.KitDslMapper.toJpaEntity;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
@@ -20,8 +19,7 @@ public class KitDslPersistenceJpaAdapter implements
     CreateKitDslPort,
     LoadDslJsonPathPort,
     UpdateKitDslPort,
-    LoadDslFilePathPort,
-    CheckIsMemberPort {
+    LoadDslFilePathPort {
 
     private final KitDslJpaRepository repository;
 
@@ -46,10 +44,5 @@ public class KitDslPersistenceJpaAdapter implements
     @Override
     public Optional<String> loadDslFilePath(Long kitId) {
         return repository.findDslPathByKitId(kitId);
-    }
-
-    @Override
-    public Boolean checkIsMemberByKitId(long kitId, UUID currentUserId) {
-        return repository.checkIsMemberByKitId(kitId, currentUserId);
     }
 }
