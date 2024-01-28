@@ -30,7 +30,7 @@ public class GetKitDslDownloadLinkService implements GetKitDownloadLinkUseCase {
 
     @SneakyThrows
     @Override
-    public String getKitLink(Param param) {
+    public String getKitDslDownloadLink(Param param) {
         var expertGroupId = loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId());
 
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId()))

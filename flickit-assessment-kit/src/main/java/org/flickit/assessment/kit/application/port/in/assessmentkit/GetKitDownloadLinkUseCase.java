@@ -12,7 +12,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetKitDownloadLinkUseCase {
 
-    String getKitLink(Param param);
+    String getKitDslDownloadLink(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

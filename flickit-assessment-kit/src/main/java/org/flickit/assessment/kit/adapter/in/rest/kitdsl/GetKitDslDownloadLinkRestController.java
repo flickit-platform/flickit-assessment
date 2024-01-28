@@ -21,7 +21,7 @@ public class GetKitDslDownloadLinkRestController {
     @GetMapping("/assessment-kits/{kitId}/dsl-download-link")
     public ResponseEntity<GetKitDslDownloadLinkResponseDto> getDslDownloadLink(@PathVariable("kitId") Long kitId) {
         UUID currentUserId = userContext.getUser().id();
-        var response = useCase.getKitLink(toParam(kitId, currentUserId));
+        var response = useCase.getKitDslDownloadLink(toParam(kitId, currentUserId));
         return new ResponseEntity<>(toResponseDto(response), HttpStatus.OK);
     }
 
