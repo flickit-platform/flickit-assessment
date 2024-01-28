@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
+import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDownloadLinkUseCase.Param;
@@ -18,7 +19,8 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_FILE_PATH_NOT_FOUND;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_DOWNLOAD_LINK_FILE_PATH_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,8 +38,12 @@ class GetKitDslDownloadLinkServiceTest {
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
 
+    private final static Duration EXPIRY_DURATION = Duration.ofHours(1);
+
     @Test
-    void getKitLink_whenDslFilePathExists_shouldReturnDownloadLink() {
+    void testGetKitDSLDownloadLink_whenDslFilePathExists_shouldReturnDownloadLink() {
+        Param param = new Param(0L, UUID.randomUUID());
+        long expertGroupId = 1;
         String expectedFilePath = "/path/to/dsl/file";
         when(loadDslFilePathPort.loadDslFilePath(param.getKitId()))
             .thenReturn(Optional.of(expectedFilePath));
@@ -50,31 +56,28 @@ class GetKitDslDownloadLinkServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId()))
             .thenReturn(expertGroupId);
 
-        String result = service.getKitLink(param);
+        String result = service.getKitDslDownloadLink(param);
         assertEquals(expectedDownloadLink, result);
-
-        verify(loadDslFilePathPort).loadDslFilePath(param.getKitId());
-        verify(createDslDownloadLinkPort).createDownloadLink(expectedFilePath, EXPIRY_DURATION);
     }
 
     @Test
-    void getKitLink_whenUserIsNotMember_shouldReturnDownloadLink() {
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId()))
-            .thenReturn(false);
+    void testGetKitDSLDownloadLink_whenUserIsNotAllowed_shouldThrowException() {
+        Param param = new Param(0L, UUID.randomUUID());
+        long expertGroupId = 1;
         when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId()))
             .thenReturn(expertGroupId);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId()))
+            .thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getKitLink(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getKitDslDownloadLink(param));
+        Assertions.assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
     @Test
-    void getKitLink_whenDslFilePathDoesNotExist_shouldThrowResourceNotFoundException() {
+    void testGetKitDSLDownloadLink_whenDslFilePathDoesNotExist_shouldThrowException() {
+        Param param = new Param(0L, UUID.randomUUID());
+        long expertGroupId = 1;
 
-        when(loadDslFilePathPort.loadDslFilePath(param.getKitId()))
-            .thenReturn(null);
-
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId()))
-            .thenReturn(true);
         when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId()))
             .thenReturn(expertGroupId);
 
@@ -82,14 +85,10 @@ class GetKitDslDownloadLinkServiceTest {
             .thenReturn(Optional.empty());
         when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId()))
             .thenReturn(true);
-        assertThrows(ResourceNotFoundException.class, () -> service.getKitLink(param),
-            GET_KIT_DSL_FILE_PATH_NOT_FOUND);
-        verify(loadDslFilePathPort).loadDslFilePath(param.getKitId());
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getKitDslDownloadLink(param));
+        Assertions.assertThat(throwable).hasMessage(GET_KIT_DSL_DOWNLOAD_LINK_FILE_PATH_NOT_FOUND);
+
         verifyNoInteractions(createDslDownloadLinkPort);
     }
-
-    private final Duration EXPIRY_DURATION = Duration.ofHours(1);
-    private final Param param = new Param(0L, UUID.randomUUID());
-    private final long expertGroupId = 1;
-
 }
