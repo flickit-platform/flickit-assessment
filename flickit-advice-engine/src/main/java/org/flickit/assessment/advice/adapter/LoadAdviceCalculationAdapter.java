@@ -1,11 +1,11 @@
 package org.flickit.assessment.advice.adapter;
 
+import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.Option;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
-import org.flickit.assessment.advice.application.domain.Target;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
-import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
@@ -31,7 +31,7 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
     @Override
     public Plan load(UUID assessmentId, Map<Long, Long> targets) {
 
-        List<Target> targetList = new ArrayList<>();
+        List<AttributeLevelScore> targetList = new ArrayList<>();
         ArrayList<Question> questions = new ArrayList<>();
         for (Map.Entry<Long, Long> target: targets.entrySet()) {
             List<QuestionView> assessedQuestions =
@@ -57,7 +57,7 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
 
                 double currentGain = totalScore * attributeMaturityScoreEntity.getScore();
                 int minGain = totalScore * levelCompetenceJpaEntity.getValue();
-                targetList.add(new Target((int)currentGain, minGain));
+                targetList.add(new AttributeLevelScore(currentGain, minGain, 0, 0L));
             }
 
             collect.forEach((questionId, questionViews) -> {
@@ -67,10 +67,12 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
                     .get();
                 List<Option> options = questionViews.stream().map(e -> {
                     int progress = (e.getAnswerOptionIndex() - 1) * ((questionViews.size() - 1) / 100);
-                    Option option = new Option();
-                    option.setProgress(progress);
-                    option.setQuestionCost(1);
-                    option.setGains(new HashMap<>());
+                    Option option = new Option(
+                        e.getAnswerOptionId(),
+                        e.getAnswerOptionIndex(),
+                        new HashMap<>(),
+                        progress,
+                        1);
                     return option;
                 }).toList();
                 Question question = new Question(questionId, 1, options, answerOptionIndex);
