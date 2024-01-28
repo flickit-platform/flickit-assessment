@@ -22,6 +22,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND;
 
@@ -126,11 +128,28 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
+
+        String versionIdRegex = "(.*)\\/([^/]+)\\.zip$";
+        Pattern pattern = Pattern.compile(versionIdRegex);
+        Matcher matcher = pattern.matcher(filePath);
+
+        String path;
+        String versionId;
+        if (matcher.find()) {
+            path = matcher.group(1);
+            versionId = matcher.group(2);
+        } else {
+            path = filePath;
+            versionId = "";
+        }
         return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
             .bucket(properties.getBucketName())
-            .object(filePath)
-            .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
+            .object(path)
+            .versionId(versionId)
+            .expiry(10000, TimeUnit.SECONDS)
             .method(Method.GET)
-            .build());
+            .build()
+
+        );
     }
 }
