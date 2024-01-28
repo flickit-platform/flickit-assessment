@@ -1,11 +1,13 @@
 package org.flickit.assessment.kit.adapter.out.persistence.kitdsl;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaRepository;
-import org.flickit.assessment.kit.application.port.out.kitdsl.*;
+import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -40,7 +42,6 @@ public class KitDslPersistenceJpaAdapter implements
         repository.updateById(id, kitId);
     }
 
-    @SneakyThrows
     @Override
     public Optional<String> loadDslFilePath(Long kitId) {
         return repository.findDslPathByKitId(kitId);

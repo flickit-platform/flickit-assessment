@@ -20,7 +20,6 @@ public interface KitDslJpaRepository extends JpaRepository<KitDslJpaEntity, Long
     @Query("""
             SELECT kd.dslPath as url
             FROM KitDslJpaEntity kd
-            LEFT JOIN AssessmentKitJpaEntity ak on ak.Id = kd.kitId
             WHERE kd.kitId = :kitId
         """)
     Optional<String> findDslPathByKitId(@Param("kitId") long kitId);
