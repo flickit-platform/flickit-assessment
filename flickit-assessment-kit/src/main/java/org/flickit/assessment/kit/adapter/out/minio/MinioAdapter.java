@@ -23,8 +23,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_DOWNLOAD_LINK_DSK_FILE_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @AllArgsConstructor
@@ -85,15 +84,7 @@ public class MinioAdapter implements
         String versionId = dslJsonFullPath.substring(dslJsonFullPath.lastIndexOf(SLASH) + 1);
         String bucketName = properties.getBucketName();
 
-        try {
-            minioClient.statObject(StatObjectArgs.builder()
-                .bucket(bucketName)
-                .object(path)
-                .versionId(versionId)
-                .build());
-        } catch (ErrorResponseException e) {
-            throw new ResourceNotFoundException(CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND);
-        }
+        checkFileExistence(path, bucketName, versionId);
 
         InputStream stream = minioClient
             .getObject(GetObjectArgs.builder()
@@ -105,8 +96,8 @@ public class MinioAdapter implements
         return new String(stream.readAllBytes());
     }
 
-    @Override
     @SneakyThrows
+    @Override
     public String uploadPicture(MultipartFile pictureFile) {
         createBucket(properties.getBucketName());
         setBucketVersioning(properties.getBucketName());
@@ -116,19 +107,12 @@ public class MinioAdapter implements
     }
 
     @SneakyThrows
-    private void createBucket(String bucketName) {
-        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
-            minioClient.makeBucket(MakeBucketArgs.builder()
-                .bucket(bucketName)
-                .build());
-        }
-    }
-
-    @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
+        String bucketName = properties.getBucketName();
         String path;
         String versionId;
+
 
         int zipExtensionIndex = filePath.lastIndexOf(".zip");
         if (zipExtensionIndex != -1) {
@@ -144,12 +128,36 @@ public class MinioAdapter implements
             throw new ResourceNotFoundException(GET_KIT_DSL_DOWNLOAD_LINK_DSK_FILE_NOT_FOUND);
         }
 
+        checkFileExistence(path, bucketName, versionId);
+
         return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-            .bucket(properties.getBucketName())
+            .bucket(bucketName)
             .object(path)
             .versionId(versionId)
             .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
             .method(Method.GET)
             .build());
+    }
+
+    @SneakyThrows
+    private void checkFileExistence(String path, String bucketName, String versionId){
+        try {
+            minioClient.statObject(StatObjectArgs.builder()
+                .bucket(bucketName)
+                .object(path)
+                .versionId(versionId)
+                .build());
+        } catch (ErrorResponseException e) {
+            throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
+        }
+    }
+
+    @SneakyThrows
+    private void createBucket(String bucketName) {
+        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
+            minioClient.makeBucket(MakeBucketArgs.builder()
+                .bucket(bucketName)
+                .build());
+        }
     }
 }
