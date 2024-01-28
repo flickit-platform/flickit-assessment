@@ -396,10 +396,16 @@
 			"response": []
 		},
 		{
-			"name": "Assessment Kit Dsl Download link",
+			"name": "Get Dsl Download Link",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/assessment-kits/144/dsl-download-link",
 					"host": [
