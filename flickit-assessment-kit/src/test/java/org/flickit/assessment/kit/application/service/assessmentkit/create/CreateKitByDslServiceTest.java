@@ -23,8 +23,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -144,7 +143,7 @@ class CreateKitByDslServiceTest {
 
         when(loadDslJsonPathPort.loadJsonPath(KIT_DSL_ID)).thenReturn(DSL_JSON);
 
-        when(loadKitDSLJsonFilePort.loadDslJson(any())).thenThrow(new ResourceNotFoundException(CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND));
+        when(loadKitDSLJsonFilePort.loadDslJson(any())).thenThrow(new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND));
 
         var param = new CreateKitByDslUseCase.Param(
             TITLE,
@@ -157,6 +156,6 @@ class CreateKitByDslServiceTest {
             EXPERT_GROUP_OWNER_ID);
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.create(param));
-        assertThat(throwable).hasMessage(CREATE_KIT_BY_DSL_KIT_DSL_FILE_NOT_FOUND);
+        assertThat(throwable).hasMessage(FILE_STORAGE_FILE_NOT_FOUND);
     }
 }
