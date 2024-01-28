@@ -5,6 +5,7 @@ import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DSLSyntaxError
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.DslParserRestException;
 import org.flickit.assessment.kit.adapter.out.uploaddsl.exception.ZipBombException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
+import org.flickit.assessment.kit.application.exception.InvalidContentException;
 import org.flickit.assessment.kit.application.port.out.kitdsl.ParsDslFilePort;
 import org.flickit.assessment.kit.config.DslParserRestProperties;
 import org.springframework.http.*;
@@ -19,6 +20,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPLOAD_KIT_DSL_DSL_HAS_ERROR;
 
 @Component
 @AllArgsConstructor
@@ -45,7 +48,11 @@ public class DslParserRestAdapter implements ParsDslFilePort {
             if (!responseEntity.getStatusCode().is2xxSuccessful())
                 throw new DslParserRestException(responseEntity.getStatusCode().value());
 
-            return responseEntity.getBody();
+            AssessmentKitDslModel kitDslModel = responseEntity.getBody();
+            if (kitDslModel != null && kitDslModel.isHasError())
+                throw new InvalidContentException(UPLOAD_KIT_DSL_DSL_HAS_ERROR, new Throwable());
+
+            return kitDslModel;
         } catch (HttpClientErrorException e) {
             String responseBody = e.getResponseBodyAsString();
             throw new DSLSyntaxErrorException(e, responseBody);
