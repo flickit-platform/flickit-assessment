@@ -26,6 +26,6 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
     @Override
     public boolean checkIsMember(long expertGroupId, UUID userId) {
-        return repository.checkUserIsMember(expertGroupId, userId);
+        return repository.existsByExpertGroupIdAndUserId(expertGroupId, userId);
     }
 }
