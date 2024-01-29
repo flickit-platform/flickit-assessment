@@ -1,8 +1,8 @@
 package org.flickit.assessment.kit.application.service.expertgroup;
 
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -25,11 +24,8 @@ class GetExpertGroupServiceTest {
 
     @InjectMocks
     private GetExpertGroupService service;
-
     @Mock
     private LoadExpertGroupPort loadExpertGroupPort;
-    @Mock
-    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Test
     void testGetExpertGroup_ValidInputs_ValidResults() {
@@ -40,8 +36,6 @@ class GetExpertGroupServiceTest {
         when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class)))
             .thenReturn(portResult);
 
-        when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(Optional.ofNullable(currentUserId));
-
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
         var result = service.getExpertGroup(param);
 
@@ -49,14 +43,25 @@ class GetExpertGroupServiceTest {
         verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture());
 
         assertNotNull(result);
-        assertEquals(useCaseResul.getId(),result.getId());
+        assertEquals(useCaseResul.getId(), result.getId());
         assertTrue(result.isOwner());
+    }
+
+    @Test
+    void testGetExpertGroup_ValidInputs_emptyResults() {
+
+        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class)))
+            .thenThrow(new ResourceNotFoundException("message"));
+
+        var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
+
+        assertThrows(ResourceNotFoundException.class, ()-> service.getExpertGroup(param));
     }
 
     long expertGroupId = new Random().nextLong();
     static UUID currentUserId = UUID.randomUUID();
 
-    private static LoadExpertGroupPort.Result createPortResult(long id,UUID ownerId) {
+    private static LoadExpertGroupPort.Result createPortResult(long id, UUID ownerId) {
         return new LoadExpertGroupPort.Result(id,
             "Title" + id,
             "Bio" + id,
