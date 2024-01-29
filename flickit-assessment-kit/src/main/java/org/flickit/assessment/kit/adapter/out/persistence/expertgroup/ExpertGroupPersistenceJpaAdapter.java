@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapEntityToPortResult;
 import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP_BY_ID_EXPERT_GROUP_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
     LoadExpertGroupMemberIdsPort,
-    LoadExpertGroupPort{
+    LoadExpertGroupPort {
 
     private final ExpertGroupJpaRepository repository;
 
@@ -77,15 +78,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
     @Override
     public LoadExpertGroupPort.Result loadExpertGroup(LoadExpertGroupPort.Param param) {
-        var resultWithoutMembers = repository.findById(param.id()).orElseThrow(
-            () -> new ResourceNotFoundException(GET_EXPERT_GROUP_BY_ID_EXPERT_GROUP_NOT_FOUND));
-        return new LoadExpertGroupPort.Result(resultWithoutMembers.getId(),
-            resultWithoutMembers.getName(),
-            resultWithoutMembers.getBio(),
-            resultWithoutMembers.getAbout(),
-            resultWithoutMembers.getPicture(),
-            resultWithoutMembers.getWebsite(),
-            resultWithoutMembers.getOwnerId()
-        );
+        var resultEntity = repository.findById(param.id()).orElseThrow(
+            () -> new ResourceNotFoundException(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND));
+        return mapEntityToPortResult(resultEntity);
     }
 }

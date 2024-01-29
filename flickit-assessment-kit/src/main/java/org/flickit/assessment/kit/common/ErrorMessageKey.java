@@ -46,8 +46,8 @@ public class ErrorMessageKey {
     public static final String GET_EXPERT_GROUP_LIST_PAGE_MIN = "get-expert-group-list.page.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MIN = "get-expert-group-list.size.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MAX = "get-expert-group-list.size.max";
-    public static final String GET_EXPERT_GROUP_BY_ID_EXPERT_GROUP_NOT_FOUND = "get-expert-group-by-id.expert-group.notFound";
-    public static final String GET_EXPERT_GROUP_BY_ID_EXPERT_GROUP_ID_NOT_NULL = "get-expert-group-by-id.expert-group.notNull";
+    public static final String GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND = "get-expert-group.expert-group.notFound";
+    public static final String GET_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "get-expert-group.expert-group.notNull";
 
     public static final String UPLOAD_KIT_DSL_KIT_NOT_NULL = "upload-kit.dsl-file.notNull";
     public static final String UPLOAD_KIT_DSL_EXPERT_GROUP_ID_NOT_NULL = "upload-kit.expert-group-id.notNull";

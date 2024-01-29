@@ -19,8 +19,8 @@ public class GetExpertGroupService implements GetExpertGroupUseCase {
     @Override
     public ExpertGroup getExpertGroup(Param param) {
         var portResult = loadExpertGroupPort.loadExpertGroup(toParam(param.getId()));
-        var ownerIdOptional = loadExpertGroupOwnerPort.loadOwnerId(param.getId());
-        boolean isOwner = ownerIdOptional.map(ownerId -> ownerId.equals(param.getCurrentUserId())).orElse(false);
+        var expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(param.getId());
+        boolean isOwner = expertGroupOwnerId.map(ownerId -> ownerId.equals(param.getCurrentUserId())).orElse(false);
 
         return new ExpertGroup(portResult.id(),
             portResult.title(),
