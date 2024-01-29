@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.expertgroup;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPictureLinkPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.util.Random;
 import java.util.UUID;
 
@@ -26,12 +28,17 @@ class GetExpertGroupServiceTest {
     private GetExpertGroupService service;
     @Mock
     private LoadExpertGroupPort loadExpertGroupPort;
+    @Mock
+    private LoadExpertGroupPictureLinkPort loadExpertGroupPictureLinkPort;
 
     @Test
     void testGetExpertGroup_ValidInputs_ValidResults() {
 
         var portResult = createPortResult(expertGroupId, currentUserId);
         var useCaseResul = portToUseCaseResult(portResult);
+
+        when(loadExpertGroupPictureLinkPort.loadPictureLink(any(String.class), any(Duration.class)))
+            .thenReturn("/path/to/picture");
 
         when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class)))
             .thenReturn(portResult);
@@ -43,6 +50,31 @@ class GetExpertGroupServiceTest {
         verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture());
 
         assertNotNull(result);
+        assertNotNull(result.getPicture());
+        assertEquals(useCaseResul.getId(), result.getId());
+        assertTrue(result.isOwner());
+    }
+
+    @Test
+    void testGetExpertGroup_NullPicture_ValidResults() {
+
+        var portResult = createPortResult(expertGroupId, currentUserId);
+        var useCaseResul = portToUseCaseResult(portResult);
+
+        when(loadExpertGroupPictureLinkPort.loadPictureLink(any(String.class), any(Duration.class)))
+            .thenReturn(null);
+
+        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class)))
+            .thenReturn(portResult);
+
+        var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
+        var result = service.getExpertGroup(param);
+
+        ArgumentCaptor<LoadExpertGroupPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadExpertGroupPort.Param.class);
+        verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture());
+
+        assertNotNull(result);
+        assertNull(result.getPicture());
         assertEquals(useCaseResul.getId(), result.getId());
         assertTrue(result.isOwner());
     }
