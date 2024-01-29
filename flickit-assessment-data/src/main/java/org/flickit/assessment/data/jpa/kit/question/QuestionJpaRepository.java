@@ -38,15 +38,15 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
         SELECT q as question, qi as questionImpact
         FROM QuestionJpaEntity q
         LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
-        WHERE q.questionnaireId IN (SELECT qu.id FROM QuestionnaireJpaEntity qu
-        WHERE qu.kitId = :kitId)
+        WHERE q.questionnaireId IN
+            (SELECT qu.id FROM QuestionnaireJpaEntity qu WHERE qu.kitId = :kitId)
         """)
     List<QuestionJoinQuestionImpactView> loadByAssessmentKitId(@Param("kitId") Long kitId);
 
     @Query("""
         SELECT q FROM QuestionJpaEntity q
-        WHERE q.questionnaireId IN (SELECT qs.questionnaireId FROM SubjectQuestionnaireJpaEntity qs
-        WHERE qs.subjectId = :subjectId)
+        WHERE q.questionnaireId IN
+            (SELECT qs.questionnaireId FROM SubjectQuestionnaireJpaEntity qs WHERE qs.subjectId = :subjectId)
         """)
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 }

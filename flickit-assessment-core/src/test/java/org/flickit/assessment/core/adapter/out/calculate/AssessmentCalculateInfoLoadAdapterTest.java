@@ -68,6 +68,36 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
+    @Test
+    void testLoad() {
+        Context context = createContext();
+
+        doMocks(context);
+        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
+        when(maturityLevelJpaAdapter.loadByKitIdWithCompetences(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
+            .thenReturn(maturityLevels);
+
+        var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
+
+        assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
+
+        assertAssessment(context.assessmentResultEntity().getAssessment(), loadedAssessmentResult.getAssessment());
+
+        assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues());
+
+        var resultAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
+            .flatMap(sv -> sv.getQualityAttributeValues().stream())
+            .toList();
+        assertAttributeValues(context.qualityAttributeValues, resultAttributeValues);
+
+        List<Answer> answers = new ArrayList<>(resultAttributeValues.stream()
+            .flatMap(qav -> qav.getAnswers().stream())
+            .collect(toMap(Answer::getId, Function.identity(), (a, b) -> a))
+            .values());
+
+        assertAnswers(context.answerEntities, answers);
+    }
+
     private static void assertAssessment(AssessmentJpaEntity assessmentEntity, Assessment resultAssessment) {
         assertEquals(assessmentEntity.getId(), resultAssessment.getId());
         assertEquals(assessmentEntity.getAssessmentKitId(), resultAssessment.getAssessmentKit().getId());
@@ -255,37 +285,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
             answerOptionDtos);
     }
 
-    @Test
-    void testLoad() {
-        Context context = createContext();
-
-        doMocks(context);
-        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        when(maturityLevelJpaAdapter.loadByKitIdWithCompetences(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
-            .thenReturn(maturityLevels);
-
-        var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
-
-        assertEquals(context.assessmentResultEntity().getId(), loadedAssessmentResult.getId());
-
-        assertAssessment(context.assessmentResultEntity().getAssessment(), loadedAssessmentResult.getAssessment());
-
-        assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues());
-
-        var resultAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
-            .flatMap(sv -> sv.getQualityAttributeValues().stream())
-            .toList();
-        assertAttributeValues(context.qualityAttributeValues, resultAttributeValues);
-
-        List<Answer> answers = new ArrayList<>(resultAttributeValues.stream()
-            .flatMap(qav -> qav.getAnswers().stream())
-            .collect(toMap(Answer::getId, Function.identity(), (a, b) -> a))
-            .values());
-
-        assertAnswers(context.answerEntities, answers);
-
-    }
-
     private void doMocks(Context context) {
         when(assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(context.assessmentResultEntity().getAssessment().getId()))
             .thenReturn(Optional.of(context.assessmentResultEntity()));
@@ -322,7 +321,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
                         return x;
                     }
                 };
-
                 return view;
             }).toList();
     }
