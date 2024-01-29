@@ -6,7 +6,7 @@ public interface ExpertGroupWithDetailsView {
 
     Long getId();
 
-    String getName();
+    String getTitle();
 
     String getPicture();
 
