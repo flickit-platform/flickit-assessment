@@ -130,13 +130,15 @@ public class MinioAdapter implements
 
         checkFileExistence(path, bucketName, versionId);
 
-        return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+        String kitDownloadUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
             .bucket(bucketName)
             .object(path)
             .versionId(versionId)
             .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
             .method(Method.GET)
             .build());
+
+        return kitDownloadUrl.replace(properties.getUrl(), properties.getApi());
     }
 
     @SneakyThrows
