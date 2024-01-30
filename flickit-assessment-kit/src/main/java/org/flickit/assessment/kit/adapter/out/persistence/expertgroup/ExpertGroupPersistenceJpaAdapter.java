@@ -78,7 +78,13 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateExpertGroupPort.Param param) {
-        repository.update(param.id(), param.title(), param.bio(), param.about(),param.picture(), param.website());
+        repository.update(
+            param.id(),
+            param.title(),
+            param.bio(),
+            param.about(),
+            param.picture(),
+            param.website());
     }
 
     @Override

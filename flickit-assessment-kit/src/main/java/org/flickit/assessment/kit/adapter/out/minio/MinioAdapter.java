@@ -142,7 +142,7 @@ public class MinioAdapter implements
     }
 
     @SneakyThrows
-    private void checkFileExistence(String path, String bucketName, String versionId){
+    private void checkFileExistence(String path, String bucketName, String versionId) {
         try {
             minioClient.statObject(StatObjectArgs.builder()
                 .bucket(bucketName)

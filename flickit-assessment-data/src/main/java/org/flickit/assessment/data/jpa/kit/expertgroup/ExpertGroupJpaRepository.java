@@ -51,13 +51,13 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
 
     @Modifying
     @Query("""
-            UPDATE ExpertGroupJpaEntity a SET
-                a.title = :title,
-                a.bio = :bio,
-                a.about = :about,
-                a.picture = :picture,
-                a.website = :website
-            WHERE a.id = :id
+            UPDATE ExpertGroupJpaEntity e SET
+                e.title = :title,
+                e.bio = :bio,
+                e.about = :about,
+                e.picture = :picture,
+                e.website = :website
+            WHERE e.id = :id
         """)
     void update(@Param("id") long id,
                 @Param("title") String title,

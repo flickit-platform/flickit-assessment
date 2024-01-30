@@ -7,7 +7,6 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsVie
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
-import org.flickit.assessment.kit.application.port.out.expertgroup.UpdateExpertGroupPort;
 
 import java.util.List;
 
@@ -36,16 +35,5 @@ public class ExpertGroupMapper {
             param.website(),
             param.currentUserId()
         );
-    }
-
-    public static ExpertGroupJpaEntity mapUpdateParamToJpaEntity(UpdateExpertGroupPort.Param param) {
-        return new ExpertGroupJpaEntity(
-            param.id(),
-            param.title(),
-            param.bio(),
-            param.about(),
-            param.picture(),
-            param.website(),
-            param.owner_id());
     }
 }

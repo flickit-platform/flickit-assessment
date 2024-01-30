@@ -36,7 +36,7 @@ public class UpdateExpertGroupService implements
         validateExpertGroup(param.getId());
         validateCurrentUser(param.getId(), param.getCurrentUserId());
 
-        if (param.getPicture() != null)
+        if (param.getPicture() != null && !param.getPicture().isEmpty())
             pictureFilePath = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
 
         updateExpertGroupPort.update(toExpertGroupParam(param, pictureFilePath));
