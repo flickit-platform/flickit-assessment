@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
@@ -17,7 +16,6 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GRANT_USER_ACCESS_TO_KIT_USER_ID_DUPLICATE;
 
 @Slf4j
 @Service
@@ -32,14 +30,8 @@ public class GrantUserAccessToKitService implements GrantUserAccessToKitUseCase 
     @Override
     public void grantUserAccessToKit(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
-        boolean isNew = grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getUserId());
-        if (isNew) {
-            log.debug("User [{}] granted access to kit [{}]", param.getUserId(), param.getKitId());
-        }
-        else {
-            log.debug("User [{}] already has access to kit [{}]", param.getUserId(), param.getKitId());
-            throw new ResourceAlreadyExistsException(GRANT_USER_ACCESS_TO_KIT_USER_ID_DUPLICATE);
-        }
+        grantUserAccessToKitPort.grantUserAccess(param.getKitId(), param.getUserId());
+        log.debug("User [{}] granted access to kit [{}]", param.getUserId(), param.getKitId());
     }
 
     private void validateCurrentUser(Long kitId, UUID currentUserId) {

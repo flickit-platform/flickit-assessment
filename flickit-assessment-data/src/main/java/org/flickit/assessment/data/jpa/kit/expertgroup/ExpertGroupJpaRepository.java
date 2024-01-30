@@ -18,7 +18,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     @Query("""
             SELECT
                 e.id as id,
-                e.title as name,
+                e.title as title,
                 e.picture as picture,
                 e.bio as bio,
                 e.ownerId as ownerId,
@@ -47,7 +47,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         LEFT JOIN UserJpaEntity u on e.userId = u.id
         WHERE e.expertGroupId = :expertGroupId
         """)
-    List<String> findMembersByExpertId(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
+    List<String> findMembersByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
 
     @Modifying
     @Query("""
@@ -65,4 +65,12 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 @Param("about") String about,
                 @Param("picture") String picture,
                 @Param("website") String website);
+
+    @Query("""
+        SELECT
+        e.userId as userId
+        FROM ExpertGroupAccessJpaEntity e
+        WHERE e.expertGroupId = :expertGroupId and e.userId is not null
+        """)
+    List<UUID> findMemberIdsByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId);
 }

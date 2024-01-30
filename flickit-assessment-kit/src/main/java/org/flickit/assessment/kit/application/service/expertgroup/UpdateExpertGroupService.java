@@ -37,7 +37,7 @@ public class UpdateExpertGroupService implements
         validateCurrentUser(param.getId(), param.getCurrentUserId());
 
         if (param.getPicture() != null)
-            pictureFilePath = uploadExpertGroupPicturePort.upload(param.getPicture());
+            pictureFilePath = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
 
         updateExpertGroupPort.update(toExpertGroupParam(param, pictureFilePath));
         log.debug("User [{}] access to updating Expert Group [{}] denied.", param.getCurrentUserId(), param.getId());

@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class UploadKitServiceTest {
 
-    public static final String ZIP_FILE_ADDR = "src/test/java/org/flickit/assessment/kit/correct-kit.zip";
+    public static final String ZIP_FILE_ADDR = "src/test/resources/correct-kit.zip";
     @InjectMocks
     private UploadKitDslService service;
 
@@ -76,7 +76,7 @@ public class UploadKitServiceTest {
         String json = ow.writeValueAsString(kitDslModel);
         String dslFilePath = "sample/zip/file/path";
         String jsonFilePath = "sample/json/file/path";
-        when(uploadKitDslToFileStoragePort.upload(dslFile, json)).thenReturn(new UploadKitDslToFileStoragePort.Result(dslFilePath, jsonFilePath));
+        when(uploadKitDslToFileStoragePort.uploadKitDsl(dslFile, json)).thenReturn(new UploadKitDslToFileStoragePort.Result(dslFilePath, jsonFilePath));
 
         long kitDslId = 1L;
         when(createKitDslPort.create(dslFilePath, jsonFilePath))

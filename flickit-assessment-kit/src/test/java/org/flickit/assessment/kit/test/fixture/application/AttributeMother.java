@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.test.fixture.application;
 import org.flickit.assessment.kit.application.domain.Attribute;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class AttributeMother {
 
@@ -18,7 +19,9 @@ public class AttributeMother {
             "Description",
             1,
             LocalDateTime.now(),
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
         );
     }
 
@@ -31,7 +34,9 @@ public class AttributeMother {
             description,
             weight,
             LocalDateTime.now(),
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
         );
     }
 }

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
 import org.flickit.assessment.kit.application.port.out.expertgroup.UpdateExpertGroupPort;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExpertGroupMapper {
 
-    public static Result mapViewToPortResult(ExpertGroupWithDetailsView entity, List<GetExpertGroupListUseCase.Member> members) {
+    public static Result mapToPortResult(ExpertGroupWithDetailsView entity, List<GetExpertGroupListUseCase.Member> members) {
         return new Result(
             entity.getId(),
             entity.getTitle(),
@@ -23,6 +24,18 @@ public class ExpertGroupMapper {
             entity.getMembersCount(),
             members,
             entity.getOwnerId());
+    }
+
+    static ExpertGroupJpaEntity mapCreateParamToJpaEntity(Param param) {
+        return new ExpertGroupJpaEntity(
+            null,
+            param.title(),
+            param.bio(),
+            param.about(),
+            param.picture(),
+            param.website(),
+            param.currentUserId()
+        );
     }
 
     public static ExpertGroupJpaEntity mapUpdateParamToJpaEntity(UpdateExpertGroupPort.Param param) {
