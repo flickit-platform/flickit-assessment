@@ -38,7 +38,7 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
     private final AttributeMaturityScoreJpaRepository attributeMaturityScoreRepository;
 
     @Override
-    public void persistAll(List<Long> qualityAttributeIds, UUID assessmentResultId) {
+    public List<UUID> persistAll(List<Long> qualityAttributeIds, UUID assessmentResultId) {
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_QUALITY_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
@@ -48,7 +48,9 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
             return qualityAttributeValue;
         }).toList();
 
-        repository.saveAll(entities);
+        var persistedEntities = repository.saveAll(entities);
+
+        return persistedEntities.stream().map(QualityAttributeValueJpaEntity::getId).toList();
     }
 
     @Override

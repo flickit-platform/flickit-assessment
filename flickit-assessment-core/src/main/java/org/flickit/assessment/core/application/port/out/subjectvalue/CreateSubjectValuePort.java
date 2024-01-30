@@ -5,5 +5,5 @@ import java.util.UUID;
 
 public interface CreateSubjectValuePort {
 
-    void persistAll(List<Long> subjectId, UUID assessmentResultId);
+    List<UUID> persistAll(List<Long> subjectId, UUID assessmentResultId);
 }

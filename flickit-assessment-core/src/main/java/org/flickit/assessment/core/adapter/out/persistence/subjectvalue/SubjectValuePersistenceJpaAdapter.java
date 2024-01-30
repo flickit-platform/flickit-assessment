@@ -23,7 +23,7 @@ public class SubjectValuePersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
-    public void persistAll(List<Long> subjectIds, UUID assessmentResultId) {
+    public List<UUID> persistAll(List<Long> subjectIds, UUID assessmentResultId) {
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
@@ -33,7 +33,9 @@ public class SubjectValuePersistenceJpaAdapter implements
             return subjectValue;
         }).toList();
 
-        repository.saveAll(entities);
+        var persistedEntities = repository.saveAll(entities);
+
+        return persistedEntities.stream().map(SubjectValueJpaEntity::getId).toList();
     }
 
 }
