@@ -35,6 +35,21 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
+        SELECT q as question, qi as questionImpact
+        FROM QuestionJpaEntity q
+        LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
+        WHERE q.questionnaireId IN
+            (SELECT qu.id FROM QuestionnaireJpaEntity qu WHERE qu.kitId = :kitId)
+        """)
+    List<QuestionJoinQuestionImpactView> loadByAssessmentKitId(@Param("kitId") Long kitId);
+
+    @Query("""
+        SELECT q FROM QuestionJpaEntity q
+        WHERE q.questionnaireId IN
+            (SELECT qs.questionnaireId FROM SubjectQuestionnaireJpaEntity qs WHERE qs.subjectId = :subjectId)
+        """)
+    List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
+    @Query("""
            SELECT DISTINCT q.id AS questionId,
             anso.index AS currentOptionIndex,
             qanso.id AS answerOptionId,

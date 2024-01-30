@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "55ecfeb3-2e42-4be2-bdb1-f0a8fae295bb",
+		"_postman_id": "929a2186-9141-4fcb-b5a6-7b43c5991f20",
 		"name": "flickit-assessment-kit",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "11099181"
@@ -390,6 +390,32 @@
 							"value": "",
 							"disabled": true
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Dsl Download Link",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/144/dsl-download-link",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"144",
+						"dsl-download-link"
 					]
 				}
 			},
