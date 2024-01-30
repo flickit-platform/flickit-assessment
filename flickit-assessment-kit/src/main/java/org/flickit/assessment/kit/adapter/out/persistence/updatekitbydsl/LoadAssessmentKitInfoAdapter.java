@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.updatekitbydsl;
+package org.flickit.assessment.kit.adapter.out.persistence.updatekitbydsl;
 
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;

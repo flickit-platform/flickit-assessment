@@ -36,41 +36,20 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
-           SELECT DISTINCT q.id AS questionId,
-            anso.index AS currentOptionIndex,
-            qanso.id AS answerOptionId,
-            qanso.index AS answerOptionIndex,
-            qi.weight AS questionImpactWeight
+        SELECT q as question, qi as questionImpact
+        FROM QuestionJpaEntity q
+        LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
+        WHERE q.questionnaireId IN
+            (SELECT qu.id FROM QuestionnaireJpaEntity qu WHERE qu.kitId = :kitId)
+        """)
+    List<QuestionJoinQuestionImpactView> loadByAssessmentKitId(@Param("kitId") Long kitId);
 
-           FROM QuestionJpaEntity q
-           JOIN QuestionnaireJpaEntity qn
-           ON q.questionnaireId = qn.id
-           JOIN AssessmentKitJpaEntity kit
-           ON qn.kitId = kit.id
-           JOIN AssessmentJpaEntity asm
-           ON asm.assessmentKitId = kit.id
-           JOIN AssessmentResultJpaEntity asmr
-           ON asm.id = asmr.assessment.id
-           JOIN QuestionImpactJpaEntity qi
-           ON q.id = qi.questionId
-           JOIN AnswerOptionJpaEntity qanso
-           ON q.id = qanso.questionId
-           LEFT JOIN AnswerJpaEntity ans
-           ON ans.assessmentResult.id = asmr.id and q.id = ans.questionId
-           LEFT JOIN AnswerOptionJpaEntity anso
-           ON ans.answerOptionId = anso.id
-           WHERE (asm.id = :assessmentId
-           AND anso.index NOT IN (SELECT MAX(sq_ans.index)
-                                  FROM AnswerOptionJpaEntity sq_ans
-                                  WHERE sq_ans.questionId = q.id)
-           AND qi.attributeId = :attributeId
-           AND qi.maturityLevel.id = :maturityLevelId)
-           OR (asm.id = :assessmentId
-           AND ans.answerOptionId IS NULL
-           AND qi.attributeId = :attributeId)
-           AND qi.maturityLevel.id = :maturityLevelId
-            """)
-    List<QuestionView> findAssessedQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
+    @Query("""
+        SELECT q FROM QuestionJpaEntity q
+        WHERE q.questionnaireId IN
+            (SELECT qs.questionnaireId FROM SubjectQuestionnaireJpaEntity qs WHERE qs.subjectId = :subjectId)
+        """)
+    List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 
     @Query("""
         SELECT

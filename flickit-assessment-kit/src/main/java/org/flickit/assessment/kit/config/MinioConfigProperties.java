@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class MinioConfigProperties {
 
     private String url;
+    private String api;
     private int port;
     private String accessKey;
     private String accessSecret;
