@@ -43,7 +43,7 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
 
         var questions = loadQuestionsPort.loadQuestions(questionMap.keySet().stream().toList());
 
-        var QuestionListItems = questions.stream().map(
+        var questionListItems = questions.stream().map(
                 q ->
                 {
                     Question question = questionMap.get(q.id());
@@ -62,6 +62,6 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
             .sorted(Comparator.comparingDouble(QuestionListItem::benefit))
             .collect(Collectors.toList());
 
-        return new Result(QuestionListItems);
+        return new Result(questionListItems);
     }
 }
