@@ -115,7 +115,7 @@ class GetExpertGroupListServiceTest {
             "Picture" + id,
             2,
             10,
-            List.of(new Member("name" + id)),
+            List.of(new Member("title" + id)),
             ownerId);
     }
 
