@@ -143,21 +143,6 @@ public class MinioAdapter implements
     }
 
     @SneakyThrows
-    @Override
-    public String loadPictureLink(String filePath, Duration expiryDuration) {
-        String bucketName = properties.getBucketName();
-
-        if (!checkPictureExistence(filePath, bucketName)) return null;
-
-        return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-            .bucket(bucketName)
-            .object(filePath)
-            .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
-            .method(Method.GET)
-            .build());
-    }
-
-    @SneakyThrows
     private void checkFileExistence(String path, String bucketName, String versionId) {
         try {
             minioClient.statObject(StatObjectArgs.builder()
@@ -177,6 +162,21 @@ public class MinioAdapter implements
                 .bucket(bucketName)
                 .build());
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public String loadPictureLink(String filePath, Duration expiryDuration) {
+        String bucketName = properties.getBucketName();
+
+        if (!checkPictureExistence(filePath, bucketName)) return null;
+
+        return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+            .bucket(bucketName)
+            .object(filePath)
+            .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
+            .method(Method.GET)
+            .build());
     }
 
     @SneakyThrows
