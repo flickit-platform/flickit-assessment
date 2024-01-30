@@ -79,8 +79,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
         Map<String, Long> savedNewAttrCodeToIdMap = new HashMap<>();
         addedAttributeCodes.forEach(code -> {
             Long subjectId = subjectCodeToSubjectId.get(attrCodeToAttrDslModel.get(code).getSubjectCode());
-            Long persistedAttributeId = createAttributePort.persist(toAttribute(attrCodeToAttrDslModel.get(code), currentUserId), subjectId, savedKit.getId());
-            log.debug("Attribute[id={}, code={}] created", persistedAttributeId, code);
+            Long persistedAttributeId = createAttribute(attrCodeToAttrDslModel.get(code), subjectId, savedKit.getId(), currentUserId);
             savedNewAttrCodeToIdMap.put(code, persistedAttributeId);
         });
 
@@ -99,21 +98,21 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
     private void updateAttribute(Attribute savedAttribute,
                                  Long subjectId,
                                  AttributeDslModel dslAttribute,
-                                 UUID currentUserId) {
+                                 UUID updatedBy) {
         UpdateAttributePort.Param param = new UpdateAttributePort.Param(savedAttribute.getId(),
             dslAttribute.getTitle(),
             dslAttribute.getIndex(),
             dslAttribute.getDescription(),
             dslAttribute.getWeight(),
             LocalDateTime.now(),
-            currentUserId,
+            updatedBy,
             subjectId);
         updateAttributePort.update(param);
         log.debug("Attribute[id={}, code={}] updated", savedAttribute.getId(), savedAttribute.getCode());
     }
 
-    private Attribute toAttribute(AttributeDslModel dslAttribute, UUID createdBy) {
-        return new Attribute(
+    private long createAttribute(AttributeDslModel dslAttribute, long subjectId, long kitId, UUID createdBy) {
+        Attribute attribute = new Attribute(
             null,
             dslAttribute.getCode(),
             dslAttribute.getTitle(),
@@ -125,6 +124,9 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
             createdBy,
             createdBy
         );
+        long persistedAttributeId = createAttributePort.persist(attribute, subjectId, kitId);
+        log.debug("Attribute[id={}, code={}] created", persistedAttributeId, dslAttribute.getCode());
+        return persistedAttributeId;
     }
 
 }
