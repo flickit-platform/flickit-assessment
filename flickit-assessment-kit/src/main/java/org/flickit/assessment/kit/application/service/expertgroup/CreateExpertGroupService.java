@@ -24,7 +24,7 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
         String pictureFilePath = null;
 
         if (param.getPicture() != null && !param.getPicture().isEmpty())
-            pictureFilePath = uploadExpertGroupPicturePort.upload(param.getPicture());
+            pictureFilePath = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
 
         long expertGroupId = createExpertGroupPort.persist(toCreateExpertGroupParam(param, pictureFilePath));
         createOwnerAccessToGroup(expertGroupId, param.getCurrentUserId());

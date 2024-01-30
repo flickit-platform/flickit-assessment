@@ -76,7 +76,7 @@ public class UploadKitServiceTest {
         String json = ow.writeValueAsString(kitDslModel);
         String dslFilePath = "sample/zip/file/path";
         String jsonFilePath = "sample/json/file/path";
-        when(uploadKitDslToFileStoragePort.upload(dslFile, json)).thenReturn(new UploadKitDslToFileStoragePort.Result(dslFilePath, jsonFilePath));
+        when(uploadKitDslToFileStoragePort.uploadKitDsl(dslFile, json)).thenReturn(new UploadKitDslToFileStoragePort.Result(dslFilePath, jsonFilePath));
 
         long kitDslId = 1L;
         when(createKitDslPort.create(dslFilePath, jsonFilePath))

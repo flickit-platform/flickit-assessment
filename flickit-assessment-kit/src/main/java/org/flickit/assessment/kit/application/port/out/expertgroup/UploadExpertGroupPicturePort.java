@@ -4,5 +4,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UploadExpertGroupPicturePort {
 
-    String upload(MultipartFile pictureFile);
+    String uploadPicture(MultipartFile pictureFile);
 }
