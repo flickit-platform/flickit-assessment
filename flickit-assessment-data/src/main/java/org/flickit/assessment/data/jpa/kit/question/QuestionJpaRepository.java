@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.question;
 
+import org.flickit.assessment.data.jpa.kit.question.advice.QuestionAdviceView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -71,7 +72,28 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             """)
     List<QuestionView> findAssessedQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
 
-
-
-
+    @Query("""
+        SELECT
+            q.id AS id,
+            q.title AS title,
+            q.index AS index,
+            ao AS option,
+            atr AS attribute,
+            questionnair AS questionnaire
+          FROM
+            QuestionJpaEntity q
+          JOIN
+            AnswerOptionJpaEntity ao ON q.id = ao.questionId
+          JOIN
+            QuestionnaireJpaEntity questionnair ON q.questionnaireId = questionnair.id
+          JOIN
+            AnswerOptionImpactJpaEntity impact ON ao.id = impact.optionId
+          JOIN
+            QuestionImpactJpaEntity question_impact ON impact.questionImpact = question_impact
+          JOIN
+            AttributeJpaEntity atr ON question_impact.attributeId = atr.id
+          WHERE
+            q.id IN :ids
+        """)
+    List<QuestionAdviceView> findAdviceQuestions(@Param("ids") List<Long> ids);
 }

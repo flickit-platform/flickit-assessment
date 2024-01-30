@@ -9,7 +9,7 @@ public class QuestionMother {
 
     private static long id = 0L;
 
-    public static Question createQuestionWithTargetAndOptionIndexes(AttributeLevelScore attributeLevelScore, int currentOptionIndex, int recommendedOptionIndex) {
+    public static Question createQuestionWithTargetAndOptionIndexes(AttributeLevelScore attributeLevelScore, Integer currentOptionIndex, int recommendedOptionIndex) {
         Question question = new Question(id++, 10, createOptions(attributeLevelScore), currentOptionIndex);
         question.setRecommendedOptionIndex(recommendedOptionIndex);
         return question;

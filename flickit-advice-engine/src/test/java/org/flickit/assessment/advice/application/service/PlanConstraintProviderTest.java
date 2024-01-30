@@ -16,7 +16,7 @@ class PlanConstraintProviderTest {
     @Test
     void gainLeastTest_PenalizesWhenQuestionsGainIsLessThanTarget() {
         AttributeLevelScore attributeLevelScore = new AttributeLevelScore(0, 10, 0, 1);
-        Question question1 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0, 1);
+        Question question1 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, null, 1);
         Question question2 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0, 0);
 
 

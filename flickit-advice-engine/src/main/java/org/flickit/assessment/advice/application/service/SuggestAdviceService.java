@@ -1,17 +1,19 @@
 package org.flickit.assessment.advice.application.service;
 
-import ai.timefold.solver.core.api.solver.Solver;
 import ai.timefold.solver.core.api.solver.SolverFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
+import org.flickit.assessment.advice.application.domain.advice.QuestionListItem;
 import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
-import org.flickit.assessment.advice.application.port.out.question.LoadAdviceQuestionsPort;
+import org.flickit.assessment.advice.application.port.out.question.LoadQuestionsPort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Comparator;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -20,29 +22,46 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
 
     private final LoadAdviceCalculationInfoPort loadInfoPort;
     private final SolverFactory<Plan> solverFactory;
-    private final LoadAdviceQuestionsPort loadQuestionsPort;
+    private final LoadQuestionsPort loadQuestionsPort;
 
     @Override
     public Result suggestAdvice(Param param) {
         // Load the problem
-        Plan problem = loadInfoPort.load(param.getAssessmentId(), param.getTargets());
+        var problem = loadInfoPort.load(param.getAssessmentId(), param.getTargets());
 
         // Solve the problem
-        Solver<Plan> solver = solverFactory.buildSolver();
+        var solver = solverFactory.buildSolver();
         Plan solution = solver.solve(problem);
-
-
 
         return mapToResult(solution);
     }
 
     private Result mapToResult(Plan solution) {
-        List<Long> questionIds = solution.getQuestions().stream()
+        var questionMap = solution.getQuestions().stream()
             .filter(Question::isRecommended)
-            .map(Question::getId).toList();
+            .collect(Collectors.toMap(Question::getId, Function.identity()));
 
-        loadQuestionsPort.load(questionIds);
+        var questions = loadQuestionsPort.loadQuestions(questionMap.keySet().stream().toList());
 
-        return null;
+        var QuestionListItems = questions.stream().map(
+                q ->
+                {
+                    Question question = questionMap.get(q.id());
+                    return new QuestionListItem(
+                        q.id(),
+                        q.title(),
+                        q.index(),
+                        question.getCurrentOptionIndex(),
+                        question.getRecommendedOptionIndex(),
+                        question.calculateBenefit(),
+                        q.options(),
+                        q.attributes(),
+                        q.questionnaire()
+                    );
+                })
+            .sorted(Comparator.comparingDouble(QuestionListItem::benefit))
+            .collect(Collectors.toList());
+
+        return new Result(QuestionListItems);
     }
 }

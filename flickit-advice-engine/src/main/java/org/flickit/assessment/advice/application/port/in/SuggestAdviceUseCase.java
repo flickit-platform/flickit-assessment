@@ -4,11 +4,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.flickit.assessment.advice.application.domain.advice.QuestionListItem;
 import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_TARGETS_SIZE_MIN;
 
 public interface SuggestAdviceUseCase {
 
@@ -18,10 +22,10 @@ public interface SuggestAdviceUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = "suggest-advice.assessmentId.notNull")
+        @NotNull(message = SUGGEST_ADVICE_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @Size(min = 1, message = "suggest-advice.targets.size.min")
+        @Size(min = 1, message = SUGGEST_ADVICE_TARGETS_SIZE_MIN)
         Map<Long, Long> targets;
 
         public Param(UUID assessmentId, Map<Long, Long> targets) {
@@ -31,38 +35,6 @@ public interface SuggestAdviceUseCase {
         }
     }
 
-    record Result(
-        List<QuestionListItem> questions
-    ) {
-    }
-
-    record QuestionListItem(
-        Long id,
-        String title,
-        List<OptionListItem> options,
-        Long currentOptionIndex,
-        Long recommendedOptionIndex,
-        Double benefit,
-        List<AttributeListItem> attributes,
-        Questionnaire questionnaire
-    ) {
-    }
-
-    record OptionListItem(
-        Long index,
-        String caption
-    ) {
-    }
-
-    record AttributeListItem(
-        Long id,
-        String title
-    ) {
-    }
-
-    record Questionnaire(
-        Long id,
-        String title
-    ) {
+    record Result(List<QuestionListItem> questions) {
     }
 }
