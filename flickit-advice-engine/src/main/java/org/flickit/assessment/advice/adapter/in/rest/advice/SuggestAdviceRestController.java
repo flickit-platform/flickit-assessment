@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase.Param;
 import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase.Result;
+import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SuggestAdviceRestController {
 
+    private final UserContext userContext;
     private final SuggestAdviceUseCase useCase;
 
     @PostMapping("/assessments/{assessmentId}/advice")
@@ -24,13 +26,14 @@ public class SuggestAdviceRestController {
         @PathVariable("assessmentId") UUID assessmentId,
         @RequestBody SuggestAdviceRequestDto requestDto) {
 
-        Param param = toParam(assessmentId, requestDto);
+        UUID currentUserId = userContext.getUser().id();
+        Param param = toParam(assessmentId, requestDto, currentUserId);
         Result result = useCase.suggestAdvice(param);
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, SuggestAdviceRequestDto requestDto) {
-        return new Param(assessmentId, requestDto.targets());
+    private Param toParam(UUID assessmentId, SuggestAdviceRequestDto requestDto, UUID currentUserId) {
+        return new Param(assessmentId, requestDto.targets(), currentUserId);
     }
 
     private SuggestAdviceResponseDto toResponseDto(Result result) {

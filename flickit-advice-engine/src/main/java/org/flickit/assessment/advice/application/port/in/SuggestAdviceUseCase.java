@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_ASSESSMENT_ID_NOT_NULL;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_TARGETS_SIZE_MIN;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
 public interface SuggestAdviceUseCase {
 
@@ -28,9 +29,13 @@ public interface SuggestAdviceUseCase {
         @Size(min = 1, message = SUGGEST_ADVICE_TARGETS_SIZE_MIN)
         Map<Long, Long> targets;
 
-        public Param(UUID assessmentId, Map<Long, Long> targets) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(UUID assessmentId, Map<Long, Long> targets, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.targets = targets;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
