@@ -70,7 +70,7 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
         ctx.put(KEY_SUBJECTS, subjectCodeToIdMap);
         log.debug("Final subjects: {}", subjectCodeToIdMap);
 
-        return new UpdateKitPersisterResult(false);
+        return new UpdateKitPersisterResult(true);
     }
 
     private CreateSubjectPort.Param toCreateParam(SubjectDslModel dslSubject, long kitId, UUID currentUserId) {
