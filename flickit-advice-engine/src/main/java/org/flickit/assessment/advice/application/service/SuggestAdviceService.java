@@ -25,7 +25,7 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
     @Override
     public Result suggestAdvice(Param param) {
         // Load the problem
-        Plan problem = loadInfoPort.load(param.getAssessmentId(), param.getTargets());
+        Plan problem = loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets());
 
         // Solve the problem
         Solver<Plan> solver = solverFactory.buildSolver();

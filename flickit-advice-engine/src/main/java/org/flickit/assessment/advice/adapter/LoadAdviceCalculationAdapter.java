@@ -93,8 +93,8 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
         Collection<List<EffectiveQuestionOnAdviceView>> questionsWithRepetitiveImpact = questionInfoGroupedById.values();
         for (List<EffectiveQuestionOnAdviceView> questionWithRepetitiveImpact: questionsWithRepetitiveImpact) {
             Integer questionImpactWeight = questionWithRepetitiveImpact.stream()
-                .map(EffectiveQuestionOnAdviceView::getQuestionImpactWeight)
                 .findFirst()
+                .map(EffectiveQuestionOnAdviceView::getQuestionImpactWeight)
                 .orElse(DEFAULT_QUESTION_IMPACT_WEIGHT);
             totalScore += questionImpactWeight;
         }
@@ -118,8 +118,8 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
                                           List<EffectiveQuestionOnAdviceView> effectiveQuestionOnAdviceViews,
                                           AttributeLevelScore attributeLevelScore) {
         Integer answerOptionIndex = effectiveQuestionOnAdviceViews.stream()
-            .map(EffectiveQuestionOnAdviceView::getCurrentOptionIndex)
             .findFirst()
+            .map(EffectiveQuestionOnAdviceView::getCurrentOptionIndex)
             .orElse(DEFAULT_ANSWER_OPTION_INDEX);
         List<Option> options = mapToOptions(effectiveQuestionOnAdviceViews, attributeLevelScore);
         return new Question(questionId, DEFAULT_QUESTION_COST, options, answerOptionIndex);
