@@ -64,8 +64,8 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
 
         Map<String, Long> updatedCodeToIdMap = savedSubjectCodesMap.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getId()));
-
-        var subjectCodeToIdMap = mergeAddedAndUpdatedMap(addedCodeToIdMap, updatedCodeToIdMap);
+        HashMap<String, Long> subjectCodeToIdMap = new HashMap<>(addedCodeToIdMap);
+        subjectCodeToIdMap.putAll(updatedCodeToIdMap);
 
         ctx.put(KEY_SUBJECTS, subjectCodeToIdMap);
         log.debug("Final subjects: {}", subjectCodeToIdMap);
@@ -93,11 +93,5 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             LocalDateTime.now(),
             currentUserId
         );
-    }
-
-    private HashMap<String, Long> mergeAddedAndUpdatedMap(Map<String, Long> added, Map<String, Long> updated) {
-        HashMap<String, Long> subjectCodeToIdMap = new HashMap<>(added);
-        subjectCodeToIdMap.putAll(updated);
-        return subjectCodeToIdMap;
     }
 }
