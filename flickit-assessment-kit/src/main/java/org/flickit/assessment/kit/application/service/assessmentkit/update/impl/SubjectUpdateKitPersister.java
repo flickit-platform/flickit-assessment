@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -44,6 +45,7 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
                                             AssessmentKit savedKit,
                                             AssessmentKitDslModel dslKit,
                                             UUID currentUserId) {
+        AtomicBoolean shouldInvalidateCalcResult = new AtomicBoolean(false);
         Map<String, Subject> savedSubjectCodesMap = savedKit.getSubjects().stream().collect(toMap(Subject::getCode, i -> i));
         Map<String, Long> addedCodeToIdMap = new HashMap<>();
 
@@ -53,6 +55,7 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             if (savedSubject == null) {
                 Long persistedSubjectId = createSubjectPort.persist(toCreateParam(dslSubject, savedKit.getId(), currentUserId));
                 addedCodeToIdMap.put(dslSubject.getCode(), persistedSubjectId);
+                shouldInvalidateCalcResult.set(true);
                 log.debug("Subject[id={}, code={}] created", persistedSubjectId, dslSubject.getCode());
             } else if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
                 savedSubject.getIndex() != dslSubject.getIndex() ||
@@ -70,7 +73,7 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
         ctx.put(KEY_SUBJECTS, subjectCodeToIdMap);
         log.debug("Final subjects: {}", subjectCodeToIdMap);
 
-        return new UpdateKitPersisterResult(true);
+        return new UpdateKitPersisterResult(shouldInvalidateCalcResult.get());
     }
 
     private CreateSubjectPort.Param toCreateParam(SubjectDslModel dslSubject, long kitId, UUID currentUserId) {
