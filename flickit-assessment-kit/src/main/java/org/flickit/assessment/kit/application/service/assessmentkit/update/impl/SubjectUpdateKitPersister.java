@@ -52,7 +52,7 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
 
             if (savedSubject == null) {
                 Long persistedSubjectId = createSubjectPort.persist(toCreateParam(dslSubject, savedKit.getId(), currentUserId));
-                addedCodeToIdMap.put(dslSubject.getTitle(), persistedSubjectId);
+                addedCodeToIdMap.put(dslSubject.getCode(), persistedSubjectId);
                 log.debug("Subject[id={}, code={}] created", persistedSubjectId, dslSubject.getCode());
             } else if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
                 savedSubject.getIndex() != dslSubject.getIndex() ||
