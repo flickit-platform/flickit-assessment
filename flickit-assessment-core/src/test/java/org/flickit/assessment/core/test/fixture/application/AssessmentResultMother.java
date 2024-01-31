@@ -12,11 +12,11 @@ import java.util.UUID;
 public class AssessmentResultMother {
 
     public static AssessmentResult invalidResultWithSubjectValues(List<SubjectValue> subjectValues) {
-        return new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessment(), subjectValues);
+        return new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessment(), subjectValues, LocalDateTime.now(), LocalDateTime.now());
     }
 
     public static AssessmentResult validResultWithSubjectValuesAndMaturityLevel(List<SubjectValue> subjectValues, MaturityLevel maturityLevel) {
-        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessment(), subjectValues);
+        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessment(), subjectValues, LocalDateTime.now(), LocalDateTime.now());
         assessmentResult.setCalculateValid(true);
         assessmentResult.setMaturityLevel(maturityLevel);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
@@ -25,7 +25,7 @@ public class AssessmentResultMother {
     }
 
     public static AssessmentResult validResultWithJustAnId() {
-        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), null, new ArrayList<>());
+        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), null, new ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
         assessmentResult.setCalculateValid(true);
         return assessmentResult;
     }
