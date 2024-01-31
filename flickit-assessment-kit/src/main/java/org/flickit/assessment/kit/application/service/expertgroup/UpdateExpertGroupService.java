@@ -33,7 +33,10 @@ public class UpdateExpertGroupService implements
     @Override
     public void updateExpertGroup(Param param) {
         String pictureFilePath = null;
-        validateExpertGroup(param.getId());
+
+        if (!checkExpertGroupIdPort.existsById(param.getId()))
+            throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
+
         validateCurrentUser(param.getId(), param.getCurrentUserId());
 
         if (param.getPicture() != null && !param.getPicture().isEmpty())
@@ -41,11 +44,6 @@ public class UpdateExpertGroupService implements
 
         updateExpertGroupPort.update(toExpertGroupParam(param, pictureFilePath));
         log.debug("User [{}] access to updating Expert Group [{}] denied.", param.getCurrentUserId(), param.getId());
-    }
-
-    private void validateExpertGroup(Long expertGroupId) {
-        if (!checkExpertGroupIdPort.existsById(expertGroupId))
-            throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {

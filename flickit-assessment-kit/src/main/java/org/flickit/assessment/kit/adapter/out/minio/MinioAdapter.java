@@ -61,6 +61,15 @@ public class MinioAdapter implements
     }
 
     @SneakyThrows
+    private void createBucket(String bucketName) {
+        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
+            minioClient.makeBucket(MakeBucketArgs.builder()
+                .bucket(bucketName)
+                .build());
+        }
+    }
+
+    @SneakyThrows
     private void setBucketVersioning(String bucketName) {
         minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
             .bucket(bucketName)
@@ -151,15 +160,6 @@ public class MinioAdapter implements
                 .build());
         } catch (ErrorResponseException e) {
             throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
-        }
-    }
-
-    @SneakyThrows
-    private void createBucket(String bucketName) {
-        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
-            minioClient.makeBucket(MakeBucketArgs.builder()
-                .bucket(bucketName)
-                .build());
         }
     }
 }
