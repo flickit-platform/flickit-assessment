@@ -8,6 +8,7 @@ import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPictureLinkPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.CreateDslDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
@@ -31,7 +32,8 @@ public class MinioAdapter implements
     UploadKitDslToFileStoragePort,
     LoadKitDSLJsonFilePort,
     UploadExpertGroupPicturePort,
-    CreateDslDownloadLinkPort {
+    CreateDslDownloadLinkPort,
+    LoadExpertGroupPictureLinkPort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
@@ -160,6 +162,34 @@ public class MinioAdapter implements
             minioClient.makeBucket(MakeBucketArgs.builder()
                 .bucket(bucketName)
                 .build());
+        }
+    }
+
+    @SneakyThrows
+    @Override
+    public String loadPictureLink(String filePath, Duration expiryDuration) {
+        String bucketName = properties.getBucketName();
+
+        if (!checkPictureExistence(filePath, bucketName)) return null;
+
+        return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+            .bucket(bucketName)
+            .object(filePath)
+            .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
+            .method(Method.GET)
+            .build());
+    }
+
+    @SneakyThrows
+    private boolean checkPictureExistence(String path, String bucketName) {
+        try {
+            minioClient.statObject(StatObjectArgs.builder()
+                .bucket(bucketName)
+                .object(path)
+                .build());
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }
