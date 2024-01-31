@@ -34,13 +34,15 @@ public class UploadKitDslService implements UploadKitDslUseCase {
     @SneakyThrows
     @Override
     public Long upload(UploadKitDslUseCase.Param param) {
-        validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
+        UUID currentUserId = param.getCurrentUserId();
+        validateCurrentUser(param.getExpertGroupId(), currentUserId);
 
         AssessmentKitDslModel dslContentJson = parsDslFilePort.parsToDslModel(param.getDslFile());
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(dslContentJson);
         UploadKitDslToFileStoragePort.Result filesInfo = uploadKitDslToFileStoragePort.uploadKitDsl(param.getDslFile(), json);
-        return createKitDslPort.create(filesInfo.dslFilePath(), filesInfo.jsonFilePath());
+        return createKitDslPort.create(filesInfo.dslFilePath(),
+            filesInfo.jsonFilePath(), currentUserId);
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
