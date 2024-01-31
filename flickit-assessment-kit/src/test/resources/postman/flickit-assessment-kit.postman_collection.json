@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "929a2186-9141-4fcb-b5a6-7b43c5991f20",
+		"_postman_id": "6a94a1fb-d66c-481d-9b23-e106a6a8d9d9",
 		"name": "flickit-assessment-kit",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "11099181"
@@ -383,6 +383,51 @@
 					"path": [
 						"{{api_path}}",
 						"expert-groups"
+					],
+					"query": [
+						{
+							"key": "picture",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Expert Group",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "picture",
+							"type": "file",
+							"src": "/home/maziyar/Pictures/Screenshots/Screenshot from 2024-01-13 08-59-19.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}"
 					],
 					"query": [
 						{
