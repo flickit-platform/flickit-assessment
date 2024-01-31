@@ -9,8 +9,11 @@ import org.flickit.assessment.advice.application.domain.advice.QuestionListItem;
 import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.CheckUserAssessmentAccessPort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultValidationFieldsPort;
 import org.flickit.assessment.advice.application.port.out.question.LoadQuestionsPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.CalculateNotValidException;
+import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -18,6 +21,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -26,6 +30,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class SuggestAdviceService implements SuggestAdviceUseCase {
 
     private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private final LoadAssessmentResultValidationFieldsPort loadAssessmentResultValidationFieldsPort;
     private final LoadAdviceCalculationInfoPort loadInfoPort;
     private final SolverFactory<Plan> solverFactory;
     private final LoadQuestionsPort loadQuestionsPort;
@@ -33,6 +38,7 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
     @Override
     public Result suggestAdvice(Param param) {
         checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
+        checkAssessmentResultValidity(param.getAssessmentId());
 
         var problem = loadInfoPort.load(param.getAssessmentId(), param.getTargets());
         var solution = solverFactory.buildSolver().solve(problem);
@@ -45,6 +51,20 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
+    private void checkAssessmentResultValidity(UUID assessmentId) {
+        var validationFields = loadAssessmentResultValidationFieldsPort.loadValidationFields(assessmentId);
+
+        if (!Boolean.TRUE.equals(validationFields.isCalculateValid())) {
+            log.warn("The calculated result is not valid for [assessmentId={}].", assessmentId);
+            throw new CalculateNotValidException(SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
+        }
+
+        if (!Boolean.TRUE.equals(validationFields.isConfidenceValid())) {
+            log.warn("The calculated confidence value is not valid for [assessmentId={}].", assessmentId);
+            throw new ConfidenceCalculationNotValidException(SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
+        }
+    }
+
     private Result mapToResult(Plan solution) {
         var questionIdsMap = solution.getQuestions().stream()
             .filter(Question::isRecommended)
@@ -52,23 +72,23 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
 
         var questions = loadQuestionsPort.loadQuestions(questionIdsMap.keySet().stream().toList());
 
-        var questionListItems = questions.stream().map(
-                q ->
-                {
-                    Question question = questionIdsMap.get(q.id());
-                    return new QuestionListItem(
-                        q.id(),
-                        q.title(),
-                        q.index(),
-                        question.getCurrentOptionIndex() + 1,
-                        question.getRecommendedOptionIndex() + 1,
-                        question.calculateBenefit(),
-                        q.options(),
-                        q.attributes(),
-                        q.questionnaire()
-                    );
-                })
-            .sorted(Comparator.comparingDouble(QuestionListItem::benefit))
+        var questionListItems = questions.stream().map(q -> {
+                var question = questionIdsMap.get(q.id());
+                int currentOptionIndex = question.getCurrentOptionIndex() + 1;
+                int recommendedOptionIndex = question.getRecommendedOptionIndex() + 1;
+                double benefit = question.calculateBenefit();
+
+                return new QuestionListItem(
+                    q.id(),
+                    q.title(),
+                    q.index(),
+                    currentOptionIndex,
+                    recommendedOptionIndex,
+                    benefit,
+                    q.options(),
+                    q.attributes(),
+                    q.questionnaire());
+            }).sorted(Comparator.comparingDouble(QuestionListItem::benefit))
             .collect(Collectors.toList());
 
         return new Result(questionListItems);
