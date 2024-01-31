@@ -1,6 +1,11 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
+import io.minio.GetPresignedObjectUrlArgs;
+import io.minio.MinioClient;
+import io.minio.StatObjectArgs;
+import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
@@ -8,17 +13,18 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsVie
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.*;
+import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMembersPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
 
@@ -27,11 +33,14 @@ import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.Exp
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
+    LoadExpertGroupMembersPort,
+    LoadExpertGroupMembersPictureLinkPort,
     LoadExpertGroupMemberIdsPort,
-    CreateExpertGroupPort,
-    LoadExpertGroupMembersPort {
+    CreateExpertGroupPort {
 
     private final ExpertGroupJpaRepository repository;
+    private final MinioClient minioClient;
+    private final MinioConfigProperties properties;
 
     @Override
     public Optional<UUID> loadOwnerId(Long expertGroupId) {
@@ -77,13 +86,12 @@ public class ExpertGroupPersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<LoadExpertGroupMembersPort.Result> loadExpertGroupMembers(LoadExpertGroupMembersPort.Param param) {
         var pageResult = repository.findExpertGroupMembers(param.expertGroupId(),
-                PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, UserJpaEntity.Fields.NAME));
+            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, UserJpaEntity.Fields.NAME));
 
         var items = pageResult
             .stream()
             .map(MembersMapper::mapToResult)
             .toList();
-
 
         return new PaginatedResponse<>(
             items,
@@ -93,7 +101,34 @@ public class ExpertGroupPersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
 
+    @SneakyThrows
+    @Override
+    public String loadMembersPictureLink(String filePath, Duration expiryDuration) {
+        String bucketName = properties.getBucketName();
+
+        if (!checkPictureExistence(filePath, bucketName)) return null;
+
+        return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+            .bucket(bucketName)
+            .object(filePath)
+            .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
+            .method(Method.GET)
+            .build());
+    }
+
+    @SneakyThrows
+    private boolean checkPictureExistence(String path, String bucketName) {
+        try {
+            minioClient.statObject(StatObjectArgs.builder()
+                .bucket(bucketName)
+                .object(path)
+                .build());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
