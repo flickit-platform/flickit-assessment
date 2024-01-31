@@ -14,7 +14,6 @@ import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEnt
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.EffectiveQuestionOnAdviceView;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -32,7 +31,6 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
     private static final int DEFAULT_QUESTION_IMPACT_WEIGHT = 1;
     private static final double DEFAULT_ATTRIBUTE_MATURITY_SCORE = 0.0;
     private static final int DEFAULT_QUESTION_COST = 1;
-    private static final int DEFAULT_ANSWER_OPTION_INDEX = 1;
 
     @Override
     public Plan loadAdviceCalculationInfo(UUID assessmentId, Map<Long, Long> attrIdToLevelId) {
@@ -113,19 +111,17 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
         });
     }
 
-    @NotNull
     private static Question mapToQuestion(Long questionId,
                                           List<EffectiveQuestionOnAdviceView> effectiveQuestionOnAdviceViews,
                                           AttributeLevelScore attributeLevelScore) {
-        Integer answerOptionIndex = effectiveQuestionOnAdviceViews.stream()
-            .findFirst()
-            .map(EffectiveQuestionOnAdviceView::getCurrentOptionIndex)
-            .orElse(DEFAULT_ANSWER_OPTION_INDEX);
+        Integer answeredOptionIndex = effectiveQuestionOnAdviceViews.get(0).getCurrentOptionIndex();
+        if (answeredOptionIndex != null) {
+            answeredOptionIndex = answeredOptionIndex - 1;
+        }
         List<Option> options = mapToOptions(effectiveQuestionOnAdviceViews, attributeLevelScore);
-        return new Question(questionId, DEFAULT_QUESTION_COST, options, answerOptionIndex);
+        return new Question(questionId, DEFAULT_QUESTION_COST, options, answeredOptionIndex);
     }
 
-    @NotNull
     private static List<Option> mapToOptions(List<EffectiveQuestionOnAdviceView> effectiveQuestionOnAdviceViews,
                                              AttributeLevelScore attributeLevelScore) {
         return effectiveQuestionOnAdviceViews.stream().map(e -> {

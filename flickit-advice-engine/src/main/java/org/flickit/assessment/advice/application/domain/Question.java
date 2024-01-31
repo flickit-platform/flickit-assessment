@@ -33,7 +33,7 @@ public class Question {
     @PlanningVariable
     private Integer recommendedOptionIndex;
 
-    private int currentOptionIndex;
+    private Integer currentOptionIndex;
 
     public Question(Long id, int cost, List<Option> options, Integer currentOptionIndex) {
         this.id = id;
