@@ -15,6 +15,7 @@ import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMatu
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -36,9 +37,10 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
     private final QualityAttributeValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final AttributeMaturityScoreJpaRepository attributeMaturityScoreRepository;
+    private final AttributeJpaRepository attributeRepository;
 
     @Override
-    public List<UUID> persistAll(List<Long> qualityAttributeIds, UUID assessmentResultId) {
+    public List<QualityAttributeValue> persistAll(List<Long> qualityAttributeIds, UUID assessmentResultId) {
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_QUALITY_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
@@ -50,7 +52,10 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
 
         var persistedEntities = repository.saveAll(entities);
 
-        return persistedEntities.stream().map(QualityAttributeValueJpaEntity::getId).toList();
+        return persistedEntities.stream().map(q -> {
+            var attributeEntity = attributeRepository.getReferenceById(q.getQualityAttributeId());
+            return QualityAttributeValueMapper.mapToDomainModel(q, attributeEntity);
+        }).toList();
     }
 
     @Override

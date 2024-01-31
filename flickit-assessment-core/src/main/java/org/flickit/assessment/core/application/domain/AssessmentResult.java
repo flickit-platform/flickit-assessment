@@ -18,7 +18,9 @@ public class AssessmentResult {
 
     private final UUID id;
     private final Assessment assessment;
-    private final List<SubjectValue> subjectValues;
+
+    @Setter
+    private List<SubjectValue> subjectValues;
 
     @Setter
     MaturityLevel maturityLevel;
@@ -40,6 +42,14 @@ public class AssessmentResult {
 
     @Setter
     LocalDateTime lastConfidenceCalculationTime;
+
+    public AssessmentResult(UUID assessmentResultId, Assessment assessment, List<SubjectValue> subjectValues, LocalDateTime lastCalculationTime, LocalDateTime lastConfidenceCalculationTime) {
+        this.id = assessmentResultId;
+        this.assessment = assessment;
+        this.subjectValues = subjectValues;
+        this.lastCalculationTime = lastCalculationTime;
+        this.lastConfidenceCalculationTime = lastConfidenceCalculationTime;
+    }
 
 
     public MaturityLevel calculate() {
