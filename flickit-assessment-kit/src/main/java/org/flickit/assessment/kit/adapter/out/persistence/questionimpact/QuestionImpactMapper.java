@@ -14,17 +14,26 @@ public class QuestionImpactMapper {
             entity.getAttributeId(),
             entity.getMaturityLevel().getId(),
             entity.getWeight(),
-            entity.getQuestionId()
+            entity.getQuestionId(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime(),
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy()
         );
     }
 
-    public static QuestionImpactJpaEntity mapToJpaEntity(QuestionImpact impact) {
+    public static QuestionImpactJpaEntity mapToJpaEntityToPersist(QuestionImpact impact, MaturityLevelJpaEntity maturityLevelJpaEntity) {
         return new QuestionImpactJpaEntity(
             null,
             impact.getWeight(),
             impact.getQuestionId(),
             impact.getAttributeId(),
-            new MaturityLevelJpaEntity(impact.getMaturityLevelId(), null, null, null, null, null)
+            maturityLevelJpaEntity,
+            null,
+            impact.getCreationTime(),
+            impact.getLastModificationTime(),
+            impact.getCreatedBy(),
+            impact.getLastModifiedBy()
         );
     }
 }

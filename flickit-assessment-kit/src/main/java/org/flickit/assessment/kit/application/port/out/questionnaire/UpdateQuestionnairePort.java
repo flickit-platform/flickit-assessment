@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.out.questionnaire;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public interface UpdateQuestionnairePort {
 
@@ -11,7 +12,8 @@ public interface UpdateQuestionnairePort {
         String title,
         int index,
         String description,
-        LocalDateTime lastModificationTime
+        LocalDateTime lastModificationTime,
+        UUID lastModifiedBy
     ) {
     }
 }

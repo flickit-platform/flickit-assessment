@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_ATTRIBUTES;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -69,7 +70,7 @@ class AttributeUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         Mockito.verify(updateAttributePort, Mockito.times(0)).update(captor.capture());
         assertFalse(result.shouldInvalidateCalcResult());
@@ -107,7 +108,7 @@ class AttributeUpdateKitPersisterTest {
         Mockito.doNothing().when(updateAttributePort).update(Mockito.any());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         Mockito.verify(updateAttributePort, Mockito.times(2)).update(captor.capture());
         List<UpdateAttributePort.Param> params = captor.getAllValues();
@@ -169,7 +170,7 @@ class AttributeUpdateKitPersisterTest {
         Mockito.doNothing().when(updateAttributePort).update(Mockito.any());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         Mockito.verify(updateAttributePort, Mockito.times(2)).update(captor.capture());
         List<UpdateAttributePort.Param> params = captor.getAllValues();

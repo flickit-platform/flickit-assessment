@@ -1,15 +1,13 @@
 package org.flickit.assessment.kit.application.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class MaturityLevel {
 
     private final Long id;

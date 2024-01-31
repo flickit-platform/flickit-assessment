@@ -9,9 +9,9 @@ public class AnswerOptionMother {
     public static AnswerOption createAnswerOption(Long questionId, String title, int index) {
         return new AnswerOption(
             id++,
-            questionId,
             title,
-            index
+            index,
+            questionId
         );
     }
 }
