@@ -40,7 +40,7 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
         checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
         checkAssessmentResultValidity(param.getAssessmentId());
 
-        var problem = loadInfoPort.load(param.getAssessmentId(), param.getTargets());
+        var problem = loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets());
         var solution = solverManager.solve(UUID.randomUUID(), problem);
         Plan plan;
         try {

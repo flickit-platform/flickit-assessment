@@ -52,6 +52,46 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 
     @Query("""
+        SELECT DISTINCT q.id AS questionId,
+         anso.index AS currentOptionIndex,
+         qanso.id AS answerOptionId,
+         qanso.index AS answerOptionIndex,
+         qi.weight AS questionImpactWeight,
+         ansoi.value AS answerOptionImpactValue
+
+        FROM QuestionJpaEntity q
+        JOIN QuestionnaireJpaEntity qn
+        ON q.questionnaireId = qn.id
+        JOIN AssessmentKitJpaEntity kit
+        ON qn.kitId = kit.id
+        JOIN AssessmentJpaEntity asm
+        ON asm.assessmentKitId = kit.id
+        JOIN AssessmentResultJpaEntity asmr
+        ON asm.id = asmr.assessment.id
+        JOIN QuestionImpactJpaEntity qi
+        ON q.id = qi.questionId
+        JOIN AnswerOptionJpaEntity qanso
+        ON q.id = qanso.questionId
+        JOIN  AnswerOptionImpactJpaEntity ansoi
+        ON qanso.id = ansoi.optionId
+        LEFT JOIN AnswerJpaEntity ans
+        ON ans.assessmentResult.id = asmr.id and q.id = ans.questionId
+        LEFT JOIN AnswerOptionJpaEntity anso
+        ON ans.answerOptionId = anso.id
+        WHERE (asm.id = :assessmentId
+        AND anso.index NOT IN (SELECT MAX(sq_ans.index)
+                               FROM AnswerOptionJpaEntity sq_ans
+                               WHERE sq_ans.questionId = q.id)
+        AND qi.attributeId = :attributeId
+        AND qi.maturityLevel.id = :maturityLevelId)
+        OR (asm.id = :assessmentId
+        AND ans.answerOptionId IS NULL
+        AND qi.attributeId = :attributeId)
+        AND qi.maturityLevel.id = :maturityLevelId
+         """)
+    List<EffectiveQuestionOnAdviceView> findEffectiveQuestionsOnAdvice(UUID assessmentId, Long attributeId, Long maturityLevelId);
+
+    @Query("""
         SELECT
             q.id AS id,
             q.title AS title,
