@@ -50,6 +50,7 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
             plan = solution.getFinalBestSolution();
         } catch (InterruptedException e) {
             log.error("Finding best solution for assessment {} interrupted", param.getAssessmentId(), e.getCause());
+            Thread.currentThread().interrupt();
             throw new CanNotFindFinalSolutionException(SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         } catch (ExecutionException e) {
             log.error("Error occurred while calculating best solution for assessment {}", param.getAssessmentId(), e.getCause());
