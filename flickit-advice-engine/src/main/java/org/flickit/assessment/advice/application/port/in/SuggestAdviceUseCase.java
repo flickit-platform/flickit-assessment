@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_ASSESSMENT_ID_NOT_NULL;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_TARGETS_SIZE_MIN;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
 public interface SuggestAdviceUseCase {
@@ -26,6 +25,7 @@ public interface SuggestAdviceUseCase {
         @NotNull(message = SUGGEST_ADVICE_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
+        @NotNull(message = SUGGEST_ADVICE_TARGETS_NOT_NULL)
         @Size(min = 1, message = SUGGEST_ADVICE_TARGETS_SIZE_MIN)
         Map<Long, Long> targets;
 
