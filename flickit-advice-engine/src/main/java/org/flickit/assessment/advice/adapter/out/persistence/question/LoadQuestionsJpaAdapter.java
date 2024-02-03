@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class QuestionPersistenceJpaAdapter implements
+public class LoadQuestionsJpaAdapter implements
     LoadQuestionsPort {
 
     private final QuestionJpaRepository repository;

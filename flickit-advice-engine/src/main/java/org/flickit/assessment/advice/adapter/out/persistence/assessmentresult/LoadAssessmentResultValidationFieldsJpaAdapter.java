@@ -12,16 +12,16 @@ import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVIC
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentPersistenceJpaAdapter implements
+public class LoadAssessmentResultValidationFieldsJpaAdapter implements
     LoadAssessmentResultValidationFieldsPort {
 
     private final AssessmentResultJpaRepository repository;
 
     @Override
     public Result loadValidationFields(UUID assessmentId) {
-        var view = repository.findFirstByAssessment_IdOrderByLastModificationTimeDescValidationFields(assessmentId);
+        var entity = repository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
 
-        return view.map(v -> new Result(v.getIsCalculateValid(), v.getIsConfidenceValid()))
+        return entity.map(v -> new Result(v.getIsCalculateValid(), v.getIsConfidenceValid()))
             .orElseThrow(() -> new ResourceNotFoundException(SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
     }
 }

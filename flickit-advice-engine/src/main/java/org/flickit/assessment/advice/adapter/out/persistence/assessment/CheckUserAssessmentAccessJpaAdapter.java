@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentPersistenceJpaAdapter implements
+public class CheckUserAssessmentAccessJpaAdapter implements
     CheckUserAssessmentAccessPort {
 
     private final AssessmentJpaRepository repository;
