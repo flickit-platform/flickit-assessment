@@ -1,6 +1,6 @@
 package org.flickit.assessment.advice.application.service;
 
-import ai.timefold.solver.core.api.solver.SolverFactory;
+import ai.timefold.solver.core.api.solver.SolverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.Plan;
@@ -32,7 +32,7 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
     private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
     private final LoadAssessmentResultValidationFieldsPort loadAssessmentResultValidationFieldsPort;
     private final LoadAdviceCalculationInfoPort loadInfoPort;
-    private final SolverFactory<Plan> solverFactory;
+    private final SolverManager<Plan, UUID> solverManager;
     private final LoadQuestionsPort loadQuestionsPort;
 
     @Override
@@ -41,9 +41,15 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
         checkAssessmentResultValidity(param.getAssessmentId());
 
         var problem = loadInfoPort.load(param.getAssessmentId(), param.getTargets());
-        var solution = solverFactory.buildSolver().solve(problem);
-
-        return mapToResult(solution);
+        var solution = solverManager.solve(UUID.randomUUID(), problem);
+        Plan plan;
+        try {
+            plan = solution.getFinalBestSolution();
+        } catch (Exception e) {
+//            TODO impl specific runtime exception
+            throw new RuntimeException(e);
+        }
+        return mapToResult(plan);
     }
 
     private void checkUserAccess(UUID assessmentId, UUID currentUserId) {
@@ -74,9 +80,9 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
 
         var questionListItems = questions.stream().map(q -> {
                 var question = questionIdsMap.get(q.id());
-                int currentOptionIndex = question.getCurrentOptionIndex() + 1;
-                int recommendedOptionIndex = question.getRecommendedOptionIndex() + 1;
-                double benefit = question.calculateBenefit();
+                var currentOptionIndex = question.getCurrentOptionIndex() != null ? question.getCurrentOptionIndex() + 1 : null;
+                var recommendedOptionIndex = question.getRecommendedOptionIndex() + 1;
+                var benefit = question.calculateBenefit();
 
                 return new QuestionListItem(
                     q.id(),
