@@ -59,34 +59,33 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
         Long kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
         LocalDateTime kitLastEffectiveModificationTime = loadKitLastEffectiveModificationTimePort.load(kitId);
         if (assessmentResult.getLastConfidenceCalculationTime().isBefore(kitLastEffectiveModificationTime)) {
-            var subjects = loadSubjectPort.loadByKitIdWithAttributes(kitId);
-            Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap = createCalculateConfidenceNewAttributeValues(subjects, assessmentResult);
-            createCalculateConfidenceNewSubjectValues(subjects, assessmentResult, subjectIdToAttributeValueMap);
+            var allSubjects = loadSubjectPort.loadByKitIdWithAttributes(kitId);
+            Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap = createCalculateConfidenceNewAttributeValues(allSubjects, assessmentResult);
+            createCalculateConfidenceNewSubjectValues(allSubjects, assessmentResult, subjectIdToAttributeValueMap);
         }
     }
 
-    private Map<Long, List<QualityAttributeValue>> createCalculateConfidenceNewAttributeValues(List<Subject> subjects, AssessmentResult assessmentResult) {
+    private Map<Long, List<QualityAttributeValue>> createCalculateConfidenceNewAttributeValues(List<Subject> allSubjects, AssessmentResult assessmentResult) {
         var attributesWithValue = assessmentResult.getSubjectValues().stream()
             .flatMap(s -> s.getQualityAttributeValues().stream())
             .distinct()
             .map(q -> q.getQualityAttribute().getId())
             .collect(Collectors.toSet());
 
-        var attributes = subjects.stream()
+        var allAttributes = allSubjects.stream()
             .flatMap(s -> s.getQualityAttributes().stream())
             .distinct()
             .toList();
 
-        var attributeIdsWithNoValue = attributes.stream()
+        var newAttributeIds = allAttributes.stream()
             .map(QualityAttribute::getId)
             .filter(a -> !attributesWithValue.contains(a))
             .toList();
 
-        var newAttributeValues = createQualityAttributeValuePort.persistAll(attributeIdsWithNoValue, assessmentResult.getId());
+        var newAttributeValues = createQualityAttributeValuePort.persistAll(newAttributeIds, assessmentResult.getId());
 
         assessmentResult.getSubjectValues().forEach(s -> {
-            List<QualityAttributeValue> newAttributeValueList = new ArrayList<>();
-            newAttributeValueList.addAll(s.getQualityAttributeValues());
+            List<QualityAttributeValue> newAttributeValueList = new ArrayList<>(s.getQualityAttributeValues());
             newAttributeValueList.addAll(newAttributeValues);
             s.setQualityAttributeValues(newAttributeValueList);
         });
@@ -94,7 +93,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
         var attributeIdToAttributeValueMap = newAttributeValues.stream()
             .collect(groupingBy(qav -> qav.getQualityAttribute().getId()));
 
-        return subjects.stream()
+        return allSubjects.stream()
             .collect(toMap(Subject::getId,
                 s -> s.getQualityAttributes().stream()
                     .filter(q -> !attributesWithValue.contains(q.getId()))
@@ -106,22 +105,20 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
             .map(s -> s.getSubject().getId())
             .collect(Collectors.toSet());
 
-        var subjectIdsWithNoValue = subjects.stream()
+        var newSubjectIds = subjects.stream()
             .map(Subject::getId)
             .filter(s -> !subjectsWithValue.contains(s))
             .toList();
 
-        var newSubjectValues = createSubjectValuePort.persistAll(subjectIdsWithNoValue, assessmentResult.getId());
+        var newSubjectValues = createSubjectValuePort.persistAll(newSubjectIds, assessmentResult.getId());
 
         newSubjectValues.forEach(sv -> {
-            List<QualityAttributeValue> newAttributeValueList = new ArrayList<>();
-            newAttributeValueList.addAll(sv.getQualityAttributeValues());
+            List<QualityAttributeValue> newAttributeValueList = new ArrayList<>(sv.getQualityAttributeValues());
             newAttributeValueList.addAll(subjectIdToAttributeValueMap.get(sv.getSubject().getId()));
             sv.setQualityAttributeValues(newAttributeValueList);
         });
 
-        List<SubjectValue> newSubjectValueList = new ArrayList<>();
-        newSubjectValueList.addAll(assessmentResult.getSubjectValues());
+        List<SubjectValue> newSubjectValueList = new ArrayList<>(assessmentResult.getSubjectValues());
         newSubjectValueList.addAll(newSubjectValues);
         assessmentResult.setSubjectValues(newSubjectValueList);
     }
