@@ -1,0 +1,34 @@
+package org.flickit.assessment.kit.application.port.in.expertgroup;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+import org.flickit.assessment.common.application.SelfValidating;
+
+import java.util.UUID;
+
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.ADD_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL;
+
+public interface AddExpertGroupMemberUseCase {
+
+    void addMember(Param param);
+
+    @Value
+    @EqualsAndHashCode(callSuper = false)
+    class Param extends SelfValidating<Param> {
+
+        @NotNull(message = ADD_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL)
+        Long expertGroupId;
+        UUID userId;
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(long expertGroupId, UUID userId, UUID currentUserId) {
+            this.expertGroupId = expertGroupId;
+            this.userId = userId;
+            this.currentUserId = currentUserId;
+            this.validateSelf();
+        }
+    }
+}
