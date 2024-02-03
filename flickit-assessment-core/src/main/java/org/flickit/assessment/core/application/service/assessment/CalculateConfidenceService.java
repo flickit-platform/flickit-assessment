@@ -39,7 +39,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
     public Result calculate(Param param) {
         AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(param.getAssessmentId());
 
-        initializeBasedOnKitChanges(assessmentResult);
+        initializeBeforeConfidenceCalculationBasedOnKitChanges(assessmentResult);
 
         Double confidenceValue = assessmentResult.calculateConfidenceValue();
 
@@ -55,17 +55,17 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
         return new Result(confidenceValue);
     }
 
-    private void initializeBasedOnKitChanges(AssessmentResult assessmentResult) {
+    private void initializeBeforeConfidenceCalculationBasedOnKitChanges(AssessmentResult assessmentResult) {
         Long kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
         LocalDateTime kitLastEffectiveModificationTime = loadKitLastEffectiveModificationTimePort.load(kitId);
         if (assessmentResult.getLastConfidenceCalculationTime().isBefore(kitLastEffectiveModificationTime)) {
             var subjects = loadSubjectPort.loadByKitIdWithAttributes(kitId);
-            Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap = createNewAttributeValues(subjects, assessmentResult);
-            createNewSubjectValues(subjects, assessmentResult, subjectIdToAttributeValueMap);
+            Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap = createCalculateConfidenceNewAttributeValues(subjects, assessmentResult);
+            createCalculateConfidenceNewSubjectValues(subjects, assessmentResult, subjectIdToAttributeValueMap);
         }
     }
 
-    private Map<Long, List<QualityAttributeValue>> createNewAttributeValues(List<Subject> subjects, AssessmentResult assessmentResult) {
+    private Map<Long, List<QualityAttributeValue>> createCalculateConfidenceNewAttributeValues(List<Subject> subjects, AssessmentResult assessmentResult) {
         var attributesWithValue = assessmentResult.getSubjectValues().stream()
             .flatMap(s -> s.getQualityAttributeValues().stream())
             .distinct()
@@ -101,7 +101,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
                     .flatMap(qa -> attributeIdToAttributeValueMap.get(qa.getId()).stream()).toList()));
     }
 
-    private void createNewSubjectValues(List<Subject> subjects, AssessmentResult assessmentResult, Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap) {
+    private void createCalculateConfidenceNewSubjectValues(List<Subject> subjects, AssessmentResult assessmentResult, Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap) {
         var subjectsWithValue = assessmentResult.getSubjectValues().stream()
             .map(s -> s.getSubject().getId())
             .collect(Collectors.toSet());
