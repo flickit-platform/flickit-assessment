@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.service;
+package org.flickit.assessment.advice.application.service.advice;
 
 import ai.timefold.solver.core.api.solver.SolverManager;
 import lombok.RequiredArgsConstructor;
@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.QuestionListItem;
+import org.flickit.assessment.advice.application.exception.CanNotFindFinalSolutionException;
 import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.CheckUserAssessmentAccessPort;
@@ -22,6 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_VALID;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -45,9 +47,12 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
         Plan plan;
         try {
             plan = solution.getFinalBestSolution();
+        } catch (InterruptedException e) {
+            log.error("Finding best solution for assessment {} interrupted", param.getAssessmentId(), e.getCause());
+            throw new CanNotFindFinalSolutionException(SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         } catch (Exception e) {
-//            TODO impl specific runtime exception
-            throw new RuntimeException(e);
+            log.error("Error occurred while calculating best solution for assessment {}", param.getAssessmentId(), e.getCause());
+            throw new CanNotFindFinalSolutionException(SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         }
         return mapToResult(plan);
     }
