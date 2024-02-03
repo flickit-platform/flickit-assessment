@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.service;
+package org.flickit.assessment.advice.application.service.advice;
 
 import ai.timefold.solver.core.api.solver.SolverJob;
 import ai.timefold.solver.core.api.solver.SolverManager;
@@ -207,7 +207,7 @@ class SuggestAdviceServiceTest {
             new OptionListItem(3, "caption3"),
             new OptionListItem(4, "caption4")
         );
-        var questionsPortResult1 = new LoadQuestionsPort.Result(0L, "what?", 12, optionListItems1, List.of(attribute), questionnaire);
+        var questionsPortResult1 = new LoadQuestionsPort.Result(question1.getId(), "what?", 12, optionListItems1, List.of(attribute), questionnaire);
 
         var optionListItems2 = List.of(
             new OptionListItem(1, "caption1"),
@@ -215,7 +215,7 @@ class SuggestAdviceServiceTest {
             new OptionListItem(3, "caption3"),
             new OptionListItem(4, "caption4")
         );
-        var questionsPortResult2 = new LoadQuestionsPort.Result(1L, "what?", 15, optionListItems2, List.of(attribute), questionnaire);
-        when(loadQuestionsPort.loadQuestions(List.of(0L, 1L))).thenReturn(List.of(questionsPortResult1, questionsPortResult2));
+        var questionsPortResult2 = new LoadQuestionsPort.Result(question2.getId(), "what?", 15, optionListItems2, List.of(attribute), questionnaire);
+        when(loadQuestionsPort.loadQuestions(List.of(question1.getId(), question2.getId()))).thenReturn(List.of(questionsPortResult1, questionsPortResult2));
     }
 }

@@ -49,6 +49,4 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
         "a.isCalculateValid = false " +
         "WHERE a.assessment.id IN (SELECT b.id FROM AssessmentJpaEntity b WHERE b.assessmentKitId = :kitId)")
     void invalidateByKitId(@Param(value = "kitId") Long kitId);
-
-    Optional<AssessmentValidationFieldsView> findFirstByAssessment_IdOrderByLastModificationTimeDescValidationFields(UUID assessmentId);
 }

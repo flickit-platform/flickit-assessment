@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.service;
+package org.flickit.assessment.advice.application.service.advice;
 
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
