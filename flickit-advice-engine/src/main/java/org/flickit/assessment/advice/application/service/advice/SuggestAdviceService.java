@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,7 +51,7 @@ public class SuggestAdviceService implements SuggestAdviceUseCase {
         } catch (InterruptedException e) {
             log.error("Finding best solution for assessment {} interrupted", param.getAssessmentId(), e.getCause());
             throw new CanNotFindFinalSolutionException(SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
-        } catch (Exception e) {
+        } catch (ExecutionException e) {
             log.error("Error occurred while calculating best solution for assessment {}", param.getAssessmentId(), e.getCause());
             throw new CanNotFindFinalSolutionException(SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         }
