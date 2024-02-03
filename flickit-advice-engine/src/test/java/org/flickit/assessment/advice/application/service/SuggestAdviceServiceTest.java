@@ -157,7 +157,7 @@ class SuggestAdviceServiceTest {
 
         verify(checkUserAssessmentAccessPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
         verify(loadAssessmentResultValidationFieldsPort, times(1)).loadValidationFields(param.getAssessmentId());
-        verify(loadInfoPort, times(1)).load(param.getAssessmentId(), param.getTargets());
+        verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets());
         verify(solverManager, times(1)).solve(any(), any());
         verify(loadQuestionsPort, times(1)).loadQuestions(any());
     }
@@ -179,7 +179,7 @@ class SuggestAdviceServiceTest {
                 question1,
                 question2
             ));
-        when(loadInfoPort.load(param.getAssessmentId(), param.getTargets()))
+        when(loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets()))
             .thenReturn(problem);
 
 
