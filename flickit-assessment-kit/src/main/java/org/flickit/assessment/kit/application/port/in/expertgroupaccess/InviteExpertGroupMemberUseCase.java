@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.in.expertgroup;
+package org.flickit.assessment.kit.application.port.in.expertgroupaccess;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -10,7 +10,7 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.ADD_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL;
 
-public interface AddExpertGroupMemberUseCase {
+public interface InviteExpertGroupMemberUseCase {
 
     void addMember(Param param);
 
