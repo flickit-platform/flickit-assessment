@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.expertgroup;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessStatus;
 import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.UploadExpertGroupPicturePort;
@@ -47,8 +48,8 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
         CreateExpertGroupAccessPort.Param param = new CreateExpertGroupAccessPort.Param(
             expertGroupId,
             null,
-            null,
-            ownerId
+            ownerId,
+            ExpertGroupAccessStatus.ACTIVE.name()
         );
         createExpertGroupAccessPort.persist(param);
     }

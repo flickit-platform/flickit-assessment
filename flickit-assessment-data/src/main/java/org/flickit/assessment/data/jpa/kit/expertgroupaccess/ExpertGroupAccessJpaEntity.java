@@ -25,12 +25,13 @@ public class ExpertGroupAccessJpaEntity {
     @Column(name = "expert_group_id", nullable = false)
     private Long expertGroupId;
 
-    @Column(name = "invite_email", columnDefinition = "TEXT")
-    private String inviteEmail;
-
     @Column(name = "invite_expiration_date")
     private LocalDate inviteExpirationDate;
 
     @Column(name = "user_id", nullable = false)
     private UUID userId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ExpertGroupAccessStatus status;
 }
