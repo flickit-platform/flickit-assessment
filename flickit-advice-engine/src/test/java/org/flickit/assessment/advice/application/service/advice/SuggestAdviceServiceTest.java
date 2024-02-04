@@ -9,6 +9,7 @@ import org.flickit.assessment.advice.application.domain.advice.AttributeListItem
 import org.flickit.assessment.advice.application.domain.advice.OptionListItem;
 import org.flickit.assessment.advice.application.domain.advice.QuestionListItem;
 import org.flickit.assessment.advice.application.domain.advice.QuestionnaireListItem;
+import org.flickit.assessment.advice.application.exception.CanNotFindFinalSolutionException;
 import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.CheckUserAssessmentAccessPort;
@@ -32,6 +33,7 @@ import java.util.concurrent.ExecutionException;
 import static java.util.UUID.randomUUID;
 import static org.flickit.assessment.advice.application.service.QuestionMother.createQuestionWithTargetAndCurrentOption;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_VALID;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -133,6 +135,98 @@ class SuggestAdviceServiceTest {
 
     @SneakyThrows
     @Test
+    void testSuggestAdvice_CalculationInterrupted_ThrowException() {
+        HashMap<Long, Long> targets = new HashMap<>();
+        targets.put(1L, 2L);
+        SuggestAdviceUseCase.Param param = new SuggestAdviceUseCase.Param(
+            randomUUID(),
+            targets,
+            randomUUID()
+        );
+
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+            .thenReturn(true);
+        when(loadAssessmentResultValidationFieldsPort.loadValidationFields(param.getAssessmentId()))
+            .thenReturn(new LoadAssessmentResultValidationFieldsPort.Result(true, true));
+
+        var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
+        var question1 = createQuestionWithTargetAndCurrentOption(attributeLevelScore, null);
+        var question2 = createQuestionWithTargetAndCurrentOption(attributeLevelScore, 0);
+        var problem = new Plan(
+            List.of(
+                attributeLevelScore
+            ),
+            List.of(
+                question1,
+                question2
+            ));
+        when(loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets()))
+            .thenReturn(problem);
+
+        SolverJob<Plan, UUID> solverJob = Mockito.mock(SolverJob.class);
+        when(solverManager.solve(any(), eq(problem))).thenReturn(solverJob);
+
+        when(solverJob.getFinalBestSolution()).thenThrow(new InterruptedException());
+
+        assertThrows(CanNotFindFinalSolutionException.class, () -> service.suggestAdvice(param), SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+
+        verify(checkUserAssessmentAccessPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
+        verify(loadAssessmentResultValidationFieldsPort, times(1)).loadValidationFields(param.getAssessmentId());
+        verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets());
+        verify(solverManager, times(1)).solve(any(), any());
+        Mockito.verifyNoInteractions(
+            loadQuestionsPort
+        );
+    }
+
+    @SneakyThrows
+    @Test
+    void testSuggestAdvice_CalculationExecutionException_ThrowException() {
+        HashMap<Long, Long> targets = new HashMap<>();
+        targets.put(1L, 2L);
+        SuggestAdviceUseCase.Param param = new SuggestAdviceUseCase.Param(
+            randomUUID(),
+            targets,
+            randomUUID()
+        );
+
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+            .thenReturn(true);
+        when(loadAssessmentResultValidationFieldsPort.loadValidationFields(param.getAssessmentId()))
+            .thenReturn(new LoadAssessmentResultValidationFieldsPort.Result(true, true));
+
+        var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
+        var question1 = createQuestionWithTargetAndCurrentOption(attributeLevelScore, null);
+        var question2 = createQuestionWithTargetAndCurrentOption(attributeLevelScore, 0);
+        var problem = new Plan(
+            List.of(
+                attributeLevelScore
+            ),
+            List.of(
+                question1,
+                question2
+            ));
+        when(loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets()))
+            .thenReturn(problem);
+
+        SolverJob<Plan, UUID> solverJob = Mockito.mock(SolverJob.class);
+        when(solverManager.solve(any(), eq(problem))).thenReturn(solverJob);
+
+        when(solverJob.getFinalBestSolution()).thenThrow(new ExecutionException("", null));
+
+        assertThrows(CanNotFindFinalSolutionException.class, () -> service.suggestAdvice(param), SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+
+        verify(checkUserAssessmentAccessPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
+        verify(loadAssessmentResultValidationFieldsPort, times(1)).loadValidationFields(param.getAssessmentId());
+        verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets());
+        verify(solverManager, times(1)).solve(any(), any());
+        Mockito.verifyNoInteractions(
+            loadQuestionsPort
+        );
+    }
+
+    @SneakyThrows
+    @Test
     void testSuggestAdvice_ValidParam_ReturnsAdvice() {
         HashMap<Long, Long> targets = new HashMap<>();
         targets.put(1L, 2L);
@@ -182,6 +276,8 @@ class SuggestAdviceServiceTest {
         when(loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets()))
             .thenReturn(problem);
 
+        SolverJob<Plan, UUID> solverJob = Mockito.mock(SolverJob.class);
+        when(solverManager.solve(any(), eq(problem))).thenReturn(solverJob);
 
         question1.setRecommendedOptionIndex(3);
         question2.setRecommendedOptionIndex(3);
@@ -194,10 +290,8 @@ class SuggestAdviceServiceTest {
                 question1,
                 question2
             ));
-        SolverJob<Plan, UUID> solverJob = Mockito.mock(SolverJob.class);
         when(solverJob.getFinalBestSolution()).thenReturn(solution);
 
-        when(solverManager.solve(any(), eq(problem))).thenReturn(solverJob);
 
         var questionnaire = new QuestionnaireListItem(15L, "Dev ops");
         var attribute = new AttributeListItem(216L, "Software Efficiency");
