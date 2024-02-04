@@ -1,7 +1,7 @@
 package org.flickit.assessment.advice.application.port.out.question;
 
+import org.flickit.assessment.advice.application.domain.advice.AdviceOptionListItem;
 import org.flickit.assessment.advice.application.domain.advice.AttributeListItem;
-import org.flickit.assessment.advice.application.domain.advice.OptionListItem;
 import org.flickit.assessment.advice.application.domain.advice.QuestionnaireListItem;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public interface LoadAdviceImpactfulQuestionsPort {
         long id,
         String title,
         int index,
-        List<OptionListItem> options,
+        List<AdviceOptionListItem> options,
         List<AttributeListItem> attributes,
         QuestionnaireListItem questionnaire
     ) {

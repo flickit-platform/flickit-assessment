@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 
-public record QuestionListItem(
-    long id,
-    String title,
-    int index,
-    Integer answeredOptionIndex,
-    int recommendedOptionIndex,
+public record AdviceListItem(
+    AdviceQuestion question,
+    AdviceOptionListItem answeredOption,
+    AdviceOptionListItem recommendedOption,
     @JsonIgnore double benefit,
-    List<OptionListItem> options,
     List<AttributeListItem> attributes,
     QuestionnaireListItem questionnaire
 ) {

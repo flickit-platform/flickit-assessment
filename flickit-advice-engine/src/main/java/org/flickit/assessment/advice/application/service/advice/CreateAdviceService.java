@@ -5,8 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
-import org.flickit.assessment.advice.application.domain.advice.QuestionListItem;
-import org.flickit.assessment.advice.application.exception.CanNotFindFinalSolutionException;
+import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.domain.advice.AdviceQuestion;
+import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultValidationFieldsPort;
@@ -48,7 +49,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         validateAssessmentResultCalculation(validationFields, param.getAssessmentId());
         validateAssessmentResultConfidence(validationFields, param.getAssessmentId());
 
-        var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelScores());
+        var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         var solution = solverManager.solve(UUID.randomUUID(), problem);
         Plan plan;
         try {
@@ -56,10 +57,10 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         } catch (InterruptedException e) {
             log.error("Finding best solution for assessment {} interrupted", param.getAssessmentId(), e.getCause());
             Thread.currentThread().interrupt();
-            throw new CanNotFindFinalSolutionException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+            throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         } catch (ExecutionException e) {
             log.error("Error occurred while calculating best solution for assessment {}", param.getAssessmentId(), e.getCause());
-            throw new CanNotFindFinalSolutionException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+            throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         }
         return mapToResult(plan);
     }
@@ -92,21 +93,18 @@ public class CreateAdviceService implements CreateAdviceUseCase {
 
         var questionListItems = questions.stream().map(q -> {
                 var question = questionIdsMap.get(q.id());
-                var answeredOptionIndex = question.getCurrentOptionIndex() != null ? question.getCurrentOptionIndex() + 1 : null;
-                var recommendedOptionIndex = question.getRecommendedOptionIndex() + 1;
+                var answeredOption = question.getCurrentOptionIndex() != null ? q.options().get(question.getCurrentOptionIndex()) : null;
+                var recommendedOption = q.options().get(question.getRecommendedOptionIndex());
                 var benefit = question.calculateBenefit();
 
-                return new QuestionListItem(
-                    q.id(),
-                    q.title(),
-                    q.index(),
-                    answeredOptionIndex,
-                    recommendedOptionIndex,
+                return new AdviceListItem(
+                    new AdviceQuestion(q.id(), q.title(), q.index()),
+                    answeredOption,
+                    recommendedOption,
                     benefit,
-                    q.options(),
                     q.attributes(),
                     q.questionnaire());
-            }).sorted(Comparator.comparingDouble(QuestionListItem::benefit))
+            }).sorted(Comparator.comparingDouble(AdviceListItem::benefit))
             .collect(Collectors.toList());
 
         return new Result(questionListItems);

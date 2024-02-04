@@ -28,7 +28,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"attributeLevelScores\": {\n        \"1599\": \"1873\"\n    }\n}",
+					"raw": "{\n    \"attributeLevelTargets\": {\n        \"attributeId\": \"1599\",\n        \"maturityLevelId\": \"1873\"\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"

@@ -4,11 +4,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.assessment.advice.application.domain.advice.QuestionListItem;
+import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
@@ -25,21 +24,24 @@ public interface CreateAdviceUseCase {
         @NotNull(message = CREATE_ADVICE_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = CREATE_ADVICE_ATTRIBUTE_LEVEL_SCORES_NOT_NULL)
-        @Size(min = 1, message = CREATE_ADVICE_ATTRIBUTE_LEVEL_SCORES_SIZE_MIN)
-        Map<Long, Long> attributeLevelScores;
+        @NotNull(message = CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL)
+        @Size(min = 1, message = CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN)
+        List<AttributeLevelTarget> attributeLevelTargets;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(UUID assessmentId, Map<Long, Long> attributeLevelScores, UUID currentUserId) {
+        public Param(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets, UUID currentUserId) {
             this.assessmentId = assessmentId;
-            this.attributeLevelScores = attributeLevelScores;
+            this.attributeLevelTargets = attributeLevelTargets;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
 
-    record Result(List<QuestionListItem> questions) {
+    record AttributeLevelTarget(long attributeId, long maturityLevelId) {
+    }
+
+    record Result(List<AdviceListItem> questions) {
     }
 }
