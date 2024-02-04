@@ -52,12 +52,12 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 
     @Query("""
-        SELECT DISTINCT q.id AS effectiveQuestionId,
-         anso.index AS effectiveAnsweredOptionIndex,
-         qanso.id AS effectiveOptionId,
-         qanso.index AS effectiveOptionIndex,
-         qi.weight AS effectiveQuestionImpactWeight,
-         ansoi.value AS effectiveOptionImpactValue
+        SELECT DISTINCT q.id AS impactfulQuestionId,
+         anso.index AS impactfulAnsweredOptionIndex,
+         qanso.id AS impactfulOptionId,
+         qanso.index AS impactfulOptionIndex,
+         qi.weight AS impactfulQuestionImpactWeight,
+         ansoi.value AS impactfulOptionImpactValue
 
         FROM QuestionJpaEntity q
         JOIN QuestionnaireJpaEntity qn
@@ -89,7 +89,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
         AND qi.attributeId = :attributeId)
         AND qi.maturityLevel.id = :maturityLevelId
          """)
-    List<EffectiveQuestionOnAdviceView> findQuestionsEffectedOnAdvice(UUID assessmentId, Long attributeId, Long maturityLevelId);
+    List<ImprovableImpactfulQuestionView> findImprovableImpactfulQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
 
     @Query("""
         SELECT
