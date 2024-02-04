@@ -25,7 +25,6 @@ public class CreateAdviceRestController {
     ResponseEntity<CreateAdviceResponseDto> createAdvice(
         @PathVariable("assessmentId") UUID assessmentId,
         @RequestBody CreateAdviceRequestDto requestDto) {
-
         UUID currentUserId = userContext.getUser().id();
         Param param = toParam(assessmentId, requestDto, currentUserId);
         Result result = useCase.createAdvice(param);
@@ -33,7 +32,7 @@ public class CreateAdviceRestController {
     }
 
     private Param toParam(UUID assessmentId, CreateAdviceRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId, requestDto.attributeLevelScores(), currentUserId);
+        return new Param(assessmentId, requestDto.attributeLevelTargets(), currentUserId);
     }
 
     private CreateAdviceResponseDto toResponseDto(Result result) {

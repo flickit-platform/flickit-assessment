@@ -1,6 +1,8 @@
 package org.flickit.assessment.advice.adapter.in.rest.advice;
 
-import java.util.Map;
+import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
 
-public record CreateAdviceRequestDto(Map<Long, Long> attributeLevelScores) {
+import java.util.List;
+
+public record CreateAdviceRequestDto(List<AttributeLevelTarget> attributeLevelTargets) {
 }

@@ -1,19 +1,20 @@
 package org.flickit.assessment.advice.adapter;
 
+import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.Option;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
-import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
+import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
-import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.EffectiveQuestionOnAdviceView;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -32,34 +33,38 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
     private static final int DEFAULT_QUESTION_COST = 1;
 
     @Override
-    public Plan loadAdviceCalculationInfo(UUID assessmentId, Map<Long, Long> attrIdToLevelId) {
+    public Plan loadAdviceCalculationInfo(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         List<AttributeLevelScore> attributeLevelScores = new ArrayList<>();
         List<Question> questions = new ArrayList<>();
 
-        for (Map.Entry<Long, Long> attrIdToLevelIdEntry: attrIdToLevelId.entrySet()) {
-            Long attributeId = attrIdToLevelIdEntry.getKey();
-            Long maturityLevelId = attrIdToLevelIdEntry.getValue();
+        for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
+            Long attributeId = attributeLevelTarget.attributeId();
+            Long maturityLevelId = attributeLevelTarget.maturityLevelId();
 
             List<LevelCompetenceJpaEntity> levelCompetenceEntities =
                 levelCompetenceRepository.findByAffectedLevelId(maturityLevelId);
-            for (LevelCompetenceJpaEntity levelCompetenceEntity: levelCompetenceEntities) {
+            for (LevelCompetenceJpaEntity levelCompetenceEntity : levelCompetenceEntities) {
                 Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevel().getId();
                 QualityAttributeValueJpaEntity attributeValueEntity =
-                    attributeValueRepository.findByAssessmentIdAndAttributeIdAndMaturityLevelId(assessmentId ,
+                    attributeValueRepository.findByAssessmentIdAndAttributeIdAndMaturityLevelId(assessmentId,
                         attributeId,
                         effectiveLevelId);
 
-                Double gainedScorePercentage = attributeMaturityScoreRepository
-                    .findByAttributeValueIdAndMaturityLevelId(attributeValueEntity.getId(), effectiveLevelId)
-                    .map(AttributeMaturityScoreJpaEntity::getScore)
-                    .orElse(DEFAULT_ATTRIBUTE_MATURITY_SCORE);
+                Double gainedScorePercentage;
+                if (attributeValueEntity == null)
+                    gainedScorePercentage = DEFAULT_ATTRIBUTE_MATURITY_SCORE;
+                else
+                    gainedScorePercentage = attributeMaturityScoreRepository
+                        .findByAttributeValueIdAndMaturityLevelId(attributeValueEntity.getId(), effectiveLevelId)
+                        .map(AttributeMaturityScoreJpaEntity::getScore)
+                        .orElse(DEFAULT_ATTRIBUTE_MATURITY_SCORE);
 
                 List<EffectiveQuestionOnAdviceView> effectiveQuestions =
                     questionRepository.findQuestionsEffectedOnAdvice(assessmentId, attributeId, effectiveLevelId);
 
                 Map<Long, Integer> effectiveQuestionIdToQuestionImpact = mapOfEffectiveQuestionIdToQuestionImpact(effectiveQuestions);
                 int totalScore = calculateTotalScore(effectiveQuestionIdToQuestionImpact);
-                double gainedScore = totalScore * (gainedScorePercentage/100.0);
+                double gainedScore = totalScore * (gainedScorePercentage / 100.0);
                 double requiredScore = totalScore * (levelCompetenceEntity.getValue()/100.0);
                 AttributeLevelScore attributeLevelScore =
                     new AttributeLevelScore(gainedScore, requiredScore, attributeId, effectiveLevelId);
