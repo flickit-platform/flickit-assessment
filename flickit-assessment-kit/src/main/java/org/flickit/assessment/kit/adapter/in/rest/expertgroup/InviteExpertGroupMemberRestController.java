@@ -1,11 +1,11 @@
 package org.flickit.assessment.kit.adapter.in.rest.expertgroup;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +21,7 @@ public class InviteExpertGroupMemberRestController {
 
     @PostMapping("/expert-groups/{id}/invite")
     public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(@PathVariable("id") long expertGroupId,
-                                                                          @JsonProperty ("userId") UUID userId) {
+                                                                          @ModelAttribute("userId") UUID userId) {
         UUID currentUserId = userContext.getUser().id();
         useCase.addMember(toParam(expertGroupId, userId, currentUserId));
 
