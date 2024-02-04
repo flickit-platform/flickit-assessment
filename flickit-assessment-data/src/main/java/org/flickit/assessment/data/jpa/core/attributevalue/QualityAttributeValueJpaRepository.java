@@ -12,20 +12,7 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
 
     List<QualityAttributeValueJpaEntity> findByAssessmentResultId(UUID resultId);
 
-    @Query("""
-        SELECT qav
-        FROM QualityAttributeValueJpaEntity qav
-        JOIN AssessmentResultJpaEntity asmr
-        ON asmr.id = qav.assessmentResult.id
-        JOIN AssessmentJpaEntity asm
-        ON asm.id = asmr.assessment.id
-        WHERE asm.id = :assessmentId
-        AND qav.qualityAttributeId = :attributeId
-        AND qav.maturityLevelId = :maturityLevelId
-        """)
-    QualityAttributeValueJpaEntity findByAssessmentIdAndAttributeIdAndMaturityLevelId(UUID assessmentId,
-                                                                                      Long attributeId,
-                                                                                      Long maturityLevelId);
+    QualityAttributeValueJpaEntity findByQualityAttributeIdAndAssessmentResult_Id(Long qualityAttributeId, UUID assessmentResultId);
 
     @Query("""
         SELECT av
