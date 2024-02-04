@@ -43,10 +43,10 @@ public class AssessmentResultJpaEntity {
     @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 
-    @Column(name = "last_calculation_time", nullable = false)
+    @Column(name = "last_calculation_time")
     private LocalDateTime lastCalculationTime;
 
-    @Column(name = "last_confidence_calculation_time", nullable = false)
+    @Column(name = "last_confidence_calculation_time")
     private LocalDateTime lastConfidenceCalculationTime;
 
     @Override

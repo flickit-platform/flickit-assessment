@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateC
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastEffectiveModificationTimePort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +30,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
     private final LoadCalculateInfoPort loadCalculateInfoPort;
     private final UpdateCalculatedResultPort updateCalculatedResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
-    private final LoadKitLastEffectiveModificationTimePort loadKitLastEffectiveModificationTimePort;
+    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadSubjectPort loadSubjectPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
@@ -57,11 +57,22 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
     private void initializeBasedOnKitChanges(AssessmentResult assessmentResult) {
         Long kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
-        LocalDateTime kitLastEffectiveModificationTime = loadKitLastEffectiveModificationTimePort.load(kitId);
-        if (assessmentResult.getLastCalculationTime().isBefore(kitLastEffectiveModificationTime)) {
+        LocalDateTime kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
+        if (assessmentResult.getLastCalculationTime().isBefore(kitLastMajorModificationTime)) {
             var subjects = loadSubjectPort.loadByKitIdWithAttributes(kitId);
             Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap = createNewAttributeValues(subjects, assessmentResult);
-            createNewSubjectValues(subjects, assessmentResult, subjectIdToAttributeValueMap);
+            assessmentResult.getSubjectValues().forEach(s -> {
+                List<QualityAttributeValue> newAttributeValueList = new ArrayList<>();
+                newAttributeValueList.addAll(s.getQualityAttributeValues());
+                newAttributeValueList.addAll(subjectIdToAttributeValueMap.get(s.getSubject().getId()));
+                s.setQualityAttributeValues(newAttributeValueList);
+            });
+
+            var newSubjectValues = createNewSubjectValues(subjects, assessmentResult, subjectIdToAttributeValueMap);
+            List<SubjectValue> newSubjectValueList = new ArrayList<>();
+            newSubjectValueList.addAll(assessmentResult.getSubjectValues());
+            newSubjectValueList.addAll(newSubjectValues);
+            assessmentResult.setSubjectValues(newSubjectValueList);
         }
     }
 
@@ -84,13 +95,6 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
         var newAttributeValues = createQualityAttributeValuePort.persistAll(attributeIdsWithNoValue, assessmentResult.getId());
 
-        assessmentResult.getSubjectValues().forEach(s -> {
-            List<QualityAttributeValue> newAttributeValueList = new ArrayList<>();
-            newAttributeValueList.addAll(s.getQualityAttributeValues());
-            newAttributeValueList.addAll(newAttributeValues);
-            s.setQualityAttributeValues(newAttributeValueList);
-        });
-
         var attributeIdToAttributeValueMap = newAttributeValues.stream()
             .collect(groupingBy(qav -> qav.getQualityAttribute().getId()));
 
@@ -101,7 +105,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
                     .flatMap(qa -> attributeIdToAttributeValueMap.get(qa.getId()).stream()).toList()));
     }
 
-    private void createNewSubjectValues(List<Subject> subjects, AssessmentResult assessmentResult, Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap) {
+    private List<SubjectValue> createNewSubjectValues(List<Subject> subjects, AssessmentResult assessmentResult, Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap) {
         var subjectsWithValue = assessmentResult.getSubjectValues().stream()
             .map(s -> s.getSubject().getId())
             .collect(Collectors.toSet());
@@ -120,10 +124,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
             sv.setQualityAttributeValues(newAttributeValueList);
         });
 
-        List<SubjectValue> newSubjectValueList = new ArrayList<>();
-        newSubjectValueList.addAll(assessmentResult.getSubjectValues());
-        newSubjectValueList.addAll(newSubjectValues);
-        assessmentResult.setSubjectValues(newSubjectValueList);
+        return newSubjectValues;
     }
 
 }

@@ -12,7 +12,7 @@ import org.flickit.assessment.core.application.domain.report.TopAttributeResolve
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastEffectiveModificationTimePort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +30,7 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
 
     private final LoadAssessmentReportInfoPort loadReportInfoPort;
     private final LoadAttributeValueListPort loadAttributeValueListPort;
-    private final LoadKitLastEffectiveModificationTimePort loadKitLastEffectiveModificationTimePort;
+    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
 
     @Override
     public AssessmentReport reportAssessment(Param param) {
@@ -42,8 +42,8 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
 
         var attributeValues = loadAttributeValueListPort.loadAll(assessmentResult.getId(), maturityLevelsMap);
 
-        LocalDateTime kitLastEffectiveModificationTime = loadKitLastEffectiveModificationTimePort.load(assessmentResult.getAssessment().getAssessmentKit().getId());
-        var assessmentReportItem = buildAssessment(assessmentResult, kitLastEffectiveModificationTime);
+        LocalDateTime kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId());
+        var assessmentReportItem = buildAssessment(assessmentResult, kitLastMajorModificationTime);
         var subjectReportItems = buildSubjects(assessmentResult);
 
         var midLevelMaturity = middleLevel(maturityLevels);
@@ -58,22 +58,22 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
             subjectReportItems);
     }
 
-    private AssessmentReportItem buildAssessment(AssessmentResult assessmentResult, LocalDateTime kitLastEffectiveModificationTime) {
+    private AssessmentReportItem buildAssessment(AssessmentResult assessmentResult, LocalDateTime kitLastMajorModificationTime) {
         Assessment assessment = assessmentResult.getAssessment();
         return new AssessmentReport.AssessmentReportItem(
             assessment.getId(),
             assessment.getTitle(),
             assessmentResult.getMaturityLevel().getId(),
             assessmentResult.getConfidenceValue(),
-            isValid(assessmentResult.isCalculateValid(), assessmentResult.getLastCalculationTime(), kitLastEffectiveModificationTime),
-            isValid(assessmentResult.isConfidenceValid(), assessmentResult.getLastCalculationTime(), kitLastEffectiveModificationTime),
+            isValid(assessmentResult.isCalculateValid(), assessmentResult.getLastCalculationTime(), kitLastMajorModificationTime),
+            isValid(assessmentResult.isConfidenceValid(), assessmentResult.getLastCalculationTime(), kitLastMajorModificationTime),
             AssessmentColor.valueOfById(assessment.getColorId()),
             assessment.getLastModificationTime()
         );
     }
 
-    private boolean isValid(boolean isValid, LocalDateTime lastCalculationTime, LocalDateTime kitLastEffectiveModificationTime) {
-        return isValid && lastCalculationTime.isAfter(kitLastEffectiveModificationTime);
+    private boolean isValid(boolean isValid, LocalDateTime lastCalculationTime, LocalDateTime kitLastMajorModificationTime) {
+        return isValid && lastCalculationTime.isAfter(kitLastMajorModificationTime);
     }
 
     private List<SubjectReportItem> buildSubjects(AssessmentResult assessmentResult) {

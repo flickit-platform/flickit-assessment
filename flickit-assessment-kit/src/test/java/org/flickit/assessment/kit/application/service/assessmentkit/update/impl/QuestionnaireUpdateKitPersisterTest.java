@@ -57,7 +57,7 @@ class QuestionnaireUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
-        assertFalse(result.isKitModificationEffective());
+        assertFalse(result.isMajorUpdate());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());
@@ -83,7 +83,7 @@ class QuestionnaireUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
-        assertTrue(result.isKitModificationEffective());
+        assertTrue(result.isMajorUpdate());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());
@@ -106,7 +106,7 @@ class QuestionnaireUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
-        assertFalse(result.isKitModificationEffective());
+        assertFalse(result.isMajorUpdate());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());

@@ -13,7 +13,7 @@ import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubje
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastEffectiveModificationTimePort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,7 +45,7 @@ class CalculateConfidenceServiceTest {
     private UpdateAssessmentPort updateAssessmentPort;
 
     @Mock
-    private LoadKitLastEffectiveModificationTimePort loadKitLastEffectiveModificationTimePort;
+    private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
 
     @Mock
     private LoadSubjectPort loadSubjectPort;
@@ -58,7 +58,7 @@ class CalculateConfidenceServiceTest {
 
     @Test
     void testCalculateConfidenceLevel_ValidInput_ValidResults() {
-        LocalDateTime kitLastEffectiveModificationTime = LocalDateTime.now();
+        LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
 
         List<QualityAttributeValue> s1QualityAttributeValues = List.of(
             QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()),
@@ -83,7 +83,7 @@ class CalculateConfidenceServiceTest {
         Param param = new Param(assessmentResult.getAssessment().getId());
 
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(loadKitLastEffectiveModificationTimePort.load(any())).thenReturn(kitLastEffectiveModificationTime);
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(kitLastMajorModificationTime);
 
         Result result = service.calculate(param);
         verify(updateCalculatedConfidenceLevelResultPort, times(1)).updateCalculatedConfidence(any(AssessmentResult.class));
@@ -123,7 +123,7 @@ class CalculateConfidenceServiceTest {
         CalculateConfidenceUseCase.Param param = new CalculateConfidenceUseCase.Param(assessmentResult.getAssessment().getId());
 
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(loadKitLastEffectiveModificationTimePort.load(any())).thenReturn(LocalDateTime.now());
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectPort.loadByKitIdWithAttributes(any())).thenReturn(subjects);
         when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
         when(createQualityAttributeValuePort.persistAll(anyList(), any())).thenReturn(List.of(newAttributeValue));
@@ -134,6 +134,6 @@ class CalculateConfidenceServiceTest {
 
         assertNotNull(result);
         assertNotNull(result.confidenceValue());
-        assertEquals(65.16129032258064, result.confidenceValue());
+        assertEquals(66.95652173913044, result.confidenceValue());
     }
 }

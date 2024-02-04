@@ -78,7 +78,7 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
 
         var result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
-        assertFalse(result.isKitModificationEffective());
+        assertFalse(result.isMajorUpdate());
         verifyNoInteractions(
             deletePort,
             createPort
@@ -133,7 +133,7 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
         ctx.put(KEY_QUESTIONNAIRES, questionnairesCodeToIdMap);
 
         var result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
-        assertFalse(result.isKitModificationEffective());
+        assertFalse(result.isMajorUpdate());
 
         verify(deletePort, times(1)).delete(subjectQuestionnaire2.getId());
 

@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.domain.report.SubjectReport;
 import org.flickit.assessment.core.application.port.in.subject.ReportSubjectUseCase;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastEffectiveModificationTimePort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,7 +36,7 @@ class ReportSubjectServiceTest {
     private LoadSubjectReportInfoPort loadSubjectReportInfoPort;
 
     @Mock
-    private LoadKitLastEffectiveModificationTimePort loadKitLastEffectiveModificationTimePort;
+    private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
 
     @Test
     void testReportSubject_ValidResult() {
@@ -70,7 +70,7 @@ class ReportSubjectServiceTest {
 
         when(loadSubjectReportInfoPort.load(assessmentResult.getAssessment().getId(), subjectValue.getSubject().getId()))
             .thenReturn(assessmentResult);
-        when(loadKitLastEffectiveModificationTimePort.load(assessmentResult.getAssessment().getAssessmentKit().getId()))
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
             .thenReturn(assessmentResult.getLastConfidenceCalculationTime().minusDays(2));
 
         SubjectReport subjectReport = service.reportSubject(param);

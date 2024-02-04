@@ -115,10 +115,10 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         ctx.put(KEY_MATURITY_LEVELS, levelCodeToIdMap);
         log.debug("Final Levels: {}", levelCodeToIdMap);
 
-        boolean isKitModificationEffective = !newLevels.isEmpty() || !deletedLevels.isEmpty() || existingLevelValueUpdated || isCompetencesChanged;
+        boolean isMajorUpdate = !newLevels.isEmpty() || !deletedLevels.isEmpty() || existingLevelValueUpdated || isCompetencesChanged;
         log.debug("InvalidateResult is [{}]: newLevels[{}], deletedLevels[{}], updatedLevels[{}], changedCompetences[{}]",
-            isKitModificationEffective, !newLevels.isEmpty(), !deletedLevels.isEmpty(), existingLevelValueUpdated, isCompetencesChanged);
-        return new UpdateKitPersisterResult(isKitModificationEffective);
+            isMajorUpdate, !newLevels.isEmpty(), !deletedLevels.isEmpty(), existingLevelValueUpdated, isCompetencesChanged);
+        return new UpdateKitPersisterResult(isMajorUpdate);
     }
 
     private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId, UUID currentUserId) {

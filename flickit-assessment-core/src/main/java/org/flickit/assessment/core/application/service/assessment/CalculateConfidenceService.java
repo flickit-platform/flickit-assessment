@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCon
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastEffectiveModificationTimePort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +30,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
     private final LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
     private final UpdateCalculatedConfidencePort updateCalculatedConfidenceLevelResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
-    private final LoadKitLastEffectiveModificationTimePort loadKitLastEffectiveModificationTimePort;
+    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadSubjectPort loadSubjectPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
@@ -57,11 +57,20 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
     private void initializeBeforeConfidenceCalculationBasedOnKitChanges(AssessmentResult assessmentResult) {
         Long kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
-        LocalDateTime kitLastEffectiveModificationTime = loadKitLastEffectiveModificationTimePort.load(kitId);
-        if (assessmentResult.getLastConfidenceCalculationTime().isBefore(kitLastEffectiveModificationTime)) {
+        LocalDateTime kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
+        if (assessmentResult.getLastConfidenceCalculationTime().isBefore(kitLastMajorModificationTime)) {
             var allSubjects = loadSubjectPort.loadByKitIdWithAttributes(kitId);
             Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap = createCalculateConfidenceNewAttributeValues(allSubjects, assessmentResult);
-            createCalculateConfidenceNewSubjectValues(allSubjects, assessmentResult, subjectIdToAttributeValueMap);
+            assessmentResult.getSubjectValues().forEach(s -> {
+                List<QualityAttributeValue> newAttributeValueList = new ArrayList<>(s.getQualityAttributeValues());
+                newAttributeValueList.addAll(subjectIdToAttributeValueMap.get(s.getSubject().getId()));
+                s.setQualityAttributeValues(newAttributeValueList);
+            });
+
+            var newSubjectValues = createCalculateConfidenceNewSubjectValues(allSubjects, assessmentResult, subjectIdToAttributeValueMap);
+            List<SubjectValue> newSubjectValueList = new ArrayList<>(assessmentResult.getSubjectValues());
+            newSubjectValueList.addAll(newSubjectValues);
+            assessmentResult.setSubjectValues(newSubjectValueList);
         }
     }
 
@@ -84,12 +93,6 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
         var newAttributeValues = createQualityAttributeValuePort.persistAll(newAttributeIds, assessmentResult.getId());
 
-        assessmentResult.getSubjectValues().forEach(s -> {
-            List<QualityAttributeValue> newAttributeValueList = new ArrayList<>(s.getQualityAttributeValues());
-            newAttributeValueList.addAll(newAttributeValues);
-            s.setQualityAttributeValues(newAttributeValueList);
-        });
-
         var attributeIdToAttributeValueMap = newAttributeValues.stream()
             .collect(groupingBy(qav -> qav.getQualityAttribute().getId()));
 
@@ -100,7 +103,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
                     .flatMap(qa -> attributeIdToAttributeValueMap.get(qa.getId()).stream()).toList()));
     }
 
-    private void createCalculateConfidenceNewSubjectValues(List<Subject> subjects, AssessmentResult assessmentResult, Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap) {
+    private List<SubjectValue> createCalculateConfidenceNewSubjectValues(List<Subject> subjects, AssessmentResult assessmentResult, Map<Long, List<QualityAttributeValue>> subjectIdToAttributeValueMap) {
         var subjectsWithValue = assessmentResult.getSubjectValues().stream()
             .map(s -> s.getSubject().getId())
             .collect(Collectors.toSet());
@@ -118,8 +121,6 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
             sv.setQualityAttributeValues(newAttributeValueList);
         });
 
-        List<SubjectValue> newSubjectValueList = new ArrayList<>(assessmentResult.getSubjectValues());
-        newSubjectValueList.addAll(newSubjectValues);
-        assessmentResult.setSubjectValues(newSubjectValueList);
+        return newSubjectValues;
     }
 }

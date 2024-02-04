@@ -12,7 +12,7 @@ import org.flickit.assessment.core.application.port.out.qualityattributevalue.Cr
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.assessment.core.test.fixture.application.*;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastEffectiveModificationTimePort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,7 +44,7 @@ class CalculateAssessmentServiceTest {
     private UpdateAssessmentPort updateAssessmentPort;
 
     @Mock
-    private LoadKitLastEffectiveModificationTimePort loadKitLastEffectiveModificationTimePort;
+    private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
 
     @Mock
     private LoadSubjectPort loadSubjectPort;
@@ -57,7 +57,7 @@ class CalculateAssessmentServiceTest {
 
     @Test
     void testCalculateMaturityLevel_ValidInput_ValidResults() {
-        LocalDateTime kitLastEffectiveModificationTime = LocalDateTime.now();
+        LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
 
         List<QualityAttributeValue> s1QualityAttributeValues = List.of(
             QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
@@ -82,7 +82,7 @@ class CalculateAssessmentServiceTest {
         CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId());
 
         when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(loadKitLastEffectiveModificationTimePort.load(any())).thenReturn(kitLastEffectiveModificationTime);
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(kitLastMajorModificationTime);
 
         CalculateAssessmentUseCase.Result result = service.calculateMaturityLevel(param);
         verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
@@ -123,7 +123,7 @@ class CalculateAssessmentServiceTest {
         CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId());
 
         when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(loadKitLastEffectiveModificationTimePort.load(any())).thenReturn(LocalDateTime.now());
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectPort.loadByKitIdWithAttributes(any())).thenReturn(subjects);
         when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
         when(createQualityAttributeValuePort.persistAll(anyList(), any())).thenReturn(List.of(newAttributeValue));

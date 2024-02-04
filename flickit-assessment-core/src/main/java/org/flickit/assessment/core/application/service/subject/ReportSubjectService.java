@@ -12,7 +12,7 @@ import org.flickit.assessment.core.application.domain.report.SubjectReport.Attri
 import org.flickit.assessment.core.application.domain.report.TopAttributeResolver;
 import org.flickit.assessment.core.application.port.in.subject.ReportSubjectUseCase;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastEffectiveModificationTimePort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +32,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_SUBJECT_
 public class ReportSubjectService implements ReportSubjectUseCase {
 
     private final LoadSubjectReportInfoPort loadSubjectReportInfoPort;
-    private final LoadKitLastEffectiveModificationTimePort loadKitLastEffectiveModificationTimePort;
+    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
 
     @Override
     public SubjectReport reportSubject(Param param) {
@@ -49,8 +49,8 @@ public class ReportSubjectService implements ReportSubjectUseCase {
 
         var attributeValues = subjectValue.getQualityAttributeValues();
 
-        LocalDateTime kitLastEffectiveModificationTime = loadKitLastEffectiveModificationTimePort.load(assessmentResult.getAssessment().getAssessmentKit().getId());
-        var subjectReportItem = buildSubject(subjectValue, assessmentResult, kitLastEffectiveModificationTime);
+        LocalDateTime kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId());
+        var subjectReportItem = buildSubject(subjectValue, assessmentResult, kitLastMajorModificationTime);
         var attributeReportItems = buildAttributes(attributeValues);
 
         var midLevelMaturity = middleLevel(maturityLevels);
@@ -65,18 +65,18 @@ public class ReportSubjectService implements ReportSubjectUseCase {
             attributeReportItems);
     }
 
-    private SubjectReport.SubjectReportItem buildSubject(SubjectValue subjectValue, AssessmentResult assessmentResult, LocalDateTime kitLastEffectiveModificationTime) {
+    private SubjectReport.SubjectReportItem buildSubject(SubjectValue subjectValue, AssessmentResult assessmentResult, LocalDateTime kitLastMajorModificationTime) {
         return new SubjectReport.SubjectReportItem(
             subjectValue.getSubject().getId(),
             subjectValue.getMaturityLevel().getId(),
             subjectValue.getConfidenceValue(),
-            isValid(assessmentResult.isCalculateValid(), assessmentResult.getLastCalculationTime(), kitLastEffectiveModificationTime),
-            isValid(assessmentResult.isConfidenceValid(), assessmentResult.getLastCalculationTime(), kitLastEffectiveModificationTime)
+            isValid(assessmentResult.isCalculateValid(), assessmentResult.getLastCalculationTime(), kitLastMajorModificationTime),
+            isValid(assessmentResult.isConfidenceValid(), assessmentResult.getLastCalculationTime(), kitLastMajorModificationTime)
         );
     }
 
-    private boolean isValid(boolean isValid, LocalDateTime lastCalculationTime, LocalDateTime kitLastEffectiveModificationTime) {
-        return isValid && lastCalculationTime.isAfter(kitLastEffectiveModificationTime);
+    private boolean isValid(boolean isValid, LocalDateTime lastCalculationTime, LocalDateTime kitLastMajorModificationTime) {
+        return isValid && lastCalculationTime.isAfter(kitLastMajorModificationTime);
     }
 
 

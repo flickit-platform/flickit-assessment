@@ -10,7 +10,7 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitByIdPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLastMajorModificationTimePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.CompositeUpdateKitValidator;
@@ -34,7 +34,7 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CompositeUpdateKitValidator validator;
     private final CompositeUpdateKitPersister persister;
-    private final UpdateKitByIdPort updateKitByIdPort;
+    private final UpdateKitLastMajorModificationTimePort updateKitLastMajorModificationTimePort;
 
     @Override
     public void update(Param param) {
@@ -45,8 +45,8 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
         validateUserIsExpertGroupOwner(savedKit.getExpertGroupId(), currentUserId);
         validateChanges(savedKit, dslKit);
         UpdateKitPersisterResult persistResult = persister.persist(savedKit, dslKit, currentUserId);
-        if (persistResult.isKitModificationEffective())
-            updateKitByIdPort.updateById(savedKit.getId(), LocalDateTime.now());
+        if (persistResult.isMajorUpdate())
+            updateKitLastMajorModificationTimePort.updateLastMajorModificationTime(savedKit.getId(), LocalDateTime.now());
     }
 
     private void validateUserIsExpertGroupOwner(long expertGroupId, UUID currentUserId) {

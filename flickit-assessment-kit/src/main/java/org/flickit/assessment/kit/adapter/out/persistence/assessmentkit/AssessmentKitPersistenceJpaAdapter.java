@@ -32,7 +32,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     DeleteKitUserAccessPort,
     LoadKitMinimalInfoPort,
     CreateAssessmentKitPort,
-    LoadKitLastEffectiveModificationTimePort {
+    LoadKitLastMajorModificationTimePort,
+    UpdateKitLastMajorModificationTimePort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -100,7 +101,12 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public LocalDateTime load(Long kitId) {
-        return repository.loadLastEffectiveModificationTime(kitId);
+    public LocalDateTime loadLastMajorModificationTime(Long kitId) {
+        return repository.loadLastMajorModificationTime(kitId);
+    }
+
+    @Override
+    public void updateLastMajorModificationTime(Long kitId, LocalDateTime lastMajorModificationTime) {
+        repository.updateById(kitId, lastMajorModificationTime);
     }
 }
