@@ -12,6 +12,8 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByD
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentresult.InvalidateAssessmentResultByKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
+import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.CompositeUpdateKitValidator;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_
 public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
     private final LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
+    private final LoadDslJsonPathPort loadDslJsonPathPort;
+    private final LoadKitDSLJsonFilePort loadKitDSLJsonFilePort;
     private final InvalidateAssessmentResultByKitPort invalidateAssessmentResultByKitPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CompositeUpdateKitValidator validator;
@@ -38,7 +42,9 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
     @Override
     public void update(Param param) {
         AssessmentKit savedKit = loadAssessmentKitInfoPort.load(param.getKitId());
-        AssessmentKitDslModel dslKit = DslTranslator.parseJson(param.getDslContent());
+        String dslJsonPath = loadDslJsonPathPort.loadJsonPath(param.getKitDslId());
+        String dslContent = loadKitDSLJsonFilePort.loadDslJson(dslJsonPath);
+        AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
         UUID currentUserId = param.getCurrentUserId();
 
         validateUserIsExpertGroupOwner(savedKit.getExpertGroupId(), currentUserId);

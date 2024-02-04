@@ -10,6 +10,8 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByD
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentresult.InvalidateAssessmentResultByKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
+import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.CompositeUpdateKitValidator;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl.InvalidAdditionError;
 import org.junit.jupiter.api.Test;
@@ -42,6 +44,10 @@ class UpdateKitByDslServiceTest {
     @Mock
     private LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
     @Mock
+    private LoadDslJsonPathPort loadDslJsonPathPort;
+    @Mock
+    private LoadKitDSLJsonFilePort loadKitDSLJsonFilePort;
+    @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     @Mock
     private InvalidateAssessmentResultByKitPort invalidateResultByKitPort;
@@ -55,34 +61,42 @@ class UpdateKitByDslServiceTest {
     @SneakyThrows
     void testUpdate_ValidChanges_NoNeedToInvalidateResult() {
         Long kitId = 1L;
+        Long kitDslId = 12L;
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
+        String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
         Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
 
         when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
+        when(loadDslJsonPathPort.loadJsonPath(kitDslId)).thenReturn(jsonPath);
+        when(loadKitDSLJsonFilePort.loadDslJson(jsonPath)).thenReturn(dslContent);
         when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(currentUserId);
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new Notification());
         when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class), any(UUID.class)))
             .thenReturn(new UpdateKitPersisterResult(false));
 
-        var param = new UpdateKitByDslUseCase.Param(kitId, dslContent, currentUserId.get());
+        var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId.get());
         service.update(param);
     }
 
     @Test
     @SneakyThrows
     void testUpdate_ValidChanges_NeedsToInvalidateResult() {
+        Long kitDslId = 12L;
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
+        String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
         Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
 
         when(loadAssessmentKitInfoPort.load(savedKit.getId())).thenReturn(savedKit);
+        when(loadDslJsonPathPort.loadJsonPath(kitDslId)).thenReturn(jsonPath);
+        when(loadKitDSLJsonFilePort.loadDslJson(jsonPath)).thenReturn(dslContent);
         when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(currentUserId);
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new Notification());
         when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class), any(UUID.class))).thenReturn(new UpdateKitPersisterResult(true));
         doNothing().when(invalidateResultByKitPort).invalidateByKitId(savedKit.getId());
 
-        var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), dslContent, currentUserId.get());
+        var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), kitDslId, currentUserId.get());
         service.update(param);
     }
 
@@ -90,18 +104,22 @@ class UpdateKitByDslServiceTest {
     @SneakyThrows
     void testUpdate_InvalidChanges_ThrowException() {
         Long kitId = 1L;
+        Long kitDslId = 12L;
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
+        String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
         Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
 
         when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
+        when(loadDslJsonPathPort.loadJsonPath(kitDslId)).thenReturn(jsonPath);
+        when(loadKitDSLJsonFilePort.loadDslJson(jsonPath)).thenReturn(dslContent);
         when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(currentUserId);
 
         Notification notification = new Notification();
         notification.add(new InvalidAdditionError(SUBJECT, Set.of("Team")));
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(notification);
 
-        var param = new UpdateKitByDslUseCase.Param(kitId, dslContent, currentUserId.get());
+        var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId.get());
 
         var throwable = assertThrows(ValidationException.class,
             () -> service.update(param));
@@ -121,15 +139,19 @@ class UpdateKitByDslServiceTest {
     @SneakyThrows
     void testUpdate_UserIsNotExpertGroupOwner_ThrowException() {
         Long kitId = 1L;
+        Long kitDslId = 12L;
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
+        String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
         Optional<UUID> ownerId = Optional.of(UUID.randomUUID());
         UUID currentUserId = UUID.randomUUID();
 
         when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
+        when(loadDslJsonPathPort.loadJsonPath(kitDslId)).thenReturn(jsonPath);
+        when(loadKitDSLJsonFilePort.loadDslJson(jsonPath)).thenReturn(dslContent);
         when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(ownerId);
 
-        var param = new UpdateKitByDslUseCase.Param(kitId, dslContent, currentUserId);
+        var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId);
         assertThrows(AccessDeniedException.class, () -> service.update(param));
     }
 }
