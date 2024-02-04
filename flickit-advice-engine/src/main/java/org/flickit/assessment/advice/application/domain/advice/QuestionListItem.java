@@ -8,7 +8,7 @@ public record QuestionListItem(
     long id,
     String title,
     int index,
-    Integer currentOptionIndex,
+    Integer answeredOptionIndex,
     int recommendedOptionIndex,
     @JsonIgnore double benefit,
     List<OptionListItem> options,

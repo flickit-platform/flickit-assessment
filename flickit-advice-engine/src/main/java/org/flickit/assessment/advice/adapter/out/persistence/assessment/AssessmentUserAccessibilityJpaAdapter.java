@@ -1,7 +1,7 @@
 package org.flickit.assessment.advice.adapter.out.persistence.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.port.out.assessment.CheckUserAssessmentAccessPort;
+import org.flickit.assessment.advice.application.port.out.assessment.UserAssessmentAccessibilityPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -9,8 +9,8 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class CheckUserAssessmentAccessJpaAdapter implements
-    CheckUserAssessmentAccessPort {
+public class AssessmentUserAccessibilityJpaAdapter implements
+    UserAssessmentAccessibilityPort {
 
     private final AssessmentJpaRepository repository;
 

@@ -14,27 +14,27 @@ import java.util.UUID;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
-public interface SuggestAdviceUseCase {
+public interface CreateAdviceUseCase {
 
-    Result suggestAdvice(Param param);
+    Result createAdvice(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = SUGGEST_ADVICE_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = CREATE_ADVICE_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = SUGGEST_ADVICE_TARGETS_NOT_NULL)
-        @Size(min = 1, message = SUGGEST_ADVICE_TARGETS_SIZE_MIN)
-        Map<Long, Long> targets;
+        @NotNull(message = CREATE_ADVICE_ATTRIBUTE_LEVEL_SCORES_NOT_NULL)
+        @Size(min = 1, message = CREATE_ADVICE_ATTRIBUTE_LEVEL_SCORES_SIZE_MIN)
+        Map<Long, Long> attributeLevelScores;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(UUID assessmentId, Map<Long, Long> targets, UUID currentUserId) {
+        public Param(UUID assessmentId, Map<Long, Long> attributeLevelScores, UUID currentUserId) {
             this.assessmentId = assessmentId;
-            this.targets = targets;
+            this.attributeLevelScores = attributeLevelScores;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

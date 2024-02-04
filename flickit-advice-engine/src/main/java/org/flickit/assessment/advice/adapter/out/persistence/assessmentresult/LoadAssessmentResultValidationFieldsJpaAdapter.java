@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +22,6 @@ public class LoadAssessmentResultValidationFieldsJpaAdapter implements
         var entity = repository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
 
         return entity.map(v -> new Result(v.getIsCalculateValid(), v.getIsConfidenceValid()))
-            .orElseThrow(() -> new ResourceNotFoundException(SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
     }
 }

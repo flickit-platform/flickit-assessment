@@ -10,11 +10,11 @@ import org.flickit.assessment.advice.application.domain.advice.OptionListItem;
 import org.flickit.assessment.advice.application.domain.advice.QuestionListItem;
 import org.flickit.assessment.advice.application.domain.advice.QuestionnaireListItem;
 import org.flickit.assessment.advice.application.exception.CanNotFindFinalSolutionException;
-import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase;
+import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
-import org.flickit.assessment.advice.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultValidationFieldsPort;
-import org.flickit.assessment.advice.application.port.out.question.LoadQuestionsPort;
+import org.flickit.assessment.advice.application.port.out.assessment.UserAssessmentAccessibilityPort;
+import org.flickit.assessment.advice.application.port.out.question.LoadAdviceImpactfulQuestionsPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
@@ -32,21 +32,21 @@ import java.util.concurrent.ExecutionException;
 
 import static java.util.UUID.randomUUID;
 import static org.flickit.assessment.advice.application.service.QuestionMother.createQuestionWithTargetAndCurrentOption;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_VALID;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class SuggestAdviceServiceTest {
+class CreateAdviceServiceTest {
 
     @InjectMocks
-    private SuggestAdviceService service;
+    private CreateAdviceService service;
 
     @Mock
-    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private UserAssessmentAccessibilityPort userAssessmentAccessibilityPort;
 
     @Mock
     private LoadAssessmentResultValidationFieldsPort loadAssessmentResultValidationFieldsPort;
@@ -58,93 +58,93 @@ class SuggestAdviceServiceTest {
     private SolverManager<Plan, UUID> solverManager;
 
     @Mock
-    private LoadQuestionsPort loadQuestionsPort;
+    private LoadAdviceImpactfulQuestionsPort loadAdviceImpactfulQuestionsPort;
 
     @Test
-    void testSuggestAdvice_UserHasNotAccessToAssessment_ThrowException() {
+    void testCreateAdvice_UserHasNotAccessToAssessment_ThrowException() {
         HashMap<Long, Long> targets = new HashMap<>();
         targets.put(1L, 2L);
-        SuggestAdviceUseCase.Param param = new SuggestAdviceUseCase.Param(
+        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
             randomUUID(),
             targets,
             randomUUID()
         );
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.suggestAdvice(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        assertThrows(AccessDeniedException.class, () -> service.createAdvice(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         Mockito.verifyNoInteractions(
             loadAssessmentResultValidationFieldsPort,
             loadInfoPort,
             solverManager,
-            loadQuestionsPort
+            loadAdviceImpactfulQuestionsPort
         );
     }
 
     @Test
-    void testSuggestAdvice_AssessmentCalculateIsNotValid_ThrowException() {
+    void testCreateAdvice_AssessmentCalculateIsNotValid_ThrowException() {
         HashMap<Long, Long> targets = new HashMap<>();
         targets.put(1L, 2L);
-        SuggestAdviceUseCase.Param param = new SuggestAdviceUseCase.Param(
+        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
             randomUUID(),
             targets,
             randomUUID()
         );
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(true);
 
         when(loadAssessmentResultValidationFieldsPort.loadValidationFields(param.getAssessmentId()))
             .thenReturn(new LoadAssessmentResultValidationFieldsPort.Result(false, true));
 
-        assertThrows(CalculateNotValidException.class, () -> service.suggestAdvice(param), SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
+        assertThrows(CalculateNotValidException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadQuestionsPort
+            loadAdviceImpactfulQuestionsPort
         );
     }
 
     @Test
-    void testSuggestAdvice_ConfidenceCalculateIsNotValid_ThrowException() {
+    void testCreateAdvice_ConfidenceCalculateIsNotValid_ThrowException() {
         HashMap<Long, Long> targets = new HashMap<>();
         targets.put(1L, 2L);
-        SuggestAdviceUseCase.Param param = new SuggestAdviceUseCase.Param(
+        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
             randomUUID(),
             targets,
             randomUUID()
         );
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(true);
 
         when(loadAssessmentResultValidationFieldsPort.loadValidationFields(param.getAssessmentId()))
             .thenReturn(new LoadAssessmentResultValidationFieldsPort.Result(true, false));
 
-        assertThrows(ConfidenceCalculationNotValidException.class, () -> service.suggestAdvice(param), SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
+        assertThrows(ConfidenceCalculationNotValidException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
 
-        verify(checkUserAssessmentAccessPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
+        verify(userAssessmentAccessibilityPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
         verify(loadAssessmentResultValidationFieldsPort, times(1)).loadValidationFields(param.getAssessmentId());
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadQuestionsPort
+            loadAdviceImpactfulQuestionsPort
         );
     }
 
     @SneakyThrows
     @Test
-    void testSuggestAdvice_CalculationInterrupted_ThrowException() {
+    void testCreateAdvice_CalculationInterrupted_ThrowException() {
         HashMap<Long, Long> targets = new HashMap<>();
         targets.put(1L, 2L);
-        SuggestAdviceUseCase.Param param = new SuggestAdviceUseCase.Param(
+        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
             randomUUID(),
             targets,
             randomUUID()
         );
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(true);
         when(loadAssessmentResultValidationFieldsPort.loadValidationFields(param.getAssessmentId()))
             .thenReturn(new LoadAssessmentResultValidationFieldsPort.Result(true, true));
@@ -160,7 +160,7 @@ class SuggestAdviceServiceTest {
                 question1,
                 question2
             ));
-        when(loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets()))
+        when(loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelScores()))
             .thenReturn(problem);
 
         SolverJob<Plan, UUID> solverJob = Mockito.mock(SolverJob.class);
@@ -168,29 +168,29 @@ class SuggestAdviceServiceTest {
 
         when(solverJob.getFinalBestSolution()).thenThrow(new InterruptedException());
 
-        assertThrows(CanNotFindFinalSolutionException.class, () -> service.suggestAdvice(param), SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+        assertThrows(CanNotFindFinalSolutionException.class, () -> service.createAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
 
-        verify(checkUserAssessmentAccessPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
+        verify(userAssessmentAccessibilityPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
         verify(loadAssessmentResultValidationFieldsPort, times(1)).loadValidationFields(param.getAssessmentId());
-        verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets());
+        verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelScores());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
-            loadQuestionsPort
+            loadAdviceImpactfulQuestionsPort
         );
     }
 
     @SneakyThrows
     @Test
-    void testSuggestAdvice_CalculationExecutionException_ThrowException() {
+    void testCreateAdvice_CalculationExecutionException_ThrowException() {
         HashMap<Long, Long> targets = new HashMap<>();
         targets.put(1L, 2L);
-        SuggestAdviceUseCase.Param param = new SuggestAdviceUseCase.Param(
+        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
             randomUUID(),
             targets,
             randomUUID()
         );
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(true);
         when(loadAssessmentResultValidationFieldsPort.loadValidationFields(param.getAssessmentId()))
             .thenReturn(new LoadAssessmentResultValidationFieldsPort.Result(true, true));
@@ -206,7 +206,7 @@ class SuggestAdviceServiceTest {
                 question1,
                 question2
             ));
-        when(loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets()))
+        when(loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelScores()))
             .thenReturn(problem);
 
         SolverJob<Plan, UUID> solverJob = Mockito.mock(SolverJob.class);
@@ -214,23 +214,23 @@ class SuggestAdviceServiceTest {
 
         when(solverJob.getFinalBestSolution()).thenThrow(new ExecutionException("", null));
 
-        assertThrows(CanNotFindFinalSolutionException.class, () -> service.suggestAdvice(param), SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+        assertThrows(CanNotFindFinalSolutionException.class, () -> service.createAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
 
-        verify(checkUserAssessmentAccessPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
+        verify(userAssessmentAccessibilityPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
         verify(loadAssessmentResultValidationFieldsPort, times(1)).loadValidationFields(param.getAssessmentId());
-        verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets());
+        verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelScores());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
-            loadQuestionsPort
+            loadAdviceImpactfulQuestionsPort
         );
     }
 
     @SneakyThrows
     @Test
-    void testSuggestAdvice_ValidParam_ReturnsAdvice() {
+    void testCreateAdvice_ValidParam_ReturnsAdvice() {
         HashMap<Long, Long> targets = new HashMap<>();
         targets.put(1L, 2L);
-        var param = new SuggestAdviceUseCase.Param(
+        var param = new CreateAdviceUseCase.Param(
             randomUUID(),
             targets,
             randomUUID()
@@ -238,7 +238,7 @@ class SuggestAdviceServiceTest {
 
         mockPorts(param);
 
-        var result = service.suggestAdvice(param);
+        var result = service.createAdvice(param);
 
         for (QuestionListItem question : result.questions()) {
             assertNotNull(question.options());
@@ -249,15 +249,15 @@ class SuggestAdviceServiceTest {
             assertNotEquals(0, question.benefit());
         }
 
-        verify(checkUserAssessmentAccessPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
+        verify(userAssessmentAccessibilityPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
         verify(loadAssessmentResultValidationFieldsPort, times(1)).loadValidationFields(param.getAssessmentId());
-        verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets());
+        verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelScores());
         verify(solverManager, times(1)).solve(any(), any());
-        verify(loadQuestionsPort, times(1)).loadQuestions(any());
+        verify(loadAdviceImpactfulQuestionsPort, times(1)).loadQuestions(any());
     }
 
-    private void mockPorts(SuggestAdviceUseCase.Param param) throws InterruptedException, ExecutionException {
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+    private void mockPorts(CreateAdviceUseCase.Param param) throws InterruptedException, ExecutionException {
+        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(true);
         when(loadAssessmentResultValidationFieldsPort.loadValidationFields(param.getAssessmentId()))
             .thenReturn(new LoadAssessmentResultValidationFieldsPort.Result(true, true));
@@ -273,7 +273,7 @@ class SuggestAdviceServiceTest {
                 question1,
                 question2
             ));
-        when(loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getTargets()))
+        when(loadInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelScores()))
             .thenReturn(problem);
 
         SolverJob<Plan, UUID> solverJob = Mockito.mock(SolverJob.class);
@@ -301,7 +301,7 @@ class SuggestAdviceServiceTest {
             new OptionListItem(3, "caption3"),
             new OptionListItem(4, "caption4")
         );
-        var questionsPortResult1 = new LoadQuestionsPort.Result(question1.getId(), "what?", 12, optionListItems1, List.of(attribute), questionnaire);
+        var questionsPortResult1 = new LoadAdviceImpactfulQuestionsPort.Result(question1.getId(), "what?", 12, optionListItems1, List.of(attribute), questionnaire);
 
         var optionListItems2 = List.of(
             new OptionListItem(1, "caption1"),
@@ -309,7 +309,7 @@ class SuggestAdviceServiceTest {
             new OptionListItem(3, "caption3"),
             new OptionListItem(4, "caption4")
         );
-        var questionsPortResult2 = new LoadQuestionsPort.Result(question2.getId(), "what?", 15, optionListItems2, List.of(attribute), questionnaire);
-        when(loadQuestionsPort.loadQuestions(List.of(question1.getId(), question2.getId()))).thenReturn(List.of(questionsPortResult1, questionsPortResult2));
+        var questionsPortResult2 = new LoadAdviceImpactfulQuestionsPort.Result(question2.getId(), "what?", 15, optionListItems2, List.of(attribute), questionnaire);
+        when(loadAdviceImpactfulQuestionsPort.loadQuestions(List.of(question1.getId(), question2.getId()))).thenReturn(List.of(questionsPortResult1, questionsPortResult2));
     }
 }

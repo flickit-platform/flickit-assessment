@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorMessageKey {
 
-    public static final String SUGGEST_ADVICE_ASSESSMENT_ID_NOT_NULL = "suggest-advice.assessmentId.notNull";
-    public static final String SUGGEST_ADVICE_TARGETS_NOT_NULL = "suggest-advice.targets.notNull";
-    public static final String SUGGEST_ADVICE_TARGETS_SIZE_MIN = "suggest-advice.targets.size.min";
-    public static final String SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_FOUND = "suggest-advice.assessmentResult.notFound";
-    public static final String SUGGEST_ADVICE_ASSESSMENT_RESULT_NOT_VALID = "suggest-advice.assessmentResult.notValid";
-    public static final String SUGGEST_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION = "suggest-advice.finding-best-solution.execution";
+    public static final String CREATE_ADVICE_ASSESSMENT_ID_NOT_NULL = "create-advice.assessmentId.notNull";
+    public static final String CREATE_ADVICE_ATTRIBUTE_LEVEL_SCORES_NOT_NULL = "create-advice.attributeLevelScores.notNull";
+    public static final String CREATE_ADVICE_ATTRIBUTE_LEVEL_SCORES_SIZE_MIN = "create-advice.attributeLevelScores.size.min";
+    public static final String CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND = "create-advice.assessmentResult.notFound";
+    public static final String CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID = "create-advice.assessmentResult.notValid";
+    public static final String CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION = "create-advice.finding-best-solution.execution";
 }

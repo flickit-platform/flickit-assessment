@@ -1,7 +1,7 @@
 package org.flickit.assessment.advice.adapter.out.persistence.question;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.port.out.question.LoadQuestionsPort;
+import org.flickit.assessment.advice.application.port.out.question.LoadAdviceImpactfulQuestionsPort;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.advice.QuestionAdviceView;
 import org.springframework.stereotype.Component;
@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class LoadQuestionsJpaAdapter implements
-    LoadQuestionsPort {
+public class LoadAdviceImpactfulQuestionsJpaAdapter implements
+    LoadAdviceImpactfulQuestionsPort {
 
     private final QuestionJpaRepository repository;
 

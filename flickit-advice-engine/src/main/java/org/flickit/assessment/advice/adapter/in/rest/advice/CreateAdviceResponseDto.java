@@ -4,5 +4,5 @@ import org.flickit.assessment.advice.application.domain.advice.QuestionListItem;
 
 import java.util.List;
 
-public record SuggestAdviceResponseDto(List<QuestionListItem> questions) {
+public record CreateAdviceResponseDto(List<QuestionListItem> questions) {
 }

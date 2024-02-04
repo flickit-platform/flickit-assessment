@@ -1,9 +1,9 @@
 package org.flickit.assessment.advice.adapter.in.rest.advice;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase;
-import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase.Param;
-import org.flickit.assessment.advice.application.port.in.SuggestAdviceUseCase.Result;
+import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
+import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.Param;
+import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.Result;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,27 +16,27 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class SuggestAdviceRestController {
+public class CreateAdviceRestController {
 
     private final UserContext userContext;
-    private final SuggestAdviceUseCase useCase;
+    private final CreateAdviceUseCase useCase;
 
     @PostMapping("/assessments/{assessmentId}/advice")
-    ResponseEntity<SuggestAdviceResponseDto> suggestAdvice(
+    ResponseEntity<CreateAdviceResponseDto> createAdvice(
         @PathVariable("assessmentId") UUID assessmentId,
-        @RequestBody SuggestAdviceRequestDto requestDto) {
+        @RequestBody CreateAdviceRequestDto requestDto) {
 
         UUID currentUserId = userContext.getUser().id();
         Param param = toParam(assessmentId, requestDto, currentUserId);
-        Result result = useCase.suggestAdvice(param);
+        Result result = useCase.createAdvice(param);
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, SuggestAdviceRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId, requestDto.targets(), currentUserId);
+    private Param toParam(UUID assessmentId, CreateAdviceRequestDto requestDto, UUID currentUserId) {
+        return new Param(assessmentId, requestDto.attributeLevelScores(), currentUserId);
     }
 
-    private SuggestAdviceResponseDto toResponseDto(Result result) {
-        return new SuggestAdviceResponseDto(result.questions());
+    private CreateAdviceResponseDto toResponseDto(Result result) {
+        return new CreateAdviceResponseDto(result.questions());
     }
 }

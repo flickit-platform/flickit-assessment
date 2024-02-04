@@ -6,7 +6,7 @@ import org.flickit.assessment.advice.application.domain.advice.QuestionnaireList
 
 import java.util.List;
 
-public interface LoadQuestionsPort {
+public interface LoadAdviceImpactfulQuestionsPort {
 
     List<Result> loadQuestions(List<Long> questionIds);
 
