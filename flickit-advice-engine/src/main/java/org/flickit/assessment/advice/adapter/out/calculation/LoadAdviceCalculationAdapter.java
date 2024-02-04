@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.adapter;
+package org.flickit.assessment.advice.adapter.out.calculation;
 
 import org.flickit.assessment.advice.application.domain.Option;
 import org.flickit.assessment.advice.application.domain.Plan;
