@@ -62,7 +62,7 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
                 List<ImprovableImpactfulQuestionView> impactfulQuestions =
                     questionRepository.findImprovableImpactfulQuestions(assessmentId, attributeId, effectiveLevelId);
 
-                Map<Long, Integer> impactfulQuestionIdToQuestionImpact = mapOfImpactfulQuestionIdToQuestionImpact(impactfulQuestions);
+                Map<Long, Integer> impactfulQuestionIdToQuestionImpact = mapImpactfulQuestionIdToWeight(impactfulQuestions);
                 int totalScore = calculateTotalScore(impactfulQuestionIdToQuestionImpact);
                 double gainedScore = totalScore * (gainedScorePercentage/100.0);
                 double requiredScore = totalScore * (levelCompetenceEntity.getValue()/100.0);
@@ -70,8 +70,8 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
                     new AttributeLevelScore(gainedScore, requiredScore, attributeId, effectiveLevelId);
                 attributeLevelScores.add(attributeLevelScore);
 
-                Map<Long, List<ImpactfulQuestionOption>> impactfulQuestionIdToOptions = mapOfImpactfulQuestionIdToOptions(impactfulQuestions);
-                Map<Long, Integer> impactfulQuestionIdToQuestionAnswer = mapOfImpactfulQuestionIdToQuestionAnswer(impactfulQuestions);
+                Map<Long, List<ImpactfulQuestionOption>> impactfulQuestionIdToOptions = mapImpactfulQuestionIdToOptions(impactfulQuestions);
+                Map<Long, Integer> impactfulQuestionIdToQuestionAnswer = mapImpactfulQuestionIdToAnswer(impactfulQuestions);
                 impactfulQuestionIdToOptions.forEach((impactfulQuestionId, impactfulOptions) -> {
                     Optional<Question> possibleQuestion = questions.stream()
                         .filter(e -> e.getId() == impactfulQuestionId)
@@ -90,46 +90,42 @@ public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPo
         return new Plan(attributeLevelScores, questions);
     }
 
-    private static Map<Long, Integer> mapOfImpactfulQuestionIdToQuestionImpact(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
+    private static Map<Long, Integer> mapImpactfulQuestionIdToWeight(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
         Map<Long, List<ImprovableImpactfulQuestionView>> questionInfoGroupedById = impactfulQuestions.stream()
             .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getImpactfulQuestionId));
-        Map<Long, Integer> questionIdToQuestionImpact = new HashMap<>();
+        Map<Long, Integer> questionIdToWeight = new HashMap<>();
         questionInfoGroupedById.forEach((questionId, questionInfo) -> {
             Integer questionImpactWeight = questionInfo.get(0).getImpactfulQuestionImpactWeight();
-            questionIdToQuestionImpact.put(questionId, questionImpactWeight);
+            questionIdToWeight.put(questionId, questionImpactWeight);
         });
-        return questionIdToQuestionImpact;
+        return questionIdToWeight;
     }
 
-    private static Map<Long, Integer> mapOfImpactfulQuestionIdToQuestionAnswer(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
+    private static Map<Long, List<ImpactfulQuestionOption>> mapImpactfulQuestionIdToOptions(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
+        return impactfulQuestions.stream()
+            .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getImpactfulQuestionId,
+                Collectors.mapping(
+                    impactfulQuestion -> new ImpactfulQuestionOption(
+                        impactfulQuestion.getImpactfulOptionId(),
+                        impactfulQuestion.getImpactfulOptionIndex(),
+                        impactfulQuestion.getImpactfulOptionImpactValue()
+                    ),
+                    Collectors.toList()
+                )));
+    }
+
+    private static Map<Long, Integer> mapImpactfulQuestionIdToAnswer(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
         Map<Long, List<ImprovableImpactfulQuestionView>> questionInfoGroupedById = impactfulQuestions.stream()
             .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getImpactfulQuestionId));
         Map<Long, Integer> questionIdToQuestionAnswer = new HashMap<>();
         questionInfoGroupedById.forEach((questionId, questionInfo) -> {
-            Integer currentOptionIndex = questionInfo.get(0).getImpactfulAnsweredOptionIndex();
-            if (currentOptionIndex != null) {
-                currentOptionIndex -= 1;
+            Integer answeredOptionIndex = questionInfo.get(0).getImpactfulAnsweredOptionIndex();
+            if (answeredOptionIndex != null) {
+                answeredOptionIndex -= 1;
             }
-            questionIdToQuestionAnswer.put(questionId, currentOptionIndex);
+            questionIdToQuestionAnswer.put(questionId, answeredOptionIndex);
         });
         return questionIdToQuestionAnswer;
-    }
-
-    private static Map<Long, List<ImpactfulQuestionOption>> mapOfImpactfulQuestionIdToOptions(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
-        Map<Long, List<ImprovableImpactfulQuestionView>> questionInfoGroupedById = impactfulQuestions.stream()
-            .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getImpactfulQuestionId));
-        Map<Long, List<ImpactfulQuestionOption>> questionIdToOptions = new HashMap<>();
-        questionInfoGroupedById.forEach((questionId, questionInfo) -> {
-            List<ImpactfulQuestionOption> options = questionInfo.stream()
-                .map(e -> new ImpactfulQuestionOption(e.getImpactfulOptionId(),
-                    e.getImpactfulOptionIndex(),
-                    e.getImpactfulOptionImpactValue()))
-                .toList();
-
-            questionIdToOptions.put(questionId, options);
-        });
-
-        return questionIdToOptions;
     }
 
     private static int calculateTotalScore(Map<Long, Integer> questionIdToQuestionImpact) {
