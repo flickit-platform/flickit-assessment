@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.expertgroupaccess;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessJpaEntity;
+import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessStatus;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
 
@@ -13,9 +14,9 @@ public class ExpertGroupAccessMapper {
         return new ExpertGroupAccessJpaEntity(
             null,
             param.expertGroupId(),
-            param.inviteEmail(),
             param.inviteExpirationDate(),
-            param.userId()
+            param.userId(),
+            ExpertGroupAccessStatus.ACTIVE
         );
     }
 
@@ -23,9 +24,9 @@ public class ExpertGroupAccessMapper {
         return new ExpertGroupAccessJpaEntity(
             null,
             param.expertGroupId(),
-            param.inviteEmail(),
-            param.inviteExpirationDate(),
-            param.userId()
+            null,
+            param.userId(),
+            param.status()
         );
     }
 }

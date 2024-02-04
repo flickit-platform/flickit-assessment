@@ -33,7 +33,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
     @Override
     public void invite(InviteExpertGroupMemberPort.Param param) {
-        ExpertGroupAccessJpaEntity unsavedEntity =
-        repository.save(ExpertGroupAccessMapper.mapInviteParamToJpaEntity(param));
+        ExpertGroupAccessJpaEntity unsavedEntity = (ExpertGroupAccessMapper.mapInviteParamToJpaEntity(param));
+        repository.save(unsavedEntity);
     }
 }

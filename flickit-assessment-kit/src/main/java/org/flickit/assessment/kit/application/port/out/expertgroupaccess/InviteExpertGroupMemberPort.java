@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.out.expertgroupaccess;
 
-import java.time.LocalDate;
+import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessStatus;
+
 import java.util.UUID;
 
 public interface InviteExpertGroupMemberPort {
@@ -9,6 +10,7 @@ public interface InviteExpertGroupMemberPort {
 
     record Param(long expertGroupId,
                  UUID userId,
-                 UUID currentUserId) {
+                 UUID currentUserId,
+                 ExpertGroupAccessStatus status) {
     }
 }
