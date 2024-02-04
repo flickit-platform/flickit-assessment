@@ -6,10 +6,10 @@ import java.util.List;
 
 public record AdviceListItem(
     AdviceQuestion question,
-    AdviceOptionListItem answeredOption,
-    AdviceOptionListItem recommendedOption,
+    AdviceOption answeredOption,
+    AdviceOption recommendedOption,
     @JsonIgnore double benefit,
-    List<AttributeListItem> attributes,
-    QuestionnaireListItem questionnaire
+    List<AdviceAttribute> attributes,
+    AdviceQuestionnaire questionnaire
 ) {
 }

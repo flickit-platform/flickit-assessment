@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.advice.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.advice.adapter.out.persistence.option.OptionMapper;
-import org.flickit.assessment.advice.application.domain.advice.QuestionnaireListItem;
+import org.flickit.assessment.advice.application.domain.advice.AdviceQuestionnaire;
 import org.flickit.assessment.advice.application.port.out.question.LoadAdviceImpactfulQuestionsPort;
 import org.flickit.assessment.data.jpa.kit.question.advice.AttributeAdviceView;
 import org.flickit.assessment.data.jpa.kit.question.advice.OptionAdviceView;
@@ -34,7 +34,7 @@ public class QuestionMapper {
             .map(AttributeMapper::mapToListItem)
             .toList();
 
-        var questionnaire = new QuestionnaireListItem(view.getQuestionnaire().getId(), view.getQuestionnaire().getTitle());
+        var questionnaire = new AdviceQuestionnaire(view.getQuestionnaire().getId(), view.getQuestionnaire().getTitle());
 
         return new LoadAdviceImpactfulQuestionsPort.Result(
             view.getId(),

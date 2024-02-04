@@ -5,10 +5,10 @@ import ai.timefold.solver.core.api.solver.SolverManager;
 import lombok.SneakyThrows;
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.Plan;
+import org.flickit.assessment.advice.application.domain.advice.AdviceAttribute;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
-import org.flickit.assessment.advice.application.domain.advice.AdviceOptionListItem;
-import org.flickit.assessment.advice.application.domain.advice.AttributeListItem;
-import org.flickit.assessment.advice.application.domain.advice.QuestionnaireListItem;
+import org.flickit.assessment.advice.application.domain.advice.AdviceOption;
+import org.flickit.assessment.advice.application.domain.advice.AdviceQuestionnaire;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
@@ -286,21 +286,21 @@ class CreateAdviceServiceTest {
         when(solverJob.getFinalBestSolution()).thenReturn(solution);
 
 
-        var questionnaire = new QuestionnaireListItem(15L, "Dev ops");
-        var attribute = new AttributeListItem(216L, "Software Efficiency");
+        var questionnaire = new AdviceQuestionnaire(15L, "Dev ops");
+        var attribute = new AdviceAttribute(216L, "Software Efficiency");
         var optionListItems1 = List.of(
-            new AdviceOptionListItem(1, "caption1"),
-            new AdviceOptionListItem(2, "caption2"),
-            new AdviceOptionListItem(3, "caption3"),
-            new AdviceOptionListItem(4, "caption4")
+            new AdviceOption(1, "caption1"),
+            new AdviceOption(2, "caption2"),
+            new AdviceOption(3, "caption3"),
+            new AdviceOption(4, "caption4")
         );
         var questionsPortResult1 = new Result(question1.getId(), "what?", 12, optionListItems1, List.of(attribute), questionnaire);
 
         var optionListItems2 = List.of(
-            new AdviceOptionListItem(1, "caption1"),
-            new AdviceOptionListItem(2, "caption2"),
-            new AdviceOptionListItem(3, "caption3"),
-            new AdviceOptionListItem(4, "caption4")
+            new AdviceOption(1, "caption1"),
+            new AdviceOption(2, "caption2"),
+            new AdviceOption(3, "caption3"),
+            new AdviceOption(4, "caption4")
         );
         var questionsPortResult2 = new Result(question2.getId(), "what?", 15, optionListItems2, List.of(attribute), questionnaire);
         when(loadAdviceImpactfulQuestionsPort.loadQuestions(List.of(question1.getId(), question2.getId())))
