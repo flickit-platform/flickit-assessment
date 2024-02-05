@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.application.domain.User;
 import org.flickit.assessment.kit.application.port.out.user.LoadUserByEmailPort;
+import org.flickit.assessment.kit.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.flickit.assessment.kit.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserPersistenceJpaAdapter implements
     LoadUserPort,
-    LoadUserByEmailPort {
+    LoadUserByEmailPort,
+    LoadUserEmailByUserIdPort {
 
     private final UserJpaRepository repository;
 
@@ -26,5 +28,10 @@ public class UserPersistenceJpaAdapter implements
     @Override
     public Optional<User> loadByEmail(String email) {
         return repository.findByEmailIgnoreCase(email).map(UserMapper::mapToDomainModel);
+    }
+
+    @Override
+    public Optional<String> loadEmail(UUID userId) {
+        return repository.findEmailByUserId(userId) ;
     }
 }
