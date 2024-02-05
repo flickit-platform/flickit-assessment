@@ -26,7 +26,7 @@ import static org.flickit.assessment.advice.common.ErrorMessageKey.LOAD_ADVICE_C
 
 @Component
 @RequiredArgsConstructor
-public class LoadAdviceCalculationAdapter implements LoadAdviceCalculationInfoPort {
+public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationInfoPort {
 
     private final QuestionJpaRepository questionRepository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
