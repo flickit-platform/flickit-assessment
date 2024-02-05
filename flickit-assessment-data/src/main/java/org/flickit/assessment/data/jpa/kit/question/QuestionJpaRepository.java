@@ -52,12 +52,12 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 
     @Query("""
-        SELECT DISTINCT q.id AS impactfulQuestionId,
-         anso.index AS impactfulAnsweredOptionIndex,
-         qanso.id AS impactfulOptionId,
-         qanso.index AS impactfulOptionIndex,
-         qi.weight AS impactfulQuestionImpactWeight,
-         ansoi.value AS impactfulOptionImpactValue
+        SELECT DISTINCT q.id AS  questionId,
+         anso.index AS answeredOptionIndex,
+         qanso.id AS optionId,
+         qanso.index AS optionIndex,
+         qi.weight AS questionImpactWeight,
+         ansoi.value AS optionImpactValue
 
         FROM QuestionJpaEntity q
         JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id
