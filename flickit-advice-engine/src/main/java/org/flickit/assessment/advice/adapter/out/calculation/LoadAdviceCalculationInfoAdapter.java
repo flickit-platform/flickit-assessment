@@ -20,9 +20,10 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.LOAD_ADVICE_CALC_INFO_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -40,7 +41,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
     @Override
     public Plan loadAdviceCalculationInfo(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         List<AttributeLevelScore> attributeLevelScores = new ArrayList<>();
-        List<Question> questions = new ArrayList<>();
+        Map<Long, Question> idToQuestions = new HashMap<>();
 
         for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
             Long attributeId = attributeLevelTarget.attributeId();
@@ -51,7 +52,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
             for (LevelCompetenceJpaEntity levelCompetenceEntity : levelCompetenceEntities) {
                 Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevel().getId();
                 var assessmentResultJpaEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-                    .orElseThrow(() -> new ResourceNotFoundException(LOAD_ADVICE_CALC_INFO_ASSESSMENT_RESULT_NOT_FOUND));
+                    .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
                 QualityAttributeValueJpaEntity attributeValueEntity =
                     attributeValueRepository.findByQualityAttributeIdAndAssessmentResult_Id(attributeId, assessmentResultJpaEntity.getId());
 
@@ -74,29 +75,26 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                 Map<Long, List<ImpactfulQuestionOption>> impactfulQuestionIdToOptions = mapImpactfulQuestionIdToOptions(impactfulQuestions);
                 Map<Long, Integer> impactfulQuestionIdToQuestionAnswer = mapImpactfulQuestionIdToAnswer(impactfulQuestions);
                 impactfulQuestionIdToOptions.forEach((impactfulQuestionId, impactfulOptions) -> {
-                    Optional<Question> possibleQuestion = questions.stream()
-                        .filter(e -> e.getId() == impactfulQuestionId)
-                        .findFirst();
-                    if (possibleQuestion.isPresent()) {
-                        Question existedQuestion = possibleQuestion.get();
-                        addAttrLevelScoreToExistedQuestion(impactfulOptions, existedQuestion, attributeLevelScore);
+                    if (idToQuestions.containsKey(impactfulQuestionId)) {
+                        Question existedQuestion = idToQuestions.get(impactfulQuestionId);
+                        addAttrLevelScoreToQuestionOptions(impactfulOptions, existedQuestion, attributeLevelScore);
                     } else {
                         Integer answeredOptionIndex = impactfulQuestionIdToQuestionAnswer.get(impactfulQuestionId);
                         Question question = mapToQuestion(impactfulQuestionId, answeredOptionIndex, impactfulOptions, attributeLevelScore);
-                        questions.add(question);
+                        idToQuestions.put(impactfulQuestionId, question);
                     }
                 });
             }
         }
-        return new Plan(attributeLevelScores, questions);
+        return new Plan(attributeLevelScores, new ArrayList<>(idToQuestions.values()));
     }
 
     private static Map<Long, Integer> mapImpactfulQuestionIdToWeight(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
         Map<Long, List<ImprovableImpactfulQuestionView>> questionInfoGroupedById = impactfulQuestions.stream()
-            .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getImpactfulQuestionId));
+            .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getQuestionId));
         Map<Long, Integer> questionIdToWeight = new HashMap<>();
         questionInfoGroupedById.forEach((questionId, questionInfo) -> {
-            Integer questionImpactWeight = questionInfo.get(0).getImpactfulQuestionImpactWeight();
+            Integer questionImpactWeight = questionInfo.get(0).getQuestionImpactWeight();
             questionIdToWeight.put(questionId, questionImpactWeight);
         });
         return questionIdToWeight;
@@ -104,12 +102,12 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
 
     private static Map<Long, List<ImpactfulQuestionOption>> mapImpactfulQuestionIdToOptions(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
         return impactfulQuestions.stream()
-            .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getImpactfulQuestionId,
+            .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getQuestionId,
                 Collectors.mapping(
                     impactfulQuestion -> new ImpactfulQuestionOption(
-                        impactfulQuestion.getImpactfulOptionId(),
-                        impactfulQuestion.getImpactfulOptionIndex(),
-                        impactfulQuestion.getImpactfulOptionImpactValue()
+                        impactfulQuestion.getOptionId(),
+                        impactfulQuestion.getOptionIndex(),
+                        impactfulQuestion.getOptionImpactValue()
                     ),
                     Collectors.toList()
                 )));
@@ -117,10 +115,10 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
 
     private static Map<Long, Integer> mapImpactfulQuestionIdToAnswer(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
         Map<Long, List<ImprovableImpactfulQuestionView>> questionInfoGroupedById = impactfulQuestions.stream()
-            .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getImpactfulQuestionId));
+            .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getQuestionId));
         Map<Long, Integer> questionIdToQuestionAnswer = new HashMap<>();
         questionInfoGroupedById.forEach((questionId, questionInfo) -> {
-            Integer answeredOptionIndex = questionInfo.get(0).getImpactfulAnsweredOptionIndex();
+            Integer answeredOptionIndex = questionInfo.get(0).getAnsweredOptionIndex();
             if (answeredOptionIndex != null) {
                 answeredOptionIndex -= 1;
             }
@@ -135,24 +133,25 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
             .reduce(0, Integer::sum);
     }
 
-    private static void addAttrLevelScoreToExistedQuestion(List<ImpactfulQuestionOption> options,
+    private static void addAttrLevelScoreToQuestionOptions(List<ImpactfulQuestionOption> options,
                                                            Question question,
                                                            AttributeLevelScore attributeLevelScore) {
-        options.forEach(v -> {
-            Option option = question.getOptions().stream()
-                .filter(m -> m.getIndex() == v.impactfulOptionIndex)
-                .findFirst()
-                .get();
-            option.getPromisedScores().put(attributeLevelScore, v.impactfulOptionImpactValue);
+        Map<Long, ImpactfulQuestionOption> idToOption = options.stream()
+            .collect(Collectors.toMap(op -> op.impactfulOptionId, Function.identity()));
+        question.getOptions().forEach(op -> {
+            ImpactfulQuestionOption option = idToOption.get(op.getId());
+            if (option != null) {
+                op.getPromisedScores().put(attributeLevelScore, option.impactfulOptionImpactValue);
+            }
         });
     }
 
-    private static Question mapToQuestion(Long effectiveQuestionId,
+    private static Question mapToQuestion(Long impactfulQuestionId,
                                           Integer answeredOptionIndex,
                                           List<ImpactfulQuestionOption> impactfulQuestionOptions,
                                           AttributeLevelScore attributeLevelScore) {
         List<Option> options = mapToOptions(impactfulQuestionOptions, attributeLevelScore);
-        return new Question(effectiveQuestionId, DEFAULT_QUESTION_COST, options, answeredOptionIndex);
+        return new Question(impactfulQuestionId, DEFAULT_QUESTION_COST, options, answeredOptionIndex);
     }
 
     private static List<Option> mapToOptions(List<ImpactfulQuestionOption> impactfulQuestionOptions,
