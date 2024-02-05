@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 
+import java.util.UUID;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionnaireMapper {
 
@@ -20,15 +22,17 @@ public class QuestionnaireMapper {
         );
     }
 
-    static QuestionnaireJpaEntity mapToJpaEntity(Questionnaire questionnaire, Long kitId) {
+    static QuestionnaireJpaEntity mapToJpaEntityToPersist(Questionnaire questionnaire, Long kitId, UUID createdBy) {
         return new QuestionnaireJpaEntity(
             null,
             questionnaire.getCode(),
+            questionnaire.getIndex(),
             questionnaire.getTitle(),
             questionnaire.getDescription(),
             questionnaire.getCreationTime(),
             questionnaire.getLastModificationTime(),
-            questionnaire.getIndex(),
+            createdBy,
+            createdBy,
             kitId
         );
     }

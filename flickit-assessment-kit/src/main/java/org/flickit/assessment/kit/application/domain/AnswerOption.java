@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public class AnswerOption {
 
     private final long id;
-    private final long questionId;
     private final String title;
     private final int index;
+    private final long questionId;
 }

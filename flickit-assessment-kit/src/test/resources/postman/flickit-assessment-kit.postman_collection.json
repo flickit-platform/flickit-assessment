@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "f85c557b-5318-439d-9535-d6bc087d37b6",
+		"_postman_id": "929a2186-9141-4fcb-b5a6-7b43c5991f20",
 		"name": "flickit-assessment-kit",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "6692064"
+		"_exporter_id": "11099181"
 	},
 	"item": [
 		{
@@ -75,106 +75,352 @@
 				}
 			},
 			"response": []
-		}, {
-          "name": "Get Kit User Access List",
-          "request": {
-            "method": "GET",
-            "header": [
-                {
-                  "key": "Authorization",
-                  "value": "{{authorization_header}}",
-                  "type": "text"
-                }
-            ],
-            "url": {
-              "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?page=0&size=10",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "{{api_path}}",
-                "assessment-kits",
-                "302",
-                "users"
-              ],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "10"
-                }
-              ]
-            }
-          },
-          "response": []
-        }, {
-        "name": "Delete Kit User Access",
-        "request": {
-          "method": "DELETE",
-          "header": [
-            {
-              "key": "Authorization",
-              "value": "{{authorization_header}}",
-              "type": "text"
-            }
-          ],
-          "url": {
-            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users/df92a05f-3b00-4bcf-86fc-e0960174b481",
-            "host": [
-              "{{base_url}}"
-            ],
-            "path": [
-              "{{api_path}}",
-              "assessment-kits",
-              "302",
-              "users",
-              "df92a05f-3b00-4bcf-86fc-e0960174b481"
-            ]
-          }
-        },
-        "response": []
-      }, {
-        "name": "Get User By Email",
-        "request": {
-          "method": "GET",
-          "header": [],
-          "url": {
-            "raw": "{{base_url}}/{{api_path}}/users/emails/example@gmail.com",
-            "host": [
-              "{{base_url}}"
-            ],
-            "path": [
-              "{{api_path}}",
-              "users",
-              "emails",
-              "example@gmail.com"
-            ]
-          }
-        },
-        "response": []
-      }, {
-        "name": "Get Kit Minimal Info",
-        "request": {
-          "method": "GET",
-          "header": [],
-          "url": {
-            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/min-info",
-            "host": [
-              "{{base_url}}"
-            ],
-            "path": [
-              "{{api_path}}",
-              "assessment-kits",
-              "302",
-              "min-info"
-            ]
-          }
-        },
-        "response": []
-      }
+		},
+		{
+			"name": "Get Kit User Access List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?page=0&size=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Kit User Access",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users/df92a05f-3b00-4bcf-86fc-e0960174b481",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302",
+						"users",
+						"df92a05f-3b00-4bcf-86fc-e0960174b481"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User By Email",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/users/emails/example@gmail.com",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"users",
+						"emails",
+						"example@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Kit Minimal Info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/min-info",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302",
+						"min-info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Expert Group List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups?page=0&size=20",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "20"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Expert Group",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "title",
+							"type": "text"
+						},
+						{
+							"key": "bio",
+							"value": "bio",
+							"type": "text"
+						},
+						{
+							"key": "about",
+							"value": "about",
+							"type": "text"
+						},
+						{
+							"key": "website",
+							"value": "http://www.website.com",
+							"type": "text"
+						},
+						{
+							"key": "picture",
+							"type": "file",
+							"src": "sample.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups"
+					],
+					"query": [
+						{
+							"key": "picture",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Kit DSL",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "dslFile",
+							"type": "file",
+							"src": "/C:/Users/MHZ/Desktop/correct-kit.zip"
+						},
+						{
+							"key": "expertGroupId",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/upload-dsl",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"upload-dsl"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create kit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"kitDslId\": 578,\n    \"isPrivate\": false,\n    \"expertGroupId\": 1,\n    \"title\":\"sample 7\",\n    \"summary\":\"sample\",\n    \"about\":\"summary\",\n    \"tagIds\": [1,2]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/create-by-dsl",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"create-by-dsl"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Expert Group",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "picture",
+							"type": "file",
+							"src": "/home/maziyar/Pictures/Screenshots/Screenshot from 2024-01-13 08-59-19.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups"
+					],
+					"query": [
+						{
+							"key": "picture",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Dsl Download Link",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/144/dsl-download-link",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"144",
+						"dsl-download-link"
+					]
+				}
+			},
+			"response": []
+		}
 	],
 	"event": [
 		{

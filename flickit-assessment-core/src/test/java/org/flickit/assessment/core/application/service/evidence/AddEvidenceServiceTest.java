@@ -34,8 +34,8 @@ class AddEvidenceServiceTest {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
             UUID.randomUUID(),
-            UUID.randomUUID(),
-            1L
+            1L,
+            UUID.randomUUID()
         );
         UUID expectedId = UUID.randomUUID();
         when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
@@ -61,8 +61,8 @@ class AddEvidenceServiceTest {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
             UUID.randomUUID(),
-            UUID.randomUUID(),
-            1L
+            1L,
+            UUID.randomUUID()
         );
         when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(false);
 

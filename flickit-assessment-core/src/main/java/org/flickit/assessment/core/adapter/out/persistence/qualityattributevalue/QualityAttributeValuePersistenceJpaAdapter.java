@@ -52,13 +52,24 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<QualityAttributeValue> loadAttributeValues(UUID assessmentResultId, Map<Long, MaturityLevel> maturityLevels) {
-        List<QualityAttributeValueJpaEntity> allAttributeValues = repository.findByAssessmentResultId(assessmentResultId);
+    public List<QualityAttributeValue> loadAll(UUID assessmentResultId, Map<Long, MaturityLevel> maturityLevels) {
+        List<QualityAttributeValueJpaEntity> entities = repository.findByAssessmentResultId(assessmentResultId);
+
+        return toAttributeValues(entities, maturityLevels);
+    }
+
+    public List<QualityAttributeValue> loadBySubjectId(UUID assessmentResultId, Long subjectId, Map<Long, MaturityLevel> maturityLevels) {
+        List<QualityAttributeValueJpaEntity> entities = repository.findByAssessmentResultIdAndSubjectId(assessmentResultId, subjectId);
+
+        return toAttributeValues(entities, maturityLevels);
+    }
+
+    private List<QualityAttributeValue> toAttributeValues(List<QualityAttributeValueJpaEntity> entities, Map<Long, MaturityLevel> maturityLevels) {
         Map<UUID, List<AttributeMaturityScoreJpaEntity>> attributeIdToScores =
-            attributeMaturityScoreRepository.findByAttributeValueIdIn(collectIds(allAttributeValues)).stream()
+            attributeMaturityScoreRepository.findByAttributeValueIdIn(collectIds(entities)).stream()
                 .collect(groupingBy(AttributeMaturityScoreJpaEntity::getAttributeValueId));
 
-        return allAttributeValues.stream()
+        return entities.stream()
             .map(x -> new QualityAttributeValue(
                 x.getId(),
                 new QualityAttribute(x.getQualityAttributeId(), 1, null),

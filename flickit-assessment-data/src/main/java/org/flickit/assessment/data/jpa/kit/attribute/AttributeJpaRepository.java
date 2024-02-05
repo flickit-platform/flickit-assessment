@@ -14,20 +14,24 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
     List<AttributeJpaEntity> findAllBySubjectId(long subjectId);
 
     @Modifying
-    @Query("UPDATE AttributeJpaEntity a SET " +
-        "a.title = :title, " +
-        "a.index = :index, " +
-        "a.description = :description, " +
-        "a.weight = :weight, " +
-        "a.lastModificationTime = :lastModificationTime, " +
-        "a.subjectId = :subjectId " +
-        "WHERE a.id = :id")
+    @Query("""
+            UPDATE AttributeJpaEntity a SET
+                a.title = :title,
+                a.index = :index,
+                a.description = :description,
+                a.weight = :weight,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastModifiedBy = :lastModifiedBy,
+                a.subject.id = :subjectId
+            WHERE a.id = :id
+        """)
     void update(@Param("id") long id,
                 @Param("title") String title,
                 @Param("index") int index,
                 @Param("description") String description,
                 @Param("weight") int weight,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                @Param("lastModifiedBy") UUID lastModifiedBy,
                 @Param("subjectId") long subjectId);
 
     @Query("""
@@ -48,7 +52,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId
             LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id and ov.optionId = ans.answerOptionId
             WHERE
-              qi.qualityAttributeId = :attributeId
+              qi.attributeId = :attributeId
               AND qi.maturityLevel.id = :maturityLevelId
             ORDER BY qr.title asc, qsn.index asc
         """)

@@ -7,7 +7,7 @@ public class AnswerOptionImpactDtoMother {
 
     private static long answerOptionImpactId = 134L;
 
-    public static AnswerOptionImpactDto createAnswerOptionImpactDto(QuestionImpactDto questionImpactDto) {
+    public static AnswerOptionImpactDto answerOptionImpactDto(QuestionImpactDto questionImpactDto) {
         return new AnswerOptionImpactDto(
             answerOptionImpactId++,
             1.0,

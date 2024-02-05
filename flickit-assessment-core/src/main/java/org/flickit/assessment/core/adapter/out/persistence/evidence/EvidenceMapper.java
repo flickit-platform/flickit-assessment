@@ -16,6 +16,7 @@ public class EvidenceMapper {
             param.creationTime(),
             param.lastModificationTime(),
             param.createdById(),
+            param.createdById(),
             param.assessmentId(),
             param.questionId(),
             false
@@ -26,7 +27,7 @@ public class EvidenceMapper {
         return new EvidenceListItem(
             entity.getId(),
             entity.getDescription(),
-            entity.getCreatedById(),
+            entity.getCreatedBy(),
             entity.getAssessmentId(),
             entity.getLastModificationTime()
         );

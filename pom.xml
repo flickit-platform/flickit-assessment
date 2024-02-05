@@ -22,10 +22,11 @@
 		<module>flickit-assessment-data</module>
 		<module>flickit-assessment-server</module>
 		<module>flickit-assessment-common</module>
-	</modules>
+        <module>flickit-advice-engine</module>
+    </modules>
 
 	<properties>
-		<revision>0.12.0-SNAPSHOT</revision>
+		<revision>0.13.0-SNAPSHOT</revision>
 
 		<java.version>17</java.version>
 		<spring-boot.version>3.0.6</spring-boot.version>
@@ -33,12 +34,12 @@
 		<sentry.version>7.1.0</sentry.version>
 		<sentry-maven-plugin.version>0.0.6</sentry-maven-plugin.version>
 		<archunit.version>1.1.0</archunit.version>
-
+        <minio.version>8.5.7</minio.version>
 		<jib-maven-plugin.version>3.3.1</jib-maven-plugin.version>
 		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
 		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
 
-		<sonar.organization>avansoft</sonar.organization>
+		<sonar.organization>flickit-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
@@ -137,7 +138,12 @@
             <version>${archunit.version}</version>
             <scope>test</scope>
         </dependency>
-	</dependencies>
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>${minio.version}</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
@@ -151,12 +157,12 @@
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
 						<labels>
 							<org.opencontainers.image.source>
-								https://github.com/avansoft/flickit-assessment-core
+								https://github.com/flickit-platform/flickit-assessment
 							</org.opencontainers.image.source>
 						</labels>
 					</container>
 					<from>
-						<image>ghcr.io/avansoft/flickit-assessment-core/jdk:17.0.7</image>
+						<image>ghcr.io/flickit-platform/jdk:17.0.7</image>
 					</from>
 				</configuration>
 			</plugin>

@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_SUBJECTS;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithSubjects;
@@ -57,7 +58,7 @@ class SubjectUpdateKitPersisterTest {
         doNothing().when(updateSubjectPort).update(any());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit);
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         ArgumentCaptor<UpdateSubjectPort.Param> param = ArgumentCaptor.forClass(UpdateSubjectPort.Param.class);
         verify(updateSubjectPort, times(2)).update(param.capture());
