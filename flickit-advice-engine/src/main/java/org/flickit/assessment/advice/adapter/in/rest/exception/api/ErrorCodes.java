@@ -6,5 +6,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorCodes {
 
-    public static final String COMPUTING_ADVICE_ERROR = "COMPUTING_ADVICE_ERROR";
+    public static final String ADVICE_CALCULATION_ERROR = "ADVICE_CALCULATION_ERROR";
 }

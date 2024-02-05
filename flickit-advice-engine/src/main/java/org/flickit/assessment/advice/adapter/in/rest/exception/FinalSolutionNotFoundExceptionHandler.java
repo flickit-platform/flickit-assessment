@@ -10,17 +10,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static org.flickit.assessment.advice.adapter.in.rest.exception.api.ErrorCodes.COMPUTING_ADVICE_ERROR;
+import static org.flickit.assessment.advice.adapter.in.rest.exception.api.ErrorCodes.ADVICE_CALCULATION_ERROR;
 
 @Slf4j
 @RestControllerAdvice
-public class CanNotFindFinalSolutionExceptionHandler {
+public class FinalSolutionNotFoundExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(FinalSolutionNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     ErrorResponseDto handle(FinalSolutionNotFoundException ex) {
-        log.error("Calculate advice error", ex);
-        return new ErrorResponseDto(COMPUTING_ADVICE_ERROR, MessageBundle.message(ex.getMessage()));
+        log.error("Advice calculation error", ex);
+        return new ErrorResponseDto(ADVICE_CALCULATION_ERROR, MessageBundle.message(ex.getMessage()));
     }
 }
