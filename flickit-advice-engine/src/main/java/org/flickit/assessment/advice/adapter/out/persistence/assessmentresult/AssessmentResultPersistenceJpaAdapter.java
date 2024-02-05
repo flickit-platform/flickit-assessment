@@ -10,9 +10,9 @@ import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND;
 
-@Component
+@Component("adviceAssessmentResultPersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class LoadAssessmentResultValidationFieldsJpaAdapter implements
+public class AssessmentResultPersistenceJpaAdapter implements
     LoadAssessmentResultValidationFieldsPort {
 
     private final AssessmentResultJpaRepository repository;

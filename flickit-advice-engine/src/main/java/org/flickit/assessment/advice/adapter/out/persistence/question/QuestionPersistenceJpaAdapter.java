@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Component("adviceQuestionPersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class LoadAdviceImpactfulQuestionsJpaAdapter implements
+public class QuestionPersistenceJpaAdapter implements
     LoadAdviceImpactfulQuestionsPort {
 
     private final QuestionJpaRepository repository;

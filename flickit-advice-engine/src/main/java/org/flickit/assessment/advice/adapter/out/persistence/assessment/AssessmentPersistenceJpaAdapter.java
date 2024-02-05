@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Component
+@Component("adviceAssessmentPersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class AssessmentUserAccessibilityJpaAdapter implements
+public class AssessmentPersistenceJpaAdapter implements
     UserAssessmentAccessibilityPort {
 
     private final AssessmentJpaRepository repository;
