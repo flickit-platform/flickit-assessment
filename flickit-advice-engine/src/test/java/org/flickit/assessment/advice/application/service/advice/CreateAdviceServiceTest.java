@@ -15,12 +15,14 @@ import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultPort;
-import org.flickit.assessment.advice.application.port.out.assessment.UserAssessmentAccessibilityPort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.question.LoadAdviceImpactfulQuestionsPort;
 import org.flickit.assessment.advice.application.port.out.question.LoadAdviceImpactfulQuestionsPort.Result;
+import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,8 +37,7 @@ import java.util.concurrent.ExecutionException;
 
 import static java.util.UUID.randomUUID;
 import static org.flickit.assessment.advice.application.service.QuestionMother.createQuestionWithTargetAndCurrentOption;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,7 +50,10 @@ class CreateAdviceServiceTest {
     private CreateAdviceService service;
 
     @Mock
-    private UserAssessmentAccessibilityPort userAssessmentAccessibilityPort;
+    private LoadAssessmentSpacePort loadAssessmentSpacePort;
+
+    @Mock
+    private CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
@@ -64,6 +68,28 @@ class CreateAdviceServiceTest {
     private LoadAdviceImpactfulQuestionsPort loadAdviceImpactfulQuestionsPort;
 
     @Test
+    void testCreateAdvice_AssessmentNotExist_ThrowException() {
+        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
+            randomUUID(),
+            attributeLevelTargets,
+            randomUUID()
+        );
+
+        when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
+            .thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_NOT_FOUND);
+        Mockito.verifyNoInteractions(
+            checkSpaceAccessPort,
+            loadAssessmentResultPort,
+            loadInfoPort,
+            solverManager,
+            loadAdviceImpactfulQuestionsPort
+        );
+    }
+
+    @Test
     void testCreateAdvice_UserHasNotAccessToAssessment_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
         CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
@@ -72,10 +98,15 @@ class CreateAdviceServiceTest {
             randomUUID()
         );
 
-        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        var spaceId = 5L;
+        when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
+            .thenReturn(Optional.of(spaceId));
+
+        when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.createAdvice(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         Mockito.verifyNoInteractions(
             loadAssessmentResultPort,
             loadInfoPort,
@@ -93,13 +124,19 @@ class CreateAdviceServiceTest {
             randomUUID()
         );
 
-        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        var spaceId = 5L;
+        when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
+            .thenReturn(Optional.of(spaceId));
+
+        when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), false, true)));
 
         assertThrows(CalculateNotValidException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
+        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+        verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
@@ -116,7 +153,11 @@ class CreateAdviceServiceTest {
             randomUUID()
         );
 
-        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        var spaceId = 5L;
+        when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
+            .thenReturn(Optional.of(spaceId));
+
+        when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -124,8 +165,9 @@ class CreateAdviceServiceTest {
 
         assertThrows(ConfidenceCalculationNotValidException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
 
-        verify(userAssessmentAccessibilityPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
+        verify(loadAssessmentSpacePort, times(1)).loadAssessmentSpaceId(param.getAssessmentId());
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+        verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
@@ -143,7 +185,10 @@ class CreateAdviceServiceTest {
             randomUUID()
         );
 
-        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        var spaceId = 5L;
+        when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
+            .thenReturn(Optional.of(spaceId));
+        when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), true, true)));
@@ -169,7 +214,8 @@ class CreateAdviceServiceTest {
 
         assertThrows(FinalSolutionNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
 
-        verify(userAssessmentAccessibilityPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
+        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+        verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
@@ -187,7 +233,11 @@ class CreateAdviceServiceTest {
             randomUUID()
         );
 
-        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        var spaceId = 5L;
+        when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
+            .thenReturn(Optional.of(spaceId));
+
+        when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), true, true)));
@@ -213,7 +263,8 @@ class CreateAdviceServiceTest {
 
         assertThrows(FinalSolutionNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
 
-        verify(userAssessmentAccessibilityPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
+        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+        verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
@@ -231,8 +282,9 @@ class CreateAdviceServiceTest {
             attributeLevelTargets,
             randomUUID()
         );
+        var spaceId = 5L;
 
-        mockPorts(param);
+        mockPorts(param, spaceId);
 
         var result = service.createAdvice(param);
 
@@ -244,15 +296,18 @@ class CreateAdviceServiceTest {
             assertNotEquals(0, question.benefit());
         }
 
-        verify(userAssessmentAccessibilityPort, times(1)).hasAccess(param.getAssessmentId(), param.getCurrentUserId());
+        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+        verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         verify(loadAdviceImpactfulQuestionsPort, times(1)).loadQuestions(any());
     }
 
-    private void mockPorts(CreateAdviceUseCase.Param param) throws InterruptedException, ExecutionException {
-        when(userAssessmentAccessibilityPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+    private void mockPorts(CreateAdviceUseCase.Param param, Long spaceId) throws InterruptedException, ExecutionException {
+        when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
+            .thenReturn(Optional.of(spaceId));
+        when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), true, true)));

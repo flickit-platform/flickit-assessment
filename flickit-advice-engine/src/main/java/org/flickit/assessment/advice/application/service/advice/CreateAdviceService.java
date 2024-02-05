@@ -12,8 +12,9 @@ import org.flickit.assessment.advice.application.exception.FinalSolutionNotFound
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultPort;
-import org.flickit.assessment.advice.application.port.out.assessment.UserAssessmentAccessibilityPort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.question.LoadAdviceImpactfulQuestionsPort;
+import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
@@ -36,7 +37,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Transactional(readOnly = true)
 public class CreateAdviceService implements CreateAdviceUseCase {
 
-    private final UserAssessmentAccessibilityPort userAssessmentAccessibilityPort;
+    private final LoadAssessmentSpacePort loadAssessmentSpacePort;
+    private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAdviceCalculationInfoPort loadAdviceCalculationInfoPort;
     private final SolverManager<Plan, UUID> solverManager;
@@ -68,7 +70,10 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
-        if (!userAssessmentAccessibilityPort.hasAccess(assessmentId, currentUserId))
+        var spaceId = loadAssessmentSpacePort.loadAssessmentSpaceId(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_NOT_FOUND));
+
+        if (!checkSpaceAccessPort.checkIsMember(spaceId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
