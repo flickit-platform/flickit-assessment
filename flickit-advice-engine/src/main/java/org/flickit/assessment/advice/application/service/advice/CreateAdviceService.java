@@ -3,6 +3,7 @@ package org.flickit.assessment.advice.application.service.advice;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
@@ -10,12 +11,13 @@ import org.flickit.assessment.advice.application.domain.advice.AdviceQuestion;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultValidationFieldsPort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.assessment.UserAssessmentAccessibilityPort;
 import org.flickit.assessment.advice.application.port.out.question.LoadAdviceImpactfulQuestionsPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -36,7 +37,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class CreateAdviceService implements CreateAdviceUseCase {
 
     private final UserAssessmentAccessibilityPort userAssessmentAccessibilityPort;
-    private final LoadAssessmentResultValidationFieldsPort loadAssessmentResultValidationFieldsPort;
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAdviceCalculationInfoPort loadAdviceCalculationInfoPort;
     private final SolverManager<Plan, UUID> solverManager;
     private final LoadAdviceImpactfulQuestionsPort loadAdviceImpactfulQuestionsPort;
@@ -45,9 +46,10 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     public Result createAdvice(Param param) {
         validateUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
-        var validationFields = loadAssessmentResultValidationFieldsPort.loadValidationFields(param.getAssessmentId());
-        validateAssessmentResultCalculation(validationFields, param.getAssessmentId());
-        validateAssessmentResultConfidence(validationFields, param.getAssessmentId());
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
+        validateAssessmentResultCalculation(assessmentResult, param.getAssessmentId());
+        validateAssessmentResultConfidence(assessmentResult, param.getAssessmentId());
 
         var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         var solution = solverManager.solve(UUID.randomUUID(), problem);
@@ -70,15 +72,15 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
-    private void validateAssessmentResultConfidence(LoadAssessmentResultValidationFieldsPort.Result validationFields, UUID param) {
-        if (!Boolean.TRUE.equals(validationFields.isConfidenceValid())) {
+    private void validateAssessmentResultConfidence(AssessmentResult assessmentResult, UUID param) {
+        if (!Boolean.TRUE.equals(assessmentResult.isConfidenceValid())) {
             log.warn("The calculated confidence value is not valid for [assessmentId={}].", param);
             throw new ConfidenceCalculationNotValidException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
         }
     }
 
-    private void validateAssessmentResultCalculation(LoadAssessmentResultValidationFieldsPort.Result validationFields, UUID param) {
-        if (!Boolean.TRUE.equals(validationFields.isCalculateValid())) {
+    private void validateAssessmentResultCalculation(AssessmentResult assessmentResult, UUID param) {
+        if (!Boolean.TRUE.equals(assessmentResult.isCalculateValid())) {
             log.warn("The calculated result is not valid for [assessmentId={}].", param);
             throw new CalculateNotValidException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
         }
