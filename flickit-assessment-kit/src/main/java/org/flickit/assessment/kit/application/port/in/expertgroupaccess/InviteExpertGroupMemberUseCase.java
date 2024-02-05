@@ -8,7 +8,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.ADD_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL;
 
 public interface InviteExpertGroupMemberUseCase {
 
@@ -18,7 +18,7 @@ public interface InviteExpertGroupMemberUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = ADD_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL)
+        @NotNull(message = INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL)
         Long expertGroupId;
         UUID userId;
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
