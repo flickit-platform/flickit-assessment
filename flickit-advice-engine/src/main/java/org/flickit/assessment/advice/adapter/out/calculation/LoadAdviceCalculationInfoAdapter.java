@@ -21,8 +21,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
@@ -91,7 +91,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
 
     private static Map<Long, Integer> mapImpactfulQuestionIdToWeight(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
         Map<Long, List<ImprovableImpactfulQuestionView>> questionInfoGroupedById = impactfulQuestions.stream()
-            .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getQuestionId));
+            .collect(groupingBy(ImprovableImpactfulQuestionView::getQuestionId));
         Map<Long, Integer> questionIdToWeight = new HashMap<>();
         questionInfoGroupedById.forEach((questionId, questionInfo) -> {
             Integer questionImpactWeight = questionInfo.get(0).getQuestionImpactWeight();
@@ -102,20 +102,20 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
 
     private static Map<Long, List<ImpactfulQuestionOption>> mapImpactfulQuestionIdToOptions(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
         return impactfulQuestions.stream()
-            .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getQuestionId,
-                Collectors.mapping(
+            .collect(groupingBy(ImprovableImpactfulQuestionView::getQuestionId,
+                mapping(
                     impactfulQuestion -> new ImpactfulQuestionOption(
                         impactfulQuestion.getOptionId(),
                         impactfulQuestion.getOptionIndex(),
                         impactfulQuestion.getOptionImpactValue()
                     ),
-                    Collectors.toList()
+                    toList()
                 )));
     }
 
     private static Map<Long, Integer> mapImpactfulQuestionIdToAnswer(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
         Map<Long, List<ImprovableImpactfulQuestionView>> questionInfoGroupedById = impactfulQuestions.stream()
-            .collect(Collectors.groupingBy(ImprovableImpactfulQuestionView::getQuestionId));
+            .collect(groupingBy(ImprovableImpactfulQuestionView::getQuestionId));
         Map<Long, Integer> questionIdToQuestionAnswer = new HashMap<>();
         questionInfoGroupedById.forEach((questionId, questionInfo) -> {
             Integer answeredOptionIndex = questionInfo.get(0).getAnsweredOptionIndex();
@@ -137,12 +137,11 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                                                            Question question,
                                                            AttributeLevelScore attributeLevelScore) {
         Map<Long, ImpactfulQuestionOption> idToOption = options.stream()
-            .collect(Collectors.toMap(op -> op.impactfulOptionId, Function.identity()));
+            .collect(toMap(op -> op.impactfulOptionId, Function.identity()));
         question.getOptions().forEach(op -> {
             ImpactfulQuestionOption option = idToOption.get(op.getId());
-            if (option != null) {
+            if (option != null)
                 op.getPromisedScores().put(attributeLevelScore, option.impactfulOptionImpactValue);
-            }
         });
     }
 
