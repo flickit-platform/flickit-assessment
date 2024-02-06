@@ -3,7 +3,6 @@ package org.flickit.assessment.advice.application.service.advice;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
@@ -31,10 +30,10 @@ import java.util.stream.Collectors;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
-@Service
 @Slf4j
-@RequiredArgsConstructor
+@Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class CreateAdviceService implements CreateAdviceUseCase {
 
     private final LoadAssessmentSpacePort loadAssessmentSpacePort;
@@ -48,10 +47,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     public Result createAdvice(Param param) {
         validateUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
-        validateAssessmentResultCalculation(assessmentResult, param.getAssessmentId());
-        validateAssessmentResultConfidence(assessmentResult, param.getAssessmentId());
+        validateCalculatedAssessmentResult(param.getAssessmentId());
 
         var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         var solution = solverManager.solve(UUID.randomUUID(), problem);
@@ -77,16 +73,16 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
-    private void validateAssessmentResultConfidence(AssessmentResult assessmentResult, UUID param) {
+    private void validateCalculatedAssessmentResult(UUID assessmentId) {
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
         if (!Boolean.TRUE.equals(assessmentResult.isConfidenceValid())) {
-            log.warn("The calculated confidence value is not valid for [assessmentId={}].", param);
+            log.warn("The calculated confidence value is not valid for [assessmentId={}].", assessmentId);
             throw new ConfidenceCalculationNotValidException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
         }
-    }
 
-    private void validateAssessmentResultCalculation(AssessmentResult assessmentResult, UUID param) {
         if (!Boolean.TRUE.equals(assessmentResult.isCalculateValid())) {
-            log.warn("The calculated result is not valid for [assessmentId={}].", param);
+            log.warn("The calculated result is not valid for [assessmentId={}].", assessmentId);
             throw new CalculateNotValidException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
         }
     }
@@ -112,7 +108,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
                     q.attributes(),
                     q.questionnaire());
             }).sorted(Comparator.comparingDouble(AdviceListItem::benefit))
-            .collect(Collectors.toList());
+            .toList();
 
         return new Result(questionListItems);
     }
