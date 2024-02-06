@@ -153,6 +153,9 @@ class CreateAdviceServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
 
+        when(assessmentAttrLevelExistencePort.exists(param.getAssessmentId(), 1L, 2L))
+            .thenReturn(true);
+
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), false, true)));
 
@@ -180,6 +183,9 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
+            .thenReturn(true);
+
+        when(assessmentAttrLevelExistencePort.exists(param.getAssessmentId(), 1L, 2L))
             .thenReturn(true);
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -211,6 +217,8 @@ class CreateAdviceServiceTest {
         when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
+            .thenReturn(true);
+        when(assessmentAttrLevelExistencePort.exists(param.getAssessmentId(), 1L, 2L))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), true, true)));
@@ -260,6 +268,8 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
+            .thenReturn(true);
+        when(assessmentAttrLevelExistencePort.exists(param.getAssessmentId(), 1L, 2L))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), true, true)));
@@ -320,6 +330,7 @@ class CreateAdviceServiceTest {
 
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
+        verify(assessmentAttrLevelExistencePort, times(1)).exists(param.getAssessmentId(), 1L, 2L);
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
@@ -330,6 +341,8 @@ class CreateAdviceServiceTest {
         when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
+            .thenReturn(true);
+        when(assessmentAttrLevelExistencePort.exists(param.getAssessmentId(), 1L, 2L))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), true, true)));
