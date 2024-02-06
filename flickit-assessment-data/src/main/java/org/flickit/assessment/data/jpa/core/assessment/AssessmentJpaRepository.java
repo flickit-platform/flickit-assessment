@@ -69,6 +69,28 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         """)
     Optional<UUID> checkUserAccess(@Param(value = "assessmentId") UUID assessmentId,
                                    @Param(value = "userId") UUID userId);
+
+    @Query("""
+            SELECT CASE WHEN EXISTS(
+                SELECT 1
+                FROM AssessmentJpaEntity asm
+                JOIN AssessmentKitJpaEntity kit
+                ON asm.assessmentKitId = kit.id
+                JOIN AttributeJpaEntity atr
+                ON atr.kitId = kit.id
+                JOIN MaturityLevelJpaEntity level
+                ON level.kitId = kit.id
+                WHERE asm.id = :assessmentId
+                AND atr.id = :attributeId
+                AND level.id = :maturityLevelId
+            )
+            THEN true
+            ELSE false
+            END
+    """)
+    boolean existsByAttributeIdAndMaturityLevelId(UUID assessmentId,
+                                                  Long attributeId,
+                                                  Long maturityLevelId);
 }
 
 

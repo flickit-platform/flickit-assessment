@@ -10,7 +10,8 @@ import org.flickit.assessment.advice.application.domain.advice.*;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
-import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
+import org.flickit.assessment.advice.application.port.out.assessment.AssessmentAttrLevelExistencePort;
+import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort;
@@ -64,6 +65,9 @@ class CreateAdviceServiceTest {
     @Mock
     private LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
 
+    @Mock
+    private AssessmentAttrLevelExistencePort assessmentAttrLevelExistencePort;
+
     @Test
     void testCreateAdvice_AssessmentNotExist_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
@@ -84,6 +88,27 @@ class CreateAdviceServiceTest {
             solverManager,
             loadCreatedAdviceDetailsPort
         );
+    }
+
+    @Test
+    void testCreateAdvice_AssessmentAttributeLevelNotExist_ThrowException() {
+        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        UUID assessmentId = randomUUID();
+        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
+            assessmentId,
+            attributeLevelTargets,
+            randomUUID()
+        );
+        var spaceId = 5L;
+
+        when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
+            .thenReturn(Optional.of(spaceId));
+        when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
+            .thenReturn(true);
+        when(assessmentAttrLevelExistencePort.exists(assessmentId,1L, 2L))
+            .thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_LEVEL_NOT_FOUND);
     }
 
     @Test

@@ -13,4 +13,5 @@ public class ErrorMessageKey {
     public static final String CREATE_ADVICE_ASSESSMENT_NOT_FOUND = "create-advice.assessment.notFound";
     public static final String CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID = "create-advice.assessmentResult.notValid";
     public static final String CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION = "create-advice.finding-best-solution.execution";
+    public static final String CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_LEVEL_NOT_FOUND = "create-advice.assessmentAttributeLevel.notFound";
 }
