@@ -9,6 +9,8 @@ import org.flickit.assessment.kit.application.port.out.mail.SendExpertGroupInvit
 import org.flickit.assessment.kit.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 import static org.flickit.assessment.kit.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_EMAIL_NOT_FOUND;
 
 @Service
@@ -21,17 +23,19 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
 
     @Override
     public void addMember(Param param) {
+        UUID inviteToken = UUID.randomUUID();
         String email = loadUserEmailByUserIdPort.loadEmail(param.getUserId()).orElseThrow(() ->
             new ResourceNotFoundException(INVITE_EXPERT_GROUP_MEMBER_EMAIL_NOT_FOUND));
-        inviteExpertGroupMemberPort.invite(toParam(param));
-        sendExpertGroupInvitationMailPort.sendEmail(email);
+        inviteExpertGroupMemberPort.invite(toParam(param, inviteToken));
+        sendExpertGroupInvitationMailPort.sendEmail(email, inviteToken);
     }
 
-    private InviteExpertGroupMemberPort.Param toParam(Param param) {
+    private InviteExpertGroupMemberPort.Param toParam(Param param, UUID inviteToken) {
         return new InviteExpertGroupMemberPort.Param(
             param.getExpertGroupId(),
             param.getUserId(),
             param.getCurrentUserId(),
+            inviteToken,
             ExpertGroupAccessStatus.PENDING
         );
     }

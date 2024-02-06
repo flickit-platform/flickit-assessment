@@ -16,6 +16,7 @@ public class ExpertGroupAccessMapper {
             param.expertGroupId(),
             param.inviteExpirationDate(),
             param.userId(),
+            null,
             ExpertGroupAccessStatus.ACTIVE
         );
     }
@@ -26,6 +27,7 @@ public class ExpertGroupAccessMapper {
             param.expertGroupId(),
             null,
             param.userId(),
+            param.inviteToken(),
             param.status()
         );
     }

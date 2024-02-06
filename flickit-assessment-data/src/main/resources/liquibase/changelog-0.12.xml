@@ -1384,4 +1384,13 @@
         <dropNotNullConstraint tableName="baseinfo_expertgroupaccess" columnName="user_id"/>
     </changeSet>
 
+    <changeSet id="0.12-246" author="Maziyar Gerami">
+        <addColumn tableName="baseinfo_expertgroupaccess">
+            <column name="invite_token" type="uuid" defaultValue="null">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+
 </databaseChangeLog>

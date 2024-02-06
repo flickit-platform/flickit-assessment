@@ -6,6 +6,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 @AllArgsConstructor
 public class MailAdapter implements
@@ -14,11 +16,11 @@ public class MailAdapter implements
     private JavaMailSender mailSender;
 
     @Override
-    public void sendEmail(String to) {
+    public void sendEmail(String to, UUID inviteToken) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("subject");
-        message.setText("body");
+        message.setText("body" + inviteToken.toString());
         mailSender.send(message);
     }
 }
