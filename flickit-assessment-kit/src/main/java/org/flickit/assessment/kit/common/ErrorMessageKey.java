@@ -68,6 +68,7 @@ public class ErrorMessageKey {
 
     public static final String INVITE_EXPERT_GROUP_MEMBER_EMAIL_NOT_FOUND = "invite-expert-group-member.email.not-found";
     public static final String INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL = "invite-expert-group-member.expert-group-id.not-null";
+    public static final String INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_UNIQUE = "invite-expert-group-member.expert-group-id-user-id.duplicate";
 
     public static final String UPLOAD_KIT_DSL_KIT_NOT_NULL = "upload-kit.dsl-file.notNull";
     public static final String UPLOAD_KIT_DSL_EXPERT_GROUP_ID_NOT_NULL = "upload-kit.expert-group-id.notNull";
