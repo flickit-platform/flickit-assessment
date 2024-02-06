@@ -90,13 +90,12 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
     }
 
     private static Map<Long, Integer> mapImpactfulQuestionIdToWeight(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
-        Map<Long, List<ImprovableImpactfulQuestionView>> questionInfoGroupedById = impactfulQuestions.stream()
-            .collect(groupingBy(ImprovableImpactfulQuestionView::getQuestionId));
         Map<Long, Integer> questionIdToWeight = new HashMap<>();
-        questionInfoGroupedById.forEach((questionId, questionInfo) -> {
-            Integer questionImpactWeight = questionInfo.get(0).getQuestionImpactWeight();
-            questionIdToWeight.put(questionId, questionImpactWeight);
-        });
+        for (ImprovableImpactfulQuestionView question: impactfulQuestions) {
+            Long questionId = question.getQuestionId();
+            Integer weight = question.getQuestionImpactWeight();
+            questionIdToWeight.putIfAbsent(questionId, weight);
+        }
         return questionIdToWeight;
     }
 
@@ -114,16 +113,15 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
     }
 
     private static Map<Long, Integer> mapImpactfulQuestionIdToAnswer(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
-        Map<Long, List<ImprovableImpactfulQuestionView>> questionInfoGroupedById = impactfulQuestions.stream()
-            .collect(groupingBy(ImprovableImpactfulQuestionView::getQuestionId));
         Map<Long, Integer> questionIdToQuestionAnswer = new HashMap<>();
-        questionInfoGroupedById.forEach((questionId, questionInfo) -> {
-            Integer answeredOptionIndex = questionInfo.get(0).getAnsweredOptionIndex();
+        for (ImprovableImpactfulQuestionView question: impactfulQuestions) {
+            Long questionId = question.getQuestionId();
+            Integer answeredOptionIndex = question.getAnsweredOptionIndex();
             if (answeredOptionIndex != null) {
                 answeredOptionIndex -= 1;
             }
-            questionIdToQuestionAnswer.put(questionId, answeredOptionIndex);
-        });
+            questionIdToQuestionAnswer.putIfAbsent(questionId, answeredOptionIndex);
+        }
         return questionIdToQuestionAnswer;
     }
 
