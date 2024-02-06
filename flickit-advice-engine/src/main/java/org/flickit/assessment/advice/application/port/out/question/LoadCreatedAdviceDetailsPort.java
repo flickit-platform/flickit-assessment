@@ -2,18 +2,17 @@ package org.flickit.assessment.advice.application.port.out.question;
 
 import org.flickit.assessment.advice.application.domain.advice.AdviceAttribute;
 import org.flickit.assessment.advice.application.domain.advice.AdviceOption;
+import org.flickit.assessment.advice.application.domain.advice.AdviceQuestion;
 import org.flickit.assessment.advice.application.domain.advice.AdviceQuestionnaire;
 
 import java.util.List;
 
-public interface LoadAdviceImpactfulQuestionsPort {
+public interface LoadCreatedAdviceDetailsPort {
 
-    List<Result> loadQuestions(List<Long> questionIds);
+    List<Result> loadAdviceDetails(List<Long> questionIds);
 
     record Result(
-        long id,
-        String title,
-        int index,
+        AdviceQuestion question,
         List<AdviceOption> options,
         List<AdviceAttribute> attributes,
         AdviceQuestionnaire questionnaire

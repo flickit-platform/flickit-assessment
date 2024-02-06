@@ -6,13 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
-import org.flickit.assessment.advice.application.domain.advice.AdviceQuestion;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
-import org.flickit.assessment.advice.application.port.out.question.LoadAdviceImpactfulQuestionsPort;
+import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
@@ -41,7 +40,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAdviceCalculationInfoPort loadAdviceCalculationInfoPort;
     private final SolverManager<Plan, UUID> solverManager;
-    private final LoadAdviceImpactfulQuestionsPort loadAdviceImpactfulQuestionsPort;
+    private final LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
 
     @Override
     public Result createAdvice(Param param) {
@@ -92,24 +91,24 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             .filter(Question::isRecommended)
             .collect(Collectors.toMap(Question::getId, Function.identity()));
 
-        var questions = loadAdviceImpactfulQuestionsPort.loadQuestions(questionIdsMap.keySet().stream().toList());
+        var adviceQuestionDetails = loadCreatedAdviceDetailsPort.loadAdviceDetails(questionIdsMap.keySet().stream().toList());
 
-        var questionListItems = questions.stream().map(q -> {
-                var question = questionIdsMap.get(q.id());
-                var answeredOption = question.getCurrentOptionIndex() != null ? q.options().get(question.getCurrentOptionIndex()) : null;
-                var recommendedOption = q.options().get(question.getRecommendedOptionIndex());
+        var adviceListItems = adviceQuestionDetails.stream().map(adv -> {
+                var question = questionIdsMap.get(adv.question().id());
+                var answeredOption = question.getCurrentOptionIndex() != null ? adv.options().get(question.getCurrentOptionIndex()) : null;
+                var recommendedOption = adv.options().get(question.getRecommendedOptionIndex());
                 var benefit = question.calculateBenefit();
 
                 return new AdviceListItem(
-                    new AdviceQuestion(q.id(), q.title(), q.index()),
+                    adv.question(),
                     answeredOption,
                     recommendedOption,
                     benefit,
-                    q.attributes(),
-                    q.questionnaire());
+                    adv.attributes(),
+                    adv.questionnaire());
             }).sorted(Comparator.comparingDouble(AdviceListItem::benefit))
             .toList();
 
-        return new Result(questionListItems);
+        return new Result(adviceListItems);
     }
 }

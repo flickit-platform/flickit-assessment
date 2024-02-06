@@ -6,18 +6,15 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.Plan;
-import org.flickit.assessment.advice.application.domain.advice.AdviceAttribute;
-import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
-import org.flickit.assessment.advice.application.domain.advice.AdviceOption;
-import org.flickit.assessment.advice.application.domain.advice.AdviceQuestionnaire;
+import org.flickit.assessment.advice.application.domain.advice.*;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
-import org.flickit.assessment.advice.application.port.out.question.LoadAdviceImpactfulQuestionsPort;
-import org.flickit.assessment.advice.application.port.out.question.LoadAdviceImpactfulQuestionsPort.Result;
+import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort;
+import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort.Result;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
@@ -65,7 +62,7 @@ class CreateAdviceServiceTest {
     private SolverManager<Plan, UUID> solverManager;
 
     @Mock
-    private LoadAdviceImpactfulQuestionsPort loadAdviceImpactfulQuestionsPort;
+    private LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
 
     @Test
     void testCreateAdvice_AssessmentNotExist_ThrowException() {
@@ -85,7 +82,7 @@ class CreateAdviceServiceTest {
             loadAssessmentResultPort,
             loadInfoPort,
             solverManager,
-            loadAdviceImpactfulQuestionsPort
+            loadCreatedAdviceDetailsPort
         );
     }
 
@@ -111,7 +108,7 @@ class CreateAdviceServiceTest {
             loadAssessmentResultPort,
             loadInfoPort,
             solverManager,
-            loadAdviceImpactfulQuestionsPort
+            loadCreatedAdviceDetailsPort
         );
     }
 
@@ -140,7 +137,7 @@ class CreateAdviceServiceTest {
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadAdviceImpactfulQuestionsPort
+            loadCreatedAdviceDetailsPort
         );
     }
 
@@ -171,7 +168,7 @@ class CreateAdviceServiceTest {
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadAdviceImpactfulQuestionsPort
+            loadCreatedAdviceDetailsPort
         );
     }
 
@@ -220,7 +217,7 @@ class CreateAdviceServiceTest {
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
-            loadAdviceImpactfulQuestionsPort
+            loadCreatedAdviceDetailsPort
         );
     }
     @SneakyThrows
@@ -269,7 +266,7 @@ class CreateAdviceServiceTest {
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
-            loadAdviceImpactfulQuestionsPort
+            loadCreatedAdviceDetailsPort
         );
     }
 
@@ -288,7 +285,7 @@ class CreateAdviceServiceTest {
 
         var result = service.createAdvice(param);
 
-        for (AdviceListItem question : result.questions()) {
+        for (AdviceListItem question : result.adviceItems()) {
             assertNotNull(question.recommendedOption());
             assertNotNull(question.attributes());
             assertNotNull(question.questionnaire());
@@ -301,7 +298,7 @@ class CreateAdviceServiceTest {
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
-        verify(loadAdviceImpactfulQuestionsPort, times(1)).loadQuestions(any());
+        verify(loadCreatedAdviceDetailsPort, times(1)).loadAdviceDetails(any());
     }
 
     private void mockPorts(CreateAdviceUseCase.Param param, Long spaceId) throws InterruptedException, ExecutionException {
@@ -342,7 +339,7 @@ class CreateAdviceServiceTest {
             ));
         when(solverJob.getFinalBestSolution()).thenReturn(solution);
 
-
+        var adviceQuestion1 = new AdviceQuestion(question1.getId(), "what?", 12);
         var questionnaire = new AdviceQuestionnaire(15L, "Dev ops");
         var attribute = new AdviceAttribute(216L, "Software Efficiency");
         var optionListItems1 = List.of(
@@ -351,16 +348,17 @@ class CreateAdviceServiceTest {
             new AdviceOption(3, "caption3"),
             new AdviceOption(4, "caption4")
         );
-        var questionsPortResult1 = new Result(question1.getId(), "what?", 12, optionListItems1, List.of(attribute), questionnaire);
+        var questionsPortResult1 = new Result(adviceQuestion1, optionListItems1, List.of(attribute), questionnaire);
 
+        var adviceQuestion2 = new AdviceQuestion(question2.getId(), "what?", 15);
         var optionListItems2 = List.of(
             new AdviceOption(1, "caption1"),
             new AdviceOption(2, "caption2"),
             new AdviceOption(3, "caption3"),
             new AdviceOption(4, "caption4")
         );
-        var questionsPortResult2 = new Result(question2.getId(), "what?", 15, optionListItems2, List.of(attribute), questionnaire);
-        when(loadAdviceImpactfulQuestionsPort.loadQuestions(List.of(question1.getId(), question2.getId())))
+        var questionsPortResult2 = new Result(adviceQuestion2, optionListItems2, List.of(attribute), questionnaire);
+        when(loadCreatedAdviceDetailsPort.loadAdviceDetails(List.of(question1.getId(), question2.getId())))
             .thenReturn(List.of(questionsPortResult1, questionsPortResult2));
     }
 }

@@ -105,5 +105,5 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
           WHERE
             q.id IN :ids
         """)
-    List<QuestionAdviceView> findAdviceQuestions(@Param("ids") List<Long> ids);
+    List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids);
 }
