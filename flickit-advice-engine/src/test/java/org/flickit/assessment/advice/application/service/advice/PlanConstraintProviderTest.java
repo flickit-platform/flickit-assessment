@@ -19,7 +19,6 @@ class PlanConstraintProviderTest {
         Question question1 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, null, 1);
         Question question2 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0, 0);
 
-
         constraintVerifier.verifyThat(PlanConstraintProvider::minGain)
             .given(question1, question2, attributeLevelScore)
             .penalizesBy(8);
@@ -31,10 +30,9 @@ class PlanConstraintProviderTest {
         Question question1 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0, 0);
         Question question2 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0, 0);
 
-
         constraintVerifier.verifyThat(PlanConstraintProvider::minGain)
             .given(
-                    attributeLevelScore,
+                attributeLevelScore,
                 question1,
                 question2
             )
