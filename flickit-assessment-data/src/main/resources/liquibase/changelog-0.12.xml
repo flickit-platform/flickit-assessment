@@ -1392,5 +1392,9 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.12-247" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="baseinfo_expertgroupaccess" columnNames="expert_group_id,user_id"
+                             constraintName="uq_baseinfo_expertgroupaccess_expertgroupid_userid"/>
+    </changeSet>
 
 </databaseChangeLog>
