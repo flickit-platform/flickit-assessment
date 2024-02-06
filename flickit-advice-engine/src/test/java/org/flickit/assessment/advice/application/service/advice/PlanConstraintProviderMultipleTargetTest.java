@@ -1,9 +1,10 @@
-package org.flickit.assessment.advice.application.service;
+package org.flickit.assessment.advice.application.service.advice;
 
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
+import org.flickit.assessment.advice.application.service.QuestionMother;
 import org.junit.jupiter.api.Test;
 
 class PlanConstraintProviderMultipleTargetTest {

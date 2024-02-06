@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.service;
+package org.flickit.assessment.advice.application.service.advice;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
