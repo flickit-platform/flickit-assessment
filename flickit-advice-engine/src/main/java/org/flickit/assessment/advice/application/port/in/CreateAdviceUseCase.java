@@ -42,6 +42,6 @@ public interface CreateAdviceUseCase {
     record AttributeLevelTarget(long attributeId, long maturityLevelId) {
     }
 
-    record Result(List<AdviceListItem> questions) {
+    record Result(List<AdviceListItem> adviceItems) {
     }
 }

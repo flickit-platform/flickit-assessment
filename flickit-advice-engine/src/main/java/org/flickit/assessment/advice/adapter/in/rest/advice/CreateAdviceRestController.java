@@ -35,6 +35,6 @@ public class CreateAdviceRestController {
     }
 
     private CreateAdviceResponseDto toResponseDto(Result result) {
-        return new CreateAdviceResponseDto(result.questions());
+        return new CreateAdviceResponseDto(result.adviceItems());
     }
 }
