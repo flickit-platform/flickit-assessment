@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.exception;
+package org.flickit.assessment.common.exception;
 
 public class CalculateNotValidException extends RuntimeException {
 

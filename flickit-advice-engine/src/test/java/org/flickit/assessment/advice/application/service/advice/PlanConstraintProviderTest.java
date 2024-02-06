@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.service;
+package org.flickit.assessment.advice.application.service.advice;
 
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
@@ -16,9 +16,8 @@ class PlanConstraintProviderTest {
     @Test
     void gainLeastTest_PenalizesWhenQuestionsGainIsLessThanTarget() {
         AttributeLevelScore attributeLevelScore = new AttributeLevelScore(0, 10, 0, 1);
-        Question question1 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0, 1);
+        Question question1 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, null, 1);
         Question question2 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0, 0);
-
 
         constraintVerifier.verifyThat(PlanConstraintProvider::minGain)
             .given(question1, question2, attributeLevelScore)
@@ -31,10 +30,9 @@ class PlanConstraintProviderTest {
         Question question1 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0, 0);
         Question question2 = createQuestionWithTargetAndOptionIndexes(attributeLevelScore, 0, 0);
 
-
         constraintVerifier.verifyThat(PlanConstraintProvider::minGain)
             .given(
-                    attributeLevelScore,
+                attributeLevelScore,
                 question1,
                 question2
             )
