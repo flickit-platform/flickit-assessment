@@ -21,7 +21,7 @@ public class AnswerOptionImpactMapper {
     }
 
     public static AnswerOptionImpactJpaEntity mapToJpaEntity(CreateAnswerOptionImpactPort.Param param,
-                                                             QuestionImpactJpaEntity questionImpactEntity) {
+                                                             QuestionImpactJpaEntity questionImpactEntity, Long lastReferenceNumber) {
         return new AnswerOptionImpactJpaEntity(
             null,
             param.optionId(),
@@ -30,7 +30,8 @@ public class AnswerOptionImpactMapper {
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.createdBy(),
-            param.createdBy()
+            param.createdBy(),
+            lastReferenceNumber + 1
         );
     }
 }

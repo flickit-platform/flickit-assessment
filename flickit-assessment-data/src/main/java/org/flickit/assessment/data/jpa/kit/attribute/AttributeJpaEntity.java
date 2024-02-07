@@ -70,4 +70,7 @@ public class AttributeJpaEntity {
     @ManyToOne
     @JoinColumn(name = "subject_id", referencedColumnName = "id")
     private SubjectJpaEntity subject;
+
+    @Column(name = "reference_number", nullable = false)
+    private Long referenceNumber;
 }

@@ -60,4 +60,10 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                                                                @Param("attributeId") Long attributeId,
                                                                @Param("maturityLevelId") Long maturityLevelId);
 
+    @Query("""
+            SELECT MAX(a.referenceNumber)
+            FROM AttributeJpaEntity a
+            WHERE a.kitId = :kitId
+        """)
+    Long findLastReferenceNumberByKitId(@Param(value = "kitId") Long kitId);
 }

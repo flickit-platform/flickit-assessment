@@ -21,7 +21,8 @@ public class QuestionJpaEntityMother {
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),
-            UUID.randomUUID()
+            UUID.randomUUID(),
+            1L
         );
     }
 }

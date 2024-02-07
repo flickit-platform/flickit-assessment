@@ -72,4 +72,7 @@ public class QuestionImpactJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Column(name = "reference_number", nullable = false)
+    private Long referenceNumber;
 }

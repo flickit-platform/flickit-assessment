@@ -4,5 +4,5 @@ import org.flickit.assessment.kit.application.domain.QuestionImpact;
 
 public interface CreateQuestionImpactPort {
 
-    Long persist(QuestionImpact impact);
+    Long persist(QuestionImpact impact, Long kitId);
 }

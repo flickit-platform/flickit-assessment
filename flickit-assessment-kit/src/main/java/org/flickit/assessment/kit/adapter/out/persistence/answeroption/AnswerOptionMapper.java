@@ -20,7 +20,7 @@ public class AnswerOptionMapper {
             );
     }
 
-    public static AnswerOptionJpaEntity mapToJpaEntity(CreateAnswerOptionPort.Param param) {
+    public static AnswerOptionJpaEntity mapToJpaEntity(CreateAnswerOptionPort.Param param, Long lastReferenceNumber) {
         return new AnswerOptionJpaEntity(
             null,
             param.index(),
@@ -29,7 +29,8 @@ public class AnswerOptionMapper {
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.createdBy(),
-            param.createdBy()
+            param.createdBy(),
+            lastReferenceNumber + 1
         );
     }
 }

@@ -39,7 +39,7 @@ public class QuestionnaireJpaEntity {
 
     @Column(name = "last_modification_date", nullable = false)
     private LocalDateTime lastModificationTime;
-    
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
@@ -48,4 +48,7 @@ public class QuestionnaireJpaEntity {
 
     @Column(name = "kit_id", nullable = false)
     private Long kitId;
+
+    @Column(name = "reference_number", nullable = false)
+    private Long referenceNumber;
 }

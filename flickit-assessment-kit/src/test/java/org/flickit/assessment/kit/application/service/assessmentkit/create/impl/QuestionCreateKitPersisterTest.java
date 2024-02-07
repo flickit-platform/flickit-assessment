@@ -94,12 +94,13 @@ class QuestionCreateKitPersisterTest {
             dslQuestion.getDescription(),
             dslQuestion.isMayNotBeApplicable(),
             CURRENT_USER_ID,
-            questionnaire.getId()
+            questionnaire.getId(),
+            KIT_ID
         );
         when(createQuestionPort.persist(createQuestionParam)).thenReturn(question.getId());
 
-        var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), question.getId(), CURRENT_USER_ID);
-        var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), question.getId(), CURRENT_USER_ID);
+        var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), question.getId(), CURRENT_USER_ID, KIT_ID);
+        var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), question.getId(), CURRENT_USER_ID, KIT_ID);
         when(createAnswerOptionPort.persist(createOption1Param)).thenReturn(answerOption1.getId());
         when(createAnswerOptionPort.persist(createOption2Param)).thenReturn(answerOption2.getId());
 
@@ -114,10 +115,10 @@ class QuestionCreateKitPersisterTest {
             CURRENT_USER_ID,
             CURRENT_USER_ID
         );
-        when(createQuestionImpactPort.persist(createImpact)).thenReturn(impact.getId());
+        when(createQuestionImpactPort.persist(createImpact, KIT_ID)).thenReturn(impact.getId());
 
-        var createOptionImpact1Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact1.getOptionId(), optionImpact1.getValue(), CURRENT_USER_ID);
-        var createOptionImpact2Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact2.getOptionId(), optionImpact2.getValue(), CURRENT_USER_ID);
+        var createOptionImpact1Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact1.getOptionId(), optionImpact1.getValue(), CURRENT_USER_ID, KIT_ID);
+        var createOptionImpact2Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact2.getOptionId(), optionImpact2.getValue(), CURRENT_USER_ID, KIT_ID);
         when(createAnswerOptionImpactPort.persist(createOptionImpact1Param)).thenReturn(optionImpact1.getId());
         when(createAnswerOptionImpactPort.persist(createOptionImpact2Param)).thenReturn(optionImpact2.getId());
 

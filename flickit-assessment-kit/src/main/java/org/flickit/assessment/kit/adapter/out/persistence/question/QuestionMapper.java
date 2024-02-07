@@ -24,7 +24,7 @@ public class QuestionMapper {
         );
     }
 
-    public static QuestionJpaEntity mapToJpaEntity(CreateQuestionPort.Param param) {
+    public static QuestionJpaEntity mapToJpaEntity(CreateQuestionPort.Param param, Long lastReferenceNumber) {
         return new QuestionJpaEntity(
             null,
             param.code(),
@@ -36,7 +36,8 @@ public class QuestionMapper {
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.createdBy(),
-            param.createdBy()
+            param.createdBy(),
+            lastReferenceNumber + 1
         );
     }
 }

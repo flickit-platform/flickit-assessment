@@ -28,7 +28,8 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public Long persist(CreateSubjectPort.Param param) {
-        return repository.save(SubjectMapper.mapToJpaEntity(param)).getId();
+        Long lastReferenceNumber = repository.findLastReferenceNumberByKitId(param.kitId());
+        return repository.save(SubjectMapper.mapToJpaEntity(param, lastReferenceNumber)).getId();
     }
 
 }

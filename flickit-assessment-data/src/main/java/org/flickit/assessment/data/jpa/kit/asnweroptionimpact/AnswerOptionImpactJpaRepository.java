@@ -27,4 +27,11 @@ public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOpt
                     @Param("value") Double value,
                     @Param("lastModificationTime") LocalDateTime lastModificationTime,
                     @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Query("""
+            SELECT MAX(a.referenceNumber)
+            FROM AnswerOptionImpactJpaEntity a
+            WHERE a.kitId = :kitId
+        """)
+    Long findLastReferenceNumberByKitId(@Param(value = "kitId") Long kitId);
 }

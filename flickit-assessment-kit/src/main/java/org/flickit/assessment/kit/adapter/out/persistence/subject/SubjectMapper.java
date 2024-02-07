@@ -26,7 +26,7 @@ public class SubjectMapper {
         );
     }
 
-    public static SubjectJpaEntity mapToJpaEntity(CreateSubjectPort.Param param) {
+    public static SubjectJpaEntity mapToJpaEntity(CreateSubjectPort.Param param, Long lastReferenceNumber) {
         return new SubjectJpaEntity(
             null,
             param.code(),
@@ -39,7 +39,8 @@ public class SubjectMapper {
             param.createdBy(),
             param.createdBy(),
             param.kitId(),
-            null
+            null,
+            lastReferenceNumber + 1
         );
     }
 }

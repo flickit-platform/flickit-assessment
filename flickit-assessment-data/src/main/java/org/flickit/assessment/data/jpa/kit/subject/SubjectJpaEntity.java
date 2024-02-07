@@ -68,4 +68,7 @@ public class SubjectJpaEntity {
 
     @OneToMany(mappedBy = "subject")
     private List<AttributeJpaEntity> attributes;
+
+    @Column(name = "reference_number", nullable = false)
+    private Long referenceNumber;
 }
