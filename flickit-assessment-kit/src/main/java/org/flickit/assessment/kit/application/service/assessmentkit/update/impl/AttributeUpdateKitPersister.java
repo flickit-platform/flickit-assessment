@@ -45,7 +45,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
             .collect(Collectors.toMap(AttributeDslModel::getCode, Function.identity()));
 
         Map<String, Attribute> savedAttrCodeToAttr = new HashMap<>();
-        boolean shouldInvalidate = false;
+        boolean isMajorUpdate = false;
         for (Subject subject : savedKit.getSubjects()) {
             String subjectCode = subject.getCode();
             for (Attribute savedAttribute : subject.getAttributes()) {
@@ -64,7 +64,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
 
                 if (!subjectCode.equals(dslAttribute.getSubjectCode()) ||
                     savedAttribute.getWeight() != dslAttribute.getWeight()) {
-                    shouldInvalidate = true;
+                    isMajorUpdate = true;
                 }
             }
         }
@@ -74,7 +74,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
             .collect(Collectors.toSet());
 
         if (!addedAttributeCodes.isEmpty())
-            shouldInvalidate = true;
+            isMajorUpdate = true;
 
         Map<String, Long> savedNewAttrCodeToIdMap = new HashMap<>();
         addedAttributeCodes.forEach(code -> {
@@ -92,7 +92,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
         ctx.put(UpdateKitPersisterContext.KEY_ATTRIBUTES, attrCodeToAttrId);
         log.debug("Final attributes: {}", attrCodeToAttrId);
 
-        return new UpdateKitPersisterResult(shouldInvalidate);
+        return new UpdateKitPersisterResult(isMajorUpdate);
     }
 
     private void updateAttribute(Attribute savedAttribute,
