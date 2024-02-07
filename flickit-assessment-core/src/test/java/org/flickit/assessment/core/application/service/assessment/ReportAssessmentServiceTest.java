@@ -5,6 +5,7 @@ import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.QualityAttributeValue;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.domain.report.AssessmentReport;
+import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
@@ -26,6 +27,7 @@ import static org.flickit.assessment.core.test.fixture.application.QualityAttrib
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndMaturityLevel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,13 +37,13 @@ class ReportAssessmentServiceTest {
     private ReportAssessmentService service;
 
     @Mock
+    private ValidateAssessmentResult validateAssessmentResult;
+
+    @Mock
     private LoadAssessmentReportInfoPort loadReportInfoPort;
 
     @Mock
     private LoadAttributeValueListPort loadAttributeValueListPort;
-
-    @Mock
-    private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
 
     @Test
     void testReportAssessment_ValidResult() {
@@ -63,8 +65,8 @@ class ReportAssessmentServiceTest {
 
         when(loadReportInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadAttributeValueListPort.loadAll(assessmentResult.getId(), maturityLevels)).thenReturn(qaValues);
-        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
-            .thenReturn(assessmentResult.getLastConfidenceCalculationTime().minusDays(2));
+
+        doNothing().when(validateAssessmentResult).validate(assessmentResult.getAssessment().getId());
 
         AssessmentReport assessmentReport = service.reportAssessment(param);
 

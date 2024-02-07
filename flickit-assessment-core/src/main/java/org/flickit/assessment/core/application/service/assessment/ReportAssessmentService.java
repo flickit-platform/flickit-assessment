@@ -1,6 +1,8 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
@@ -15,24 +17,26 @@ import org.flickit.assessment.core.application.port.out.qualityattributevalue.Lo
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.application.domain.MaturityLevel.middleLevel;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReportAssessmentService implements ReportAssessmentUseCase {
 
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentReportInfoPort loadReportInfoPort;
     private final LoadAttributeValueListPort loadAttributeValueListPort;
-    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
 
     @Override
     public AssessmentReport reportAssessment(Param param) {
+        validateAssessmentResultPort.validate(param.getAssessmentId());
+
         var assessmentResult = loadReportInfoPort.load(param.getAssessmentId());
 
         var maturityLevels = assessmentResult.getAssessment().getAssessmentKit().getMaturityLevels();
@@ -41,8 +45,7 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
 
         var attributeValues = loadAttributeValueListPort.loadAll(assessmentResult.getId(), maturityLevelsMap);
 
-        LocalDateTime kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId());
-        var assessmentReportItem = buildAssessment(assessmentResult, kitLastMajorModificationTime);
+        var assessmentReportItem = buildAssessment(assessmentResult);
         var subjectReportItems = buildSubjects(assessmentResult);
 
         var midLevelMaturity = middleLevel(maturityLevels);
@@ -57,22 +60,18 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
             subjectReportItems);
     }
 
-    private AssessmentReportItem buildAssessment(AssessmentResult assessmentResult, LocalDateTime kitLastMajorModificationTime) {
+    private AssessmentReportItem buildAssessment(AssessmentResult assessmentResult) {
         Assessment assessment = assessmentResult.getAssessment();
         return new AssessmentReport.AssessmentReportItem(
             assessment.getId(),
             assessment.getTitle(),
             assessmentResult.getMaturityLevel().getId(),
             assessmentResult.getConfidenceValue(),
-            isValid(assessmentResult.isCalculateValid(), assessmentResult.getLastCalculationTime(), kitLastMajorModificationTime),
-            isValid(assessmentResult.isConfidenceValid(), assessmentResult.getLastCalculationTime(), kitLastMajorModificationTime),
+            true,
+            true,
             AssessmentColor.valueOfById(assessment.getColorId()),
             assessment.getLastModificationTime()
         );
-    }
-
-    private boolean isValid(boolean isValid, LocalDateTime lastCalculationTime, LocalDateTime kitLastMajorModificationTime) {
-        return isValid && lastCalculationTime.isAfter(kitLastMajorModificationTime);
     }
 
     private List<SubjectReportItem> buildSubjects(AssessmentResult assessmentResult) {

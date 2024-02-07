@@ -29,4 +29,14 @@ public class AssessmentResultMother {
         assessmentResult.setIsCalculateValid(true);
         return assessmentResult;
     }
+
+    public static AssessmentResult resultWithValidations(Boolean isCalculateValid, Boolean isConfCalculationValid,
+                                                         LocalDateTime lastCalculationTime, LocalDateTime lastConfCalculationTime) {
+        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessment(), List.of(), LocalDateTime.now(), LocalDateTime.now());
+        assessmentResult.setIsCalculateValid(isCalculateValid);
+        assessmentResult.setIsConfidenceValid(isConfCalculationValid);
+        assessmentResult.setLastCalculationTime(lastCalculationTime);
+        assessmentResult.setLastConfidenceCalculationTime(lastConfCalculationTime);
+        return assessmentResult;
+    }
 }
