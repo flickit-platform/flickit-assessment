@@ -14,7 +14,7 @@ public class MinioConfigProperties {
     private int port;
     private String accessKey;
     private String accessSecret;
-    private String bucketName;
-    private String objectName;
+    private String dslBucketName;
+    private String avatarBucketName;
     private Boolean secure;
 }

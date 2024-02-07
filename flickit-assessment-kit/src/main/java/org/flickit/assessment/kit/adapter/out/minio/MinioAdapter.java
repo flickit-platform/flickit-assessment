@@ -3,8 +3,6 @@ package org.flickit.assessment.kit.adapter.out.minio;
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
-import io.minio.messages.VersioningConfiguration;
-import io.minio.messages.VersioningConfiguration.Status;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -19,11 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.Duration;
-import java.time.LocalDate;
-import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.adapter.out.minio.MinioConstants.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
 @Component
 @AllArgsConstructor
@@ -34,45 +32,35 @@ public class MinioAdapter implements
     CreateDslDownloadLinkPort {
 
     public static final String SLASH = "/";
+    public static final String DOT = ".";
     private final MinioClient minioClient;
     private final MinioConfigProperties properties;
 
     @SneakyThrows
     @Override
     public UploadKitDslToFileStoragePort.Result uploadKitDsl(MultipartFile dslZipFile, String dslJsonFile) {
-        String bucketName = properties.getBucketName();
-        String dslFileNameNoSuffix = Objects.requireNonNull(dslZipFile.getOriginalFilename()).replace(".zip", "");
-        String dslFileDirPathAddr = properties.getObjectName() + LocalDate.now() + SLASH + dslFileNameNoSuffix + SLASH;
-        String dslFileObjectName = dslFileDirPathAddr + dslZipFile.getOriginalFilename();
-        String jsonFileObjectName = dslFileDirPathAddr + dslFileNameNoSuffix + ".json";
-
-        createBucket(bucketName);
-        setBucketVersioning(bucketName);
+        String bucketName = properties.getDslBucketName();
+        UUID uniqueObjectName = UUID.randomUUID();
+        String dslFileObjectName = uniqueObjectName + DSL_FILE_NAME;
+        String dslJsonObjectName = uniqueObjectName + DSL_JSON_NAME;
 
         InputStream zipFileInputStream = dslZipFile.getInputStream();
-        String zipFileVersionId = writeFile(bucketName, dslFileObjectName, zipFileInputStream).versionId();
+        writeFile(bucketName, dslFileObjectName, zipFileInputStream);
 
         InputStream jsonFileInputStream = new ByteArrayInputStream(dslJsonFile.getBytes());
-        String jsonFileVersionId = writeFile(bucketName, jsonFileObjectName, jsonFileInputStream).versionId();
+        writeFile(bucketName, dslJsonObjectName, jsonFileInputStream);
 
-        return new UploadKitDslToFileStoragePort.Result(
-            dslFileObjectName + SLASH + zipFileVersionId,
-            jsonFileObjectName + SLASH + jsonFileVersionId);
+        String dslFilePath = bucketName + SLASH + dslFileObjectName;
+        String dslJsonPath = bucketName + SLASH + dslJsonObjectName;
+        return new UploadKitDslToFileStoragePort.Result(dslFilePath, dslJsonPath);
     }
 
     @SneakyThrows
-    private void setBucketVersioning(String bucketName) {
-        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
-            .bucket(bucketName)
-            .config(new VersioningConfiguration(Status.ENABLED, false))
-            .build());
-    }
-
-    @SneakyThrows
-    private ObjectWriteResponse writeFile(String bucketName, String fileObjectName, InputStream fileInputStream) {
-        return minioClient.putObject(PutObjectArgs.builder()
+    private void writeFile(String bucketName, String fileObjectName, InputStream fileInputStream) {
+        minioClient.putObject(PutObjectArgs.builder()
             .bucket(bucketName)
             .object(fileObjectName)
+//            .contentType()
             .stream(fileInputStream, fileInputStream.available(), -1)
             .build());
     }
@@ -80,17 +68,15 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String loadDslJson(String dslJsonFullPath) {
-        String path = dslJsonFullPath.substring(0, dslJsonFullPath.lastIndexOf(SLASH));
-        String versionId = dslJsonFullPath.substring(dslJsonFullPath.lastIndexOf(SLASH) + 1);
-        String bucketName = properties.getBucketName();
+        String bucketName = dslJsonFullPath.substring(0, dslJsonFullPath.indexOf(SLASH));
+        String objectName = dslJsonFullPath.substring(dslJsonFullPath.indexOf(SLASH));
 
-        checkFileExistence(path, bucketName, versionId);
+        checkFileExistence(bucketName, objectName);
 
         InputStream stream = minioClient
             .getObject(GetObjectArgs.builder()
                 .bucket(bucketName)
-                .object(path)
-                .versionId(versionId)
+                .object(objectName)
                 .build());
 
         return new String(stream.readAllBytes());
@@ -99,67 +85,46 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String uploadPicture(MultipartFile pictureFile) {
-        createBucket(properties.getBucketName());
-        setBucketVersioning(properties.getBucketName());
+        String bucketName = properties.getAvatarBucketName();
+        UUID uniqueObjectName = UUID.randomUUID();
 
-        var result = writeFile(properties.getBucketName(), pictureFile.getOriginalFilename(), pictureFile.getInputStream());
-        return result.bucket() + "/" + result.object();
+        String postFix = "";
+        if (pictureFile.getOriginalFilename() != null) {
+            postFix = pictureFile.getOriginalFilename().substring(pictureFile.getOriginalFilename().indexOf(DOT));
+        }
+        String objectName = uniqueObjectName + PIC_FILE_NAME + postFix;
+        writeFile(bucketName, objectName, pictureFile.getInputStream());
+        return bucketName + SLASH + objectName;
     }
 
     @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
-        String bucketName = properties.getBucketName();
-        String path;
-        String versionId;
+        String bucketName = filePath.substring(0, filePath.indexOf(SLASH));
+        String objectName = filePath.substring(filePath.indexOf(SLASH));
 
+        checkFileExistence(bucketName, objectName);
 
-        int zipExtensionIndex = filePath.lastIndexOf(".zip");
-        if (zipExtensionIndex != -1) {
-            int lastSlashIndex = filePath.lastIndexOf("/");
-            if (lastSlashIndex != -1 && zipExtensionIndex < lastSlashIndex) {
-                path = filePath.substring(0, lastSlashIndex);
-                versionId = filePath.substring(lastSlashIndex + 1);
-            } else {
-                path = filePath;
-                versionId = "";
-            }
-        } else {
-            throw new ResourceNotFoundException(GET_KIT_DSL_DOWNLOAD_LINK_DSK_FILE_NOT_FOUND);
-        }
-
-        checkFileExistence(path, bucketName, versionId);
-
-        String kitDownloadUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+        String downloadUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
             .bucket(bucketName)
-            .object(path)
-            .versionId(versionId)
+            .object(objectName)
+            //.extraQueryParams(Map.of("response-content-disposition", "attachment; name=myfile.zip"))
             .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
             .method(Method.GET)
             .build());
 
-        return kitDownloadUrl.replace(properties.getUrl(), properties.getApi());
+        return downloadUrl.replace(properties.getUrl(), properties.getApi());
     }
 
     @SneakyThrows
-    private void checkFileExistence(String path, String bucketName, String versionId){
+    private void checkFileExistence(String bucketName, String objectName) {
         try {
             minioClient.statObject(StatObjectArgs.builder()
                 .bucket(bucketName)
-                .object(path)
-                .versionId(versionId)
+                .object(objectName)
                 .build());
         } catch (ErrorResponseException e) {
             throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
-        }
-    }
-
-    @SneakyThrows
-    private void createBucket(String bucketName) {
-        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
-            minioClient.makeBucket(MakeBucketArgs.builder()
-                .bucket(bucketName)
-                .build());
         }
     }
 }
