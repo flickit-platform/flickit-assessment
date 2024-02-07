@@ -18,13 +18,13 @@ public class InviteExpertGroupMemberRestController {
     private final UserContext userContext;
 
     @PostMapping("/expert-groups/{id}/invite")
-    public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(@PathVariable("id") long expertGroupId, @RequestBody InviteExpertGroupRequestDto requestDto) {
+    public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(@PathVariable("id") long expertGroupId, @RequestBody InviteExpertGroupMemberRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.inviteMember(toParam(expertGroupId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private InviteExpertGroupMemberUseCase.Param toParam(long expertGroupId, InviteExpertGroupRequestDto requestDto, UUID currentUserId) {
+    private InviteExpertGroupMemberUseCase.Param toParam(long expertGroupId, InviteExpertGroupMemberRequestDto requestDto, UUID currentUserId) {
         return new InviteExpertGroupMemberUseCase.Param(expertGroupId, requestDto.userId(), currentUserId);
     }
 }
