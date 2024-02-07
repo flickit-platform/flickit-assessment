@@ -19,7 +19,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
     private final InviteExpertGroupMemberPort inviteExpertGroupMemberPort;
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     private final SendExpertGroupInvitationMailPort sendExpertGroupInvitationMailPort;
-    private final static Duration EXPIRY_DURATION = Duration.ofDays(7);
+    private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
     @Override
     public void inviteMember(Param param) {
