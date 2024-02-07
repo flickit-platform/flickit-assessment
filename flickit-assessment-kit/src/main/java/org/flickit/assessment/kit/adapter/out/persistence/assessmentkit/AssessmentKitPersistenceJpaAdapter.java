@@ -107,6 +107,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public void updateLastMajorModificationTime(Long kitId, LocalDateTime lastMajorModificationTime) {
-        repository.updateById(kitId, lastMajorModificationTime);
+        repository.updateLastMajorModificationTime(kitId, lastMajorModificationTime);
     }
 }
