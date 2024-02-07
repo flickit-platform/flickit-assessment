@@ -28,6 +28,10 @@
             <groupId>org.flickit</groupId>
             <artifactId>flickit-assessment-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.flickit</groupId>
+            <artifactId>flickit-advice-engine</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.sentry</groupId>
@@ -39,7 +43,6 @@
             <artifactId>sentry-logback</artifactId>
             <version>${sentry.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>

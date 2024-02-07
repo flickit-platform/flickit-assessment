@@ -1,15 +1,15 @@
-package org.flickit.assessment.core.adapter.in.rest.exception;
+package org.flickit.assessment.common.exception.handler;
 
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
-import org.flickit.assessment.core.application.exception.ConfidenceCalculationNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static org.flickit.assessment.core.adapter.in.rest.exception.api.ErrorCodes.CONFIDENCE_CALCULATION_NOT_VALID;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.CONFIDENCE_CALCULATION_NOT_VALID;
 
 @RestControllerAdvice
 public class ConfidenceCalculationNotValidExceptionHandler {
