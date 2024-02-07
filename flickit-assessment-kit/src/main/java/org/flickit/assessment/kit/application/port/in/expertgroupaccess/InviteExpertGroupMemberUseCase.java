@@ -12,7 +12,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.INVITE_EXPERT_GR
 
 public interface InviteExpertGroupMemberUseCase {
 
-    void addMember(Param param);
+    void inviteMember(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

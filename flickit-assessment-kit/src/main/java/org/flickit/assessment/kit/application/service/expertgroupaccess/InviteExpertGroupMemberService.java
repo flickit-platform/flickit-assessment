@@ -22,12 +22,11 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
     private final SendExpertGroupInvitationMailPort sendExpertGroupInvitationMailPort;
 
     @Override
-    public void addMember(Param param) {
+    public void inviteMember(Param param) {
         UUID inviteToken = UUID.randomUUID();
-        String email = loadUserEmailByUserIdPort.loadEmail(param.getUserId()).orElseThrow(() ->
-            new ResourceNotFoundException(INVITE_EXPERT_GROUP_MEMBER_EMAIL_NOT_FOUND));
+        String email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
         inviteExpertGroupMemberPort.invite(toParam(param, inviteToken));
-        sendExpertGroupInvitationMailPort.sendEmail(email, inviteToken);
+        sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken);
     }
 
     private InviteExpertGroupMemberPort.Param toParam(Param param, UUID inviteToken) {

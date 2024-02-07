@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface SendExpertGroupInvitationMailPort {
 
-    void sendEmail(String email, UUID inviteLink);
+    void sendInviteExpertGroupMemberEmail(String email, UUID inviteLink);
 }

@@ -16,5 +16,5 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
         FROM UserJpaEntity u
         WHERE u.id = :userId
         """)
-    Optional<String> findEmailByUserId(@Param(value = "userId") UUID userId);
+    String findEmailByUserId(@Param(value = "userId") UUID userId);
 }

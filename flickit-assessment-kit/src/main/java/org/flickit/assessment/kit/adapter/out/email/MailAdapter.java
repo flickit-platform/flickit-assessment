@@ -16,7 +16,7 @@ public class MailAdapter implements
     private JavaMailSender mailSender;
 
     @Override
-    public void sendEmail(String to, UUID inviteToken) {
+    public void sendInviteExpertGroupMemberEmail(String to, UUID inviteToken) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("subject");

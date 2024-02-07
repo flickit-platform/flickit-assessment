@@ -5,5 +5,5 @@ import java.util.UUID;
 
 public interface LoadUserEmailByUserIdPort {
 
-    Optional<String> loadEmail(UUID userId);
+    String loadEmail(UUID userId);
 }

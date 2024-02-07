@@ -31,7 +31,7 @@ public class UserPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<String> loadEmail(UUID userId) {
+    public String loadEmail(UUID userId) {
         return repository.findEmailByUserId(userId) ;
     }
 }
