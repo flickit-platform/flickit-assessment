@@ -57,13 +57,9 @@ class AttributeUpdateKitPersisterTest {
 
         SubjectDslModel subjectDslModel = SubjectDslModelMother.domainToDslModel(subject);
         AttributeDslModel dslAttrOne =
-            AttributeDslModelMother.domainToDslModel(attrOne, e -> {
-                e.subjectCode(subject.getCode());
-            });
+            AttributeDslModelMother.domainToDslModel(attrOne, e -> e.subjectCode(subject.getCode()));
         AttributeDslModel dslAttrTwo =
-            AttributeDslModelMother.domainToDslModel(attrTwo, e -> {
-                e.subjectCode(subject.getCode());
-            });
+            AttributeDslModelMother.domainToDslModel(attrTwo, e -> e.subjectCode(subject.getCode()));
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .subjects(List.of(subjectDslModel))
             .attributes(List.of(dslAttrOne, dslAttrTwo))
@@ -73,7 +69,7 @@ class AttributeUpdateKitPersisterTest {
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         Mockito.verify(updateAttributePort, Mockito.times(0)).update(captor.capture());
-        assertFalse(result.shouldInvalidateCalcResult());
+        assertFalse(result.isMajorUpdate());
 
         Map<String, Long> codeToIdMap = ctx.get(KEY_ATTRIBUTES);
         assertNotNull(codeToIdMap);
@@ -130,7 +126,7 @@ class AttributeUpdateKitPersisterTest {
         assertEquals(attrTwo.getWeight(), secondAttr.weight());
         assertThat(secondAttr.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
         assertEquals(subject.getId(), secondAttr.subjectId());
-        assertFalse(result.shouldInvalidateCalcResult());
+        assertFalse(result.isMajorUpdate());
 
         Map<String, Long> codeToIdMap = ctx.get(KEY_ATTRIBUTES);
         assertNotNull(codeToIdMap);
@@ -158,9 +154,7 @@ class AttributeUpdateKitPersisterTest {
                 e.subjectCode(subjectOne.getCode());
             });
         AttributeDslModel dslAttrThree =
-            AttributeDslModelMother.domainToDslModel(attrThree, e -> {
-                e.subjectCode(subjectTwo.getCode());
-            });
+            AttributeDslModelMother.domainToDslModel(attrThree, e -> e.subjectCode(subjectTwo.getCode()));
 
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .subjects(List.of(subjectDslModel))
@@ -192,7 +186,7 @@ class AttributeUpdateKitPersisterTest {
         assertEquals(dslAttrTwo.getWeight(), secondAttr.weight());
         assertThat(secondAttr.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
         assertEquals(subjectOne.getId(), secondAttr.subjectId());
-        assertTrue(result.shouldInvalidateCalcResult());
+        assertTrue(result.isMajorUpdate());
 
         Map<String, Long> codeToIdMap = ctx.get(KEY_ATTRIBUTES);
         assertNotNull(codeToIdMap);

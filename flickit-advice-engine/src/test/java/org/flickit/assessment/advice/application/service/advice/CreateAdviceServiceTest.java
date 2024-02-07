@@ -3,7 +3,6 @@ package org.flickit.assessment.advice.application.service.advice;
 import ai.timefold.solver.core.api.solver.SolverJob;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import lombok.SneakyThrows;
-import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.advice.*;
@@ -11,11 +10,11 @@ import org.flickit.assessment.advice.application.exception.FinalSolutionNotFound
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort.Result;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
@@ -35,6 +34,7 @@ import java.util.concurrent.ExecutionException;
 import static java.util.UUID.randomUUID;
 import static org.flickit.assessment.advice.application.service.QuestionMother.createQuestionWithTargetAndCurrentOption;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,13 +47,13 @@ class CreateAdviceServiceTest {
     private CreateAdviceService service;
 
     @Mock
+    private ValidateAssessmentResultPort validateAssessmentResultPort;
+
+    @Mock
     private LoadAssessmentSpacePort loadAssessmentSpacePort;
 
     @Mock
     private CheckSpaceAccessPort checkSpaceAccessPort;
-
-    @Mock
-    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
     private LoadAdviceCalculationInfoPort loadInfoPort;
@@ -79,7 +79,7 @@ class CreateAdviceServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_NOT_FOUND);
         Mockito.verifyNoInteractions(
             checkSpaceAccessPort,
-            loadAssessmentResultPort,
+            validateAssessmentResultPort,
             loadInfoPort,
             solverManager,
             loadCreatedAdviceDetailsPort
@@ -105,7 +105,6 @@ class CreateAdviceServiceTest {
         assertThrows(AccessDeniedException.class, () -> service.createAdvice(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         Mockito.verifyNoInteractions(
-            loadAssessmentResultPort,
             loadInfoPort,
             solverManager,
             loadCreatedAdviceDetailsPort
@@ -128,11 +127,11 @@ class CreateAdviceServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
 
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), false, true)));
+        doThrow(new CalculateNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID))
+            .when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         assertThrows(CalculateNotValidException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
-        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+        verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         Mockito.verifyNoInteractions(
             loadInfoPort,
@@ -157,13 +156,13 @@ class CreateAdviceServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
 
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), true, false)));
+        doThrow(new ConfidenceCalculationNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID))
+            .when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         assertThrows(ConfidenceCalculationNotValidException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
 
         verify(loadAssessmentSpacePort, times(1)).loadAssessmentSpaceId(param.getAssessmentId());
-        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+        verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         Mockito.verifyNoInteractions(
             loadInfoPort,
@@ -187,8 +186,7 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), true, true)));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
         var question1 = createQuestionWithTargetAndCurrentOption(attributeLevelScore, null);
@@ -211,9 +209,9 @@ class CreateAdviceServiceTest {
 
         assertThrows(FinalSolutionNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
 
-        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+        verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
-        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+//        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
@@ -236,8 +234,7 @@ class CreateAdviceServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), true, true)));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
         var question1 = createQuestionWithTargetAndCurrentOption(attributeLevelScore, null);
@@ -260,9 +257,9 @@ class CreateAdviceServiceTest {
 
         assertThrows(FinalSolutionNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
 
-        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+        verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
-        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+//        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
@@ -293,9 +290,9 @@ class CreateAdviceServiceTest {
             assertNotEquals(0, question.benefit());
         }
 
-        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+        verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
-        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
+//        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         verify(loadCreatedAdviceDetailsPort, times(1)).loadAdviceDetails(any());
@@ -306,8 +303,7 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.of(new AssessmentResult(UUID.randomUUID(), true, true)));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
         var question1 = createQuestionWithTargetAndCurrentOption(attributeLevelScore, null);
