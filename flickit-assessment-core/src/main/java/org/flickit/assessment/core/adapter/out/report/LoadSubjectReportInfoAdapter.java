@@ -12,7 +12,6 @@ import org.flickit.assessment.core.application.port.out.subject.LoadSubjectRepor
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

@@ -9,7 +9,6 @@ import org.flickit.assessment.core.application.port.in.assessment.ReportAssessme
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.LoadAttributeValueListPort;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

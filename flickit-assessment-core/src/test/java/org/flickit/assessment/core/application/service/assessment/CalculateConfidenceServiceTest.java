@@ -5,6 +5,8 @@ import org.flickit.assessment.core.application.port.in.assessment.CalculateConfi
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase.Result;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
@@ -13,7 +15,6 @@ import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubje
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
