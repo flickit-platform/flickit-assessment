@@ -3,7 +3,7 @@ package org.flickit.assessment.data.jpa.kit.expertgroupaccess;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +26,7 @@ public class ExpertGroupAccessJpaEntity {
     private Long expertGroupId;
 
     @Column(name = "invite_expiration_date")
-    private LocalDate inviteExpirationDate;
+    private LocalDateTime inviteExpirationDate;
 
     @Column(name = "user_id", nullable = false)
     private UUID userId;

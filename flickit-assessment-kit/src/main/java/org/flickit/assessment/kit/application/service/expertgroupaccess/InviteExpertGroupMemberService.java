@@ -8,6 +8,8 @@ import org.flickit.assessment.kit.application.port.out.mail.SendExpertGroupInvit
 import org.flickit.assessment.kit.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -17,20 +19,23 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
     private final InviteExpertGroupMemberPort inviteExpertGroupMemberPort;
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     private final SendExpertGroupInvitationMailPort sendExpertGroupInvitationMailPort;
+    private final static Duration EXPIRY_DURATION = Duration.ofDays(7);
 
     @Override
     public void inviteMember(Param param) {
         UUID inviteToken = UUID.randomUUID();
+        var inviteExpirationDate = LocalDateTime.now().plusDays(EXPIRY_DURATION.toDays());
         String email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
-        inviteExpertGroupMemberPort.invite(toParam(param, inviteToken));
+        inviteExpertGroupMemberPort.invite(toParam(param, inviteExpirationDate, inviteToken));
         sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken);
     }
 
-    private InviteExpertGroupMemberPort.Param toParam(Param param, UUID inviteToken) {
+    private InviteExpertGroupMemberPort.Param toParam(Param param, LocalDateTime inviteExpirationDate, UUID inviteToken) {
         return new InviteExpertGroupMemberPort.Param(
             param.getExpertGroupId(),
             param.getUserId(),
             param.getCurrentUserId(),
+            inviteExpirationDate,
             inviteToken,
             ExpertGroupAccessStatus.PENDING
         );
