@@ -32,17 +32,6 @@
             <groupId>org.flickit</groupId>
             <artifactId>flickit-advice-engine</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>io.sentry</groupId>
-            <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
-            <version>${sentry.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.sentry</groupId>
-            <artifactId>sentry-logback</artifactId>
-            <version>${sentry.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
