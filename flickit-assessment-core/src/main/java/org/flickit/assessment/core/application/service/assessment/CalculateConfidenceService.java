@@ -44,7 +44,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
         Double confidenceValue = assessmentResult.calculateConfidenceValue();
 
         assessmentResult.setConfidenceValue(confidenceValue);
-        assessmentResult.setConfidenceValid(Boolean.TRUE);
+        assessmentResult.setIsConfidenceValid(Boolean.TRUE);
         assessmentResult.setLastModificationTime(LocalDateTime.now());
         assessmentResult.setLastConfidenceCalculationTime(LocalDateTime.now());
 

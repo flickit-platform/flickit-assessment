@@ -28,7 +28,7 @@ public class AssessmentCalculateResultPersistAdapter implements
     public void updateCalculatedResult(AssessmentResult assessmentResult) {
         assessmentResultRepo.updateAfterCalculate(assessmentResult.getId(),
             assessmentResult.getMaturityLevel().getId(),
-            assessmentResult.isCalculateValid(),
+            assessmentResult.getIsCalculateValid(),
             assessmentResult.getLastModificationTime(),
             assessmentResult.getLastCalculationTime());
 
@@ -50,7 +50,7 @@ public class AssessmentCalculateResultPersistAdapter implements
         assessmentResultRepo.updateAfterCalculateConfidence(
             assessmentResult.getId(),
             assessmentResult.getConfidenceValue(),
-            assessmentResult.isConfidenceValid(),
+            assessmentResult.getIsConfidenceValid(),
             assessmentResult.getLastModificationTime(),
             assessmentResult.getLastConfidenceCalculationTime());
 

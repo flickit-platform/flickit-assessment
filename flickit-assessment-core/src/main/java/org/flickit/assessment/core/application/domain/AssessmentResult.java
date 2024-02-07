@@ -23,25 +23,25 @@ public class AssessmentResult {
     private List<SubjectValue> subjectValues;
 
     @Setter
-    MaturityLevel maturityLevel;
+    private MaturityLevel maturityLevel;
 
     @Setter
-    Double confidenceValue;
+    private Double confidenceValue;
 
     @Setter
-    boolean isCalculateValid;
+    private Boolean isCalculateValid;
 
     @Setter
-    boolean isConfidenceValid;
+    private Boolean isConfidenceValid;
 
     @Setter
-    LocalDateTime lastModificationTime;
+    private LocalDateTime lastModificationTime;
 
     @Setter
-    LocalDateTime lastCalculationTime;
+    private LocalDateTime lastCalculationTime;
 
     @Setter
-    LocalDateTime lastConfidenceCalculationTime;
+    private LocalDateTime lastConfidenceCalculationTime;
 
     public AssessmentResult(UUID assessmentResultId, Assessment assessment, List<SubjectValue> subjectValues, LocalDateTime lastCalculationTime, LocalDateTime lastConfidenceCalculationTime) {
         this.id = assessmentResultId;

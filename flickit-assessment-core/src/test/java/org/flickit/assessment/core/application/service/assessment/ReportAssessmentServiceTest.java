@@ -75,7 +75,7 @@ class ReportAssessmentServiceTest {
         assertEquals(assessmentResult.getAssessment().getTitle(), assessmentReport.assessment().title());
         assertEquals(assessmentResult.getMaturityLevel().getId(), assessmentReport.assessment().maturityLevelId());
         assertEquals(assessmentResult.getAssessment().getColorId(), assessmentReport.assessment().color().getId());
-        assertEquals(assessmentResult.isCalculateValid(), assessmentReport.assessment().isCalculateValid());
+        assertEquals(assessmentResult.getIsCalculateValid(), assessmentReport.assessment().isCalculateValid());
         assertEquals(assessmentResult.getAssessment().getLastModificationTime(), assessmentReport.assessment().lastModificationTime());
 
         assertNotNull(assessmentReport.topStrengths());

@@ -79,7 +79,7 @@ class ReportSubjectServiceTest {
         assertNotNull(subjectReport.subject());
         assertEquals(subjectValue.getSubject().getId(), subjectReport.subject().id());
         assertEquals(subjectValue.getMaturityLevel().getId(), subjectReport.subject().maturityLevelId());
-        assertEquals(assessmentResult.isCalculateValid(), subjectReport.subject().isCalculateValid());
+        assertEquals(assessmentResult.getIsCalculateValid(), subjectReport.subject().isCalculateValid());
 
         assertEquals(qaValues.size(), subjectReport.attributes().size());
         for (SubjectReport.AttributeReportItem attribute : subjectReport.attributes()) {
