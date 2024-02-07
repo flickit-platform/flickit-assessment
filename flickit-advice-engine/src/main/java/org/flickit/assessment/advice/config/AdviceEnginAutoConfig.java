@@ -5,5 +5,4 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan("org.flickit.assessment.advice")
-public class AdviceEnginAutoConfig {
-}
+public class AdviceEnginAutoConfig {}

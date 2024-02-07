@@ -12,16 +12,14 @@ import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitMinimalInfoPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
@@ -33,7 +31,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     LoadKitUsersPort,
     DeleteKitUserAccessPort,
     LoadKitMinimalInfoPort,
-    CreateAssessmentKitPort {
+    CreateAssessmentKitPort,
+    UpdateKitLastMajorModificationTimePort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -98,5 +97,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public Long persist(CreateAssessmentKitPort.Param param) {
         return repository.save(AssessmentKitMapper.toJpaEntity(param)).getId();
+    }
+
+    @Override
+    public void updateLastMajorModificationTime(Long kitId, LocalDateTime lastMajorModificationTime) {
+        repository.updateLastMajorModificationTime(kitId, lastMajorModificationTime);
     }
 }
