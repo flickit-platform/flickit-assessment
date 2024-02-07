@@ -246,7 +246,7 @@ class AttributeUpdateKitPersisterTest {
         assertEquals(attrThree.getWeight(), attributeCaptor.getValue().getWeight());
         assertEquals(subject.getId(), subjectIdCaptor.getValue());
         assertEquals(savedKit.getId(), kitIdCaptor.getValue());
-        assertTrue(result.shouldInvalidateCalcResult());
+        assertTrue(result.isMajorUpdate());
 
         Map<String, Long> codeToIdMap = ctx.get(KEY_ATTRIBUTES);
         assertNotNull(codeToIdMap);
