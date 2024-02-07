@@ -155,11 +155,6 @@
 		</dependency>
 		<dependency>
 			<groupId>io.sentry</groupId>
-			<artifactId>sentry-logback</artifactId>
-			<version>${sentry.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.sentry</groupId>
 			<artifactId>sentry-jdbc</artifactId>
 			<version>${sentry.version}</version>
 		</dependency>
@@ -182,8 +177,12 @@
 						</labels>
 					</container>
 					<from>
-						<image>ghcr.io/flickit-platform/jdk:17.0.7</image>
+						<image>localhost:5000/jdk:17.0.7</image>
 					</from>
+					<to>
+						<image>localhost:5000/flickit-sentry:17.0.12</image>
+					</to>
+					<allowInsecureRegistries>true</allowInsecureRegistries>
 				</configuration>
 			</plugin>
 			<plugin>
