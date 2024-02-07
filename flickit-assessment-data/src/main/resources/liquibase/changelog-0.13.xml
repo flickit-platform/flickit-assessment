@@ -41,10 +41,4 @@
         </update>
     </changeSet>
 
-    <changeSet id="0.13-07" author="MKouhestani">
-        <addColumn tableName="fac_assessment_result">
-            <column name="last_modification_time" type="${datetime_with_time_zone_type}"/>
-        </addColumn>
-    </changeSet>
-
 </databaseChangeLog>
