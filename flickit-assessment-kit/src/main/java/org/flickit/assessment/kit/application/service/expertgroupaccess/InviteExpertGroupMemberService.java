@@ -7,12 +7,14 @@ import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteE
 import org.flickit.assessment.kit.application.port.out.mail.SendExpertGroupInvitationMailPort;
 import org.flickit.assessment.kit.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUseCase {
 
@@ -26,7 +28,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         UUID inviteToken = UUID.randomUUID();
         var inviteExpirationDate = LocalDateTime.now().plusDays(EXPIRY_DURATION.toDays());
         String email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
-        inviteExpertGroupMemberPort.invite(toParam(param, inviteExpirationDate, inviteToken));
+        inviteExpertGroupMemberPort.persist(toParam(param, inviteExpirationDate, inviteToken));
         sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken);
     }
 

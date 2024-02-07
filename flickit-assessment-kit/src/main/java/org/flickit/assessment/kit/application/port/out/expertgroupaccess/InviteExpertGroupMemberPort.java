@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface InviteExpertGroupMemberPort {
 
-    void invite(Param param);
+    void persist(Param param);
 
     record Param(long expertGroupId,
                  UUID userId,

@@ -6,10 +6,7 @@ import org.flickit.assessment.kit.adapter.in.rest.expertgroup.CreateExpertGroupR
 import org.flickit.assessment.kit.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -21,14 +18,13 @@ public class InviteExpertGroupMemberRestController {
     private final UserContext userContext;
 
     @PostMapping("/expert-groups/{id}/invite")
-    public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(@PathVariable("id") long expertGroupId,
-                                                                          @ModelAttribute("userId") UUID userId) {
+    public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(@PathVariable("id") long expertGroupId, @RequestBody InviteExpertGroupRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.inviteMember(toParam(expertGroupId, userId, currentUserId));
+        useCase.inviteMember(toParam(expertGroupId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private InviteExpertGroupMemberUseCase.Param toParam(long expertGroupId, UUID userId, UUID currentUserId) {
-        return new InviteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
+    private InviteExpertGroupMemberUseCase.Param toParam(long expertGroupId, InviteExpertGroupRequestDto requestDto, UUID currentUserId) {
+        return new InviteExpertGroupMemberUseCase.Param(expertGroupId, requestDto.userId(), currentUserId);
     }
 }
