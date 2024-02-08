@@ -12,6 +12,8 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
 
     List<QualityAttributeValueJpaEntity> findByAssessmentResultId(UUID resultId);
 
+    QualityAttributeValueJpaEntity findByQualityAttributeIdAndAssessmentResult_Id(Long qualityAttributeId, UUID assessmentResultId);
+
     @Query("""
         SELECT av
         FROM QualityAttributeValueJpaEntity av

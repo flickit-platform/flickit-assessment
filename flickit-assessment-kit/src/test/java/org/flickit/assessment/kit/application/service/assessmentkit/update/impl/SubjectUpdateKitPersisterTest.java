@@ -79,7 +79,7 @@ class SubjectUpdateKitPersisterTest {
         assertEquals(dslSubjectTwo.getIndex(), teamSubject.index());
         assertThat(teamSubject.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
 
-        assertFalse(result.shouldInvalidateCalcResult());
+        assertFalse(result.isMajorUpdate());
         Map<String, Long> codeToIdMap = ctx.get(KEY_SUBJECTS);
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());

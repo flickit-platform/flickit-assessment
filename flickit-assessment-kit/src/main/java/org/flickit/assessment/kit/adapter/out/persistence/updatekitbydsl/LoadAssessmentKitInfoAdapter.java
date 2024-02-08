@@ -33,7 +33,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND
 
 @Component
 @AllArgsConstructor
-public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
+public class LoadAssessmentKitInfoAdapter implements
+    LoadAssessmentKitInfoPort {
 
     private final AssessmentKitJpaRepository repository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
@@ -125,4 +126,5 @@ public class LoadAssessmentKitInfoAdapter implements LoadAssessmentKitInfoPort {
         Map<Long, List<Question>> groupedQuestions = questions.stream().collect(Collectors.groupingBy(Question::getQuestionnaireId));
         questionnaires.forEach(q -> q.setQuestions(groupedQuestions.get(q.getId())));
     }
+
 }
