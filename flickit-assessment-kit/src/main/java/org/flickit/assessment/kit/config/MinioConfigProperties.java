@@ -14,7 +14,16 @@ public class MinioConfigProperties {
     private int port;
     private String accessKey;
     private String accessSecret;
-    private String dslBucketName;
-    private String avatarBucketName;
+    private BucketNames bucketNames;
     private Boolean secure;
+
+    @Getter
+    @Setter
+    public static class BucketNames {
+
+        private String dsl;
+        private String avatar;
+    }
 }
+
+
