@@ -21,28 +21,23 @@ public class AssessmentKitAutoConfig {
             .endpoint(properties.getUrl(), properties.getPort(), properties.getSecure())
             .build();
 
-        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(properties.getDslBucketName()).build())) {
-            minioClient.makeBucket(MakeBucketArgs.builder()
-                .bucket(properties.getDslBucketName())
-                .build());
-        }
-
-        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(properties.getAvatarBucketName()).build())) {
-            minioClient.makeBucket(MakeBucketArgs.builder()
-                .bucket(properties.getAvatarBucketName())
-                .build());
-        }
-
-        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
-            .bucket(properties.getDslBucketName())
-            .config(new VersioningConfiguration(VersioningConfiguration.Status.ENABLED, false))
-            .build());
-
-        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
-            .bucket(properties.getAvatarBucketName())
-            .config(new VersioningConfiguration(VersioningConfiguration.Status.ENABLED, false))
-            .build());
+        createMinioBucket(minioClient, properties.getBucketNames().getDsl());
+        createMinioBucket(minioClient, properties.getBucketNames().getAvatar());
 
         return minioClient;
+    }
+
+    @SneakyThrows
+    private void createMinioBucket(MinioClient minioClient, String bucketName) {
+        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
+            minioClient.makeBucket(MakeBucketArgs.builder()
+                .bucket(bucketName)
+                .build());
+        }
+
+        minioClient.setBucketVersioning(SetBucketVersioningArgs.builder()
+            .bucket(bucketName)
+            .config(new VersioningConfiguration(VersioningConfiguration.Status.ENABLED, false))
+            .build());
     }
 }
