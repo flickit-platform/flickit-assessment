@@ -158,6 +158,28 @@
                               tableName="fak_answer_option_impact"/>
     </changeSet>
 
+    <changeSet id="0.14-22" author="MKouhestani">
+        <addColumn tableName="fak_maturity_level">
+            <column name="reference_number" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-23" author="MKouhestani">
+        <sql>
+            <![CDATA[UPDATE fak_maturity_level
+            SET reference_number = (SELECT COUNT(*)
+            FROM fak_maturity_level m
+            WHERE m.kit_id = fak_maturity_level.kit_id
+            AND m.id <= fak_maturity_level.id);]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.14-24" author="MKouhestani">
+        <addNotNullConstraint columnName="reference_number"
+                              constraintName="reference_number_not_null"
+                              tableName="fak_maturity_level"/>
+    </changeSet>
+
     <!--<changeSet id="0.14-22" author="MKouhestani">
         <addColumn tableName="fac_answer">
             <column name="question_reference_number" type="bigint"/>

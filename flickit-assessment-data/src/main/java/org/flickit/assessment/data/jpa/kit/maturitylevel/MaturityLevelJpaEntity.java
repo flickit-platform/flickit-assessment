@@ -86,4 +86,7 @@ public class MaturityLevelJpaEntity {
 
     @OneToMany(mappedBy = "maturityLevel", cascade = CascadeType.REMOVE)
     private List<QuestionImpactJpaEntity> questionImpacts;
+
+    @Column(name = "reference_number", nullable = false)
+    private Long referenceNumber;
 }
