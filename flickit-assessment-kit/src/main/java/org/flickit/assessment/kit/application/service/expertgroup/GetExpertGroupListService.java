@@ -19,7 +19,7 @@ import java.util.UUID;
 public class GetExpertGroupListService implements GetExpertGroupListUseCase {
 
     private static final int SIZE_OF_MEMBERS = 5;
-    private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
+    private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     private final LoadExpertGroupListPort loadExpertGroupListPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
