@@ -39,16 +39,16 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public UploadKitDslToFileStoragePort.Result uploadKitDsl(MultipartFile dslZipFile, String dslJsonFile) {
-        String bucketName = properties.getDslBucketName();
+        String bucketName = properties.getBucketNames().getDsl();
         UUID uniqueObjectName = UUID.randomUUID();
         String dslFileObjectName = uniqueObjectName + DSL_FILE_NAME;
         String dslJsonObjectName = uniqueObjectName + DSL_JSON_NAME;
 
         InputStream zipFileInputStream = dslZipFile.getInputStream();
-        writeFile(bucketName, dslFileObjectName, zipFileInputStream);
+        writeFile(bucketName, dslFileObjectName, zipFileInputStream, dslZipFile.getContentType());
 
         InputStream jsonFileInputStream = new ByteArrayInputStream(dslJsonFile.getBytes());
-        writeFile(bucketName, dslJsonObjectName, jsonFileInputStream);
+        writeFile(bucketName, dslJsonObjectName, jsonFileInputStream, JSON_CONTENT_TYPE);
 
         String dslFilePath = bucketName + SLASH + dslFileObjectName;
         String dslJsonPath = bucketName + SLASH + dslJsonObjectName;
@@ -56,11 +56,11 @@ public class MinioAdapter implements
     }
 
     @SneakyThrows
-    private void writeFile(String bucketName, String fileObjectName, InputStream fileInputStream) {
+    private void writeFile(String bucketName, String fileObjectName, InputStream fileInputStream, String contentType) {
         minioClient.putObject(PutObjectArgs.builder()
             .bucket(bucketName)
             .object(fileObjectName)
-//            .contentType()
+            .contentType(contentType)
             .stream(fileInputStream, fileInputStream.available(), -1)
             .build());
     }
@@ -85,15 +85,15 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String uploadPicture(MultipartFile pictureFile) {
-        String bucketName = properties.getAvatarBucketName();
-        UUID uniqueObjectName = UUID.randomUUID();
+        String bucketName = properties.getBucketNames().getAvatar();
+        UUID uniqueDir = UUID.randomUUID();
 
-        String postFix = "";
-        if (pictureFile.getOriginalFilename() != null) {
-            postFix = pictureFile.getOriginalFilename().substring(pictureFile.getOriginalFilename().indexOf(DOT));
-        }
-        String objectName = uniqueObjectName + PIC_FILE_NAME + postFix;
-        writeFile(bucketName, objectName, pictureFile.getInputStream());
+        String extension = "";
+        if (pictureFile.getOriginalFilename() != null)
+            extension = pictureFile.getOriginalFilename().substring(pictureFile.getOriginalFilename().indexOf(DOT));
+
+        String objectName = uniqueDir + PIC_FILE_NAME + extension;
+        writeFile(bucketName, objectName, pictureFile.getInputStream(), pictureFile.getContentType());
         return bucketName + SLASH + objectName;
     }
 
@@ -108,7 +108,6 @@ public class MinioAdapter implements
         String downloadUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
             .bucket(bucketName)
             .object(objectName)
-            //.extraQueryParams(Map.of("response-content-disposition", "attachment; name=myfile.zip"))
             .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
             .method(Method.GET)
             .build());
