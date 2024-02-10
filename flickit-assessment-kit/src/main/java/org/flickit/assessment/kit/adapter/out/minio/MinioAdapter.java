@@ -100,10 +100,17 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
+        if(filePath == null || filePath.isBlank())
+            return null;
+
         String bucketName = filePath.substring(0, filePath.indexOf(SLASH));
         String objectName = filePath.substring(filePath.indexOf(SLASH));
 
-        checkFileExistence(bucketName, objectName);
+        try {
+            checkFileExistence(bucketName, objectName);
+        } catch (ResourceNotFoundException e) {
+            return null;
+        }
 
         String downloadUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
             .bucket(bucketName)

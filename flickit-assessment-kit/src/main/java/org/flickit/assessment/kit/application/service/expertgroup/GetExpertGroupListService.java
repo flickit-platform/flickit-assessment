@@ -5,9 +5,11 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
+import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,21 +19,24 @@ import java.util.UUID;
 public class GetExpertGroupListService implements GetExpertGroupListUseCase {
 
     private static final int SIZE_OF_MEMBERS = 5;
+    private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
+
     private final LoadExpertGroupListPort loadExpertGroupListPort;
+    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public PaginatedResponse<ExpertGroupListItem> getExpertGroupList(Param param) {
 
-        var portResult = loadExpertGroupListPort.loadExpertGroupList(
+        var loadPortResult = loadExpertGroupListPort.loadExpertGroupList(
             toParam(param.getPage(), param.getSize(), param.getCurrentUserId()));
 
         return new PaginatedResponse<>(
-            mapToExpertGroupListItems(portResult.getItems(), param.getCurrentUserId()),
-            portResult.getPage(),
-            portResult.getSize(),
-            portResult.getSort(),
-            portResult.getOrder(),
-            portResult.getTotal()
+            mapToExpertGroupListItems(loadPortResult.getItems(), param.getCurrentUserId()),
+            loadPortResult.getPage(),
+            loadPortResult.getSize(),
+            loadPortResult.getSort(),
+            loadPortResult.getOrder(),
+            loadPortResult.getTotal()
         );
     }
 
@@ -45,7 +50,7 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
                 item.id(),
                 item.title(),
                 item.bio(),
-                item.picture(),
+                createFileDownloadLinkPort.createDownloadLink(item.picture(), EXPIRY_DURATION),
                 item.publishedKitsCount(),
                 item.membersCount(),
                 item.members(),
