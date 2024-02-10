@@ -1,27 +1,28 @@
 <configuration scan="false">
 
-	<contextName>flickit-assessment</contextName>
-	<jmxConfigurator />
-	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <contextName>flickit-assessment</contextName>
+    <jmxConfigurator />
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 
-	<springProperty scope="context" name="ASYNC_CONSOLE_QUEUE_SIZE" source="logging.async-console.queue-size" defaultValue="1000"/>
+    <springProperty scope="context" name="ASYNC_CONSOLE_QUEUE_SIZE" source="logging.async-console.queue-size" defaultValue="1000"/>
+    <springProperty scope="context" name="LOGSTASH_URL" source="logstash.url" defaultValue="localhost:4560"/>
 
-	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>[%date{ISO8601,UTC}] %-5level -| %logger{0} -| %msg %rEx%n</pattern>
-		</encoder>
-	</appender>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%date{ISO8601,UTC}] %-5level -| %logger{0} -| %msg %rEx%n</pattern>
+        </encoder>
+    </appender>
 
-	<!-- see https://logback.qos.ch/manual/appenders.html#AsyncAppender -->
-	<appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
-		<appender-ref ref="CONSOLE" />
-		<discardingThreshold>0</discardingThreshold>
-		<queueSize>${ASYNC_CONSOLE_QUEUE_SIZE}</queueSize>
-		<neverBlock>true</neverBlock>
-	</appender>
+    <!-- see https://logback.qos.ch/manual/appenders.html#AsyncAppender -->
+    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="CONSOLE" />
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>${ASYNC_CONSOLE_QUEUE_SIZE}</queueSize>
+        <neverBlock>true</neverBlock>
+    </appender>
 
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>localhost:4560</destination>
+        <destination>${LOGSTASH_URL}</destination>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>info</level>
         </filter>
@@ -58,15 +59,13 @@
         </encoder>
     </appender>
 
-
-	<root level="info">
-		<appender-ref ref="ASYNC_CONSOLE" />
+    <root level="info">
+        <appender-ref ref="ASYNC_CONSOLE" />
         <appender-ref ref="LOGSTASH" />
-	</root>
+    </root>
 
-	<logger name="org.flickit.assessment" level="info" additivity="false">
+    <logger name="org.flickit.assessment" level="info" additivity="false">
         <appender-ref ref="ASYNC_CONSOLE" />
     </logger>
-
 
 </configuration>
