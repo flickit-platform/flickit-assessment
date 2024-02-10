@@ -26,7 +26,7 @@ public class QuestionImpactPersistenceJpaAdapter implements
     public Long persist(QuestionImpact impact, Long kitId) {
         MaturityLevelJpaEntity maturityLevelJpaEntity = maturityLevelRepository.getReferenceById(impact.getMaturityLevelId());
         Long lastReferenceNumber = repository.findLastReferenceNumberByKitId(kitId);
-        return repository.save(mapToJpaEntityToPersist(impact, maturityLevelJpaEntity, lastReferenceNumber)).getId();
+        return repository.save(mapToJpaEntityToPersist(impact, maturityLevelJpaEntity, lastReferenceNumber, kitId)).getId();
     }
 
     @Override

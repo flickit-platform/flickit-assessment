@@ -22,7 +22,7 @@ public class QuestionImpactMapper {
         );
     }
 
-    public static QuestionImpactJpaEntity mapToJpaEntityToPersist(QuestionImpact impact, MaturityLevelJpaEntity maturityLevelJpaEntity, Long lastReferenceNumber) {
+    public static QuestionImpactJpaEntity mapToJpaEntityToPersist(QuestionImpact impact, MaturityLevelJpaEntity maturityLevelJpaEntity, Long lastReferenceNumber, Long kitId) {
         return new QuestionImpactJpaEntity(
             null,
             impact.getWeight(),
@@ -34,7 +34,8 @@ public class QuestionImpactMapper {
             impact.getLastModificationTime(),
             impact.getCreatedBy(),
             impact.getLastModifiedBy(),
-            lastReferenceNumber + 1
+            lastReferenceNumber + 1,
+            kitId
         );
     }
 }

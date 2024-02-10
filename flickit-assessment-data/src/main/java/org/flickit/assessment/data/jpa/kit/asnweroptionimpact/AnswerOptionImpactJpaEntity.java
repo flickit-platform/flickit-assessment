@@ -47,4 +47,7 @@ public class AnswerOptionImpactJpaEntity {
 
     @Column(name = "reference_number", nullable = false)
     private Long referenceNumber;
+
+    @Column(name = "kit_id", nullable = false)
+    private Long kitId;
 }

@@ -33,7 +33,7 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         );
 
     @Query("""
-            SELECT MAX(s.referenceNumber)
+            SELECT MAX(q.referenceNumber)
             FROM QuestionnaireJpaEntity q
             WHERE q.kitId = :kitId
         """)

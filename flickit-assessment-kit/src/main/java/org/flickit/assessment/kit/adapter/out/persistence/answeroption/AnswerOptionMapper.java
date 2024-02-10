@@ -30,7 +30,8 @@ public class AnswerOptionMapper {
             LocalDateTime.now(),
             param.createdBy(),
             param.createdBy(),
-            lastReferenceNumber + 1
+            lastReferenceNumber + 1,
+            param.kitId()
         );
     }
 }

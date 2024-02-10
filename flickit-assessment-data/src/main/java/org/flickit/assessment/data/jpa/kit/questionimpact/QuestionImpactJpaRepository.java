@@ -28,7 +28,7 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
-            SELECT MAX(a.referenceNumber)
+            SELECT MAX(q.referenceNumber)
             FROM QuestionImpactJpaEntity q
             WHERE q.kitId = :kitId
         """)

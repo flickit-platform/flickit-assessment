@@ -108,7 +108,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids);
 
     @Query("""
-            SELECT MAX(a.referenceNumber)
+            SELECT MAX(q.referenceNumber)
             FROM QuestionJpaEntity q
             WHERE q.kitId = :kitId
         """)
