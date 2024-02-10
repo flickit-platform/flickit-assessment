@@ -18,9 +18,6 @@
             WHERE s.kit_id = fak_subject.kit_id
             AND s.id <= fak_subject.id);]]>
         </sql>
-<!--        <update tableName="fak_subject">
-            <column name="reference_number" valueComputed="SELECT COUNT(*) FROM fak_subject WHERE fak_subject.kit_id = kit_id AND fak_subject.id <= id"/>
-        </update>-->
     </changeSet>
 
     <changeSet id="0.14-03" author="MKouhestani">
@@ -255,70 +252,58 @@
                               tableName="fak_maturity_level"/>
     </changeSet>
 
-    <!--<changeSet id="0.14-22" author="MKouhestani">
+    <changeSet id="0.14-37" author="MKouhestani">
         <addColumn tableName="fac_answer">
             <column name="question_reference_number" type="bigint"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.14-23" author="MKouhestani">
-        <sql>
-            <![CDATA[UPDATE fak_attribute
-            SET question_reference_number = (SELECT COUNT(*)
-            FROM fac_answer a
-            WHERE a.kit_id = fac_answer.kit_id
-            AND a.id <= fac_answer.id);]]>
-        </sql>
+    <changeSet id="0.14-38" author="MKouhestani">
+        <update tableName="fac_answer">
+            <column name="question_reference_number" valueComputed="fak_question.reference_number FROM fak_question WHERE question_id = fak_question.id" />
+        </update>
     </changeSet>
 
-    <changeSet id="0.14-24" author="MKouhestani">
+    <changeSet id="0.14-39" author="MKouhestani">
         <addNotNullConstraint columnName="question_reference_number"
                               constraintName="question_reference_number_not_null"
                               tableName="fac_answer"/>
     </changeSet>
 
-    <changeSet id="0.14-25" author="MKouhestani">
+    <changeSet id="0.14-40" author="MKouhestani">
         <addColumn tableName="fac_subject_value">
-            <column name="reference_number" type="bigint"/>
+            <column name="subject_reference_number" type="bigint"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.14-26" author="MKouhestani">
-        <sql>
-            <![CDATA[UPDATE fak_attribute
-            SET reference_number = (SELECT COUNT(*)
-            FROM fak_attribute a
-            WHERE a.kit_id = fak_attribute.kit_id
-            AND a.id <= fak_attribute.id);]]>
-        </sql>
+    <changeSet id="0.14-41" author="MKouhestani">
+        <update tableName="fac_subject_value">
+            <column name="subject_reference_number" valueComputed="fak_subject.reference_number FROM fak_subject WHERE subject_id = fak_subject.id" />
+        </update>
     </changeSet>
 
-    <changeSet id="0.14-27" author="MKouhestani">
-        <addNotNullConstraint columnName="reference_number"
-                              constraintName="reference_number_not_null"
-                              tableName="fak_attribute"/>
+    <changeSet id="0.14-42" author="MKouhestani">
+        <addNotNullConstraint columnName="subject_reference_number"
+                              constraintName="subject_reference_number_not_null"
+                              tableName="fac_subject_value"/>
     </changeSet>
 
-    <changeSet id="0.14-28" author="MKouhestani">
+    <changeSet id="0.14-43" author="MKouhestani">
         <addColumn tableName="fac_quality_attribute_value">
-            <column name="reference_number" type="bigint"/>
+            <column name="attribute_reference_number" type="bigint"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.14-29" author="MKouhestani">
-        <sql>
-            <![CDATA[UPDATE fak_attribute
-            SET reference_number = (SELECT COUNT(*)
-            FROM fak_attribute a
-            WHERE a.kit_id = fak_attribute.kit_id
-            AND a.id <= fak_attribute.id);]]>
-        </sql>
+    <changeSet id="0.14-44" author="MKouhestani">
+        <update tableName="fac_quality_attribute_value">
+            <column name="attribute_reference_number" valueComputed="fak_attribute.reference_number FROM fak_attribute WHERE quality_attribute_id = fak_attribute.id" />
+        </update>
     </changeSet>
 
-    <changeSet id="0.14-30" author="MKouhestani">
-        <addNotNullConstraint columnName="reference_number"
-                              constraintName="reference_number_not_null"
-                              tableName="fak_attribute"/>
-    </changeSet>-->
+    <changeSet id="0.14-45" author="MKouhestani">
+        <addNotNullConstraint columnName="attribute_reference_number"
+                              constraintName="attribute_reference_number_not_null"
+                              tableName="fac_quality_attribute_value"/>
+    </changeSet>
 
 </databaseChangeLog>
