@@ -22,6 +22,8 @@ public class AssessmentResultMapper {
             null,
             param.isCalculateValid(),
             param.isConfidenceValid(),
+            param.lastModificationTime(),
+            param.lastModificationTime(),
             param.lastModificationTime()
         );
     }
@@ -36,7 +38,9 @@ public class AssessmentResultMapper {
             entity.getConfidenceValue(),
             entity.getIsCalculateValid(),
             entity.getIsConfidenceValid(),
-            entity.getLastModificationTime()
+            entity.getLastModificationTime(),
+            entity.getLastCalculationTime(),
+            entity.getLastConfidenceCalculationTime()
         );
     }
 }
