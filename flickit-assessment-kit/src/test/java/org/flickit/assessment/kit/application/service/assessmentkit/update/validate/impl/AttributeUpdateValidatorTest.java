@@ -53,36 +53,6 @@ class AttributeUpdateValidatorTest {
     }
 
     @Test
-    void testValidate_DslHasTwoNewAttributes_Invalid() {
-        Attribute attrOne = AttributeMother.attributeWithTitle("attr1");
-        Attribute attrTwo = AttributeMother.attributeWithTitle("attr2");
-        Subject subject = SubjectMother.subjectWithAttributes("subject1", Arrays.asList(attrOne, attrTwo));
-        AssessmentKit savedKit = AssessmentKitMother.kitWithSubjects(List.of(subject));
-
-        Attribute attrThree = AttributeMother.attributeWithTitle("attr3");
-        Attribute attrFour = AttributeMother.attributeWithTitle("attr4");
-
-        AttributeDslModel dslAttrOne =
-            AttributeDslModelMother.domainToDslModel(attrOne, e -> e.title("new title"));
-        AttributeDslModel dslAttrTwo =
-            AttributeDslModelMother.domainToDslModel(attrTwo, e -> e.description("new description"));
-
-        AttributeDslModel dslAttrThree = AttributeDslModelMother.domainToDslModel(attrThree);
-        AttributeDslModel dslAttrFour = AttributeDslModelMother.domainToDslModel(attrFour);
-
-        SubjectDslModel subjectDslModel = SubjectDslModelMother.domainToDslModel(subject);
-
-        AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
-            .subjects(List.of(subjectDslModel))
-            .attributes(List.of(dslAttrOne, dslAttrTwo, dslAttrThree, dslAttrFour))
-            .build();
-
-        Notification notification = validator.validate(savedKit, dslKit);
-
-        Assertions.assertTrue(notification.hasErrors());
-    }
-
-    @Test
     void testValidate_DslHasTwoAttributesLessThanDb_Invalid() {
         Attribute attrOne = AttributeMother.attributeWithTitle("attr1");
         Attribute attrTwo = AttributeMother.attributeWithTitle("attr2");

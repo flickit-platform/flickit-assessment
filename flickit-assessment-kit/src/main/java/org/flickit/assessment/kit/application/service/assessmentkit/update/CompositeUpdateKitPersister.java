@@ -29,11 +29,11 @@ public class CompositeUpdateKitPersister {
 
     public UpdateKitPersisterResult persist(AssessmentKit savedKit, AssessmentKitDslModel dslKit, UUID currentUserId) {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        boolean shouldInvalidateCalcResult = false;
+        boolean isMajorUpdate = false;
         for (UpdateKitPersister p : persisters) {
             UpdateKitPersisterResult result = p.persist(ctx, savedKit, dslKit, currentUserId);
-            shouldInvalidateCalcResult = shouldInvalidateCalcResult || result.shouldInvalidateCalcResult();
+            isMajorUpdate = isMajorUpdate || result.isMajorUpdate();
         }
-        return new UpdateKitPersisterResult(shouldInvalidateCalcResult);
+        return new UpdateKitPersisterResult(isMajorUpdate);
     }
 }
