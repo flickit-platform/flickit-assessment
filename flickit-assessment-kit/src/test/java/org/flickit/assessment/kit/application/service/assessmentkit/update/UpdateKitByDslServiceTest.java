@@ -8,7 +8,7 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
-import org.flickit.assessment.kit.application.port.out.assessmentresult.InvalidateAssessmentResultByKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLastMajorModificationTimePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.CompositeUpdateKitValidator;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl.InvalidAdditionError;
@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -44,7 +45,7 @@ class UpdateKitByDslServiceTest {
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     @Mock
-    private InvalidateAssessmentResultByKitPort invalidateResultByKitPort;
+    private UpdateKitLastMajorModificationTimePort updateKitLastMajorModificationTimePort;
     @Mock
     private CompositeUpdateKitValidator validator;
     @Mock
@@ -53,7 +54,7 @@ class UpdateKitByDslServiceTest {
 
     @Test
     @SneakyThrows
-    void testUpdate_ValidChanges_NoNeedToInvalidateResult() {
+    void testUpdate_ValidChanges_NoNeedToUpdateKitEffectiveModificationTime() {
         Long kitId = 1L;
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKit savedKit = simpleKit();
@@ -71,7 +72,7 @@ class UpdateKitByDslServiceTest {
 
     @Test
     @SneakyThrows
-    void testUpdate_ValidChanges_NeedsToInvalidateResult() {
+    void testUpdate_ValidChanges_NeedsToUpdateKitEffectiveModificationTime() {
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         AssessmentKit savedKit = simpleKit();
         Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
@@ -80,7 +81,7 @@ class UpdateKitByDslServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(currentUserId);
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new Notification());
         when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class), any(UUID.class))).thenReturn(new UpdateKitPersisterResult(true));
-        doNothing().when(invalidateResultByKitPort).invalidateByKitId(savedKit.getId());
+        doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(savedKit.getId()), any(LocalDateTime.class));
 
         var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), dslContent, currentUserId.get());
         service.update(param);

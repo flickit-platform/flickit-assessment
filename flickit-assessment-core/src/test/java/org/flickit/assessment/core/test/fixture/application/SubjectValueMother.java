@@ -26,4 +26,8 @@ public class SubjectValueMother {
         subjectValue.setMaturityLevel(maturityLevel);
         return subjectValue;
     }
+
+    public static SubjectValue withQAValuesAndSubjectWithQAs(List<QualityAttributeValue> qaValues, List<QualityAttribute> qas) {
+        return new SubjectValue(UUID.randomUUID(), SubjectMother.withAttributes(qas), qaValues);
+    }
 }

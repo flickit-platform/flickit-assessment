@@ -6,7 +6,7 @@ import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroup
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.Member;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPictureLinkPort;
+import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -30,10 +30,12 @@ class GetExpertGroupListServiceTest {
 
     @InjectMocks
     private GetExpertGroupListService service;
+
     @Mock
     private LoadExpertGroupListPort loadExpertGroupListPort;
+
     @Mock
-    private LoadExpertGroupPictureLinkPort loadExpertGroupPictureLinkPort;
+    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
     void testGetExpertGroupList_ValidInputs_ValidResults() {
@@ -45,6 +47,10 @@ class GetExpertGroupListServiceTest {
         var expertGroup2 = createExpertGroup(currentUserId);
         List<Result> expertGroups = List.of(expertGroup1, expertGroup2);
 
+        List<GetExpertGroupListUseCase.ExpertGroupListItem> expertGroupListItems = List.of(
+            portToUseCaseResult(expertGroup1, false),
+            portToUseCaseResult(expertGroup2, true));
+
         PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
             expertGroups,
             page,
@@ -54,9 +60,10 @@ class GetExpertGroupListServiceTest {
             expertGroups.size());
         when(loadExpertGroupListPort.loadExpertGroupList(any(LoadExpertGroupListPort.Param.class)))
             .thenReturn(paginatedResponse);
-
-        when(loadExpertGroupPictureLinkPort.loadPictureLink(any(String.class),any(Duration.class)))
-            .thenReturn(any(String.class));
+        when(createFileDownloadLinkPort.createDownloadLink(expertGroup1.picture(), Duration.ofDays(1)))
+            .thenReturn(expertGroup1.picture());
+        when(createFileDownloadLinkPort.createDownloadLink(expertGroup2.picture(), Duration.ofDays(1)))
+            .thenReturn(expertGroup2.picture());
 
         var param = new GetExpertGroupListUseCase.Param(size, page, currentUserId);
         var result = service.getExpertGroupList(param);
@@ -68,8 +75,8 @@ class GetExpertGroupListServiceTest {
         assertEquals(size, loadPortParam.getValue().size());
         assertNotNull(paginatedResponse);
         assertNotNull(result.getItems());
-        assertEquals(2,result.getItems().size());
-        assertNotNull(result.getItems());
+        assertNotEquals(0, result.getItems().size());
+        assertEquals(expertGroupListItems, result.getItems());
     }
 
     @Test
@@ -102,6 +109,7 @@ class GetExpertGroupListServiceTest {
         assertEquals(size, loadPortParam.getValue().size());
         assertNotNull(paginatedResponse);
         assertNotNull(result.getItems());
+        assertEquals(0, result.getItems().size());
         assertEquals(expertGroupListItemsFinal, result.getItems());
     }
 
@@ -117,6 +125,19 @@ class GetExpertGroupListServiceTest {
             10,
             List.of(new Member("title" + id)),
             ownerId);
+    }
+
+    private static GetExpertGroupListUseCase.ExpertGroupListItem portToUseCaseResult(Result portResult, boolean editable) {
+        return new GetExpertGroupListUseCase.ExpertGroupListItem(
+            portResult.id(),
+            portResult.title(),
+            portResult.bio(),
+            portResult.picture(),
+            portResult.publishedKitsCount(),
+            portResult.membersCount(),
+            portResult.members(),
+            editable
+        );
     }
 }
 

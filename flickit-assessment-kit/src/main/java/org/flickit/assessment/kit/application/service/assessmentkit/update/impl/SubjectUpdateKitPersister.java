@@ -6,6 +6,7 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
+import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -22,13 +24,13 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_SUBJECTS;
 
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubjectUpdateKitPersister implements UpdateKitPersister {
 
     private final UpdateSubjectPort updateSubjectPort;
+    private final CreateSubjectPort createSubjectPort;
 
     @Override
     public int order() {
@@ -42,11 +44,16 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
                                             AssessmentKitDslModel dslKit,
                                             UUID currentUserId) {
         Map<String, Subject> savedSubjectCodesMap = savedKit.getSubjects().stream().collect(toMap(Subject::getCode, i -> i));
+        Map<String, Long> addedCodeToIdMap = new HashMap<>();
 
         dslKit.getSubjects().forEach(dslSubject -> {
             Subject savedSubject = savedSubjectCodesMap.get(dslSubject.getCode());
 
-            if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
+            if (savedSubject == null) {
+                Long persistedSubjectId = createSubjectPort.persist(toCreateParam(dslSubject, savedKit.getId(), currentUserId));
+                addedCodeToIdMap.put(dslSubject.getCode(), persistedSubjectId);
+                log.debug("Subject[id={}, code={}] created", persistedSubjectId, dslSubject.getCode());
+            } else if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
                 savedSubject.getIndex() != dslSubject.getIndex() ||
                 !savedSubject.getDescription().equals(dslSubject.getDescription())) {
                 updateSubjectPort.update(toUpdateParam(savedSubject.getId(), dslSubject, currentUserId));
@@ -54,12 +61,27 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             }
         });
 
-        Map<String, Long> subjectCodeToIdMap = savedSubjectCodesMap.entrySet().stream()
+        Map<String, Long> updatedCodeToIdMap = savedSubjectCodesMap.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getId()));
+        HashMap<String, Long> subjectCodeToIdMap = new HashMap<>(addedCodeToIdMap);
+        subjectCodeToIdMap.putAll(updatedCodeToIdMap);
+
         ctx.put(KEY_SUBJECTS, subjectCodeToIdMap);
         log.debug("Final subjects: {}", subjectCodeToIdMap);
 
-        return new UpdateKitPersisterResult(false);
+        return new UpdateKitPersisterResult(!addedCodeToIdMap.isEmpty());
+    }
+
+    private CreateSubjectPort.Param toCreateParam(SubjectDslModel dslSubject, long kitId, UUID currentUserId) {
+        return new CreateSubjectPort.Param(
+            dslSubject.getCode(),
+            dslSubject.getTitle(),
+            dslSubject.getIndex(),
+            dslSubject.getWeight(),
+            dslSubject.getDescription(),
+            kitId,
+            currentUserId
+        );
     }
 
     private UpdateSubjectPort.Param toUpdateParam(long id, SubjectDslModel dslSubject, UUID currentUserId) {

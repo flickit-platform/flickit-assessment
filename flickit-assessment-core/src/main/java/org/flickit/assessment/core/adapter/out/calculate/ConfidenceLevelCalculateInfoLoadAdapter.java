@@ -89,7 +89,9 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         return new AssessmentResult(
             assessmentResultId,
             buildAssessment(assessmentResultEntity.getAssessment()),
-            subjectValues);
+            subjectValues,
+            assessmentResultEntity.getLastCalculationTime(),
+            assessmentResultEntity.getLastConfidenceCalculationTime());
     }
 
     private Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> mapQuestionToImpacts(List<QuestionJoinQuestionImpactView> questionJoinImpactViews) {

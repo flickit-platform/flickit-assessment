@@ -48,5 +48,4 @@ class UpdateEvidenceServiceTest {
         assertEquals(param.getDescription(), updateParamArgumentCaptor.getValue().description());
         assertNotEquals(savedEvidence.getLastModificationTime(), updateParamArgumentCaptor.getValue().lastModificationTime());
     }
-
 }

@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDownloadLinkUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.kitdsl.CreateDslDownloadLinkPort;
+import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ public class GetKitDslDownloadLinkService implements GetKitDownloadLinkUseCase {
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadDslFilePathPort loadDslFilePathPort;
-    private final CreateDslDownloadLinkPort createDslDownloadLinkPort;
+    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public String getKitDslDownloadLink(Param param) {
@@ -38,6 +38,6 @@ public class GetKitDslDownloadLinkService implements GetKitDownloadLinkUseCase {
         String filePath = loadDslFilePathPort.loadDslFilePath(param.getKitId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_DSL_DOWNLOAD_LINK_FILE_PATH_NOT_FOUND));
 
-        return createDslDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
+        return createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
     }
 }

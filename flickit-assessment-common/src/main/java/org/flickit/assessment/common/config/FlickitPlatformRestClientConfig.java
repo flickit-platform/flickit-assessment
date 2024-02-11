@@ -17,8 +17,8 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKN
 public class FlickitPlatformRestClientConfig {
 
     @Bean
-    RestTemplate flickitPlatformRestTemplate(FlickitPlatformRestProperties props) {
-        return new RestTemplateBuilder()
+    RestTemplate flickitPlatformRestTemplate(FlickitPlatformRestProperties props, RestTemplateBuilder restTemplateBuilder) {
+        return restTemplateBuilder
             .setConnectTimeout(props.getRestClient().getConnectTimeout())
             .setReadTimeout(props.getRestClient().getReadTimeout())
             .messageConverters(mappingJackson2HttpMessageConverter())

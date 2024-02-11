@@ -20,7 +20,7 @@ import static org.flickit.assessment.kit.application.service.assessmentkit.updat
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithSubjects;
 import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.SubjectDslModelMother.domainToDslModel;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class SubjectUpdateKitValidatorTest {
@@ -46,7 +46,7 @@ class SubjectUpdateKitValidatorTest {
     }
 
     @Test
-    void testValidate_dslHasTwoNewSubjects_Invalid() {
+    void testValidate_dslHasTwoNewSubjects_valid() {
         Subject subjectOne = SubjectMother.subjectWithTitle("Software");
         Subject subjectTwo = subjectWithTitle("Team");
         AssessmentKit savedKit = kitWithSubjects(List.of(subjectOne, subjectTwo));
@@ -65,14 +65,8 @@ class SubjectUpdateKitValidatorTest {
         Notification notification = validator.validate(savedKit, dslKit);
 
         assertThat(notification)
-            .returns(true, Notification::hasErrors)
-            .extracting(Notification::getErrors, as(COLLECTION))
-            .singleElement()
-            .isInstanceOfSatisfying(InvalidAdditionError.class, x -> {
-                assertThat(x.fieldName()).isEqualTo(SUBJECT);
-                assertThat(x.addedItems()).contains(subjectThree.getCode());
-                assertThat(x.addedItems()).contains(subjectFour.getCode());
-            });
+            .returns(false, Notification::hasErrors);
+        assertEquals(0, notification.getErrors().size());
     }
 
     @Test

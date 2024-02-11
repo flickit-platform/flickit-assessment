@@ -33,7 +33,7 @@ public class Question {
     @PlanningVariable
     private Integer recommendedOptionIndex;
 
-    private int currentOptionIndex;
+    private Integer currentOptionIndex;
 
     public Question(Long id, int cost, List<Option> options, Integer currentOptionIndex) {
         this.id = id;
@@ -44,19 +44,24 @@ public class Question {
 
     @ValueRangeProvider
     private List<Integer> getNextOptionIndexes() {
-        return IntStream.range(currentOptionIndex, options.size()).boxed().toList();
+        return IntStream.range(getCurrentOptionIndexValue(), options.size()).boxed().toList();
+    }
+
+    public int getCurrentOptionIndexValue() {
+        return currentOptionIndex != null ? currentOptionIndex : 0;
     }
 
     public double calculateGainingScore(AttributeLevelScore attributeLevelScore) {
-        return getOptionScore(attributeLevelScore, recommendedOptionIndex) - getOptionScore(attributeLevelScore, currentOptionIndex);
+        return getOptionScore(attributeLevelScore, recommendedOptionIndex)
+            - getOptionScore(attributeLevelScore, getCurrentOptionIndexValue());
     }
 
     public double getCost() {
-        return getOptionCost(recommendedOptionIndex) - getOptionCost(currentOptionIndex);
+        return getOptionCost(recommendedOptionIndex) - getOptionCost(getCurrentOptionIndexValue());
     }
 
     public boolean isRecommended() {
-        return recommendedOptionIndex != null && recommendedOptionIndex > currentOptionIndex;
+        return recommendedOptionIndex != null && recommendedOptionIndex > getCurrentOptionIndexValue();
     }
 
     public boolean hasImpact(AttributeLevelScore attributeLevelScore) {
@@ -64,18 +69,22 @@ public class Question {
     }
 
     public double calculateGainingScore() {
-        return options.get(recommendedOptionIndex).sumScores() - options.get(currentOptionIndex).sumScores();
+        return options.get(recommendedOptionIndex).sumScores() - options.get(getCurrentOptionIndexValue()).sumScores();
+    }
+
+    public double calculateBenefit() {
+        return calculateGainingScore() / getOptionCost(getRecommendedOptionIndex());
     }
 
     private double getOptionScore(AttributeLevelScore attributeLevelScore, Integer optionIndex) {
         return options
-            .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
+            .get(Objects.requireNonNullElseGet(optionIndex, this::getCurrentOptionIndexValue))
             .getAttributeLevelPromisedScore(attributeLevelScore);
     }
 
     private double getOptionCost(Integer optionIndex) {
         return options
-            .get(Objects.requireNonNullElseGet(optionIndex, () -> currentOptionIndex))
+            .get(Objects.requireNonNullElseGet(optionIndex, this::getCurrentOptionIndexValue))
             .getCost();
     }
 }

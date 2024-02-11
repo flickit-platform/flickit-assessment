@@ -33,13 +33,6 @@ public class AttributeUpdateValidator implements UpdateKitValidator {
             .filter(e -> !dslAttributeCodes.contains(e))
             .collect(Collectors.toSet());
 
-        var addedAttributeCodes = dslAttributeCodes.stream()
-            .filter(e -> !savedAttributeCodes.contains(e))
-            .collect(Collectors.toSet());
-
-        if (!addedAttributeCodes.isEmpty())
-            notification.add(new InvalidAdditionError(DslFieldNames.ATTRIBUTE, addedAttributeCodes));
-
         if (!deletedAttributeCodes.isEmpty())
             notification.add(new InvalidDeletionError(DslFieldNames.ATTRIBUTE, deletedAttributeCodes));
 

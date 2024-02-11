@@ -1,6 +1,8 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
@@ -21,16 +23,20 @@ import java.util.Map;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.application.domain.MaturityLevel.middleLevel;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReportAssessmentService implements ReportAssessmentUseCase {
 
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentReportInfoPort loadReportInfoPort;
     private final LoadAttributeValueListPort loadAttributeValueListPort;
 
     @Override
     public AssessmentReport reportAssessment(Param param) {
+        validateAssessmentResultPort.validate(param.getAssessmentId());
+
         var assessmentResult = loadReportInfoPort.load(param.getAssessmentId());
 
         var maturityLevels = assessmentResult.getAssessment().getAssessmentKit().getMaturityLevels();
@@ -61,8 +67,8 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
             assessment.getTitle(),
             assessmentResult.getMaturityLevel().getId(),
             assessmentResult.getConfidenceValue(),
-            assessmentResult.isCalculateValid(),
-            assessmentResult.isConfidenceValid(),
+            true,
+            true,
             AssessmentColor.valueOfById(assessment.getColorId()),
             assessment.getLastModificationTime()
         );

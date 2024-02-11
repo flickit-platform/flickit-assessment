@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDownloadLinkUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.kitdsl.CreateDslDownloadLinkPort;
+import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
 import org.flickit.assessment.kit.application.service.kitdsl.GetKitDslDownloadLinkService;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class GetKitDslDownloadLinkServiceTest {
     @Mock
     private LoadDslFilePathPort loadDslFilePathPort;
     @Mock
-    private CreateDslDownloadLinkPort createDslDownloadLinkPort;
+    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
     @Mock
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     @Mock
@@ -49,7 +49,7 @@ class GetKitDslDownloadLinkServiceTest {
             .thenReturn(Optional.of(expectedFilePath));
 
         String expectedDownloadLink = "http://download.link";
-        when(createDslDownloadLinkPort.createDownloadLink(expectedFilePath, EXPIRY_DURATION))
+        when(createFileDownloadLinkPort.createDownloadLink(expectedFilePath, EXPIRY_DURATION))
             .thenReturn(expectedDownloadLink);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId()))
             .thenReturn(true);
@@ -89,6 +89,6 @@ class GetKitDslDownloadLinkServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getKitDslDownloadLink(param));
         Assertions.assertThat(throwable).hasMessage(GET_KIT_DSL_DOWNLOAD_LINK_FILE_PATH_NOT_FOUND);
 
-        verifyNoInteractions(createDslDownloadLinkPort);
+        verifyNoInteractions(createFileDownloadLinkPort);
     }
 }

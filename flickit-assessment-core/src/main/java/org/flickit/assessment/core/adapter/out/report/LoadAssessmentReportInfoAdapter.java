@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.application.domain.*;
-import org.flickit.assessment.core.application.exception.CalculateNotValidException;
-import org.flickit.assessment.core.application.exception.ConfidenceCalculationNotValidException;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
@@ -22,7 +20,8 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_ASSESSMENT_MATURITY_LEVEL_NOT_FOUND;
 
 @Slf4j
 @Component
@@ -37,16 +36,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     public AssessmentResult load(UUID assessmentId) {
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
-
-        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsCalculateValid())) {
-            log.warn("The calculated result is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultEntity.getId());
-            throw new CalculateNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
-        }
-
-        if (!Boolean.TRUE.equals(assessmentResultEntity.getIsConfidenceValid())) {
-            log.warn("The calculated confidence value is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResultEntity.getId());
-            throw new ConfidenceCalculationNotValidException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_VALID);
-        }
 
         UUID assessmentResultId = assessmentResultEntity.getId();
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
@@ -64,7 +53,9 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentResultEntity.getConfidenceValue(),
             assessmentResultEntity.getIsCalculateValid(),
             assessmentResultEntity.getIsConfidenceValid(),
-            assessmentResultEntity.getLastModificationTime());
+            assessmentResultEntity.getLastModificationTime(),
+            assessmentResultEntity.getLastCalculationTime(),
+            assessmentResultEntity.getLastConfidenceCalculationTime());
     }
 
     private List<SubjectValue> buildSubjectValues(List<SubjectValueJpaEntity> subjectValueEntities, Map<Long, MaturityLevel> maturityLevels) {

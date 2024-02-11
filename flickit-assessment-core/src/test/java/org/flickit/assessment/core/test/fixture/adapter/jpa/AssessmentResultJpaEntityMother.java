@@ -17,6 +17,8 @@ public class AssessmentResultJpaEntityMother {
             1.0,
             isCalculateValid,
             isConfidenceValid,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
             LocalDateTime.now()
         );
     }
