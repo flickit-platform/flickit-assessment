@@ -3,8 +3,8 @@ package org.flickit.assessment.kit.application.service.expertgroup;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPictureLinkPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,18 +17,17 @@ public class GetExpertGroupService implements GetExpertGroupUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
     private final LoadExpertGroupPort loadExpertGroupPort;
-    private final LoadExpertGroupPictureLinkPort loadExpertGroupPictureLinkPort;
+    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public ExpertGroup getExpertGroup(Param param) {
-        var portResult = loadExpertGroupPort.loadExpertGroup(toParam(param.getId()));
-        var picturePath = loadExpertGroupPictureLinkPort.loadPictureLink(portResult.picture(), EXPIRY_DURATION);
+        var portResult = loadExpertGroupPort.loadExpertGroup(toParam(param.getId()), param.getCurrentUserId());
 
         return new ExpertGroup(portResult.id(),
             portResult.title(),
             portResult.bio(),
             portResult.about(),
-            picturePath,
+            createFileDownloadLinkPort.createDownloadLink(portResult.picture(), EXPIRY_DURATION),
             portResult.website(),
             portResult.ownerId().equals(param.getCurrentUserId()));
     }

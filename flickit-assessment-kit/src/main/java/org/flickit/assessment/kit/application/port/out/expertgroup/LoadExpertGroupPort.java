@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public interface LoadExpertGroupPort {
 
-    Result loadExpertGroup(Param param);
+    Result loadExpertGroup(Param param, UUID currentUserId);
 
     record Param(Long id) {
     }
