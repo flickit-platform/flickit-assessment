@@ -10,8 +10,8 @@ public interface UpdateExpertGroupPort {
                  String title,
                  String bio,
                  String about,
-                 String website,
                  String picture,
+                 String website,
                  UUID owner_id) {
     }
 }

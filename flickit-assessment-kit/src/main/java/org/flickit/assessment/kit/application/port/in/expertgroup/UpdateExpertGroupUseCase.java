@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
@@ -21,7 +22,6 @@ public interface UpdateExpertGroupUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_EXPERT_GROUP_ID_NOT_NULL)
         Long id;
 
         @NotBlank(message = UPDATE_EXPERT_GROUP_TITLE_NOT_BLANK)
@@ -41,6 +41,7 @@ public interface UpdateExpertGroupUseCase {
 
         MultipartFile picture;
 
+        @URL(message = UPDATE_EXPERT_GROUP_WEBSITE_NOT_URL)
         @Size(min = 3, message = UPDATE_EXPERT_GROUP_WEBSITE_SIZE_MIN)
         @Size(max = 200, message = UPDATE_EXPERT_GROUP_WEBSITE_SIZE_MAX)
         String website;

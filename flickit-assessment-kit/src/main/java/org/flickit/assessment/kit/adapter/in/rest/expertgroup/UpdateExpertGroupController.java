@@ -20,23 +20,25 @@ public class UpdateExpertGroupController {
     private final UserContext userContext;
 
     @PutMapping("/expert-groups/{id}")
-    public ResponseEntity<Void> updateExpertGroupList(@PathVariable long id,
-                                                      @ModelAttribute UpdateExpertGroupRequestDto request) {
+    public ResponseEntity<Void> updateExpertGroup(@PathVariable long id,
+                                                  @ModelAttribute UpdateExpertGroupRequestDto request) {
         var currentUserId = userContext.getUser().id();
         useCase.updateExpertGroup(toParam(id, request, currentUserId));
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private UpdateExpertGroupUseCase.Param toParam(long id,
                                                    UpdateExpertGroupRequestDto request,
                                                    UUID currentUserId) {
+        String website = request.website();
         return new UpdateExpertGroupUseCase.Param(
             id,
             request.title(),
             request.bio(),
             request.about(),
             request.picture(),
-            request.website(),
+            (website != null && !website.isBlank()) ? website.strip() : null,
             currentUserId
         );
     }

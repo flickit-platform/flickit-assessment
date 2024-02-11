@@ -43,13 +43,14 @@ public class UpdateExpertGroupService implements
             pictureFilePath = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
 
         updateExpertGroupPort.update(toExpertGroupParam(param, pictureFilePath));
-        log.debug("User [{}] access to updating Expert Group [{}] denied.", param.getCurrentUserId(), param.getId());
+        log.debug("User [{}] updated Expert Group [{}].", param.getCurrentUserId(), param.getId());
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
         UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
             .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
         if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
+            log.debug("User [{}] updating Expert Group [{}] denied.", currentUserId, expertGroupId);
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
     }
@@ -60,8 +61,8 @@ public class UpdateExpertGroupService implements
             param.getTitle(),
             param.getBio(),
             param.getAbout(),
-            param.getWebsite(),
             picture,
+            param.getWebsite(),
             param.getCurrentUserId()
         );
     }

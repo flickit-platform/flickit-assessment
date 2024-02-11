@@ -61,7 +61,7 @@ class UpdateExpertGroupServiceTest {
         "NewAbout",
         "NewPicture",
         null,
-        "NewBio",
+        "http://www.google.com",
         currentUserId
     );
 }

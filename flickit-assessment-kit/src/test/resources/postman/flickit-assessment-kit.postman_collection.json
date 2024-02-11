@@ -415,7 +415,27 @@
 						{
 							"key": "picture",
 							"type": "file",
-							"src": "/home/maziyar/Pictures/Screenshots/Screenshot from 2024-01-13 08-59-19.png"
+							"src": "/home/maziyar/Pictures/Back.jpg"
+						},
+						{
+							"key": "title",
+							"value": "title",
+							"type": "text"
+						},
+						{
+							"key": "about",
+							"value": "about",
+							"type": "text"
+						},
+						{
+							"key": "bio",
+							"value": "bio",
+							"type": "text"
+						},
+						{
+							"key": "website",
+							"value": "https://www.google.com",
+							"type": "text"
 						}
 					]
 				},
