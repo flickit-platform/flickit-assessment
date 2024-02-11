@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.13-01" author="MKouhestani">
+        <addColumn tableName="fak_assessment_kit">
+            <column name="last_major_modification_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.13-02" author="MKouhestani">
+        <update tableName="fak_assessment_kit">
+            <column name="last_major_modification_time" valueComputed="last_modification_date"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.13-03" author="MKouhestani">
+        <addNotNullConstraint columnName="last_major_modification_time"
+                              constraintName="last_major_modification_time_not_null"
+                              tableName="fak_assessment_kit"/>
+    </changeSet>
+
+    <changeSet id="0.13-04" author="MKouhestani">
+        <addColumn tableName="fac_assessment_result">
+            <column name="last_calculation_time" type="${datetime_with_time_zone_type}"/>
+            <column name="last_confidence_calculation_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.13-05" author="MKouhestani">
+        <update tableName="fac_assessment_result">
+            <column name="last_calculation_time" valueComputed="last_modification_time WHERE maturity_level_id is not null"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.13-06" author="MKouhestani">
+        <update tableName="fac_assessment_result">
+            <column name="last_confidence_calculation_time" valueComputed="last_modification_time WHERE maturity_level_id is not null"/>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

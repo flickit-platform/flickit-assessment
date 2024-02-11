@@ -5,6 +5,7 @@ import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.QualityAttributeValue;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.domain.report.SubjectReport;
+import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.subject.ReportSubjectUseCase;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -23,6 +24,7 @@ import static org.flickit.assessment.core.test.fixture.application.QualityAttrib
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndMaturityLevelAndSubjectWithQAs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +32,9 @@ class ReportSubjectServiceTest {
 
     @InjectMocks
     private ReportSubjectService service;
+
+    @Mock
+    private ValidateAssessmentResult validateAssessmentResult;
 
     @Mock
     private LoadSubjectReportInfoPort loadSubjectReportInfoPort;
@@ -66,6 +71,7 @@ class ReportSubjectServiceTest {
 
         when(loadSubjectReportInfoPort.load(assessmentResult.getAssessment().getId(), subjectValue.getSubject().getId()))
             .thenReturn(assessmentResult);
+        doNothing().when(validateAssessmentResult).validate(assessmentResult.getAssessment().getId());
 
         SubjectReport subjectReport = service.reportSubject(param);
 
@@ -73,12 +79,11 @@ class ReportSubjectServiceTest {
         assertNotNull(subjectReport.subject());
         assertEquals(subjectValue.getSubject().getId(), subjectReport.subject().id());
         assertEquals(subjectValue.getMaturityLevel().getId(), subjectReport.subject().maturityLevelId());
-        assertEquals(assessmentResult.isCalculateValid(), subjectReport.subject().isCalculateValid());
+        assertEquals(assessmentResult.getIsCalculateValid(), subjectReport.subject().isCalculateValid());
 
         assertEquals(qaValues.size(), subjectReport.attributes().size());
-        for (SubjectReport.AttributeReportItem attribute : subjectReport.attributes()) {
+        for (SubjectReport.AttributeReportItem attribute : subjectReport.attributes())
             assertEquals(allLevels().size(), attribute.maturityScores().size());
-        }
 
         assertNotNull(subjectReport.topStrengths());
         assertEquals(3, subjectReport.topStrengths().size());
