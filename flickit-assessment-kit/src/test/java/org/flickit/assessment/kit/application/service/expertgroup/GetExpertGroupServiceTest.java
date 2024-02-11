@@ -41,14 +41,14 @@ class GetExpertGroupServiceTest {
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
             .thenReturn("/path/to/picture");
 
-        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class), currentUserId))
+        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class), eq(currentUserId)))
             .thenReturn(portResult);
 
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
         var result = service.getExpertGroup(param);
 
         ArgumentCaptor<LoadExpertGroupPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadExpertGroupPort.Param.class);
-        verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture(), currentUserId);
+        verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture(), eq(currentUserId));
 
         assertNotNull(result);
         assertNotNull(result.getPicture());
