@@ -16,6 +16,7 @@ import java.time.Duration;
 public class GetExpertGroupService implements GetExpertGroupUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
+
     private final LoadExpertGroupPort loadExpertGroupPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
