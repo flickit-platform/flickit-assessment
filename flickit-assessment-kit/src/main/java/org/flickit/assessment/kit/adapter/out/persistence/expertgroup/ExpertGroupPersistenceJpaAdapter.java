@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
-import io.minio.MinioClient;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
@@ -10,7 +9,6 @@ import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.*;
-import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,8 +30,6 @@ public class ExpertGroupPersistenceJpaAdapter implements
     CreateExpertGroupPort {
 
     private final ExpertGroupJpaRepository repository;
-    private final MinioClient minioClient;
-    private final MinioConfigProperties properties;
 
     @Override
     public Optional<UUID> loadOwnerId(Long expertGroupId) {
