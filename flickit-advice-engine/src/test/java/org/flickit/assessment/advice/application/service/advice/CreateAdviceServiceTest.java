@@ -9,10 +9,8 @@ import org.flickit.assessment.advice.application.domain.advice.*;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
-import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.AssessmentAttrLevelExistencePort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort.Result;
@@ -154,9 +152,6 @@ class CreateAdviceServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
 
-        when(assessmentAttrLevelExistencePort.exists(param.getAssessmentId(), 1L, 2L))
-            .thenReturn(true);
-
         doThrow(new CalculateNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID))
             .when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
@@ -184,9 +179,6 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
-            .thenReturn(true);
-
-        when(assessmentAttrLevelExistencePort.exists(param.getAssessmentId(), 1L, 2L))
             .thenReturn(true);
 
         doThrow(new ConfidenceCalculationNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID))
@@ -328,7 +320,6 @@ class CreateAdviceServiceTest {
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         verify(assessmentAttrLevelExistencePort, times(1)).exists(param.getAssessmentId(), 1L, 2L);
-        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(param.getAssessmentId());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         verify(loadCreatedAdviceDetailsPort, times(1)).loadAdviceDetails(any());
