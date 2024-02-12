@@ -9,7 +9,8 @@ import org.flickit.assessment.advice.application.domain.advice.*;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
-import org.flickit.assessment.advice.application.port.out.assessment.AssessmentAttrLevelExistencePort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
@@ -29,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -66,7 +68,10 @@ class CreateAdviceServiceTest {
     private LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
 
     @Mock
-    private AssessmentAttrLevelExistencePort assessmentAttrLevelExistencePort;
+    private LoadSelectedAttributeIdsRelatedToAssessmentPort loadSelectedAttributeIdsRelatedToAssessmentPort;
+
+    @Mock
+    private LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
 
     @Test
     void testCreateAdvice_AssessmentNotExist_ThrowException() {
@@ -91,8 +96,10 @@ class CreateAdviceServiceTest {
     }
 
     @Test
-    void testCreateAdvice_AssessmentAttributeLevelNotExist_ThrowException() {
-        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+    void testCreateAdvice_AssessmentAttributeNotRelated_ThrowException() {
+        List<AttributeLevelTarget> attributeLevelTargets =
+            List.of(new AttributeLevelTarget(1L, 2L),
+                new AttributeLevelTarget(2L, 3L));
         UUID assessmentId = randomUUID();
         CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
             assessmentId,
@@ -105,10 +112,35 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(assessmentAttrLevelExistencePort.exists(assessmentId,1L, 2L))
-            .thenReturn(false);
+        when(loadSelectedAttributeIdsRelatedToAssessmentPort.load(assessmentId, Set.of(1L, 2L)))
+            .thenReturn(Set.of(1L));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_LEVEL_NOT_FOUND);
+        assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
+    }
+
+    @Test
+    void testCreateAdvice_AssessmentMaturityLevelNotRelated_ThrowException() {
+        List<AttributeLevelTarget> attributeLevelTargets =
+            List.of(new AttributeLevelTarget(1L, 2L),
+                new AttributeLevelTarget(2L, 3L));
+        UUID assessmentId = randomUUID();
+        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
+            assessmentId,
+            attributeLevelTargets,
+            randomUUID()
+        );
+        var spaceId = 5L;
+
+        when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
+            .thenReturn(Optional.of(spaceId));
+        when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
+            .thenReturn(true);
+        when(loadSelectedAttributeIdsRelatedToAssessmentPort.load(assessmentId, Set.of(1L, 2L)))
+            .thenReturn(Set.of(1L, 2L));
+        when(loadSelectedLevelIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(2L, 3L)))
+            .thenReturn(Set.of(2L));
+
+        assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
     }
 
     @Test
@@ -211,8 +243,10 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(assessmentAttrLevelExistencePort.exists(param.getAssessmentId(), 1L, 2L))
-            .thenReturn(true);
+        when(loadSelectedAttributeIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(1L)))
+            .thenReturn(Set.of(1L));
+        when(loadSelectedLevelIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(2L)))
+            .thenReturn(Set.of(2L));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
@@ -260,8 +294,10 @@ class CreateAdviceServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(assessmentAttrLevelExistencePort.exists(param.getAssessmentId(), 1L, 2L))
-            .thenReturn(true);
+        when(loadSelectedAttributeIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(1L)))
+            .thenReturn(Set.of(1L));
+        when(loadSelectedLevelIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(2L)))
+            .thenReturn(Set.of(2L));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
@@ -319,7 +355,6 @@ class CreateAdviceServiceTest {
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
-        verify(assessmentAttrLevelExistencePort, times(1)).exists(param.getAssessmentId(), 1L, 2L);
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         verify(loadCreatedAdviceDetailsPort, times(1)).loadAdviceDetails(any());
@@ -330,8 +365,10 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(assessmentAttrLevelExistencePort.exists(param.getAssessmentId(), 1L, 2L))
-            .thenReturn(true);
+        when(loadSelectedAttributeIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(1L)))
+            .thenReturn(Set.of(1L));
+        when(loadSelectedLevelIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(2L)))
+            .thenReturn(Set.of(2L));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);

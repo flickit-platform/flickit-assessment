@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID>, JpaSpecificationExecutor<AssessmentJpaEntity> {
@@ -71,26 +72,30 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                                    @Param(value = "userId") UUID userId);
 
     @Query("""
-            SELECT CASE WHEN EXISTS(
-                SELECT 1
-                FROM AssessmentJpaEntity asm
-                JOIN AssessmentKitJpaEntity kit
-                ON asm.assessmentKitId = kit.id
-                JOIN AttributeJpaEntity atr
-                ON atr.kitId = kit.id
-                JOIN MaturityLevelJpaEntity level
-                ON level.kitId = kit.id
-                WHERE asm.id = :assessmentId
-                AND atr.id = :attributeId
-                AND level.id = :maturityLevelId
-            )
-            THEN true
-            ELSE false
-            END
+        SELECT attr.id
+        FROM AssessmentJpaEntity asm
+        JOIN AssessmentKitJpaEntity kit
+        ON asm.assessmentKitId = kit.id
+        JOIN AttributeJpaEntity attr
+        ON attr.kitId = kit.id
+        WHERE asm.id = :assessmentId
+        AND attr.id in :attributeIds
     """)
-    boolean existsByAttributeIdAndMaturityLevelId(UUID assessmentId,
-                                                  Long attributeId,
-                                                  Long maturityLevelId);
+    Set<Long> findSelectedAttributeIdsRelatedToAssessment(UUID assessmentId, Set<Long> attributeIds);
+
+    @Query("""
+        SELECT level.id
+        FROM AssessmentJpaEntity asm
+        JOIN AssessmentKitJpaEntity kit
+        ON asm.assessmentKitId = kit.id
+        JOIN MaturityLevelJpaEntity level
+        ON level.kitId = kit.id
+        WHERE asm.id = :assessmentId
+        AND level.id in :levelIds
+    """)
+    Set<Long> findSelectedLevelIdsRelatedToAssessment(UUID assessmentId, Set<Long> levelIds);
+
+
 }
 
 
