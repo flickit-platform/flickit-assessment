@@ -11,12 +11,12 @@ import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.assessment.AssessmentAttrLevelExistencePort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentResultPort;
+import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.CalculateNotValidException;
-import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_NOT_FOUND;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Slf4j
@@ -39,7 +40,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
 
     private final LoadAssessmentSpacePort loadAssessmentSpacePort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
-    private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAdviceCalculationInfoPort loadAdviceCalculationInfoPort;
     private final SolverManager<Plan, UUID> solverManager;
     private final LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
@@ -48,8 +49,9 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     @Override
     public Result createAdvice(Param param) {
         validateUserAccess(param.getAssessmentId(), param.getCurrentUserId());
+
+        validateAssessmentResultPort.validate(param.getAssessmentId());
         validateAssessmentAttrLevelRelation(param.getAssessmentId(), param.getAttributeLevelTargets());
-        validateCalculatedAssessmentResult(param.getAssessmentId());
 
         var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         var solution = solverManager.solve(UUID.randomUUID(), problem);
@@ -81,20 +83,6 @@ public class CreateAdviceService implements CreateAdviceUseCase {
                 throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_LEVEL_NOT_FOUND);
             }
         });
-    }
-
-    private void validateCalculatedAssessmentResult(UUID assessmentId) {
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
-        if (!Boolean.TRUE.equals(assessmentResult.isConfidenceValid())) {
-            log.warn("The calculated confidence value is not valid for [assessmentId={}].", assessmentId);
-            throw new ConfidenceCalculationNotValidException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
-        }
-
-        if (!Boolean.TRUE.equals(assessmentResult.isCalculateValid())) {
-            log.warn("The calculated result is not valid for [assessmentId={}].", assessmentId);
-            throw new CalculateNotValidException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
-        }
     }
 
     private Result mapToResult(Plan solution) {

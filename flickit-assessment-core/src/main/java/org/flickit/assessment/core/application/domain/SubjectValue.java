@@ -16,13 +16,21 @@ public class SubjectValue {
 
     private final UUID id;
     private final Subject subject;
-    private final List<QualityAttributeValue> qualityAttributeValues;
+
+    @Setter
+    private List<QualityAttributeValue> qualityAttributeValues;
 
     @Setter
     MaturityLevel maturityLevel;
 
     @Setter
     Double confidenceValue;
+
+    public SubjectValue(UUID id, Subject subject, List<QualityAttributeValue> qavList) {
+        this.id = id;
+        this.subject = subject;
+        this.qualityAttributeValues = qavList;
+    }
 
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
         qualityAttributeValues.forEach(x -> x.calculate(maturityLevels));
