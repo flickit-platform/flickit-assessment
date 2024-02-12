@@ -12,8 +12,8 @@ import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.Att
 import org.flickit.assessment.advice.application.port.out.assessment.AssessmentAttrLevelExistencePort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
-import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort;
-import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort.Result;
+import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
+import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort.Result;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
