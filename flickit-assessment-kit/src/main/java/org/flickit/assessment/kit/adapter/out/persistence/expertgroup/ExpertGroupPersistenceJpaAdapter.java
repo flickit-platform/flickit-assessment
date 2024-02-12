@@ -25,7 +25,6 @@ import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.Exp
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
-    LoadExpertGroupMembersPort,
     LoadExpertGroupMemberIdsPort,
     CreateExpertGroupPort {
 
@@ -70,26 +69,6 @@ public class ExpertGroupPersistenceJpaAdapter implements
             .map(GetExpertGroupListUseCase.Member::new)
             .toList();
         return mapToPortResult(item, members);
-    }
-
-    @Override
-    public PaginatedResponse<LoadExpertGroupMembersPort.Result> loadExpertGroupMembers(LoadExpertGroupMembersPort.Param param) {
-        var pageResult = repository.findExpertGroupMembers(param.expertGroupId(),
-            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, UserJpaEntity.Fields.NAME));
-
-        var items = pageResult
-            .stream()
-            .map(MembersMapper::mapToResult)
-            .toList();
-
-        return new PaginatedResponse<>(
-            items,
-            pageResult.getNumber(),
-            pageResult.getSize(),
-            ExpertGroupJpaEntity.Fields.NAME,
-            Sort.Direction.ASC.name().toLowerCase(),
-            (int) pageResult.getTotalElements()
-        );
     }
 
     @Override
