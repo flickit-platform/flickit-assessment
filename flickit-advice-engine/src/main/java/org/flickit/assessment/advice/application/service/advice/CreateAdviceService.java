@@ -91,7 +91,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
                     benefit,
                     adv.attributes(),
                     adv.questionnaire());
-            }).sorted(Comparator.comparingDouble(AdviceListItem::benefit))
+            }).sorted(Comparator.comparingDouble(AdviceListItem::benefit).reversed())
             .toList();
 
         return new Result(adviceListItems);
