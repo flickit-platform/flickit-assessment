@@ -18,7 +18,7 @@ public class GetExpertGroupMembersRestController {
 
     private final GetExpertGroupMembersUseCase useCase;
 
-    @GetMapping("/expert-groups/{id}/users")
+    @GetMapping("/expert-groups/{id}/members")
     public ResponseEntity<PaginatedResponse<GetExpertGroupMembersUseCase.Member>> getExpertGroupList(
         @PathVariable("id") long id,
         @RequestParam(defaultValue = "10") int size,
