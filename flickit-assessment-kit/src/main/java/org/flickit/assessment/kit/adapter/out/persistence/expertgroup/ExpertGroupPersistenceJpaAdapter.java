@@ -1,11 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
-import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
-import io.minio.StatObjectArgs;
-import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
@@ -20,11 +16,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
 
@@ -34,7 +28,6 @@ public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
     LoadExpertGroupMembersPort,
-    LoadExpertGroupMembersPictureLinkPort,
     LoadExpertGroupMemberIdsPort,
     CreateExpertGroupPort {
 
@@ -101,34 +94,6 @@ public class ExpertGroupPersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
-    }
-
-    @SneakyThrows
-    @Override
-    public String loadMembersPictureLink(String filePath, Duration expiryDuration) {
-        String bucketName = properties.getBucketName();
-
-        if (!checkPictureExistence(filePath, bucketName)) return null;
-
-        return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-            .bucket(bucketName)
-            .object(filePath)
-            .expiry((int) expiryDuration.getSeconds(), TimeUnit.SECONDS)
-            .method(Method.GET)
-            .build());
-    }
-
-    @SneakyThrows
-    private boolean checkPictureExistence(String path, String bucketName) {
-        try {
-            minioClient.statObject(StatObjectArgs.builder()
-                .bucket(bucketName)
-                .object(path)
-                .build());
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     @Override

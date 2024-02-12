@@ -3,9 +3,9 @@ package org.flickit.assessment.kit.application.service.expertgroup;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupMembersUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMembersPictureLinkPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMembersPort.Result;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMembersPort;
+import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +19,7 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
 
     private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
     private final LoadExpertGroupMembersPort loadExpertGroupMembersPort;
-    private final LoadExpertGroupMembersPictureLinkPort loadExpertGroupMembersPictureLinkPort;
+    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     private LoadExpertGroupMembersPort.Param toParam(int page, int size, long id) {
         return new LoadExpertGroupMembersPort.Param(page, size, id);
@@ -32,7 +32,7 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
                 item.email(),
                 item.displayNme(),
                 item.bio(),
-                loadExpertGroupMembersPictureLinkPort.loadMembersPictureLink(item.picture(), EXPIRY_DURATION),
+                createFileDownloadLinkPort.createDownloadLink(item.picture(), EXPIRY_DURATION),
                 item.linkedin()
             ))
             .toList();
