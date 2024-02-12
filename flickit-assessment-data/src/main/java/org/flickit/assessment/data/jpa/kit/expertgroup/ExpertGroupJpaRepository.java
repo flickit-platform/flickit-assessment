@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
@@ -39,24 +38,6 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 e.ownerId
         """)
     Page<ExpertGroupWithDetailsView> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
-
-    @Query("""
-            SELECT e
-            FROM ExpertGroupJpaEntity e
-            LEFT JOIN ExpertGroupAccessJpaEntity ac on e.id = ac.expertGroupId
-            WHERE EXISTS (
-                SELECT 1 FROM ExpertGroupAccessJpaEntity ac
-                WHERE ac.expertGroupId = e.id AND ac.userId = :userId
-            ) AND e.id = :expertGroupId
-            GROUP BY
-                e.id,
-                e.title,
-                e.picture,
-                e.bio,
-                e.ownerId
-        """)
-    Optional<ExpertGroupJpaEntity> findByExpertGroupId(@Param(value = "expertGroupId") long expertGroupId,
-                                                       @Param(value = "userId") UUID userId);
 
     @Query("""
         SELECT

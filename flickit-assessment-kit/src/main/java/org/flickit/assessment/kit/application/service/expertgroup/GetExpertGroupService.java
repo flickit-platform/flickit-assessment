@@ -22,7 +22,7 @@ public class GetExpertGroupService implements GetExpertGroupUseCase {
 
     @Override
     public ExpertGroup getExpertGroup(Param param) {
-        var portResult = loadExpertGroupPort.loadExpertGroup(toParam(param.getId()), param.getCurrentUserId());
+        var portResult = loadExpertGroupPort.loadExpertGroup(toParam(param.getId()));
 
         return new ExpertGroup(portResult.id(),
             portResult.title(),

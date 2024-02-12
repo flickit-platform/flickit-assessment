@@ -18,7 +18,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -41,14 +40,14 @@ class GetExpertGroupServiceTest {
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
             .thenReturn("/path/to/picture");
 
-        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class), eq(currentUserId)))
+        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class)))
             .thenReturn(portResult);
 
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
         var result = service.getExpertGroup(param);
 
         ArgumentCaptor<LoadExpertGroupPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadExpertGroupPort.Param.class);
-        verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture(), eq(currentUserId));
+        verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture());
 
         assertNotNull(result);
         assertNotNull(result.getPicture());
@@ -65,14 +64,14 @@ class GetExpertGroupServiceTest {
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
             .thenReturn(null);
 
-        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class), any(UUID.class)))
+        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class)))
             .thenReturn(portResult);
 
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
         var result = service.getExpertGroup(param);
 
         ArgumentCaptor<LoadExpertGroupPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadExpertGroupPort.Param.class);
-        verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture(), eq(currentUserId));
+        verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture());
 
         assertNotNull(result);
         assertNull(result.getPicture());
@@ -83,7 +82,7 @@ class GetExpertGroupServiceTest {
     @Test
     void testGetExpertGroup_ValidInputs_emptyResults() {
 
-        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class), any(UUID.class)))
+        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class)))
             .thenThrow(new ResourceNotFoundException("message"));
 
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
