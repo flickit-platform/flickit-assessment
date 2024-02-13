@@ -10,10 +10,20 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class MinioConfigProperties {
 
     private String url;
+    private String api;
     private int port;
     private String accessKey;
     private String accessSecret;
-    private String bucketName;
-    private String objectName;
+    private BucketNames bucketNames;
     private Boolean secure;
+
+    @Getter
+    @Setter
+    public static class BucketNames {
+
+        private String dsl;
+        private String avatar;
+    }
 }
+
+

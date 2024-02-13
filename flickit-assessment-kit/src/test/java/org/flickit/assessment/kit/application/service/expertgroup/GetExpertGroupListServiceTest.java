@@ -6,6 +6,7 @@ import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroup
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.Member;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
+import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +33,9 @@ class GetExpertGroupListServiceTest {
 
     @Mock
     private LoadExpertGroupListPort loadExpertGroupListPort;
+
+    @Mock
+    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
     void testGetExpertGroupList_ValidInputs_ValidResults() {
@@ -55,6 +60,10 @@ class GetExpertGroupListServiceTest {
             expertGroups.size());
         when(loadExpertGroupListPort.loadExpertGroupList(any(LoadExpertGroupListPort.Param.class)))
             .thenReturn(paginatedResponse);
+        when(createFileDownloadLinkPort.createDownloadLink(expertGroup1.picture(), Duration.ofDays(1)))
+            .thenReturn(expertGroup1.picture());
+        when(createFileDownloadLinkPort.createDownloadLink(expertGroup2.picture(), Duration.ofDays(1)))
+            .thenReturn(expertGroup2.picture());
 
         var param = new GetExpertGroupListUseCase.Param(size, page, currentUserId);
         var result = service.getExpertGroupList(param);
@@ -75,7 +84,6 @@ class GetExpertGroupListServiceTest {
         int page = 0;
         int size = 10;
         UUID currentUserId = UUID.randomUUID();
-
 
         List<Result> expertGroupListItems = Collections.emptyList();
 
@@ -115,7 +123,7 @@ class GetExpertGroupListServiceTest {
             "Picture" + id,
             2,
             10,
-            List.of(new Member("name" + id)),
+            List.of(new Member("title" + id)),
             ownerId);
     }
 
