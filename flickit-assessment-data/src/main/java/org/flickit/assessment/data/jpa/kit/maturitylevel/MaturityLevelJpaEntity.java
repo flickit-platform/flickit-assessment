@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -65,7 +64,8 @@ public class MaturityLevelJpaEntity {
                                   LocalDateTime lastModificationTime,
                                   UUID createdBy,
                                   UUID lastModifiedBy,
-                                  Long kitId) {
+                                  Long kitId,
+                                  Long referenceNumber) {
         this.id = id;
         this.code = code;
         this.index = index;
@@ -76,6 +76,7 @@ public class MaturityLevelJpaEntity {
         this.createdBy = createdBy;
         this.lastModifiedBy = lastModifiedBy;
         this.kitId = kitId;
+        this.referenceNumber = referenceNumber;
     }
 
     @OneToMany(mappedBy = "affectedLevel", cascade = CascadeType.REMOVE)
@@ -87,6 +88,10 @@ public class MaturityLevelJpaEntity {
     @OneToMany(mappedBy = "maturityLevel", cascade = CascadeType.REMOVE)
     private List<QuestionImpactJpaEntity> questionImpacts;
 
-    @Column(name = "reference_number", nullable = false)
+//    @org.hibernate.annotations.Generated(value = GenerationTime.INSERT)
+    @FunctionCreationTimestamp
+    @Column(name = "reference_number")
     private Long referenceNumber;
 }
+
+
