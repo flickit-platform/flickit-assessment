@@ -6,7 +6,6 @@ import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +20,7 @@ public class GetExpertGroupRestController {
     private final UserContext userContext;
 
     @GetMapping("/expert-groups/{id}")
-    public ResponseEntity<ExpertGroup> getExpertGroup(@PathVariable("id") long id) {
+    public ResponseEntity<ExpertGroup> getExpertGroup(@PathVariable("id") Long id) {
         var currentUserId = userContext.getUser().id();
         var expertGroup = useCase.getExpertGroup(toParam(id, currentUserId));
         return new ResponseEntity<>(expertGroup, HttpStatus.OK);
