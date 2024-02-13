@@ -1,8 +1,6 @@
 package org.flickit.assessment.core.application.port.in.evidence;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -38,11 +36,20 @@ public interface AddEvidenceUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID createdById;
 
-        public Param(String description, UUID assessmentId, Long questionId, UUID createdById) {
+        @Min(value = 1, message = ADD_EVIDENCE_EVIDENCE_TYPE_ID_MIN)
+        @Max(value = 2, message = ADD_EVIDENCE_EVIDENCE_TYPE_ID_MAX)
+        Integer evidenceTypeId;
+
+        public Param(String description,
+                     UUID assessmentId,
+                     Long questionId,
+                     Integer evidenceTypeId,
+                     UUID createdById) {
             this.description = description;
             this.assessmentId = assessmentId;
             this.questionId = questionId;
             this.createdById = createdById;
+            this.evidenceTypeId = evidenceTypeId;
             this.validateSelf();
         }
     }

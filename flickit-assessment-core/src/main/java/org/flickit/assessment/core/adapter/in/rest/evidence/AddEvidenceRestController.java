@@ -31,6 +31,7 @@ public class AddEvidenceRestController {
             requestDto.description(),
             requestDto.assessmentId(),
             requestDto.questionId(),
+            requestDto.evidenceTypeId(),
             currentUserId
         );
     }

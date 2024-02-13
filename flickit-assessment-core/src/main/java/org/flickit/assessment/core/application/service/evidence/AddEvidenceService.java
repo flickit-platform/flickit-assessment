@@ -37,7 +37,8 @@ public class AddEvidenceService implements AddEvidenceUseCase {
             LocalDateTime.now(),
             param.getCreatedById(),
             param.getAssessmentId(),
-            param.getQuestionId()
+            param.getQuestionId(),
+            param.getEvidenceTypeId()
         );
     }
 }
