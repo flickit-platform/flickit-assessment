@@ -21,10 +21,10 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 e.picture as picture,
                 e.bio as bio,
                 e.ownerId as ownerId,
-                COUNT(DISTINCT e.id) as publishedKitsCount,
+                COUNT(DISTINCT CASE WHEN ak.published = true THEN ak.id ELSE NULL END) as publishedKitsCount,
                 COUNT(DISTINCT ac.userId) as membersCount
             FROM ExpertGroupJpaEntity e
-            LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId AND ak.published = true
+            LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId
             LEFT JOIN ExpertGroupAccessJpaEntity ac on e.id = ac.expertGroupId
             WHERE EXISTS (
                 SELECT 1 FROM ExpertGroupAccessJpaEntity ac
