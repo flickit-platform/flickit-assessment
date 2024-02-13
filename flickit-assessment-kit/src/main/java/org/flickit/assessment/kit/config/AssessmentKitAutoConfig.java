@@ -8,6 +8,4 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("org.flickit.assessment.kit")
 @EnableConfigurationProperties(DslParserRestProperties.class)
 public class AssessmentKitAutoConfig {
-
-
 }
