@@ -1,8 +1,9 @@
-package org.flickit.assessment.kit.adapter.in.rest.expertgroup;
+package org.flickit.assessment.kit.adapter.in.rest.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupMembersUseCase;
+import org.flickit.assessment.kit.application.port.in.expertgroupaccess.GetExpertGroupMembersUseCase;
+import org.flickit.assessment.kit.application.port.in.expertgroupaccess.GetExpertGroupMembersUseCase.Member;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +20,7 @@ public class GetExpertGroupMembersRestController {
     private final GetExpertGroupMembersUseCase useCase;
 
     @GetMapping("/expert-groups/{id}/members")
-    public ResponseEntity<PaginatedResponse<GetExpertGroupMembersUseCase.Member>> getExpertGroupList(
+    public ResponseEntity<PaginatedResponse<Member>> getExpertGroupList(
         @PathVariable("id") long id,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page) {
