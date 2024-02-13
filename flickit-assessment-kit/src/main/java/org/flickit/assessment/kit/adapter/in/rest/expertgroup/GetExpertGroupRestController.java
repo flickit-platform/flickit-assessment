@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-@Validated
 @RestController
 @RequiredArgsConstructor
 public class GetExpertGroupRestController {
@@ -22,7 +21,7 @@ public class GetExpertGroupRestController {
     private final UserContext userContext;
 
     @GetMapping("/expert-groups/{id}")
-    public ResponseEntity<ExpertGroup> getExpertGroupList(@PathVariable("id") long id) {
+    public ResponseEntity<ExpertGroup> getExpertGroup(@PathVariable("id") long id) {
         var currentUserId = userContext.getUser().id();
         var expertGroup = useCase.getExpertGroup(toParam(id, currentUserId));
         return new ResponseEntity<>(expertGroup, HttpStatus.OK);
