@@ -29,7 +29,7 @@ public interface GetExpertGroupMembersUseCase {
         int page;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        long id;
+        Long id;
 
         public Param(int size, int page, long expertGroupId) {
             this.size = size;
