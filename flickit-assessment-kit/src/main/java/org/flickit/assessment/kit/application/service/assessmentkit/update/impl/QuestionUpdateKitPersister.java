@@ -18,7 +18,6 @@ import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQues
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -107,25 +106,26 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             }
         }
 
-        isMajorUpdate = isMajorUpdate ||
-            createNewQuestions(
-                savedQuestionnaireToQuestionsMap,
-                dslQuestionnaireToQuestionsMap,
-                postUpdateQuestionnaires,
-                postUpdateAttributes,
-                postUpdateMaturityLevels,
-                currentUserId);
+        boolean haveNewQuestionsBeenAdded = haveNewQuestionsBeenAdded(
+            savedQuestionnaireToQuestionsMap,
+            dslQuestionnaireToQuestionsMap,
+            postUpdateQuestionnaires,
+            postUpdateAttributes,
+            postUpdateMaturityLevels,
+            currentUserId);
+
+        isMajorUpdate = isMajorUpdate || haveNewQuestionsBeenAdded;
 
         return new UpdateKitPersisterResult(isMajorUpdate || !newQuestionnaireCodes.isEmpty());
     }
 
-    private boolean createNewQuestions(Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap,
-                                       Map<String, Map<String, QuestionDslModel>> dslQuestionnaireToQuestionsMap,
-                                       Map<String, Long> postUpdateQuestionnaires,
-                                       Map<String, Long> postUpdateAttributes,
-                                       Map<String, Long> postUpdateMaturityLevels,
-                                       UUID currentUserId) {
-        boolean invalidateResults = false;
+    private boolean haveNewQuestionsBeenAdded(Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap,
+                                              Map<String, Map<String, QuestionDslModel>> dslQuestionnaireToQuestionsMap,
+                                              Map<String, Long> postUpdateQuestionnaires,
+                                              Map<String, Long> postUpdateAttributes,
+                                              Map<String, Long> postUpdateMaturityLevels,
+                                              UUID currentUserId) {
+        boolean questionAddition = false;
         for (Map.Entry<String, Map<String, Question>> questionnaire : savedQuestionnaireToQuestionsMap.entrySet()) {
             Map<String, Question> savedQuestions = questionnaire.getValue();
             Map<String, QuestionDslModel> dslQuestions = dslQuestionnaireToQuestionsMap.get(questionnaire.getKey());
@@ -139,9 +139,10 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
             createQuestions(newDslQuestionsMap, postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels, currentUserId);
 
-            if (!newDslQuestionsMap.isEmpty()) invalidateResults = true;
+            if (!newDslQuestionsMap.isEmpty())
+                questionAddition = true;
         }
-        return invalidateResults;
+        return questionAddition;
     }
 
     private void createQuestions(Map<String, QuestionDslModel> dslQuestions,
@@ -166,8 +167,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         });
     }
 
-    @NotNull
-    private static CreateQuestionPort.Param toCreateQuestionParam(Long questionnaireId, UUID currentUserId, QuestionDslModel dslQuestion) {
+    private CreateQuestionPort.Param toCreateQuestionParam(Long questionnaireId, UUID currentUserId, QuestionDslModel dslQuestion) {
         return new CreateQuestionPort.Param(
             dslQuestion.getCode(),
             dslQuestion.getTitle(),
