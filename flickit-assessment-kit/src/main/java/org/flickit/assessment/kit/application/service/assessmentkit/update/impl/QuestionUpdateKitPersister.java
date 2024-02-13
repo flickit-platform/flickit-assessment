@@ -82,7 +82,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             .toList();
 
         // Assuming that new questionnaires have been created in QuestionnairePersister
-        newQuestionnaireCodes.forEach(code -> createQuestionsOfNewQuestionnaires(dslQuestionnaireToQuestionsMap.get(code),
+        newQuestionnaireCodes.forEach(code -> createQuestions(dslQuestionnaireToQuestionsMap.get(code),
             postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels, currentUserId, savedKit.getId()));
 
         boolean isMajorUpdate = false;
@@ -106,15 +106,54 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                     isMajorUpdate = true;
             }
         }
+
+        boolean haveNewQuestionsBeenAdded = haveNewQuestionsBeenAdded(
+            savedQuestionnaireToQuestionsMap,
+            dslQuestionnaireToQuestionsMap,
+            postUpdateQuestionnaires,
+            postUpdateAttributes,
+            postUpdateMaturityLevels,
+            currentUserId,
+            savedKit.getId());
+
+        isMajorUpdate = isMajorUpdate || haveNewQuestionsBeenAdded;
+
         return new UpdateKitPersisterResult(isMajorUpdate || !newQuestionnaireCodes.isEmpty());
     }
 
-    private void createQuestionsOfNewQuestionnaires(Map<String, QuestionDslModel> dslQuestions,
-                                                    Map<String, Long> questionnaires,
-                                                    Map<String, Long> attributes,
-                                                    Map<String, Long> maturityLevels,
-                                                    UUID currentUserId,
-                                                    long kitId) {
+    private boolean haveNewQuestionsBeenAdded(Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap,
+                                              Map<String, Map<String, QuestionDslModel>> dslQuestionnaireToQuestionsMap,
+                                              Map<String, Long> postUpdateQuestionnaires,
+                                              Map<String, Long> postUpdateAttributes,
+                                              Map<String, Long> postUpdateMaturityLevels,
+                                              UUID currentUserId,
+                                              long kitId) {
+        boolean questionAddition = false;
+        for (Map.Entry<String, Map<String, Question>> questionnaire : savedQuestionnaireToQuestionsMap.entrySet()) {
+            Map<String, Question> savedQuestions = questionnaire.getValue();
+            Map<String, QuestionDslModel> dslQuestions = dslQuestionnaireToQuestionsMap.get(questionnaire.getKey());
+
+            if (dslQuestions == null || dslQuestions.isEmpty())
+                continue;
+
+            Map<String, QuestionDslModel> newDslQuestionsMap = dslQuestions.entrySet().stream()
+                .filter(e -> !savedQuestions.containsKey(e.getKey()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            createQuestions(newDslQuestionsMap, postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels, currentUserId, kitId);
+
+            if (!newDslQuestionsMap.isEmpty())
+                questionAddition = true;
+        }
+        return questionAddition;
+    }
+
+    private void createQuestions(Map<String, QuestionDslModel> dslQuestions,
+                                    Map<String, Long> questionnaires,
+                                    Map<String, Long> attributes,
+                                    Map<String, Long> maturityLevels,
+                                    UUID currentUserId,
+                                    long kitId) {
         if (dslQuestions == null || dslQuestions.isEmpty())
             return;
 
@@ -138,6 +177,18 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             dslQuestion.getQuestionImpacts().forEach(impact ->
                 createImpact(impact, questionId, attributes, maturityLevels, currentUserId, kitId));
         });
+    }
+
+    private CreateQuestionPort.Param toCreateQuestionParam(Long questionnaireId, UUID currentUserId, QuestionDslModel dslQuestion, Long kitId) {
+        return new CreateQuestionPort.Param(
+            dslQuestion.getCode(),
+            dslQuestion.getTitle(),
+            dslQuestion.getIndex(),
+            dslQuestion.getDescription(),
+            dslQuestion.isMayNotBeApplicable(),
+            currentUserId,
+            questionnaireId,
+            kitId);
     }
 
     private void createAnswerOption(AnswerOptionDslModel option, Long questionId, UUID currentUserId, long kitId) {
