@@ -1,8 +1,8 @@
-package org.flickit.assessment.kit.application.service.expertgroup;
+package org.flickit.assessment.kit.application.service.expertgroupaccess;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupMembersUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMembersPort;
+import org.flickit.assessment.kit.application.port.in.expertgroupaccess.GetExpertGroupMembersUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroupaccess.LoadExpertGroupMembersPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
