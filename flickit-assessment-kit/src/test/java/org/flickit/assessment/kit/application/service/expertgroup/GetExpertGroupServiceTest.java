@@ -52,7 +52,7 @@ class GetExpertGroupServiceTest {
         assertNotNull(result);
         assertNotNull(result.getPicture());
         assertEquals(useCaseResul.getId(), result.getId());
-        assertTrue(result.isOwner());
+        assertTrue(result.isEditable());
     }
 
     @Test
@@ -76,7 +76,7 @@ class GetExpertGroupServiceTest {
         assertNotNull(result);
         assertNull(result.getPicture());
         assertEquals(useCaseResul.getId(), result.getId());
-        assertTrue(result.isOwner());
+        assertTrue(result.isEditable());
     }
 
     @Test
