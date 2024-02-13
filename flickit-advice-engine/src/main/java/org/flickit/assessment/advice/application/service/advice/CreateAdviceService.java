@@ -82,8 +82,9 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         Set<Long> selectedAttrIds = attributeLevelTargets.stream()
             .map(AttributeLevelTarget::attributeId)
             .collect(Collectors.toSet());
-        Set<Long> loadedAttrIds = loadSelectedAttributeIdsRelatedToAssessmentPort.load(assessmentId, selectedAttrIds);
-        if (!loadedAttrIds.containsAll(selectedAttrIds)) {
+        Set<Long> loadedAttrIds =
+            loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, selectedAttrIds);
+        if (loadedAttrIds.size() != selectedAttrIds.size()) {
             throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
         }
     }
@@ -92,8 +93,9 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         Set<Long> selectedLevelIds = attributeLevelTargets.stream()
             .map(AttributeLevelTarget::maturityLevelId)
             .collect(Collectors.toSet());
-        Set<Long> loadedLevelIds = loadSelectedLevelIdsRelatedToAssessmentPort.load(assessmentId, selectedLevelIds);
-        if (!loadedLevelIds.containsAll(selectedLevelIds)) {
+        Set<Long> loadedLevelIds =
+            loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(assessmentId, selectedLevelIds);
+        if (loadedLevelIds.size() != selectedLevelIds.size()) {
             throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
         }
     }

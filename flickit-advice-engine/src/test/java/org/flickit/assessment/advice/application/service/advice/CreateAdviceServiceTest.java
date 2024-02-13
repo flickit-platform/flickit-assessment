@@ -112,7 +112,7 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(loadSelectedAttributeIdsRelatedToAssessmentPort.load(assessmentId, Set.of(1L, 2L)))
+        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L, 2L)))
             .thenReturn(Set.of(1L));
 
         assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
@@ -135,9 +135,9 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(loadSelectedAttributeIdsRelatedToAssessmentPort.load(assessmentId, Set.of(1L, 2L)))
+        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L, 2L)))
             .thenReturn(Set.of(1L, 2L));
-        when(loadSelectedLevelIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(2L, 3L)))
+        when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L, 3L)))
             .thenReturn(Set.of(2L));
 
         assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
@@ -243,9 +243,9 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(loadSelectedAttributeIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(1L)))
+        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(param.getAssessmentId(), Set.of(1L)))
             .thenReturn(Set.of(1L));
-        when(loadSelectedLevelIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(2L)))
+        when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L)))
             .thenReturn(Set.of(2L));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
@@ -294,9 +294,9 @@ class CreateAdviceServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(loadSelectedAttributeIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(1L)))
+        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(param.getAssessmentId(), Set.of(1L)))
             .thenReturn(Set.of(1L));
-        when(loadSelectedLevelIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(2L)))
+        when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L)))
             .thenReturn(Set.of(2L));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
@@ -365,9 +365,9 @@ class CreateAdviceServiceTest {
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(true);
-        when(loadSelectedAttributeIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(1L)))
+        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(param.getAssessmentId(), Set.of(1L)))
             .thenReturn(Set.of(1L));
-        when(loadSelectedLevelIdsRelatedToAssessmentPort.load(param.getAssessmentId(), Set.of(2L)))
+        when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L)))
             .thenReturn(Set.of(2L));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 

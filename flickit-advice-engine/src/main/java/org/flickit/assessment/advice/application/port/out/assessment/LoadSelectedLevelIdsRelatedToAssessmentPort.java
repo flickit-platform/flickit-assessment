@@ -5,5 +5,5 @@ import java.util.UUID;
 
 public interface LoadSelectedLevelIdsRelatedToAssessmentPort {
 
-    Set<Long> load(UUID assessmentId, Set<Long> levelIds);
+    Set<Long> loadSelectedLevelIdsRelatedToAssessment(UUID assessmentId, Set<Long> levelIds);
 }
