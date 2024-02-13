@@ -7,10 +7,12 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.UpdateExpertGroupPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,8 @@ import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.Exp
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
+    UpdateExpertGroupPort,
+    CheckExpertGroupIdPort,
     LoadExpertGroupMemberIdsPort,
     CreateExpertGroupPort {
 
@@ -70,6 +74,22 @@ public class ExpertGroupPersistenceJpaAdapter implements
             .map(GetExpertGroupListUseCase.Member::new)
             .toList();
         return mapToPortResult(item, members);
+    }
+
+    @Override
+    public void update(UpdateExpertGroupPort.Param param) {
+        repository.update(
+            param.id(),
+            param.title(),
+            param.bio(),
+            param.about(),
+            param.picture(),
+            param.website());
+    }
+
+    @Override
+    public boolean existsById(long id) {
+        return repository.existsById(id);
     }
 
     @Override
