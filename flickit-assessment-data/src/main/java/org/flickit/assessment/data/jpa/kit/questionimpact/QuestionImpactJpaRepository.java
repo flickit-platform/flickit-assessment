@@ -27,10 +27,4 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
-    @Query("""
-            SELECT MAX(q.referenceNumber)
-            FROM QuestionImpactJpaEntity q
-            WHERE q.kitId = :kitId
-        """)
-    Long findLastReferenceNumberByKitId(@Param(value = "kitId") Long kitId);
 }

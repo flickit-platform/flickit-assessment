@@ -24,7 +24,7 @@ public class AttributeMapper {
         );
     }
 
-    public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, SubjectJpaEntity subjectJpaEntity, Long kitId, Long lastReferenceNumber) {
+    public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, SubjectJpaEntity subjectJpaEntity, Long kitId) {
         return new AttributeJpaEntity(
             null,
             attribute.getCode(),
@@ -38,7 +38,7 @@ public class AttributeMapper {
             attribute.getLastModifiedBy(),
             kitId,
             subjectJpaEntity,
-            lastReferenceNumber + 1
+            null
         );
     }
 }

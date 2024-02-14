@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.questionnaire;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.annotation.ReferenceNumberValue;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -50,5 +51,6 @@ public class QuestionnaireJpaEntity {
     private Long kitId;
 
     @Column(name = "reference_number", nullable = false)
+    @ReferenceNumberValue(query = "(SELECT nextval('fak_questionnaire_reference_number_seq'))")
     private Long referenceNumber;
 }

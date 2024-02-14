@@ -258,4 +258,46 @@
                         startValue="1"/>
     </changeSet>
 
+    <changeSet id="0.14-38" author="MKouhestani">
+        <createSequence sequenceName="fak_subject_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-39" author="MKouhestani">
+        <createSequence sequenceName="fak_attribute_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-40" author="MKouhestani">
+        <createSequence sequenceName="fak_questionnaire_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-41" author="MKouhestani">
+        <createSequence sequenceName="fak_question_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-42" author="MKouhestani">
+        <createSequence sequenceName="fak_question_impact_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-43" author="MKouhestani">
+        <createSequence sequenceName="fak_answer_option_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-44" author="MKouhestani">
+        <createSequence sequenceName="fak_answer_option_impact_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
 </databaseChangeLog>

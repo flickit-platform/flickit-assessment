@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.subject;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.annotation.ReferenceNumberValue;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 
 import java.time.LocalDateTime;
@@ -70,5 +71,6 @@ public class SubjectJpaEntity {
     private List<AttributeJpaEntity> attributes;
 
     @Column(name = "reference_number", nullable = false)
+    @ReferenceNumberValue(query = "(SELECT nextval('fak_subject_reference_number_seq'))")
     private Long referenceNumber;
 }

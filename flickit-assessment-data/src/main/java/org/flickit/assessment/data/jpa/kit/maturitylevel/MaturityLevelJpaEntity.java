@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.maturitylevel;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.annotation.ReferenceNumberValue;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import java.time.LocalDateTime;
@@ -55,6 +56,19 @@ public class MaturityLevelJpaEntity {
         this.id = id;
     }
 
+    @OneToMany(mappedBy = "affectedLevel", cascade = CascadeType.REMOVE)
+    private List<LevelCompetenceJpaEntity> affectedCompetences;
+
+    @OneToMany(mappedBy = "effectiveLevel", cascade = CascadeType.REMOVE)
+    private List<LevelCompetenceJpaEntity> effectiveCompetences;
+
+    @OneToMany(mappedBy = "maturityLevel", cascade = CascadeType.REMOVE)
+    private List<QuestionImpactJpaEntity> questionImpacts;
+
+    @Column(name = "reference_number", nullable = false)
+    @ReferenceNumberValue(query = "(SELECT nextval('fak_maturity_level_reference_number_seq'))")
+    private Long referenceNumber;
+
     public MaturityLevelJpaEntity(Long id,
                                   String code,
                                   Integer index,
@@ -64,8 +78,7 @@ public class MaturityLevelJpaEntity {
                                   LocalDateTime lastModificationTime,
                                   UUID createdBy,
                                   UUID lastModifiedBy,
-                                  Long kitId,
-                                  Long referenceNumber) {
+                                  Long kitId) {
         this.id = id;
         this.code = code;
         this.index = index;
@@ -76,22 +89,7 @@ public class MaturityLevelJpaEntity {
         this.createdBy = createdBy;
         this.lastModifiedBy = lastModifiedBy;
         this.kitId = kitId;
-        this.referenceNumber = referenceNumber;
     }
-
-    @OneToMany(mappedBy = "affectedLevel", cascade = CascadeType.REMOVE)
-    private List<LevelCompetenceJpaEntity> affectedCompetences;
-
-    @OneToMany(mappedBy = "effectiveLevel", cascade = CascadeType.REMOVE)
-    private List<LevelCompetenceJpaEntity> effectiveCompetences;
-
-    @OneToMany(mappedBy = "maturityLevel", cascade = CascadeType.REMOVE)
-    private List<QuestionImpactJpaEntity> questionImpacts;
-
-//    @org.hibernate.annotations.Generated(value = GenerationTime.INSERT)
-    @FunctionCreationTimestamp
-    @Column(name = "reference_number")
-    private Long referenceNumber;
 }
 
 

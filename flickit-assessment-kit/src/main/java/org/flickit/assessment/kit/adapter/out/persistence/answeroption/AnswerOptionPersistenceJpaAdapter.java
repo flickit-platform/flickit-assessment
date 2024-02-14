@@ -36,8 +36,7 @@ public class AnswerOptionPersistenceJpaAdapter implements
 
     @Override
     public Long persist(CreateAnswerOptionPort.Param param) {
-        Long lastReferenceNumber = repository.findLastReferenceNumberByKitId(param.kitId());
-        return repository.save(AnswerOptionMapper.mapToJpaEntity(param, lastReferenceNumber)).getId();
+        return repository.save(AnswerOptionMapper.mapToJpaEntity(param)).getId();
     }
 
 }

@@ -26,10 +26,4 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     List<AnswerOptionJpaEntity> findByQuestionId(Long questionId);
 
-    @Query("""
-            SELECT MAX(a.referenceNumber)
-            FROM AnswerOptionJpaEntity a
-            WHERE a.kitId = :kitId
-        """)
-    Long findLastReferenceNumberByKitId(@Param(value = "kitId") Long kitId);
 }

@@ -32,10 +32,4 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         @Param(value = "lastModifiedBy") UUID lastModifiedBy
         );
 
-    @Query("""
-            SELECT MAX(q.referenceNumber)
-            FROM QuestionnaireJpaEntity q
-            WHERE q.kitId = :kitId
-        """)
-    Long findLastReferenceNumberByKitId(@Param(value = "kitId") long kitId);
 }

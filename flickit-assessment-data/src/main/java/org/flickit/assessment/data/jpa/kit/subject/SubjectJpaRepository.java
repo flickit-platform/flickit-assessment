@@ -40,10 +40,4 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
         """)
     List<SubjectJpaEntity> loadByKitIdWithAttributes(Long kitId);
 
-    @Query("""
-            SELECT MAX(s.referenceNumber)
-            FROM SubjectJpaEntity s
-            WHERE s.kitId = :kitId
-        """)
-    Long findLastReferenceNumberByKitId(@Param(value = "kitId") Long kitId);
 }

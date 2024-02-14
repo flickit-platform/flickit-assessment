@@ -25,8 +25,7 @@ public class QuestionImpactPersistenceJpaAdapter implements
     @Override
     public Long persist(QuestionImpact impact, Long kitId) {
         MaturityLevelJpaEntity maturityLevelJpaEntity = maturityLevelRepository.getReferenceById(impact.getMaturityLevelId());
-        Long lastReferenceNumber = repository.findLastReferenceNumberByKitId(kitId);
-        return repository.save(mapToJpaEntityToPersist(impact, maturityLevelJpaEntity, lastReferenceNumber, kitId)).getId();
+        return repository.save(mapToJpaEntityToPersist(impact, maturityLevelJpaEntity, kitId)).getId();
     }
 
     @Override

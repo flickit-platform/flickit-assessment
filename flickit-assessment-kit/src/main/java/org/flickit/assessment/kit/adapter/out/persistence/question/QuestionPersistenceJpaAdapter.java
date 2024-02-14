@@ -29,8 +29,7 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public Long persist(CreateQuestionPort.Param param) {
-        Long lastReferenceNumber = repository.findLastReferenceNumberByKitId(param.kitId());
-        return repository.save(mapToJpaEntity(param, lastReferenceNumber)).getId();
+        return repository.save(mapToJpaEntity(param)).getId();
     }
 
 }

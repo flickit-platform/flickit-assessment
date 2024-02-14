@@ -20,8 +20,7 @@ public class AnswerOptionImpactPersistenceJpaAdapter implements
     @Override
     public Long persist(CreateAnswerOptionImpactPort.Param param) {
         QuestionImpactJpaEntity questionImpactJpaEntity = questionImpactRepository.getReferenceById(param.questionImpactId());
-        Long lastReferenceNumber = repository.findLastReferenceNumberByKitId(param.kitId());
-        return repository.save(AnswerOptionImpactMapper.mapToJpaEntity(param, questionImpactJpaEntity, lastReferenceNumber)).getId();
+        return repository.save(AnswerOptionImpactMapper.mapToJpaEntity(param, questionImpactJpaEntity)).getId();
     }
 
     @Override
