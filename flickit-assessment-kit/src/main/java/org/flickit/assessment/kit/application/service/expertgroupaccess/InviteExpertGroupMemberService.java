@@ -29,7 +29,9 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         var inviteExpirationDate = LocalDateTime.now().plusDays(EXPIRY_DURATION.toDays());
         String email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
         inviteExpertGroupMemberPort.persist(toParam(param, inviteExpirationDate, inviteToken));
-        sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken);
+        new Thread(()->
+            {sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken);})
+            .start();
     }
 
     private InviteExpertGroupMemberPort.Param toParam(Param param, LocalDateTime inviteExpirationDate, UUID inviteToken) {
