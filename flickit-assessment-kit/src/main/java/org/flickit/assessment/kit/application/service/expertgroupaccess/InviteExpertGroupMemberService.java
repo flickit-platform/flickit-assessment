@@ -33,7 +33,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         String email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
 
         inviteExpertGroupMemberPort.persist(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
-        boolean isInserted = inviteTokenCheckPort.getInviteToken(inviteToken);
+        boolean isInserted = inviteTokenCheckPort.checkInviteToken(inviteToken);
 
         if (isInserted)
             new Thread(() ->

@@ -39,12 +39,12 @@ class InviteExpertGroupMemberServiceTest {
         String email = "test@example.com";
 
         when(loadUserEmailByUserIdPort.loadEmail(any())).thenReturn(email);
-        when(inviteTokenCheckPort.getInviteToken(any(UUID.class))).thenReturn(true);
+        when(inviteTokenCheckPort.checkInviteToken(any(UUID.class))).thenReturn(true);
 
         service.inviteMember(param);
 
         verify(inviteExpertGroupMemberPort).persist(any());
         verify(sendExpertGroupInvitationMailPort).sendInviteExpertGroupMemberEmail(any(String.class), any(UUID.class));
-        verify(inviteTokenCheckPort).getInviteToken(any(UUID.class));
+        verify(inviteTokenCheckPort).checkInviteToken(any(UUID.class));
     }
 }

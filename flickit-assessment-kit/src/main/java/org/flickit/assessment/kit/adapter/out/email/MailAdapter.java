@@ -21,13 +21,12 @@ public class MailAdapter implements
 
     private JavaMailSender mailSender;
 
-
     @SneakyThrows
     @Retryable(retryFor = Exception.class, maxAttempts = 10, backoff = @Backoff(delay = 10000))
     @Override
     public void sendInviteExpertGroupMemberEmail(String to, UUID inviteToken) {
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true); // Enable HTML content and multipart support
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
         helper.setTo(to);
         helper.setSubject("Invite to join");

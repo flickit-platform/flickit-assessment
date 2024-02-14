@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface InviteTokenCheckPort {
 
-    boolean getInviteToken(UUID inviteToke);
+    boolean checkInviteToken(UUID inviteToke);
 }
