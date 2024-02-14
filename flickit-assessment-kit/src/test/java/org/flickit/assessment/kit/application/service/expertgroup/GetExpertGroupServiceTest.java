@@ -40,13 +40,13 @@ class GetExpertGroupServiceTest {
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
             .thenReturn("/path/to/picture");
 
-        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class)))
+        when(loadExpertGroupPort.loadExpertGroup(any(Long.class)))
             .thenReturn(portResult);
 
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
         var result = service.getExpertGroup(param);
 
-        ArgumentCaptor<LoadExpertGroupPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadExpertGroupPort.Param.class);
+        ArgumentCaptor<Long> loadPortParam = ArgumentCaptor.forClass(Long.class);
         verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture());
 
         assertNotNull(result);
@@ -64,13 +64,13 @@ class GetExpertGroupServiceTest {
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
             .thenReturn(null);
 
-        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class)))
+        when(loadExpertGroupPort.loadExpertGroup(any(Long.class)))
             .thenReturn(portResult);
 
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
         var result = service.getExpertGroup(param);
 
-        ArgumentCaptor<LoadExpertGroupPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadExpertGroupPort.Param.class);
+        ArgumentCaptor<Long> loadPortParam = ArgumentCaptor.forClass(Long.class);
         verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture());
 
         assertNotNull(result);
@@ -82,7 +82,7 @@ class GetExpertGroupServiceTest {
     @Test
     void testGetExpertGroup_ValidInputs_emptyResults() {
 
-        when(loadExpertGroupPort.loadExpertGroup(any(LoadExpertGroupPort.Param.class)))
+        when(loadExpertGroupPort.loadExpertGroup(any(Long.class)))
             .thenThrow(new ResourceNotFoundException("message"));
 
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);

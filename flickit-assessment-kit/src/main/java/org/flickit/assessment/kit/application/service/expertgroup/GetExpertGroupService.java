@@ -22,7 +22,7 @@ public class GetExpertGroupService implements GetExpertGroupUseCase {
 
     @Override
     public ExpertGroup getExpertGroup(Param param) {
-        var portResult = loadExpertGroupPort.loadExpertGroup(toParam(param.getId()));
+        var portResult = loadExpertGroupPort.loadExpertGroup(param.getId());
 
         return new ExpertGroup(portResult.id(),
             portResult.title(),
@@ -31,9 +31,5 @@ public class GetExpertGroupService implements GetExpertGroupUseCase {
             createFileDownloadLinkPort.createDownloadLink(portResult.picture(), EXPIRY_DURATION),
             portResult.website(),
             portResult.ownerId().equals(param.getCurrentUserId()));
-    }
-
-    private LoadExpertGroupPort.Param toParam(long id) {
-        return new LoadExpertGroupPort.Param(id);
     }
 }

@@ -86,8 +86,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public LoadExpertGroupPort.Result loadExpertGroup(LoadExpertGroupPort.Param param) {
-        var resultEntity = repository.findById(param.id())
+    public LoadExpertGroupPort.Result loadExpertGroup(long id) {
+        var resultEntity = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND));
         return mapEntityToPortResult(resultEntity);
     }
