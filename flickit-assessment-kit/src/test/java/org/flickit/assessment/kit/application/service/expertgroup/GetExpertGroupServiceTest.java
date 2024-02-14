@@ -34,7 +34,7 @@ class GetExpertGroupServiceTest {
     @Test
     void testGetExpertGroup_ValidInputs_ValidResults() {
         var portResult = createPortResult(expertGroupId, currentUserId);
-        var useCaseResul = portToUseCaseResult(portResult);
+        var useCaseResult = portToUseCaseResult(portResult);
 
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
             .thenReturn("/path/to/picture");
@@ -50,14 +50,14 @@ class GetExpertGroupServiceTest {
 
         assertNotNull(result);
         assertNotNull(result.getPicture());
-        assertEquals(useCaseResul.getId(), result.getId());
+        assertEquals(useCaseResult.getId(), result.getId());
         assertTrue(result.isEditable());
     }
 
     @Test
     void testGetExpertGroup_NullPicture_ValidResults() {
         var portResult = createPortResult(expertGroupId, currentUserId);
-        var useCaseResul = portToUseCaseResult(portResult);
+        var useCaseResult = portToUseCaseResult(portResult);
 
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
             .thenReturn(null);
@@ -73,7 +73,7 @@ class GetExpertGroupServiceTest {
 
         assertNotNull(result);
         assertNull(result.getPicture());
-        assertEquals(useCaseResul.getId(), result.getId());
+        assertEquals(useCaseResult.getId(), result.getId());
         assertTrue(result.isEditable());
     }
 
