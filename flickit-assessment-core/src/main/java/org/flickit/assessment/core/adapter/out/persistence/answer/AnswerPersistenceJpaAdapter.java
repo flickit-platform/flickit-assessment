@@ -12,6 +12,7 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -34,10 +35,12 @@ public class AnswerPersistenceJpaAdapter implements
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
+    private final QuestionJpaRepository questionRepository;
 
     @Override
     public UUID persist(CreateAnswerPort.Param param) {
-        AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param);
+        Long questionReferenceNumber = questionRepository.findReferenceNumberById(param.questionId());
+        AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param, questionReferenceNumber);
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepo.findById(param.assessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
         unsavedEntity.setAssessmentResult(assessmentResult);

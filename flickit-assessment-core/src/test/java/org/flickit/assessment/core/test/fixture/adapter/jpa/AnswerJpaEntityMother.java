@@ -19,7 +19,8 @@ public class AnswerJpaEntityMother {
             ConfidenceLevel.getDefault().getId(),
             null,
             createdBy,
-            createdBy
+            createdBy,
+            1L
         );
     }
 
@@ -34,7 +35,8 @@ public class AnswerJpaEntityMother {
             ConfidenceLevel.getDefault().getId(),
             null,
             createdBy,
-            createdBy
+            createdBy,
+            1L
         );
     }
 
@@ -49,7 +51,8 @@ public class AnswerJpaEntityMother {
             ConfidenceLevel.getDefault().getId(),
             Boolean.TRUE,
             createdBy,
-            createdBy
+            createdBy,
+            1L
         );
     }
 }

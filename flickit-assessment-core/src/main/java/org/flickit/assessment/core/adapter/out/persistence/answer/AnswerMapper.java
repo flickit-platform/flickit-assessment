@@ -14,7 +14,7 @@ import java.util.ArrayList;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerMapper {
 
-    public static AnswerJpaEntity mapCreateParamToJpaEntity(CreateAnswerPort.Param param) {
+    public static AnswerJpaEntity mapCreateParamToJpaEntity(CreateAnswerPort.Param param, Long questionReferenceNumber) {
         return new AnswerJpaEntity(
             null,
             null,
@@ -24,7 +24,8 @@ public class AnswerMapper {
             param.confidenceLevelId(),
             param.isNotApplicable(),
             param.currentUserId(),
-            param.currentUserId()
+            param.currentUserId(),
+            questionReferenceNumber
         );
     }
 

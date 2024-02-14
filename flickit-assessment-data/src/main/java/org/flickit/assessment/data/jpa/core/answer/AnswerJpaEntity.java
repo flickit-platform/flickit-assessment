@@ -50,6 +50,9 @@ public class AnswerJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
+    @Column(name = "question_reference_number", nullable = false)
+    private Long questionReferenceNumber;
+
     @Override
     public String toString() {
         return id.toString();

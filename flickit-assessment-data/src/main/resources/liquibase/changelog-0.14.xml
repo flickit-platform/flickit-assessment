@@ -300,4 +300,23 @@
                         startValue="1"/>
     </changeSet>
 
+    <changeSet id="0.14-45" author="MKouhestani">
+        <addColumn tableName="fac_answer">
+            <column name="question_reference_number" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-46" author="MKouhestani">
+        <update tableName="fac_answer">
+            <column name="question_reference_number"
+                    valueComputed="fak_question.reference_number FROM fak_question WHERE fak_question.id = question_id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.14-47" author="MKouhestani">
+        <addNotNullConstraint columnName="question_reference_number"
+                              constraintName="question_reference_number_not_null"
+                              tableName="fac_answer"/>
+    </changeSet>
+
 </databaseChangeLog>
