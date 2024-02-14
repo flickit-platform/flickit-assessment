@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.mail.SendExpertGroupInvit
 import org.flickit.assessment.kit.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteTokenCheckPort;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
     private final InviteExpertGroupMemberPort inviteExpertGroupMemberPort;
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     private final SendExpertGroupInvitationMailPort sendExpertGroupInvitationMailPort;
+    private final InviteTokenCheckPort inviteTokenCheckPort;
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
     @Override
@@ -28,10 +30,17 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         UUID inviteToken = UUID.randomUUID();
         var inviteExpirationDate = LocalDateTime.now().plusDays(EXPIRY_DURATION.toDays());
         String email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
+
         inviteExpertGroupMemberPort.persist(toParam(param, inviteExpirationDate, inviteToken));
-        new Thread(()->
-            {sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken);})
-            .start();
+        boolean isInserted = inviteTokenCheckPort.getInviteToken(inviteToken);
+
+        if (isInserted) {
+            new Thread(() ->
+            {
+                sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken);
+            })
+                .start();
+        }
     }
 
     private InviteExpertGroupMemberPort.Param toParam(Param param, LocalDateTime inviteExpirationDate, UUID inviteToken) {

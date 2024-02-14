@@ -6,6 +6,7 @@ import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessJp
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
+import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteTokenCheckPort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -15,7 +16,8 @@ import java.util.UUID;
 public class ExpertGroupAccessPersistenceJpaAdapter implements
     CreateExpertGroupAccessPort,
     CheckExpertGroupAccessPort,
-    InviteExpertGroupMemberPort {
+    InviteExpertGroupMemberPort,
+    InviteTokenCheckPort {
 
     private final ExpertGroupAccessJpaRepository repository;
 
@@ -35,5 +37,10 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     public void persist(InviteExpertGroupMemberPort.Param param) {
         ExpertGroupAccessJpaEntity unsavedEntity = (ExpertGroupAccessMapper.mapInviteParamToJpaEntity(param));
         repository.save(unsavedEntity);
+    }
+
+    @Override
+    public boolean getInviteToken(UUID inviteToke) {
+        return repository.findByInviteToken(inviteToke);
     }
 }
