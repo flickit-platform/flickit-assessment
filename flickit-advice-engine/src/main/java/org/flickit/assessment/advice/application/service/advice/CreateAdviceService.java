@@ -8,9 +8,11 @@ import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
-import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
-import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
+import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
+import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -19,13 +21,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_NOT_FOUND;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Slf4j
@@ -40,12 +43,16 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     private final LoadAdviceCalculationInfoPort loadAdviceCalculationInfoPort;
     private final SolverManager<Plan, UUID> solverManager;
     private final LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
+    private final LoadSelectedAttributeIdsRelatedToAssessmentPort loadSelectedAttributeIdsRelatedToAssessmentPort;
+    private final LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
 
     @Override
     public Result createAdvice(Param param) {
         validateUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
+        validateAssessmentAttributeRelation(param.getAssessmentId(), param.getAttributeLevelTargets());
+        validateAssessmentLevelRelation(param.getAssessmentId(), param.getAttributeLevelTargets());
 
         var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         var solution = solverManager.solve(UUID.randomUUID(), problem);
@@ -71,6 +78,28 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
+    private void validateAssessmentAttributeRelation(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+        Set<Long> selectedAttrIds = attributeLevelTargets.stream()
+            .map(AttributeLevelTarget::attributeId)
+            .collect(Collectors.toSet());
+        Set<Long> loadedAttrIds =
+            loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, selectedAttrIds);
+        if (loadedAttrIds.size() != selectedAttrIds.size()) {
+            throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
+        }
+    }
+
+    private void validateAssessmentLevelRelation(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+        Set<Long> selectedLevelIds = attributeLevelTargets.stream()
+            .map(AttributeLevelTarget::maturityLevelId)
+            .collect(Collectors.toSet());
+        Set<Long> loadedLevelIds =
+            loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(assessmentId, selectedLevelIds);
+        if (loadedLevelIds.size() != selectedLevelIds.size()) {
+            throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
+        }
+    }
+
     private Result mapToResult(Plan solution) {
         var questionIdsMap = solution.getQuestions().stream()
             .filter(Question::isRecommended)
@@ -91,7 +120,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
                     benefit,
                     adv.attributes(),
                     adv.questionnaire());
-            }).sorted(Comparator.comparingDouble(AdviceListItem::benefit))
+            }).sorted(Comparator.comparingDouble(AdviceListItem::benefit).reversed())
             .toList();
 
         return new Result(adviceListItems);

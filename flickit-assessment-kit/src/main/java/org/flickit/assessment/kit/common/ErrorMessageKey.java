@@ -23,7 +23,6 @@ public class ErrorMessageKey {
 
     public static final String GET_KIT_DSL_DOWNLOAD_LINK_FILE_PATH_NOT_FOUND = "get-kit-dsl-download-link.filePath.notFound";
     public static final String GET_KIT_DSL_DOWNLOAD_LINK_KIT_ID_NOT_NULL =  "get-kit-dsl-download-link.kitId.notNull";
-    public static final String GET_KIT_DSL_DOWNLOAD_LINK_DSK_FILE_NOT_FOUND = "get-kit-dsl-download-link.dslFile.notFound";
 
     public static final String GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_NULL = "grant-user-access-to-kit.kitId.notNull";
     public static final String GRANT_USER_ACCESS_TO_KIT_USER_ID_NOT_NULL = "grant-user-access-to-kit.userId.notNull";
