@@ -4,5 +4,5 @@ import org.flickit.assessment.kit.application.domain.ExpertGroup;
 
 public interface LoadExpertGroupPort {
 
-    ExpertGroup loadExpertGroup(Long id);
+    ExpertGroup loadExpertGroup(long id);
 }
