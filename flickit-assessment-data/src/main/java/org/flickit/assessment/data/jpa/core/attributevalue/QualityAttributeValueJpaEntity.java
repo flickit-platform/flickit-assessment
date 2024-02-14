@@ -36,4 +36,7 @@ public class QualityAttributeValueJpaEntity {
 
     @Column(name = "confidence_value")
     private Double confidenceValue;
+
+    @Column(name = "attribute_reference_number", nullable = false)
+    private Long attributeReferenceNumber;
 }

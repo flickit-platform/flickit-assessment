@@ -10,13 +10,14 @@ import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QualityAttributeValueMapper {
 
-    public static QualityAttributeValueJpaEntity mapToJpaEntity(Long qualityAttributeId) {
+    public static QualityAttributeValueJpaEntity mapToJpaEntity(Long qualityAttributeId, Long attributeReferenceNumber) {
         return new QualityAttributeValueJpaEntity(
             null,
             null,
             qualityAttributeId,
             null,
-            null
+            null,
+            attributeReferenceNumber
         );
     }
 

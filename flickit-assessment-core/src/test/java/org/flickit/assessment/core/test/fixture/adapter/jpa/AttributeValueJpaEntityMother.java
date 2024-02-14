@@ -13,7 +13,8 @@ public class AttributeValueJpaEntityMother {
             assessmentResultJpaEntity,
             attributeId,
             null,
-            null
+            null,
+            1L
         );
     }
 }
