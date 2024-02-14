@@ -12,6 +12,7 @@ public interface InviteExpertGroupMemberPort {
     record Param(long expertGroupId,
                  UUID userId,
                  UUID currentUserId,
+                 LocalDateTime inviteDate,
                  LocalDateTime inviteExpirationDate,
                  UUID inviteToken,
                  ExpertGroupAccessStatus status) {

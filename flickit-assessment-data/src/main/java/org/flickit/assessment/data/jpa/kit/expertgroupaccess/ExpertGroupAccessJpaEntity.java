@@ -25,6 +25,9 @@ public class ExpertGroupAccessJpaEntity {
     @Column(name = "expert_group_id", nullable = false)
     private Long expertGroupId;
 
+    @Column(name = "invite_date")
+    private LocalDateTime inviteDate;
+
     @Column(name = "invite_expiration_date")
     private LocalDateTime inviteExpirationDate;
 

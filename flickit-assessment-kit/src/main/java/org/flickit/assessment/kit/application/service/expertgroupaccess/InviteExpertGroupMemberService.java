@@ -28,26 +28,25 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
     @Override
     public void inviteMember(Param param) {
         UUID inviteToken = UUID.randomUUID();
-        var inviteExpirationDate = LocalDateTime.now().plusDays(EXPIRY_DURATION.toDays());
+        var inviteDate = LocalDateTime.now();
+        var inviteExpirationDate = inviteDate.plusDays(EXPIRY_DURATION.toDays());
         String email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
 
-        inviteExpertGroupMemberPort.persist(toParam(param, inviteExpirationDate, inviteToken));
+        inviteExpertGroupMemberPort.persist(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
         boolean isInserted = inviteTokenCheckPort.getInviteToken(inviteToken);
 
-        if (isInserted) {
+        if (isInserted)
             new Thread(() ->
-            {
-                sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken);
-            })
-                .start();
-        }
+                sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken)).start();
     }
 
-    private InviteExpertGroupMemberPort.Param toParam(Param param, LocalDateTime inviteExpirationDate, UUID inviteToken) {
+    private InviteExpertGroupMemberPort.Param toParam(Param param, LocalDateTime inviteDate,
+                                                      LocalDateTime inviteExpirationDate, UUID inviteToken) {
         return new InviteExpertGroupMemberPort.Param(
             param.getExpertGroupId(),
             param.getUserId(),
             param.getCurrentUserId(),
+            inviteDate,
             inviteExpirationDate,
             inviteToken,
             ExpertGroupAccessStatus.PENDING

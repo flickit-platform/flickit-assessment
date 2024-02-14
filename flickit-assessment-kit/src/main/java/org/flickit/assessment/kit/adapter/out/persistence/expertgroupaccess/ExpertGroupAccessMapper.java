@@ -14,7 +14,8 @@ public class ExpertGroupAccessMapper {
         return new ExpertGroupAccessJpaEntity(
             null,
             param.expertGroupId(),
-            param.inviteExpirationDate(),
+            null,
+            null,
             param.userId(),
             null,
             ExpertGroupAccessStatus.ACTIVE
@@ -25,6 +26,7 @@ public class ExpertGroupAccessMapper {
         return new ExpertGroupAccessJpaEntity(
             null,
             param.expertGroupId(),
+            param.inviteDate(),
             param.inviteExpirationDate(),
             param.userId(),
             param.inviteToken(),
