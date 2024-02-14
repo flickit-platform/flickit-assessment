@@ -33,7 +33,6 @@ class GetExpertGroupServiceTest {
 
     @Test
     void testGetExpertGroup_ValidInputs_ValidResults() {
-
         var portResult = createPortResult(expertGroupId, currentUserId);
         var useCaseResul = portToUseCaseResult(portResult);
 
@@ -57,7 +56,6 @@ class GetExpertGroupServiceTest {
 
     @Test
     void testGetExpertGroup_NullPicture_ValidResults() {
-
         var portResult = createPortResult(expertGroupId, currentUserId);
         var useCaseResul = portToUseCaseResult(portResult);
 
