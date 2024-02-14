@@ -46,6 +46,5 @@ class InviteExpertGroupMemberServiceTest {
         verify(inviteExpertGroupMemberPort).persist(any());
         verify(sendExpertGroupInvitationMailPort).sendInviteExpertGroupMemberEmail(any(String.class), any(UUID.class));
         verify(inviteTokenCheckPort).getInviteToken(any(UUID.class));
-        verify(sendExpertGroupInvitationMailPort).sendInviteExpertGroupMemberEmail(any(String.class),any(UUID.class));
     }
 }
