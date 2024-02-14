@@ -1365,36 +1365,4 @@
                 newDataType="varchar(200)"
                 tableName="baseinfo_assessmentkitdsl"/>
     </changeSet>
-
-    <changeSet id="0.12-243" author="Maziyar Gerami">
-        <dropColumn tableName="baseinfo_expertgroupaccess"
-                    columnName="invite_email">
-        </dropColumn>
-    </changeSet>
-
-    <changeSet id="0.12-244" author="Maziyar Gerami">
-        <addColumn tableName="baseinfo_expertgroupaccess">
-            <column name="status" type="varchar(20)" defaultValue="ACTIVE">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="0.12-245" author="Maziyar Gerami">
-        <dropNotNullConstraint tableName="baseinfo_expertgroupaccess" columnName="user_id"/>
-    </changeSet>
-
-    <changeSet id="0.12-246" author="Maziyar Gerami">
-        <addColumn tableName="baseinfo_expertgroupaccess">
-            <column name="invite_token" type="uuid" defaultValue="null">
-                <constraints nullable="true"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="0.12-247" author="Maziyar Gerami">
-        <addUniqueConstraint tableName="baseinfo_expertgroupaccess" columnNames="expert_group_id,user_id"
-                             constraintName="uq_baseinfo_expertgroupaccess_expertgroupid_userid"/>
-    </changeSet>
-
 </databaseChangeLog>
