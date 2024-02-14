@@ -3,6 +3,8 @@ package org.flickit.assessment.kit.application.domain;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @Getter
 @RequiredArgsConstructor
 public class ExpertGroup {
@@ -13,5 +15,5 @@ public class ExpertGroup {
     private final String about;
     private final String picture;
     private final String website;
-    private final boolean editable;
+    private final UUID ownerId;
 }
