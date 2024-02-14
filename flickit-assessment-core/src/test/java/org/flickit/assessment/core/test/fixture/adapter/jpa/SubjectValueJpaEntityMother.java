@@ -15,7 +15,8 @@ public class SubjectValueJpaEntityMother {
             assessmentResultJpaEntity,
             subjectId++,
             null,
-            null
+            null,
+            1L
         );
     }
 }

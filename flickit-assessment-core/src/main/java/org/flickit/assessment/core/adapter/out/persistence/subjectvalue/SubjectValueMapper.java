@@ -12,13 +12,14 @@ import java.util.ArrayList;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SubjectValueMapper {
 
-    public static SubjectValueJpaEntity mapToJpaEntity(Long subjectId){
+    public static SubjectValueJpaEntity mapToJpaEntity(Long subjectId, Long subjectReferenceNumber){
         return new SubjectValueJpaEntity(
             null,
             null,
             subjectId,
             null,
-            null
+            null,
+            subjectReferenceNumber
         );
     }
 

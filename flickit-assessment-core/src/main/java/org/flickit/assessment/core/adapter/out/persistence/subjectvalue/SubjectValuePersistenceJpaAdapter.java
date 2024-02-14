@@ -31,7 +31,8 @@ public class SubjectValuePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
         List<SubjectValueJpaEntity> entities = subjectIds.stream().map(subjectId -> {
-            SubjectValueJpaEntity subjectValue = SubjectValueMapper.mapToJpaEntity(subjectId);
+            Long subjectReferenceNumber = subjectRepository.findReferenceNumberById(subjectId);
+            SubjectValueJpaEntity subjectValue = SubjectValueMapper.mapToJpaEntity(subjectId, subjectReferenceNumber);
             subjectValue.setAssessmentResult(assessmentResult);
             return subjectValue;
         }).toList();

@@ -36,4 +36,7 @@ public class SubjectValueJpaEntity {
 
     @Column(name = "confidence_value")
     private Double confidenceValue;
+
+    @Column(name = "subject_reference_number", nullable = false)
+    private Long subjectReferenceNumber;
 }

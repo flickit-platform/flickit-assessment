@@ -319,4 +319,23 @@
                               tableName="fac_answer"/>
     </changeSet>
 
+    <changeSet id="0.14-48" author="MKouhestani">
+        <addColumn tableName="fac_subject_value">
+            <column name="subject_reference_number" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-49" author="MKouhestani">
+        <update tableName="fac_subject_value">
+            <column name="subject_reference_number"
+                    valueComputed="fak_subject.reference_number FROM fak_subject WHERE fak_subject.id = subject_id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.14-50" author="MKouhestani">
+        <addNotNullConstraint columnName="subject_reference_number"
+                              constraintName="subject_reference_number_not_null"
+                              tableName="fac_subject_value"/>
+    </changeSet>
+
 </databaseChangeLog>
