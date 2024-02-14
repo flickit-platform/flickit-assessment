@@ -13,13 +13,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
-import java.util.Random;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
+import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetExpertGroupServiceTest {
@@ -33,37 +35,42 @@ class GetExpertGroupServiceTest {
 
     @Test
     void testGetExpertGroup_ValidInputs_ValidResults() {
-        var portResult = createPortResult(expertGroupId, currentUserId);
-        var useCaseResult = portToUseCaseResult(portResult);
+        UUID currentUserId = UUID.randomUUID();
+        ExpertGroup expertGroup = createExpertGroup("/path/to/picture", currentUserId);
+        long expertGroupId = expertGroup.getId();
 
+        String pictureLink = "cdn.flickit.org" + expertGroup.getPicture();
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
-            .thenReturn("/path/to/picture");
+            .thenReturn(pictureLink);
 
         when(loadExpertGroupPort.loadExpertGroup(anyLong()))
-            .thenReturn(portResult);
+            .thenReturn(expertGroup);
 
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
-        var result = service.getExpertGroup(param);
+        GetExpertGroupUseCase.Result result = service.getExpertGroup(param);
 
-        ArgumentCaptor<Long> loadPortParam = ArgumentCaptor.forClass(Long.class);
-        verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture());
+        ArgumentCaptor<Long> expertGroupIdArgument = ArgumentCaptor.forClass(Long.class);
+        verify(loadExpertGroupPort).loadExpertGroup(expertGroupIdArgument.capture());
 
+        assertEquals(expertGroupId, expertGroupIdArgument.getValue());
         assertNotNull(result);
-        assertNotNull(result.getPicture());
-        assertEquals(useCaseResult.getId(), result.getId());
-        assertTrue(result.isEditable());
+        assertNotNull(result.expertGroup());
+        assertEquals(expertGroup.getTitle(), result.expertGroup().getTitle());
+        assertEquals(expertGroup.getBio(), result.expertGroup().getBio());
+        assertEquals(expertGroup.getAbout(), result.expertGroup().getAbout());
+        assertEquals(pictureLink, result.pictureLink());
+        assertEquals(expertGroup.getWebsite(), result.expertGroup().getWebsite());
+        assertTrue(result.editable());
     }
 
     @Test
     void testGetExpertGroup_NullPicture_ValidResults() {
-        var portResult = createPortResult(expertGroupId, currentUserId);
-        var useCaseResult = portToUseCaseResult(portResult);
-
-        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
-            .thenReturn(null);
+        UUID currentUserId = UUID.randomUUID();
+        ExpertGroup expertGroup = createExpertGroup(null, currentUserId);
+        long expertGroupId = expertGroup.getId();
 
         when(loadExpertGroupPort.loadExpertGroup(anyLong()))
-            .thenReturn(portResult);
+            .thenReturn(expertGroup);
 
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
         var result = service.getExpertGroup(param);
@@ -72,44 +79,40 @@ class GetExpertGroupServiceTest {
         verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture());
 
         assertNotNull(result);
-        assertNull(result.getPicture());
-        assertEquals(useCaseResult.getId(), result.getId());
-        assertTrue(result.isEditable());
+        assertNull(result.pictureLink());
+        verifyNoInteractions(createFileDownloadLinkPort);
     }
 
     @Test
-    void testGetExpertGroup_ValidInputs_emptyResults() {
+    void testGetExpertGroup_ValidInputs_nonEditableGroup() {
+        UUID currentUserId = UUID.randomUUID();
+        ExpertGroup expertGroup = createExpertGroup(null, UUID.randomUUID());
+        long expertGroupId = expertGroup.getId();
+
         when(loadExpertGroupPort.loadExpertGroup(anyLong()))
-            .thenThrow(new ResourceNotFoundException("message"));
+            .thenReturn(expertGroup);
 
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
+        GetExpertGroupUseCase.Result result = service.getExpertGroup(param);
 
-        assertThrows(ResourceNotFoundException.class, () -> service.getExpertGroup(param));
+        ArgumentCaptor<Long> expertGroupIdArgument = ArgumentCaptor.forClass(Long.class);
+        verify(loadExpertGroupPort).loadExpertGroup(expertGroupIdArgument.capture());
+
+        assertEquals(expertGroupId, expertGroupIdArgument.getValue());
+        assertNotNull(result);
+        assertFalse(result.editable());
     }
 
-    long expertGroupId = new Random().nextLong();
-    static UUID currentUserId = UUID.randomUUID();
+    @Test
+    void testGetExpertGroup_ValidInputs_expertGroupNotFound() {
+        when(loadExpertGroupPort.loadExpertGroup(anyLong()))
+            .thenThrow(new ResourceNotFoundException(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND));
 
-    private static LoadExpertGroupPort.Result createPortResult(long id, UUID ownerId) {
-        return new LoadExpertGroupPort.Result(id,
-            "Title" + id,
-            "Bio" + id,
-            "About" + id,
-            "Picture" + id,
-            "Website" + id,
-            ownerId);
-    }
+        var param = new GetExpertGroupUseCase.Param(134L, UUID.randomUUID());
 
-    private static ExpertGroup portToUseCaseResult(LoadExpertGroupPort.Result portResult) {
-        return new ExpertGroup(
-            portResult.id(),
-            portResult.title(),
-            portResult.bio(),
-            portResult.about(),
-            portResult.picture(),
-            portResult.website(),
-            portResult.ownerId().equals(currentUserId)
-        );
+        var throwable = assertThrows(ResourceNotFoundException.class,
+            () -> service.getExpertGroup(param));
+        assertThat(throwable).hasMessage(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND);
     }
 }
 

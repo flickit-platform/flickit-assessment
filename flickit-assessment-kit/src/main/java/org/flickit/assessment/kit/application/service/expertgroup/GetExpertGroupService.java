@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -21,15 +23,17 @@ public class GetExpertGroupService implements GetExpertGroupUseCase {
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
-    public ExpertGroup getExpertGroup(Param param) {
-        var portResult = loadExpertGroupPort.loadExpertGroup(param.getId());
+    public Result getExpertGroup(Param param) {
+        ExpertGroup expertGroup = loadExpertGroupPort.loadExpertGroup(param.getId());
 
-        return new ExpertGroup(portResult.id(),
-            portResult.title(),
-            portResult.bio(),
-            portResult.about(),
-            createFileDownloadLinkPort.createDownloadLink(portResult.picture(), EXPIRY_DURATION),
-            portResult.website(),
-            portResult.ownerId().equals(param.getCurrentUserId()));
+        String pictureLink = getPictureDownloadLink(expertGroup.getPicture());
+        boolean editable = expertGroup.getOwnerId().equals(param.getCurrentUserId());
+        return new Result(expertGroup, pictureLink, editable);
+    }
+
+    private String getPictureDownloadLink(String filePath) {
+        if (isBlank(filePath))
+            return null;
+        return createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
     }
 }

@@ -13,7 +13,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP
 
 public interface GetExpertGroupUseCase {
 
-    ExpertGroup getExpertGroup(Param param);
+    Result getExpertGroup(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -24,5 +24,8 @@ public interface GetExpertGroupUseCase {
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
+    }
+
+    record Result(ExpertGroup expertGroup, String pictureLink, boolean editable) {
     }
 }
