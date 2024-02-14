@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.expertgroupaccess;
 
 import org.flickit.assessment.kit.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
+import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteTokenCheckPort;
 import org.flickit.assessment.kit.application.port.out.mail.SendExpertGroupInvitationMailPort;
 import org.flickit.assessment.kit.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.junit.jupiter.api.Test;
@@ -22,27 +23,29 @@ class InviteExpertGroupMemberServiceTest {
 
     @Mock
     private InviteExpertGroupMemberPort inviteExpertGroupMemberPort;
-
     @Mock
     private LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
-
     @Mock
     private SendExpertGroupInvitationMailPort sendExpertGroupInvitationMailPort;
+    @Mock
+    private InviteTokenCheckPort inviteTokenCheckPort;
 
     @InjectMocks
-    private InviteExpertGroupMemberService inviteExpertGroupMemberService;
+    private InviteExpertGroupMemberService service;
 
     @Test
     void inviteMember_Success() {
         Param param = new Param(new Random().nextLong(), UUID.randomUUID(), UUID.randomUUID());
-        UUID inviteToken = UUID.randomUUID();
         String email = "test@example.com";
 
         when(loadUserEmailByUserIdPort.loadEmail(any())).thenReturn(email);
+        when(inviteTokenCheckPort.getInviteToken(any(UUID.class))).thenReturn(true);
 
-        inviteExpertGroupMemberService.inviteMember(param);
+        service.inviteMember(param);
 
         verify(inviteExpertGroupMemberPort).persist(any());
-        verify(sendExpertGroupInvitationMailPort).sendInviteExpertGroupMemberEmail(email, inviteToken);
+        verify(sendExpertGroupInvitationMailPort).sendInviteExpertGroupMemberEmail(any(String.class), any(UUID.class));
+        verify(inviteTokenCheckPort).getInviteToken(any(UUID.class));
+        verify(sendExpertGroupInvitationMailPort).sendInviteExpertGroupMemberEmail(any(String.class),any(UUID.class));
     }
 }
