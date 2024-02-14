@@ -41,6 +41,6 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
     @Override
     public boolean getInviteToken(UUID inviteToke) {
-        return repository.findByInviteToken(inviteToke);
+        return repository.existsByInviteToken(inviteToke);
     }
 }
