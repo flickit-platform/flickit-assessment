@@ -13,8 +13,6 @@ public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOpt
 
     List<AnswerOptionImpactJpaEntity> findAllByQuestionImpactId(Long impactId);
 
-    void deleteByQuestionImpactIdAndOptionId(Long questionImpactId, Long optionId);
-
     @Modifying
     @Query("""
         UPDATE AnswerOptionImpactJpaEntity a
