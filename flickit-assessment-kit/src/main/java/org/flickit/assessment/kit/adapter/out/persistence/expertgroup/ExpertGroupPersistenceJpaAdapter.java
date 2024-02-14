@@ -8,11 +8,7 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -86,8 +82,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public LoadExpertGroupPort.Result loadExpertGroup(LoadExpertGroupPort.Param param) {
-        var resultEntity = repository.findById(param.id())
+    public LoadExpertGroupPort.Result loadExpertGroup(Long id) {
+        var resultEntity = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND));
         return mapEntityToPortResult(resultEntity);
     }
