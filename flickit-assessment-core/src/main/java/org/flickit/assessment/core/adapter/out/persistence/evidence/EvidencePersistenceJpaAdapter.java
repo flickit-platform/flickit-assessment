@@ -54,6 +54,7 @@ public class EvidencePersistenceJpaAdapter implements
         repository.update(
             param.id(),
             param.description(),
+            param.evidenceTypeId(),
             param.lastModificationTime(),
             param.lastModifiedById()
         );

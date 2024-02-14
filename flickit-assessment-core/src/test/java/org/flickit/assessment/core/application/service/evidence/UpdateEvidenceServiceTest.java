@@ -31,6 +31,7 @@ class UpdateEvidenceServiceTest {
         var param = new UpdateEvidenceUseCase.Param(
             savedEvidence.getId(),
             "new " + savedEvidence.getDescription(),
+            savedEvidence.getEvidenceTypeId(),
             savedEvidence.getLastModifiedById()
         );
 

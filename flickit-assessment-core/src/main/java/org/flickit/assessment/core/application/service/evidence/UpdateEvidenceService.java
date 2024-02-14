@@ -20,6 +20,7 @@ public class UpdateEvidenceService implements UpdateEvidenceUseCase {
         var updateParam = new UpdateEvidencePort.Param(
             param.getId(),
             param.getDescription(),
+            param.getEvidenceTypeId(),
             LocalDateTime.now(),
             param.getLastModifiedById()
         );
