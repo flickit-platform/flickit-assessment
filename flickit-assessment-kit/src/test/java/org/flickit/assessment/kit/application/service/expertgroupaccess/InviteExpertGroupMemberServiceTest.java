@@ -40,11 +40,11 @@ class InviteExpertGroupMemberServiceTest {
 
         when(loadUserEmailByUserIdPort.loadEmail(any())).thenReturn(email);
         when(inviteTokenCheckPort.checkInviteToken(any(UUID.class))).thenReturn(true);
-
-        service.inviteMember(param);
+        when(sendExpertGroupInvitationMailPort).getMock();
 
         verify(inviteExpertGroupMemberPort).persist(any());
         verify(sendExpertGroupInvitationMailPort).sendInviteExpertGroupMemberEmail(any(String.class), any(UUID.class));
         verify(inviteTokenCheckPort).checkInviteToken(any(UUID.class));
+        service.inviteMember(param);
     }
 }
