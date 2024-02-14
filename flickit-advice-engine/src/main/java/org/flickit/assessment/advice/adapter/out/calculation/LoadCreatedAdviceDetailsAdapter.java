@@ -5,7 +5,7 @@ import org.flickit.assessment.advice.application.domain.advice.AdviceAttribute;
 import org.flickit.assessment.advice.application.domain.advice.AdviceOption;
 import org.flickit.assessment.advice.application.domain.advice.AdviceQuestion;
 import org.flickit.assessment.advice.application.domain.advice.AdviceQuestionnaire;
-import org.flickit.assessment.advice.application.port.out.question.LoadCreatedAdviceDetailsPort;
+import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.advice.AttributeAdviceView;
 import org.flickit.assessment.data.jpa.kit.question.advice.OptionAdviceView;

@@ -47,15 +47,9 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
                 .filter(s -> !codeToDslQuestion.containsKey(s))
                 .collect(toSet());
 
-            var newQuestions = codeToDslQuestion.keySet().stream()
-                .filter(s -> !codeToQuestion.containsKey(s))
-                .collect(toSet());
-
-            if (!deletedQuestions.isEmpty())
+            if (!deletedQuestions.isEmpty()) {
                 notification.add(new InvalidDeletionError(DslFieldNames.QUESTION, deletedQuestions));
-
-            if (!newQuestions.isEmpty())
-                notification.add(new InvalidAdditionError(DslFieldNames.QUESTION, newQuestions));
+            }
 
             validateAnswerOptions(codeToQuestion, codeToDslQuestion, notification);
         }
