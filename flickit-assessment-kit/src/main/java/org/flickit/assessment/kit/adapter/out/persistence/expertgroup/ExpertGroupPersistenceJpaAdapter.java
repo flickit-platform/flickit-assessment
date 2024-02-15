@@ -23,7 +23,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupListPort,
     LoadExpertGroupMemberIdsPort,
     CreateExpertGroupPort,
-    CheckExpertGroupExistsPort {
+    CheckExpertGroupExistsPort,
+    CheckExpertGroupOwnerPort {
 
     private final ExpertGroupJpaRepository repository;
 
@@ -79,5 +80,10 @@ public class ExpertGroupPersistenceJpaAdapter implements
     @Override
     public boolean existsById(long id) {
         return repository.existsById(id);
+    }
+
+    @Override
+    public boolean checkIsOwner(long expertGroupId, UUID userId) {
+        return repository.existsByIdAndOwnerId(expertGroupId, userId);
     }
 }
