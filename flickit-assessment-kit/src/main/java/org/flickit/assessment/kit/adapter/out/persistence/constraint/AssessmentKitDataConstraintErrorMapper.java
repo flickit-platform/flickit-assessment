@@ -7,7 +7,6 @@ import java.util.Map;
 
 import static java.util.Map.entry;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_EXPERT_GROUP_TITLE_DUPLICATE;
 
 @Component
 public class AssessmentKitDataConstraintErrorMapper implements DataConstraintErrorMapper {
