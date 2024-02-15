@@ -47,9 +47,8 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
     private void createOwnerAccessToGroup(Long expertGroupId, UUID ownerId) {
         CreateExpertGroupAccessPort.Param param = new CreateExpertGroupAccessPort.Param(
             expertGroupId,
-            null,
             ownerId,
-            ExpertGroupAccessStatus.ACTIVE.name()
+            ExpertGroupAccessStatus.ACTIVE
         );
         createExpertGroupAccessPort.persist(param);
     }
