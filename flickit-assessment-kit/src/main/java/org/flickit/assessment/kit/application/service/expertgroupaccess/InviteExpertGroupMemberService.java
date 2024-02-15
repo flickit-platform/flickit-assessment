@@ -41,18 +41,17 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         var inviteExpirationDate = inviteDate.plusDays(EXPIRY_DURATION.toDays());
         String email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
 
-        inviteExpertGroupMemberPort.persist(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
-        boolean isInserted = inviteTokenCheckPort.checkInviteToken(inviteToken);
-
         boolean expertGroupExists = checkExpertGroupExistsPort.existsById(param.getExpertGroupId());
         if (!expertGroupExists)
             throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
 
         boolean isOwner = checkExpertGroupOwnerPort.checkIsOwner(param.getExpertGroupId(), param.getUserId());
-
         if (!isOwner)
             throw new AccessDeniedException(INVITE_EXPERT_GROUP_MEMBER_OWNER_ID_ACCESS_DENIED);
 
+        inviteExpertGroupMemberPort.persist(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
+
+        boolean isInserted = inviteTokenCheckPort.checkInviteToken(inviteToken);
         if (isInserted)
             new Thread(() ->
                 sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken)).start();
