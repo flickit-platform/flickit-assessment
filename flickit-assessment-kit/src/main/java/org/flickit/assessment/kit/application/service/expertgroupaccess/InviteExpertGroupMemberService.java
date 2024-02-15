@@ -1,8 +1,10 @@
 package org.flickit.assessment.kit.application.service.expertgroupaccess;
 
 import lombok.AllArgsConstructor;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessStatus;
 import org.flickit.assessment.kit.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
 import org.flickit.assessment.kit.application.port.out.mail.SendExpertGroupInvitationMailPort;
 import org.flickit.assessment.kit.application.port.out.user.LoadUserEmailByUserIdPort;
@@ -14,6 +16,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+
 @Service
 @Transactional
 @AllArgsConstructor
@@ -23,6 +27,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     private final SendExpertGroupInvitationMailPort sendExpertGroupInvitationMailPort;
     private final InviteTokenCheckPort inviteTokenCheckPort;
+    private final CheckExpertGroupExistsPort checkExpertGroupExistsPort;
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
     @Override
@@ -34,6 +39,10 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
 
         inviteExpertGroupMemberPort.persist(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
         boolean isInserted = inviteTokenCheckPort.checkInviteToken(inviteToken);
+
+        boolean expertGroupExists = checkExpertGroupExistsPort.existsById(param.getExpertGroupId());
+        if (!expertGroupExists)
+            throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
 
         if (isInserted)
             new Thread(() ->
