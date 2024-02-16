@@ -2,13 +2,10 @@ package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
-import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
-import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
+import org.flickit.assessment.data.jpa.kit.expertgroup.*;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.*;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
