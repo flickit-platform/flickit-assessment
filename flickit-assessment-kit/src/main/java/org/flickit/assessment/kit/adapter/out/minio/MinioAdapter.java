@@ -109,7 +109,7 @@ public class MinioAdapter implements
             return null;
 
         String bucketName = filePath.substring(0, filePath.indexOf(SLASH));
-        String objectName = filePath.substring(filePath.indexOf(SLASH));
+        String objectName = filePath.substring(filePath.indexOf(SLASH) + 1);
 
         try {
             checkFileExistence(bucketName, objectName);

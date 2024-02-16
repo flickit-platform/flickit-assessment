@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.port.out.question;
+package org.flickit.assessment.advice.application.port.out.calculation;
 
 import org.flickit.assessment.advice.application.domain.advice.AdviceAttribute;
 import org.flickit.assessment.advice.application.domain.advice.AdviceOption;
