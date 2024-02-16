@@ -29,10 +29,6 @@ class GetExpertGroupMembersServiceTest {
     private LoadExpertGroupMembersPort loadExpertGroupMembersPort;
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
-    int count = 0;
-    String expectedDownloadLink = "downloadLink";
-
-
     @Test
     void testGetExpertGroupMembers_ValidInputs_ValidResults() {
 
@@ -93,4 +89,7 @@ class GetExpertGroupMembersServiceTest {
             portResult.linkedin()
         );
     }
+
+    int count = 0;
+    String expectedDownloadLink = "downloadLink";
 }
