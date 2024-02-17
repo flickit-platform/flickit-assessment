@@ -762,6 +762,14 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Evidence Types",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	],
 	"variable": [
