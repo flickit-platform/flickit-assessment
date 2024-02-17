@@ -14,13 +14,13 @@ public enum EvidenceType {
     POSITIVE,
     NEGATIVE;
 
-    public int getId() { return ordinal() + 1; }
+    public Integer getId() { return ordinal() + 1; }
 
     public String getTitle() { return name().toLowerCase();}
 
-    public static EvidenceType valueOfById(int id) {
+    public static EvidenceType valueOfById(Integer id) {
         return Stream.of(EvidenceType.values())
-            .filter(x -> x.getId() == id)
+            .filter(x -> x.getId().equals(id))
             .findAny()
             .orElse(null);
     }
