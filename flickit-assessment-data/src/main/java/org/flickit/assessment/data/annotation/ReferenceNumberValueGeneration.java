@@ -1,9 +1,6 @@
 package org.flickit.assessment.data.annotation;
 
-import org.hibernate.tuple.AnnotationValueGeneration;
-import org.hibernate.tuple.GenerationTiming;
-import org.hibernate.tuple.ValueGenerator;
-
+import org.hibernate.tuple.*;
 
 public class ReferenceNumberValueGeneration implements AnnotationValueGeneration<ReferenceNumberValue> {
 
