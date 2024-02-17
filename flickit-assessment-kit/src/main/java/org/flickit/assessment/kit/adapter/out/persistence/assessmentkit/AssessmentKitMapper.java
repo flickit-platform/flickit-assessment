@@ -26,7 +26,8 @@ public class AssessmentKitMapper {
             param.createdBy(),
             param.createdBy(),
             new HashSet<>(),
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            null // TODO: should create a version and submit and add id here
         );
     }
 }

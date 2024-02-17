@@ -78,7 +78,8 @@
 
     <changeSet id="0.14-11" author="MKouhestani">
         <update tableName="fak_question">
-            <column name="kit_id" valueComputed="fak_questionnaire.kit_id FROM fak_questionnaire WHERE questionnaire_id = fak_questionnaire.id"/>
+            <column name="kit_id"
+                    valueComputed="fak_questionnaire.kit_id FROM fak_questionnaire WHERE questionnaire_id = fak_questionnaire.id"/>
         </update>
     </changeSet>
 
@@ -96,7 +97,8 @@
 
     <changeSet id="0.14-14" author="MKouhestani">
         <update tableName="fak_question_impact">
-            <column name="kit_id" valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id"/>
+            <column name="kit_id"
+                    valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id"/>
         </update>
     </changeSet>
 
@@ -114,7 +116,8 @@
 
     <changeSet id="0.14-17" author="MKouhestani">
         <update tableName="fak_answer_option">
-            <column name="kit_id" valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id"/>
+            <column name="kit_id"
+                    valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id"/>
         </update>
     </changeSet>
 
@@ -132,7 +135,8 @@
 
     <changeSet id="0.14-20" author="MKouhestani">
         <update tableName="fak_answer_option_impact">
-            <column name="kit_id" valueComputed="fak_question_impact.kit_id FROM fak_question_impact WHERE question_impact_id = fak_question_impact.id"/>
+            <column name="kit_id"
+                    valueComputed="fak_question_impact.kit_id FROM fak_question_impact WHERE question_impact_id = fak_question_impact.id"/>
         </update>
     </changeSet>
 
@@ -356,5 +360,91 @@
                               constraintName="attribute_reference_number_not_null"
                               tableName="fac_quality_attribute_value"/>
     </changeSet>
+
+    <changeSet id="0.14-54" author="MKouhestani">
+        <sql>CREATE TABLE new_assessment_kit AS (SELECT * FROM fak_assessment_kit);</sql>
+    </changeSet>
+
+    <changeSet id="0.14-55" author="MKouhestani">
+        <renameTable oldTableName="fak_assessment_kit" newTableName="fak_assessment_kit_version"/>
+    </changeSet>
+
+    <changeSet id="0.14-56" author="MKouhestani">
+        <renameTable oldTableName="new_assessment_kit" newTableName="fak_assessment_kit"/>
+    </changeSet>
+
+    <changeSet id="0.14-57" author="MKouhestani">
+        <createSequence sequenceName="fak_assessment_kit_version_id_seq"
+                        dataType="bigint"
+                        startValue="nextVal(fak_assessment_kit_id_seq)"/>
+    </changeSet>
+
+    <changeSet id="0.14-58" author="MKouhestani">
+        <addColumn tableName="fak_assessment_kit_version">
+            <column name="version_status" type="tinyint" valueNumeric="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="kit_id" type="bigint" valueComputed="id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-59" author="MKouhestani">
+        <dropColumn tableName="fak_assessment_kit_version">
+            <column name="title"/>
+            <column name="summary"/>
+            <column name="about"/>
+            <column name="published"/>
+            <column name="is_private"/>
+            <column name="expert_group_id"/>
+            <column name="creation_time"/>
+            <column name="last_modification_date"/>
+            <column name="created_by"/>
+            <column name="last_modified_by"/>
+            <column name="fak_kit_user_access"/>
+            <column name="last_major_modification_time"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.14-60" author="MKouhestani">
+        <addColumn tableName="fak_assessment_kit">
+            <column name="kit_version_id" type="bigint" valueComputed="id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+<!--    <changeSet id="0.14-61" author="MKouhestani">
+        <renameColumn tableName="faK_subject" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.14-62" author="MKouhestani">
+        <renameColumn tableName="fak_attribute" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.14-63" author="MKouhestani">
+        <renameColumn tableName="fak_questionnaire" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.14-64" author="MKouhestani">
+        <renameColumn tableName="fak_question" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.14-65" author="MKouhestani">
+        <renameColumn tableName="fak_question_impact" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.14-66" author="MKouhestani">
+        <renameColumn tableName="fak_answer_option" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.14-67" author="MKouhestani">
+        <renameColumn tableName="fak_answer_option_impact" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.14-68" author="MKouhestani">
+        <renameColumn tableName="fak_maturity_level" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>-->
 
 </databaseChangeLog>
