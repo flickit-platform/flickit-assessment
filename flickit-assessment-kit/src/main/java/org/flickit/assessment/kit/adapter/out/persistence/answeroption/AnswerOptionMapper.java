@@ -21,13 +21,14 @@ public class AnswerOptionMapper {
     }
 
     public static AnswerOptionJpaEntity mapToJpaEntity(CreateAnswerOptionPort.Param param) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new AnswerOptionJpaEntity(
             null,
             param.index(),
             param.title(),
             param.questionId(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            creationTime,
+            creationTime,
             param.createdBy(),
             param.createdBy(),
             null,
