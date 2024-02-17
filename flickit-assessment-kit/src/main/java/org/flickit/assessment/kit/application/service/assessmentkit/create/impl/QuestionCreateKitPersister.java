@@ -58,7 +58,6 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                 currentUserId,
                 kitId
             ));
-
     }
 
     private void createQuestions(Map<String, QuestionDslModel> dslQuestions,
