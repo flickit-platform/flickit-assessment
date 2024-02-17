@@ -33,4 +33,21 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     void delete(@Param(value = "id") UUID id);
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
+
+    @Query("""
+            SELECT evd.description AS description, evd.evidenceTypeId AS evidenceTypeId
+            FROM AttributeJpaEntity atr
+            JOIN QuestionImpactJpaEntity  qi
+            ON atr.id = qi.attributeId
+            JOIN QuestionJpaEntity q
+            ON qi.questionId = q.id
+            JOIN EvidenceJpaEntity evd
+            ON evd.questionId = q.id
+            WHERE evd.assessmentId = :assessmentId
+            AND evd.deleted = false
+            AND atr.id = :attributeId
+            ORDER BY evd.lastModificationTime DESC
+    """)
+    Page<AttributeEvidenceView> findByAttributeIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(UUID assessmentId,
+                                                                                                               Long attributeId,Pageable pageable);
 }
