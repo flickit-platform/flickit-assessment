@@ -26,7 +26,7 @@ public class EvidenceMapper {
     }
 
     public static EvidenceListItem toEvidenceListItem(EvidenceJpaEntity entity) {
-        String evidenceTypeTitle = "";
+        String evidenceTypeTitle = null;
         EvidenceType evidenceType = EvidenceType.valueOfById(entity.getEvidenceTypeId());
         if (evidenceType != null) {
             evidenceTypeTitle = evidenceType.getTitle();
