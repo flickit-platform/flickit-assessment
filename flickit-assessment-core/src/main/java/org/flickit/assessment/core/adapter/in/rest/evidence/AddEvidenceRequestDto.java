@@ -6,6 +6,6 @@ public record AddEvidenceRequestDto(
     String description,
     UUID assessmentId,
     Long questionId,
-    Integer evidenceTypeId
+    String evidenceType
 ) {
 }
