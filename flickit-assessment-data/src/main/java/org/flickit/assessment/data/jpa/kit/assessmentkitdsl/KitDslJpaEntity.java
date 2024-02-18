@@ -4,9 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "baseinfo_assessmentkitdsl")
+@Table(name = "fak_kit_dsl")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,12 +17,12 @@ public class KitDslJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_profiledsl_id_seq")
-    @SequenceGenerator(name = "baseinfo_profiledsl_id_seq", sequenceName = "baseinfo_profiledsl_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_kit_dsl_id_seq")
+    @SequenceGenerator(name = "fak_kit_dsl_id_seq", sequenceName = "fak_kit_dsl_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "dsl_file", length = 200, nullable = false)
+    @Column(name = "dsl_path", length = 200, nullable = false)
     private String dslPath;
 
     @Column(name = "json_path", length = 200)
@@ -32,5 +33,14 @@ public class KitDslJpaEntity {
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
+
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
+
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
+
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
 
 }
