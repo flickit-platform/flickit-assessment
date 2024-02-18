@@ -79,7 +79,7 @@ public class UploadKitServiceTest {
         when(uploadKitDslToFileStoragePort.uploadKitDsl(dslFile, json)).thenReturn(new UploadKitDslToFileStoragePort.Result(dslFilePath, jsonFilePath));
 
         long kitDslId = 1L;
-        when(createKitDslPort.create(dslFilePath, jsonFilePath))
+        when(createKitDslPort.create(dslFilePath, jsonFilePath, currentUserId))
             .thenReturn(kitDslId);
 
         when(parsDslFilePort.parsToDslModel(dslFile)).thenReturn(kitDslModel);
