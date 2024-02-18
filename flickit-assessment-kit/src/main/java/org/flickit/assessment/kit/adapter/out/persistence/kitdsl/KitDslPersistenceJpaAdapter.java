@@ -11,6 +11,7 @@ import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.KitDslMapper.toJpaEntity;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
@@ -26,8 +27,8 @@ public class KitDslPersistenceJpaAdapter implements
     private final KitDslJpaRepository repository;
 
     @Override
-    public Long create(String dslFilePath, String jsonFilePath) {
-        return repository.save(toJpaEntity(dslFilePath, jsonFilePath)).getId();
+    public Long create(String dslFilePath, String jsonFilePath, UUID createdBy) {
+        return repository.save(toJpaEntity(dslFilePath, jsonFilePath, createdBy)).getId();
     }
 
     @Override
