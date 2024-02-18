@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.adapter.out.persistence.kitdsl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaEntity;
-import org.flickit.assessment.kit.application.domain.KitDsl;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
