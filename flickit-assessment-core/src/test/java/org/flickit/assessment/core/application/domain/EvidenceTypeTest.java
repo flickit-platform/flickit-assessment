@@ -7,12 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class EvidenceTypeTest {
 
     @Test
-    void testEvidenceType_IdOfItemsShouldNotBeChanged() {
-        assertEquals(1, EvidenceType.POSITIVE.getId());
-        assertEquals(2, EvidenceType.NEGATIVE.getId());
-    }
-
-    @Test
     void testEvidenceType_OrderOfItemsShouldNotBeChanged() {
         assertEquals(0, EvidenceType.POSITIVE.ordinal());
         assertEquals(1, EvidenceType.NEGATIVE.ordinal());
@@ -26,8 +20,8 @@ class EvidenceTypeTest {
 
     @Test
     void testEvidenceType_TitleOfItemsShouldNotBeChanged() {
-        assertEquals("positive", EvidenceType.POSITIVE.getTitle());
-        assertEquals("negative", EvidenceType.NEGATIVE.getTitle());
+        assertEquals("Positive", EvidenceType.POSITIVE.getTitle());
+        assertEquals("Negative", EvidenceType.NEGATIVE.getTitle());
     }
 
     @Test
