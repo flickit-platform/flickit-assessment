@@ -41,16 +41,15 @@ public class UploadKitDslService implements UploadKitDslUseCase {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(dslContentJson);
         UploadKitDslToFileStoragePort.Result filesInfo = uploadKitDslToFileStoragePort.uploadKitDsl(param.getDslFile(), json);
-        return createKitDslPort.create(filesInfo.dslFilePath(),
-            filesInfo.jsonFilePath(), currentUserId);
+        return createKitDslPort.create(filesInfo.dslFilePath(), filesInfo.jsonFilePath(), currentUserId);
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
         UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
             .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
-        if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
+
+        if (!Objects.equals(expertGroupOwnerId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        }
     }
 
 }

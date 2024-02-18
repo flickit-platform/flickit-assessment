@@ -11,25 +11,16 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class KitDslMapper {
 
-    public static KitDslJpaEntity toJpaEntity(String dslPath, String jsonPath, UUID currentUserId) {
-        return new KitDslJpaEntity(null,
+    public static KitDslJpaEntity toJpaEntity(String dslPath, String jsonPath, UUID createdBy) {
+        return new KitDslJpaEntity(
+            null,
             dslPath,
             jsonPath,
             null,
             LocalDateTime.now(),
             LocalDateTime.now(),
-            currentUserId,
-            currentUserId
+            createdBy,
+            createdBy
             );
-    }
-
-    public static KitDsl toDomainModel(KitDslJpaEntity entity) {
-        return new KitDsl(
-            entity.getId(),
-            entity.getDslPath(),
-            entity.getJsonPath(),
-            entity.getKitId(),
-            entity.getCreationTime()
-        );
     }
 }

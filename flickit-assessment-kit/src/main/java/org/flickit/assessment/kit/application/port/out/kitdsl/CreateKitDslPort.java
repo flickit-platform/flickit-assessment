@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public interface CreateKitDslPort {
 
-    Long create(String dslFilePath, String jsonFilePath, UUID currentUserId);
+    Long create(String dslFilePath, String jsonFilePath, UUID createdBy);
 
 }

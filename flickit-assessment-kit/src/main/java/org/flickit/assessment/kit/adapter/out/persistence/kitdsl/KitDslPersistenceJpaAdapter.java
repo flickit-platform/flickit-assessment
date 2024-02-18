@@ -27,8 +27,8 @@ public class KitDslPersistenceJpaAdapter implements
     private final KitDslJpaRepository repository;
 
     @Override
-    public Long create(String dslFilePath, String jsonFilePath, UUID currentUserId) {
-        return repository.save(toJpaEntity(dslFilePath, jsonFilePath, currentUserId)).getId();
+    public Long create(String dslFilePath, String jsonFilePath, UUID createdBy) {
+        return repository.save(toJpaEntity(dslFilePath, jsonFilePath, createdBy)).getId();
     }
 
     @Override
