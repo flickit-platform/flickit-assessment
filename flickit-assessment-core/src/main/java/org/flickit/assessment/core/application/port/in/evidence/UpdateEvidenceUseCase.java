@@ -4,6 +4,8 @@ import jakarta.validation.constraints.*;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.validation.EnumValue;
+import org.flickit.assessment.core.application.domain.EvidenceType;
 
 import java.util.UUID;
 
@@ -26,20 +28,19 @@ public interface UpdateEvidenceUseCase {
         @Size(max = 1000, message = UPDATE_EVIDENCE_DESC_MAX_SIZE)
         String description;
 
-        @Min(value = 1, message = UPDATE_EVIDENCE_EVIDENCE_TYPE_ID_MIN)
-        @Max(value = 2, message = UPDATE_EVIDENCE_EVIDENCE_TYPE_ID_MAX)
-        Integer evidenceTypeId;
+        @EnumValue(enumClass = EvidenceType.class, message = UPDATE_EVIDENCE_EVIDENCE_TYPE_INVALID)
+        String evidenceTypeTitle;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID lastModifiedById;
 
         public Param(UUID id,
                      String description,
-                     Integer evidenceTypeId,
+                     String evidenceTypeTitle,
                      UUID lastModifiedById) {
             this.id = id;
             this.description = description;
-            this.evidenceTypeId = evidenceTypeId;
+            this.evidenceTypeTitle = evidenceTypeTitle;
             this.lastModifiedById = lastModifiedById;
             this.validateSelf();
         }

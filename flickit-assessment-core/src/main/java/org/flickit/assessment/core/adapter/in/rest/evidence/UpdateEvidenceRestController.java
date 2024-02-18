@@ -30,7 +30,7 @@ public class UpdateEvidenceRestController {
     private UpdateEvidenceUseCase.Param toParam(UUID id, UpdateEvidenceRequestDto request, UUID currentUserId) {
         return new UpdateEvidenceUseCase.Param(id,
             request.description(),
-            request.evidenceTypeId(),
+            request.evidenceType(),
             currentUserId);
     }
 

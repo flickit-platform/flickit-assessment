@@ -539,7 +539,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"description\": \"new_desc\",\n    \"evidenceTypeId\": 1\n}",
+					"raw": "{\n    \"description\": \"new_desc\",\n    \"evidenceType\": \"negative\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -547,14 +547,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/evidences/34a20577-70f7-44f3-a3b3-d7059abced43",
+					"raw": "{{base_url}}/{{api_path}}/evidences/4fc9fd54-a96b-4752-82c5-4c428e080d8f",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
 						"evidences",
-						"34a20577-70f7-44f3-a3b3-d7059abced43"
+						"4fc9fd54-a96b-4752-82c5-4c428e080d8f"
 					]
 				}
 			},

@@ -9,7 +9,7 @@ public interface UpdateEvidencePort {
 
     record Param(UUID id,
                  String description,
-                 Integer evidenceTypeId,
+                 String evidenceTypeTitle,
                  LocalDateTime lastModificationTime,
                  UUID lastModifiedById) {
     }

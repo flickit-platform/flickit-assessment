@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.evidence;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.core.application.domain.EvidenceType;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.*;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
@@ -51,10 +52,16 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public UpdateEvidencePort.Result update(UpdateEvidencePort.Param param) {
+        Integer evidenceTypeId = null;
+        String evidenceTypeTitle = param.evidenceTypeTitle();
+        if (evidenceTypeTitle != null) {
+            evidenceTypeId = EvidenceType.valueOf(evidenceTypeTitle.toUpperCase()).getId();
+        }
+
         repository.update(
             param.id(),
             param.description(),
-            param.evidenceTypeId(),
+            evidenceTypeId,
             param.lastModificationTime(),
             param.lastModifiedById()
         );
