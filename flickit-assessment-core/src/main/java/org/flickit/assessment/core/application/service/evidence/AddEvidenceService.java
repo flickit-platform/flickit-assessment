@@ -35,7 +35,7 @@ public class AddEvidenceService implements AddEvidenceUseCase {
         Integer evidenceTypeId = null;
         String evidenceTypeTitle = param.getEvidenceTypeTitle();
         if (evidenceTypeTitle != null) {
-            evidenceTypeId = EvidenceType.valueOf(evidenceTypeTitle.toUpperCase()).getId();
+            evidenceTypeId = EvidenceType.valueOf(evidenceTypeTitle).ordinal();
         }
 
         return new CreateEvidencePort.Param(

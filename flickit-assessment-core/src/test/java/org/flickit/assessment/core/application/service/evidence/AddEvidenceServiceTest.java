@@ -35,7 +35,7 @@ class AddEvidenceServiceTest {
             "desc",
             UUID.randomUUID(),
             1L,
-            "positive",
+            "POSITIVE",
             UUID.randomUUID()
         );
         UUID expectedId = UUID.randomUUID();
@@ -63,7 +63,7 @@ class AddEvidenceServiceTest {
             "desc",
             UUID.randomUUID(),
             1L,
-            "positive",
+            "POSITIVE",
             UUID.randomUUID()
         );
         when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(false);
