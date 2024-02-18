@@ -38,7 +38,7 @@ public class EvidenceMapper {
     }
 
     public static AttributeEvidenceListItem toAttributeEvidenceListItem(AttributeEvidenceView attributeEvidenceView) {
-        String evidenceTypeTitle = "";
+        String evidenceTypeTitle = null;
         Integer evidenceTypeId = attributeEvidenceView.getEvidenceTypeId();
         if (evidenceTypeId != null) {
             evidenceTypeTitle = EvidenceType.valueOfById(evidenceTypeId).getTitle();
