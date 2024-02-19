@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Long> {
 
-    List<SubjectJpaEntity> findAllByKitId(Long kitId);
+    List<SubjectJpaEntity> findAllByKitVersionId(Long kitVersionId);
 
     @Modifying
     @Query("""
@@ -36,7 +36,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
             SELECT s as subject
             FROM SubjectJpaEntity s
                 JOIN FETCH s.attributes a
-            WHERE s.kitId = :kitId
+            WHERE s.kitVersionId = (SELECT k.kitVersionId FROM AssessmentKitJpaEntity k WHERE k.id = :kitId)
         """)
     List<SubjectJpaEntity> loadByKitIdWithAttributes(Long kitId);
 

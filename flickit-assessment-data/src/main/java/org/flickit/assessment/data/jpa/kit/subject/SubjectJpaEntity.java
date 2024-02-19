@@ -52,18 +52,18 @@ public class SubjectJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     public SubjectJpaEntity(Long id, String code, String title, String description, LocalDateTime creationTime,
-                            LocalDateTime lastModificationTime, Long kitId, Integer index) {
+                            LocalDateTime lastModificationTime, Long kitVersionId, Integer index) {
         this.id = id;
         this.code = code;
         this.title = title;
         this.description = description;
         this.creationTime = creationTime;
         this.lastModificationTime = lastModificationTime;
-        this.kitId = kitId;
+        this.kitVersionId = kitVersionId;
         this.index = index;
     }
 

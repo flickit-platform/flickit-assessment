@@ -38,7 +38,7 @@ public class SubjectMapper {
             LocalDateTime.now(),
             param.createdBy(),
             param.createdBy(),
-            param.kitId(),
+            param.kitVersionId(),
             null,
             null
         );
