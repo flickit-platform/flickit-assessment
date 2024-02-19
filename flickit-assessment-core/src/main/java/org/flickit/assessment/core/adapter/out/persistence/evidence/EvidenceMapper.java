@@ -27,9 +27,9 @@ public class EvidenceMapper {
 
     public static EvidenceListItem toEvidenceListItem(EvidenceJpaEntity entity) {
         Integer type = entity.getType();
-        String code = null;
+        String title = null;
         if (type != null) {
-            code = EvidenceType.values()[type].getCode();
+            title = EvidenceType.values()[type].getTitle();
         }
 
         return new EvidenceListItem(
@@ -37,7 +37,7 @@ public class EvidenceMapper {
             entity.getDescription(),
             entity.getCreatedBy(),
             entity.getAssessmentId(),
-            code,
+            title,
             entity.getLastModificationTime()
         );
     }
