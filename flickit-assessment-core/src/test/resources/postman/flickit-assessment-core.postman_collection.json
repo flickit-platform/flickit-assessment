@@ -255,7 +255,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"description\": \"description1\",\n    \"assessmentId\": \"136960fa-4040-4f3b-ac34-a71a67d29941\",\n    \"questionId\": 9110,\n    \"evidenceTypeTitle\": \"positive\"\n}",
+					"raw": "{\n    \"description\": \"description1\",\n    \"assessmentId\": \"136960fa-4040-4f3b-ac34-a71a67d29941\",\n    \"questionId\": 9110,\n    \"type\": \"POSITIVE\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
