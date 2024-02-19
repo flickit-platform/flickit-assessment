@@ -15,7 +15,7 @@ public class Evidence {
     private final UUID lastModifiedById;
     private final UUID assessmentId;
     private final long questionId;
-    private final Integer evidenceTypeId;
+    private final Integer type;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
     private final boolean deleted;

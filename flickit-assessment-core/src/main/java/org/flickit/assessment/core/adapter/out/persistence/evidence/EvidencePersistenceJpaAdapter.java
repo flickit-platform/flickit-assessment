@@ -52,16 +52,16 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public UpdateEvidencePort.Result update(UpdateEvidencePort.Param param) {
-        Integer evidenceTypeId = null;
-        String evidenceTypeTitle = param.evidenceTypeTitle();
-        if (evidenceTypeTitle != null) {
-            evidenceTypeId = EvidenceType.valueOf(evidenceTypeTitle.toUpperCase()).getId();
+        Integer type = null;
+        String code = param.type();
+        if (code != null) {
+            type = EvidenceType.valueOf(code).ordinal();
         }
 
         repository.update(
             param.id(),
             param.description(),
-            evidenceTypeId,
+            type,
             param.lastModificationTime(),
             param.lastModifiedById()
         );

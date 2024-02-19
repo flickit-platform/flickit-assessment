@@ -21,17 +21,25 @@ class UpdateEvidenceUseCaseParamTest {
     void testUpdateEvidenceParam_IdIsEmpty_ErrorMessage() {
         UUID lastModifiedById = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateEvidenceUseCase.Param(null,"new_description", "positive", lastModifiedById));
+            () -> new UpdateEvidenceUseCase.Param(null,"new_description", "POSITIVE", lastModifiedById));
         assertThat(throwable).hasMessage("id: " + UPDATE_EVIDENCE_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateEvidenceParam_EvidenceTypeIsNotValid_ErrorMessage() {
+    void testUpdateEvidenceParam_TypeIsNotValid_ErrorMessage() {
         var id = UUID.randomUUID();
         UUID lastModifiedById = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
                 () -> new UpdateEvidenceUseCase.Param(id, "new_description", "pos", lastModifiedById));
-        assertThat(throwable).hasMessage("evidenceTypeTitle: " + UPDATE_EVIDENCE_EVIDENCE_TYPE_INVALID);
+        assertThat(throwable).hasMessage("type: " + UPDATE_EVIDENCE_TYPE_INVALID);
+    }
+
+    @Test
+    void testUpdateEvidenceParam_TypeIsNull_NoErrorMessage() {
+        var id = UUID.randomUUID();
+        UUID lastModifiedById = UUID.randomUUID();
+
+        assertDoesNotThrow(() -> new UpdateEvidenceUseCase.Param(id, "new_description", null, lastModifiedById));
     }
 
     @Test
@@ -39,7 +47,7 @@ class UpdateEvidenceUseCaseParamTest {
         var id = UUID.randomUUID();
         UUID lastModifiedById = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateEvidenceUseCase.Param(id,"    ", "negative", lastModifiedById));
+            () -> new UpdateEvidenceUseCase.Param(id,"    ", "NEGATIVE", lastModifiedById));
         assertThat(throwable).hasMessage("description: " + UPDATE_EVIDENCE_DESC_NOT_BLANK);
     }
 
@@ -48,13 +56,13 @@ class UpdateEvidenceUseCaseParamTest {
         var id = UUID.randomUUID();
         UUID lastModifiedById = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateEvidenceUseCase.Param(id,"ab", "positive", lastModifiedById));
+            () -> new UpdateEvidenceUseCase.Param(id,"ab", "POSITIVE", lastModifiedById));
         assertThat(throwable).hasMessage("description: " + UPDATE_EVIDENCE_DESC_MIN_SIZE);
     }
 
     @Test
     void testUpdateEvidenceParam_DescriptionSizeIsEqualToMin_Success() {
-        assertDoesNotThrow(() -> new UpdateEvidenceUseCase.Param(UUID.randomUUID(),"abc", "negative", UUID.randomUUID()));
+        assertDoesNotThrow(() -> new UpdateEvidenceUseCase.Param(UUID.randomUUID(),"abc", "NEGATIVE", UUID.randomUUID()));
     }
 
     @Test
@@ -63,7 +71,7 @@ class UpdateEvidenceUseCaseParamTest {
         var desc = randomAlphabetic(1001);
         UUID lastModifiedById = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateEvidenceUseCase.Param(id, desc, "positive", lastModifiedById));
+            () -> new UpdateEvidenceUseCase.Param(id, desc, "POSITIVE", lastModifiedById));
         assertThat(throwable).hasMessage("description: " + UPDATE_EVIDENCE_DESC_MAX_SIZE);
     }
 
@@ -72,7 +80,7 @@ class UpdateEvidenceUseCaseParamTest {
         assertDoesNotThrow(() -> new UpdateEvidenceUseCase.Param(
             UUID.randomUUID(),
             randomAlphabetic(1000),
-            "negative",
+            "NEGATIVE",
             UUID.randomUUID()
         ));
     }
@@ -81,7 +89,7 @@ class UpdateEvidenceUseCaseParamTest {
     void testUpdateEvidenceParam_lastModifiedByIdIsEmpty_ErrorMessage() {
         UUID id = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateEvidenceUseCase.Param(id,"new_description", "positive", null));
+            () -> new UpdateEvidenceUseCase.Param(id,"new_description", "POSITIVE", null));
         assertThat(throwable).hasMessage("lastModifiedById: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }

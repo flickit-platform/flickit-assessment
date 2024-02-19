@@ -28,19 +28,19 @@ public interface UpdateEvidenceUseCase {
         @Size(max = 1000, message = UPDATE_EVIDENCE_DESC_MAX_SIZE)
         String description;
 
-        @EnumValue(enumClass = EvidenceType.class, message = UPDATE_EVIDENCE_EVIDENCE_TYPE_INVALID)
-        String evidenceTypeTitle;
+        @EnumValue(enumClass = EvidenceType.class, message = UPDATE_EVIDENCE_TYPE_INVALID)
+        String type;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID lastModifiedById;
 
         public Param(UUID id,
                      String description,
-                     String evidenceTypeTitle,
+                     String type,
                      UUID lastModifiedById) {
             this.id = id;
             this.description = description;
-            this.evidenceTypeTitle = evidenceTypeTitle;
+            this.type = type;
             this.lastModifiedById = lastModifiedById;
             this.validateSelf();
         }

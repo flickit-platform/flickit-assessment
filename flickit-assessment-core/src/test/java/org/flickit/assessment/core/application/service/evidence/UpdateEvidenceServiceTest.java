@@ -29,11 +29,11 @@ class UpdateEvidenceServiceTest {
     @Test
     void testUpdateEvidence_ValidParam_UpdatedAndReturnsId() {
         var savedEvidence = simpleEvidence();
-        String title = EvidenceType.valueOfById(savedEvidence.getEvidenceTypeId()).getTitle();
+        String code = EvidenceType.values()[savedEvidence.getType()].getCode();
         var param = new UpdateEvidenceUseCase.Param(
             savedEvidence.getId(),
             "new " + savedEvidence.getDescription(),
-            title,
+            code,
             savedEvidence.getLastModifiedById()
         );
 
