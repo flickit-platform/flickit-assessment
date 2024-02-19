@@ -22,7 +22,7 @@ public class EvidenceMapper {
             param.createdById(),
             param.assessmentId(),
             param.questionId(),
-            param.evidenceTypeId(),
+            param.type(),
             false
         );
     }

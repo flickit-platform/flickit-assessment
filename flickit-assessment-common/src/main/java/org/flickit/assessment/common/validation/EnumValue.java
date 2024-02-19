@@ -13,6 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Constraint(validatedBy = EnumValueValidator.class)
 public @interface EnumValue {
+
     Class<? extends Enum<?>> enumClass();
 
     Class<?>[] groups() default {};
