@@ -32,7 +32,7 @@ public class AnswerOptionMapper {
             param.createdBy(),
             param.createdBy(),
             null,
-            param.kitId()
+            param.kitVersionId()
         );
     }
 }
