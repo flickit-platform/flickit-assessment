@@ -125,7 +125,7 @@
 
     <changeSet id="0.14-23" author="Ali Sedaghat">
         <addColumn tableName="fac_evidence">
-            <column name="evidence_type_id" type="tinyint"/>
+            <column name="type" type="tinyint"/>
         </addColumn>
     </changeSet>
 

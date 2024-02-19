@@ -45,8 +45,8 @@ public class EvidenceJpaEntity {
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
-    @Column(name = "evidence_type_id")
-    private Integer evidenceTypeId;
+    @Column(name = "type")
+    private Integer type;
 
     @Column(name = "deleted", nullable = false)
     private Boolean deleted;
