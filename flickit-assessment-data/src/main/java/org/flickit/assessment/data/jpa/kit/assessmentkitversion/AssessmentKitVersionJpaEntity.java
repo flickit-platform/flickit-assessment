@@ -19,23 +19,10 @@ public class AssessmentKitVersionJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "code", length = 50, nullable = false)
-    private String code;
-
     @Column(name = "kit_id", nullable = false)
     private Long kitId;
 
     @Column(name = "version_status", nullable = false)
-    private VersionStatus versionStatus;
+    private KitVersionStatus versionStatus;
 
-}
-
-enum VersionStatus {
-    ACTIVE(1), UPDATING(2), ARCHIVE(3);
-
-    final int code;
-
-    VersionStatus(int code) {
-        this.code = code;
-    }
 }

@@ -39,6 +39,7 @@ class CreateKitByDslServiceTest {
     private static final UUID DSL_JSON_VERSION_ID = UUID.randomUUID();
     private static final String DSL_JSON = "sample/json/file/path/" + DSL_JSON_VERSION_ID;
     private static final Long KIT_ID = 1L;
+    private static final Long KIT_VERSION_ID = 1L;
     private static final String TITLE = "title";
     private static final String SUMMARY = "summary";
     private static final String ABOUT = "about";
@@ -84,7 +85,7 @@ class CreateKitByDslServiceTest {
             Boolean.FALSE,
             EXPERT_GROUP_ID,
             currentUserId);
-        when(createAssessmentKitPort.persist(kitCreateParam)).thenReturn(KIT_ID);
+        when(createAssessmentKitPort.persist(kitCreateParam)).thenReturn(new CreateAssessmentKitPort.Result(KIT_ID, KIT_VERSION_ID));
 
         doNothing().when(persister).persist(any(), eq(KIT_ID), eq(currentUserId));
 

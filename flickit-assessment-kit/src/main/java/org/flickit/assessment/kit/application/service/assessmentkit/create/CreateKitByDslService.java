@@ -62,21 +62,21 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
             param.getExpertGroupId(),
             param.getCurrentUserId()
         );
-        Long kitId = createAssessmentKitPort.persist(createKitParam);
+        var kitCreationResult = createAssessmentKitPort.persist(createKitParam);
 
-        persister.persist(dslKit, kitId, param.getCurrentUserId());
+        persister.persist(dslKit, kitCreationResult.kitVersionId(), param.getCurrentUserId());
 
-        createKitTagRelationPort.persist(param.getTagIds(), kitId);
+        createKitTagRelationPort.persist(param.getTagIds(), kitCreationResult.kitId());
 
-        updateKitDslPort.update(param.getKitDslId(), kitId);
+        updateKitDslPort.update(param.getKitDslId(), kitCreationResult.kitId());
 
         List<UUID> expertGroupMemberIds = loadExpertGroupMemberIdsPort.loadMemberIds(param.getExpertGroupId())
             .stream()
             .map(LoadExpertGroupMemberIdsPort.Result::userId)
             .toList();
-        grantUserAccessToKitPort.grantUsersAccess(kitId, expertGroupMemberIds);
+        grantUserAccessToKitPort.grantUsersAccess(kitCreationResult.kitId(), expertGroupMemberIds);
 
-        return kitId;
+        return kitCreationResult.kitId();
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
