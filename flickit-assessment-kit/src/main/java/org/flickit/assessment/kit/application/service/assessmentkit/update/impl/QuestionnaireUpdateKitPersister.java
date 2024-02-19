@@ -61,7 +61,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
         newQuestionnairesCodes.forEach(i ->
             finalQuestionnaires.add(createQuestionnaire(dslQuestionnaireCodesMap.get(i),
-                savedKit.getId(),
+                savedKit.getKitVersionId(),
                 currentUserId)));
         sameQuestionnairesCodes.forEach(i ->
             finalQuestionnaires.add(updateQuestionnaire(savedQuestionnaireCodesMap.get(i),
@@ -75,7 +75,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         return new UpdateKitPersisterResult(!newQuestionnairesCodes.isEmpty());
     }
 
-    private Questionnaire createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitId, UUID currentUserId) {
+    private Questionnaire createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitVersionId, UUID currentUserId) {
         var createParam = new Questionnaire(
             null,
             newQuestionnaire.getCode(),
@@ -86,7 +86,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             LocalDateTime.now()
         );
 
-        long persistedId = createQuestionnairePort.persist(createParam, kitId, currentUserId);
+        long persistedId = createQuestionnairePort.persist(createParam, kitVersionId, currentUserId);
         log.debug("Questionnaire[id={}, code={}] created.", persistedId, newQuestionnaire.getCode());
 
         return new Questionnaire(
