@@ -21,6 +21,6 @@ public class GetEvidenceTypesRestController {
     }
 
     private GetEvidenceTypesResponseDto toResponseDto(GetEvidenceTypesUseCase.Result response) {
-        return new GetEvidenceTypesResponseDto(response.evidenceTypes());
+        return new GetEvidenceTypesResponseDto(response.types());
     }
 }

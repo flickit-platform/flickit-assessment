@@ -13,7 +13,7 @@ public class GetEvidenceTypesService implements GetEvidenceTypesUseCase {
     @Override
     public Result getEvidenceTypes() {
         List<EvidenceTypeItem> items = Arrays.stream(EvidenceType.values())
-            .map(e -> new EvidenceTypeItem(e.getId(), e.getTitle()))
+            .map(e -> new EvidenceTypeItem(e.getTitle(), e.getCode()))
             .toList();
         return new Result(items);
     }

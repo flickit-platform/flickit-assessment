@@ -16,7 +16,7 @@ class GetEvidenceTypesServiceTest {
     @Test
     void testGetEvidenceTypes() {
         List<GetEvidenceTypesUseCase.EvidenceTypeItem> items = Arrays.stream(EvidenceType.values())
-            .map(e -> new GetEvidenceTypesUseCase.EvidenceTypeItem(e.getId(), e.getTitle()))
+            .map(e -> new GetEvidenceTypesUseCase.EvidenceTypeItem(e.getTitle(), e.getCode()))
             .toList();
 
         assertEquals(new GetEvidenceTypesUseCase.Result(items), service.getEvidenceTypes());

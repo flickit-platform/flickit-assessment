@@ -767,7 +767,17 @@
 			"name": "Get Evidence Types",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidence-types",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidence-types"
+					]
+				}
 			},
 			"response": []
 		}
