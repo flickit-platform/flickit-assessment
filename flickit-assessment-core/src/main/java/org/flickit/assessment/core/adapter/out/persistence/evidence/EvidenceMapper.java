@@ -38,15 +38,15 @@ public class EvidenceMapper {
     }
 
     public static AttributeEvidenceListItem toAttributeEvidenceListItem(AttributeEvidenceView attributeEvidenceView) {
-        String evidenceTypeTitle = null;
-        Integer evidenceTypeId = attributeEvidenceView.getEvidenceTypeId();
-        if (evidenceTypeId != null) {
-            evidenceTypeTitle = EvidenceType.valueOfById(evidenceTypeId).getTitle();
+        String title = null;
+        Integer type = attributeEvidenceView.getType();
+        if (type != null) {
+            title = EvidenceType.values()[type].getTitle();
         }
 
         return new AttributeEvidenceListItem(
                 attributeEvidenceView.getDescription(),
-                evidenceTypeTitle
+                title
         );
     }
 }

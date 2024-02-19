@@ -4,5 +4,5 @@ public interface AttributeEvidenceView {
 
         String getDescription();
 
-        Integer getEvidenceTypeId();
+        Integer getType();
 }

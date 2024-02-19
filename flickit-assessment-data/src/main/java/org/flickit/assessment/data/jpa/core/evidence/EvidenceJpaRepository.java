@@ -35,7 +35,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
     @Query("""
-            SELECT evd.description AS description, evd.evidenceTypeId AS evidenceTypeId
+            SELECT evd.description AS description, evd.type AS type
             FROM AttributeJpaEntity atr
             JOIN QuestionImpactJpaEntity  qi
             ON atr.id = qi.attributeId
