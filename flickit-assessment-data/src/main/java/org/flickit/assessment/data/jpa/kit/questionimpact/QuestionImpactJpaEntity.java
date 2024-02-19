@@ -78,6 +78,6 @@ public class QuestionImpactJpaEntity {
     @ReferenceNumberValue(query = "(SELECT nextval('fak_question_impact_reference_number_seq'))")
     private Long referenceNumber;
 
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 }
