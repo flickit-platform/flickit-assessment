@@ -52,6 +52,6 @@ public interface GetEvidenceListUseCase {
         String description,
         UUID createdById,
         UUID assessmentId,
-        String eventTypeTitle,
+        String type,
         LocalDateTime lastModificationTime){}
 }
