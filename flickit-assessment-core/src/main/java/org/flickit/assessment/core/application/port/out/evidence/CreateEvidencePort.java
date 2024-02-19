@@ -13,6 +13,6 @@ public interface CreateEvidencePort {
                  UUID createdById,
                  UUID assessmentId,
                  Long questionId,
-                 Integer evidenceTypeId) {
+                 Integer type) {
     }
 }
