@@ -32,7 +32,7 @@ public class AnswerOptionImpactMapper {
             param.createdBy(),
             param.createdBy(),
             null,
-            param.kitId()
+            param.kitVersionId()
         );
     }
 }
