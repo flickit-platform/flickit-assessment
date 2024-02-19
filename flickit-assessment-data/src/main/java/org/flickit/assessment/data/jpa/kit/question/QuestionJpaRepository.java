@@ -13,8 +13,8 @@ import java.util.UUID;
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, Long> {
 
     @Query("SELECT q FROM QuestionJpaEntity q " +
-        "WHERE q.questionnaireId IN (SELECT i.id FROM QuestionnaireJpaEntity i WHERE i.kitId = :kitId)")
-    List<QuestionJpaEntity> findByKitId(@Param("kitId") Long kitId);
+        "WHERE q.questionnaireId IN (SELECT i.id FROM QuestionnaireJpaEntity i WHERE i.kitVersionId = :kitVersionId)")
+    List<QuestionJpaEntity> findByKitVersionId(@Param("kitVersionId") Long kitVersionId);
 
     @Modifying
     @Query("""
@@ -40,7 +40,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
         FROM QuestionJpaEntity q
         LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
         WHERE q.questionnaireId IN
-            (SELECT qu.id FROM QuestionnaireJpaEntity qu WHERE qu.kitId = :kitId)
+            (SELECT qu.id FROM QuestionnaireJpaEntity qu WHERE qu.kitVersionId = (SELECT k.kitVersionId FROM AssessmentKitJpaEntity k WHERE k.id = :kitId))
         """)
     List<QuestionJoinQuestionImpactView> loadByAssessmentKitId(@Param("kitId") Long kitId);
 
@@ -61,7 +61,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
         FROM QuestionJpaEntity q
         JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id
-        JOIN AssessmentKitJpaEntity kit ON qn.kitId = kit.id
+        JOIN AssessmentKitJpaEntity kit ON qn.kitVersionId = kit.kitVersionId
         JOIN AssessmentJpaEntity asm ON asm.assessmentKitId = kit.id
         JOIN AssessmentResultJpaEntity asmr ON asm.id = asmr.assessment.id
         JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId

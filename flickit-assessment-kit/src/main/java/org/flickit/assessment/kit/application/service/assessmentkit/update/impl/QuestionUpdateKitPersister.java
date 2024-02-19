@@ -83,7 +83,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         // Assuming that new questionnaires have been created in QuestionnairePersister
         newQuestionnaireCodes.forEach(code -> createQuestions(dslQuestionnaireToQuestionsMap.get(code),
-            postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels, currentUserId, savedKit.getId()));
+            postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels, currentUserId, savedKit.getKitVersionId()));
 
         boolean isMajorUpdate = false;
 
@@ -101,7 +101,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                     postUpdateAttributes,
                     postUpdateMaturityLevels,
                     currentUserId,
-                    savedKit.getId());
+                    savedKit.getKitVersionId());
                 if (isKitModificationMajor)
                     isMajorUpdate = true;
             }
@@ -114,7 +114,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             postUpdateAttributes,
             postUpdateMaturityLevels,
             currentUserId,
-            savedKit.getId());
+            savedKit.getKitVersionId());
 
         isMajorUpdate = isMajorUpdate || haveNewQuestionsBeenAdded;
 
@@ -127,7 +127,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                               Map<String, Long> postUpdateAttributes,
                                               Map<String, Long> postUpdateMaturityLevels,
                                               UUID currentUserId,
-                                              long kitId) {
+                                              long kitVersionId) {
         boolean questionAddition = false;
         for (Map.Entry<String, Map<String, Question>> questionnaire : savedQuestionnaireToQuestionsMap.entrySet()) {
             Map<String, Question> savedQuestions = questionnaire.getValue();
@@ -140,7 +140,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 .filter(e -> !savedQuestions.containsKey(e.getKey()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-            createQuestions(newDslQuestionsMap, postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels, currentUserId, kitId);
+            createQuestions(newDslQuestionsMap, postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels, currentUserId, kitVersionId);
 
             if (!newDslQuestionsMap.isEmpty())
                 questionAddition = true;
@@ -153,7 +153,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                     Map<String, Long> attributes,
                                     Map<String, Long> maturityLevels,
                                     UUID currentUserId,
-                                    long kitId) {
+                                    long kitVersionId) {
         if (dslQuestions == null || dslQuestions.isEmpty())
             return;
 
@@ -166,34 +166,22 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 dslQuestion.isMayNotBeApplicable(),
                 currentUserId,
                 questionnaires.get(dslQuestion.getQuestionnaireCode()),
-                kitId);
+                kitVersionId);
 
             Long questionId = createQuestionPort.persist(createParam);
             log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
                 questionId, dslQuestion.getCode(), questionnaires.get(dslQuestion.getQuestionnaireCode()));
 
-            dslQuestion.getAnswerOptions().forEach(option -> createAnswerOption(option, questionId, currentUserId, kitId));
+            dslQuestion.getAnswerOptions().forEach(option -> createAnswerOption(option, questionId, currentUserId, kitVersionId));
 
             dslQuestion.getQuestionImpacts().forEach(impact ->
-                createImpact(impact, questionId, attributes, maturityLevels, currentUserId, kitId));
+                createImpact(impact, questionId, attributes, maturityLevels, currentUserId, kitVersionId));
         });
     }
 
-    private CreateQuestionPort.Param toCreateQuestionParam(Long questionnaireId, UUID currentUserId, QuestionDslModel dslQuestion, Long kitId) {
-        return new CreateQuestionPort.Param(
-            dslQuestion.getCode(),
-            dslQuestion.getTitle(),
-            dslQuestion.getIndex(),
-            dslQuestion.getDescription(),
-            dslQuestion.isMayNotBeApplicable(),
-            currentUserId,
-            questionnaireId,
-            kitId);
-    }
-
-    private void createAnswerOption(AnswerOptionDslModel option, Long questionId, UUID currentUserId, long kitId) {
+    private void createAnswerOption(AnswerOptionDslModel option, Long questionId, UUID currentUserId, long kitVersionId) {
         var createOptionParam =
-            new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, currentUserId, kitId);
+            new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, currentUserId, kitVersionId);
         var optionId = createAnswerOptionPort.persist(createOptionParam);
         log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",
             optionId, option.getIndex(), option.getCaption(), questionId);
@@ -204,7 +192,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                               Map<String, Long> attributes,
                               Map<String, Long> maturityLevels,
                               UUID currentUserId,
-                              long kitId) {
+                              long kitVersionId) {
         QuestionImpact newQuestionImpact = new QuestionImpact(
             null,
             attributes.get(dslQuestionImpact.getAttributeCode()),
@@ -216,7 +204,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             currentUserId,
             currentUserId
         );
-        Long impactId = createQuestionImpactPort.persist(newQuestionImpact, kitId);
+        Long impactId = createQuestionImpactPort.persist(newQuestionImpact, kitVersionId);
         log.debug("QuestionImpact[impactId={}, questionId={}] created.", impactId, questionId);
 
         Map<Integer, Long> optionIndexToIdMap = loadAnswerOptionsByQuestionPort.loadByQuestionId(questionId).stream()
@@ -228,12 +216,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 optionIndexToIdMap.get(index),
                 dslQuestionImpact.getOptionsIndextoValueMap().get(index),
                 currentUserId,
-                kitId)
+                kitVersionId)
         );
     }
 
-    private void createAnswerOptionImpact(Long questionImpactId, Long optionId, Double value, UUID currentUserId, long kitId) {
-        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value, currentUserId, kitId);
+    private void createAnswerOptionImpact(Long questionImpactId, Long optionId, Double value, UUID currentUserId, long kitVersionId) {
+        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value, currentUserId, kitVersionId);
         Long optionImpactId = createAnswerOptionImpactPort.persist(createParam);
         log.debug("AnswerOptionImpact[id={}, questionImpactId={}, optionId={}] created.", optionImpactId, questionImpactId, optionId);
     }
@@ -245,7 +233,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                    Map<String, Long> updatedAttributes,
                                    Map<String, Long> updatedLevels,
                                    UUID currentUserId,
-                                   long kitId) {
+                                   long kitVersionId) {
         boolean isMajorUpdate = false;
         if (!savedQuestion.getTitle().equals(dslQuestion.getTitle()) ||
             !Objects.equals(savedQuestion.getHint(), dslQuestion.getDescription()) ||
@@ -275,7 +263,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             updatedAttributes,
             updatedLevels,
             currentUserId,
-            kitId);
+            kitVersionId);
 
         return isMajorUpdate || isMajorUpdateQuestionImpact;
     }
@@ -311,7 +299,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                           Map<String, Long> updatedAttributes,
                                           Map<String, Long> updatedLevels,
                                           UUID currentUserId,
-                                          long kitId) {
+                                          long kitVersionId) {
         Map<AttributeLevel, QuestionImpact> savedImpactsMap = savedQuestion.getImpacts().stream()
             .collect(toMap(impact -> createSavedAttributeLevel(impact, savedAttributes, savedLevels), i -> i));
         Map<AttributeLevel, QuestionImpactDslModel> dslImpactMap = dslQuestion.getQuestionImpacts().stream()
@@ -326,7 +314,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 savedQuestion.getId(),
                 updatedAttributes,
                 updatedLevels,
-                currentUserId, kitId));
+                currentUserId,
+                kitVersionId));
         deletedImpacts.forEach(i -> deleteImpact(savedImpactsMap.get(i), savedQuestion.getId()));
 
         boolean isMajorUpdate = false;

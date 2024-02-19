@@ -38,7 +38,7 @@ public class QuestionMapper {
             param.createdBy(),
             param.createdBy(),
             null,
-            param.kitId()
+            param.kitVersionId()
         );
     }
 }

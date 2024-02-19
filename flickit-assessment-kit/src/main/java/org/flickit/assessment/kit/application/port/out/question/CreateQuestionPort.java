@@ -14,6 +14,6 @@ public interface CreateQuestionPort {
         Boolean mayNotBeApplicable,
         UUID createdBy,
         Long questionnaireId,
-        Long kitId) {
+        Long kitVersionId) {
     }
 }
