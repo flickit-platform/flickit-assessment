@@ -49,8 +49,8 @@ public class MaturityLevelJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @Column(name = "kit_id")
-    private Long kitId;
+    @Column(name = "kit_version_id")
+    private Long kitVersionId;
 
     public MaturityLevelJpaEntity(Long id) {
         this.id = id;
@@ -78,7 +78,7 @@ public class MaturityLevelJpaEntity {
                                   LocalDateTime lastModificationTime,
                                   UUID createdBy,
                                   UUID lastModifiedBy,
-                                  Long kitId) {
+                                  Long kitVersionId) {
         this.id = id;
         this.code = code;
         this.index = index;
@@ -88,7 +88,7 @@ public class MaturityLevelJpaEntity {
         this.lastModificationTime = lastModificationTime;
         this.createdBy = createdBy;
         this.lastModifiedBy = lastModifiedBy;
-        this.kitId = kitId;
+        this.kitVersionId = kitVersionId;
     }
 }
 

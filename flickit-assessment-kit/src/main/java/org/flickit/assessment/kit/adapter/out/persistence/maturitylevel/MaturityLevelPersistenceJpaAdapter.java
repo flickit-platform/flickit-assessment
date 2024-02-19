@@ -27,8 +27,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
     private final MaturityLevelJpaRepository repository;
 
     @Override
-    public Long persist(MaturityLevel level, Long kitId, UUID createdBy) {
-        return repository.saveAndFlush(mapToJpaEntityToPersist(level, kitId, createdBy)).getId();
+    public Long persist(MaturityLevel level, Long kitVersionId, UUID createdBy) {
+        return repository.saveAndFlush(mapToJpaEntityToPersist(level, kitVersionId, createdBy)).getId();
     }
 
     @Override

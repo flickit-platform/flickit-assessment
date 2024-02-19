@@ -22,7 +22,7 @@ public class MaturityLevelMapper {
         );
     }
 
-    public static MaturityLevelJpaEntity mapToJpaEntityToPersist(MaturityLevel level, Long kitId, UUID createdBy) {
+    public static MaturityLevelJpaEntity mapToJpaEntityToPersist(MaturityLevel level, Long kitVersionId, UUID createdBy) {
         return new MaturityLevelJpaEntity(
             null,
             level.getCode(),
@@ -33,7 +33,7 @@ public class MaturityLevelMapper {
             LocalDateTime.now(),
             createdBy,
             createdBy,
-            kitId
+            kitVersionId
         );
     }
 }
