@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "17fd9565-1423-44f4-a57b-b2b85d4e2968",
+		"name": "flickit-advice-engine",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18899907"
+	},
+	"item": [
+		{
+			"name": "Create Advice",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"attributeLevelTargets\": [\n        {\n            \"attributeId\": \"1599\",\n            \"maturityLevelId\": \"1873\"\n        },\n        {\n            \"attributeId\": \"1600\",\n            \"maturityLevelId\": \"1873\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/b064f522-da94-4047-9c19-50c3e43d0a3d/advice",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"b064f522-da94-4047-9c19-50c3e43d0a3d",
+						"advice"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8098",
+			"type": "string"
+		},
+		{
+			"key": "api_path",
+			"value": "assessment-core/api",
+			"type": "string"
+		},
+		{
+			"key": "authorization_header",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

@@ -58,39 +58,6 @@ class QuestionUpdateKitValidatorTest {
     }
 
     @Test
-    void testValidator_dslHasOneNewQuestion_Invalid() {
-        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, 1L);
-        questionOne.setOptions(List.of());
-        var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        questionnaire.setQuestions(List.of(questionOne));
-        var savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(questionnaire));
-
-        var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
-            .answerOptions(List.of())
-            .questionnaireCode(questionnaire.getCode()));
-        var questionTwo = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, 1L);
-        var dslQuestionTwo = QuestionDslModelMother.domainToDslModel(questionTwo, q -> q
-            .answerOptions(List.of())
-            .questionnaireCode(questionnaire.getCode()));
-        var dslQuestionnaires = QuestionnaireDslModelMother.domainToDslModel(questionnaire);
-        var dslKit = AssessmentKitDslModel.builder()
-            .questionnaires(List.of(dslQuestionnaires))
-            .questions(List.of(dslQuestionOne, dslQuestionTwo))
-            .build();
-
-        Notification notification = validator.validate(savedKit, dslKit);
-
-        assertThat(notification)
-            .returns(true, Notification::hasErrors)
-            .extracting(Notification::getErrors, as(COLLECTION))
-            .singleElement()
-            .isInstanceOfSatisfying(InvalidAdditionError.class, x -> {
-                assertThat(x.fieldName()).isEqualTo(QUESTION);
-                assertThat(x.addedItems()).contains(questionTwo.getCode());
-            });
-    }
-
-    @Test
     void testValidator_dslHasOneQuestionLessThanDb_Invalid() {
         var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, 1L);
         var questionTwo = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, 1L);

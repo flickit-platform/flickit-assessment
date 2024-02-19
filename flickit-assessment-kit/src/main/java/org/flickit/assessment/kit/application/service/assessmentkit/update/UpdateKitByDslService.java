@@ -10,7 +10,7 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
-import org.flickit.assessment.kit.application.port.out.assessmentresult.InvalidateAssessmentResultByKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLastMajorModificationTimePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
@@ -19,6 +19,7 @@ import org.flickit.assessment.kit.application.service.assessmentkit.update.valid
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -34,10 +35,10 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
     private final LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
     private final LoadDslJsonPathPort loadDslJsonPathPort;
     private final LoadKitDSLJsonFilePort loadKitDSLJsonFilePort;
-    private final InvalidateAssessmentResultByKitPort invalidateAssessmentResultByKitPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CompositeUpdateKitValidator validator;
     private final CompositeUpdateKitPersister persister;
+    private final UpdateKitLastMajorModificationTimePort updateKitLastMajorModificationTimePort;
 
     @Override
     public void update(Param param) {
@@ -50,8 +51,8 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
         validateUserIsExpertGroupOwner(savedKit.getExpertGroupId(), currentUserId);
         validateChanges(savedKit, dslKit);
         UpdateKitPersisterResult persistResult = persister.persist(savedKit, dslKit, currentUserId);
-        if (persistResult.shouldInvalidateCalcResult())
-            invalidateAssessmentResultByKitPort.invalidateByKitId(savedKit.getId());
+        if (persistResult.isMajorUpdate())
+            updateKitLastMajorModificationTimePort.updateLastMajorModificationTime(savedKit.getId(), LocalDateTime.now());
     }
 
     private void validateUserIsExpertGroupOwner(long expertGroupId, UUID currentUserId) {
