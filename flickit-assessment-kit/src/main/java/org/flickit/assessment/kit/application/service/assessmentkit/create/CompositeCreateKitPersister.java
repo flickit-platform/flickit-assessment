@@ -26,10 +26,10 @@ public class CompositeCreateKitPersister {
             throw new IllegalStateException();
     }
 
-    public void persist(AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
+    public void persist(AssessmentKitDslModel dslKit, Long kitVersionId, UUID currentUserId) {
         CreateKitPersisterContext ctx = new CreateKitPersisterContext();
         for (CreateKitPersister p : persisters) {
-            p.persist(ctx, dslKit, kitId, currentUserId);
+            p.persist(ctx, dslKit, kitVersionId, currentUserId);
         }
     }
 }
