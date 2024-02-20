@@ -26,27 +26,27 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
     public List<Result> loadAttributeCurrentAndTargetLevelIndex(List<AttributeLevelTarget> attributeLevelTargets, UUID assessmentId) {
         var attributeIds = attributeLevelTargets.stream().map(AttributeLevelTarget::attributeId).toList();
         var qualityAttributeValues = repository.findByAssessmentResult_assessment_IdAndQualityAttributeIdIn(assessmentId, attributeIds);
-        var qualityAttributeValueIdMap = qualityAttributeValues.stream()
+        var qualityAttributeValuesIdMap = qualityAttributeValues.stream()
             .collect(Collectors.toMap(QualityAttributeValueJpaEntity::getQualityAttributeId, Function.identity()));
 
-        var maturityLevelEntities = maturityLevelRepository.findAllInKitWithOneId(attributeLevelTargets.get(0).maturityLevelId());
-        var maturityLevelEntityIdMap = maturityLevelEntities
+        var maturityLevels = maturityLevelRepository.findAllInKitWithOneId(attributeLevelTargets.get(0).maturityLevelId());
+        var maturityLevelsIdMap = maturityLevels
             .stream().collect(Collectors.toMap(MaturityLevelJpaEntity::getId, Function.identity()));
 
-        List<Result> results = new ArrayList<>();
+        List<Result> result = new ArrayList<>();
         for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
             var attributeId = attributeLevelTarget.attributeId();
-            var currentMaturityLevel = maturityLevelEntityIdMap
-                .get(qualityAttributeValueIdMap.get(attributeId).getMaturityLevelId());
-            var targetMaturityLevel = maturityLevelEntityIdMap
+            var currentMaturityLevel = maturityLevelsIdMap
+                .get(qualityAttributeValuesIdMap.get(attributeId).getMaturityLevelId());
+            var targetMaturityLevel = maturityLevelsIdMap
                 .get(attributeLevelTarget.maturityLevelId());
 
-            results.add(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(
+            result.add(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(
                 attributeId,
                 currentMaturityLevel.getIndex(),
                 targetMaturityLevel.getIndex()
             ));
         }
-        return results;
+        return result;
     }
 }
