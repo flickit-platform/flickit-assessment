@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.application.service.expertgroup;
 
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupUsedByKit;
+import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupUsedByKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.DeleteExpertGroupPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,18 +26,18 @@ public class DeleteExpertGroupServiceTest {
     @Mock
     CheckExpertGroupOwnerPort checkExpertGroupOwnerPort;
     @Mock
-    CheckExpertGroupUsedByKit checkExpertGroupUsedByKit;
+    CheckExpertGroupUsedByKitPort checkExpertGroupUsedByKitPort;
 
     @Test
     public void testDeleteExpertGroup_validParameters_successful(){
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(true);
-        when(checkExpertGroupUsedByKit.checkByKitId(any(Long.class))).thenReturn(false);
+        when(checkExpertGroupUsedByKitPort.checkByKitId(any(Long.class))).thenReturn(false);
         doNothing().when(deleteExpertGroupPort).deleteById(isA(Long.class));
 
         assertDoesNotThrow(()-> service.deleteExpertGroup(expertGroupId,currentUserId));
 
         verify(checkExpertGroupOwnerPort,times(1)).checkIsOwner(any(Long.class), any(UUID.class));
-        verify(checkExpertGroupUsedByKit,times(1)).checkByKitId(any(Long.class));
+        verify(checkExpertGroupUsedByKitPort,times(1)).checkByKitId(any(Long.class));
         verify(deleteExpertGroupPort,times(1)).deleteById(any(Long.class));
     }
 
