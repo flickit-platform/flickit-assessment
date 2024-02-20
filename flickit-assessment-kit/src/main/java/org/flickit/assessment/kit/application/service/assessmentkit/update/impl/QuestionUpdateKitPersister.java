@@ -179,21 +179,9 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         });
     }
 
-    private CreateQuestionPort.Param toCreateQuestionParam(Long questionnaireId, UUID currentUserId, QuestionDslModel dslQuestion, Long kitId) {
-        return new CreateQuestionPort.Param(
-            dslQuestion.getCode(),
-            dslQuestion.getTitle(),
-            dslQuestion.getIndex(),
-            dslQuestion.getDescription(),
-            dslQuestion.isMayNotBeApplicable(),
-            currentUserId,
-            questionnaireId,
-            kitId);
-    }
-
     private void createAnswerOption(AnswerOptionDslModel option, Long questionId, UUID currentUserId, long kitId) {
         var createOptionParam =
-            new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, currentUserId, kitId);
+            new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, kitId, currentUserId);
         var optionId = createAnswerOptionPort.persist(createOptionParam);
         log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",
             optionId, option.getIndex(), option.getCaption(), questionId);
@@ -233,7 +221,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private void createAnswerOptionImpact(Long questionImpactId, Long optionId, Double value, UUID currentUserId, long kitId) {
-        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value, currentUserId, kitId);
+        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value, kitId, currentUserId);
         Long optionImpactId = createAnswerOptionImpactPort.persist(createParam);
         log.debug("AnswerOptionImpact[id={}, questionImpactId={}, optionId={}] created.", optionImpactId, questionImpactId, optionId);
     }

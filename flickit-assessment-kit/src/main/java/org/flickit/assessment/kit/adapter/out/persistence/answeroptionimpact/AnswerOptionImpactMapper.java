@@ -28,12 +28,12 @@ public class AnswerOptionImpactMapper {
             param.optionId(),
             questionImpactEntity,
             param.value(),
+            param.kitId(),
             creationTime,
             creationTime,
             param.createdBy(),
             param.createdBy(),
-            null,
-            param.kitId()
+            null
         );
     }
 }

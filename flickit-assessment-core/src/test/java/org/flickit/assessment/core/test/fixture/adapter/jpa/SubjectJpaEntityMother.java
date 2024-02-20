@@ -9,6 +9,7 @@ import java.util.List;
 public class SubjectJpaEntityMother {
 
     public static SubjectJpaEntity subjectWithAttributes(Long subjectId, Integer index, List<AttributeJpaEntity> attributes) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new SubjectJpaEntity(
             subjectId,
             "code" + subjectId,
@@ -16,11 +17,11 @@ public class SubjectJpaEntityMother {
             "title" + subjectId,
             "description" + subjectId,
             1,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            null,
-            null,
             1L,
+            creationTime,
+            creationTime,
+            null,
+            null,
             attributes,
             1L
         );

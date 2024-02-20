@@ -29,6 +29,9 @@ public class AnswerOptionJpaEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "kit_id", nullable = false)
+    private Long kitId;
+
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
@@ -47,8 +50,5 @@ public class AnswerOptionJpaEntity {
     @Column(name = "reference_number", nullable = false)
     @ReferenceNumberValue(query = "(SELECT nextval('fak_answer_option_reference_number_seq'))")
     private Long referenceNumber;
-
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
 
 }

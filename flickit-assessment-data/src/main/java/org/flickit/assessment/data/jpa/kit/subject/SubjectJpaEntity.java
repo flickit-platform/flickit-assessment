@@ -40,6 +40,9 @@ public class SubjectJpaEntity {
     @Column(name = "weight", nullable = false)
     private Integer weight = 1;
 
+    @Column(name = "kit_id", nullable = false)
+    private Long kitId;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
@@ -51,9 +54,6 @@ public class SubjectJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
 
     public SubjectJpaEntity(Long id, String code, String title, String description, LocalDateTime creationTime,
                             LocalDateTime lastModificationTime, Long kitId, Integer index) {

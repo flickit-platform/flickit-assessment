@@ -35,29 +35,12 @@ public class QuestionImpactJpaEntity {
     @Column(name = "attribute_id", nullable = false)
     private Long attributeId;
 
+    @Column(name = "kit_id", nullable = false)
+    private Long kitId;
+
     @ManyToOne
     @JoinColumn(name = "maturity_level_id", referencedColumnName = "id")
     private MaturityLevelJpaEntity maturityLevel;
-
-    public QuestionImpactJpaEntity(Long id,
-                                   Integer weight,
-                                   Long questionId,
-                                   Long attributeId,
-                                   MaturityLevelJpaEntity maturityLevel,
-                                   LocalDateTime creationTime,
-                                   LocalDateTime lastModificationTime,
-                                   UUID createdBy,
-                                   UUID lastModifiedBy) {
-        this.id = id;
-        this.weight = weight;
-        this.questionId = questionId;
-        this.attributeId = attributeId;
-        this.maturityLevel = maturityLevel;
-        this.creationTime = creationTime;
-        this.lastModificationTime = lastModificationTime;
-        this.createdBy = createdBy;
-        this.lastModifiedBy = lastModifiedBy;
-    }
 
     @OneToMany(mappedBy = "questionImpact", cascade = CascadeType.REMOVE)
     private List<AnswerOptionImpactJpaEntity> answerOptionImpacts;
@@ -78,6 +61,23 @@ public class QuestionImpactJpaEntity {
     @ReferenceNumberValue(query = "(SELECT nextval('fak_question_impact_reference_number_seq'))")
     private Long referenceNumber;
 
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
+    public QuestionImpactJpaEntity(Long id,
+                                   Integer weight,
+                                   Long questionId,
+                                   Long attributeId,
+                                   MaturityLevelJpaEntity maturityLevel,
+                                   LocalDateTime creationTime,
+                                   LocalDateTime lastModificationTime,
+                                   UUID createdBy,
+                                   UUID lastModifiedBy) {
+        this.id = id;
+        this.weight = weight;
+        this.questionId = questionId;
+        this.attributeId = attributeId;
+        this.maturityLevel = maturityLevel;
+        this.creationTime = creationTime;
+        this.lastModificationTime = lastModificationTime;
+        this.createdBy = createdBy;
+        this.lastModifiedBy = lastModifiedBy;
+    }
 }
