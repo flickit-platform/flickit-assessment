@@ -13,6 +13,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLastMajorModificationTimePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.CompositeUpdateKitValidator;
@@ -39,6 +40,7 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
     private final CompositeUpdateKitValidator validator;
     private final CompositeUpdateKitPersister persister;
     private final UpdateKitLastMajorModificationTimePort updateKitLastMajorModificationTimePort;
+    private final UpdateKitDslPort updateKitDslPort;
 
     @Override
     public void update(Param param) {
@@ -53,6 +55,8 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
         UpdateKitPersisterResult persistResult = persister.persist(savedKit, dslKit, currentUserId);
         if (persistResult.isMajorUpdate())
             updateKitLastMajorModificationTimePort.updateLastMajorModificationTime(savedKit.getId(), LocalDateTime.now());
+
+        updateKitDslPort.update(param.getKitDslId(), param.getKitId(), param.getCurrentUserId(), LocalDateTime.now());
     }
 
     private void validateUserIsExpertGroupOwner(long expertGroupId, UUID currentUserId) {

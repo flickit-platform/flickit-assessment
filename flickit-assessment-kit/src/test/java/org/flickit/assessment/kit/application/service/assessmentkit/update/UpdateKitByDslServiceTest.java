@@ -11,6 +11,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLastMajorModificationTimePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.CompositeUpdateKitValidator;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.validate.impl.InvalidAdditionError;
@@ -56,11 +57,13 @@ class UpdateKitByDslServiceTest {
     private CompositeUpdateKitValidator validator;
     @Mock
     private CompositeUpdateKitPersister persister;
+    @Mock
+    private UpdateKitDslPort updateKitDslPort;
 
 
     @Test
     @SneakyThrows
-    void testUpdate_ValidChanges_NoNeedToUpdateKitEffectiveModificationTime() {
+    void testUpdate_ValidChanges_NoNeedToUpdateKitMajorModificationTime() {
         Long kitId = 1L;
         Long kitDslId = 12L;
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
@@ -96,6 +99,7 @@ class UpdateKitByDslServiceTest {
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(new Notification());
         when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class), any(UUID.class))).thenReturn(new UpdateKitPersisterResult(true));
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(savedKit.getId()), any(LocalDateTime.class));
+        doNothing().when(updateKitDslPort).update(anyLong(), anyLong(), any(), any());
 
         var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), kitDslId, currentUserId.get());
         service.update(param);
