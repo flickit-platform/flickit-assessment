@@ -419,58 +419,58 @@
                         startValue="1"/>
     </changeSet>
 
-    <changeSet id="0.14-45" author="MKouhestani">
+    <changeSet id="0.14-67" author="MKouhestani">
         <addColumn tableName="fac_answer">
             <column name="question_reference_number" type="bigint"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.14-46" author="MKouhestani">
+    <changeSet id="0.14-68" author="MKouhestani">
         <update tableName="fac_answer">
             <column name="question_reference_number"
                     valueComputed="fak_question.reference_number FROM fak_question WHERE fak_question.id = question_id"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.14-47" author="MKouhestani">
+    <changeSet id="0.14-69" author="MKouhestani">
         <addNotNullConstraint columnName="question_reference_number"
                               constraintName="question_reference_number_not_null"
                               tableName="fac_answer"/>
     </changeSet>
 
-    <changeSet id="0.14-48" author="MKouhestani">
+    <changeSet id="0.14-70" author="MKouhestani">
         <addColumn tableName="fac_subject_value">
             <column name="subject_reference_number" type="bigint"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.14-49" author="MKouhestani">
+    <changeSet id="0.14-71" author="MKouhestani">
         <update tableName="fac_subject_value">
             <column name="subject_reference_number"
                     valueComputed="fak_subject.reference_number FROM fak_subject WHERE fak_subject.id = subject_id"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.14-50" author="MKouhestani">
+    <changeSet id="0.14-72" author="MKouhestani">
         <addNotNullConstraint columnName="subject_reference_number"
                               constraintName="subject_reference_number_not_null"
                               tableName="fac_subject_value"/>
     </changeSet>
 
-    <changeSet id="0.14-51" author="MKouhestani">
+    <changeSet id="0.14-73" author="MKouhestani">
         <addColumn tableName="fac_quality_attribute_value">
             <column name="attribute_reference_number" type="bigint"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.14-52" author="MKouhestani">
+    <changeSet id="0.14-74" author="MKouhestani">
         <update tableName="fac_quality_attribute_value">
             <column name="attribute_reference_number"
                     valueComputed="fak_attribute.reference_number FROM fak_attribute WHERE fak_attribute.id = quality_attribute_id"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.14-53" author="MKouhestani">
+    <changeSet id="0.14-75" author="MKouhestani">
         <addNotNullConstraint columnName="attribute_reference_number"
                               constraintName="attribute_reference_number_not_null"
                               tableName="fac_quality_attribute_value"/>
