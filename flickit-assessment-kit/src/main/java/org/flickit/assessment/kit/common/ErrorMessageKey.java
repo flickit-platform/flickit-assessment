@@ -87,6 +87,8 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL = "create-kit-by-dsl.tag-ids.notNull";
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
 
+    public static final String DELETE_EXPERT_GROUP_ACCESS_DENIED = "delete-expert-group.expert-group.access-denied";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
