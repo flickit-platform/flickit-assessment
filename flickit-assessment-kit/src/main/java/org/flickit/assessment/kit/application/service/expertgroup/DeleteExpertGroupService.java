@@ -2,6 +2,8 @@ package org.flickit.assessment.kit.application.service.expertgroup;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupUsedByKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.DeleteExpertGroupPort;
@@ -19,11 +21,16 @@ public class DeleteExpertGroupService {
 
     private final CheckExpertGroupOwnerPort checkExpertGroupOwnerPort;
     private final CheckExpertGroupUsedByKitPort checkExpertGroupUsedByKitPort;
+    private final CheckExpertGroupExistsPort checkExpertGroupExistsPort;
     private final DeleteExpertGroupPort deleteExpertGroupPort;
 
     final void deleteExpertGroup(long expertGroupId, UUID currentUserId) {
         boolean isOwner = checkExpertGroupOwnerPort.checkIsOwner(expertGroupId, currentUserId);
         boolean isUsed = checkExpertGroupUsedByKitPort.checkByKitId(expertGroupId);
+        boolean isExist = checkExpertGroupExistsPort.existsById(expertGroupId);
+
+        if (!isExist)
+            throw new ResourceNotFoundException(DELETE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_FOUND);
 
         if (isOwner && !isUsed)
             deleteExpertGroupPort.deleteById(expertGroupId);
