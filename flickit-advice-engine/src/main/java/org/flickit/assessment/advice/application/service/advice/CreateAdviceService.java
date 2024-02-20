@@ -6,11 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.exception.AttributeLevelTargetNotEmptyException;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
+import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
@@ -40,11 +42,12 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     private final LoadAssessmentSpacePort loadAssessmentSpacePort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
+    private final LoadSelectedAttributeIdsRelatedToAssessmentPort loadSelectedAttributeIdsRelatedToAssessmentPort;
+    private final LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
+    private final LoadAttributeCurrentAndTargetLevelIndexPort loadAttributeCurrentAndTargetLevelIndexPort;
     private final LoadAdviceCalculationInfoPort loadAdviceCalculationInfoPort;
     private final SolverManager<Plan, UUID> solverManager;
     private final LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
-    private final LoadSelectedAttributeIdsRelatedToAssessmentPort loadSelectedAttributeIdsRelatedToAssessmentPort;
-    private final LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
 
     @Override
     public Result createAdvice(Param param) {
@@ -53,8 +56,9 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         validateAssessmentResultPort.validate(param.getAssessmentId());
         validateAssessmentAttributeRelation(param.getAssessmentId(), param.getAttributeLevelTargets());
         validateAssessmentLevelRelation(param.getAssessmentId(), param.getAttributeLevelTargets());
+        var validAttributeLevelTargets = filterValidAttributeLevelTargets(param.getAttributeLevelTargets(), param.getAssessmentId());
 
-        var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
+        var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), validAttributeLevelTargets);
         var solution = solverManager.solve(UUID.randomUUID(), problem);
         Plan plan;
         try {
@@ -98,6 +102,20 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         if (loadedLevelIds.size() != selectedLevelIds.size()) {
             throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
         }
+    }
+
+    private List<AttributeLevelTarget> filterValidAttributeLevelTargets(List<AttributeLevelTarget> attributeLevelTargets, UUID assessmentId) {
+        var attributeCurrentLevelIndex = loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(attributeLevelTargets, assessmentId);
+        var validAttributeIds = attributeCurrentLevelIndex.stream()
+            .filter(a -> a.targetMaturityLevelIndex() > a.currentMaturityLevelIndex())
+            .map(LoadAttributeCurrentAndTargetLevelIndexPort.Result::attributeId)
+            .toList();
+        if (validAttributeIds.size() == 0) {
+            throw new AttributeLevelTargetNotEmptyException(CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
+        }
+        return attributeLevelTargets.stream()
+            .filter(a -> validAttributeIds.contains(a.attributeId()))
+            .toList();
     }
 
     private Result mapToResult(Plan solution) {
