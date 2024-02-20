@@ -5,13 +5,14 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGr
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.DeleteExpertGroupPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
@@ -27,20 +28,28 @@ public class DeleteExpertGroupServiceTest {
     CheckExpertGroupOwnerPort checkExpertGroupOwnerPort;
     @Mock
     CheckExpertGroupUsedByKitPort checkExpertGroupUsedByKitPort;
+    @Captor
+    ArgumentCaptor<Long> expertGroupIdCaptor;
+    @Captor
+    ArgumentCaptor<UUID> currentUserIdCaptor;
 
     @Test
-    public void testDeleteExpertGroup_validParameters_successful(){
+    public void testDeleteExpertGroup_validParameters_successful() {
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(true);
         when(checkExpertGroupUsedByKitPort.checkByKitId(any(Long.class))).thenReturn(false);
         doNothing().when(deleteExpertGroupPort).deleteById(isA(Long.class));
 
-        assertDoesNotThrow(()-> service.deleteExpertGroup(expertGroupId,currentUserId));
+        service.deleteExpertGroup(expertGroupId, currentUserId);
 
-        verify(checkExpertGroupOwnerPort,times(1)).checkIsOwner(any(Long.class), any(UUID.class));
-        verify(checkExpertGroupUsedByKitPort,times(1)).checkByKitId(any(Long.class));
-        verify(deleteExpertGroupPort,times(1)).deleteById(any(Long.class));
+        verify(checkExpertGroupUsedByKitPort).checkByKitId(expertGroupIdCaptor.capture());
+        verify(checkExpertGroupOwnerPort).checkIsOwner(expertGroupIdCaptor.capture(),currentUserIdCaptor.capture());
+        verify(deleteExpertGroupPort).deleteById(expertGroupIdCaptor.capture());
+
+        verify(checkExpertGroupOwnerPort).checkIsOwner(expertGroupIdCaptor.getValue(), currentUserIdCaptor.getValue());
+        verify(checkExpertGroupUsedByKitPort).checkByKitId(expertGroupIdCaptor.getValue());
+        verify(deleteExpertGroupPort).deleteById(expertGroupIdCaptor.getValue());
     }
 
-    final static long expertGroupId =  123L;
-    final static UUID currentUserId = UUID.randomUUID();
+    long expertGroupId= 0L;
+    UUID currentUserId = UUID.randomUUID();
 }

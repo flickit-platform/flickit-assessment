@@ -17,9 +17,9 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class DeleteExpertGroupService {
 
-    private final DeleteExpertGroupPort deleteExpertGroupPort;
     private final CheckExpertGroupOwnerPort checkExpertGroupOwnerPort;
     private final CheckExpertGroupUsedByKitPort checkExpertGroupUsedByKitPort;
+    private final DeleteExpertGroupPort deleteExpertGroupPort;
 
     final void deleteExpertGroup(long expertGroupId, UUID currentUserId) {
         boolean isOwner = checkExpertGroupOwnerPort.checkIsOwner(expertGroupId, currentUserId);
