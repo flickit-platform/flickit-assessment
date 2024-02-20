@@ -22,17 +22,18 @@ public class AnswerOptionImpactMapper {
 
     public static AnswerOptionImpactJpaEntity mapToJpaEntity(CreateAnswerOptionImpactPort.Param param,
                                                              QuestionImpactJpaEntity questionImpactEntity) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new AnswerOptionImpactJpaEntity(
             null,
             param.optionId(),
             questionImpactEntity,
             param.value(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            param.kitVersionId(),
+            creationTime,
+            creationTime,
             param.createdBy(),
             param.createdBy(),
-            null,
-            param.kitVersionId()
+            null
         );
     }
 }

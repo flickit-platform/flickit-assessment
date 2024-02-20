@@ -193,16 +193,16 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), 1, List.of(attribute5, attribute6));
         List<SubjectJpaEntity> subjects = List.of(subject1, subject2, subject3);
 
-        var question1 = questionEntity(1L, 1L, Boolean.FALSE, kitId);
-        var question2 = questionEntity(2L, 1L, Boolean.FALSE, kitId);
-        var question3 = questionEntity(3L, 1L, Boolean.FALSE, kitId);
-        var question4 = questionEntity(4L, 1L, Boolean.FALSE, kitId);
-        var question5 = questionEntity(5L, 1L, Boolean.FALSE, kitId);
-        var question6 = questionEntity(6L, 1L, Boolean.FALSE, kitId);
-        var question7 = questionEntity(7L, 1L, Boolean.FALSE, kitId);
-        var question8 = questionEntity(8L, 1L, Boolean.FALSE, kitId);
-        var question9 = questionEntity(9L, 1L, Boolean.FALSE, kitId);
-        var question10 = questionEntity(10L, 1L, Boolean.FALSE, kitId);
+        var question1 = questionEntity(1L, kitId, 1L, Boolean.FALSE);
+        var question2 = questionEntity(2L, kitId, 1L, Boolean.FALSE);
+        var question3 = questionEntity(3L, kitId, 1L, Boolean.FALSE);
+        var question4 = questionEntity(4L, kitId, 1L, Boolean.FALSE);
+        var question5 = questionEntity(5L, kitId, 1L, Boolean.FALSE);
+        var question6 = questionEntity(6L, kitId, 1L, Boolean.FALSE);
+        var question7 = questionEntity(7L, kitId, 1L, Boolean.FALSE);
+        var question8 = questionEntity(8L, kitId, 1L, Boolean.FALSE);
+        var question9 = questionEntity(9L, kitId, 1L, Boolean.FALSE);
+        var question10 = questionEntity(10L, kitId, 1L, Boolean.FALSE);
         List<QuestionJpaEntity> questions = List.of(question1, question2, question3, question4, question5, question6, question7, question8, question9, question10);
 
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap = new HashMap<>();

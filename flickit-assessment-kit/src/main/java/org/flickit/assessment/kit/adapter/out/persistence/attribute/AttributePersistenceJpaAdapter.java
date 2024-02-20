@@ -35,6 +35,6 @@ public class AttributePersistenceJpaAdapter implements
     @Override
     public Long persist(Attribute attribute, Long subjectId, Long kitVersionId) {
         SubjectJpaEntity subjectJpaEntity = subjectRepository.getReferenceById(subjectId);
-        return repository.save(mapToJpaEntity(attribute, subjectJpaEntity, kitVersionId)).getId();
+        return repository.save(mapToJpaEntity(attribute, kitVersionId, subjectJpaEntity)).getId();
     }
 }

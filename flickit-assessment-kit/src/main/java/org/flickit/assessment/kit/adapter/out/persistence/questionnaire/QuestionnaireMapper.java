@@ -29,11 +29,11 @@ public class QuestionnaireMapper {
             questionnaire.getIndex(),
             questionnaire.getTitle(),
             questionnaire.getDescription(),
+            kitVersionId,
             questionnaire.getCreationTime(),
             questionnaire.getLastModificationTime(),
             createdBy,
             createdBy,
-            kitVersionId,
             null
         );
     }

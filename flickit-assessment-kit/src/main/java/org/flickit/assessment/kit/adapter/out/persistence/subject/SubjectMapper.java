@@ -34,11 +34,11 @@ public class SubjectMapper {
             param.title(),
             param.description(),
             param.weight(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            param.createdBy(),
-            param.createdBy(),
             param.kitVersionId(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            param.createdBy(),
+            param.createdBy(),
             null,
             null
         );

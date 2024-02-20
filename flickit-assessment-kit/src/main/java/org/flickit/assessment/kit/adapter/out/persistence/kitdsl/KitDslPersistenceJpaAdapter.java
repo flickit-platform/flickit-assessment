@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPor
 import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,8 +40,10 @@ public class KitDslPersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(Long id, Long kitId) {
-        repository.updateById(id, kitId);
+    public void update(Long id, Long kitId, UUID lastModifiedBy, LocalDateTime lastModificationTime) {
+        repository.removeKitId(kitId, lastModifiedBy, lastModificationTime);
+
+        repository.updateById(id, kitId, lastModifiedBy, lastModificationTime);
     }
 
     @Override

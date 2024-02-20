@@ -116,7 +116,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
     }
 
     private AnswerOption createAnswerOption(AnswerOptionDslModel option, Long questionId, UUID currentUserId, Long kitVersionId) {
-        var createOptionParam = new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, currentUserId, kitVersionId);
+        var createOptionParam = new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, kitVersionId, currentUserId);
 
         var optionId = createAnswerOptionPort.persist(createOptionParam);
         log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",
@@ -158,7 +158,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
     }
 
     private void createAnswerOptionImpact(Long questionImpactId, Long optionId, Double value, UUID currentUserId, Long kitVersionId) {
-        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value, currentUserId, kitVersionId);
+        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value, kitVersionId, currentUserId);
         Long optionImpactId = createAnswerOptionImpactPort.persist(createParam);
         log.debug("AnswerOptionImpact[id={}, questionImpactId={}, optionId={}] created.", optionImpactId, questionImpactId, optionId);
     }
