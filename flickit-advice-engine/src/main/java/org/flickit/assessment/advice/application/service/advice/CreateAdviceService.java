@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
-import org.flickit.assessment.advice.application.exception.AttributeLevelTargetNotEmptyException;
+import org.flickit.assessment.advice.application.exception.AttributeLevelTargetsEmptyException;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
@@ -111,7 +111,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             .map(LoadAttributeCurrentAndTargetLevelIndexPort.Result::attributeId)
             .toList();
         if (validAttributeIds.isEmpty()) {
-            throw new AttributeLevelTargetNotEmptyException(CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
+            throw new AttributeLevelTargetsEmptyException(CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
         }
         return attributeLevelTargets.stream()
             .filter(a -> validAttributeIds.contains(a.attributeId()))

@@ -6,7 +6,7 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.advice.*;
-import org.flickit.assessment.advice.application.exception.AttributeLevelTargetNotEmptyException;
+import org.flickit.assessment.advice.application.exception.AttributeLevelTargetsEmptyException;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
@@ -257,7 +257,7 @@ class CreateAdviceServiceTest {
             .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 2)));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
-        assertThrows(AttributeLevelTargetNotEmptyException.class, () -> service.createAdvice(param), CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
+        assertThrows(AttributeLevelTargetsEmptyException.class, () -> service.createAdvice(param), CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());

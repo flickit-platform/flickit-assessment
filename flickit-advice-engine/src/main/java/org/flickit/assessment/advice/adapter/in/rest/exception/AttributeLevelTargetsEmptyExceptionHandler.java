@@ -1,7 +1,7 @@
 package org.flickit.assessment.advice.adapter.in.rest.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.advice.application.exception.AttributeLevelTargetNotEmptyException;
+import org.flickit.assessment.advice.application.exception.AttributeLevelTargetsEmptyException;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
@@ -14,12 +14,12 @@ import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INP
 
 @Slf4j
 @RestControllerAdvice
-public class AttributeLevelTargetNotEmptyExceptionHandler {
+public class AttributeLevelTargetsEmptyExceptionHandler {
 
     @ResponseBody
-    @ExceptionHandler(AttributeLevelTargetNotEmptyException.class)
+    @ExceptionHandler(AttributeLevelTargetsEmptyException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErrorResponseDto handle(AttributeLevelTargetNotEmptyException ex) {
+    ErrorResponseDto handle(AttributeLevelTargetsEmptyException ex) {
         log.error("Invalid AttributeLevelTargets", ex);
         return new ErrorResponseDto(INVALID_INPUT, MessageBundle.message(ex.getMessage()));
     }
