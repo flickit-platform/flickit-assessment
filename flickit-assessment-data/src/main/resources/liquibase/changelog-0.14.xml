@@ -436,11 +436,11 @@
         </update>
     </changeSet>
 
-    <changeSet id="0.14-69" author="MKouhestani">
+<!--    <changeSet id="0.14-69" author="MKouhestani">
         <addNotNullConstraint columnName="question_reference_number"
                               constraintName="question_reference_number_not_null"
                               tableName="fac_answer"/>
-    </changeSet>
+    </changeSet>-->
 
     <changeSet id="0.14-70" author="MKouhestani">
         <addColumn tableName="fac_subject_value">
@@ -455,11 +455,11 @@
         </update>
     </changeSet>
 
-    <changeSet id="0.14-72" author="MKouhestani">
+<!--    <changeSet id="0.14-72" author="MKouhestani">
         <addNotNullConstraint columnName="subject_reference_number"
                               constraintName="subject_reference_number_not_null"
                               tableName="fac_subject_value"/>
-    </changeSet>
+    </changeSet>-->
 
     <changeSet id="0.14-73" author="MKouhestani">
         <addColumn tableName="fac_quality_attribute_value">
@@ -474,11 +474,11 @@
         </update>
     </changeSet>
 
-    <changeSet id="0.14-75" author="MKouhestani">
+<!--    <changeSet id="0.14-75" author="MKouhestani">
         <addNotNullConstraint columnName="attribute_reference_number"
                               constraintName="attribute_reference_number_not_null"
                               tableName="fac_quality_attribute_value"/>
-    </changeSet>
+    </changeSet>-->
 
     <changeSet id="0.14-76" author="MKouhestani">
         <sql>CREATE TABLE new_assessment_kit AS (SELECT * FROM fak_assessment_kit);</sql>
