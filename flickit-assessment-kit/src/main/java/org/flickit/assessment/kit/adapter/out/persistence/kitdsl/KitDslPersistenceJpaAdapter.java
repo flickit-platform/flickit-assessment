@@ -39,8 +39,10 @@ public class KitDslPersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(Long id, Long kitId) {
-        repository.updateById(id, kitId);
+    public void update(Long id, Long kitId, UUID lastModifiedBy, LocalDateTime lastModificationTime) {
+        repository.removeKitId(kitId, lastModifiedBy, lastModificationTime);
+
+        repository.updateById(id, kitId, lastModifiedBy, lastModificationTime);
     }
 
     @Override
