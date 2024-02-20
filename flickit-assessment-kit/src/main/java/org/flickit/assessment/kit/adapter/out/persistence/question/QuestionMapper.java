@@ -25,6 +25,7 @@ public class QuestionMapper {
     }
 
     public static QuestionJpaEntity mapToJpaEntity(CreateQuestionPort.Param param) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new QuestionJpaEntity(
             null,
             param.code(),
@@ -32,13 +33,13 @@ public class QuestionMapper {
             param.title(),
             param.hint(),
             param.mayNotBeApplicable(),
+            param.kitId(),
             param.questionnaireId(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            creationTime,
+            creationTime,
             param.createdBy(),
             param.createdBy(),
-            null,
-            param.kitId()
+            null
         );
     }
 }

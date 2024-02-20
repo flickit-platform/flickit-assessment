@@ -34,6 +34,9 @@ public class AnswerOptionImpactJpaEntity {
     @Column(name = "value", nullable = false)
     private double value;
 
+    @Column(name = "kit_id", nullable = false)
+    private Long kitId;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
@@ -50,6 +53,4 @@ public class AnswerOptionImpactJpaEntity {
     @ReferenceNumberValue(query = "(SELECT nextval('fak_answer_option_impact_reference_number_seq'))")
     private Long referenceNumber;
 
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
 }

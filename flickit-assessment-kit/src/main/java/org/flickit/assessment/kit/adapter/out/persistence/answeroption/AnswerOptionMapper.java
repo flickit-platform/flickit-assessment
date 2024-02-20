@@ -26,13 +26,13 @@ public class AnswerOptionMapper {
             null,
             param.index(),
             param.title(),
+            param.kitId(),
             param.questionId(),
             creationTime,
             creationTime,
             param.createdBy(),
             param.createdBy(),
-            null,
-            param.kitId()
+            null
         );
     }
 }

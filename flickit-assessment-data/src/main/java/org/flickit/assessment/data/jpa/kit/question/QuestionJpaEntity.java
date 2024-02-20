@@ -38,6 +38,9 @@ public class QuestionJpaEntity {
     @Column(name = "may_not_be_applicable", nullable = false)
     private Boolean mayNotBeApplicable;
 
+    @Column(name = "kit_id", nullable = false)
+    private Long kitId;
+
     @Column(name = "questionnaire_id", nullable = false)
     private Long questionnaireId;
 
@@ -56,7 +59,4 @@ public class QuestionJpaEntity {
     @Column(name = "reference_number", nullable = false)
     @ReferenceNumberValue(query = "(SELECT nextval('fak_question_reference_number_seq'))")
     private Long referenceNumber;
-
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
 }
