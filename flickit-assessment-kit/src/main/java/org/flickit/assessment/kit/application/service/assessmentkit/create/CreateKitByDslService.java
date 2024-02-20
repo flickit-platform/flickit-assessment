@@ -69,7 +69,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
 
         createKitTagRelationPort.persist(param.getTagIds(), kitCreationResult.kitId());
 
-        updateKitDslPort.update(param.getKitDslId(), kitCreationResult.kitId());
+        updateKitDslPort.update(param.getKitDslId(), kitCreationResult.kitId(), param.getCurrentUserId(), LocalDateTime.now());
 
         List<UUID> expertGroupMemberIds = loadExpertGroupMemberIdsPort.loadMemberIds(param.getExpertGroupId())
             .stream()

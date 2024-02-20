@@ -53,6 +53,4 @@ public class AnswerOptionImpactJpaEntity {
     @ReferenceNumberValue(query = "(SELECT nextval('fak_answer_option_impact_reference_number_seq'))")
     private Long referenceNumber;
 
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
 }
