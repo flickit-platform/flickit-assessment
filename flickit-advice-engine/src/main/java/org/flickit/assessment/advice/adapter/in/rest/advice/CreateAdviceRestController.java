@@ -1,9 +1,9 @@
 package org.flickit.assessment.advice.adapter.in.rest.advice;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.Param;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.Result;
+import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase;
+import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase.Param;
+import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase.Result;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,22 +19,22 @@ import java.util.UUID;
 public class CreateAdviceRestController {
 
     private final UserContext userContext;
-    private final CreateAdviceUseCase useCase;
+    private final CalculateAdviceUseCase useCase;
 
     @PostMapping("/assessments/{assessmentId}/advice")
-    ResponseEntity<CreateAdviceResponseDto> createAdvice(@PathVariable("assessmentId") UUID assessmentId,
-                                                         @RequestBody CreateAdviceRequestDto requestDto) {
+    ResponseEntity<CalculateAdviceResponseDto> calculateAdvice(@PathVariable("assessmentId") UUID assessmentId,
+                                                               @RequestBody CalculateAdviceRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         Param param = toParam(assessmentId, requestDto, currentUserId);
-        Result result = useCase.createAdvice(param);
+        Result result = useCase.calculateAdvice(param);
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, CreateAdviceRequestDto requestDto, UUID currentUserId) {
+    private Param toParam(UUID assessmentId, CalculateAdviceRequestDto requestDto, UUID currentUserId) {
         return new Param(assessmentId, requestDto.attributeLevelTargets(), currentUserId);
     }
 
-    private CreateAdviceResponseDto toResponseDto(Result result) {
-        return new CreateAdviceResponseDto(result.adviceItems());
+    private CalculateAdviceResponseDto toResponseDto(Result result) {
+        return new CalculateAdviceResponseDto(result.adviceItems());
     }
 }

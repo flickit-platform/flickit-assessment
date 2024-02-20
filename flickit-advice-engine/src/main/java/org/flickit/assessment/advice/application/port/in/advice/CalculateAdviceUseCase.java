@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.port.in;
+package org.flickit.assessment.advice.application.port.in.advice;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,9 +13,9 @@ import java.util.UUID;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
-public interface CreateAdviceUseCase {
+public interface CalculateAdviceUseCase {
 
-    Result createAdvice(Param param);
+    Result calculateAdvice(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

@@ -7,9 +7,9 @@ import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
+import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
@@ -35,7 +35,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class CreateAdviceService implements CreateAdviceUseCase {
+public class CalculateAdviceService implements CalculateAdviceUseCase {
 
     private final LoadAssessmentSpacePort loadAssessmentSpacePort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
@@ -47,7 +47,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     private final LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
 
     @Override
-    public Result createAdvice(Param param) {
+    public Result calculateAdvice(Param param) {
         validateUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
@@ -55,10 +55,10 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         validateAssessmentLevelRelation(param.getAssessmentId(), param.getAttributeLevelTargets());
 
         var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
-        var solution = solverManager.solve(UUID.randomUUID(), problem);
-        Plan plan;
+        var solver = solverManager.solve(UUID.randomUUID(), problem);
+        Plan solution;
         try {
-            plan = solution.getFinalBestSolution();
+            solution = solver.getFinalBestSolution();
         } catch (InterruptedException e) {
             log.error("Finding best solution for assessment {} interrupted", param.getAssessmentId(), e.getCause());
             Thread.currentThread().interrupt();
@@ -67,7 +67,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             log.error("Error occurred while calculating best solution for assessment {}", param.getAssessmentId(), e.getCause());
             throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         }
-        return mapToResult(plan);
+        return mapToResult(solution);
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {

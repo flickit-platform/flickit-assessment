@@ -7,12 +7,12 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.advice.*;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
+import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase.AttributeLevelTarget;
+import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase.Param;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort.Result;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
@@ -44,10 +44,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CreateAdviceServiceTest {
+class CalculateAdviceServiceTest {
 
     @InjectMocks
-    private CreateAdviceService service;
+    private CalculateAdviceService service;
 
     @Mock
     private ValidateAssessmentResultPort validateAssessmentResultPort;
@@ -75,8 +75,8 @@ class CreateAdviceServiceTest {
 
     @Test
     void testCreateAdvice_AssessmentNotExist_ThrowException() {
-        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
+        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        var param = new Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -85,7 +85,7 @@ class CreateAdviceServiceTest {
         when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
             .thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_NOT_FOUND);
+        assertThrows(ResourceNotFoundException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_ASSESSMENT_NOT_FOUND);
         Mockito.verifyNoInteractions(
             checkSpaceAccessPort,
             validateAssessmentResultPort,
@@ -97,11 +97,11 @@ class CreateAdviceServiceTest {
 
     @Test
     void testCreateAdvice_AssessmentAttributeNotRelated_ThrowException() {
-        List<AttributeLevelTarget> attributeLevelTargets =
+        var attributeLevelTargets =
             List.of(new AttributeLevelTarget(1L, 2L),
                 new AttributeLevelTarget(2L, 3L));
-        UUID assessmentId = randomUUID();
-        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
+        var assessmentId = randomUUID();
+        var param = new Param(
             assessmentId,
             attributeLevelTargets,
             randomUUID()
@@ -115,16 +115,16 @@ class CreateAdviceServiceTest {
         when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L, 2L)))
             .thenReturn(Set.of(1L));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
+        assertThrows(ResourceNotFoundException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
     }
 
     @Test
     void testCreateAdvice_AssessmentMaturityLevelNotRelated_ThrowException() {
-        List<AttributeLevelTarget> attributeLevelTargets =
+        var attributeLevelTargets =
             List.of(new AttributeLevelTarget(1L, 2L),
                 new AttributeLevelTarget(2L, 3L));
-        UUID assessmentId = randomUUID();
-        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
+        var assessmentId = randomUUID();
+        var param = new Param(
             assessmentId,
             attributeLevelTargets,
             randomUUID()
@@ -140,13 +140,13 @@ class CreateAdviceServiceTest {
         when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L, 3L)))
             .thenReturn(Set.of(2L));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
+        assertThrows(ResourceNotFoundException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
     }
 
     @Test
     void testCreateAdvice_UserHasNotAccessToAssessment_ThrowException() {
-        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
+        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        var param = new Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -159,7 +159,7 @@ class CreateAdviceServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
             .thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.createAdvice(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        assertThrows(AccessDeniedException.class, () -> service.calculateAdvice(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         Mockito.verifyNoInteractions(
             loadInfoPort,
@@ -170,8 +170,8 @@ class CreateAdviceServiceTest {
 
     @Test
     void testCreateAdvice_AssessmentCalculateIsNotValid_ThrowException() {
-        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
+        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        var param = new Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -187,7 +187,7 @@ class CreateAdviceServiceTest {
         doThrow(new CalculateNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID))
             .when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
-        assertThrows(CalculateNotValidException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
+        assertThrows(CalculateNotValidException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         Mockito.verifyNoInteractions(
@@ -199,8 +199,8 @@ class CreateAdviceServiceTest {
 
     @Test
     void testCreateAdvice_ConfidenceCalculateIsNotValid_ThrowException() {
-        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
+        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        var param = new Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -216,7 +216,7 @@ class CreateAdviceServiceTest {
         doThrow(new ConfidenceCalculationNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID))
             .when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
-        assertThrows(ConfidenceCalculationNotValidException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
+        assertThrows(ConfidenceCalculationNotValidException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
 
         verify(loadAssessmentSpacePort, times(1)).loadAssessmentSpaceId(param.getAssessmentId());
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
@@ -231,8 +231,8 @@ class CreateAdviceServiceTest {
     @SneakyThrows
     @Test
     void testCreateAdvice_CalculationInterrupted_ThrowException() {
-        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
+        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        var param = new Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -268,7 +268,7 @@ class CreateAdviceServiceTest {
 
         when(solverJob.getFinalBestSolution()).thenThrow(new InterruptedException());
 
-        assertThrows(FinalSolutionNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+        assertThrows(FinalSolutionNotFoundException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
@@ -281,8 +281,8 @@ class CreateAdviceServiceTest {
     @SneakyThrows
     @Test
     void testCreateAdvice_CalculationExecutionException_ThrowException() {
-        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
+        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        var param = new Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -319,7 +319,7 @@ class CreateAdviceServiceTest {
 
         when(solverJob.getFinalBestSolution()).thenThrow(new ExecutionException("", null));
 
-        assertThrows(FinalSolutionNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+        assertThrows(FinalSolutionNotFoundException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
@@ -333,8 +333,8 @@ class CreateAdviceServiceTest {
     @SneakyThrows
     @Test
     void testCreateAdvice_ValidParam_ReturnsAdvice() {
-        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        var param = new CreateAdviceUseCase.Param(
+        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        var param = new Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -343,7 +343,7 @@ class CreateAdviceServiceTest {
 
         mockPorts(param, spaceId);
 
-        var result = service.createAdvice(param);
+        var result = service.calculateAdvice(param);
 
         for (AdviceListItem question : result.adviceItems()) {
             assertNotNull(question.recommendedOption());
@@ -360,7 +360,7 @@ class CreateAdviceServiceTest {
         verify(loadCreatedAdviceDetailsPort, times(1)).loadAdviceDetails(any());
     }
 
-    private void mockPorts(CreateAdviceUseCase.Param param, Long spaceId) throws InterruptedException, ExecutionException {
+    private void mockPorts(Param param, Long spaceId) throws InterruptedException, ExecutionException {
         when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
