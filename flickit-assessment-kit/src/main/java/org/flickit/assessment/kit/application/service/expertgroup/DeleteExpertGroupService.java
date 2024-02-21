@@ -32,9 +32,7 @@ public class DeleteExpertGroupService implements DeleteExpertGroupUseCase {
         if (!isExist)
             throw new ResourceNotFoundException(DELETE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_FOUND);
 
-        if (isOwner && !isUsed)
-            deleteExpertGroupPort.deleteById(param.getId());
-        else
+        if (!(isOwner && !isUsed))
             throw new AccessDeniedException(DELETE_EXPERT_GROUP_ACCESS_DENIED);
 
         deleteExpertGroupPort.deleteById(param.getId());
