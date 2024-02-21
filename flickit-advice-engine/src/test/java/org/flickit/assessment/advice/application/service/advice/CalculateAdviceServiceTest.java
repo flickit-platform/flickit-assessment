@@ -85,7 +85,7 @@ class CalculateAdviceServiceTest {
         when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
             .thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_ASSESSMENT_NOT_FOUND);
+        assertThrows(ResourceNotFoundException.class, () -> service.calculateAdvice(param), CALCULATE_ADVICE_ASSESSMENT_NOT_FOUND);
         Mockito.verifyNoInteractions(
             checkSpaceAccessPort,
             validateAssessmentResultPort,
@@ -115,7 +115,7 @@ class CalculateAdviceServiceTest {
         when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L, 2L)))
             .thenReturn(Set.of(1L));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
+        assertThrows(ResourceNotFoundException.class, () -> service.calculateAdvice(param), CALCULATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
     }
 
     @Test
@@ -140,7 +140,7 @@ class CalculateAdviceServiceTest {
         when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L, 3L)))
             .thenReturn(Set.of(2L));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
+        assertThrows(ResourceNotFoundException.class, () -> service.calculateAdvice(param), CALCULATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
     }
 
     @Test
@@ -187,7 +187,7 @@ class CalculateAdviceServiceTest {
         doThrow(new CalculateNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID))
             .when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
-        assertThrows(CalculateNotValidException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
+        assertThrows(CalculateNotValidException.class, () -> service.calculateAdvice(param), CALCULATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         Mockito.verifyNoInteractions(
@@ -216,7 +216,7 @@ class CalculateAdviceServiceTest {
         doThrow(new ConfidenceCalculationNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID))
             .when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
-        assertThrows(ConfidenceCalculationNotValidException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
+        assertThrows(ConfidenceCalculationNotValidException.class, () -> service.calculateAdvice(param), CALCULATE_ADVICE_ASSESSMENT_RESULT_NOT_VALID);
 
         verify(loadAssessmentSpacePort, times(1)).loadAssessmentSpaceId(param.getAssessmentId());
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
@@ -268,7 +268,7 @@ class CalculateAdviceServiceTest {
 
         when(solverJob.getFinalBestSolution()).thenThrow(new InterruptedException());
 
-        assertThrows(FinalSolutionNotFoundException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+        assertThrows(FinalSolutionNotFoundException.class, () -> service.calculateAdvice(param), CALCULATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
@@ -319,7 +319,7 @@ class CalculateAdviceServiceTest {
 
         when(solverJob.getFinalBestSolution()).thenThrow(new ExecutionException("", null));
 
-        assertThrows(FinalSolutionNotFoundException.class, () -> service.calculateAdvice(param), CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+        assertThrows(FinalSolutionNotFoundException.class, () -> service.calculateAdvice(param), CALCULATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());

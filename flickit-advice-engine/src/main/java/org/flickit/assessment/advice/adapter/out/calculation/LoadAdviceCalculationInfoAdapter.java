@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.CALCULATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -52,7 +52,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
             for (LevelCompetenceJpaEntity levelCompetenceEntity : levelCompetenceEntities) {
                 Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevel().getId();
                 var assessmentResultJpaEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-                    .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
+                    .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
                 QualityAttributeValueJpaEntity attributeValueEntity =
                     attributeValueRepository.findByQualityAttributeIdAndAssessmentResult_Id(attributeId, assessmentResultJpaEntity.getId());
 

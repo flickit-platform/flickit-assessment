@@ -62,17 +62,17 @@ public class CalculateAdviceService implements CalculateAdviceUseCase {
         } catch (InterruptedException e) {
             log.error("Finding best solution for assessment {} interrupted", param.getAssessmentId(), e.getCause());
             Thread.currentThread().interrupt();
-            throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+            throw new FinalSolutionNotFoundException(CALCULATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         } catch (ExecutionException e) {
             log.error("Error occurred while calculating best solution for assessment {}", param.getAssessmentId(), e.getCause());
-            throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
+            throw new FinalSolutionNotFoundException(CALCULATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         }
         return mapToResult(solution);
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
         var spaceId = loadAssessmentSpacePort.loadAssessmentSpaceId(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ADVICE_ASSESSMENT_NOT_FOUND));
 
         if (!checkSpaceAccessPort.checkIsMember(spaceId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -85,7 +85,7 @@ public class CalculateAdviceService implements CalculateAdviceUseCase {
         Set<Long> loadedAttrIds =
             loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, selectedAttrIds);
         if (loadedAttrIds.size() != selectedAttrIds.size()) {
-            throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
+            throw new ResourceNotFoundException(CALCULATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
         }
     }
 
@@ -96,7 +96,7 @@ public class CalculateAdviceService implements CalculateAdviceUseCase {
         Set<Long> loadedLevelIds =
             loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(assessmentId, selectedLevelIds);
         if (loadedLevelIds.size() != selectedLevelIds.size()) {
-            throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
+            throw new ResourceNotFoundException(CALCULATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
         }
     }
 

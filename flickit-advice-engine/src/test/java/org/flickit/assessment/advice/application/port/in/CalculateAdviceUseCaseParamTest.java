@@ -22,7 +22,7 @@ class CalculateAdviceUseCaseParamTest {
 
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CalculateAdviceUseCase.Param(null, attributeLevelTargets, currentUserId));
-        assertThat(throwable).hasMessage("assessmentId: " + CREATE_ADVICE_ASSESSMENT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("assessmentId: " + CALCULATE_ADVICE_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
@@ -32,7 +32,7 @@ class CalculateAdviceUseCaseParamTest {
 
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CalculateAdviceUseCase.Param(assessmentId, null, currentUserId));
-        assertThat(throwable).hasMessage("attributeLevelTargets: " + CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL);
+        assertThat(throwable).hasMessage("attributeLevelTargets: " + CALCULATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL);
     }
 
     @Test
@@ -43,7 +43,7 @@ class CalculateAdviceUseCaseParamTest {
 
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CalculateAdviceUseCase.Param(assessmentId, attributeLevelTargets, currentUserId));
-        assertThat(throwable).hasMessage("attributeLevelTargets: " + CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
+        assertThat(throwable).hasMessage("attributeLevelTargets: " + CALCULATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
     }
 
     @Test

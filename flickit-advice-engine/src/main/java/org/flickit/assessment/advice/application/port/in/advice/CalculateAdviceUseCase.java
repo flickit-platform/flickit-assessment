@@ -21,11 +21,11 @@ public interface CalculateAdviceUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = CREATE_ADVICE_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = CALCULATE_ADVICE_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL)
-        @Size(min = 1, message = CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN)
+        @NotNull(message = CALCULATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL)
+        @Size(min = 1, message = CALCULATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN)
         List<AttributeLevelTarget> attributeLevelTargets;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
