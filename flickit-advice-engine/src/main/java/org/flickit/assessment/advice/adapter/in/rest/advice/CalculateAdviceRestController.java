@@ -16,12 +16,12 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class CreateAdviceRestController {
+public class CalculateAdviceRestController {
 
     private final UserContext userContext;
     private final CalculateAdviceUseCase useCase;
 
-    @PostMapping("/assessments/{assessmentId}/advice")
+    @PostMapping("/assessments/{assessmentId}/calculate-advice")
     ResponseEntity<CalculateAdviceResponseDto> calculateAdvice(@PathVariable("assessmentId") UUID assessmentId,
                                                                @RequestBody CalculateAdviceRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
