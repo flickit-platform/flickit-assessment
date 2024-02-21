@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.expertgroup;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.port.in.expertgroup.DeleteExpertGroupUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CheckKitUsedByExpertGroupPort;
@@ -49,7 +50,7 @@ class DeleteExpertGroupServiceTest {
         when(checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(anyLong())).thenReturn(false);
         doNothing().when(deleteExpertGroupPort).deleteById(isA(Long.class));
 
-        assertDoesNotThrow(()-> service.deleteExpertGroup(expertGroupId, currentUserId));
+        assertDoesNotThrow(()-> service.deleteExpertGroup(param));
         verify(checkExpertGroupExistsPort).existsById(expertGroupIdCaptor.capture());
         verify(checkKitUsedByExpertGroupPort).checkKitUsedByExpertGroupId(expertGroupIdCaptor.capture());
         verify(checkExpertGroupOwnerPort).checkIsOwner(expertGroupIdCaptor.capture(),currentUserIdCaptor.capture());
@@ -61,7 +62,7 @@ class DeleteExpertGroupServiceTest {
     void testDeleteExpertGroup_inValidExpertGroup_expertGroupNotFoundException() {
         when(checkExpertGroupExistsPort.existsById(anyLong())).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class, ()-> service.deleteExpertGroup(expertGroupId, currentUserId));
+        assertThrows(ResourceNotFoundException.class, ()-> service.deleteExpertGroup(param));
         verify(checkExpertGroupExistsPort).existsById(expertGroupIdCaptor.capture());
     }
 
@@ -71,17 +72,17 @@ class DeleteExpertGroupServiceTest {
         when(checkExpertGroupExistsPort.existsById(anyLong())).thenReturn(true);
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(true);
         when(checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(any(Long.class))).thenReturn(true);
-        assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(expertGroupId, currentUserId));
+        assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(param));
 
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(false);
-        assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(expertGroupId, currentUserId));
+        assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(param));
 
         when(checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(any(Long.class))).thenReturn(false);
-        assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(expertGroupId, currentUserId));
+        assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(param));
 
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(false);
         when(checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(any(Long.class))).thenReturn(true);
-        assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(expertGroupId, currentUserId));
+        assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(param));
 
         verify(checkExpertGroupExistsPort,times(4)).existsById(expertGroupIdCaptor.capture());
         verify(checkKitUsedByExpertGroupPort,times(4)).checkKitUsedByExpertGroupId(expertGroupIdCaptor.capture());
@@ -90,4 +91,5 @@ class DeleteExpertGroupServiceTest {
 
     long expertGroupId= 0L;
     UUID currentUserId = UUID.randomUUID();
+    DeleteExpertGroupUseCase.Param param = new DeleteExpertGroupUseCase.Param(expertGroupId, currentUserId);
 }
