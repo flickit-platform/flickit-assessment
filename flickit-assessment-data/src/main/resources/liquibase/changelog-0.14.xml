@@ -123,4 +123,79 @@
         <renameSequence oldSequenceName="baseinfo_profiledsl_id_seq" newSequenceName="fak_kit_dsl_id_seq"/>
     </changeSet>
 
+    <changeSet id="0.14-23" author="Mahdi Rezazadeh">
+        <createTable tableName="faa_advice">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.14-24" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="faa_advice"
+                             columnNames="assessmentResultId"
+                             constraintName="uq_faa_advice_assessmentResultId"/>
+    </changeSet>
+
+    <changeSet id="0.14-25" author="Mahdi Rezazadeh">
+        <createTable tableName="faa_attribute_level_target">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="advice_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="maturity_level_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.14-26" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="faa_attribute_level_target"
+                             columnNames="advice_id, attribute_id"
+                             constraintName="uq_faa_attribute_level_target_adviceId_attributeId"/>
+    </changeSet>
+
+    <changeSet id="0.14-27" author="Mahdi Rezazadeh">
+        <createTable tableName="faa_advice_question">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="advice_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recommended_option_index" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="benefit" type="double">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.14-28" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="faa_advice_question"
+                             columnNames="advice_id, question_id"
+                             constraintName="uq_faa_advice_question_adviceId_questionId"/>
+    </changeSet>
+
 </databaseChangeLog>
