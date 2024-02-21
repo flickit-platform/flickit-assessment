@@ -145,7 +145,7 @@
 
     <changeSet id="0.14-24" author="Mahdi Rezazadeh">
         <addUniqueConstraint tableName="faa_advice"
-                             columnNames="assessmentResultId"
+                             columnNames="assessment_result_id"
                              constraintName="uq_faa_advice_assessmentResultId"/>
     </changeSet>
 
