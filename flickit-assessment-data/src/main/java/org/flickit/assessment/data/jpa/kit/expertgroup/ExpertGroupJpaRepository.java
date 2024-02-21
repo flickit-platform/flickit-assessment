@@ -55,4 +55,12 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         WHERE e.expertGroupId = :expertGroupId and e.userId is not null
         """)
     List<UUID> findMemberIdsByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId);
+
+    @Query("""
+        SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END
+        FROM ExpertGroupJpaEntity e
+        WHERE e.id = :expertGroupId AND e.ownerId = :ownerId
+        """)
+    boolean checkUserIsOwner(@Param("expertGroupId") long expertGroupId,
+                             @Param("ownerId") UUID ownerId);
 }
