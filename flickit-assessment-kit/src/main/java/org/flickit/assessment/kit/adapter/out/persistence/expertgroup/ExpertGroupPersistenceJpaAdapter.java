@@ -29,7 +29,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupListPort,
     LoadExpertGroupMemberIdsPort,
     CreateExpertGroupPort,
-    LoadExpertGroupPort {
+    LoadExpertGroupPort,
+    CheckExpertGroupExistsPort{
 
     private final ExpertGroupJpaRepository repository;
 
@@ -87,5 +88,10 @@ public class ExpertGroupPersistenceJpaAdapter implements
         var resultEntity = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND));
         return mapToDomainModel(resultEntity);
+    }
+
+    @Override
+    public boolean existsById(long id) {
+        return  repository.existsById(id);
     }
 }

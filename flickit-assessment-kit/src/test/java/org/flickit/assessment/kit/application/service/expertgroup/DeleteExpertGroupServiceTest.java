@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DeleteExpertGroupServiceTest {
+class DeleteExpertGroupServiceTest {
 
     @InjectMocks
     DeleteExpertGroupService service;
