@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupUsedByKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.CheckKitUsedByExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.DeleteExpertGroupPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +20,13 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 public class DeleteExpertGroupService {
 
     private final CheckExpertGroupOwnerPort checkExpertGroupOwnerPort;
-    private final CheckExpertGroupUsedByKitPort checkExpertGroupUsedByKitPort;
+    private final CheckKitUsedByExpertGroupPort checkKitUsedByExpertGroupPort;
     private final CheckExpertGroupExistsPort checkExpertGroupExistsPort;
     private final DeleteExpertGroupPort deleteExpertGroupPort;
 
     final void deleteExpertGroup(long expertGroupId, UUID currentUserId) {
         boolean isOwner = checkExpertGroupOwnerPort.checkIsOwner(expertGroupId, currentUserId);
-        boolean isUsed = checkExpertGroupUsedByKitPort.checkByKitId(expertGroupId);
+        boolean isUsed = checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(expertGroupId);
         boolean isExist = checkExpertGroupExistsPort.existsById(expertGroupId);
 
         if (!isExist)

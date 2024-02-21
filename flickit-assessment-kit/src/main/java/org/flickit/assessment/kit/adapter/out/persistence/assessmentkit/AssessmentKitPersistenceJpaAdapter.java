@@ -32,7 +32,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     DeleteKitUserAccessPort,
     LoadKitMinimalInfoPort,
     CreateAssessmentKitPort,
-    UpdateKitLastMajorModificationTimePort {
+    UpdateKitLastMajorModificationTimePort,
+    CheckKitUsedByExpertGroupPort{
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -102,5 +103,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public void updateLastMajorModificationTime(Long kitId, LocalDateTime lastMajorModificationTime) {
         repository.updateLastMajorModificationTime(kitId, lastMajorModificationTime);
+    }
+
+    @Override
+    public boolean checkKitUsedByExpertGroupId(Long expertGroupId) {
+        return repository.usedByExpertGroupId(expertGroupId);
     }
 }

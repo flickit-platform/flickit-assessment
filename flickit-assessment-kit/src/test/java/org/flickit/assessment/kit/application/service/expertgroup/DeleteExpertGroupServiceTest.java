@@ -4,7 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupUsedByKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.CheckKitUsedByExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.DeleteExpertGroupPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class DeleteExpertGroupServiceTest {
     @Mock
     CheckExpertGroupOwnerPort checkExpertGroupOwnerPort;
     @Mock
-    CheckExpertGroupUsedByKitPort checkExpertGroupUsedByKitPort;
+    CheckKitUsedByExpertGroupPort checkKitUsedByExpertGroupPort;
     @Mock
     CheckExpertGroupExistsPort checkExpertGroupExistsPort;
     @Captor
@@ -46,12 +46,12 @@ class DeleteExpertGroupServiceTest {
     void testDeleteExpertGroup_validParameters_successful() {
         when(checkExpertGroupExistsPort.existsById(anyLong())).thenReturn(true);
         when(checkExpertGroupOwnerPort.checkIsOwner(anyLong(), any(UUID.class))).thenReturn(true);
-        when(checkExpertGroupUsedByKitPort.checkByKitId(anyLong())).thenReturn(false);
+        when(checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(anyLong())).thenReturn(false);
         doNothing().when(deleteExpertGroupPort).deleteById(isA(Long.class));
 
         assertDoesNotThrow(()-> service.deleteExpertGroup(expertGroupId, currentUserId));
         verify(checkExpertGroupExistsPort).existsById(expertGroupIdCaptor.capture());
-        verify(checkExpertGroupUsedByKitPort).checkByKitId(expertGroupIdCaptor.capture());
+        verify(checkKitUsedByExpertGroupPort).checkKitUsedByExpertGroupId(expertGroupIdCaptor.capture());
         verify(checkExpertGroupOwnerPort).checkIsOwner(expertGroupIdCaptor.capture(),currentUserIdCaptor.capture());
         verify(deleteExpertGroupPort).deleteById(expertGroupIdCaptor.capture());
     }
@@ -70,21 +70,21 @@ class DeleteExpertGroupServiceTest {
     void testDeleteExpertGroup_invalidParameters_accessDenied() {
         when(checkExpertGroupExistsPort.existsById(anyLong())).thenReturn(true);
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(true);
-        when(checkExpertGroupUsedByKitPort.checkByKitId(any(Long.class))).thenReturn(true);
+        when(checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(any(Long.class))).thenReturn(true);
         assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(expertGroupId, currentUserId));
 
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(false);
         assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(expertGroupId, currentUserId));
 
-        when(checkExpertGroupUsedByKitPort.checkByKitId(any(Long.class))).thenReturn(false);
+        when(checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(any(Long.class))).thenReturn(false);
         assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(expertGroupId, currentUserId));
 
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(false);
-        when(checkExpertGroupUsedByKitPort.checkByKitId(any(Long.class))).thenReturn(true);
+        when(checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(any(Long.class))).thenReturn(true);
         assertThrows(AccessDeniedException.class, ()-> service.deleteExpertGroup(expertGroupId, currentUserId));
 
         verify(checkExpertGroupExistsPort,times(4)).existsById(expertGroupIdCaptor.capture());
-        verify(checkExpertGroupUsedByKitPort,times(4)).checkByKitId(expertGroupIdCaptor.capture());
+        verify(checkKitUsedByExpertGroupPort,times(4)).checkKitUsedByExpertGroupId(expertGroupIdCaptor.capture());
         verify(checkExpertGroupOwnerPort,times(4)).checkIsOwner(expertGroupIdCaptor.capture(),currentUserIdCaptor.capture());
     }
 
