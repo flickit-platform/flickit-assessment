@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.flickit.assessment.kit.adapter.out.minio.MinioConstants.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
@@ -48,7 +49,7 @@ public class MinioAdapter implements
         InputStream zipFileInputStream = dslZipFile.getInputStream();
         writeFile(bucketName, dslFileObjectName, zipFileInputStream, dslZipFile.getContentType());
 
-        InputStream jsonFileInputStream = new ByteArrayInputStream(dslJsonFile.getBytes());
+        InputStream jsonFileInputStream = new ByteArrayInputStream(dslJsonFile.getBytes(UTF_8));
         writeFile(bucketName, dslJsonObjectName, jsonFileInputStream, JSON_CONTENT_TYPE);
 
         String dslFilePath = bucketName + SLASH + dslFileObjectName;
@@ -84,7 +85,7 @@ public class MinioAdapter implements
                 .object(objectName)
                 .build());
 
-        return new String(stream.readAllBytes());
+        return new String(stream.readAllBytes(), UTF_8);
     }
 
     @SneakyThrows

@@ -2,15 +2,14 @@ package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -19,7 +18,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -27,7 +28,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
     LoadExpertGroupMemberIdsPort,
-    CreateExpertGroupPort {
+    CreateExpertGroupPort,
+    LoadExpertGroupPort {
 
     private final ExpertGroupJpaRepository repository;
 
@@ -78,5 +80,12 @@ public class ExpertGroupPersistenceJpaAdapter implements
         return memberIds.stream()
             .map(LoadExpertGroupMemberIdsPort.Result::new)
             .toList();
+    }
+
+    @Override
+    public ExpertGroup loadExpertGroup(long id) {
+        var resultEntity = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND));
+        return mapToDomainModel(resultEntity);
     }
 }
