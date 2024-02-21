@@ -41,6 +41,9 @@ public class ExpertGroupJpaEntity {
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
 
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted;
+
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
         public static final String NAME = "title";

@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.out.expertgroupaccess;
+package org.flickit.assessment.kit.application.port.out.expertgroup;
 
 public interface DeleteExpertGroupPort {
 

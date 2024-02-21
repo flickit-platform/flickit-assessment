@@ -46,7 +46,8 @@ public class ExpertGroupMapper {
             param.about(),
             param.picture(),
             param.website(),
-            param.currentUserId()
+            param.currentUserId(),
+            false
         );
     }
 }

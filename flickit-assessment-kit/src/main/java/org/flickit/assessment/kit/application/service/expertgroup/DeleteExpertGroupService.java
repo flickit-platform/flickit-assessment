@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CheckKitUsedByExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.DeleteExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.DeleteExpertGroupPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
