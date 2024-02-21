@@ -46,11 +46,9 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     @Query("""
         SELECT DISTINCT q FROM QuestionJpaEntity q
-        LEFT JOIN QuestionImpactJpaEntity qi
-            ON q.id = qi.questionId
-        LEFT JOIN AttributeJpaEntity a
-            ON qi.attributeId = a.id
-            WHERE a.subject.id = :subjectId
+        LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
+        LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id
+        WHERE at.subject.id = :subjectId
         """)
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 
