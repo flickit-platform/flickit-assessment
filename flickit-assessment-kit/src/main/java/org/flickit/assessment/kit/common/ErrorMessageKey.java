@@ -89,6 +89,7 @@ public class ErrorMessageKey {
 
     public static final String DELETE_EXPERT_GROUP_ACCESS_DENIED = "delete-expert-group.expert-group.access-denied";
     public static final String DELETE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_FOUND = "delete-expert-group.expert-group-id.notFound";
+    public static final String DELETE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group.expert-group-id.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
