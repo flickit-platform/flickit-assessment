@@ -21,4 +21,9 @@ public class ErrorMessageKey {
     public static final String CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN = "create-advice.attributeLevelTargets.size.min";
     public static final String CREATE_ADVICE_ADVICE_QUESTIONS_NOT_NULL = "create-advice.adviceQuestions.notNull";
     public static final String CREATE_ADVICE_ADVICE_QUESTIONS_SIZE_MIN = "create-advice.adviceQuestions.size.min";
+    public static final String CREATE_ADVICE_ADVICE_NOT_FOUND = "create-advice.advice.notFound";
+    public static final String CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND = "create-advice.assessmentResult.notFound";
+    public static final String CREATE_ADVICE_ASSESSMENT_NOT_FOUND = "create-advice.assessment.notFound";
+    public static final String CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND = "create-advice.assessmentAttributeRelation.notFound";
+    public static final String CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND = "create-advice.assessmentLevelRelation.notFound";
 }
