@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.expertgroup;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.port.in.expertgroup.DeleteExpertGroupUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CheckKitUsedByExpertGroupPort;
@@ -10,31 +11,32 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.DeleteExpertG
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DeleteExpertGroupService {
+public class DeleteExpertGroupService implements DeleteExpertGroupUseCase {
 
     private final CheckExpertGroupOwnerPort checkExpertGroupOwnerPort;
     private final CheckKitUsedByExpertGroupPort checkKitUsedByExpertGroupPort;
     private final CheckExpertGroupExistsPort checkExpertGroupExistsPort;
     private final DeleteExpertGroupPort deleteExpertGroupPort;
 
-    final void deleteExpertGroup(long expertGroupId, UUID currentUserId) {
-        boolean isOwner = checkExpertGroupOwnerPort.checkIsOwner(expertGroupId, currentUserId);
-        boolean isUsed = checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(expertGroupId);
-        boolean isExist = checkExpertGroupExistsPort.existsById(expertGroupId);
+    @Override
+    public void deleteExpertGroup(Param param) {
+        boolean isOwner = checkExpertGroupOwnerPort.checkIsOwner(param.getId(), param.getCurrentUserId());
+        boolean isUsed = checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(param.getId());
+        boolean isExist = checkExpertGroupExistsPort.existsById(param.getId());
 
         if (!isExist)
             throw new ResourceNotFoundException(DELETE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_FOUND);
 
         if (isOwner && !isUsed)
-            deleteExpertGroupPort.deleteById(expertGroupId);
+            deleteExpertGroupPort.deleteById(param.getId());
         else
             throw new AccessDeniedException(DELETE_EXPERT_GROUP_ACCESS_DENIED);
+
+        deleteExpertGroupPort.deleteById(param.getId());
     }
 }
