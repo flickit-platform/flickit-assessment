@@ -24,8 +24,8 @@ public class AdviceQuestionJpaEntity {
     @Column(name = "id")
     private UUID id;
 
-    @ManyToOne(optional = false)
-    @Column(name = "advice_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "advice_id", referencedColumnName = "id", nullable = false)
     private AdviceJpaEntity advice;
 
     @Column(name = "question_id", nullable = false)
