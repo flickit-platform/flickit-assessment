@@ -33,6 +33,7 @@ public class EvidenceMapper {
             entity.getDescription(),
             entity.getCreatedBy(),
             entity.getAssessmentId(),
+            entity.getType() != null ? EvidenceType.values()[entity.getType()].getTitle() : null,
             entity.getLastModificationTime()
         );
     }

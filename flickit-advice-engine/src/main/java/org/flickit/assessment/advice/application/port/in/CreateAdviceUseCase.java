@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.common.application.SelfValidating;
 
@@ -37,9 +38,6 @@ public interface CreateAdviceUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
-    }
-
-    record AttributeLevelTarget(long attributeId, long maturityLevelId) {
     }
 
     record Result(List<AdviceListItem> adviceItems) {
