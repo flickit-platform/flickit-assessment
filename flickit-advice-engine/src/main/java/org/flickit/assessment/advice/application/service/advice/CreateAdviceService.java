@@ -3,6 +3,7 @@ package org.flickit.assessment.advice.application.service.advice;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
@@ -88,24 +89,22 @@ public class CreateAdviceService implements CreateAdviceUseCase {
 
     private void validateAssessmentAttributeRelation(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         Set<Long> selectedAttrIds = attributeLevelTargets.stream()
-            .map(AttributeLevelTarget::attributeId)
+            .map(AttributeLevelTarget::getAttributeId)
             .collect(Collectors.toSet());
         Set<Long> loadedAttrIds =
             loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, selectedAttrIds);
-        if (loadedAttrIds.size() != selectedAttrIds.size()) {
+        if (loadedAttrIds.size() != selectedAttrIds.size())
             throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
-        }
     }
 
     private void validateAssessmentLevelRelation(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         Set<Long> selectedLevelIds = attributeLevelTargets.stream()
-            .map(AttributeLevelTarget::maturityLevelId)
+            .map(AttributeLevelTarget::getMaturityLevelId)
             .collect(Collectors.toSet());
         Set<Long> loadedLevelIds =
             loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(assessmentId, selectedLevelIds);
-        if (loadedLevelIds.size() != selectedLevelIds.size()) {
+        if (loadedLevelIds.size() != selectedLevelIds.size())
             throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
-        }
     }
 
     private List<AttributeLevelTarget> filterValidAttributeLevelTargets(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
@@ -118,7 +117,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             throw new ValidationException(CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
 
         return attributeLevelTargets.stream()
-            .filter(a -> validAttributeIds.contains(a.attributeId()))
+            .filter(a -> validAttributeIds.contains(a.getAttributeId()))
             .toList();
     }
 
