@@ -15,6 +15,7 @@ import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAtt
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -116,7 +117,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             .map(LoadAttributeCurrentAndTargetLevelIndexPort.Result::attributeId)
             .collect(Collectors.toSet());
         if (validAttributeIds.isEmpty()) {
-            throw new ValidationException(INVALID_INPUT, CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
+            throw new ValidationException(INVALID_INPUT, MessageBundle.message(CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN));
         }
         return attributeLevelTargets.stream()
             .filter(a -> validAttributeIds.contains(a.attributeId()))
