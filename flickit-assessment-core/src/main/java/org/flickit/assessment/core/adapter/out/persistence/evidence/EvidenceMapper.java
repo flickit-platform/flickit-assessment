@@ -26,18 +26,12 @@ public class EvidenceMapper {
     }
 
     public static EvidenceListItem toEvidenceListItem(EvidenceJpaEntity entity) {
-        Integer type = entity.getType();
-        String title = null;
-        if (type != null) {
-            title = EvidenceType.values()[type].getTitle();
-        }
-
         return new EvidenceListItem(
             entity.getId(),
             entity.getDescription(),
             entity.getCreatedBy(),
             entity.getAssessmentId(),
-            title,
+            entity.getType() != null ? EvidenceType.values()[entity.getType()].getTitle() : null,
             entity.getLastModificationTime()
         );
     }
