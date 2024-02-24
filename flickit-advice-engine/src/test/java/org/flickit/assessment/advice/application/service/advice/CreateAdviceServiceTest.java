@@ -33,8 +33,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static java.util.UUID.randomUUID;
-import static org.flickit.assessment.advice.application.service.QuestionMother.createQuestionWithTargetAndCurrentOption;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
+import static org.flickit.assessment.advice.test.fixture.application.QuestionMother.createQuestionWithTargetAndCurrentOption;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
