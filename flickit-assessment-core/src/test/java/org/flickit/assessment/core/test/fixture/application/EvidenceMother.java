@@ -15,6 +15,7 @@ public class EvidenceMother {
             UUID.randomUUID(),
             UUID.randomUUID(),
             1L,
+            1,
             LocalDateTime.now(),
             LocalDateTime.now(),
             false
