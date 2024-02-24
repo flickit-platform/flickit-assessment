@@ -51,24 +51,28 @@ public class CreateAdviceService implements CreateAdviceUseCase {
 
     @Override
     public Result createAdvice(Param param) {
-        validateUserAccess(param.getAssessmentId(), param.getCurrentUserId());
+        UUID assessmentId = param.getAssessmentId();
 
-        validateAssessmentResultPort.validate(param.getAssessmentId());
-        validateAssessmentAttributeRelation(param.getAssessmentId(), param.getAttributeLevelTargets());
-        validateAssessmentLevelRelation(param.getAssessmentId(), param.getAttributeLevelTargets());
-        var validAttributeLevelTargets = filterValidAttributeLevelTargets(param.getAttributeLevelTargets(), param.getAssessmentId());
+        validateUserAccess(assessmentId, param.getCurrentUserId());
 
-        var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), validAttributeLevelTargets);
+        validateAssessmentResultPort.validate(assessmentId);
+
+        List<AttributeLevelTarget> attributeLevelTargets = param.getAttributeLevelTargets();
+        validateAssessmentAttributeRelation(assessmentId, attributeLevelTargets);
+        validateAssessmentLevelRelation(assessmentId, attributeLevelTargets);
+        var validAttributeLevelTargets = filterValidAttributeLevelTargets(attributeLevelTargets, assessmentId);
+
+        var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(assessmentId, validAttributeLevelTargets);
         var solution = solverManager.solve(UUID.randomUUID(), problem);
         Plan plan;
         try {
             plan = solution.getFinalBestSolution();
         } catch (InterruptedException e) {
-            log.error("Finding best solution for assessment {} interrupted", param.getAssessmentId(), e.getCause());
+            log.error("Finding best solution for assessment {} interrupted", assessmentId, e.getCause());
             Thread.currentThread().interrupt();
             throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         } catch (ExecutionException e) {
-            log.error("Error occurred while calculating best solution for assessment {}", param.getAssessmentId(), e.getCause());
+            log.error("Error occurred while calculating best solution for assessment {}", assessmentId, e.getCause());
             throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         }
         return mapToResult(plan);
