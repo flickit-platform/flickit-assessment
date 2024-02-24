@@ -6,8 +6,8 @@ import org.flickit.assessment.common.exception.api.Notification;
 @Getter
 public class ValidationException extends RuntimeException {
 
-    private final String code;
-    private final Notification validation;
+    private final transient String code;
+    private final transient Notification validation;
 
     public ValidationException(String code, Notification validation) {
         this.code = code;
