@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.advice.*;
-import org.flickit.assessment.advice.application.exception.AttributeLevelTargetsEmptyException;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
@@ -19,10 +18,7 @@ import org.flickit.assessment.advice.application.port.out.calculation.LoadCreate
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort.Result;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
-import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.CalculateNotValidException;
-import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -257,7 +253,7 @@ class CreateAdviceServiceTest {
             .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 2)));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
-        assertThrows(AttributeLevelTargetsEmptyException.class, () -> service.createAdvice(param), CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
+        assertThrows(ValidationException.class, () -> service.createAdvice(param), CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());

@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
-import org.flickit.assessment.advice.application.exception.AttributeLevelTargetsEmptyException;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
@@ -19,6 +18,7 @@ import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccess
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
 
 @Slf4j
 @Service
@@ -115,7 +116,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             .map(LoadAttributeCurrentAndTargetLevelIndexPort.Result::attributeId)
             .collect(Collectors.toSet());
         if (validAttributeIds.isEmpty()) {
-            throw new AttributeLevelTargetsEmptyException(CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
+            throw new ValidationException(INVALID_INPUT, CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
         }
         return attributeLevelTargets.stream()
             .filter(a -> validAttributeIds.contains(a.attributeId()))
