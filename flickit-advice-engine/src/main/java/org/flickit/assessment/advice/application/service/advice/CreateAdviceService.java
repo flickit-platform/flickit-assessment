@@ -109,7 +109,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         var validAttributeIds = attributeCurrentAndTargetLevelIndexes.stream()
             .filter(a -> a.targetMaturityLevelIndex() > a.currentMaturityLevelIndex())
             .map(LoadAttributeCurrentAndTargetLevelIndexPort.Result::attributeId)
-            .toList();
+            .collect(Collectors.toSet());
         if (validAttributeIds.isEmpty()) {
             throw new AttributeLevelTargetsEmptyException(CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
         }
