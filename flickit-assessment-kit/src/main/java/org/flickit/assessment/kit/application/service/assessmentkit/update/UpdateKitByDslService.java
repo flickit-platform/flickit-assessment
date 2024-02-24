@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.common.exception.ValidationsException;
 import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
@@ -70,6 +70,6 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
     private void validateChanges(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {
         Notification notification = validator.validate(savedKit, dslKit);
         if (notification.hasErrors())
-            throw new ValidationException(UNSUPPORTED_DSL_CONTENT_CHANGE, notification);
+            throw new ValidationsException(UNSUPPORTED_DSL_CONTENT_CHANGE, notification);
     }
 }

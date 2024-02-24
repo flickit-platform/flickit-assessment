@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.service;
+package org.flickit.assessment.advice.test.fixture.application;
 
 
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
