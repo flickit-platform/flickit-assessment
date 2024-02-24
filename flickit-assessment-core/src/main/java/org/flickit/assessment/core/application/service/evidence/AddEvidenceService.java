@@ -32,12 +32,6 @@ public class AddEvidenceService implements AddEvidenceUseCase {
     }
 
     private CreateEvidencePort.Param toCreatePortParam(AddEvidenceUseCase.Param param) {
-        Integer type = null;
-        String code = param.getType();
-        if (code != null) {
-            type = EvidenceType.valueOf(code).ordinal();
-        }
-
         return new CreateEvidencePort.Param(
             param.getDescription(),
             LocalDateTime.now(),
@@ -45,7 +39,7 @@ public class AddEvidenceService implements AddEvidenceUseCase {
             param.getCreatedById(),
             param.getAssessmentId(),
             param.getQuestionId(),
-            type
+            param.getType() != null ? EvidenceType.valueOf(param.getType()).ordinal() : null
         );
     }
 }
