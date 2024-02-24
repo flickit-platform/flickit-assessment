@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.evidence;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.core.application.domain.EvidenceType;
 import org.flickit.assessment.core.application.port.in.evidence.UpdateEvidenceUseCase;
 import org.flickit.assessment.core.application.port.out.evidence.UpdateEvidencePort;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class UpdateEvidenceService implements UpdateEvidenceUseCase {
         var updateParam = new UpdateEvidencePort.Param(
             param.getId(),
             param.getDescription(),
-            param.getType(),
+            param.getType() != null ? EvidenceType.valueOf(param.getType()).ordinal() : null,
             LocalDateTime.now(),
             param.getLastModifiedById()
         );
