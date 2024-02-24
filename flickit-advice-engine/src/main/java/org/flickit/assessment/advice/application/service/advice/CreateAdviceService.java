@@ -56,7 +56,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         validateAssessmentResultPort.validate(param.getAssessmentId());
         validateAssessmentAttributeRelation(param.getAssessmentId(), param.getAttributeLevelTargets());
         validateAssessmentLevelRelation(param.getAssessmentId(), param.getAttributeLevelTargets());
-        var validAttributeLevelTargets = filterValidAttributeLevelTargets(param.getAttributeLevelTargets(), param.getAssessmentId());
+        var validAttributeLevelTargets = filterValidAttributeLevelTargets(param.getAssessmentId(), param.getAttributeLevelTargets());
 
         var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(param.getAssessmentId(), validAttributeLevelTargets);
         var solution = solverManager.solve(UUID.randomUUID(), problem);
@@ -104,8 +104,8 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         }
     }
 
-    private List<AttributeLevelTarget> filterValidAttributeLevelTargets(List<AttributeLevelTarget> attributeLevelTargets, UUID assessmentId) {
-        var attributeCurrentAndTargetLevelIndexes = loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(attributeLevelTargets, assessmentId);
+    private List<AttributeLevelTarget> filterValidAttributeLevelTargets(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+        var attributeCurrentAndTargetLevelIndexes = loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(assessmentId, attributeLevelTargets);
         var validAttributeIds = attributeCurrentAndTargetLevelIndexes.stream()
             .filter(a -> a.targetMaturityLevelIndex() > a.currentMaturityLevelIndex())
             .map(LoadAttributeCurrentAndTargetLevelIndexPort.Result::attributeId)

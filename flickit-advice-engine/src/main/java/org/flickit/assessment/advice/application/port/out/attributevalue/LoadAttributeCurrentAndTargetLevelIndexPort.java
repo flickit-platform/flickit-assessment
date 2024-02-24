@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface LoadAttributeCurrentAndTargetLevelIndexPort {
 
-    List<Result> loadAttributeCurrentAndTargetLevelIndex(List<CreateAdviceUseCase.AttributeLevelTarget> attributeLevelTargets, UUID assessmentId);
+    List<Result> loadAttributeCurrentAndTargetLevelIndex(UUID assessmentId, List<CreateAdviceUseCase.AttributeLevelTarget> attributeLevelTargets);
 
     record Result(
         long attributeId,
