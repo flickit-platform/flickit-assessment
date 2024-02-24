@@ -27,8 +27,8 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
         var attributeIds = attributeLevelTargets.stream()
             .map(AttributeLevelTarget::attributeId)
             .toList();
-        var qualityAttributeValues = repository.findByAssessmentResult_assessment_IdAndQualityAttributeIdIn(assessmentId, attributeIds);
-        var qualityAttributeValuesIdMap = qualityAttributeValues.stream()
+        var attributeValues = repository.findByAssessmentResult_assessment_IdAndQualityAttributeIdIn(assessmentId, attributeIds);
+        var attributeValuesIdMap = attributeValues.stream()
             .collect(Collectors.toMap(QualityAttributeValueJpaEntity::getQualityAttributeId, Function.identity()));
 
         var maturityLevels = maturityLevelRepository.findAllInKitWithOneId(attributeLevelTargets.get(0).maturityLevelId());
@@ -39,7 +39,7 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
         for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
             var attributeId = attributeLevelTarget.attributeId();
             var currentMaturityLevel = maturityLevelsIdMap
-                .get(qualityAttributeValuesIdMap.get(attributeId).getMaturityLevelId());
+                .get(attributeValuesIdMap.get(attributeId).getMaturityLevelId());
             var targetMaturityLevel = maturityLevelsIdMap
                 .get(attributeLevelTarget.maturityLevelId());
 
