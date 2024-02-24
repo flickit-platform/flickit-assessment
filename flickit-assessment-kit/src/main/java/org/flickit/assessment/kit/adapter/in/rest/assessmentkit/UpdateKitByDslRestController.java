@@ -28,6 +28,6 @@ public class UpdateKitByDslRestController {
     }
 
     private UpdateKitByDslUseCase.Param toParam(Long kitId, UpdateKitByDslRequestDto request, UUID currentUserId) {
-        return new UpdateKitByDslUseCase.Param(kitId, request.dslContent(), currentUserId);
+        return new UpdateKitByDslUseCase.Param(kitId, request.kitDslId(), currentUserId);
     }
 }
