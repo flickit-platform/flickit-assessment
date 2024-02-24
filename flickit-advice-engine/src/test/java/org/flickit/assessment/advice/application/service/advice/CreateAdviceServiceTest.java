@@ -235,7 +235,7 @@ class CreateAdviceServiceTest {
 
     @SneakyThrows
     @Test
-    void testCreateAdvice_AttributeLevelTargetsIsNotValid_ThrowException() {
+    void testCreateAdvice_AttributeLevelTargetsAreNotValid_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
         CreateAdviceUseCase.Param param = new CreateAdviceUseCase.Param(
             randomUUID(),
