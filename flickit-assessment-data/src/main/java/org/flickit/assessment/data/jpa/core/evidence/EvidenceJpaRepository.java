@@ -18,10 +18,10 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     @Modifying
     @Query("""
         UPDATE EvidenceJpaEntity e SET
-        e.description = :description,
-        e.type = :type,
-        e.lastModificationTime = :lastModificationTime,
-        e.lastModifiedBy = :lastModifiedBy
+            e.description = :description,
+            e.type = :type,
+            e.lastModificationTime = :lastModificationTime,
+            e.lastModifiedBy = :lastModifiedBy
         WHERE e.id = :id
         """)
     void update(@Param(value = "id") UUID id,
@@ -31,9 +31,11 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
 
     @Modifying
-    @Query("UPDATE EvidenceJpaEntity e SET " +
-        "e.deleted = true " +
-        "WHERE e.id = :id")
+    @Query("""
+        UPDATE EvidenceJpaEntity e SET
+            e.deleted = true
+        WHERE e.id = :id
+        """)
     void delete(@Param(value = "id") UUID id);
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
