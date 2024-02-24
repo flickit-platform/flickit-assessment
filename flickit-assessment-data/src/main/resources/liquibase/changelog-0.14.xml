@@ -123,4 +123,10 @@
         <renameSequence oldSequenceName="baseinfo_profiledsl_id_seq" newSequenceName="fak_kit_dsl_id_seq"/>
     </changeSet>
 
+    <changeSet id="0.14-23" author="Ali Sedaghat">
+        <addColumn tableName="fac_evidence">
+            <column name="type" type="tinyint"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
