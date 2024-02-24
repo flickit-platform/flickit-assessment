@@ -15,7 +15,6 @@ import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAtt
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
-import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
 
 @Slf4j
 @Service
@@ -116,9 +114,9 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             .filter(a -> a.targetMaturityLevelIndex() > a.currentMaturityLevelIndex())
             .map(LoadAttributeCurrentAndTargetLevelIndexPort.Result::attributeId)
             .collect(Collectors.toSet());
-        if (validAttributeIds.isEmpty()) {
-            throw new ValidationException(INVALID_INPUT, MessageBundle.message(CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN));
-        }
+        if (validAttributeIds.isEmpty())
+            throw new ValidationException(CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
+
         return attributeLevelTargets.stream()
             .filter(a -> validAttributeIds.contains(a.attributeId()))
             .toList();
