@@ -38,5 +38,5 @@ public class QualityAttributeValueJpaEntity {
     private Double confidenceValue;
 
     @Column(name = "attribute_reference_number", nullable = false)
-    private Long attributeReferenceNumber;
+    private UUID attributeReferenceNumber;
 }

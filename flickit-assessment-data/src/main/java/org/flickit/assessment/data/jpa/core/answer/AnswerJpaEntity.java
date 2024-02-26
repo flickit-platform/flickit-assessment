@@ -51,7 +51,7 @@ public class AnswerJpaEntity {
     private UUID lastModifiedBy;
 
     @Column(name = "question_reference_number", nullable = false)
-    private Long questionReferenceNumber;
+    private UUID questionReferenceNumber;
 
     @Override
     public String toString() {

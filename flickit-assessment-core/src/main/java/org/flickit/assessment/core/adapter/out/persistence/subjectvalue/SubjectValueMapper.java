@@ -8,11 +8,12 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SubjectValueMapper {
 
-    public static SubjectValueJpaEntity mapToJpaEntity(Long subjectId, Long subjectReferenceNumber){
+    public static SubjectValueJpaEntity mapToJpaEntity(Long subjectId, UUID subjectReferenceNumber){
         return new SubjectValueJpaEntity(
             null,
             null,

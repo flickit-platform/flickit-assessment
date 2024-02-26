@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.maturitylevel;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.annotation.ReferenceNumberValue;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import java.time.LocalDateTime;
@@ -66,8 +65,7 @@ public class MaturityLevelJpaEntity {
     private List<QuestionImpactJpaEntity> questionImpacts;
 
     @Column(name = "reference_number", nullable = false)
-    @ReferenceNumberValue(query = "(SELECT nextval('fak_maturity_level_reference_number_seq'))")
-    private Long referenceNumber;
+    private UUID referenceNumber;
 
     public MaturityLevelJpaEntity(Long id,
                                   String code,
@@ -78,7 +76,8 @@ public class MaturityLevelJpaEntity {
                                   LocalDateTime lastModificationTime,
                                   UUID createdBy,
                                   UUID lastModifiedBy,
-                                  Long kitVersionId) {
+                                  Long kitVersionId,
+                                  UUID referenceNumber) {
         this.id = id;
         this.code = code;
         this.index = index;
@@ -89,6 +88,7 @@ public class MaturityLevelJpaEntity {
         this.createdBy = createdBy;
         this.lastModifiedBy = lastModifiedBy;
         this.kitVersionId = kitVersionId;
+        this.referenceNumber = referenceNumber;
     }
 }
 

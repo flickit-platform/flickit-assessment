@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update;
 
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.common.exception.ValidationsException;
 import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
@@ -126,7 +126,7 @@ class UpdateKitByDslServiceTest {
 
         var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId.get());
 
-        var throwable = assertThrows(ValidationException.class,
+        var throwable = assertThrows(ValidationsException.class,
             () -> service.update(param));
 
         assertThat(throwable.getValidation())

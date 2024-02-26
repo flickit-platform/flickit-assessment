@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.questionimpact;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.annotation.ReferenceNumberValue;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 
@@ -58,8 +57,7 @@ public class QuestionImpactJpaEntity {
     private UUID lastModifiedBy;
 
     @Column(name = "reference_number", nullable = false)
-    @ReferenceNumberValue(query = "(SELECT nextval('fak_question_impact_reference_number_seq'))")
-    private Long referenceNumber;
+    private UUID referenceNumber;
 
     public QuestionImpactJpaEntity(Long id,
                                    Integer weight,

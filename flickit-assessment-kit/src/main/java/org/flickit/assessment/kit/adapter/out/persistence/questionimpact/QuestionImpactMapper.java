@@ -6,6 +6,8 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 
+import java.util.UUID;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionImpactMapper {
     public static QuestionImpact mapToDomainModel(QuestionImpactJpaEntity entity) {
@@ -35,7 +37,7 @@ public class QuestionImpactMapper {
             impact.getLastModificationTime(),
             impact.getCreatedBy(),
             impact.getLastModifiedBy(),
-            null
+            UUID.randomUUID()
         );
     }
 }

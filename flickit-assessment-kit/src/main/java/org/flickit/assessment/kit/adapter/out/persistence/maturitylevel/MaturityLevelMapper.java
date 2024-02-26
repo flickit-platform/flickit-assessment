@@ -34,6 +34,7 @@ public class MaturityLevelMapper {
             createdBy,
             createdBy,
             kitVersionId
+            UUID.randomUUID()
         );
     }
 }

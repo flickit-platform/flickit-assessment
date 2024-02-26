@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.15-1" author="MKouhestani">
+        <addColumn tableName="fak_subject">
+            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-2" author="MKouhestani">
+        <addColumn tableName="fak_attribute">
+            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-3" author="MKouhestani">
+        <addColumn tableName="fak_questionnaire">
+            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-4" author="MKouhestani">
+        <addColumn tableName="fak_question">
+            <column name="kit_id" type="bigint"
+                    valueComputed="fak_questionnaire.kit_id FROM fak_questionnaire WHERE questionnaire_id = fak_questionnaire.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-5" author="MKouhestani">
+        <addColumn tableName="fak_question_impact">
+            <column name="kit_id" type="bigint"
+                    valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-6" author="MKouhestani">
+        <addColumn tableName="fak_answer_option">
+            <column name="kit_id" type="bigint"
+                    valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-7" author="MKouhestani">
+        <addColumn tableName="fak_answer_option_impact">
+            <column name="kit_id" type="bigint"
+                    valueComputed="fak_question_impact.kit_id FROM fak_question_impact WHERE question_impact_id = fak_question_impact.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-8" author="MKouhestani">
+        <addColumn tableName="fak_question">
+            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-9" author="MKouhestani">
+        <addColumn tableName="fak_question_impact">
+            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-10" author="MKouhestani">
+        <addColumn tableName="fak_answer_option">
+            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-11" author="MKouhestani">
+        <addColumn tableName="fak_answer_option_impact">
+            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-12" author="MKouhestani">
+        <addColumn tableName="fak_maturity_level">
+            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-13" author="MKouhestani">
+        <addColumn tableName="fac_answer">
+            <column name="question_reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-14" author="MKouhestani">
+        <update tableName="fac_answer">
+            <column name="question_reference_number"
+                    valueComputed="fak_question.reference_number FROM fak_question WHERE fak_question.id = question_id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.15-15" author="MKouhestani">
+        <addColumn tableName="fac_subject_value">
+            <column name="subject_reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-16" author="MKouhestani">
+        <update tableName="fac_subject_value">
+            <column name="subject_reference_number"
+                    valueComputed="fak_subject.reference_number FROM fak_subject WHERE fak_subject.id = subject_id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.15-17" author="MKouhestani">
+        <addColumn tableName="fac_quality_attribute_value">
+            <column name="attribute_reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-18" author="MKouhestani">
+        <update tableName="fac_quality_attribute_value">
+            <column name="attribute_reference_number"
+                    valueComputed="fak_attribute.reference_number FROM fak_attribute WHERE fak_attribute.id = quality_attribute_id"/>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

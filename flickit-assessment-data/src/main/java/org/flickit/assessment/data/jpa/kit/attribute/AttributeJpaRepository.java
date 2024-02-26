@@ -65,5 +65,5 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
         FROM AttributeJpaEntity a
         WHERE a.id = :attributeId
         """)
-    Long findReferenceNumberById(@Param("attributeId") Long attributeId);
+    UUID findReferenceNumberById(@Param("attributeId") Long attributeId);
 }

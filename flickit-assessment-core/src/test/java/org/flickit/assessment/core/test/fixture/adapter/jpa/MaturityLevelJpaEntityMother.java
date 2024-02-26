@@ -20,7 +20,8 @@ public class MaturityLevelJpaEntityMother {
             LocalDateTime.now(),
             UUID.randomUUID(),
             UUID.randomUUID(),
-            1L
+            1L,
+            UUID.randomUUID()
         );
     }
 }
