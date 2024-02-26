@@ -33,7 +33,7 @@ public class MaturityLevelMapper {
             LocalDateTime.now(),
             createdBy,
             createdBy,
-            kitVersionId
+            kitVersionId,
             UUID.randomUUID()
         );
     }

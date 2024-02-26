@@ -20,7 +20,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
 
     @Query("""
             FROM MaturityLevelJpaEntity ml WHERE
-            ml.kitId = (SELECT l.kitId FROM MaturityLevelJpaEntity AS l WHERE l.id = :id)
+            ml.kitVersionId = (SELECT l.kitVersionId FROM MaturityLevelJpaEntity AS l WHERE l.id = :id)
         """)
     List<MaturityLevelJpaEntity> findAllInKitWithOneId(Long id);
 }
