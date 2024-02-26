@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.14-1" author="MKouhestani">
+        <addColumn tableName="fak_subject">
+            <column name="reference_number" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-2" author="MKouhestani">
+        <sql>
+            <![CDATA[UPDATE fak_subject
+            SET reference_number = (SELECT COUNT(*)
+            FROM fak_subject s
+            WHERE s.kit_id = fak_subject.kit_id
+            AND s.id <= fak_subject.id);]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.14-3" author="MKouhestani">
+        <addNotNullConstraint columnName="reference_number"
+                              constraintName="reference_number_not_null"
+                              tableName="fak_subject"/>
+    </changeSet>
+
+    <changeSet id="0.14-4" author="MKouhestani">
+        <addColumn tableName="fak_attribute">
+            <column name="reference_number" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-5" author="MKouhestani">
+        <sql>
+            <![CDATA[UPDATE fak_attribute
+            SET reference_number = (SELECT COUNT(*)
+            FROM fak_attribute a
+            WHERE a.kit_id = fak_attribute.kit_id
+            AND a.id <= fak_attribute.id);]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.14-6" author="MKouhestani">
+        <addNotNullConstraint columnName="reference_number"
+                              constraintName="reference_number_not_null"
+                              tableName="fak_attribute"/>
+    </changeSet>
+
+    <changeSet id="0.14-7" author="MKouhestani">
+        <addColumn tableName="fak_questionnaire">
+            <column name="reference_number" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-8" author="MKouhestani">
+        <sql>
+            <![CDATA[UPDATE fak_questionnaire
+            SET reference_number = (SELECT COUNT(*)
+            FROM fak_questionnaire q
+            WHERE q.kit_id = fak_questionnaire.kit_id
+            AND q.id <= fak_questionnaire.id);]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.14-9" author="MKouhestani">
+        <addNotNullConstraint columnName="reference_number"
+                              constraintName="reference_number_not_null"
+                              tableName="fak_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.14-10" author="MKouhestani">
+        <addColumn tableName="fak_question">
+            <column name="kit_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-11" author="MKouhestani">
+        <update tableName="fak_question">
+            <column name="kit_id"
+                    valueComputed="fak_questionnaire.kit_id FROM fak_questionnaire WHERE questionnaire_id = fak_questionnaire.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.14-12" author="MKouhestani">
+        <addNotNullConstraint columnName="kit_id"
+                              constraintName="kit_id_not_null"
+                              tableName="fak_question"/>
+    </changeSet>
+
+    <changeSet id="0.14-13" author="MKouhestani">
+        <addColumn tableName="fak_question_impact">
+            <column name="kit_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-14" author="MKouhestani">
+        <update tableName="fak_question_impact">
+            <column name="kit_id"
+                    valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.14-15" author="MKouhestani">
+        <addNotNullConstraint columnName="kit_id"
+                              constraintName="kit_id_not_null"
+                              tableName="fak_question_impact"/>
+    </changeSet>
+
+    <changeSet id="0.14-16" author="MKouhestani">
+        <addColumn tableName="fak_answer_option">
+            <column name="kit_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-17" author="MKouhestani">
+        <update tableName="fak_answer_option">
+            <column name="kit_id"
+                    valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.14-18" author="MKouhestani">
+        <addNotNullConstraint columnName="kit_id"
+                              constraintName="kit_id_not_null"
+                              tableName="fak_answer_option"/>
+    </changeSet>
+
+    <changeSet id="0.14-19" author="MKouhestani">
+        <addColumn tableName="fak_answer_option_impact">
+            <column name="kit_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-20" author="MKouhestani">
+        <update tableName="fak_answer_option_impact">
+            <column name="kit_id"
+                    valueComputed="fak_question_impact.kit_id FROM fak_question_impact WHERE question_impact_id = fak_question_impact.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.14-21" author="MKouhestani">
+        <addNotNullConstraint columnName="kit_id"
+                              constraintName="kit_id_not_null"
+                              tableName="fak_answer_option_impact"/>
+    </changeSet>
+
+    <changeSet id="0.14-22" author="MKouhestani">
+        <addColumn tableName="fak_question">
+            <column name="reference_number" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-23" author="MKouhestani">
+        <sql>
+            <![CDATA[UPDATE fak_question
+            SET reference_number = (SELECT COUNT(*)
+            FROM fak_question q
+            WHERE q.kit_id = fak_question.kit_id
+            AND q.id <= fak_question.id);]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.14-24" author="MKouhestani">
+        <addNotNullConstraint columnName="reference_number"
+                              constraintName="reference_number_not_null"
+                              tableName="fak_question"/>
+    </changeSet>
+
+    <changeSet id="0.14-25" author="MKouhestani">
+        <addColumn tableName="fak_question_impact">
+            <column name="reference_number" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-26" author="MKouhestani">
+        <sql>
+            <![CDATA[UPDATE fak_question_impact
+            SET reference_number = (SELECT COUNT(*)
+            FROM fak_question_impact i
+            WHERE i.kit_id = fak_question_impact.kit_id
+            AND i.id <= fak_question_impact.id);]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.14-27" author="MKouhestani">
+        <addNotNullConstraint columnName="reference_number"
+                              constraintName="reference_number_not_null"
+                              tableName="fak_question_impact"/>
+    </changeSet>
+
+    <changeSet id="0.14-28" author="MKouhestani">
+        <addColumn tableName="fak_answer_option">
+            <column name="reference_number" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-29" author="MKouhestani">
+        <sql>
+            <![CDATA[UPDATE fak_answer_option
+            SET reference_number = (SELECT COUNT(*)
+            FROM fak_answer_option a
+            WHERE a.kit_id = fak_answer_option.kit_id
+            AND a.id <= fak_answer_option.id);]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.14-30" author="MKouhestani">
+        <addNotNullConstraint columnName="reference_number"
+                              constraintName="reference_number_not_null"
+                              tableName="fak_answer_option"/>
+    </changeSet>
+
+    <changeSet id="0.14-31" author="MKouhestani">
+        <addColumn tableName="fak_answer_option_impact">
+            <column name="reference_number" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-32" author="MKouhestani">
+        <sql>
+            <![CDATA[UPDATE fak_answer_option_impact
+            SET reference_number = (SELECT COUNT(*)
+            FROM fak_answer_option_impact a
+            WHERE a.kit_id = fak_answer_option_impact.kit_id
+            AND a.id <= fak_answer_option_impact.id);]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.14-33" author="MKouhestani">
+        <addNotNullConstraint columnName="reference_number"
+                              constraintName="reference_number_not_null"
+                              tableName="fak_answer_option_impact"/>
+    </changeSet>
+
+    <changeSet id="0.14-34" author="MKouhestani">
+        <addColumn tableName="fak_maturity_level">
+            <column name="reference_number" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-35" author="MKouhestani">
+        <sql>
+            <![CDATA[UPDATE fak_maturity_level
+            SET reference_number = (SELECT COUNT(*)
+            FROM fak_maturity_level m
+            WHERE m.kit_id = fak_maturity_level.kit_id
+            AND m.id <= fak_maturity_level.id);]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.14-36" author="MKouhestani">
+        <addNotNullConstraint columnName="reference_number"
+                              constraintName="reference_number_not_null"
+                              tableName="fak_maturity_level"/>
+    </changeSet>
+
+    <changeSet id="0.14-37" author="MKouhestani">
+        <createSequence sequenceName="fak_maturity_level_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-38" author="MKouhestani">
+        <createSequence sequenceName="fak_subject_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-39" author="MKouhestani">
+        <createSequence sequenceName="fak_attribute_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-40" author="MKouhestani">
+        <createSequence sequenceName="fak_questionnaire_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-41" author="MKouhestani">
+        <createSequence sequenceName="fak_question_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-42" author="MKouhestani">
+        <createSequence sequenceName="fak_question_impact_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-43" author="MKouhestani">
+        <createSequence sequenceName="fak_answer_option_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.14-44" author="MKouhestani">
+        <createSequence sequenceName="fak_answer_option_impact_reference_number_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+</databaseChangeLog>
