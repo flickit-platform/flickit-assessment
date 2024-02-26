@@ -113,5 +113,5 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
         FROM QuestionJpaEntity q
         WHERE q.id = :questionId
         """)
-    Long findReferenceNumberById(@Param("questionId") Long questionId);
+    UUID findReferenceNumberById(@Param("questionId") Long questionId);
 }

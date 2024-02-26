@@ -20,7 +20,7 @@ public class AnswerJpaEntityMother {
             null,
             createdBy,
             createdBy,
-            1L
+            UUID.randomUUID()
         );
     }
 
@@ -36,7 +36,7 @@ public class AnswerJpaEntityMother {
             null,
             createdBy,
             createdBy,
-            1L
+            UUID.randomUUID()
         );
     }
 
@@ -52,7 +52,7 @@ public class AnswerJpaEntityMother {
             Boolean.TRUE,
             createdBy,
             createdBy,
-            1L
+            UUID.randomUUID()
         );
     }
 }
