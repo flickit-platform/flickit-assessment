@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.evidence;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.EvidenceType;
 import org.flickit.assessment.core.application.port.in.evidence.AddEvidenceUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
@@ -37,7 +38,8 @@ public class AddEvidenceService implements AddEvidenceUseCase {
             LocalDateTime.now(),
             param.getCreatedById(),
             param.getAssessmentId(),
-            param.getQuestionId()
+            param.getQuestionId(),
+            param.getType() != null ? EvidenceType.valueOf(param.getType()).ordinal() : null
         );
     }
 }

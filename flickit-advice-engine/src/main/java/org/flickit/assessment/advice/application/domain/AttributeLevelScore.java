@@ -7,10 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public class AttributeLevelScore {
 
-    private double gainedScore;
-    private double requiredScore;
-    private long attributeId;
-    private long maturityLevelId;
+    private final double gainedScore;
+    private final double requiredScore;
+    private final long attributeId;
+    private final long maturityLevelId;
 
     public double getRemainingScore() {
         return this.requiredScore - this.gainedScore;
