@@ -16,7 +16,7 @@ public class SubjectValueJpaEntityMother {
             subjectId++,
             null,
             null,
-            1L
+            UUID.randomUUID()
         );
     }
 }

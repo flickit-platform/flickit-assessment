@@ -45,7 +45,7 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_QUALITY_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
         List<QualityAttributeValueJpaEntity> entities = qualityAttributeIds.stream().map(qualityAttributeId -> {
-            Long attributeReferenceNumber = attributeRepository.findReferenceNumberById(qualityAttributeId);
+            UUID attributeReferenceNumber = attributeRepository.findReferenceNumberById(qualityAttributeId);
             QualityAttributeValueJpaEntity qualityAttributeValue = QualityAttributeValueMapper.mapToJpaEntity(qualityAttributeId, attributeReferenceNumber);
             qualityAttributeValue.setAssessmentResult(assessmentResult);
             return qualityAttributeValue;

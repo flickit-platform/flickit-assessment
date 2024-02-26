@@ -38,5 +38,5 @@ public class SubjectValueJpaEntity {
     private Double confidenceValue;
 
     @Column(name = "subject_reference_number", nullable = false)
-    private Long subjectReferenceNumber;
+    private UUID subjectReferenceNumber;
 }
