@@ -2,7 +2,7 @@ package org.flickit.assessment.advice.adapter.out.persistence.attributeleveltarg
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase.AttributeLevelTarget;
+import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.data.jpa.advice.advice.AdviceJpaEntity;
 import org.flickit.assessment.data.jpa.advice.attributeleveltarget.AttributeLevelTargetJpaEntity;
 
@@ -13,8 +13,8 @@ public class AttributeLevelTargetMapper {
         return new AttributeLevelTargetJpaEntity(
             null,
             adviceEntity,
-            attributeLevelTarget.attributeId(),
-            attributeLevelTarget.maturityLevelId()
+            attributeLevelTarget.getAttributeId(),
+            attributeLevelTarget.getMaturityLevelId()
         );
     }
 }

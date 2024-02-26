@@ -5,7 +5,7 @@ import org.flickit.assessment.advice.application.domain.advice.AdviceAttribute;
 import org.flickit.assessment.advice.application.domain.advice.AdviceOption;
 import org.flickit.assessment.advice.application.domain.advice.AdviceQuestion;
 import org.flickit.assessment.advice.application.domain.advice.AdviceQuestionnaire;
-import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
+import org.flickit.assessment.advice.application.port.out.calculation.LoadCalculatedAdviceDetailsPort;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.advice.AttributeAdviceView;
 import org.flickit.assessment.data.jpa.kit.question.advice.OptionAdviceView;
@@ -22,8 +22,8 @@ import static java.util.stream.Collectors.groupingBy;
 
 @Component
 @RequiredArgsConstructor
-public class LoadCreatedAdviceDetailsAdapter implements
-    LoadCreatedAdviceDetailsPort {
+public class LoadCalculatedAdviceDetailsAdapter implements
+    LoadCalculatedAdviceDetailsPort {
 
     private final QuestionJpaRepository repository;
 
@@ -38,7 +38,7 @@ public class LoadCreatedAdviceDetailsAdapter implements
             .toList();
     }
 
-    private LoadCreatedAdviceDetailsPort.Result mapToAdviceListItem(List<QuestionAdviceView> questionAdviceViews) {
+    private LoadCalculatedAdviceDetailsPort.Result mapToAdviceListItem(List<QuestionAdviceView> questionAdviceViews) {
         var view = questionAdviceViews.get(0);
         AdviceQuestion question = new AdviceQuestion(view.getId(), view.getTitle(), view.getIndex());
 
@@ -56,7 +56,7 @@ public class LoadCreatedAdviceDetailsAdapter implements
 
         var questionnaire = new AdviceQuestionnaire(view.getQuestionnaire().getId(), view.getQuestionnaire().getTitle());
 
-        return new LoadCreatedAdviceDetailsPort.Result(
+        return new LoadCalculatedAdviceDetailsPort.Result(
             question,
             options,
             attributes,

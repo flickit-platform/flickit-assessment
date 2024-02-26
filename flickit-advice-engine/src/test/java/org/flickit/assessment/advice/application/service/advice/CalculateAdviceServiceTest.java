@@ -4,18 +4,18 @@ import ai.timefold.solver.core.api.solver.SolverJob;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import lombok.SneakyThrows;
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
+import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.advice.*;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
-import org.flickit.assessment.advice.application.port.in.CalculateAdviceUseCase;
-import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
+import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
-import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
-import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort.Result;
+import org.flickit.assessment.advice.application.port.out.calculation.LoadCalculatedAdviceDetailsPort;
+import org.flickit.assessment.advice.application.port.out.calculation.LoadCalculatedAdviceDetailsPort.Result;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.*;
@@ -72,10 +72,10 @@ class CalculateAdviceServiceTest {
     private SolverManager<Plan, UUID> solverManager;
 
     @Mock
-    private LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
+    private LoadCalculatedAdviceDetailsPort loadCalculatedAdviceDetailsPort;
 
     @Test
-    void testCreateAdvice_AssessmentNotExist_ThrowException() {
+    void testCalculateAdvice_AssessmentNotExist_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
         CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
@@ -92,12 +92,12 @@ class CalculateAdviceServiceTest {
             validateAssessmentResultPort,
             loadInfoPort,
             solverManager,
-            loadCreatedAdviceDetailsPort
+            loadCalculatedAdviceDetailsPort
         );
     }
 
     @Test
-    void testCreateAdvice_AssessmentAttributeNotRelated_ThrowException() {
+    void testCalculateAdvice_AssessmentAttributeNotRelated_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets =
             List.of(new AttributeLevelTarget(1L, 2L),
                 new AttributeLevelTarget(2L, 3L));
@@ -120,7 +120,7 @@ class CalculateAdviceServiceTest {
     }
 
     @Test
-    void testCreateAdvice_AssessmentMaturityLevelNotRelated_ThrowException() {
+    void testCalculateAdvice_AssessmentMaturityLevelNotRelated_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets =
             List.of(new AttributeLevelTarget(1L, 2L),
                 new AttributeLevelTarget(2L, 3L));
@@ -145,7 +145,7 @@ class CalculateAdviceServiceTest {
     }
 
     @Test
-    void testCreateAdvice_UserHasNotAccessToAssessment_ThrowException() {
+    void testCalculateAdvice_UserHasNotAccessToAssessment_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
         CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
@@ -165,12 +165,12 @@ class CalculateAdviceServiceTest {
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadCreatedAdviceDetailsPort
+            loadCalculatedAdviceDetailsPort
         );
     }
 
     @Test
-    void testCreateAdvice_AssessmentCalculateIsNotValid_ThrowException() {
+    void testCalculateAdvice_AssessmentCalculateIsNotValid_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
         CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
@@ -194,12 +194,12 @@ class CalculateAdviceServiceTest {
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadCreatedAdviceDetailsPort
+            loadCalculatedAdviceDetailsPort
         );
     }
 
     @Test
-    void testCreateAdvice_ConfidenceCalculateIsNotValid_ThrowException() {
+    void testCalculateAdvice_ConfidenceCalculateIsNotValid_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
         CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
@@ -225,13 +225,13 @@ class CalculateAdviceServiceTest {
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadCreatedAdviceDetailsPort
+            loadCalculatedAdviceDetailsPort
         );
     }
 
     @SneakyThrows
     @Test
-    void testCreateAdvice_AttributeLevelTargetsAreNotValid_ThrowException() {
+    void testCalculateAdvice_AttributeLevelTargetsAreNotValid_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
         CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
@@ -262,13 +262,13 @@ class CalculateAdviceServiceTest {
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadCreatedAdviceDetailsPort
+            loadCalculatedAdviceDetailsPort
         );
     }
 
     @SneakyThrows
     @Test
-    void testCreateAdvice_CalculationInterrupted_ThrowException() {
+    void testCalculateAdvice_CalculationInterrupted_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
         CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
@@ -317,13 +317,13 @@ class CalculateAdviceServiceTest {
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
-            loadCreatedAdviceDetailsPort
+            loadCalculatedAdviceDetailsPort
         );
     }
 
     @SneakyThrows
     @Test
-    void testCreateAdvice_CalculationExecutionException_ThrowException() {
+    void testCalculateAdvice_CalculationExecutionException_ThrowException() {
         List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
         CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
@@ -373,13 +373,13 @@ class CalculateAdviceServiceTest {
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
-            loadCreatedAdviceDetailsPort
+            loadCalculatedAdviceDetailsPort
         );
     }
 
     @SneakyThrows
     @Test
-    void testCreateAdvice_ValidParam_ReturnsAdvice() {
+    void testCalculateAdvice_ValidParam_ReturnsAdvice() {
         List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
         var param = new CalculateAdviceUseCase.Param(
             randomUUID(),
@@ -404,7 +404,7 @@ class CalculateAdviceServiceTest {
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
-        verify(loadCreatedAdviceDetailsPort, times(1)).loadAdviceDetails(any());
+        verify(loadCalculatedAdviceDetailsPort, times(1)).loadAdviceDetails(any());
     }
 
     private void mockPorts(CalculateAdviceUseCase.Param param, Long spaceId) throws InterruptedException, ExecutionException {
@@ -469,7 +469,7 @@ class CalculateAdviceServiceTest {
             new AdviceOption(4, "caption4")
         );
         var questionsPortResult2 = new Result(adviceQuestion2, optionListItems2, List.of(attribute), questionnaire);
-        when(loadCreatedAdviceDetailsPort.loadAdviceDetails(List.of(question1.getId(), question2.getId())))
+        when(loadCalculatedAdviceDetailsPort.loadAdviceDetails(List.of(question1.getId(), question2.getId())))
             .thenReturn(List.of(questionsPortResult1, questionsPortResult2));
     }
 }

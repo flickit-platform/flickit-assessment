@@ -1,7 +1,7 @@
 package org.flickit.assessment.advice.adapter.out.persistence.attributeleveltarget;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase.AttributeLevelTarget;
+import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.port.out.attributeleveltarget.CreateAttributeLevelTargetPort;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.advice.advice.AdviceJpaRepository;
