@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.evidence;
 
+import org.flickit.assessment.core.application.domain.EvidenceType;
 import org.flickit.assessment.core.application.port.in.evidence.UpdateEvidenceUseCase;
 import org.flickit.assessment.core.application.port.out.evidence.UpdateEvidencePort;
 import org.junit.jupiter.api.Test;
@@ -28,9 +29,11 @@ class UpdateEvidenceServiceTest {
     @Test
     void testUpdateEvidence_ValidParam_UpdatedAndReturnsId() {
         var savedEvidence = simpleEvidence();
+        String code = EvidenceType.values()[savedEvidence.getType()].getCode();
         var param = new UpdateEvidenceUseCase.Param(
             savedEvidence.getId(),
             "new " + savedEvidence.getDescription(),
+            code,
             savedEvidence.getLastModifiedById()
         );
 

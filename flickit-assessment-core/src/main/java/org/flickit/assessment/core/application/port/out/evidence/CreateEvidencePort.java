@@ -12,6 +12,7 @@ public interface CreateEvidencePort {
                  LocalDateTime lastModificationTime,
                  UUID createdById,
                  UUID assessmentId,
-                 Long questionId) {
+                 Long questionId,
+                 Integer type) {
     }
 }
