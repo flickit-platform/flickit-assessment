@@ -1,8 +1,7 @@
 package org.flickit.assessment.advice.application.port.in;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase;
-import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase.AttributeLevelTarget;
+import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

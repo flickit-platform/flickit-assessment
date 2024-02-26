@@ -2,6 +2,12 @@ package org.flickit.assessment.advice.application.service.advice;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
+import org.flickit.assessment.advice.application.domain.Plan;
+import org.flickit.assessment.advice.application.domain.Question;
+import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
+import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.advicequestion.CreateAdviceQuestionPort;
@@ -63,7 +69,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
 
     private void validateAssessmentAttributeRelation(UUID assessmentId, List<CalculateAdviceUseCase.AttributeLevelTarget> attributeLevelTargets) {
         Set<Long> selectedAttrIds = attributeLevelTargets.stream()
-            .map(CalculateAdviceUseCase.AttributeLevelTarget::attributeId)
+            .map(AttributeLevelTarget::attributeId)
             .collect(Collectors.toSet());
         Set<Long> loadedAttrIds =
             loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, selectedAttrIds);
@@ -74,7 +80,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
 
     private void validateAssessmentLevelRelation(UUID assessmentId, List<CalculateAdviceUseCase.AttributeLevelTarget> attributeLevelTargets) {
         Set<Long> selectedLevelIds = attributeLevelTargets.stream()
-            .map(CalculateAdviceUseCase.AttributeLevelTarget::maturityLevelId)
+            .map(AttributeLevelTarget::maturityLevelId)
             .collect(Collectors.toSet());
         Set<Long> loadedLevelIds =
             loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(assessmentId, selectedLevelIds);

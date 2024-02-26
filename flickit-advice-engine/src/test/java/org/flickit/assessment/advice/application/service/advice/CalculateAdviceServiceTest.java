@@ -7,20 +7,18 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.advice.*;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
-import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase.AttributeLevelTarget;
-import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase.Param;
+import org.flickit.assessment.advice.application.port.in.CalculateAdviceUseCase;
+import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
+import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort.Result;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
-import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.CalculateNotValidException;
-import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,8 +33,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static java.util.UUID.randomUUID;
-import static org.flickit.assessment.advice.application.service.QuestionMother.createQuestionWithTargetAndCurrentOption;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
+import static org.flickit.assessment.advice.test.fixture.application.QuestionMother.createQuestionWithTargetAndCurrentOption;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,6 +57,15 @@ class CalculateAdviceServiceTest {
     private CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
+    private LoadSelectedAttributeIdsRelatedToAssessmentPort loadSelectedAttributeIdsRelatedToAssessmentPort;
+
+    @Mock
+    private LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
+
+    @Mock
+    private LoadAttributeCurrentAndTargetLevelIndexPort loadAttributeCurrentAndTargetLevelIndexPort;
+
+    @Mock
     private LoadAdviceCalculationInfoPort loadInfoPort;
 
     @Mock
@@ -67,16 +74,10 @@ class CalculateAdviceServiceTest {
     @Mock
     private LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
 
-    @Mock
-    private LoadSelectedAttributeIdsRelatedToAssessmentPort loadSelectedAttributeIdsRelatedToAssessmentPort;
-
-    @Mock
-    private LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
-
     @Test
     void testCreateAdvice_AssessmentNotExist_ThrowException() {
-        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        var param = new Param(
+        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -97,11 +98,11 @@ class CalculateAdviceServiceTest {
 
     @Test
     void testCreateAdvice_AssessmentAttributeNotRelated_ThrowException() {
-        var attributeLevelTargets =
+        List<AttributeLevelTarget> attributeLevelTargets =
             List.of(new AttributeLevelTarget(1L, 2L),
                 new AttributeLevelTarget(2L, 3L));
-        var assessmentId = randomUUID();
-        var param = new Param(
+        UUID assessmentId = randomUUID();
+        CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             assessmentId,
             attributeLevelTargets,
             randomUUID()
@@ -120,11 +121,11 @@ class CalculateAdviceServiceTest {
 
     @Test
     void testCreateAdvice_AssessmentMaturityLevelNotRelated_ThrowException() {
-        var attributeLevelTargets =
+        List<AttributeLevelTarget> attributeLevelTargets =
             List.of(new AttributeLevelTarget(1L, 2L),
                 new AttributeLevelTarget(2L, 3L));
-        var assessmentId = randomUUID();
-        var param = new Param(
+        UUID assessmentId = randomUUID();
+        CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             assessmentId,
             attributeLevelTargets,
             randomUUID()
@@ -145,8 +146,8 @@ class CalculateAdviceServiceTest {
 
     @Test
     void testCreateAdvice_UserHasNotAccessToAssessment_ThrowException() {
-        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        var param = new Param(
+        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -170,8 +171,8 @@ class CalculateAdviceServiceTest {
 
     @Test
     void testCreateAdvice_AssessmentCalculateIsNotValid_ThrowException() {
-        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        var param = new Param(
+        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -199,8 +200,8 @@ class CalculateAdviceServiceTest {
 
     @Test
     void testCreateAdvice_ConfidenceCalculateIsNotValid_ThrowException() {
-        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        var param = new Param(
+        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -230,9 +231,46 @@ class CalculateAdviceServiceTest {
 
     @SneakyThrows
     @Test
+    void testCreateAdvice_AttributeLevelTargetsAreNotValid_ThrowException() {
+        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
+            randomUUID(),
+            attributeLevelTargets,
+            randomUUID()
+        );
+
+        var spaceId = 5L;
+        when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
+            .thenReturn(Optional.of(spaceId));
+
+        when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
+            .thenReturn(true);
+        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(param.getAssessmentId(), Set.of(1L)))
+            .thenReturn(Set.of(1L));
+        when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L)))
+            .thenReturn(Set.of(2L));
+        when(loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets()))
+            .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 2)));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+
+        assertThrows(ValidationException.class, () -> service.calculateAdvice(param), CALCULATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
+
+        verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
+        verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
+        verify(loadAttributeCurrentAndTargetLevelIndexPort, times(1))
+            .loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets());
+        Mockito.verifyNoInteractions(
+            loadInfoPort,
+            solverManager,
+            loadCreatedAdviceDetailsPort
+        );
+    }
+
+    @SneakyThrows
+    @Test
     void testCreateAdvice_CalculationInterrupted_ThrowException() {
-        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        var param = new Param(
+        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -247,6 +285,8 @@ class CalculateAdviceServiceTest {
             .thenReturn(Set.of(1L));
         when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L)))
             .thenReturn(Set.of(2L));
+        when(loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets()))
+            .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 3)));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
@@ -272,17 +312,20 @@ class CalculateAdviceServiceTest {
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
+        verify(loadAttributeCurrentAndTargetLevelIndexPort, times(1))
+            .loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
             loadCreatedAdviceDetailsPort
         );
     }
+
     @SneakyThrows
     @Test
     void testCreateAdvice_CalculationExecutionException_ThrowException() {
-        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        var param = new Param(
+        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        CalculateAdviceUseCase.Param param = new CalculateAdviceUseCase.Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -298,6 +341,8 @@ class CalculateAdviceServiceTest {
             .thenReturn(Set.of(1L));
         when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L)))
             .thenReturn(Set.of(2L));
+        when(loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets()))
+            .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 3)));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
@@ -323,6 +368,8 @@ class CalculateAdviceServiceTest {
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(checkSpaceAccessPort, times(1)).checkIsMember(spaceId, param.getCurrentUserId());
+        verify(loadAttributeCurrentAndTargetLevelIndexPort, times(1))
+            .loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
@@ -333,8 +380,8 @@ class CalculateAdviceServiceTest {
     @SneakyThrows
     @Test
     void testCreateAdvice_ValidParam_ReturnsAdvice() {
-        var attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-        var param = new Param(
+        List<AttributeLevelTarget> attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
+        var param = new CalculateAdviceUseCase.Param(
             randomUUID(),
             attributeLevelTargets,
             randomUUID()
@@ -360,7 +407,7 @@ class CalculateAdviceServiceTest {
         verify(loadCreatedAdviceDetailsPort, times(1)).loadAdviceDetails(any());
     }
 
-    private void mockPorts(Param param, Long spaceId) throws InterruptedException, ExecutionException {
+    private void mockPorts(CalculateAdviceUseCase.Param param, Long spaceId) throws InterruptedException, ExecutionException {
         when(loadAssessmentSpacePort.loadAssessmentSpaceId(param.getAssessmentId()))
             .thenReturn(Optional.of(spaceId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, param.getCurrentUserId()))
@@ -369,6 +416,8 @@ class CalculateAdviceServiceTest {
             .thenReturn(Set.of(1L));
         when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L)))
             .thenReturn(Set.of(2L));
+        when(loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets()))
+            .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 3)));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);

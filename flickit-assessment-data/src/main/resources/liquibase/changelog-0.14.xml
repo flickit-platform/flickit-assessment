@@ -123,7 +123,13 @@
         <renameSequence oldSequenceName="baseinfo_profiledsl_id_seq" newSequenceName="fak_kit_dsl_id_seq"/>
     </changeSet>
 
-    <changeSet id="0.14-23" author="Mahdi Rezazadeh">
+    <changeSet id="0.14-23" author="Ali Sedaghat">
+        <addColumn tableName="fac_evidence">
+            <column name="type" type="tinyint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-24" author="Mahdi Rezazadeh">
         <createTable tableName="faa_advice">
             <column name="id" type="uuid">
                 <constraints primaryKey="true"/>
@@ -143,13 +149,13 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="0.14-24" author="Mahdi Rezazadeh">
+    <changeSet id="0.14-25" author="Mahdi Rezazadeh">
         <addUniqueConstraint tableName="faa_advice"
                              columnNames="assessment_result_id"
                              constraintName="uq_faa_advice_assessmentResultId"/>
     </changeSet>
 
-    <changeSet id="0.14-25" author="Mahdi Rezazadeh">
+    <changeSet id="0.14-26" author="Mahdi Rezazadeh">
         <createTable tableName="faa_attribute_level_target">
             <column name="id" type="uuid">
                 <constraints primaryKey="true"/>
@@ -166,13 +172,13 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="0.14-26" author="Mahdi Rezazadeh">
+    <changeSet id="0.14-27" author="Mahdi Rezazadeh">
         <addUniqueConstraint tableName="faa_attribute_level_target"
                              columnNames="advice_id, attribute_id"
                              constraintName="uq_faa_attribute_level_target_adviceId_attributeId"/>
     </changeSet>
 
-    <changeSet id="0.14-27" author="Mahdi Rezazadeh">
+    <changeSet id="0.14-28" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseTableName="faa_attribute_level_target"
                                  baseColumnNames="advice_id"
                                  referencedTableName="faa_advice"
@@ -180,7 +186,7 @@
                                  constraintName="fk_faa_attribute_level_target_advice"/>
     </changeSet>
 
-    <changeSet id="0.14-28" author="Mahdi Rezazadeh">
+    <changeSet id="0.14-29" author="Mahdi Rezazadeh">
         <createTable tableName="faa_advice_question">
             <column name="id" type="uuid">
                 <constraints primaryKey="true"/>
@@ -200,13 +206,13 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="0.14-29" author="Mahdi Rezazadeh">
+    <changeSet id="0.14-30" author="Mahdi Rezazadeh">
         <addUniqueConstraint tableName="faa_advice_question"
                              columnNames="advice_id, question_id"
                              constraintName="uq_faa_advice_question_adviceId_questionId"/>
     </changeSet>
 
-    <changeSet id="0.14-30" author="Mahdi Rezazadeh">
+    <changeSet id="0.14-31" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseTableName="faa_advice_question"
                                  baseColumnNames="advice_id"
                                  referencedTableName="faa_advice"
