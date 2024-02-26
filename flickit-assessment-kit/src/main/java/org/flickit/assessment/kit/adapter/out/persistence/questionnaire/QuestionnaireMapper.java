@@ -34,7 +34,7 @@ public class QuestionnaireMapper {
             questionnaire.getLastModificationTime(),
             createdBy,
             createdBy,
-            null
+            UUID.randomUUID()
         );
     }
 }

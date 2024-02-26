@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerOptionMapper {
@@ -32,7 +33,7 @@ public class AnswerOptionMapper {
             creationTime,
             param.createdBy(),
             param.createdBy(),
-            null
+            UUID.randomUUID()
         );
     }
 }

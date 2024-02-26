@@ -5,6 +5,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public class SubjectJpaEntityMother {
 
@@ -23,7 +24,7 @@ public class SubjectJpaEntityMother {
             null,
             null,
             attributes,
-            1L
+            UUID.randomUUID()
         );
     }
 }
