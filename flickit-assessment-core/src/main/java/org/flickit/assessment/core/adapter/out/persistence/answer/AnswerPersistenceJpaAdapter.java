@@ -39,7 +39,8 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public UUID persist(CreateAnswerPort.Param param) {
-        UUID questionReferenceNumber = questionRepository.findReferenceNumberById(param.questionId());
+        UUID questionReferenceNumber = questionRepository.findReferenceNumberById(param.questionId()).
+            orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND));
         AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param, questionReferenceNumber);
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepo.findById(param.assessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
