@@ -1,12 +1,8 @@
 package org.flickit.assessment.advice.adapter.out.calculation;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
-import org.flickit.assessment.advice.application.domain.Option;
-import org.flickit.assessment.advice.application.domain.Plan;
-import org.flickit.assessment.advice.application.domain.Question;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
-import org.flickit.assessment.advice.application.port.out.LoadAdviceCalculationInfoPort;
+import org.flickit.assessment.advice.application.domain.*;
+import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaEntity;
@@ -44,8 +40,8 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
         Map<Long, Question> idToQuestions = new HashMap<>();
 
         for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
-            Long attributeId = attributeLevelTarget.attributeId();
-            Long maturityLevelId = attributeLevelTarget.maturityLevelId();
+            Long attributeId = attributeLevelTarget.getAttributeId();
+            Long maturityLevelId = attributeLevelTarget.getMaturityLevelId();
 
             List<LevelCompetenceJpaEntity> levelCompetenceEntities =
                 levelCompetenceRepository.findByAffectedLevelId(maturityLevelId);

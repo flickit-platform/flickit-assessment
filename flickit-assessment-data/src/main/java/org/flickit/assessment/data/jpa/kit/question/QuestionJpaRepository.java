@@ -45,9 +45,10 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionJoinQuestionImpactView> loadByAssessmentKitId(@Param("kitId") Long kitId);
 
     @Query("""
-        SELECT q FROM QuestionJpaEntity q
-        WHERE q.questionnaireId IN
-            (SELECT qs.questionnaireId FROM SubjectQuestionnaireJpaEntity qs WHERE qs.subjectId = :subjectId)
+        SELECT DISTINCT q FROM QuestionJpaEntity q
+        LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
+        LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id
+        WHERE at.subject.id = :subjectId
         """)
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 
@@ -66,7 +67,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
         JOIN AssessmentResultJpaEntity asmr ON asm.id = asmr.assessment.id
         JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
         JOIN AnswerOptionJpaEntity qanso ON q.id = qanso.questionId
-        JOIN  AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId
+        LEFT JOIN  AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId and qi.id = ansoi.questionImpact.id
         LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = asmr.id and q.id = ans.questionId
         LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id
         WHERE (asm.id = :assessmentId
