@@ -284,7 +284,8 @@
     </changeSet>
 
     <changeSet id="0.15-43" author="MKouhestani">
-        <addForeignKeyConstraint baseTableName="fak_kit_dsl" baseColumnNames="assessment_kit_id"
+        <addForeignKeyConstraint baseTableName="fak_kit_dsl"
+                                 baseColumnNames="assessment_kit_id"
                                  referencedTableName="fak_assessment_kit"
                                  referencedColumnNames="id"
                                  constraintName="fk_fak_kitdsl_assessmentkit"
@@ -296,7 +297,8 @@
     </changeSet>
 
     <changeSet id="0.15-45" author="MKouhestani">
-        <addForeignKeyConstraint baseTableName="baseinfo_assessmentkittag_assessmentkits" baseColumnNames="assessmentkit_id"
+        <addForeignKeyConstraint baseTableName="baseinfo_assessmentkittag_assessmentkits"
+                                 baseColumnNames="assessmentkit_id"
                                  referencedTableName="fak_assessment_kit"
                                  referencedColumnNames="id"
                                  constraintName="baseinfo_profiletag__assessmentkit_id_511ef243_fk_baseinfo_"
@@ -317,4 +319,14 @@
                                  validate="true"/>
     </changeSet>
 
+    <changeSet id="0.15-48" author="MKouhestani">
+        <addColumn tableName="fac_assessment_result">
+            <column name="kit_version_id" type="bigint"
+                    valueComputed="fak_assessment_kit.kit_version_id FROM fak_assessment_kit
+                    LEFT JOIN fac_assessment ON fak_assessment_kit.id = fac_assessment.assessment_kit_id
+                    WHERE assessment_id = fac_assessment.id" defaultValue="0"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
+

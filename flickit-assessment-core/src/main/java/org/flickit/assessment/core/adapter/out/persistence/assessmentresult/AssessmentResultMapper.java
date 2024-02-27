@@ -20,6 +20,7 @@ public class AssessmentResultMapper {
             null,
             null,
             null,
+            null,
             param.isCalculateValid(),
             param.isConfidenceValid(),
             param.lastModificationTime(),
