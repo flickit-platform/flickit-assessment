@@ -6,7 +6,7 @@ public interface GetEvidenceTypesUseCase {
 
     Result getEvidenceTypes();
 
-    record EvidenceTypeItem(String title, String code) {}
-
     record Result(List<EvidenceTypeItem> types) {}
+
+    record EvidenceTypeItem(String code, String title) {}
 }
