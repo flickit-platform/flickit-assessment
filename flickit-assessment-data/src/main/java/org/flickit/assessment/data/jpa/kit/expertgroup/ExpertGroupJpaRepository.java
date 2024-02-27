@@ -60,10 +60,10 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     @Query("""
         SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END
         FROM ExpertGroupJpaEntity e
-        WHERE e.id = :expertGroupId AND e.ownerId = :ownerId
+        WHERE e.id = :expertGroupId AND e.ownerId = :userId
         """)
     boolean checkUserIsOwner(@Param("expertGroupId") long expertGroupId,
-                             @Param("ownerId") UUID ownerId);
+                             @Param("userId") UUID userId);
 
     @Modifying
     @Query("""
