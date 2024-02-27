@@ -767,24 +767,30 @@
 			"name": "Get Attribute Evidence List",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/attribute-evidences?assessmentId=625e6194-b710-4ed4-90e5-d6372ee3cb96&attributeId=1564&size=10&page=0",
+					"raw": "{{base_url}}/{{api_path}}/assessments/625e6194-b710-4ed4-90e5-d6372ee3cb96/attributes/1564/evidences?type=NEGATIVE&size=10&page=0",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"attribute-evidences"
+						"assessments",
+						"625e6194-b710-4ed4-90e5-d6372ee3cb96",
+						"attributes",
+						"1564",
+						"evidences"
 					],
 					"query": [
 						{
-							"key": "assessmentId",
-							"value": "625e6194-b710-4ed4-90e5-d6372ee3cb96"
-						},
-						{
-							"key": "attributeId",
-							"value": "1564"
+							"key": "type",
+							"value": "NEGATIVE"
 						},
 						{
 							"key": "size",

@@ -50,10 +50,13 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             JOIN EvidenceJpaEntity evd
             ON evd.questionId = q.id
             WHERE evd.assessmentId = :assessmentId
+            AND evd.type = :type
             AND evd.deleted = false
             AND atr.id = :attributeId
             ORDER BY evd.lastModificationTime DESC
     """)
-    Page<AttributeEvidenceView> findByAttributeIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(UUID assessmentId,
-                                                                                                               Long attributeId,Pageable pageable);
+    Page<AttributeEvidenceView> findAssessmentAttributeEvidencesByTypeAndModificationTimeDescOrder(UUID assessmentId,
+                                                                                            Long attributeId,
+                                                                                            Integer type,
+                                                                                            Pageable pageable);
 }

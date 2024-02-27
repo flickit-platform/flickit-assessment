@@ -9,6 +9,7 @@ public interface LoadAttributeEvidencesPort {
 
     PaginatedResponse<AttributeEvidenceListItem> loadAttributeEvidences(UUID assessmentId,
                                                                         Long attributeId,
+                                                                        Integer type,
                                                                         int page,
                                                                         int size);
 }
