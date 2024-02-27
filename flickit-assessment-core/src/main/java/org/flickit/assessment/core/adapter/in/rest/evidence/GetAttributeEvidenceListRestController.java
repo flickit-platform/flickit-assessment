@@ -25,36 +25,19 @@ public class GetAttributeEvidenceListRestController {
 
     @GetMapping("/assessments/{assessmentId}/attributes/{attributeId}/evidences")
     ResponseEntity<PaginatedResponse<AttributeEvidenceListItem>> getAttributeEvidenceList(
-        @PathVariable("assessmentId")
-        UUID assessmentId,
-        @PathVariable("attributeId")
-        Long attributeId,
-        @RequestParam("type")
-        String type,
+        @PathVariable("assessmentId") UUID assessmentId,
+        @PathVariable("attributeId") Long attributeId,
+        @RequestParam("type") String type,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page
     ) {
         UUID currentUserId = userContext.getUser().id();
-        var result = useCase.getAttributeEvidenceList(toParam(assessmentId,
-            attributeId,
-            type,
-            currentUserId,
-            size,
-            page));
+        var result = useCase.getAttributeEvidenceList(toParam(assessmentId, attributeId, type, currentUserId, size, page));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private GetAttributeEvidenceListUseCase.Param toParam(UUID assessmentId,
-                                                          Long attributeId,
-                                                          String type,
-                                                          UUID currentUserId,
-                                                          int size,
-                                                          int page) {
-        return new GetAttributeEvidenceListUseCase.Param(assessmentId,
-            attributeId,
-            type,
-            currentUserId,
-            size,
-            page);
+    private GetAttributeEvidenceListUseCase.Param toParam(UUID assessmentId, Long attributeId, String type,
+                                                          UUID currentUserId, int size, int page) {
+        return new GetAttributeEvidenceListUseCase.Param(assessmentId, attributeId, type, currentUserId, size, page);
     }
 }
