@@ -18,6 +18,7 @@ import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -68,7 +69,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
 
         createKitTagRelationPort.persist(param.getTagIds(), kitId);
 
-        updateKitDslPort.update(param.getKitDslId(), kitId);
+        updateKitDslPort.update(param.getKitDslId(), kitId, param.getCurrentUserId(), LocalDateTime.now());
 
         List<UUID> expertGroupMemberIds = loadExpertGroupMemberIdsPort.loadMemberIds(param.getExpertGroupId())
             .stream()

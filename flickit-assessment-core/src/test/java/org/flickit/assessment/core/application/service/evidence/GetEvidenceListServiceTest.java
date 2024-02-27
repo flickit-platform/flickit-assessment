@@ -90,6 +90,7 @@ class GetEvidenceListServiceTest {
             "desc",
             UUID.randomUUID(),
             UUID.randomUUID(),
+            "type",
             LocalDateTime.now()
         );
     }
