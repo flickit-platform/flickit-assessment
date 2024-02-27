@@ -1,7 +1,7 @@
 package org.flickit.assessment.advice.application.port.out.calculation;
 
+import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.Plan;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.AttributeLevelTarget;
 
 import java.util.List;
 import java.util.UUID;

@@ -35,6 +35,7 @@ public class ErrorMessageKey {
     public static final String ADD_EVIDENCE_DESC_SIZE_MAX = "add-evidence.desc.size.max";
     public static final String ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL = "add-evidence.assessmentId.notNull";
     public static final String ADD_EVIDENCE_QUESTION_ID_NOT_NULL = "add-evidence.questionId.notNull";
+    public static final String ADD_EVIDENCE_TYPE_INVALID = "add-evidence.type.invalid";
 
     public static final String UPDATE_ASSESSMENT_ID_NOT_NULL = "update-assessment.id.notNull";
     public static final String UPDATE_ASSESSMENT_ID_NOT_FOUND = "update-assessment.id.notFound";
@@ -80,6 +81,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_EVIDENCE_DESC_NOT_BLANK = "update-evidence.description.notBlank";
     public static final String UPDATE_EVIDENCE_DESC_MIN_SIZE = "update-evidence.description.size.min";
     public static final String UPDATE_EVIDENCE_DESC_MAX_SIZE = "update-evidence.description.size.max";
+    public static final String UPDATE_EVIDENCE_TYPE_INVALID = "update-evidence.type.invalid";
 
     public static final String GET_SUBJECT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-subject-progress.assessment.id.notNull";
     public static final String GET_SUBJECT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND = "get-subject-progress.assessmentResultId.notFound";
