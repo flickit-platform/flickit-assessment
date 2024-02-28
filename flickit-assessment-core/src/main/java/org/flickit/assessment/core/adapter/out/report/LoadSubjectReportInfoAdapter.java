@@ -50,7 +50,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
         var attributeValues = attributeValuePersistenceJpaAdapter.loadBySubjectId(assessmentResultId, subjectId, maturityLevels);
         SubjectValue subjectValue = new SubjectValue(svEntity.getId(),
-            new Subject(svEntity.getSubjectId()),
+            new Subject(svEntity.getSubjectId(), "subject" + svEntity.getSubjectId()),
             attributeValues,
             findMaturityLevelById(maturityLevels, svEntity.getMaturityLevelId()),
             svEntity.getConfidenceValue()

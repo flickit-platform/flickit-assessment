@@ -63,7 +63,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .map(x ->
                 new SubjectValue(
                     x.getId(),
-                    new Subject(x.getSubjectId()),
+                    new Subject(x.getSubjectId(), "subject" + x.getSubjectId()),
                     null,
                     findMaturityLevelById(maturityLevels, x.getMaturityLevelId()),
                     x.getConfidenceValue())

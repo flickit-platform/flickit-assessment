@@ -5,14 +5,20 @@ import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.Attribu
 import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
+
+import static org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper.mapToDomainModel;
 
 @Component("coreSubjectPersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class SubjectPersistenceJpaAdapter implements LoadSubjectPort {
+public class SubjectPersistenceJpaAdapter implements
+    LoadSubjectsPort,
+    LoadSubjectPort {
 
     private final SubjectJpaRepository repository;
 
@@ -25,7 +31,13 @@ public class SubjectPersistenceJpaAdapter implements LoadSubjectPort {
                 .map(AttributeMapper::mapToDomainModel)
                 .toList();
 
-            return SubjectMapper.mapToDomainModel(entity, attributes);
+            return mapToDomainModel(entity, attributes);
         }).toList();
+    }
+
+    @Override
+    public Optional<Subject> loadById(Long id) {
+        return repository.findById(id)
+            .map(entity -> mapToDomainModel(entity, null));
     }
 }

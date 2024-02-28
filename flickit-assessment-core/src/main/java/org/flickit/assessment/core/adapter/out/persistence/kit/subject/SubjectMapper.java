@@ -13,6 +13,7 @@ public class SubjectMapper {
     public static Subject mapToDomainModel(SubjectJpaEntity entity, List<QualityAttribute> attributes) {
         return new Subject(
             entity.getId(),
+            entity.getTitle(),
             attributes
         );
     }

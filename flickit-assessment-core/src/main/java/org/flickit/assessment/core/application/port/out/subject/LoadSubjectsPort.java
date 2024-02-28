@@ -2,9 +2,9 @@ package org.flickit.assessment.core.application.port.out.subject;
 
 import org.flickit.assessment.core.application.domain.Subject;
 
-import java.util.Optional;
+import java.util.List;
 
-public interface LoadSubjectPort {
+public interface LoadSubjectsPort {
 
-    Optional<Subject> loadById(Long id);
+    List<Subject> loadByKitIdWithAttributes(Long kitId);
 }
