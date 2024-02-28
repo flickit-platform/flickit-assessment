@@ -78,11 +78,11 @@ public class EvidencePersistenceJpaAdapter implements
                                                                                Integer type,
                                                                                int page,
                                                                                int size) {
-        var pageResult = repository.findAssessmentAttributeEvidencesByTypeAndModificationTimeDescOrder(
+        var pageResult = repository.findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(
             assessmentId, attributeId, type, PageRequest.of(page, size)
         );
         var items = pageResult.getContent().stream()
-            .map(EvidenceMapper::toAttributeEvidenceListItem)
+            .map(e -> new AttributeEvidenceListItem(e.getDescription()))
             .toList();
         return new PaginatedResponse<>(
             items,

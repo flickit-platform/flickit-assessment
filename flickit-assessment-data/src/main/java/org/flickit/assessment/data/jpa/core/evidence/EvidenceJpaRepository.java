@@ -40,23 +40,30 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
-    @Query("""
-            SELECT evd.description AS description, evd.type AS type
+    @Query(value = """
+            SELECT evd.description AS description
             FROM AttributeJpaEntity atr
-            JOIN QuestionImpactJpaEntity  qi
-            ON atr.id = qi.attributeId
-            JOIN QuestionJpaEntity q
-            ON qi.questionId = q.id
-            JOIN EvidenceJpaEntity evd
-            ON evd.questionId = q.id
+            JOIN QuestionImpactJpaEntity qi ON atr.id = qi.attributeId
+            JOIN QuestionJpaEntity q ON qi.questionId = q.id
+            JOIN EvidenceJpaEntity evd ON evd.questionId = q.id
             WHERE evd.assessmentId = :assessmentId
-            AND evd.type = :type
-            AND evd.deleted = false
-            AND atr.id = :attributeId
+                AND evd.type = :type
+                AND evd.deleted = false
+                AND atr.id = :attributeId
             ORDER BY evd.lastModificationTime DESC
+    """, countQuery = """
+            SELECT count(evd.description)
+            FROM AttributeJpaEntity atr
+            JOIN QuestionImpactJpaEntity qi ON atr.id = qi.attributeId
+            JOIN QuestionJpaEntity q ON qi.questionId = q.id
+            JOIN EvidenceJpaEntity evd ON evd.questionId = q.id
+            WHERE evd.assessmentId = :assessmentId
+                AND evd.type = :type
+                AND evd.deleted = false
+                AND atr.id = :attributeId
     """)
-    Page<AttributeEvidenceView> findAssessmentAttributeEvidencesByTypeAndModificationTimeDescOrder(UUID assessmentId,
-                                                                                            Long attributeId,
-                                                                                            Integer type,
-                                                                                            Pageable pageable);
+    Page<AttributeEvidenceView> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(UUID assessmentId,
+                                                                                                      Long attributeId,
+                                                                                                      Integer type,
+                                                                                                      Pageable pageable);
 }
