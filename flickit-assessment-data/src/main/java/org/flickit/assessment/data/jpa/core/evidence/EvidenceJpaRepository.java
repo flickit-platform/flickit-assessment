@@ -42,25 +42,27 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
 
     @Query(value = """
             SELECT evd.description AS description
-            FROM AttributeJpaEntity atr
-            JOIN QuestionImpactJpaEntity qi ON atr.id = qi.attributeId
-            JOIN QuestionJpaEntity q ON qi.questionId = q.id
-            JOIN EvidenceJpaEntity evd ON evd.questionId = q.id
+            FROM QuestionJpaEntity q
+            LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
             WHERE evd.assessmentId = :assessmentId
                 AND evd.type = :type
                 AND evd.deleted = false
-                AND atr.id = :attributeId
+                AND q.id IN (SELECT qs.id
+                             FROM QuestionJpaEntity qs
+                             LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
+                             WHERE qi.attributeId = :attributeId)
             ORDER BY evd.lastModificationTime DESC
     """, countQuery = """
             SELECT count(evd.description)
-            FROM AttributeJpaEntity atr
-            JOIN QuestionImpactJpaEntity qi ON atr.id = qi.attributeId
-            JOIN QuestionJpaEntity q ON qi.questionId = q.id
-            JOIN EvidenceJpaEntity evd ON evd.questionId = q.id
+            FROM QuestionJpaEntity q
+            LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
             WHERE evd.assessmentId = :assessmentId
                 AND evd.type = :type
                 AND evd.deleted = false
-                AND atr.id = :attributeId
+                AND q.id IN (SELECT qs.id
+                             FROM QuestionJpaEntity qs
+                             LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
+                             WHERE qi.attributeId = :attributeId)
     """)
     Page<AttributeEvidenceView> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(UUID assessmentId,
                                                                                                       Long attributeId,
