@@ -5,6 +5,7 @@ import org.flickit.assessment.core.application.port.in.subject.GetSubjectProgres
 import org.flickit.assessment.core.application.port.out.answer.CountAnswersByQuestionIdsPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsBySubjectPort;
+import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
 import org.flickit.assessment.core.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +28,9 @@ class GetSubjectProgressServiceTest {
 
     @Mock
     private LoadQuestionsBySubjectPort loadQuestionsBySubjectPort;
+
+    @Mock
+    private LoadSubjectPort loadSubjectPort;
 
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
@@ -50,6 +55,8 @@ class GetSubjectProgressServiceTest {
 
         when(loadQuestionsBySubjectPort.loadQuestionsBySubject(subjectValue.getSubject().getId())).
             thenReturn(questions);
+        when(loadSubjectPort.loadById(subjectValue.getSubject().getId())).
+            thenReturn(Optional.of(subjectValue.getSubject()));
         when(loadAssessmentResultPort.loadByAssessmentId(result.getAssessment().getId())).thenReturn(Optional.of(result));
         when(countAnswersByQuestionIdsPort.countByQuestionIds(
             result.getId(), questionIds)).thenReturn(2);
@@ -57,6 +64,8 @@ class GetSubjectProgressServiceTest {
         var subjectProgress = service.getSubjectProgress(new GetSubjectProgressUseCase.Param(
             result.getAssessment().getId(), subjectValue.getSubject().getId()));
 
+        assertFalse(subjectProgress.title().isBlank());
         assertEquals(2, subjectProgress.answerCount());
+        assertEquals(3, subjectProgress.questionCount());
     }
 }
