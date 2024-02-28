@@ -5,15 +5,19 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 @Component("adviceAttributeValuePersistenceJpaAdapter")
 @RequiredArgsConstructor
@@ -21,24 +25,29 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
 
     private final QualityAttributeValueJpaRepository repository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
+    private final AttributeJpaRepository attributeRepository;
 
     @Override
     public List<Result> loadAttributeCurrentAndTargetLevelIndex(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+        var maturityLevels = maturityLevelRepository.findAllInKitWithOneId(attributeLevelTargets.get(0).getMaturityLevelId());
+        var maturityLevelsIdMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+
         var attributeIds = attributeLevelTargets.stream()
             .map(AttributeLevelTarget::getAttributeId)
             .toList();
-        var attributeValues = repository.findByAssessmentResult_assessment_IdAndQualityAttributeIdIn(assessmentId, attributeIds);
-        var attributeValuesIdMap = attributeValues.stream()
-            .collect(Collectors.toMap(QualityAttributeValueJpaEntity::getQualityAttributeId, Function.identity()));
+        var attributes = attributeRepository.findAllByIdsAndAssessmentId(attributeIds, assessmentId);
+        Map<UUID, Long> attributeReferenceNumberToIdMap = attributes.stream()
+            .collect(toMap(AttributeJpaEntity::getReferenceNumber, AttributeJpaEntity::getId));
+        var attributeValues = repository.findByAssessmentResult_assessment_IdAndAttributeReferenceNumberIn(assessmentId, attributeReferenceNumberToIdMap.keySet().stream().toList());
 
-        var maturityLevels = maturityLevelRepository.findAllInKitWithOneId(attributeLevelTargets.get(0).getMaturityLevelId());
-        var maturityLevelsIdMap = maturityLevels.stream()
-            .collect(Collectors.toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+        Map<Long, QualityAttributeValueJpaEntity> attributeIdToAttributeValueMap = attributeValues.stream()
+            .collect(toMap(a -> attributeReferenceNumberToIdMap.get(a.getAttributeReferenceNumber()), a -> a));
 
         List<Result> result = new ArrayList<>();
         for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
             var attributeId = attributeLevelTarget.getAttributeId();
-            Long currentMaturityLevelId = attributeValuesIdMap.get(attributeId).getMaturityLevelId();
+            Long currentMaturityLevelId = attributeIdToAttributeValueMap.get(attributeId).getMaturityLevelId();
             var currentMaturityLevel = maturityLevelsIdMap
                 .get(currentMaturityLevelId);
             var targetMaturityLevel = maturityLevelsIdMap

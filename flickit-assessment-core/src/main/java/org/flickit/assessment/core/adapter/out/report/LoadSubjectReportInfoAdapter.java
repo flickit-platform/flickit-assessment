@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.port.out.subject.LoadSubjectRepor
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
+    private final AssessmentKitJpaRepository kitRepository;
 
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
     private final QualityAttributeValuePersistenceJpaAdapter attributeValuePersistenceJpaAdapter;
@@ -40,11 +42,12 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
         UUID assessmentResultId = assessmentResultEntity.getId();
         Long kitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
+        Long kitVersionId = kitRepository.loadKitVersionId(kitId);
 
         var svEntity = subjectValueRepo.findBySubjectIdAndAssessmentResult_Id(subjectId, assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
 
-        Map<Long, MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitId(kitId)
+        Map<Long, MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitVersionId(kitVersionId)
             .stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
 

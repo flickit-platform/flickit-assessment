@@ -12,14 +12,14 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QualityAttributeValueMapper {
 
-    public static QualityAttributeValueJpaEntity mapToJpaEntity(Long qualityAttributeId, UUID attributeReferenceNumber) {
+    public static QualityAttributeValueJpaEntity mapToJpaEntity(Long kitVersionId, UUID attributeReferenceNumber) {
         return new QualityAttributeValueJpaEntity(
             null,
             null,
-            qualityAttributeId,
+            kitVersionId,
+            attributeReferenceNumber,
             null,
-            null,
-            attributeReferenceNumber
+            null
         );
     }
 

@@ -10,16 +10,19 @@ import java.util.UUID;
 
 public interface QualityAttributeValueJpaRepository extends JpaRepository<QualityAttributeValueJpaEntity, UUID> {
 
-    List<QualityAttributeValueJpaEntity> findByAssessmentResultId(UUID resultId);
-
+    @Query("""
+        SELECT qav FROM QualityAttributeValueJpaEntity qav
+        LEFT JOIN AttributeJpaEntity a ON a.id = :qualityAttributeId AND qav.attributeReferenceNumber = a.referenceNumber
+        WHERE qav.assessmentResult.id = :assessmentResultId
+        """)
     QualityAttributeValueJpaEntity findByQualityAttributeIdAndAssessmentResult_Id(Long qualityAttributeId, UUID assessmentResultId);
 
-    List<QualityAttributeValueJpaEntity> findByAssessmentResult_assessment_IdAndQualityAttributeIdIn(UUID assessmentId, List<Long> qualityAttributeId);
+    List<QualityAttributeValueJpaEntity> findByAssessmentResult_assessment_IdAndAttributeReferenceNumberIn(UUID assessmentId, List<UUID> attributeReferenceNumbers);
 
     @Query("""
         SELECT av
         FROM QualityAttributeValueJpaEntity av
-        LEFT JOIN AttributeJpaEntity att ON av.qualityAttributeId = att.id and av.assessmentResult.id = :resultId
+        LEFT JOIN AttributeJpaEntity att ON av.attributeReferenceNumber = att.referenceNumber and av.kitVersionId = att.kitVersionId and av.assessmentResult.id = :resultId
         WHERE att.subject.id = :subjectId
         """)
     List<QualityAttributeValueJpaEntity> findByAssessmentResultIdAndSubjectId(UUID resultId, Long subjectId);
@@ -34,4 +37,5 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
     void updateConfidenceValueById(@Param(value = "id") UUID id,
                                    @Param(value = "confidenceValue") Double confidenceValue);
 
+    List<QualityAttributeValueJpaEntity> findByAssessmentResultIdAndKitVersionId(UUID assessmentResultId, Long kitVersionId);
 }

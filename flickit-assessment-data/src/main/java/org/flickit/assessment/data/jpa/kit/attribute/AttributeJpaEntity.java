@@ -55,7 +55,7 @@ public class AttributeJpaEntity {
     private UUID lastModifiedBy;
 
     public AttributeJpaEntity(Long id, String code, String title, Integer index, String description, Integer weight, Long kitVersionId,
-                              LocalDateTime creationTime, LocalDateTime lastModificationTime) {
+                              LocalDateTime creationTime, LocalDateTime lastModificationTime, UUID referenceNumber) {
         this.id = id;
         this.code = code;
         this.title = title;
@@ -65,6 +65,7 @@ public class AttributeJpaEntity {
         this.kitVersionId = kitVersionId;
         this.creationTime = creationTime;
         this.lastModificationTime = lastModificationTime;
+        this.referenceNumber = referenceNumber;
     }
 
     @ManyToOne

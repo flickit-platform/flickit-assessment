@@ -328,5 +328,26 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.15-49" author="MKouhestani">
+        <addColumn tableName="fac_quality_attribute_value">
+            <column name="kit_version_id" type="bigint" valueComputed="fak_assessment_kit.kit_version_id FROM fak_assessment_kit
+                    LEFT JOIN fac_assessment ON fak_assessment_kit.id = fac_assessment.assessment_kit_id
+                    LEFT JOIN fac_assessment_result ON fac_assessment_result.assessment_id = fac_assessment.id
+                    WHERE assessment_result_id = fac_assessment_result.id" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-50" author="MKouhestani">
+        <addUniqueConstraint columnNames="assessment_result_id, kit_version_id, attribute_reference_number"
+                             constraintName="uq_fac_attribute_value_assessment_result_id_kit_version_id_attribute_ref_no"
+                             tableName="fac_quality_attribute_value"/>
+    </changeSet>
+
+    <changeSet id="0.15-51" author="MKouhestani">
+        <dropNotNullConstraint tableName="fac_quality_attribute_value" columnName="quality_attribute_id"/>
+    </changeSet>
+
 </databaseChangeLog>
 

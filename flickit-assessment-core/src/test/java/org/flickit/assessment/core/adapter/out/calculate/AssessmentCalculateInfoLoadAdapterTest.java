@@ -15,6 +15,7 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
@@ -44,6 +45,7 @@ import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJ
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,6 +69,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
     private AnswerOptionRestAdapter answerOptionRestAdapter;
     @Mock
     private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
+    @Mock
+    private AssessmentKitJpaRepository kitRepository;
+
 
     @Test
     void testLoad() {
@@ -167,6 +172,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var attribute6Id = attributeId;
 
         Long kitId = 123L;
+        Long kitVersionId = 123L;
 
         AttributeJpaEntity attribute1 = createAttributeEntity(attribute1Id, 1, kitId);
         AttributeJpaEntity attribute2 = createAttributeEntity(attribute2Id, 2, kitId);
@@ -175,12 +181,12 @@ class AssessmentCalculateInfoLoadAdapterTest {
         AttributeJpaEntity attribute5 = createAttributeEntity(attribute5Id, 5, kitId);
         AttributeJpaEntity attribute6 = createAttributeEntity(attribute6Id, 6, kitId);
 
-        var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1Id);
-        var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2Id);
-        var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3Id);
-        var qav4 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute4Id);
-        var qav5 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute5Id);
-        var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6Id);
+        var qav1 = attributeValueWithNullMaturityLevel(kitVersionId, assessmentResultEntity, attribute1.getReferenceNumber());
+        var qav2 = attributeValueWithNullMaturityLevel(kitVersionId, assessmentResultEntity, attribute2.getReferenceNumber());
+        var qav3 = attributeValueWithNullMaturityLevel(kitVersionId, assessmentResultEntity, attribute3.getReferenceNumber());
+        var qav4 = attributeValueWithNullMaturityLevel(kitVersionId, assessmentResultEntity, attribute4.getReferenceNumber());
+        var qav5 = attributeValueWithNullMaturityLevel(kitVersionId, assessmentResultEntity, attribute5.getReferenceNumber());
+        var qav6 = attributeValueWithNullMaturityLevel(kitVersionId, assessmentResultEntity, attribute6.getReferenceNumber());
         List<QualityAttributeValueJpaEntity> qualityAttributeValues = List.of(qav1, qav2, qav3, qav4, qav5, qav6);
 
         var subjectValue1 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
@@ -290,7 +296,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(Optional.of(context.assessmentResultEntity()));
         when(subjectValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.subjectValues());
-        when(qualityAttrValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
+        when(qualityAttrValueRepo.findByAssessmentResultIdAndKitVersionId(eq(context.assessmentResultEntity().getId()), any()))
             .thenReturn(context.qualityAttributeValues());
         when(subjectRepository.loadByKitIdWithAttributes(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
             .thenReturn(context.subjects);
@@ -300,6 +306,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.answerEntities());
         when(answerOptionRestAdapter.loadAnswerOptionByIds(any()))
             .thenReturn(context.answerOptionDtos());
+        when(kitRepository.loadKitVersionId(any())).thenReturn(context.assessmentResultEntity().getAssessment().getAssessmentKitId());
     }
 
     private List<QuestionJoinQuestionImpactView> questionJoinImpactView(List<QuestionJpaEntity> questionEntities, Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap) {

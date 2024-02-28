@@ -1,9 +1,6 @@
 package org.flickit.assessment.core.application.service.assessment;
 
-import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.MaturityLevel;
-import org.flickit.assessment.core.application.domain.QualityAttributeValue;
-import org.flickit.assessment.core.application.domain.SubjectValue;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.report.AssessmentReport;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
@@ -58,13 +55,14 @@ class ReportAssessmentServiceTest {
         AssessmentResult assessmentResult = validResultWithSubjectValuesAndMaturityLevel(
             List.of(subjectValue), levelTwo());
 
-        Map<Long, MaturityLevel> maturityLevels = assessmentResult.getAssessment().getAssessmentKit().getMaturityLevels()
+        AssessmentKit kit = assessmentResult.getAssessment().getAssessmentKit();
+        Map<Long, MaturityLevel> maturityLevels = kit.getMaturityLevels()
             .stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentResult.getAssessment().getId());
 
         when(loadReportInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(loadAttributeValueListPort.loadAll(assessmentResult.getId(), maturityLevels)).thenReturn(qaValues);
+        when(loadAttributeValueListPort.loadAll(assessmentResult.getId(), kit.getId(), maturityLevels)).thenReturn(qaValues);
 
         doNothing().when(validateAssessmentResult).validate(assessmentResult.getAssessment().getId());
 

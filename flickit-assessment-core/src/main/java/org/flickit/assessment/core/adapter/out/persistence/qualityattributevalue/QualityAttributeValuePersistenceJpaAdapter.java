@@ -15,6 +15,8 @@ import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMatu
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_QUALITY_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -38,6 +41,7 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final AttributeMaturityScoreJpaRepository attributeMaturityScoreRepository;
     private final AttributeJpaRepository attributeRepository;
+    private final AssessmentKitJpaRepository kitRepository;
 
     @Override
     public List<QualityAttributeValue> persistAll(List<Long> qualityAttributeIds, UUID assessmentResultId) {
@@ -46,7 +50,7 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
 
         List<QualityAttributeValueJpaEntity> entities = qualityAttributeIds.stream().map(qualityAttributeId -> {
             UUID attributeReferenceNumber = attributeRepository.findReferenceNumberById(qualityAttributeId);
-            QualityAttributeValueJpaEntity qualityAttributeValue = QualityAttributeValueMapper.mapToJpaEntity(qualityAttributeId, attributeReferenceNumber);
+            QualityAttributeValueJpaEntity qualityAttributeValue = QualityAttributeValueMapper.mapToJpaEntity(assessmentResult.getKitVersionId(), attributeReferenceNumber);
             qualityAttributeValue.setAssessmentResult(assessmentResult);
             return qualityAttributeValue;
         }).toList();
@@ -54,14 +58,15 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
         var persistedEntities = repository.saveAll(entities);
 
         return persistedEntities.stream().map(q -> {
-            var attributeEntity = attributeRepository.getReferenceById(q.getQualityAttributeId());
+            var attributeEntity = attributeRepository.findByKitVersionIdAndReferenceNumber(assessmentResult.getKitVersionId(), q.getAttributeReferenceNumber());
             return QualityAttributeValueMapper.mapToDomainModel(q, attributeEntity);
         }).toList();
     }
 
     @Override
-    public List<QualityAttributeValue> loadAll(UUID assessmentResultId, Map<Long, MaturityLevel> maturityLevels) {
-        List<QualityAttributeValueJpaEntity> entities = repository.findByAssessmentResultId(assessmentResultId);
+    public List<QualityAttributeValue> loadAll(UUID assessmentResultId, Long kitId, Map<Long, MaturityLevel> maturityLevels) {
+        Long kitVersionId = kitRepository.loadKitVersionId(kitId);
+        List<QualityAttributeValueJpaEntity> entities = repository.findByAssessmentResultIdAndKitVersionId(assessmentResultId, kitVersionId);
 
         return toAttributeValues(entities, maturityLevels);
     }
@@ -77,10 +82,14 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
             attributeMaturityScoreRepository.findByAttributeValueIdIn(collectIds(entities)).stream()
                 .collect(groupingBy(AttributeMaturityScoreJpaEntity::getAttributeValueId));
 
+        List<UUID> attributeReferenceNumbers = entities.stream().map(QualityAttributeValueJpaEntity::getAttributeReferenceNumber).toList();
+        Long kitVersionId = entities.get(0).getKitVersionId();
+        Map<UUID, Long> attributeIdsToReferenceNumberMap = attributeRepository.findAllByKitVersionIdAndReferenceNumberIn(kitVersionId, attributeReferenceNumbers).stream()
+            .collect(toMap(AttributeJpaEntity::getReferenceNumber, AttributeJpaEntity::getId));
+
         return entities.stream()
             .map(x -> new QualityAttributeValue(
-                x.getId(),
-                new QualityAttribute(x.getQualityAttributeId(), 1, null),
+                x.getId(), new QualityAttribute(attributeIdsToReferenceNumberMap.get(x.getAttributeReferenceNumber()), 1, null),
                 null,
                 toMaturityScore(attributeIdToScores, x),
                 maturityLevels.get(x.getMaturityLevelId()),

@@ -20,6 +20,13 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
                         @Param(value = "isCalculateValid")Boolean isCalculateValid,
                         @Param(value = "isConfidenceValid")Boolean isConfidenceValid);
 
+    @Query("""
+        SELECT a FROM AssessmentResultJpaEntity a
+        LEFT JOIN AssessmentKitJpaEntity k ON a.assessment.assessmentKitId = k.id AND a.kitVersionId = k.kitVersionId
+        WHERE a.assessment.id = :assessmentId
+        ORDER BY a.lastModificationTime DESC
+        LIMIT 1
+        """)
     Optional<AssessmentResultJpaEntity> findFirstByAssessment_IdOrderByLastModificationTimeDesc(UUID assessmentId);
 
     @Modifying

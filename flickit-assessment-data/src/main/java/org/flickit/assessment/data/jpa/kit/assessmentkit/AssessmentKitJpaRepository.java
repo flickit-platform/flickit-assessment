@@ -34,4 +34,10 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.id = :kitId
         """)
     LocalDateTime loadLastMajorModificationTime(@Param("kitId") Long kitId);
+
+    @Query("""
+        SELECT k.kitVersionId FROM AssessmentKitJpaEntity k
+            WHERE k.id = :assessmentKitId
+        """)
+    Long loadKitVersionId(Long assessmentKitId);
 }

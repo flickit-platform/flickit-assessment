@@ -14,11 +14,11 @@ import java.util.ArrayList;
 public class AssessmentResultMapper {
 
 
-    public static AssessmentResultJpaEntity mapToJpaEntity(CreateAssessmentResultPort.Param param) {
+    public static AssessmentResultJpaEntity mapToJpaEntity(CreateAssessmentResultPort.Param param, Long kitVersionId) {
         return new AssessmentResultJpaEntity(
             null,
             null,
-            null,
+            kitVersionId,
             null,
             null,
             param.isCalculateValid(),

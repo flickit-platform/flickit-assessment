@@ -17,6 +17,7 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
@@ -43,6 +44,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
     private final SubjectValueJpaRepository subjectValueRepo;
     private final QuestionJpaRepository questionRepository;
     private final SubjectJpaRepository subjectRepository;
+    private final AssessmentKitJpaRepository kitRepository;
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
                    List<QualityAttributeValueJpaEntity> allAttributeValueEntities,
@@ -56,20 +58,21 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND));
         UUID assessmentResultId = assessmentResultEntity.getId();
         Long assessmentKitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
+        Long kitVersionId = kitRepository.loadKitVersionId(assessmentKitId);
 
         /*
          load all subjectValue and attributeValue entities
          that are already saved with this assessmentResult
          */
         var subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
-        var allAttributeValueEntities = attributeValueRepo.findByAssessmentResultId(assessmentResultId);
+        var allAttributeValueEntities = attributeValueRepo.findByAssessmentResultIdAndKitVersionId(assessmentResultId, kitVersionId);
 
         // load all subjects and their related attributes (by assessmentKit)
-        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByKitIdWithAttributes(assessmentKitId).stream()
+        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByKitIdWithAttributes(assessmentKitId).stream()  // TODO Later: we can change to load by kitVersionId
             .collect(toMap(SubjectJpaEntity::getId, x -> x, (s1, s2) -> s1));
 
         // load all questions with their impacts (by assessmentKit)
-        List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByAssessmentKitId(assessmentKitId);
+        List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByAssessmentKitId(assessmentKitId); // TODO Later: we can change to load by kitVersionId
         Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> impactfulQuestions = mapQuestionToImpacts(allQuestionsJoinImpactViews);
 
 
@@ -122,9 +125,14 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         Map<Long, Integer> qaIdToWeightMap = context.subjectIdToEntity().values().stream()
             .flatMap(x -> x.getAttributes().stream())
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
+
+        Map<UUID, Long> attributeIdToRefNoMap = context.subjectIdToEntity().values().stream()
+            .flatMap(x -> x.getAttributes().stream())
+            .collect(toMap(AttributeJpaEntity::getReferenceNumber, AttributeJpaEntity::getId));
+
         Map<Long, QualityAttributeValue> attributeIdToValueMap = new HashMap<>();
         for (QualityAttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
-            long attributeId = qavEntity.getQualityAttributeId();
+            long attributeId = attributeIdToRefNoMap.get(qavEntity.getAttributeReferenceNumber());
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
             QualityAttribute attribute = new QualityAttribute(

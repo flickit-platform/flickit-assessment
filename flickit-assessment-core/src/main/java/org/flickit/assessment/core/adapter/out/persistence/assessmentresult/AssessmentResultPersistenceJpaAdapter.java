@@ -10,6 +10,7 @@ import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -26,6 +27,7 @@ public class AssessmentResultPersistenceJpaAdapter implements
 
     private final AssessmentResultJpaRepository repo;
     private final AssessmentJpaRepository assessmentRepo;
+    private final AssessmentKitJpaRepository kitRepository;
 
     @Override
     public void invalidateById(UUID assessmentResultId, Boolean isCalculateValid, Boolean isConfidenceValid) {
@@ -34,7 +36,8 @@ public class AssessmentResultPersistenceJpaAdapter implements
 
     @Override
     public UUID persist(Param param) {
-        AssessmentResultJpaEntity entity = AssessmentResultMapper.mapToJpaEntity(param);
+        Long kitVersionId = kitRepository.loadKitVersionId(param.kitId());
+        AssessmentResultJpaEntity entity = AssessmentResultMapper.mapToJpaEntity(param, kitVersionId);
         AssessmentJpaEntity assessment = assessmentRepo.findById(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND));
         entity.setAssessment(assessment);
