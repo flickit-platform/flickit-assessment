@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface CreateAdviceUseCase {
 
         @NotNull(message = CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL)
         @Size(min = 1, message = CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN)
-        List<CalculateAdviceUseCase.AttributeLevelTarget> attributeLevelTargets;
+        List<AttributeLevelTarget> attributeLevelTargets;
 
         @NotNull(message = CREATE_ADVICE_ADVICE_QUESTIONS_NOT_NULL)
         @Size(min = 1, message = CREATE_ADVICE_ADVICE_QUESTIONS_SIZE_MIN)
@@ -35,7 +36,7 @@ public interface CreateAdviceUseCase {
         UUID currentUserId;
 
         public Param(UUID assessmentId,
-                     List<CalculateAdviceUseCase.AttributeLevelTarget> attributeLevelTargets,
+                     List<AttributeLevelTarget> attributeLevelTargets,
                      List<AdviceQuestion> adviceQuestion,
                      UUID currentUserId) {
             this.assessmentId = assessmentId;

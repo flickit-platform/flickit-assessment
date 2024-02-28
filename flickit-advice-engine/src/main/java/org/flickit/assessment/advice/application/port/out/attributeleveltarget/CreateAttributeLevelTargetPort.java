@@ -1,6 +1,6 @@
 package org.flickit.assessment.advice.application.port.out.attributeleveltarget;
 
-import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase.AttributeLevelTarget;
+import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 
 import java.util.List;

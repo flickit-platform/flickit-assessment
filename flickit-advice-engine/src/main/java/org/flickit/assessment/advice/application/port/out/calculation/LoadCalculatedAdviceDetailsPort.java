@@ -7,7 +7,7 @@ import org.flickit.assessment.advice.application.domain.advice.AdviceQuestionnai
 
 import java.util.List;
 
-public interface LoadCreatedAdviceDetailsPort {
+public interface LoadCalculatedAdviceDetailsPort {
 
     List<Result> loadAdviceDetails(List<Long> questionIds);
 

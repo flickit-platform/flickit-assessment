@@ -3,12 +3,6 @@ package org.flickit.assessment.advice.application.service.advice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
-import org.flickit.assessment.advice.application.domain.Plan;
-import org.flickit.assessment.advice.application.domain.Question;
-import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
-import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
-import org.flickit.assessment.advice.application.port.in.advice.CalculateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.advicequestion.CreateAdviceQuestionPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
@@ -17,9 +11,11 @@ import org.flickit.assessment.advice.application.port.out.assessment.LoadSelecte
 import org.flickit.assessment.advice.application.port.out.assessmentadvice.CreateAdvicePort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultIdPort;
 import org.flickit.assessment.advice.application.port.out.attributeleveltarget.CreateAttributeLevelTargetPort;
+import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +38,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final LoadSelectedAttributeIdsRelatedToAssessmentPort loadSelectedAttributeIdsRelatedToAssessmentPort;
     private final LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
+    private final LoadAttributeCurrentAndTargetLevelIndexPort loadAttributeCurrentAndTargetLevelIndexPort;
     private final LoadAssessmentResultIdPort loadAssessmentResultIdPort;
     private final CreateAdvicePort createAdvicePort;
     private final CreateAttributeLevelTargetPort createAttributeLevelTargetPort;
@@ -50,7 +47,8 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     @Override
     public Result createAdvice(Param param) {
         validateParamBeforeCreate(param);
-        UUID adviceId = create(param);
+        var validAttributeLevelTargets = filterValidAttributeLevelTargets(param.getAssessmentId(), param.getAttributeLevelTargets());
+        UUID adviceId = create(param, validAttributeLevelTargets);
         return new Result(adviceId);
     }
 
@@ -67,9 +65,9 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
-    private void validateAssessmentAttributeRelation(UUID assessmentId, List<CalculateAdviceUseCase.AttributeLevelTarget> attributeLevelTargets) {
+    private void validateAssessmentAttributeRelation(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         Set<Long> selectedAttrIds = attributeLevelTargets.stream()
-            .map(AttributeLevelTarget::attributeId)
+            .map(AttributeLevelTarget::getAttributeId)
             .collect(Collectors.toSet());
         Set<Long> loadedAttrIds =
             loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, selectedAttrIds);
@@ -78,9 +76,9 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         }
     }
 
-    private void validateAssessmentLevelRelation(UUID assessmentId, List<CalculateAdviceUseCase.AttributeLevelTarget> attributeLevelTargets) {
+    private void validateAssessmentLevelRelation(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         Set<Long> selectedLevelIds = attributeLevelTargets.stream()
-            .map(AttributeLevelTarget::maturityLevelId)
+            .map(AttributeLevelTarget::getMaturityLevelId)
             .collect(Collectors.toSet());
         Set<Long> loadedLevelIds =
             loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(assessmentId, selectedLevelIds);
@@ -89,11 +87,25 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         }
     }
 
-    private UUID create(Param param) {
+    private List<AttributeLevelTarget> filterValidAttributeLevelTargets(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+        var attributeCurrentAndTargetLevelIndexes = loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(assessmentId, attributeLevelTargets);
+        var validAttributeIds = attributeCurrentAndTargetLevelIndexes.stream()
+            .filter(a -> a.targetMaturityLevelIndex() > a.currentMaturityLevelIndex())
+            .map(LoadAttributeCurrentAndTargetLevelIndexPort.Result::attributeId)
+            .collect(Collectors.toSet());
+        if (validAttributeIds.isEmpty())
+            throw new ValidationException(CALCULATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
+
+        return attributeLevelTargets.stream()
+            .filter(a -> validAttributeIds.contains(a.getAttributeId()))
+            .toList();
+    }
+
+    private UUID create(Param param, List<AttributeLevelTarget> validAttributeLevelTargets) {
         var assessmentResultId = loadAssessmentResultIdPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
         var adviceId = createAdvicePort.persist(toCreateAdviceParam(param, assessmentResultId));
-        createAttributeLevelTargetPort.persistAll(adviceId, param.getAttributeLevelTargets());
+        createAttributeLevelTargetPort.persistAll(adviceId, validAttributeLevelTargets);
         createAdviceQuestionPort.persistAll(adviceId, param.getAdviceQuestions());
         return adviceId;
     }
