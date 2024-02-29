@@ -43,18 +43,18 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     @Query(value = """
             SELECT evd.description
             FROM QuestionJpaEntity q
-            LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
-            WHERE evd.assessmentId = :assessmentId
-                AND evd.type = :type
-                AND evd.deleted = false
-                AND q.id IN (SELECT qs.id
-                             FROM QuestionJpaEntity qs
-                             LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
-                             WHERE qi.attributeId = :attributeId)
-            ORDER BY evd.lastModificationTime DESC
-    """)
-    Page<String> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(UUID assessmentId,
-                                                                                       Long attributeId,
-                                                                                       Integer type,
+                LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
+                WHERE evd.assessmentId = :assessmentId
+                    AND evd.type = :type
+                    AND evd.deleted = false
+                    AND q.id IN (SELECT qs.id
+                                 FROM QuestionJpaEntity qs
+                                 LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
+                                 WHERE qi.attributeId = :attributeId)
+                ORDER BY evd.lastModificationTime DESC
+        """)
+    Page<String> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(@Param(value = "assessmentId") UUID assessmentId,
+                                                                                       @Param(value = "attributeId") Long attributeId,
+                                                                                       @Param(value = "type") Integer type,
                                                                                        Pageable pageable);
 }
