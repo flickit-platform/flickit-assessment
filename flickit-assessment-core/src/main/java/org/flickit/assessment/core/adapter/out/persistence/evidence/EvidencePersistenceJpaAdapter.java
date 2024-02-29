@@ -73,14 +73,11 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AttributeEvidenceListItem> loadAttributeEvidences(UUID assessmentId,
-                                                                               Long attributeId,
-                                                                               Integer type,
-                                                                               int page,
-                                                                               int size) {
+    public PaginatedResponse<AttributeEvidenceListItem> loadAttributeEvidences(UUID assessmentId, Long attributeId,
+                                                                               Integer type, int page, int size) {
         var pageResult = repository.findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(
-            assessmentId, attributeId, type, PageRequest.of(page, size)
-        );
+            assessmentId, attributeId, type, PageRequest.of(page, size));
+
         var items = pageResult.getContent().stream()
             .map(AttributeEvidenceListItem::new)
             .toList();

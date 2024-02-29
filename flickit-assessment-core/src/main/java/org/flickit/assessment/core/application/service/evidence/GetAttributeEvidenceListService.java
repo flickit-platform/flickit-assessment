@@ -28,8 +28,10 @@ public class GetAttributeEvidenceListService implements GetAttributeEvidenceList
     public PaginatedResponse<AttributeEvidenceListItem> getAttributeEvidenceList(Param param) {
         if (!checkAssessmentExistencePort.existsById(param.getAssessmentId()))
             throw new ResourceNotFoundException(GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND);
+
         if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         return loadAttributeEvidencesPort.loadAttributeEvidences(param.getAssessmentId(),
             param.getAttributeId(),
             EvidenceType.valueOf(param.getType()).ordinal(),
