@@ -29,6 +29,7 @@ public interface GetAttributeEvidenceListUseCase {
         @NotNull(message = GET_ATTRIBUTE_EVIDENCE_LIST_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
+        @NotNull(message = GET_ATTRIBUTE_EVIDENCE_LIST_TYPE_NOT_NULL)
         @EnumValue(enumClass = EvidenceType.class, message = GET_ATTRIBUTE_EVIDENCE_LIST_TYPE_INVALID)
         String type;
 

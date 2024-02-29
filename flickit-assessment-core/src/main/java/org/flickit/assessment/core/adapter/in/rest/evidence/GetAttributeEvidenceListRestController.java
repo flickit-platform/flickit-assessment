@@ -25,7 +25,7 @@ public class GetAttributeEvidenceListRestController {
     ResponseEntity<PaginatedResponse<AttributeEvidenceListItem>> getAttributeEvidenceList(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId,
-        @RequestParam("type") String type,
+        @RequestParam(value = "type" , required = false) String type, //validated in use case
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page
     ) {
