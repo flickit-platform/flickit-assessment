@@ -41,7 +41,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
     @Query(value = """
-            SELECT evd.description AS description
+            SELECT evd.description
             FROM QuestionJpaEntity q
             LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
             WHERE evd.assessmentId = :assessmentId
@@ -52,20 +52,9 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                              LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
                              WHERE qi.attributeId = :attributeId)
             ORDER BY evd.lastModificationTime DESC
-    """, countQuery = """
-            SELECT count(evd.description)
-            FROM QuestionJpaEntity q
-            LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
-            WHERE evd.assessmentId = :assessmentId
-                AND evd.type = :type
-                AND evd.deleted = false
-                AND q.id IN (SELECT qs.id
-                             FROM QuestionJpaEntity qs
-                             LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
-                             WHERE qi.attributeId = :attributeId)
     """)
-    Page<AttributeEvidenceView> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(UUID assessmentId,
-                                                                                                      Long attributeId,
-                                                                                                      Integer type,
-                                                                                                      Pageable pageable);
+    Page<String> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(UUID assessmentId,
+                                                                                       Long attributeId,
+                                                                                       Integer type,
+                                                                                       Pageable pageable);
 }
