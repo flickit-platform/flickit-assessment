@@ -36,7 +36,7 @@ public interface GetAttributeEvidenceListUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        @Min(value = 10, message = GET_ATTRIBUTE_EVIDENCE_LIST_SIZE_MIN)
+        @Min(value = 1, message = GET_ATTRIBUTE_EVIDENCE_LIST_SIZE_MIN)
         @Max(value = 100, message = GET_ATTRIBUTE_EVIDENCE_LIST_SIZE_MAX)
         int size;
 
