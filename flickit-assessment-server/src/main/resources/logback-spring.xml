@@ -5,6 +5,7 @@
 	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 
 	<springProperty scope="context" name="ASYNC_CONSOLE_QUEUE_SIZE" source="logging.async-console.queue-size" defaultValue="1000"/>
+    <springProperty scope="context" name="LOG_FILE_PATH" source="log.file.path" defaultValue="logs"/>
 
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -21,9 +22,9 @@
 	</appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>logs/application.log</File>
+        <File>${LOG_FILE_PATH}/application.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>logs/application.%d{yyyy-MM-dd}.log.gz</FileNamePattern>
+            <FileNamePattern>${LOG_FILE_PATH}/application.%d{yyyy-MM-dd}.log.gz</FileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <layout class="ch.qos.logback.classic.PatternLayout">
