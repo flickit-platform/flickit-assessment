@@ -25,6 +25,7 @@ public class AnswerOptionMapper {
         LocalDateTime creationTime = LocalDateTime.now();
         return new AnswerOptionJpaEntity(
             null,
+            UUID.randomUUID(),
             param.index(),
             param.title(),
             param.kitId(),
@@ -32,8 +33,7 @@ public class AnswerOptionMapper {
             creationTime,
             creationTime,
             param.createdBy(),
-            param.createdBy(),
-            UUID.randomUUID()
+            param.createdBy()
         );
     }
 }

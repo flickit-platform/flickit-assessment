@@ -24,6 +24,9 @@ public class MaturityLevelJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
+
     @Column(name = "code", length = 50)
     private String code;
 
@@ -42,19 +45,18 @@ public class MaturityLevelJpaEntity {
     @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 
+    @Column(name = "kit_id")
+    private Long kitId;
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @Column(name = "kit_id")
-    private Long kitId;
-
     public MaturityLevelJpaEntity(Long id) {
         this.id = id;
     }
-
     @OneToMany(mappedBy = "affectedLevel", cascade = CascadeType.REMOVE)
     private List<LevelCompetenceJpaEntity> affectedCompetences;
 
@@ -63,9 +65,6 @@ public class MaturityLevelJpaEntity {
 
     @OneToMany(mappedBy = "maturityLevel", cascade = CascadeType.REMOVE)
     private List<QuestionImpactJpaEntity> questionImpacts;
-
-    @Column(name = "ref_num", nullable = false)
-    private UUID refNum;
 
     public MaturityLevelJpaEntity(Long id,
                                   String code,

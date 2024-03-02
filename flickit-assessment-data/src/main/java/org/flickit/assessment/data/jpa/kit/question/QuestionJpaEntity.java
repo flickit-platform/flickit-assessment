@@ -22,6 +22,9 @@ public class QuestionJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
+
     @Column(name = "code")
     private String code;
 
@@ -54,7 +57,4 @@ public class QuestionJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @Column(name = "ref_num", nullable = false)
-    private UUID refNum;
 }

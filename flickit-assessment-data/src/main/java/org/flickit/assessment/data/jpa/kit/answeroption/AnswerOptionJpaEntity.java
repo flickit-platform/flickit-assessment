@@ -22,6 +22,9 @@ public class AnswerOptionJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
+
     @Column(name = "index", nullable = false)
     private Integer index;
 
@@ -45,8 +48,4 @@ public class AnswerOptionJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @Column(name = "ref_num", nullable = false)
-    private UUID refNum;
-
 }
