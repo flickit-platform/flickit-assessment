@@ -86,6 +86,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             dslQuestion.getIndex(),
             dslQuestion.getDescription(),
             dslQuestion.isMayNotBeApplicable(),
+            dslQuestion.isAdvisable(),
             currentUserId,
             questionnaireId
         );
