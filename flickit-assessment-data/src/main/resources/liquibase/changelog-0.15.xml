@@ -38,6 +38,14 @@
     </changeSet>
 
     <changeSet id="0.15-5" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fak_question"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_assessment_kit_question"/>
+    </changeSet>
+
+    <changeSet id="0.15-6" author="MKouhestani">
         <addColumn tableName="fak_question">
             <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
@@ -45,7 +53,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.15-6" author="MKouhestani">
+    <changeSet id="0.15-7" author="MKouhestani">
         <addColumn tableName="fak_answer_option">
             <column name="kit_id" type="bigint"
                     valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id">
@@ -54,8 +62,16 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.15-8" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fak_answer_option"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_assessment_kit_answer_option"/>
+    </changeSet>
 
-    <changeSet id="0.15-7" author="MKouhestani">
+
+    <changeSet id="0.15-9" author="MKouhestani">
         <addColumn tableName="fak_answer_option">
             <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
@@ -63,7 +79,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.15-8" author="MKouhestani">
+    <changeSet id="0.15-10" author="MKouhestani">
         <addColumn tableName="fak_maturity_level">
             <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
