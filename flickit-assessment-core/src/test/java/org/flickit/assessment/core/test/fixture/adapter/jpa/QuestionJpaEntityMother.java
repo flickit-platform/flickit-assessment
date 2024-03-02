@@ -9,7 +9,7 @@ public class QuestionJpaEntityMother {
 
     public static int index = 1;
 
-    public static QuestionJpaEntity questionEntity(Long questionId, Long questionnaireId, boolean mayNotBeApplicable) {
+    public static QuestionJpaEntity questionEntity(Long questionId, Long questionnaireId, boolean mayNotBeApplicable, boolean advisable) {
         return new QuestionJpaEntity(
             questionId,
             "code" + questionId,
@@ -17,6 +17,7 @@ public class QuestionJpaEntityMother {
             "title" + questionId,
             "description" + questionId,
             mayNotBeApplicable,
+            advisable,
             questionnaireId,
             LocalDateTime.now(),
             LocalDateTime.now(),

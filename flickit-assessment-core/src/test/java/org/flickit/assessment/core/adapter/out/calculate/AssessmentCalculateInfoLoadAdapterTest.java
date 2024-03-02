@@ -16,12 +16,12 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,9 +37,9 @@ import static org.flickit.assessment.core.test.fixture.adapter.dto.AnswerOptionD
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeJapEntityMother.createAttributeEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
-import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEntityMother.subjectWithAttributes;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.QuestionImpactEntityMother.questionImpactEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.QuestionJpaEntityMother.questionEntity;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEntityMother.subjectWithAttributes;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -193,16 +193,16 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), 1, List.of(attribute5, attribute6));
         List<SubjectJpaEntity> subjects = List.of(subject1, subject2, subject3);
 
-        var question1 = questionEntity(1L, 1L, Boolean.FALSE);
-        var question2 = questionEntity(2L, 1L, Boolean.FALSE);
-        var question3 = questionEntity(3L, 1L, Boolean.FALSE);
-        var question4 = questionEntity(4L, 1L, Boolean.FALSE);
-        var question5 = questionEntity(5L, 1L, Boolean.FALSE);
-        var question6 = questionEntity(6L, 1L, Boolean.FALSE);
-        var question7 = questionEntity(7L, 1L, Boolean.FALSE);
-        var question8 = questionEntity(8L, 1L, Boolean.FALSE);
-        var question9 = questionEntity(9L, 1L, Boolean.FALSE);
-        var question10 = questionEntity(10L, 1L, Boolean.FALSE);
+        var question1 = questionEntity(1L, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question2 = questionEntity(2L, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question3 = questionEntity(3L, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question4 = questionEntity(4L, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question5 = questionEntity(5L, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question6 = questionEntity(6L, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question7 = questionEntity(7L, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question8 = questionEntity(8L, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question9 = questionEntity(9L, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question10 = questionEntity(10L, 1L, Boolean.FALSE, Boolean.TRUE);
         List<QuestionJpaEntity> questions = List.of(question1, question2, question3, question4, question5, question6, question7, question8, question9, question10);
 
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap = new HashMap<>();
