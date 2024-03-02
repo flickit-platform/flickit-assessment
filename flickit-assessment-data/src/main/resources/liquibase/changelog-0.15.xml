@@ -38,6 +38,14 @@
     </changeSet>
 
     <changeSet id="0.15-5" author="MKouhestani">
+        <addColumn tableName="fak_question">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-6" author="MKouhestani">
         <addColumn tableName="fak_answer_option">
             <column name="kit_id" type="bigint"
                     valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id">
@@ -46,13 +54,6 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.15-6" author="MKouhestani">
-        <addColumn tableName="fak_question">
-            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
 
     <changeSet id="0.15-7" author="MKouhestani">
         <addColumn tableName="fak_answer_option">
