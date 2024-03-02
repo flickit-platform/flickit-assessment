@@ -39,14 +39,14 @@ public class MaturityLevelJpaEntity {
     @Column(name = "value", nullable = false)
     private Integer value;
 
+    @Column(name = "kit_id")
+    private Long kitId;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
     @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
-
-    @Column(name = "kit_id")
-    private Long kitId;
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
@@ -67,27 +67,27 @@ public class MaturityLevelJpaEntity {
     private List<QuestionImpactJpaEntity> questionImpacts;
 
     public MaturityLevelJpaEntity(Long id,
+                                  UUID refNum,
                                   String code,
                                   Integer index,
                                   String title,
                                   Integer value,
+                                  Long kitId,
                                   LocalDateTime creationTime,
                                   LocalDateTime lastModificationTime,
                                   UUID createdBy,
-                                  UUID lastModifiedBy,
-                                  Long kitId,
-                                  UUID refNum) {
+                                  UUID lastModifiedBy) {
         this.id = id;
+        this.refNum = refNum;
         this.code = code;
         this.index = index;
         this.title = title;
         this.value = value;
+        this.kitId = kitId;
         this.creationTime = creationTime;
         this.lastModificationTime = lastModificationTime;
         this.createdBy = createdBy;
         this.lastModifiedBy = lastModifiedBy;
-        this.kitId = kitId;
-        this.refNum = refNum;
     }
 }
 
