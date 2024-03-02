@@ -69,6 +69,6 @@ public class SubjectJpaEntity {
     @OneToMany(mappedBy = "subject")
     private List<AttributeJpaEntity> attributes;
 
-    @Column(name = "reference_number", nullable = false)
-    private UUID referenceNumber;
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
 }

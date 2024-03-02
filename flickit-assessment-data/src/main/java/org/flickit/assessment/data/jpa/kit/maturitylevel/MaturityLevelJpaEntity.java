@@ -64,8 +64,8 @@ public class MaturityLevelJpaEntity {
     @OneToMany(mappedBy = "maturityLevel", cascade = CascadeType.REMOVE)
     private List<QuestionImpactJpaEntity> questionImpacts;
 
-    @Column(name = "reference_number", nullable = false)
-    private UUID referenceNumber;
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
 
     public MaturityLevelJpaEntity(Long id,
                                   String code,
@@ -77,7 +77,7 @@ public class MaturityLevelJpaEntity {
                                   UUID createdBy,
                                   UUID lastModifiedBy,
                                   Long kitId,
-                                  UUID referenceNumber) {
+                                  UUID refNum) {
         this.id = id;
         this.code = code;
         this.index = index;
@@ -88,7 +88,7 @@ public class MaturityLevelJpaEntity {
         this.createdBy = createdBy;
         this.lastModifiedBy = lastModifiedBy;
         this.kitId = kitId;
-        this.referenceNumber = referenceNumber;
+        this.refNum = refNum;
     }
 }
 

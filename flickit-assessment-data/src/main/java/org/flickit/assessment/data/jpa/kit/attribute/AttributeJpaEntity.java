@@ -71,6 +71,6 @@ public class AttributeJpaEntity {
     @JoinColumn(name = "subject_id", referencedColumnName = "id")
     private SubjectJpaEntity subject;
 
-    @Column(name = "reference_number", nullable = false)
-    private UUID referenceNumber;
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
 }

@@ -6,7 +6,7 @@
 
     <changeSet id="0.15-1" author="MKouhestani">
         <addColumn tableName="fak_subject">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -14,7 +14,7 @@
 
     <changeSet id="0.15-2" author="MKouhestani">
         <addColumn tableName="fak_attribute">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -22,7 +22,7 @@
 
     <changeSet id="0.15-3" author="MKouhestani">
         <addColumn tableName="fak_questionnaire">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -48,7 +48,7 @@
 
     <changeSet id="0.15-6" author="MKouhestani">
         <addColumn tableName="fak_question">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -56,7 +56,7 @@
 
     <changeSet id="0.15-7" author="MKouhestani">
         <addColumn tableName="fak_answer_option">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -64,7 +64,7 @@
 
     <changeSet id="0.15-8" author="MKouhestani">
         <addColumn tableName="fak_maturity_level">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>

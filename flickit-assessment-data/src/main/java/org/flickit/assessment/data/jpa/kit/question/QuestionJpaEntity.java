@@ -55,6 +55,6 @@ public class QuestionJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @Column(name = "reference_number", nullable = false)
-    private UUID referenceNumber;
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
 }
