@@ -42,7 +42,7 @@
                                  baseColumnNames="kit_id"
                                  referencedTableName="fak_assessment_kit"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_assessment_kit_question"/>
+                                 constraintName="fk_fak_question_assessmentkit"/>
     </changeSet>
 
     <changeSet id="0.15-6" author="MKouhestani">
@@ -67,7 +67,7 @@
                                  baseColumnNames="kit_id"
                                  referencedTableName="fak_assessment_kit"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_assessment_kit_answer_option"/>
+                                 constraintName="fk_fak_answeroption_assessmentkit"/>
     </changeSet>
 
 
