@@ -28,6 +28,7 @@ public class SubjectMapper {
     }
 
     public static SubjectJpaEntity mapToJpaEntity(CreateSubjectPort.Param param) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new SubjectJpaEntity(
             null,
             UUID.randomUUID(),
@@ -37,8 +38,8 @@ public class SubjectMapper {
             param.description(),
             param.weight(),
             param.kitId(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            creationTime,
+            creationTime,
             param.createdBy(),
             param.createdBy(),
             null

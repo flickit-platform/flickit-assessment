@@ -6,7 +6,6 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 
-import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionImpactMapper {
