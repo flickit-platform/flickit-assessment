@@ -13,6 +13,7 @@ public class QuestionJpaEntityMother {
         LocalDateTime creationTime = LocalDateTime.now();
         return new QuestionJpaEntity(
             questionId,
+            UUID.randomUUID(),
             "code" + questionId,
             index++,
             "title" + questionId,
@@ -22,7 +23,6 @@ public class QuestionJpaEntityMother {
             questionnaireId,
             creationTime,
             creationTime,
-            UUID.randomUUID(),
             UUID.randomUUID(),
             UUID.randomUUID()
         );

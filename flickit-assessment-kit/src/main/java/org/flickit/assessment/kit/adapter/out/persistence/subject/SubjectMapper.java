@@ -30,6 +30,7 @@ public class SubjectMapper {
     public static SubjectJpaEntity mapToJpaEntity(CreateSubjectPort.Param param) {
         return new SubjectJpaEntity(
             null,
+            UUID.randomUUID(),
             param.code(),
             param.index(),
             param.title(),
@@ -40,8 +41,7 @@ public class SubjectMapper {
             LocalDateTime.now(),
             param.createdBy(),
             param.createdBy(),
-            null,
-            UUID.randomUUID()
+            null
         );
     }
 }

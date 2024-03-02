@@ -29,6 +29,7 @@ public class QuestionMapper {
         LocalDateTime creationTime = LocalDateTime.now();
         return new QuestionJpaEntity(
             null,
+            UUID.randomUUID(),
             param.code(),
             param.index(),
             param.title(),
@@ -39,8 +40,7 @@ public class QuestionMapper {
             creationTime,
             creationTime,
             param.createdBy(),
-            param.createdBy(),
-            UUID.randomUUID()
+            param.createdBy()
         );
     }
 }
