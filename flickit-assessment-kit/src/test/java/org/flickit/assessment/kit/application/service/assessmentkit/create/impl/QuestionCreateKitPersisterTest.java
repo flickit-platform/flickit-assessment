@@ -61,7 +61,7 @@ class QuestionCreateKitPersisterTest {
     void testPersist_ValidInputs_SaveQuestionAndItsRelatedEntities() {
         var levelTwo = levelTwo();
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, questionnaire.getId());
+        var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, Boolean.TRUE, questionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
         var answerOption1 = createAnswerOption(question.getId(), OPTION_TITLE, OPTION_INDEX1);
@@ -82,7 +82,7 @@ class QuestionCreateKitPersisterTest {
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
         var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE);
+        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslModel = AssessmentKitDslModel.builder()
             .questions(List.of(dslQuestion))
             .build();
@@ -93,6 +93,7 @@ class QuestionCreateKitPersisterTest {
             dslQuestion.getIndex(),
             dslQuestion.getDescription(),
             dslQuestion.isMayNotBeApplicable(),
+            dslQuestion.isAdvisable(),
             CURRENT_USER_ID,
             questionnaire.getId()
         );
