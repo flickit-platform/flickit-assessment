@@ -158,7 +158,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         dslQuestions.values().forEach(dslQuestion -> {
             Long questionnaireId = questionnaires.get(dslQuestion.getQuestionnaireCode());
-            var createParam = toCreateQuestionParam(questionnaireId, kitId, currentUserId, dslQuestion);
+            var createParam = toCreateQuestionParam(kitId, questionnaireId, currentUserId, dslQuestion);
 
             Long questionId = createQuestionPort.persist(createParam);
             log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
@@ -171,15 +171,15 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         });
     }
 
-    private CreateQuestionPort.Param toCreateQuestionParam(Long questionnaireId, Long kitId, UUID currentUserId, QuestionDslModel dslQuestion) {
+    private CreateQuestionPort.Param toCreateQuestionParam(Long kitId, Long questionnaireId, UUID currentUserId, QuestionDslModel dslQuestion) {
         return new CreateQuestionPort.Param(
             dslQuestion.getCode(),
             dslQuestion.getTitle(),
             dslQuestion.getIndex(),
             dslQuestion.getDescription(),
             dslQuestion.isMayNotBeApplicable(),
-            questionnaireId,
             kitId,
+            questionnaireId,
             currentUserId);
     }
 
