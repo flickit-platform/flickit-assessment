@@ -26,7 +26,7 @@ public class AnswerJpaEntity {
     private UUID id;
 
     @Column(name = "question_ref_num", nullable = false)
-    private UUID questionRefNumb;
+    private UUID questionRefNum;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
