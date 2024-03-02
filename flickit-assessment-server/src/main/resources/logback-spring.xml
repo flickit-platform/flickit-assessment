@@ -10,6 +10,7 @@
     <springProperty scope="context" name="LOG_MAX_FILE_SIZE" source="log.file.max-size" defaultValue="10MB"/>
     <springProperty scope="context" name="LOG_MAX_TOTAL_SIZE" source="log.file.total-size" defaultValue="100GB"/>
 
+
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>[%date{ISO8601,UTC}] %-5level -| %logger{0} -| %msg %rEx%n</pattern>
