@@ -13,6 +13,7 @@ public class SubjectJpaEntityMother {
         LocalDateTime creationTime = LocalDateTime.now();
         return new SubjectJpaEntity(
             subjectId,
+            UUID.randomUUID(),
             "code" + subjectId,
             index,
             "title" + subjectId,
@@ -23,8 +24,7 @@ public class SubjectJpaEntityMother {
             creationTime,
             null,
             null,
-            attributes,
-            UUID.randomUUID()
+            attributes
         );
     }
 }

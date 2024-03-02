@@ -12,8 +12,8 @@ public interface CreateQuestionPort {
         int index,
         String hint,
         Boolean mayNotBeApplicable,
-        UUID createdBy,
+        Long kitId,
         Long questionnaireId,
-        Long kitId) {
+        UUID createdBy) {
     }
 }

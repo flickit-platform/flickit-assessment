@@ -22,6 +22,9 @@ public class QuestionnaireJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
+
     @Column(name = "code", length = 50, nullable = false)
     private String code;
 
@@ -48,7 +51,4 @@ public class QuestionnaireJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @Column(name = "reference_number", nullable = false)
-    private UUID referenceNumber;
 }

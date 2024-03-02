@@ -24,6 +24,9 @@ public class SubjectJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
+
     @Column(name = "code", length = 50, nullable = false)
     private String code;
 
@@ -54,21 +57,6 @@ public class SubjectJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    public SubjectJpaEntity(Long id, String code, String title, String description, LocalDateTime creationTime,
-                            LocalDateTime lastModificationTime, Long kitId, Integer index) {
-        this.id = id;
-        this.code = code;
-        this.title = title;
-        this.description = description;
-        this.creationTime = creationTime;
-        this.lastModificationTime = lastModificationTime;
-        this.kitId = kitId;
-        this.index = index;
-    }
-
     @OneToMany(mappedBy = "subject")
     private List<AttributeJpaEntity> attributes;
-
-    @Column(name = "reference_number", nullable = false)
-    private UUID referenceNumber;
 }
