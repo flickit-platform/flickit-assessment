@@ -6,6 +6,9 @@
 
 	<springProperty scope="context" name="ASYNC_CONSOLE_QUEUE_SIZE" source="logging.async-console.queue-size" defaultValue="1000"/>
     <springProperty scope="context" name="LOG_FILE_PATH" source="log.file.path" defaultValue="logs"/>
+    <springProperty scope="context" name="LOG_MAX_HISTORY_DAYS" source="log.file.max-history" defaultValue="30"/>
+    <springProperty scope="context" name="LOG_MAX_FILE_SIZE" source="log.file.max-size" defaultValue="10MB"/>
+    <springProperty scope="context" name="LOG_MAX_TOTAL_SIZE" source="log.file.total-size" defaultValue="100GB"/>
 
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -25,7 +28,9 @@
         <File>${LOG_FILE_PATH}/application.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <FileNamePattern>${LOG_FILE_PATH}/application.%d{yyyy-MM-dd}.log.gz</FileNamePattern>
-            <maxHistory>30</maxHistory>
+            <maxHistory>${LOG_MAX_HISTORY_DAYS}</maxHistory>
+            <maxFileSize>${LOG_MAX_FILE_SIZE}</maxFileSize>
+            <totalSizeCap>${LOG_MAX_TOTAL_SIZE}</totalSizeCap>
         </rollingPolicy>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</Pattern>
