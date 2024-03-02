@@ -37,6 +37,9 @@ public class QuestionJpaEntity {
     @Column(name = "may_not_be_applicable", nullable = false)
     private Boolean mayNotBeApplicable;
 
+    @Column(name = "advisable", nullable = false)
+    private Boolean advisable;
+
     @Column(name = "questionnaire_id", nullable = false)
     private Long questionnaireId;
 
@@ -45,7 +48,7 @@ public class QuestionJpaEntity {
 
     @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
-    
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
