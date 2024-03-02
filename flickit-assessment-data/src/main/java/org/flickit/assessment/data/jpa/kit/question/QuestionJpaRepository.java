@@ -72,7 +72,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
         LEFT JOIN  AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId and qi.id = ansoi.questionImpact.id
         LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = asmr.id and q.id = ans.questionId
         LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id
-        WHERE (asm.id = :assessmentId
+        WHERE (q.advisable = true
+            AND asm.id = :assessmentId
             AND anso.index NOT IN (SELECT MAX(sq_ans.index)
                                FROM AnswerOptionJpaEntity sq_ans
                                WHERE sq_ans.questionId = q.id)
@@ -83,7 +84,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             AND qi.attributeId = :attributeId)
             AND qi.maturityLevel.id = :maturityLevelId
          """)
-    List<ImprovableImpactfulQuestionView> findImprovableImpactfulQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
+    List<ImprovableImpactfulQuestionView> findAdvisableImprovableImpactfulQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
 
     @Query("""
         SELECT
