@@ -31,4 +31,5 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
         @Param(value = "lastModifiedBy") UUID lastModifiedBy
         );
+
 }
