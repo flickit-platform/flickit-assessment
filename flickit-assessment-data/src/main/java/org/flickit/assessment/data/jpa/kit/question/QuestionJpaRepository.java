@@ -109,9 +109,9 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids);
 
     @Query("""
-        SELECT q.referenceNumber
+        SELECT q.refNum
         FROM QuestionJpaEntity q
         WHERE q.id = :questionId
         """)
-    UUID findReferenceNumberById(@Param("questionId") Long questionId);
+    UUID findRefNumById(@Param("questionId") Long questionId);
 }
