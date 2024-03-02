@@ -100,8 +100,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                     savedLevelIdToCodeMap,
                     postUpdateAttributes,
                     postUpdateMaturityLevels,
-                    currentUserId,
-                    savedKit.getId());
+                    currentUserId);
                 if (isKitModificationMajor)
                     isMajorUpdate = true;
             }
@@ -158,15 +157,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             return;
 
         dslQuestions.values().forEach(dslQuestion -> {
-            var createParam = new CreateQuestionPort.Param(
-                dslQuestion.getCode(),
-                dslQuestion.getTitle(),
-                dslQuestion.getIndex(),
-                dslQuestion.getDescription(),
-                dslQuestion.isMayNotBeApplicable(),
+            Long questionnaireId = questionnaires.get(dslQuestion.getQuestionnaireCode());
+            var createParam = toCreateQuestionParam(
+                kitId,
+                questionnaireId,
                 currentUserId,
-                questionnaires.get(dslQuestion.getQuestionnaireCode()),
-                kitId);
+                dslQuestion);
 
             Long questionId = createQuestionPort.persist(createParam);
             log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
@@ -177,6 +173,18 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             dslQuestion.getQuestionImpacts().forEach(impact ->
                 createImpact(impact, questionId, attributes, maturityLevels, currentUserId));
         });
+    }
+
+    private CreateQuestionPort.Param toCreateQuestionParam(Long kitId, Long questionnaireId, UUID currentUserId, QuestionDslModel dslQuestion) {
+        return new CreateQuestionPort.Param(
+            dslQuestion.getCode(),
+            dslQuestion.getTitle(),
+            dslQuestion.getIndex(),
+            dslQuestion.getDescription(),
+            dslQuestion.isMayNotBeApplicable(),
+            currentUserId,
+            questionnaireId,
+            kitId);
     }
 
     private void createAnswerOption(AnswerOptionDslModel option, Long questionId, UUID currentUserId, long kitId) {
@@ -230,8 +238,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                    Map<Long, String> savedLevels,
                                    Map<String, Long> updatedAttributes,
                                    Map<String, Long> updatedLevels,
-                                   UUID currentUserId,
-                                   long kitId) {
+                                   UUID currentUserId) {
         boolean isMajorUpdate = false;
         if (!savedQuestion.getTitle().equals(dslQuestion.getTitle()) ||
             !Objects.equals(savedQuestion.getHint(), dslQuestion.getDescription()) ||
@@ -260,8 +267,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             savedLevels,
             updatedAttributes,
             updatedLevels,
-            currentUserId,
-            kitId);
+            currentUserId);
 
         return isMajorUpdate || isMajorUpdateQuestionImpact;
     }
@@ -296,8 +302,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                           Map<Long, String> savedLevels,
                                           Map<String, Long> updatedAttributes,
                                           Map<String, Long> updatedLevels,
-                                          UUID currentUserId,
-                                          long kitId) {
+                                          UUID currentUserId) {
         Map<AttributeLevel, QuestionImpact> savedImpactsMap = savedQuestion.getImpacts().stream()
             .collect(toMap(impact -> createSavedAttributeLevel(impact, savedAttributes, savedLevels), i -> i));
         Map<AttributeLevel, QuestionImpactDslModel> dslImpactMap = dslQuestion.getQuestionImpacts().stream()
