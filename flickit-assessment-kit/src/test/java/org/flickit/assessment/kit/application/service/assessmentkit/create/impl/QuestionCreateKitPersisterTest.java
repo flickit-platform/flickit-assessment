@@ -94,8 +94,8 @@ class QuestionCreateKitPersisterTest {
             dslQuestion.getIndex(),
             dslQuestion.getDescription(),
             dslQuestion.isMayNotBeApplicable(),
-            questionnaire.getId(),
             kitId,
+            questionnaire.getId(),
             currentUserId
         );
         when(createQuestionPort.persist(createQuestionParam)).thenReturn(question.getId());
