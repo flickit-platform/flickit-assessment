@@ -115,10 +115,10 @@ class QuestionCreateKitPersisterTest {
             CURRENT_USER_ID,
             CURRENT_USER_ID
         );
-        when(createQuestionImpactPort.persist(createImpact, KIT_ID)).thenReturn(impact.getId());
+        when(createQuestionImpactPort.persist(createImpact)).thenReturn(impact.getId());
 
-        var createOptionImpact1Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact1.getOptionId(), optionImpact1.getValue(), KIT_ID, CURRENT_USER_ID);
-        var createOptionImpact2Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact2.getOptionId(), optionImpact2.getValue(), KIT_ID, CURRENT_USER_ID);
+        var createOptionImpact1Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact1.getOptionId(), optionImpact1.getValue(), CURRENT_USER_ID);
+        var createOptionImpact2Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact2.getOptionId(), optionImpact2.getValue(), CURRENT_USER_ID);
         when(createAnswerOptionImpactPort.persist(createOptionImpact1Param)).thenReturn(optionImpact1.getId());
         when(createAnswerOptionImpactPort.persist(createOptionImpact2Param)).thenReturn(optionImpact2.getId());
 
