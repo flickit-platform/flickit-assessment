@@ -15,9 +15,10 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerMapper {
 
-    public static AnswerJpaEntity mapCreateParamToJpaEntity(CreateAnswerPort.Param param, UUID questionReferenceNumber) {
+    public static AnswerJpaEntity mapCreateParamToJpaEntity(CreateAnswerPort.Param param, UUID questionRefNum) {
         return new AnswerJpaEntity(
             null,
+            questionRefNum,
             null,
             param.questionnaireId(),
             param.questionId(),
@@ -25,8 +26,7 @@ public class AnswerMapper {
             param.confidenceLevelId(),
             param.isNotApplicable(),
             param.currentUserId(),
-            param.currentUserId(),
-            questionReferenceNumber
+            param.currentUserId()
         );
     }
 

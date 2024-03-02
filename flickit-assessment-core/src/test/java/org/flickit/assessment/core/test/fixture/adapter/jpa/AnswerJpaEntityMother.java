@@ -12,6 +12,7 @@ public class AnswerJpaEntityMother {
         UUID createdBy = UUID.randomUUID();
         return new AnswerJpaEntity(
             UUID.randomUUID(),
+            UUID.randomUUID(),
             assessmentResultJpaEntity,
             1L,
             questionId,
@@ -19,14 +20,14 @@ public class AnswerJpaEntityMother {
             ConfidenceLevel.getDefault().getId(),
             null,
             createdBy,
-            createdBy,
-            UUID.randomUUID()
+            createdBy
         );
     }
 
     public static AnswerJpaEntity answerEntityWithNoOption(AssessmentResultJpaEntity assessmentResultJpaEntity, Long questionId) {
         UUID createdBy = UUID.randomUUID();
         return new AnswerJpaEntity(
+            UUID.randomUUID(),
             UUID.randomUUID(),
             assessmentResultJpaEntity,
             1L,
@@ -35,14 +36,14 @@ public class AnswerJpaEntityMother {
             ConfidenceLevel.getDefault().getId(),
             null,
             createdBy,
-            createdBy,
-            UUID.randomUUID()
+            createdBy
         );
     }
 
     public static AnswerJpaEntity answerEntityWithIsNotApplicableTrue(AssessmentResultJpaEntity assessmentResultJpaEntity, Long questionId) {
         UUID createdBy = UUID.randomUUID();
         return new AnswerJpaEntity(
+            UUID.randomUUID(),
             UUID.randomUUID(),
             assessmentResultJpaEntity,
             1L,
@@ -51,8 +52,7 @@ public class AnswerJpaEntityMother {
             ConfidenceLevel.getDefault().getId(),
             Boolean.TRUE,
             createdBy,
-            createdBy,
-            UUID.randomUUID()
+            createdBy
         );
     }
 }

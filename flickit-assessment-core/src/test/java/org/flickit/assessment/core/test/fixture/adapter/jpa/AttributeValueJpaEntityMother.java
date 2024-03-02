@@ -10,11 +10,11 @@ public class AttributeValueJpaEntityMother {
     public static QualityAttributeValueJpaEntity attributeValueWithNullMaturityLevel(AssessmentResultJpaEntity assessmentResultJpaEntity, long attributeId) {
         return new QualityAttributeValueJpaEntity(
             UUID.randomUUID(),
+            UUID.randomUUID(),
             assessmentResultJpaEntity,
             attributeId,
             null,
-            null,
-            UUID.randomUUID()
+            null
         );
     }
 }

@@ -24,6 +24,9 @@ public class SubjectValueJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
+    @Column(name = "subject_ref_num", nullable = false)
+    private UUID subjectRefNum;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
@@ -36,7 +39,4 @@ public class SubjectValueJpaEntity {
 
     @Column(name = "confidence_value")
     private Double confidenceValue;
-
-    @Column(name = "subject_reference_number", nullable = false)
-    private UUID subjectReferenceNumber;
 }
