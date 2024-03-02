@@ -29,12 +29,10 @@ public class AnswerOptionImpactMapper {
             param.optionId(),
             questionImpactEntity,
             param.value(),
-            param.kitId(),
             creationTime,
             creationTime,
             param.createdBy(),
-            param.createdBy(),
-            UUID.randomUUID()
+            param.createdBy()
         );
     }
 }

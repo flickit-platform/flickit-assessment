@@ -103,7 +103,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         dslQuestion.getQuestionImpacts().forEach(impact -> {
             Long attributeId = attributes.get(impact.getAttributeCode());
             Long maturityLevelId = maturityLevels.get(impact.getMaturityLevel().getTitle());
-            createImpact(impact, questionId, attributeId, maturityLevelId, optionIndexToIdMap, currentUserId, kitId);
+            createImpact(impact, questionId, attributeId, maturityLevelId, optionIndexToIdMap, currentUserId);
         });
     }
 
@@ -131,8 +131,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                               Long attributeId,
                               Long maturityLevelId,
                               Map<Integer, Long> optionIndexToIdMap,
-                              UUID currentUserId,
-                              Long kitId) {
+                              UUID currentUserId) {
 
         QuestionImpact newQuestionImpact = new QuestionImpact(
             null,
@@ -145,7 +144,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             currentUserId,
             currentUserId
         );
-        Long impactId = createQuestionImpactPort.persist(newQuestionImpact, kitId);
+        Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
         log.debug("QuestionImpact[impactId={}, questionId={}] created.", impactId, questionId);
 
         dslQuestionImpact.getOptionsIndextoValueMap().keySet().forEach(
@@ -153,13 +152,12 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                 impactId,
                 optionIndexToIdMap.get(index),
                 dslQuestionImpact.getOptionsIndextoValueMap().get(index),
-                currentUserId,
-                kitId)
+                currentUserId)
         );
     }
 
-    private void createAnswerOptionImpact(Long questionImpactId, Long optionId, Double value, UUID currentUserId, Long kitId) {
-        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value, kitId, currentUserId);
+    private void createAnswerOptionImpact(Long questionImpactId, Long optionId, Double value, UUID currentUserId) {
+        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value, currentUserId);
         Long optionImpactId = createAnswerOptionImpactPort.persist(createParam);
         log.debug("AnswerOptionImpact[id={}, questionImpactId={}, optionId={}] created.", optionImpactId, questionImpactId, optionId);
     }

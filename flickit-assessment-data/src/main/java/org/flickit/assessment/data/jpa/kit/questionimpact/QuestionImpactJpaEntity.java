@@ -34,9 +34,6 @@ public class QuestionImpactJpaEntity {
     @Column(name = "attribute_id", nullable = false)
     private Long attributeId;
 
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
-
     @ManyToOne
     @JoinColumn(name = "maturity_level_id", referencedColumnName = "id")
     private MaturityLevelJpaEntity maturityLevel;
@@ -55,9 +52,6 @@ public class QuestionImpactJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @Column(name = "reference_number", nullable = false)
-    private UUID referenceNumber;
 
     public QuestionImpactJpaEntity(Long id,
                                    Integer weight,

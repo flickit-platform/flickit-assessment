@@ -24,20 +24,18 @@ public class QuestionImpactMapper {
         );
     }
 
-    public static QuestionImpactJpaEntity mapToJpaEntityToPersist(QuestionImpact impact, Long kitId, MaturityLevelJpaEntity maturityLevelJpaEntity) {
+    public static QuestionImpactJpaEntity mapToJpaEntityToPersist(QuestionImpact impact, MaturityLevelJpaEntity maturityLevelJpaEntity) {
         return new QuestionImpactJpaEntity(
             null,
             impact.getWeight(),
             impact.getQuestionId(),
             impact.getAttributeId(),
-            kitId,
             maturityLevelJpaEntity,
             null,
             impact.getCreationTime(),
             impact.getLastModificationTime(),
             impact.getCreatedBy(),
-            impact.getLastModifiedBy(),
-            UUID.randomUUID()
+            impact.getLastModifiedBy()
         );
     }
 }
