@@ -159,6 +159,11 @@
 			<artifactId>sentry-jdbc</artifactId>
 			<version>${sentry.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
+        </dependency>
     </dependencies>
 
 	<build>
