@@ -12,10 +12,10 @@ public class AnswerJpaEntityMother {
         UUID createdBy = UUID.randomUUID();
         return new AnswerJpaEntity(
             UUID.randomUUID(),
-            UUID.randomUUID(),
             assessmentResultJpaEntity,
             1L,
             questionId,
+            UUID.randomUUID(),
             answerOptionId,
             ConfidenceLevel.getDefault().getId(),
             null,
@@ -28,10 +28,10 @@ public class AnswerJpaEntityMother {
         UUID createdBy = UUID.randomUUID();
         return new AnswerJpaEntity(
             UUID.randomUUID(),
-            UUID.randomUUID(),
             assessmentResultJpaEntity,
             1L,
             questionId,
+            UUID.randomUUID(),
             null,
             ConfidenceLevel.getDefault().getId(),
             null,
@@ -44,10 +44,10 @@ public class AnswerJpaEntityMother {
         UUID createdBy = UUID.randomUUID();
         return new AnswerJpaEntity(
             UUID.randomUUID(),
-            UUID.randomUUID(),
             assessmentResultJpaEntity,
             1L,
             questionId,
+            UUID.randomUUID(),
             null,
             ConfidenceLevel.getDefault().getId(),
             Boolean.TRUE,

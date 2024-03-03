@@ -25,9 +25,6 @@ public class AnswerJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "question_ref_num", nullable = false)
-    private UUID questionRefNum;
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
@@ -37,6 +34,9 @@ public class AnswerJpaEntity {
 
     @Column(name = "question_id", nullable = false)
     private Long questionId;
+
+    @Column(name = "question_ref_num", nullable = false)
+    private UUID questionRefNum;
 
     @Column(name = "answer_option_id")
     private Long answerOptionId;

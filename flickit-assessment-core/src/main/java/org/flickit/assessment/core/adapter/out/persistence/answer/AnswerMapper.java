@@ -18,10 +18,10 @@ public class AnswerMapper {
     public static AnswerJpaEntity mapCreateParamToJpaEntity(CreateAnswerPort.Param param, UUID questionRefNum) {
         return new AnswerJpaEntity(
             null,
-            questionRefNum,
             null,
             param.questionnaireId(),
             param.questionId(),
+            questionRefNum,
             param.answerOptionId(),
             param.confidenceLevelId(),
             param.isNotApplicable(),
