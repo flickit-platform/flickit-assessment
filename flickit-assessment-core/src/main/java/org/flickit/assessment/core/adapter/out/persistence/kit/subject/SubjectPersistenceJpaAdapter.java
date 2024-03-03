@@ -36,8 +36,8 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<Subject> loadById(Long id) {
-        return repository.findById(id)
+    public Optional<Subject> loadByIdAndKitId(long id, long kitId) {
+        return repository.findByIdAndKitId(id, kitId)
             .map(entity -> mapToDomainModel(entity, null));
     }
 }

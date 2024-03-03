@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface LoadSubjectPort {
 
-    Optional<Subject> loadById(Long id);
+    Optional<Subject> loadByIdAndKitId(long id, long kitId);
 }

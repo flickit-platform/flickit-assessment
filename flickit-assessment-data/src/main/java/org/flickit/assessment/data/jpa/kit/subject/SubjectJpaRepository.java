@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Long> {
@@ -39,5 +40,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
             WHERE s.kitId = :kitId
         """)
     List<SubjectJpaEntity> loadByKitIdWithAttributes(Long kitId);
+
+    Optional<SubjectJpaEntity> findByIdAndKitId(@Param(value = "id") long id, @Param(value = "kitId") long kitId);
 
 }

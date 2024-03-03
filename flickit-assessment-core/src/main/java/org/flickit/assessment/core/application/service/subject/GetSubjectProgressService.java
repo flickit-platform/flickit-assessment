@@ -37,10 +37,10 @@ public class GetSubjectProgressService implements GetSubjectProgressUseCase {
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_SUBJECT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
-        var subject = loadSubjectPort.loadById(param.getSubjectId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_SUBJECT_PROGRESS_SUBJECT_ID_NOT_FOUND));
 
-        checkSubjectBelongsToAssessment(subject, assessmentResult.getAssessment());
+        long kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
+        var subject = loadSubjectPort.loadByIdAndKitId(param.getSubjectId(), kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_SUBJECT_PROGRESS_SUBJECT_ID_NOT_FOUND));
 
         var questionIds = loadQuestionsBySubjectPort.loadQuestionsBySubject(param.getSubjectId())
             .stream()
