@@ -16,9 +16,9 @@ public class SubjectValueMapper {
     public static SubjectValueJpaEntity mapToJpaEntity(Long subjectId, UUID subjectRefNum){
         return new SubjectValueJpaEntity(
             null,
-            subjectRefNum,
             null,
             subjectId,
+            subjectRefNum,
             null,
             null
         );

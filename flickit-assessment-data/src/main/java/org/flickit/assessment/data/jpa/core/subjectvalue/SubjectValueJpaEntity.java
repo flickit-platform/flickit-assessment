@@ -24,15 +24,15 @@ public class SubjectValueJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "subject_ref_num", nullable = false)
-    private UUID subjectRefNum;
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 
     @Column(name = "subject_id", nullable = false)
     private Long subjectId;
+
+    @Column(name = "subject_ref_num", nullable = false)
+    private UUID subjectRefNum;
 
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;

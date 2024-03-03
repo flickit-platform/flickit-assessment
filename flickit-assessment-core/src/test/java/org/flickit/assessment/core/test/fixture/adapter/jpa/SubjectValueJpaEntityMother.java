@@ -12,9 +12,9 @@ public class SubjectValueJpaEntityMother {
     public static SubjectValueJpaEntity subjectValueWithNullMaturityLevel(AssessmentResultJpaEntity assessmentResultJpaEntity) {
         return new SubjectValueJpaEntity(
             UUID.randomUUID(),
-            UUID.randomUUID(),
             assessmentResultJpaEntity,
             subjectId++,
+            UUID.randomUUID(),
             null,
             null
         );
