@@ -35,6 +35,9 @@ public class AnswerJpaEntity {
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
+    @Column(name = "question_ref_num", nullable = false)
+    private UUID questionRefNum;
+
     @Column(name = "answer_option_id")
     private Long answerOptionId;
 
@@ -49,9 +52,6 @@ public class AnswerJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @Column(name = "question_reference_number", nullable = false)
-    private UUID questionReferenceNumber;
 
     @Override
     public String toString() {
