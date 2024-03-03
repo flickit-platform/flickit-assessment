@@ -24,15 +24,6 @@ public class AssessmentResultMother {
         return assessmentResult;
     }
 
-    public static AssessmentResult validResultWithSubjectValuesAndMaturityLevelAndKitId(List<SubjectValue> subjectValues, MaturityLevel maturityLevel, long kitId) {
-        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessmentWithKitId(kitId), subjectValues, LocalDateTime.now(), LocalDateTime.now());
-        assessmentResult.setIsCalculateValid(true);
-        assessmentResult.setMaturityLevel(maturityLevel);
-        assessmentResult.setLastCalculationTime(LocalDateTime.now());
-        assessmentResult.setLastConfidenceCalculationTime(LocalDateTime.now());
-        return assessmentResult;
-    }
-
     public static AssessmentResult validResultWithJustAnId() {
         AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), null, new ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
         assessmentResult.setIsCalculateValid(true);

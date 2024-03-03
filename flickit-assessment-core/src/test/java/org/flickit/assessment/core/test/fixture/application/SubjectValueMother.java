@@ -15,10 +15,6 @@ public class SubjectValueMother {
         return new SubjectValue(UUID.randomUUID(), SubjectMother.withNoAttributes(), qaValues);
     }
 
-    public static SubjectValue withQAValuesAndKitId(List<QualityAttributeValue> qaValues, Long kitId) {
-        return new SubjectValue(UUID.randomUUID(), SubjectMother.withKitId(kitId), qaValues);
-    }
-
     public static SubjectValue withQAValuesAndMaturityLevel(List<QualityAttributeValue> qaValues, MaturityLevel maturityLevel) {
         SubjectValue subjectValue = new SubjectValue(UUID.randomUUID(), SubjectMother.withNoAttributes(), qaValues);
         subjectValue.setMaturityLevel(maturityLevel);
