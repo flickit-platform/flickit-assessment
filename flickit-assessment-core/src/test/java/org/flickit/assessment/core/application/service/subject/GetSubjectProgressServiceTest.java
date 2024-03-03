@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.subject;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.subject.GetSubjectProgressUseCase;
 import org.flickit.assessment.core.application.port.out.answer.CountAnswersByQuestionIdsPort;
+import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsBySubjectPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -25,6 +27,9 @@ class GetSubjectProgressServiceTest {
 
     @InjectMocks
     private GetSubjectProgressService service;
+
+    @Mock
+    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
 
     @Mock
     private LoadQuestionsBySubjectPort loadQuestionsBySubjectPort;
@@ -40,7 +45,7 @@ class GetSubjectProgressServiceTest {
 
     @Test
     void testGetSubjectProgress_ValidResult() {
-        var kitId = 1563L;
+        UUID currentUserId = UUID.randomUUID();
         var questions = List.of(
             QuestionMother.withNoImpact(),
             QuestionMother.withNoImpact(),
@@ -54,6 +59,7 @@ class GetSubjectProgressServiceTest {
         var result = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevelAndKitId(
             List.of(subjectValue), MaturityLevelMother.levelTwo(), kitId);
 
+        when(checkUserAssessmentAccessPort.hasAccess(result.getAssessment().getId(), currentUserId)).thenReturn(true);
         when(loadQuestionsBySubjectPort.loadQuestionsBySubject(subjectValue.getSubject().getId())).
             thenReturn(questions);
         when(loadSubjectPort.loadById(subjectValue.getSubject().getId())).
@@ -63,7 +69,7 @@ class GetSubjectProgressServiceTest {
             result.getId(), questionIds)).thenReturn(2);
 
         var subjectProgress = service.getSubjectProgress(new GetSubjectProgressUseCase.Param(
-            result.getAssessment().getId(), subjectValue.getSubject().getId()));
+            result.getAssessment().getId(), subjectValue.getSubject().getId(), currentUserId));
 
         assertFalse(subjectProgress.title().isBlank());
         assertEquals(2, subjectProgress.answerCount());
