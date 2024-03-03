@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.domain.AnswerOptionImpact;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerOptionImpactMapper {
@@ -22,13 +23,14 @@ public class AnswerOptionImpactMapper {
 
     public static AnswerOptionImpactJpaEntity mapToJpaEntity(CreateAnswerOptionImpactPort.Param param,
                                                              QuestionImpactJpaEntity questionImpactEntity) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new AnswerOptionImpactJpaEntity(
             null,
             param.optionId(),
             questionImpactEntity,
             param.value(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            creationTime,
+            creationTime,
             param.createdBy(),
             param.createdBy()
         );

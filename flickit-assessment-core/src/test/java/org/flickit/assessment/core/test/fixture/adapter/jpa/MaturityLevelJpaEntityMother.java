@@ -12,15 +12,16 @@ public class MaturityLevelJpaEntityMother {
     public static MaturityLevelJpaEntity maturityLevelEntity(Long id) {
         return new MaturityLevelJpaEntity(
             id,
+            UUID.randomUUID(),
             "code" + id,
             index++,
             "title" + id,
             id.intValue(),
+            1L,
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),
-            UUID.randomUUID(),
-            1L
+            UUID.randomUUID()
         );
     }
 }

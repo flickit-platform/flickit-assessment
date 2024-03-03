@@ -6,6 +6,7 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionImpactMapper {
     public static QuestionImpact mapToDomainModel(QuestionImpactJpaEntity entity) {
