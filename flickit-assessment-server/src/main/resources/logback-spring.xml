@@ -1,50 +1,70 @@
 <configuration scan="false">
 
-	<contextName>flickit-assessment</contextName>
-	<jmxConfigurator />
-	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <contextName>flickit-assessment</contextName>
+    <jmxConfigurator/>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
-	<springProperty scope="context" name="ASYNC_CONSOLE_QUEUE_SIZE" source="logging.async-console.queue-size" defaultValue="1000"/>
+    <springProperty scope="context" name="ASYNC_CONSOLE_QUEUE_SIZE" source="logging.async-console.queue-size"
+                    defaultValue="1000"/>
     <springProperty scope="context" name="LOG_FILE_PATH" source="log.file.path" defaultValue="logs"/>
     <springProperty scope="context" name="LOG_MAX_HISTORY_DAYS" source="log.file.max-history" defaultValue="30"/>
     <springProperty scope="context" name="LOG_MAX_FILE_SIZE" source="log.file.max-size" defaultValue="10MB"/>
     <springProperty scope="context" name="LOG_MAX_TOTAL_SIZE" source="log.file.total-size" defaultValue="100GB"/>
 
+    <springProfile name="prod">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        </appender>
+    </springProfile>
 
-	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>[%date{ISO8601,UTC}] %-5level -| %logger{0} -| %msg %rEx%n</pattern>
-		</encoder>
-	</appender>
+    <springProfile name="!prod">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>[%date{ISO8601,UTC}] %-5level -| %logger{0} -| %msg %rEx%n</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
 
-	<!-- see https://logback.qos.ch/manual/appenders.html#AsyncAppender -->
-	<appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
-		<appender-ref ref="CONSOLE" />
-		<discardingThreshold>0</discardingThreshold>
-		<queueSize>${ASYNC_CONSOLE_QUEUE_SIZE}</queueSize>
-		<neverBlock>true</neverBlock>
-	</appender>
+    <!-- see https://logback.qos.ch/manual/appenders.html#RollingFileAppender -->
+    <springProfile name="prod">
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <File>${LOG_FILE_PATH}/application.log</File>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <FileNamePattern>${LOG_FILE_PATH}/application.%d{yyyy-MM-dd}.log.gz</FileNamePattern>
+                <maxHistory>${LOG_MAX_HISTORY_DAYS}</maxHistory>
+                <maxFileSize>${LOG_MAX_FILE_SIZE}</maxFileSize>
+                <totalSizeCap>${LOG_MAX_TOTAL_SIZE}</totalSizeCap>
+            </rollingPolicy>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</Pattern>
+            </layout>
+        </appender>
+    </springProfile>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${LOG_FILE_PATH}/application.log</File>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${LOG_FILE_PATH}/application.%d{yyyy-MM-dd}.log.gz</FileNamePattern>
-            <maxHistory>${LOG_MAX_HISTORY_DAYS}</maxHistory>
-            <maxFileSize>${LOG_MAX_FILE_SIZE}</maxFileSize>
-            <totalSizeCap>${LOG_MAX_TOTAL_SIZE}</totalSizeCap>
-        </rollingPolicy>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</Pattern>
-        </layout>
+    <!-- see https://logback.qos.ch/manual/appenders.html#AsyncAppender -->
+    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="CONSOLE"/>
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>${ASYNC_CONSOLE_QUEUE_SIZE}</queueSize>
+        <neverBlock>true</neverBlock>
     </appender>
 
-	<root level="warn">
-		<appender-ref ref="ASYNC_CONSOLE" />
-        <appender-ref ref="FILE" />
-	</root>
 
-	<logger name="org.flickit.assessment" level="info" additivity="false">
-        <appender-ref ref="ASYNC_CONSOLE" />
-        <appender-ref ref="FILE" />
+    <!-- see https://logback.qos.ch/manual/appenders.html#AsyncAppender -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE"/>
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>${ASYNC_CONSOLE_QUEUE_SIZE}</queueSize>
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <root level="warn">
+        <appender-ref ref="ASYNC_CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+    </root>
+
+    <logger name="org.flickit.assessment" level="info" additivity="false">
+        <appender-ref ref="ASYNC_CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </logger>
 </configuration>
