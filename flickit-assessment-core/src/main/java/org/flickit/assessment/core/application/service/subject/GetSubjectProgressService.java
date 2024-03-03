@@ -41,6 +41,6 @@ public class GetSubjectProgressService implements GetSubjectProgressUseCase {
         var questionCount = new HashSet<>(questionIds).size();
 
         int answerCount = countAnswersByQuestionIdsPort.countByQuestionIds(assessmentResult.getId(), questionIds);
-        return new Result(param.getSubjectId(), title, answerCount, questionCount);
+        return new Result(param.getSubjectId(), title, questionCount, answerCount);
     }
 }

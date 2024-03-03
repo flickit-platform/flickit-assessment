@@ -29,6 +29,6 @@ public class GetSubjectProgressRestController {
     }
 
     private GetSubjectProgressResponseDto toResponse(GetSubjectProgressUseCase.Result result) {
-        return new GetSubjectProgressResponseDto(result.id(), result.title(), result.answerCount(), result.questionCount());
+        return new GetSubjectProgressResponseDto(result.id(), result.title(), result.questionCount(), result.answerCount());
     }
 }
