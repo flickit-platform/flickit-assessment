@@ -15,9 +15,9 @@ public class QualityAttributeValueMapper {
     public static QualityAttributeValueJpaEntity mapToJpaEntity(Long qualityAttributeId, UUID attributeRefNum) {
         return new QualityAttributeValueJpaEntity(
             null,
-            attributeRefNum,
             null,
             qualityAttributeId,
+            attributeRefNum,
             null,
             null
         );
