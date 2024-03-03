@@ -7,14 +7,17 @@ import org.flickit.assessment.core.application.domain.QualityAttributeValue;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 
+import java.util.UUID;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QualityAttributeValueMapper {
 
-    public static QualityAttributeValueJpaEntity mapToJpaEntity(Long qualityAttributeId) {
+    public static QualityAttributeValueJpaEntity mapToJpaEntity(Long qualityAttributeId, UUID attributeRefNum) {
         return new QualityAttributeValueJpaEntity(
             null,
             null,
             qualityAttributeId,
+            attributeRefNum,
             null,
             null
         );
