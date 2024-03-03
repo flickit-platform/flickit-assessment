@@ -39,7 +39,8 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public UUID persist(CreateAnswerPort.Param param) {
-        UUID questionRefNum = questionRepository.findRefNumById(param.questionId()); // TODO: This query must be deleted after question id deletion
+        UUID questionRefNum = questionRepository.findRefNumById(param.questionId())
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND)); // TODO: This query must be deleted after question id deletion
         AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param, questionRefNum);
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepo.findById(param.assessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));

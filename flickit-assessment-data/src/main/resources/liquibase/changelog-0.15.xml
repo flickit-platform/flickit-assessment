@@ -132,4 +132,19 @@
         </update>
     </changeSet>
 
+    <changeSet id="0.15-17" author="MKouhestani">
+        <addColumn tableName="fac_evidence">
+            <column name="question_ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-18" author="MKouhestani">
+        <update tableName="fac_evidence">
+            <column name="question_ref_num"
+                    valueComputed="fak_question.ref_num FROM fak_question WHERE fak_question.id = question_id"/>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
