@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.evidence;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.core.application.port.in.evidence.GetAttributeEvidenceListUseCase.AttributeEvidenceListItem;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.*;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
@@ -19,7 +20,8 @@ public class EvidencePersistenceJpaAdapter implements
     LoadEvidencesPort,
     UpdateEvidencePort,
     DeleteEvidencePort,
-    CheckEvidenceExistencePort {
+    CheckEvidenceExistencePort,
+    LoadAttributeEvidencesPort {
 
     private final EvidenceJpaRepository repository;
 
@@ -48,7 +50,6 @@ public class EvidencePersistenceJpaAdapter implements
         );
     }
 
-
     @Override
     public UpdateEvidencePort.Result update(UpdateEvidencePort.Param param) {
         repository.update(
@@ -69,5 +70,24 @@ public class EvidencePersistenceJpaAdapter implements
     @Override
     public boolean existsById(UUID id) {
         return repository.existsByIdAndDeletedFalse(id);
+    }
+
+    @Override
+    public PaginatedResponse<AttributeEvidenceListItem> loadAttributeEvidences(UUID assessmentId, Long attributeId,
+                                                                               Integer type, int page, int size) {
+        var pageResult = repository.findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(
+            assessmentId, attributeId, type, PageRequest.of(page, size));
+
+        var items = pageResult.getContent().stream()
+            .map(AttributeEvidenceListItem::new)
+            .toList();
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            EvidenceJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            Sort.Direction.DESC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
     }
 }

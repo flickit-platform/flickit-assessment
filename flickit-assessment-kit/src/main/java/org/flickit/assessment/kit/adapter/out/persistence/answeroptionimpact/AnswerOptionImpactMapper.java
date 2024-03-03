@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.domain.AnswerOptionImpact;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerOptionImpactMapper {
@@ -29,12 +28,10 @@ public class AnswerOptionImpactMapper {
             param.optionId(),
             questionImpactEntity,
             param.value(),
-            param.kitVersionId(),
             creationTime,
             creationTime,
             param.createdBy(),
-            param.createdBy(),
-            UUID.randomUUID()
+            param.createdBy()
         );
     }
 }

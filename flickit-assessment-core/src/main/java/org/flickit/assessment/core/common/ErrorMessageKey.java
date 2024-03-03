@@ -55,6 +55,15 @@ public class ErrorMessageKey {
     public static final String GET_ANSWER_LIST_PAGE_MIN = "get-answer-list.page.min";
     public static final String GET_ANSWER_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND = "get-answer-list.assessmentResultId.notFound";
 
+    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL = "get-attribute-evidence-list.assessmentId.notNull";
+    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_ATTRIBUTE_ID_NOT_NULL = "get-attribute-evidence-list.attributeId.notNull";
+    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND = "get-attribute-evidence-list.assessmentId.notFound";
+    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_TYPE_INVALID = "get-attribute-evidence-list.type.invalid";
+    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_TYPE_NOT_NULL = "get-attribute-evidence-list.type.notNull";
+    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_SIZE_MIN = "get-attribute-evidence-list.size.min";
+    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_SIZE_MAX = "get-attribute-evidence-list.size.max";
+    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_PAGE_MIN = "get-attribute-evidence-list.page.min";
+
     public static final String GET_EVIDENCE_LIST_QUESTION_ID_NOT_NULL = "get-evidence-list.questionId.notNull";
     public static final String GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL = "get-evidence-list.assessmentId.notNull";
     public static final String GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND = "get-evidence-list.assessmentId.notFound";

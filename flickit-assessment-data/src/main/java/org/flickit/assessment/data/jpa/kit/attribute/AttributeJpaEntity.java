@@ -24,6 +24,9 @@ public class AttributeJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
+
     @Column(name = "code", length = 50, nullable = false)
     private String code;
 
@@ -54,6 +57,7 @@ public class AttributeJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
+
     public AttributeJpaEntity(Long id, String code, String title, Integer index, String description, Integer weight, Long kitVersionId,
                               LocalDateTime creationTime, LocalDateTime lastModificationTime) {
         this.id = id;
@@ -66,11 +70,8 @@ public class AttributeJpaEntity {
         this.creationTime = creationTime;
         this.lastModificationTime = lastModificationTime;
     }
-
     @ManyToOne
     @JoinColumn(name = "subject_id", referencedColumnName = "id")
     private SubjectJpaEntity subject;
 
-    @Column(name = "reference_number", nullable = false)
-    private UUID referenceNumber;
 }

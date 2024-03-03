@@ -28,20 +28,21 @@ public class SubjectMapper {
     }
 
     public static SubjectJpaEntity mapToJpaEntity(CreateSubjectPort.Param param) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new SubjectJpaEntity(
             null,
+            UUID.randomUUID(),
             param.code(),
             param.index(),
             param.title(),
             param.description(),
             param.weight(),
             param.kitVersionId(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            creationTime,
+            creationTime,
             param.createdBy(),
             param.createdBy(),
-            null,
-            UUID.randomUUID()
+            null
         );
     }
 }

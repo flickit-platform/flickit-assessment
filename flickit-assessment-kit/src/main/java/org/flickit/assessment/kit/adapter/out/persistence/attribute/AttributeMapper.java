@@ -29,6 +29,7 @@ public class AttributeMapper {
     public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, Long kitVersionId, SubjectJpaEntity subjectJpaEntity) {
         return new AttributeJpaEntity(
             null,
+            UUID.randomUUID(),
             attribute.getCode(),
             attribute.getIndex(),
             attribute.getTitle(),
@@ -39,8 +40,7 @@ public class AttributeMapper {
             attribute.getLastModificationTime(),
             attribute.getCreatedBy(),
             attribute.getLastModifiedBy(),
-            subjectJpaEntity,
-            UUID.randomUUID()
+            subjectJpaEntity
         );
     }
 }
