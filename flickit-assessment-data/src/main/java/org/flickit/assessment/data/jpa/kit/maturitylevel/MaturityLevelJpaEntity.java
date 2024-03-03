@@ -24,6 +24,9 @@ public class MaturityLevelJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
+
     @Column(name = "code", length = 50)
     private String code;
 
@@ -36,6 +39,9 @@ public class MaturityLevelJpaEntity {
     @Column(name = "value", nullable = false)
     private Integer value;
 
+    @Column(name = "kit_version_id")
+    private Long kitVersionId;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
@@ -47,9 +53,6 @@ public class MaturityLevelJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @Column(name = "kit_version_id")
-    private Long kitVersionId;
 
     public MaturityLevelJpaEntity(Long id) {
         this.id = id;
@@ -64,31 +67,28 @@ public class MaturityLevelJpaEntity {
     @OneToMany(mappedBy = "maturityLevel", cascade = CascadeType.REMOVE)
     private List<QuestionImpactJpaEntity> questionImpacts;
 
-    @Column(name = "reference_number", nullable = false)
-    private UUID referenceNumber;
-
     public MaturityLevelJpaEntity(Long id,
+                                  UUID refNum,
                                   String code,
                                   Integer index,
                                   String title,
                                   Integer value,
+                                  Long kitVersionId,
                                   LocalDateTime creationTime,
                                   LocalDateTime lastModificationTime,
                                   UUID createdBy,
-                                  UUID lastModifiedBy,
-                                  Long kitVersionId,
-                                  UUID referenceNumber) {
+                                  UUID lastModifiedBy) {
         this.id = id;
+        this.refNum = refNum;
         this.code = code;
         this.index = index;
         this.title = title;
         this.value = value;
+        this.kitVersionId = kitVersionId;
         this.creationTime = creationTime;
         this.lastModificationTime = lastModificationTime;
         this.createdBy = createdBy;
         this.lastModifiedBy = lastModifiedBy;
-        this.kitVersionId = kitVersionId;
-        this.referenceNumber = referenceNumber;
     }
 }
 

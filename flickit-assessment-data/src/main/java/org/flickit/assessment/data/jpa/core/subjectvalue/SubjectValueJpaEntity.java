@@ -31,12 +31,12 @@ public class SubjectValueJpaEntity {
     @Column(name = "subject_id", nullable = false)
     private Long subjectId;
 
+    @Column(name = "subject_ref_num", nullable = false)
+    private UUID subjectRefNum;
+
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
 
     @Column(name = "confidence_value")
     private Double confidenceValue;
-
-    @Column(name = "subject_reference_number", nullable = false)
-    private UUID subjectReferenceNumber;
 }

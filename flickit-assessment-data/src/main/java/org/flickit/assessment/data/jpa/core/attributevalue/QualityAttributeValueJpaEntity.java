@@ -31,8 +31,8 @@ public class QualityAttributeValueJpaEntity {
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 
-    @Column(name = "attribute_reference_number", nullable = false)
-    private UUID attributeReferenceNumber;
+    @Column(name = "attribute_ref_num", nullable = false)
+    private UUID attributeRefNum;
 
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;

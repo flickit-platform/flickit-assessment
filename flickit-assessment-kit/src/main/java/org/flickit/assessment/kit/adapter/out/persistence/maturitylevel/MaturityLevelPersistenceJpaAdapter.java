@@ -28,7 +28,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public Long persist(MaturityLevel level, Long kitVersionId, UUID createdBy) {
-        return repository.saveAndFlush(mapToJpaEntityToPersist(level, kitVersionId, createdBy)).getId();
+        return repository.save(mapToJpaEntityToPersist(level, kitVersionId, createdBy)).getId();
     }
 
     @Override

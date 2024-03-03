@@ -33,9 +33,6 @@ public class AnswerOptionImpactJpaEntity {
     @Column(name = "value", nullable = false)
     private double value;
 
-    @Column(name = "kit_version_id", nullable = false)
-    private Long kitVersionId;
-
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
@@ -47,8 +44,5 @@ public class AnswerOptionImpactJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @Column(name = "reference_number", nullable = false)
-    private UUID referenceNumber;
 
 }

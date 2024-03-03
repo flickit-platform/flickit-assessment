@@ -61,11 +61,11 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                                                                @Param("maturityLevelId") Long maturityLevelId);
 
     @Query("""
-        SELECT a.referenceNumber
+        SELECT a.refNum
         FROM AttributeJpaEntity a
         WHERE a.id = :attributeId
         """)
-    UUID findReferenceNumberById(@Param("attributeId") Long attributeId);
+    UUID findRefNumById(@Param("attributeId") Long attributeId);
 
     AttributeJpaEntity findByKitVersionIdAndReferenceNumber(Long kitVersionId, UUID referenceNumber);
 

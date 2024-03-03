@@ -41,9 +41,9 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
     List<SubjectJpaEntity> loadByKitIdWithAttributes(Long kitId);
 
     @Query("""
-        SELECT s.referenceNumber
+        SELECT s.refNum
         FROM SubjectJpaEntity s
         WHERE s.id = :subjectId
         """)
-    UUID findReferenceNumberById(@Param(value = "subjectId") Long subjectId);
+    UUID findRefNumById(@Param(value = "subjectId") Long subjectId);
 }

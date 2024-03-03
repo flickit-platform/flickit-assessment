@@ -25,6 +25,7 @@ public class QuestionnaireMapper {
     static QuestionnaireJpaEntity mapToJpaEntityToPersist(Questionnaire questionnaire, Long kitVersionId, UUID createdBy) {
         return new QuestionnaireJpaEntity(
             null,
+            UUID.randomUUID(),
             questionnaire.getCode(),
             questionnaire.getIndex(),
             questionnaire.getTitle(),
@@ -33,8 +34,7 @@ public class QuestionnaireMapper {
             questionnaire.getCreationTime(),
             questionnaire.getLastModificationTime(),
             createdBy,
-            createdBy,
-            UUID.randomUUID()
+            createdBy
         );
     }
 }

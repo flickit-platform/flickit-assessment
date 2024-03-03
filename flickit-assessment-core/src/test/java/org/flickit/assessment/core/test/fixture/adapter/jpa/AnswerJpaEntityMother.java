@@ -15,12 +15,12 @@ public class AnswerJpaEntityMother {
             assessmentResultJpaEntity,
             1L,
             questionId,
+            UUID.randomUUID(),
             answerOptionId,
             ConfidenceLevel.getDefault().getId(),
             null,
             createdBy,
-            createdBy,
-            UUID.randomUUID()
+            createdBy
         );
     }
 
@@ -31,12 +31,12 @@ public class AnswerJpaEntityMother {
             assessmentResultJpaEntity,
             1L,
             questionId,
+            UUID.randomUUID(),
             null,
             ConfidenceLevel.getDefault().getId(),
             null,
             createdBy,
-            createdBy,
-            UUID.randomUUID()
+            createdBy
         );
     }
 
@@ -47,12 +47,12 @@ public class AnswerJpaEntityMother {
             assessmentResultJpaEntity,
             1L,
             questionId,
+            UUID.randomUUID(),
             null,
             ConfidenceLevel.getDefault().getId(),
             Boolean.TRUE,
             createdBy,
-            createdBy,
-            UUID.randomUUID()
+            createdBy
         );
     }
 }

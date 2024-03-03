@@ -6,7 +6,7 @@
 
     <changeSet id="0.15-1" author="MKouhestani">
         <addColumn tableName="fak_subject">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -14,7 +14,7 @@
 
     <changeSet id="0.15-2" author="MKouhestani">
         <addColumn tableName="fak_attribute">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -22,7 +22,7 @@
 
     <changeSet id="0.15-3" author="MKouhestani">
         <addColumn tableName="fak_questionnaire">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -38,114 +38,112 @@
     </changeSet>
 
     <changeSet id="0.15-5" author="MKouhestani">
-        <addColumn tableName="fak_question_impact">
-            <column name="kit_id" type="bigint"
-                    valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
+        <addForeignKeyConstraint baseTableName="fak_question"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_question_assessmentkit"/>
     </changeSet>
 
     <changeSet id="0.15-6" author="MKouhestani">
-        <addColumn tableName="fak_answer_option">
-            <column name="kit_id" type="bigint"
-                    valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id">
+        <addColumn tableName="fak_question">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.15-7" author="MKouhestani">
-        <addColumn tableName="fak_answer_option_impact">
+        <addColumn tableName="fak_answer_option">
             <column name="kit_id" type="bigint"
-                    valueComputed="fak_question_impact.kit_id FROM fak_question_impact WHERE question_impact_id = fak_question_impact.id">
+                    valueComputed="fak_question.kit_id FROM fak_question WHERE question_id = fak_question.id">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.15-8" author="MKouhestani">
-        <addColumn tableName="fak_question">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
+        <addForeignKeyConstraint baseTableName="fak_answer_option"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_answeroption_assessmentkit"/>
     </changeSet>
 
+
     <changeSet id="0.15-9" author="MKouhestani">
-        <addColumn tableName="fak_question_impact">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+        <addColumn tableName="fak_answer_option">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.15-10" author="MKouhestani">
-        <addColumn tableName="fak_answer_option">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+        <addColumn tableName="fak_maturity_level">
+            <column name="ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.15-11" author="MKouhestani">
-        <addColumn tableName="fak_answer_option_impact">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+        <addColumn tableName="fac_answer">
+            <column name="question_ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.15-12" author="MKouhestani">
-        <addColumn tableName="fak_maturity_level">
-            <column name="reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
+        <update tableName="fac_answer">
+            <column name="question_ref_num"
+                    valueComputed="fak_question.ref_num FROM fak_question WHERE fak_question.id = question_id"/>
+        </update>
     </changeSet>
 
     <changeSet id="0.15-13" author="MKouhestani">
-        <addColumn tableName="fac_answer">
-            <column name="question_reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+        <addColumn tableName="fac_subject_value">
+            <column name="subject_ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.15-14" author="MKouhestani">
-        <update tableName="fac_answer">
-            <column name="question_reference_number"
-                    valueComputed="fak_question.reference_number FROM fak_question WHERE fak_question.id = question_id"/>
+        <update tableName="fac_subject_value">
+            <column name="subject_ref_num"
+                    valueComputed="fak_subject.ref_num FROM fak_subject WHERE fak_subject.id = subject_id"/>
         </update>
     </changeSet>
 
     <changeSet id="0.15-15" author="MKouhestani">
-        <addColumn tableName="fac_subject_value">
-            <column name="subject_reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+        <addColumn tableName="fac_quality_attribute_value">
+            <column name="attribute_ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.15-16" author="MKouhestani">
-        <update tableName="fac_subject_value">
-            <column name="subject_reference_number"
-                    valueComputed="fak_subject.reference_number FROM fak_subject WHERE fak_subject.id = subject_id"/>
+        <update tableName="fac_quality_attribute_value">
+            <column name="attribute_ref_num"
+                    valueComputed="fak_attribute.ref_num FROM fak_attribute WHERE fak_attribute.id = quality_attribute_id"/>
         </update>
     </changeSet>
 
     <changeSet id="0.15-17" author="MKouhestani">
-        <addColumn tableName="fac_quality_attribute_value">
-            <column name="attribute_reference_number" type="uuid" defaultValueComputed="gen_random_uuid()">
+        <addColumn tableName="fac_evidence">
+            <column name="question_ref_num" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.15-18" author="MKouhestani">
-        <update tableName="fac_quality_attribute_value">
-            <column name="attribute_reference_number"
-                    valueComputed="fak_attribute.reference_number FROM fak_attribute WHERE fak_attribute.id = quality_attribute_id"/>
+        <update tableName="fac_evidence">
+            <column name="question_ref_num"
+                    valueComputed="fak_question.ref_num FROM fak_question WHERE fak_question.id = question_id"/>
         </update>
     </changeSet>
 
@@ -224,22 +222,14 @@
     </changeSet>
 
     <changeSet id="0.15-31" author="MKouhestani">
-        <renameColumn tableName="fak_question_impact" oldColumnName="kit_id" newColumnName="kit_version_id"/>
-    </changeSet>
-
-    <changeSet id="0.15-32" author="MKouhestani">
         <renameColumn tableName="fak_answer_option" oldColumnName="kit_id" newColumnName="kit_version_id"/>
     </changeSet>
 
-    <changeSet id="0.15-33" author="MKouhestani">
-        <renameColumn tableName="fak_answer_option_impact" oldColumnName="kit_id" newColumnName="kit_version_id"/>
-    </changeSet>
-
-    <changeSet id="0.15-34" author="MKouhestani">
+    <changeSet id="0.15-32" author="MKouhestani">
         <renameColumn tableName="fak_maturity_level" oldColumnName="kit_id" newColumnName="kit_version_id"/>
     </changeSet>
 
-    <changeSet id="0.15-35" author="MKouhestani">
+    <changeSet id="0.15-33" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fak_assessment_kit"
                                  baseColumnNames="expert_group_id"
                                  referencedTableName="baseinfo_expertgroup"
@@ -247,7 +237,7 @@
                                  constraintName="fk_fak_assessmentkit_expertgroup"/>
     </changeSet>
 
-    <changeSet id="0.15-36" author="MKouhestani">
+    <changeSet id="0.15-34" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fak_assessment_kit"
                                  baseColumnNames="created_by"
                                  referencedTableName="account_user"
@@ -255,7 +245,7 @@
                                  constraintName="fk_fak_assessmentkit_user_createdby"/>
     </changeSet>
 
-    <changeSet id="0.15-37" author="MKouhestani">
+    <changeSet id="0.15-35" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fak_assessment_kit"
                                  baseColumnNames="last_modified_by"
                                  referencedTableName="account_user"
@@ -263,27 +253,27 @@
                                  constraintName="fk_fak_assessmentkit_user_lastmodifiedby"/>
     </changeSet>
 
-    <changeSet id="0.15-38" author="MKouhestani">
+    <changeSet id="0.15-36" author="MKouhestani">
         <addUniqueConstraint tableName="fak_assessment_kit" columnNames="code" constraintName="uq_fak_assessmentkit_code"/>
     </changeSet>
 
-    <changeSet id="0.15-39" author="MKouhestani">
+    <changeSet id="0.15-37" author="MKouhestani">
         <addUniqueConstraint tableName="fak_assessment_kit" columnNames="title" constraintName="uq_fak_assessmentkit_title"/>
     </changeSet>
 
-    <changeSet id="0.15-40" author="MKouhestani">
+    <changeSet id="0.15-38" author="MKouhestani">
         <sql>ALTER INDEX pk_fak_assessment_kit RENAME TO pk_fak_assessment_kit_version</sql>
     </changeSet>
 
-    <changeSet id="0.15-41" author="MKouhestani">
+    <changeSet id="0.15-39" author="MKouhestani">
         <addPrimaryKey tableName="fak_assessment_kit" columnNames="id" constraintName="pk_fak_assessment_kit"/>
     </changeSet>
 
-    <changeSet id="0.15-42" author="MKouhestani">
+    <changeSet id="0.15-40" author="MKouhestani">
         <dropUniqueConstraint tableName="fak_kit_dsl" constraintName="fk_fak_kitdsl_assessmentkit"/>
     </changeSet>
 
-    <changeSet id="0.15-43" author="MKouhestani">
+    <changeSet id="0.15-41" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fak_kit_dsl"
                                  baseColumnNames="assessment_kit_id"
                                  referencedTableName="fak_assessment_kit"
@@ -292,11 +282,11 @@
                                  deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
-    <changeSet id="0.15-44" author="MKouhestani">
+    <changeSet id="0.15-42" author="MKouhestani">
         <dropUniqueConstraint tableName="baseinfo_assessmentkittag_assessmentkits" constraintName="baseinfo_profiletag__assessmentkit_id_511ef243_fk_baseinfo_"/>
     </changeSet>
 
-    <changeSet id="0.15-45" author="MKouhestani">
+    <changeSet id="0.15-43" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="baseinfo_assessmentkittag_assessmentkits"
                                  baseColumnNames="assessmentkit_id"
                                  referencedTableName="fak_assessment_kit"
@@ -305,11 +295,11 @@
                                  deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
-    <changeSet id="0.15-46" author="MKouhestani">
+    <changeSet id="0.15-44" author="MKouhestani">
         <dropUniqueConstraint tableName="fak_kit_user_access" constraintName="fk_fak_kit_user_access_assessmentkit"/>
     </changeSet>
 
-    <changeSet id="0.15-47" author="MKouhestani">
+    <changeSet id="0.15-45" author="MKouhestani">
         <addForeignKeyConstraint baseTableName="fak_kit_user_access"
                                  baseColumnNames="kit_id"
                                  referencedTableName="fak_assessment_kit"
@@ -319,7 +309,7 @@
                                  validate="true"/>
     </changeSet>
 
-    <changeSet id="0.15-48" author="MKouhestani">
+    <changeSet id="0.15-46" author="MKouhestani">
         <addColumn tableName="fac_assessment_result">
             <column name="kit_version_id" type="bigint"
                     valueComputed="fak_assessment_kit.kit_version_id FROM fak_assessment_kit
