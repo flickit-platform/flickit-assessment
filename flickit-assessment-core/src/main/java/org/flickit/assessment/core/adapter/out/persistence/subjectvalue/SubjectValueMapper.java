@@ -23,7 +23,7 @@ public class SubjectValueMapper {
     }
 
     public static SubjectValue mapToDomainModel(SubjectValueJpaEntity entity, SubjectJpaEntity subjectEntity) {
-        var subject = new Subject(subjectEntity.getId(), null);
+        var subject = new Subject(subjectEntity.getId(), null, subjectEntity.getKitId());
         return new SubjectValue(
             entity.getId(),
             subject,

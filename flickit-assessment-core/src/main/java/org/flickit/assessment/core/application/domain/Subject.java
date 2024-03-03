@@ -13,5 +13,6 @@ public class Subject {
 
     private final long id;
     private final String title;
+    private final Long kitId;
     private List<QualityAttribute> qualityAttributes;
 }

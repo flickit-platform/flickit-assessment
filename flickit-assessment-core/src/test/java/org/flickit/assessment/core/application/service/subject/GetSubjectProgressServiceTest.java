@@ -40,6 +40,7 @@ class GetSubjectProgressServiceTest {
 
     @Test
     void testGetSubjectProgress_ValidResult() {
+        var kitId = 1563L;
         var questions = List.of(
             QuestionMother.withNoImpact(),
             QuestionMother.withNoImpact(),
@@ -49,9 +50,9 @@ class GetSubjectProgressServiceTest {
             .map(Question::getId)
             .toList();
         var qav = QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
-        var subjectValue = SubjectValueMother.withQAValues(List.of(qav));
-        var result = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(
-            List.of(subjectValue), MaturityLevelMother.levelTwo());
+        var subjectValue = SubjectValueMother.withQAValuesAndKitId(List.of(qav), kitId);
+        var result = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevelAndKitId(
+            List.of(subjectValue), MaturityLevelMother.levelTwo(), kitId);
 
         when(loadQuestionsBySubjectPort.loadQuestionsBySubject(subjectValue.getSubject().getId())).
             thenReturn(questions);
