@@ -58,7 +58,7 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
         var persistedEntities = repository.saveAll(entities);
 
         return persistedEntities.stream().map(q -> {
-            var attributeEntity = attributeRepository.findByKitVersionIdAndReferenceNumber(assessmentResult.getKitVersionId(), q.getAttributeReferenceNumber());
+            var attributeEntity = attributeRepository.findByKitVersionIdAndRefNum(assessmentResult.getKitVersionId(), q.getAttributeRefNum());
             return QualityAttributeValueMapper.mapToDomainModel(q, attributeEntity);
         }).toList();
     }
@@ -82,14 +82,14 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
             attributeMaturityScoreRepository.findByAttributeValueIdIn(collectIds(entities)).stream()
                 .collect(groupingBy(AttributeMaturityScoreJpaEntity::getAttributeValueId));
 
-        List<UUID> attributeReferenceNumbers = entities.stream().map(QualityAttributeValueJpaEntity::getAttributeReferenceNumber).toList();
+        List<UUID> attributeRefNums = entities.stream().map(QualityAttributeValueJpaEntity::getAttributeRefNum).toList();
         Long kitVersionId = entities.get(0).getKitVersionId();
-        Map<UUID, Long> attributeIdsToReferenceNumberMap = attributeRepository.findAllByKitVersionIdAndReferenceNumberIn(kitVersionId, attributeReferenceNumbers).stream()
-            .collect(toMap(AttributeJpaEntity::getReferenceNumber, AttributeJpaEntity::getId));
+        Map<UUID, Long> attributeIdsToRefNumMap = attributeRepository.findAllByKitVersionIdAndRefNumIn(kitVersionId, attributeRefNums).stream()
+            .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
 
         return entities.stream()
             .map(x -> new QualityAttributeValue(
-                x.getId(), new QualityAttribute(attributeIdsToReferenceNumberMap.get(x.getAttributeReferenceNumber()), 1, null),
+                x.getId(), new QualityAttribute(attributeIdsToRefNumMap.get(x.getAttributeRefNum()), 1, null),
                 null,
                 toMaturityScore(attributeIdToScores, x),
                 maturityLevels.get(x.getMaturityLevelId()),

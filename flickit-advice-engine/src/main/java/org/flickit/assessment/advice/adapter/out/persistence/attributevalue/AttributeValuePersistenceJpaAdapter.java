@@ -37,12 +37,12 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
             .map(AttributeLevelTarget::getAttributeId)
             .toList();
         var attributes = attributeRepository.findAllByIdsAndAssessmentId(attributeIds, assessmentId);
-        Map<UUID, Long> attributeReferenceNumberToIdMap = attributes.stream()
-            .collect(toMap(AttributeJpaEntity::getReferenceNumber, AttributeJpaEntity::getId));
-        var attributeValues = repository.findByAssessmentResult_assessment_IdAndAttributeReferenceNumberIn(assessmentId, attributeReferenceNumberToIdMap.keySet().stream().toList());
+        Map<UUID, Long> attributeRefNumToIdMap = attributes.stream()
+            .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
+        var attributeValues = repository.findByAssessmentResult_assessment_IdAndAttributeRefNumIn(assessmentId, attributeRefNumToIdMap.keySet().stream().toList());
 
         Map<Long, QualityAttributeValueJpaEntity> attributeIdToAttributeValueMap = attributeValues.stream()
-            .collect(toMap(a -> attributeReferenceNumberToIdMap.get(a.getAttributeReferenceNumber()), a -> a));
+            .collect(toMap(a -> attributeRefNumToIdMap.get(a.getAttributeRefNum()), a -> a));
 
         List<Result> result = new ArrayList<>();
         for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {

@@ -12,17 +12,17 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
 
     @Query("""
         SELECT qav FROM QualityAttributeValueJpaEntity qav
-        LEFT JOIN AttributeJpaEntity a ON a.id = :qualityAttributeId AND qav.attributeReferenceNumber = a.referenceNumber
+        LEFT JOIN AttributeJpaEntity a ON a.id = :qualityAttributeId AND qav.attributeRefNum = a.refNum
         WHERE qav.assessmentResult.id = :assessmentResultId
         """)
     QualityAttributeValueJpaEntity findByQualityAttributeIdAndAssessmentResult_Id(Long qualityAttributeId, UUID assessmentResultId);
 
-    List<QualityAttributeValueJpaEntity> findByAssessmentResult_assessment_IdAndAttributeReferenceNumberIn(UUID assessmentId, List<UUID> attributeReferenceNumbers);
+    List<QualityAttributeValueJpaEntity> findByAssessmentResult_assessment_IdAndAttributeRefNumIn(UUID assessmentId, List<UUID> attributeRefNums);
 
     @Query("""
         SELECT av
         FROM QualityAttributeValueJpaEntity av
-        LEFT JOIN AttributeJpaEntity att ON av.attributeReferenceNumber = att.referenceNumber and av.kitVersionId = att.kitVersionId and av.assessmentResult.id = :resultId
+        LEFT JOIN AttributeJpaEntity att ON av.attributeRefNum = att.refNum and av.kitVersionId = att.kitVersionId and av.assessmentResult.id = :resultId
         WHERE att.subject.id = :subjectId
         """)
     List<QualityAttributeValueJpaEntity> findByAssessmentResultIdAndSubjectId(UUID resultId, Long subjectId);

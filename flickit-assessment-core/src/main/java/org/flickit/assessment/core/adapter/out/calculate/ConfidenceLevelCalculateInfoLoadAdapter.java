@@ -128,11 +128,11 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
         Map<UUID, Long> attributeIdToRefNoMap = context.subjectIdToEntity().values().stream()
             .flatMap(x -> x.getAttributes().stream())
-            .collect(toMap(AttributeJpaEntity::getReferenceNumber, AttributeJpaEntity::getId));
+            .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
 
         Map<Long, QualityAttributeValue> attributeIdToValueMap = new HashMap<>();
         for (QualityAttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
-            long attributeId = attributeIdToRefNoMap.get(qavEntity.getAttributeReferenceNumber());
+            long attributeId = attributeIdToRefNoMap.get(qavEntity.getAttributeRefNum());
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
             QualityAttribute attribute = new QualityAttribute(

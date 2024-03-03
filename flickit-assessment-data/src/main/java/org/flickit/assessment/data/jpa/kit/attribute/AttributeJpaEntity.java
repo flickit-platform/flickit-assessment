@@ -59,7 +59,7 @@ public class AttributeJpaEntity {
 
 
     public AttributeJpaEntity(Long id, String code, String title, Integer index, String description, Integer weight, Long kitVersionId,
-                              LocalDateTime creationTime, LocalDateTime lastModificationTime, UUID referenceNumber) {
+                              LocalDateTime creationTime, LocalDateTime lastModificationTime, UUID refNum) {
         this.id = id;
         this.code = code;
         this.title = title;
@@ -69,7 +69,7 @@ public class AttributeJpaEntity {
         this.kitVersionId = kitVersionId;
         this.creationTime = creationTime;
         this.lastModificationTime = lastModificationTime;
-        this.referenceNumber = referenceNumber;
+        this.refNum = refNum;
     }
     @ManyToOne
     @JoinColumn(name = "subject_id", referencedColumnName = "id")

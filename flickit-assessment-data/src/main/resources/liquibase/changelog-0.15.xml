@@ -330,8 +330,8 @@
     </changeSet>
 
     <changeSet id="0.15-50" author="MKouhestani">
-        <addUniqueConstraint columnNames="assessment_result_id, kit_version_id, attribute_reference_number"
-                             constraintName="uq_fac_attribute_value_assessment_result_id_kit_version_id_attribute_ref_no"
+        <addUniqueConstraint columnNames="assessment_result_id, kit_version_id, attribute_ref_num"
+                             constraintName="uq_fac_assessmentresult_kitversion_attribute_attributevalue"
                              tableName="fac_quality_attribute_value"/>
     </changeSet>
 

@@ -137,15 +137,15 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         Map<Long, Integer> qaIdToWeightMap = context.subjectIdToEntity().values().stream()
             .flatMap(x -> x.getAttributes().stream())
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
-        
+
         Map<UUID, Long> attributeIdToRefNoMap = context.subjectIdToEntity().values().stream()
             .flatMap(x -> x.getAttributes().stream())
-            .collect(toMap(AttributeJpaEntity::getReferenceNumber, AttributeJpaEntity::getId));
+            .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
 
         Map<Long, QualityAttributeValue> attrIdToValue = new HashMap<>();
         for (QualityAttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
-            UUID attributeReferenceNumber = qavEntity.getAttributeReferenceNumber();
-            Long attributeId = attributeIdToRefNoMap.get(attributeReferenceNumber);
+            UUID attributeRefNum = qavEntity.getAttributeRefNum();
+            Long attributeId = attributeIdToRefNoMap.get(attributeRefNum);
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
             QualityAttribute attribute = new QualityAttribute(

@@ -7,12 +7,12 @@ import java.util.UUID;
 
 public class AttributeValueJpaEntityMother {
 
-    public static QualityAttributeValueJpaEntity attributeValueWithNullMaturityLevel(Long kitVersionId, AssessmentResultJpaEntity assessmentResultJpaEntity, UUID attributeReferenceNumber) {
+    public static QualityAttributeValueJpaEntity attributeValueWithNullMaturityLevel(Long kitVersionId, AssessmentResultJpaEntity assessmentResultJpaEntity, UUID attributeRefNum) {
         return new QualityAttributeValueJpaEntity(
             UUID.randomUUID(),
             assessmentResultJpaEntity,
             kitVersionId,
-            attributeReferenceNumber,
+            attributeRefNum,
             null,
             null
         );

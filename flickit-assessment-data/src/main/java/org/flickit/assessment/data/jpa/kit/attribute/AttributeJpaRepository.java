@@ -67,9 +67,9 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
         """)
     UUID findRefNumById(@Param("attributeId") Long attributeId);
 
-    AttributeJpaEntity findByKitVersionIdAndReferenceNumber(Long kitVersionId, UUID referenceNumber);
+    AttributeJpaEntity findByKitVersionIdAndRefNum(Long kitVersionId, UUID refNum);
 
-    List<AttributeJpaEntity> findAllByKitVersionIdAndReferenceNumberIn(Long kitVersionId, List<UUID> referenceNumbers);
+    List<AttributeJpaEntity> findAllByKitVersionIdAndRefNumIn(Long kitVersionId, List<UUID> refNums);
 
     @Query("""
         SELECT a
