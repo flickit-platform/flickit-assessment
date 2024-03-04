@@ -12,7 +12,7 @@ public class KitVersionMapper {
         return new KitVersionJpaEntity(
             kitVersionId,
             kitId,
-            KitVersionStatus.ACTIVE.ordinal()
+            KitVersionStatus.ACTIVE.getCode()
         );
     }
 }
