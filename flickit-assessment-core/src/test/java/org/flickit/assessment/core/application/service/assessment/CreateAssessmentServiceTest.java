@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.port.in.assessment.CreateAssessme
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.assessment.core.test.fixture.application.QualityAttributeMother;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class CreateAssessmentServiceTest {
     private CreateAssessmentResultPort createAssessmentResultPort;
 
     @Mock
-    private LoadSubjectPort loadSubjectsPort;
+    private LoadSubjectsPort loadSubjectsPort;
 
     @Mock
     private CreateSubjectValuePort createSubjectValuePort;
@@ -121,9 +121,9 @@ class CreateAssessmentServiceTest {
         QualityAttribute qa5 = QualityAttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
-            new Subject(1L, List.of(qa1, qa2)),
-            new Subject(2L, List.of(qa3, qa4)),
-            new Subject(3L, List.of(qa5))
+            new Subject(2L, "subject2", List.of(qa3, qa4)),
+            new Subject(1L, "subject1", List.of(qa1, qa2)),
+            new Subject(3L, "subject3", List.of(qa5))
         );
         when(loadSubjectsPort.loadByKitIdWithAttributes(assessmentKitId)).thenReturn(expectedSubjects);
 
@@ -150,9 +150,9 @@ class CreateAssessmentServiceTest {
         QualityAttribute qa5 = QualityAttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
-            new Subject(1L, List.of(qa1, qa2)),
-            new Subject(2L, List.of(qa3, qa4)),
-            new Subject(3L, List.of(qa5))
+            new Subject(1L, "subject2", List.of(qa1, qa2)),
+            new Subject(2L, "subject1", List.of(qa3, qa4)),
+            new Subject(3L, "subject3", List.of(qa5))
         );
         when(loadSubjectsPort.loadByKitIdWithAttributes(assessmentKitId)).thenReturn(expectedSubjects);
 

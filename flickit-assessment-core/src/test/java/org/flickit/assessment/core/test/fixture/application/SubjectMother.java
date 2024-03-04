@@ -10,10 +10,14 @@ public class SubjectMother {
     private static long id = 134L;
 
     public static Subject withNoAttributes() {
-        return new Subject(id++);
+        return new Subject(id++, "subject" + id, null);
     }
 
     public static Subject withAttributes(List<QualityAttribute> attributes) {
-        return new Subject(id++, attributes);
+        return new Subject(id++, "subject" + id, attributes);
+    }
+
+    public static Subject withKitId(Long kitId) {
+        return new Subject(id++, "subject" + id);
     }
 }
