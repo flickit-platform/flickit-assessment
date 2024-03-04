@@ -24,8 +24,8 @@ public class KitVersionJpaEntity {
     @JoinColumn(name = "kit_id")
     private AssessmentKitJpaEntity kit;
 
-    @Column(name = "version_status", nullable = false)
-    private int versionStatus;
+    @Column(name = "status", nullable = false)
+    private int status;
 
 
 }

@@ -167,7 +167,7 @@
     <!--Add new columns to kit_version-->
     <changeSet id="0.15-22" author="MKouhestani">
         <addColumn tableName="fak_kit_version">
-            <column name="version_status" type="tinyint" valueNumeric="1">
+            <column name="status" type="tinyint" valueNumeric="1">
                 <constraints nullable="false"/>
             </column>
             <column name="kit_id" type="bigint" valueComputed="id">
