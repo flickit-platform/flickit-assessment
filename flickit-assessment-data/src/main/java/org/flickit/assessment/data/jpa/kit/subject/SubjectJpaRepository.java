@@ -44,7 +44,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
     @Query("""
             SELECT s as subject
             FROM SubjectJpaEntity s
-            WHERE s.id = :id AND s.kitVersionId = (SELECT k.kitVersion.id FROM AssessmentKitJpaEntity k WHERE k.id = :kitId)
+            WHERE s.id = :id AND s.kitVersionId = (SELECT k.kitVersionId FROM AssessmentKitJpaEntity k WHERE k.id = :kitId)
         """)
     Optional<SubjectJpaEntity> findByIdAndKitId(@Param(value = "id") long id, @Param(value = "kitId") long kitId);
 
