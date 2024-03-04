@@ -5,13 +5,13 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
-import org.flickit.assessment.data.jpa.kit.assessmentkitversion.AssessmentKitVersionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.assessmentkitversion.AssessmentKitVersionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
-import org.flickit.assessment.kit.adapter.out.persistence.assessmentkitversion.AssessmentKitVersionMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
@@ -40,7 +40,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
     private final ExpertGroupJpaRepository expertGroupRepository;
-    private final AssessmentKitVersionJpaRepository kitVersionRepository;
+    private final KitVersionJpaRepository kitVersionRepository;
 
     @Override
     public Long loadKitExpertGroupId(Long kitId) {
@@ -103,7 +103,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         Long kitVersionId = kitVersionRepository.getKitVersionSequenceLastValue() + 1;
         AssessmentKitJpaEntity kitEntity = AssessmentKitMapper.toJpaEntity(param, kitVersionId);
         Long kitId = repository.save(kitEntity).getId();
-        AssessmentKitVersionJpaEntity kitVersionEntity = AssessmentKitVersionMapper.toJpaEntity(kitVersionId, kitId);
+        KitVersionJpaEntity kitVersionEntity = KitVersionMapper.toJpaEntity(kitVersionId, kitId);
         Long savedKitVersionId = kitVersionRepository.save(kitVersionEntity).getId();
         return new CreateAssessmentKitPort.Result(kitId, savedKitVersionId);
     }
