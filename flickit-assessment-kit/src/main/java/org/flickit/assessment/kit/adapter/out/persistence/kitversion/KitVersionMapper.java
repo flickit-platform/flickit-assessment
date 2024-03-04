@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.kitversion;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionStatus;
+import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class KitVersionMapper {
@@ -12,7 +12,7 @@ public class KitVersionMapper {
         return new KitVersionJpaEntity(
             kitVersionId,
             kitId,
-            KitVersionStatus.ACTIVE
+            KitVersionStatus.ACTIVE.ordinal()
         );
     }
 }

@@ -23,6 +23,7 @@ public class KitVersionJpaEntity {
     private Long kitId;
 
     @Column(name = "version_status", nullable = false)
-    private KitVersionStatus versionStatus;
+    private int versionStatus;
+
 
 }

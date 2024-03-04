@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.kit.kitversion;
+package org.flickit.assessment.kit.application.domain;
 
 public enum KitVersionStatus {
     ACTIVE(1), UPDATING(2), ARCHIVE(3);
