@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.port.in.assessment.CreateAssessme
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +29,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateAssessmentResultPort createAssessmentResultPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
-    private final LoadSubjectPort loadSubjectPort;
+    private final LoadSubjectsPort loadSubjectsPort;
 
     @Override
     public Result createAssessment(Param param) {
@@ -62,7 +62,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         CreateAssessmentResultPort.Param param = new CreateAssessmentResultPort.Param(assessmentId, lastModificationTime, false, false);
         UUID assessmentResultId = createAssessmentResultPort.persist(param);
 
-        List<Subject> subjects = loadSubjectPort.loadByKitIdWithAttributes(assessmentKitId);
+        List<Subject> subjects = loadSubjectsPort.loadByKitIdWithAttributes(assessmentKitId);
         List<Long> subjectIds = subjects.stream().map(Subject::getId).toList();
         List<Long> qualityAttributeIds = subjects.stream()
             .map(x -> x.getQualityAttributes().stream().map(QualityAttribute::getId).toList())

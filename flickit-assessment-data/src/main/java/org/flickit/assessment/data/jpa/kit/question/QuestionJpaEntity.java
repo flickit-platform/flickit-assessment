@@ -22,6 +22,9 @@ public class QuestionJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(name = "ref_num", nullable = false)
+    private UUID refNum;
+
     @Column(name = "code")
     private String code;
 
@@ -39,6 +42,9 @@ public class QuestionJpaEntity {
 
     @Column(name = "advisable", nullable = false)
     private Boolean advisable;
+
+    @Column(name = "kit_id", nullable = false)
+    private Long kitId;
 
     @Column(name = "questionnaire_id", nullable = false)
     private Long questionnaireId;
