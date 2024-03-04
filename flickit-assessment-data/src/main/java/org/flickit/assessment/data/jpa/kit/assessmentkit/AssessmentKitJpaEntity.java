@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 
 import java.time.LocalDateTime;
@@ -68,6 +67,6 @@ public class AssessmentKitJpaEntity {
     @Column(name = "last_major_modification_time", nullable = false)
     private LocalDateTime lastMajorModificationTime;
 
-    @OneToOne(mappedBy = "kit", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private KitVersionJpaEntity kitVersion;
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 }

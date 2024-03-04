@@ -77,7 +77,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         JOIN AssessmentKitJpaEntity kit
         ON asm.assessmentKitId = kit.id
         JOIN AttributeJpaEntity attr
-        ON attr.kitVersionId = kit.kitVersion.id
+        ON attr.kitVersionId = kit.kitVersionId
         WHERE asm.id = :assessmentId
         AND attr.id in :attributeIds
     """)
@@ -89,7 +89,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         JOIN AssessmentKitJpaEntity kit
         ON asm.assessmentKitId = kit.id
         JOIN MaturityLevelJpaEntity level
-        ON level.kitVersionId = kit.kitVersion.id
+        ON level.kitVersionId = kit.kitVersionId
         WHERE asm.id = :assessmentId
         AND level.id in :levelIds
     """)

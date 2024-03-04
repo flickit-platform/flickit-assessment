@@ -9,6 +9,6 @@ public interface SubjectQuestionnaireJpaRepository extends JpaRepository<Subject
 
     @Query("FROM SubjectQuestionnaireJpaEntity sq " +
         "where sq.subjectId in " +
-        "(SELECT s.id FROM SubjectJpaEntity s where s.kitVersionId = (SELECT k.kitVersion.id FROM AssessmentKitJpaEntity k WHERE k.id = :assessmentKitId))")
+        "(SELECT s.id FROM SubjectJpaEntity s where s.kitVersionId = (SELECT k.kitVersionId FROM AssessmentKitJpaEntity k WHERE k.id = :assessmentKitId))")
     List<SubjectQuestionnaireJpaEntity> findAllByAssessmentKitId(Long assessmentKitId);
 }

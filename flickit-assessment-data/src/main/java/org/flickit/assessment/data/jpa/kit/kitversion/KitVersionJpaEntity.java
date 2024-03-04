@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.kitversion;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 
 @Entity
 @Table(name = "fak_kit_version")
@@ -20,9 +19,8 @@ public class KitVersionJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "kit_id")
-    private AssessmentKitJpaEntity kit;
+    @Column(name = "kit_id", nullable = false)
+    private Long kitId;
 
     @Column(name = "status", nullable = false)
     private int status;

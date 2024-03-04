@@ -41,7 +41,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
         FROM QuestionJpaEntity q
         LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
         WHERE q.questionnaireId IN
-            (SELECT qu.id FROM QuestionnaireJpaEntity qu WHERE qu.kitVersionId = (SELECT k.kitVersion.id FROM AssessmentKitJpaEntity k WHERE k.id = :kitId))
+            (SELECT qu.id FROM QuestionnaireJpaEntity qu WHERE qu.kitVersionId = (SELECT k.kitVersionId FROM AssessmentKitJpaEntity k WHERE k.id = :kitId))
         """)
     List<QuestionJoinQuestionImpactView> loadByAssessmentKitId(@Param("kitId") Long kitId);
 
@@ -63,7 +63,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
         FROM QuestionJpaEntity q
         JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id
-        JOIN AssessmentKitJpaEntity kit ON qn.kitVersionId = kit.kitVersion.id
+        JOIN AssessmentKitJpaEntity kit ON qn.kitVersionId = kit.kitVersionId
         JOIN AssessmentJpaEntity asm ON asm.assessmentKitId = kit.id
         JOIN AssessmentResultJpaEntity asmr ON asm.id = asmr.assessment.id
         JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId

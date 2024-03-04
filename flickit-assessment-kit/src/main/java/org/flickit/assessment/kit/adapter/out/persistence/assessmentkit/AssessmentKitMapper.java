@@ -11,7 +11,7 @@ import java.util.HashSet;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentKitMapper {
 
-    public static AssessmentKitJpaEntity toJpaEntity(CreateAssessmentKitPort.Param param) {
+    public static AssessmentKitJpaEntity toJpaEntity(CreateAssessmentKitPort.Param param, Long kitVersionId) {
         return new AssessmentKitJpaEntity(
             null,
             param.code(),
@@ -27,7 +27,7 @@ public class AssessmentKitMapper {
             param.createdBy(),
             new HashSet<>(),
             LocalDateTime.now(),
-            null
+            kitVersionId
         );
     }
 }
