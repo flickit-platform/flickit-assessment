@@ -37,7 +37,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
             SELECT s as subject
             FROM SubjectJpaEntity s
                 JOIN FETCH s.attributes a
-            WHERE s.kitVersionId = (SELECT k.kitVersionId FROM AssessmentKitJpaEntity k WHERE k.id = :kitId)
+            WHERE s.kitVersionId = (SELECT k.kitVersion.id FROM AssessmentKitJpaEntity k WHERE k.id = :kitId)
         """)
     List<SubjectJpaEntity> loadByKitIdWithAttributes(Long kitId);
 

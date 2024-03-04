@@ -51,7 +51,7 @@ public class LoadAssessmentKitInfoAdapter implements
     public AssessmentKit load(Long kitId) {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
             () -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-        Long kitVersionId = entity.getKitVersionId();
+        Long kitVersionId = entity.getKitVersion().getId();
 
         List<Subject> subjects = subjectRepository.findAllByKitVersionId(kitVersionId).stream()
             .map(e -> {

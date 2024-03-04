@@ -5,8 +5,6 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
@@ -40,7 +38,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
     private final ExpertGroupJpaRepository expertGroupRepository;
-    private final KitVersionJpaRepository kitVersionRepository;
 
     @Override
     public Long loadKitExpertGroupId(Long kitId) {
@@ -100,12 +97,12 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public CreateAssessmentKitPort.Result persist(CreateAssessmentKitPort.Param param) {
-        Long kitVersionId = kitVersionRepository.getKitVersionSequenceLastValue() + 1;
-        AssessmentKitJpaEntity kitEntity = AssessmentKitMapper.toJpaEntity(param, kitVersionId);
-        Long kitId = repository.save(kitEntity).getId();
-        KitVersionJpaEntity kitVersionEntity = KitVersionMapper.toJpaEntity(kitVersionId, kitId);
-        Long savedKitVersionId = kitVersionRepository.save(kitVersionEntity).getId();
-        return new CreateAssessmentKitPort.Result(kitId, savedKitVersionId);
+        var kitEntity = AssessmentKitMapper.toJpaEntity(param);
+        var kitVersionEntity = KitVersionMapper.toJpaEntity(kitEntity);
+        kitEntity.setKitVersion(kitVersionEntity);
+        AssessmentKitJpaEntity savedKitEntity = repository.save(kitEntity);
+
+        return new CreateAssessmentKitPort.Result(savedKitEntity.getId(), savedKitEntity.getKitVersion().getId());
     }
 
     @Override
