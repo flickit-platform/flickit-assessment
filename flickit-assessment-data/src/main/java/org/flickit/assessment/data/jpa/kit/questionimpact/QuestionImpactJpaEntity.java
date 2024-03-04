@@ -38,6 +38,21 @@ public class QuestionImpactJpaEntity {
     @JoinColumn(name = "maturity_level_id", referencedColumnName = "id")
     private MaturityLevelJpaEntity maturityLevel;
 
+    @OneToMany(mappedBy = "questionImpact", cascade = CascadeType.REMOVE)
+    private List<AnswerOptionImpactJpaEntity> answerOptionImpacts;
+
+    @Column(name = "creation_time", nullable = false)
+    private LocalDateTime creationTime;
+
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
+
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
+
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
+
     public QuestionImpactJpaEntity(Long id,
                                    Integer weight,
                                    Long questionId,
@@ -57,19 +72,4 @@ public class QuestionImpactJpaEntity {
         this.createdBy = createdBy;
         this.lastModifiedBy = lastModifiedBy;
     }
-
-    @OneToMany(mappedBy = "questionImpact", cascade = CascadeType.REMOVE)
-    private List<AnswerOptionImpactJpaEntity> answerOptionImpacts;
-
-    @Column(name = "creation_time", nullable = false)
-    private LocalDateTime creationTime;
-
-    @Column(name = "last_modification_time", nullable = false)
-    private LocalDateTime lastModificationTime;
-
-    @Column(name = "created_by", nullable = false)
-    private UUID createdBy;
-
-    @Column(name = "last_modified_by", nullable = false)
-    private UUID lastModifiedBy;
 }

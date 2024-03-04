@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, Long> {
@@ -110,4 +111,11 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             q.id IN :ids
         """)
     List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids);
+
+    @Query("""
+        SELECT q.refNum
+        FROM QuestionJpaEntity q
+        WHERE q.id = :questionId
+        """)
+    Optional<UUID> findRefNumById(@Param("questionId") Long questionId);
 }

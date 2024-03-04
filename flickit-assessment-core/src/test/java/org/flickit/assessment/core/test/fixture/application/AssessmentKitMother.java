@@ -9,4 +9,8 @@ public class AssessmentKitMother {
     public static AssessmentKit kit() {
         return new AssessmentKit(id++, MaturityLevelMother.allLevels());
     }
+
+    public static AssessmentKit kitWithId(long id) {
+        return new AssessmentKit(id, MaturityLevelMother.allLevels());
+    }
 }
