@@ -148,10 +148,10 @@
     </changeSet>
 
     <!--Create kit_version table-->
-    <changeSet id="0.15-20" author="MKouhestani">
+    <changeSet id="0.15-19" author="MKouhestani">
         <createTable tableName="fak_kit_version">
             <column name="id" type="bigint">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fak_kit_version"/>
             </column>
             <column name="kit_id" type="bigint">
                 <constraints nullable="false"/>
@@ -163,7 +163,7 @@
     </changeSet>
 
     <!-- Populate the fak_kit_version table with data -->
-    <changeSet id="0.15-19" author="MKouhestani">
+    <changeSet id="0.15-20" author="MKouhestani">
         <sql>
             INSERT INTO fak_kit_version (id, kit_id, status)
             SELECT id, id, 0 FROM fak_assessment_kit;
@@ -177,7 +177,7 @@
                         startValue="1"/>
     </changeSet>
 
-    <!--Set is next value to start from kit seq next value (so they can have same ids for now)-->
+    <!--Set seq next value to start from kit seq next value (so they can have same ids for now)-->
     <changeSet id="0.15-22" author="MKouhestani">
         <sql>SELECT setval('fak_kit_version_id_seq', nextVal('fak_assessment_kit_id_seq'))</sql>
     </changeSet>
