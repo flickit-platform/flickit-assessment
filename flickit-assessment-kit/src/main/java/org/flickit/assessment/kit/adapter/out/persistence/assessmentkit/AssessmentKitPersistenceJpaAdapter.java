@@ -5,10 +5,10 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
@@ -101,11 +101,11 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public CreateAssessmentKitPort.Result persist(CreateAssessmentKitPort.Param param) {
-        Long kitVersionId = kitVersionRepository.getKitVersionSequenceLastValue() + 1;
-        AssessmentKitJpaEntity kitEntity = AssessmentKitMapper.toJpaEntity(param, kitVersionId);
+        AssessmentKitJpaEntity kitEntity = AssessmentKitMapper.toJpaEntity(param, null);
         Long kitId = repository.save(kitEntity).getId();
-        KitVersionJpaEntity kitVersionEntity = KitVersionMapper.toJpaEntity(kitVersionId, kitId, KitVersionStatus.ACTIVE);
+        KitVersionJpaEntity kitVersionEntity = KitVersionMapper.toJpaEntity(kitEntity, KitVersionStatus.ACTIVE);
         Long savedKitVersionId = kitVersionRepository.save(kitVersionEntity).getId();
+        repository.updateKitVersionId(kitId, savedKitVersionId);
         return new CreateAssessmentKitPort.Result(kitId, savedKitVersionId);
     }
 

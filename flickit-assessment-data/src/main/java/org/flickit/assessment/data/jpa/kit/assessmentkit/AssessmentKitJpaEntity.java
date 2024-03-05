@@ -67,6 +67,6 @@ public class AssessmentKitJpaEntity {
     @Column(name = "last_major_modification_time", nullable = false)
     private LocalDateTime lastMajorModificationTime;
 
-    @Column(name = "kit_version_id", nullable = false)
+    @Column(name = "kit_version_id")
     private Long kitVersionId;
 }

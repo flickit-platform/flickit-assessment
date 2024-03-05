@@ -185,9 +185,7 @@
     <!--Add kit_version id to kit table-->
     <changeSet id="0.15-23" author="MKouhestani">
         <addColumn tableName="fak_assessment_kit">
-            <column name="kit_version_id" type="bigint" valueComputed="id">
-                <constraints nullable="false"/>
-            </column>
+            <column name="kit_version_id" type="bigint" valueComputed="id"/>
         </addColumn>
     </changeSet>
 
