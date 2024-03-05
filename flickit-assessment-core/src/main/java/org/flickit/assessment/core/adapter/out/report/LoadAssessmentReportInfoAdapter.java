@@ -47,7 +47,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
         return new AssessmentResult(
             assessmentResultId,
-            buildAssessment(assessmentResultEntity.getAssessment(), maturityLevels),
+            buildAssessment(assessmentResultEntity.getAssessment(), assessmentResultEntity.getKitVersionId(), maturityLevels),
+            assessmentResultEntity.getKitVersionId(),
             subjectValues,
             findMaturityLevelById(maturityLevels, assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
@@ -70,8 +71,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             ).toList();
     }
 
-    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, Map<Long, MaturityLevel> maturityLevels) {
-        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), new ArrayList<>(maturityLevels.values()));
+    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId, Map<Long, MaturityLevel> maturityLevels) {
+        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), kitVersionId, new ArrayList<>(maturityLevels.values()));
         return mapToDomainModel(assessmentEntity, kit);
     }
 

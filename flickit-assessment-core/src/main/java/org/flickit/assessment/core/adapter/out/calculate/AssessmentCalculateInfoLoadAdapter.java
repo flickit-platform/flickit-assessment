@@ -101,7 +101,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
         return new AssessmentResult(
             assessmentResultId,
-            buildAssessment(assessmentResultEntity.getAssessment()),
+            buildAssessment(assessmentResultEntity.getAssessment(), kitVersionId),
+            kitVersionId,
             subjectValues,
             assessmentResultEntity.getLastCalculationTime(),
             assessmentResultEntity.getLastConfidenceCalculationTime());
@@ -229,10 +230,10 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * @param assessmentEntity loaded assessment entity
      * @return assessment with all information needed for calculation
      */
-    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity) {
+    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId) {
         Long kitId = assessmentEntity.getAssessmentKitId();
         List<MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitIdWithCompetences(kitId);
-        AssessmentKit kit = new AssessmentKit(kitId, maturityLevels);
+        AssessmentKit kit = new AssessmentKit(kitId, kitVersionId, maturityLevels);
         return mapToDomainModel(assessmentEntity, kit);
     }
 }

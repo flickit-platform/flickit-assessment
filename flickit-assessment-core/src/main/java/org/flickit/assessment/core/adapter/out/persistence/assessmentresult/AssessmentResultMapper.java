@@ -33,6 +33,7 @@ public class AssessmentResultMapper {
         return new AssessmentResult(
             entity.getId(),
             AssessmentMapper.mapToDomainModel(entity.getAssessment()),
+            entity.getKitVersionId(),
             new ArrayList<>(),
             entity.getMaturityLevelId() == null ? null :
                 new MaturityLevel(entity.getMaturityLevelId(), 1, 0, new ArrayList<>()),

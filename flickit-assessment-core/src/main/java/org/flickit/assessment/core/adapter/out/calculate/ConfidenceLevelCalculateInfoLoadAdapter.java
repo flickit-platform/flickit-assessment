@@ -88,7 +88,8 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
         return new AssessmentResult(
             assessmentResultId,
-            buildAssessment(assessmentResultEntity.getAssessment()),
+            buildAssessment(assessmentResultEntity.getAssessment(), kitVersionId),
+            kitVersionId,
             subjectValues,
             assessmentResultEntity.getLastCalculationTime(),
             assessmentResultEntity.getLastConfidenceCalculationTime());
@@ -218,8 +219,8 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * @param assessmentEntity loaded assessment entity
      * @return assessment with all information needed for calculation
      */
-    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity) {
-        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), null);
+    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId) {
+        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), kitVersionId,null);
         return mapToDomainModel(assessmentEntity, kit);
     }
 }
