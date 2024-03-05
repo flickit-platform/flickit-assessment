@@ -18,7 +18,7 @@ public class AssessmentResultMapper {
         return new AssessmentResultJpaEntity(
             null,
             null,
-            null,
+            param.kitVersionId(),
             null,
             null,
             param.isCalculateValid(),

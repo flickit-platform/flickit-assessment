@@ -128,7 +128,7 @@ class CalculateAssessmentServiceTest {
 
         when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
-        when(loadSubjectsPort.loadByKitIdWithAttributes(any())).thenReturn(subjects);
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
         when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
         when(createAttributeValuePort.persistAll(anyList(), any())).thenReturn(List.of(newAttributeValue));
 
