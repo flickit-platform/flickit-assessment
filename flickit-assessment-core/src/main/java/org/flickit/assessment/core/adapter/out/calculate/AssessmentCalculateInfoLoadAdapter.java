@@ -61,7 +61,6 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
         UUID assessmentResultId = assessmentResultEntity.getId();
-        Long assessmentKitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
         long kitVersionId = assessmentResultEntity.getKitVersionId();
 
         /*
@@ -76,7 +75,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .collect(toMap(SubjectJpaEntity::getId, x -> x, (s1, s2) -> s1));
 
         // load all questions with their impacts (by assessmentKit)
-        List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByAssessmentKitId(assessmentKitId);
+        List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByKitVersionId(kitVersionId);
         Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> impactfulQuestions = mapQuestionToImpacts(allQuestionsJoinImpactViews);
 
         // load all answers submitted with this assessmentResult
