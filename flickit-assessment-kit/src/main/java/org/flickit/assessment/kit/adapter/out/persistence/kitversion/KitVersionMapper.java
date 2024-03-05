@@ -8,11 +8,11 @@ import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class KitVersionMapper {
 
-    public static KitVersionJpaEntity toJpaEntity(Long id, Long kitId) {
+    public static KitVersionJpaEntity toJpaEntity(Long id, Long kitId, KitVersionStatus status) {
         return new KitVersionJpaEntity(
             id,
             kitId,
-            KitVersionStatus.ACTIVE.ordinal()
+            status.ordinal()
         );
     }
 }
