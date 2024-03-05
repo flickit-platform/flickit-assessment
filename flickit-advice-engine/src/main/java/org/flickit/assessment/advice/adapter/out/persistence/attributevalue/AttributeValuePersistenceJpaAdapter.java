@@ -31,7 +31,7 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
         var attributeValuesIdMap = attributeValues.stream()
             .collect(Collectors.toMap(QualityAttributeValueJpaEntity::getQualityAttributeId, Function.identity()));
 
-        var maturityLevels = maturityLevelRepository.findAllInKitWithOneId(attributeLevelTargets.get(0).getMaturityLevelId());
+        var maturityLevels = maturityLevelRepository.findAllInKitVersionWithOneId(attributeLevelTargets.get(0).getMaturityLevelId());
         var maturityLevelsIdMap = maturityLevels.stream()
             .collect(Collectors.toMap(MaturityLevelJpaEntity::getId, Function.identity()));
 

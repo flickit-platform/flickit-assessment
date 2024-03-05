@@ -38,17 +38,18 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
         UUID assessmentResultId = assessmentResultEntity.getId();
+        long kitVersionId = assessmentResultEntity.getKitVersionId();
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
 
-        Map<Long, MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitIdWithCompetences(assessmentResultEntity.getAssessment().getAssessmentKitId())
+        Map<Long, MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(kitVersionId)
             .stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
         List<SubjectValue> subjectValues = buildSubjectValues(subjectValueEntities, maturityLevels);
 
         return new AssessmentResult(
             assessmentResultId,
-            buildAssessment(assessmentResultEntity.getAssessment(), assessmentResultEntity.getKitVersionId(), maturityLevels),
-            assessmentResultEntity.getKitVersionId(),
+            buildAssessment(assessmentResultEntity.getAssessment(), kitVersionId, maturityLevels),
+            kitVersionId,
             subjectValues,
             findMaturityLevelById(maturityLevels, assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
