@@ -166,7 +166,7 @@
     <changeSet id="0.15-19" author="MKouhestani">
         <sql>
             INSERT INTO fak_kit_version (id, kit_id, status)
-            SELECT id, id, 1 FROM fak_assessment_kit;
+            SELECT id, id, 0 FROM fak_assessment_kit;
         </sql>
     </changeSet>
 

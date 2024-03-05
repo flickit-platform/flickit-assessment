@@ -1,15 +1,9 @@
 package org.flickit.assessment.kit.application.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum KitVersionStatus {
-    ACTIVE(1), UPDATING(2), ARCHIVE(3);
 
-    final int code;
-
-    KitVersionStatus(int code) {
-        this.code = code;
-    }
-
-    public int getCode() {
-        return code;
-    }
+    ACTIVE, UPDATING, ARCHIVE;
 }
