@@ -66,7 +66,7 @@ public class LoadAssessmentKitInfoAdapter implements
             .toList();
         setLevelCompetences(levels);
 
-        List<Question> questions = questionRepository.findByKitVersionId(kitVersionId).stream()
+        List<Question> questions = questionRepository.findAllByKitVersionId(kitVersionId).stream()
             .map(QuestionMapper::mapToDomainModel)
             .toList();
         setQuestionImpacts(questions);

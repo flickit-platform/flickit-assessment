@@ -13,9 +13,7 @@ import java.util.UUID;
 
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, Long> {
 
-    @Query("SELECT q FROM QuestionJpaEntity q " +
-        "WHERE q.questionnaireId IN (SELECT i.id FROM QuestionnaireJpaEntity i WHERE i.kitVersionId = :kitVersionId)")
-    List<QuestionJpaEntity> findByKitVersionId(@Param("kitVersionId") Long kitVersionId);
+    List<QuestionJpaEntity> findAllByKitVersionId(@Param("kitVersionId") Long kitVersionId);
 
     @Modifying
     @Query("""
