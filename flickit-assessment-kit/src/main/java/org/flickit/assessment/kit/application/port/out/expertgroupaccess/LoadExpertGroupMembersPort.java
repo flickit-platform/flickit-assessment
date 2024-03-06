@@ -6,11 +6,8 @@ import java.util.UUID;
 
 public interface LoadExpertGroupMembersPort {
 
-    PaginatedResponse<Result> loadExpertGroupMembers(Param param);
+    PaginatedResponse<Member> loadExpertGroupMembers(long expertGroupId, int page, int size);
 
-    record Result(UUID id, String email, String displayNme, String bio, String picture, String linkedin) {
-    }
-
-    record Param(int page, int size, long expertGroupId) {
+    record Member(UUID id, String email, String displayName, String bio, String picture, String linkedin) {
     }
 }
