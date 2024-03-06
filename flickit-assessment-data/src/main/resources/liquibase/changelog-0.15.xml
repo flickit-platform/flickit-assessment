@@ -423,5 +423,89 @@
                                  constraintName="fk_fak_kitversion_assessmentkit"/>
     </changeSet>
 
+    <changeSet id="0.15-61" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-62" author="Ali Sedaghat">
+        <update tableName="fak_kit_version">
+            <column name="creation_time" valueComputed="fak_assessment_kit.creation_time FROM fak_assessment_kit
+            WHERE fak_kit_version.kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.15-63" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_kit_version" columnName="creation_time"/>
+    </changeSet>
+
+    <changeSet id="0.15-64" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-65" author="Ali Sedaghat">
+        <update tableName="fak_kit_version">
+            <column name="last_modification_time" valueComputed="fak_assessment_kit.last_modification_time FROM fak_assessment_kit
+            WHERE fak_kit_version.kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.15-66" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_kit_version" columnName="last_modification_time"/>
+    </changeSet>
+
+    <changeSet id="0.15.67" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="created_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-68" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_version"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitversion_user_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.15-69" author="Ali Sedaghat">
+        <update tableName="fak_kit_version">
+            <column name="created_by" valueComputed="fak_assessment_kit.created_by FROM fak_assessment_kit
+            WHERE fak_kit_version.kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.15-70" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_kit_version" columnName="created_by"/>
+    </changeSet>
+
+    <changeSet id="0.15-71" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="last_modified_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-72" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_version"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitversion_user_lastmodifiedby"/>
+    </changeSet>
+
+    <changeSet id="0.15-73" author="Ali Sedaghat">
+        <update tableName="fak_kit_version">
+            <column name="last_modified_by" valueComputed="fak_assessment_kit.last_modified_by FROM fak_assessment_kit
+            WHERE fak_kit_version.kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.15-74" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_kit_version" columnName="last_modified_by"/>
+    </changeSet>
+
 </databaseChangeLog>
 
