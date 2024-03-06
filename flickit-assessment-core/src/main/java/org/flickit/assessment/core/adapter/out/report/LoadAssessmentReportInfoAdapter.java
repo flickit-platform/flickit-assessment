@@ -38,16 +38,18 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
         UUID assessmentResultId = assessmentResultEntity.getId();
+        long kitVersionId = assessmentResultEntity.getKitVersionId();
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
 
-        Map<Long, MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitIdWithCompetences(assessmentResultEntity.getAssessment().getAssessmentKitId())
+        Map<Long, MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(kitVersionId)
             .stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
         List<SubjectValue> subjectValues = buildSubjectValues(subjectValueEntities, maturityLevels);
 
         return new AssessmentResult(
             assessmentResultId,
-            buildAssessment(assessmentResultEntity.getAssessment(), maturityLevels),
+            buildAssessment(assessmentResultEntity.getAssessment(), kitVersionId, maturityLevels),
+            kitVersionId,
             subjectValues,
             findMaturityLevelById(maturityLevels, assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
@@ -63,15 +65,15 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .map(x ->
                 new SubjectValue(
                     x.getId(),
-                    new Subject(x.getSubjectId()),
+                    new Subject(x.getSubjectId(), null, null),
                     null,
                     findMaturityLevelById(maturityLevels, x.getMaturityLevelId()),
                     x.getConfidenceValue())
             ).toList();
     }
 
-    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, Map<Long, MaturityLevel> maturityLevels) {
-        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), new ArrayList<>(maturityLevels.values()));
+    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId, Map<Long, MaturityLevel> maturityLevels) {
+        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), kitVersionId, new ArrayList<>(maturityLevels.values()));
         return mapToDomainModel(assessmentEntity, kit);
     }
 

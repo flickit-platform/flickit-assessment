@@ -18,6 +18,7 @@ import org.flickit.assessment.kit.application.service.DslTranslator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -62,21 +63,21 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
             param.getExpertGroupId(),
             param.getCurrentUserId()
         );
-        Long kitId = createAssessmentKitPort.persist(createKitParam);
+        var kitCreationResult = createAssessmentKitPort.persist(createKitParam);
 
-        persister.persist(dslKit, kitId, param.getCurrentUserId());
+        persister.persist(dslKit, kitCreationResult.kitVersionId(), param.getCurrentUserId());
 
-        createKitTagRelationPort.persist(param.getTagIds(), kitId);
+        createKitTagRelationPort.persist(param.getTagIds(), kitCreationResult.kitId());
 
-        updateKitDslPort.update(param.getKitDslId(), kitId);
+        updateKitDslPort.update(param.getKitDslId(), kitCreationResult.kitId(), param.getCurrentUserId(), LocalDateTime.now());
 
         List<UUID> expertGroupMemberIds = loadExpertGroupMemberIdsPort.loadMemberIds(param.getExpertGroupId())
             .stream()
             .map(LoadExpertGroupMemberIdsPort.Result::userId)
             .toList();
-        grantUserAccessToKitPort.grantUsersAccess(kitId, expertGroupMemberIds);
+        grantUserAccessToKitPort.grantUsersAccess(kitCreationResult.kitId(), expertGroupMemberIds);
 
-        return kitId;
+        return kitCreationResult.kitId();
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {

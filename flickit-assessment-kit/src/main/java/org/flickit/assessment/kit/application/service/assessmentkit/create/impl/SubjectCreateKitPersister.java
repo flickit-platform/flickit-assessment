@@ -29,12 +29,12 @@ public class SubjectCreateKitPersister implements CreateKitPersister {
     }
 
     @Override
-    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
+    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitVersionId, UUID currentUserId) {
         List<SubjectDslModel> dslSubjects = dslKit.getSubjects();
 
         Map<String, Long> savedSubjectCodesMap = new HashMap<>();
         dslSubjects.forEach(s -> {
-            Long persistedSubjectId = createSubject(s, kitId, currentUserId);
+            Long persistedSubjectId = createSubject(s, kitVersionId, currentUserId);
             savedSubjectCodesMap.put(s.getCode(), persistedSubjectId);
         });
 
@@ -42,14 +42,14 @@ public class SubjectCreateKitPersister implements CreateKitPersister {
         log.debug("Final subjects: {}", savedSubjectCodesMap);
     }
 
-    private Long createSubject(SubjectDslModel newSubject, Long kitId, UUID currentUserId) {
+    private Long createSubject(SubjectDslModel newSubject, Long kitVersionId, UUID currentUserId) {
         CreateSubjectPort.Param param = new CreateSubjectPort.Param(
             newSubject.getCode(),
             newSubject.getTitle(),
             newSubject.getIndex(),
             newSubject.getWeight(),
             newSubject.getDescription(),
-            kitId,
+            kitVersionId,
             currentUserId
         );
 
