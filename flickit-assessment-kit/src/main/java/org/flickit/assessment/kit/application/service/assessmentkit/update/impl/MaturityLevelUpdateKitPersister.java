@@ -85,7 +85,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         updateMaturityLevelPort.update(updatedLevels, currentUserId);
 
         newLevels.forEach(code -> {
-            MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(code), savedKit.getId(), currentUserId);
+            MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(code), savedKit.getKitVersionId(), currentUserId);
             codeToPersistedLevels.put(createdLevel.getCode(), createdLevel);
         });
 
@@ -121,7 +121,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         return new UpdateKitPersisterResult(isMajorUpdate);
     }
 
-    private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitId, UUID currentUserId) {
+    private MaturityLevel createMaturityLevel(MaturityLevelDslModel newLevel, Long kitVersionId, UUID currentUserId) {
         MaturityLevel newDomainLevel = new MaturityLevel(
             null,
             newLevel.getCode(),
@@ -131,7 +131,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             null
         );
 
-        Long persistedLevelId = createMaturityLevelPort.persist(newDomainLevel, kitId, currentUserId);
+        Long persistedLevelId = createMaturityLevelPort.persist(newDomainLevel, kitVersionId, currentUserId);
         log.debug("MaturityLevel[id={}, code={}] created.", persistedLevelId, newLevel.getTitle());
 
         return new MaturityLevel(

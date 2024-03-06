@@ -40,8 +40,8 @@ public class QuestionJpaEntity {
     @Column(name = "may_not_be_applicable", nullable = false)
     private Boolean mayNotBeApplicable;
 
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "questionnaire_id", nullable = false)
     private Long questionnaireId;

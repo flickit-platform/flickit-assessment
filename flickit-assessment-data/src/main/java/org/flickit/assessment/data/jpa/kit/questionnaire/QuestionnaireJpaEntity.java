@@ -37,8 +37,8 @@ public class QuestionnaireJpaEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

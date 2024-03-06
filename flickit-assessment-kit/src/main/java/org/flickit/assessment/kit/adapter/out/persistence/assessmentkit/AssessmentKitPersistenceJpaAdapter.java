@@ -7,9 +7,13 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
+import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
+import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
@@ -37,6 +41,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
     private final ExpertGroupJpaRepository expertGroupRepository;
+    private final KitVersionJpaRepository kitVersionRepository;
 
     @Override
     public Long loadKitExpertGroupId(Long kitId) {
@@ -95,8 +100,13 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public Long persist(CreateAssessmentKitPort.Param param) {
-        return repository.save(AssessmentKitMapper.toJpaEntity(param)).getId();
+    public CreateAssessmentKitPort.Result persist(CreateAssessmentKitPort.Param param) {
+        AssessmentKitJpaEntity kitEntity = AssessmentKitMapper.toJpaEntity(param, null);
+        Long kitId = repository.save(kitEntity).getId();
+        KitVersionJpaEntity kitVersionEntity = KitVersionMapper.toJpaEntity(kitEntity, KitVersionStatus.ACTIVE);
+        Long savedKitVersionId = kitVersionRepository.save(kitVersionEntity).getId();
+        repository.updateKitVersionId(kitId, savedKitVersionId);
+        return new CreateAssessmentKitPort.Result(kitId, savedKitVersionId);
     }
 
     @Override

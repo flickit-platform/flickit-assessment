@@ -23,8 +23,8 @@ public class SubjectPersistenceJpaAdapter implements
     private final SubjectJpaRepository repository;
 
     @Override
-    public List<Subject> loadByKitIdWithAttributes(Long kitId) {
-        var views = repository.loadByKitIdWithAttributes(kitId);
+    public List<Subject> loadByKitVersionIdWithAttributes(Long kitVersionId) {
+        var views = repository.loadByKitVersionIdWithAttributes(kitVersionId);
 
         return views.stream().map(entity -> {
             List<QualityAttribute> attributes = entity.getAttributes().stream()
@@ -36,8 +36,8 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<Subject> loadByIdAndKitId(long id, long kitId) {
-        return repository.findByIdAndKitId(id, kitId)
+    public Optional<Subject> loadByIdAndKitVersionId(long id, long kitVersionId) {
+        return repository.findByIdAndKitVersionId(id, kitVersionId)
             .map(entity -> mapToDomainModel(entity, null));
     }
 }

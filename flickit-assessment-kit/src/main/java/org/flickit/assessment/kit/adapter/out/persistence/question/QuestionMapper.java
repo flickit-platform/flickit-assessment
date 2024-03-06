@@ -35,7 +35,7 @@ public class QuestionMapper {
             param.title(),
             param.hint(),
             param.mayNotBeApplicable(),
-            param.kitId(),
+            param.kitVersionId(),
             param.questionnaireId(),
             creationTime,
             creationTime,
