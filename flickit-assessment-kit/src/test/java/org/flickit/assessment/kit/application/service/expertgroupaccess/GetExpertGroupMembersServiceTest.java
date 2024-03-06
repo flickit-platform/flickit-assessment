@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.expertgroupaccess;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.expertgroupaccess.GetExpertGroupMembersUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.ExistsExpertGroupByIdPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.LoadExpertGroupMembersPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -28,7 +28,7 @@ class GetExpertGroupMembersServiceTest {
     @InjectMocks
     private GetExpertGroupMembersService service;
     @Mock
-    private ExistsExpertGroupByIdPort existsExpertGroupByIdPort;
+    private CheckExpertGroupExistsPort checkExpertGroupExistsPort;
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     @Mock
@@ -44,7 +44,7 @@ class GetExpertGroupMembersServiceTest {
 
         PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, page, size, "title", "asc", 2);
 
-        when(existsExpertGroupByIdPort.existsById(any(Long.class))).thenReturn(true);
+        when(checkExpertGroupExistsPort.checkExpertGroupExistsById(any(Long.class))).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(Optional.ofNullable(currentUserId));
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(any(Long.class), any(Integer.class), any(Integer.class))).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
@@ -61,7 +61,7 @@ class GetExpertGroupMembersServiceTest {
 
     @Test
     void testGetExpertGroupMembers_InvalidExpertGroupId_ExpertGroupNotFound() {
-        when(existsExpertGroupByIdPort.existsById(any(Long.class))).thenReturn(false);
+        when(checkExpertGroupExistsPort.checkExpertGroupExistsById(any(Long.class))).thenReturn(false);
         assertThrows(ResourceNotFoundException.class, ()->service.getExpertGroupMembers(param));
     }
 
@@ -71,7 +71,7 @@ class GetExpertGroupMembersServiceTest {
 
         PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, page, size, "title", "asc", 2);
 
-        when(existsExpertGroupByIdPort.existsById(any(Long.class))).thenReturn(true);
+        when(checkExpertGroupExistsPort.checkExpertGroupExistsById(any(Long.class))).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(Optional.ofNullable(currentUserId));
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(any(Long.class), any(Integer.class), any(Integer.class))).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);

@@ -9,7 +9,7 @@ import org.flickit.assessment.kit.application.port.out.expertgroupaccess.LoadExp
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.flickit.assessment.kit.application.port.out.expertgroup.ExistsExpertGroupByIdPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 
 import java.time.Duration;
 import java.util.List;
@@ -24,7 +24,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP
 public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
-    private final ExistsExpertGroupByIdPort existsExpertGroupByIdPort;
+    private final CheckExpertGroupExistsPort checkExpertGroupExistsPort;
     private final LoadExpertGroupMembersPort loadExpertGroupMembersPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
@@ -33,7 +33,7 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
 
     @Override
     public PaginatedResponse<Member> getExpertGroupMembers(Param param) {
-        if (!existsExpertGroupByIdPort.existsById(param.getId()))
+        if (!checkExpertGroupExistsPort.checkExpertGroupExistsById(param.getId()))
             throw new ResourceNotFoundException(GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND);
 
         var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), param.getPage(), param.getSize());
