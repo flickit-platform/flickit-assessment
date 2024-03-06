@@ -4,6 +4,8 @@ public interface ImprovableImpactfulQuestionView {
 
     Long getQuestionId();
 
+    Integer getQuestionCost();
+
     Integer getAnsweredOptionIndex();
 
     Long getOptionId();

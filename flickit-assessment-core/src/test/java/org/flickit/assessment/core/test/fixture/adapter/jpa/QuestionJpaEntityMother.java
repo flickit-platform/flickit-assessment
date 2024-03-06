@@ -8,6 +8,7 @@ import java.util.UUID;
 public class QuestionJpaEntityMother {
 
     public static int index = 1;
+    public static final int DEFAULT_COST = 1;
 
     public static QuestionJpaEntity questionEntity(Long questionId, Long kitId, Long questionnaireId, boolean mayNotBeApplicable) {
         LocalDateTime creationTime = LocalDateTime.now();
@@ -19,6 +20,7 @@ public class QuestionJpaEntityMother {
             "title" + questionId,
             "description" + questionId,
             mayNotBeApplicable,
+            DEFAULT_COST,
             kitId,
             questionnaireId,
             creationTime,

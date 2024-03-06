@@ -423,5 +423,15 @@
                                  constraintName="fk_fak_kitversion_assessmentkit"/>
     </changeSet>
 
-</databaseChangeLog>
+    <changeSet id="0.15-63" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_question">
+            <column name="cost" type="int" defaultValueNumeric="1">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 
+    <changeSet id="0.15-64" author="Mahdi Rezazadeh">
+        <dropDefaultValue tableName="fak_question" columnName="cost"/>
+    </changeSet>
+</databaseChangeLog>
