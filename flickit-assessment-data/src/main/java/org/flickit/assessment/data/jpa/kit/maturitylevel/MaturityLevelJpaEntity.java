@@ -39,8 +39,8 @@ public class MaturityLevelJpaEntity {
     @Column(name = "value", nullable = false)
     private Integer value;
 
-    @Column(name = "kit_id")
-    private Long kitId;
+    @Column(name = "kit_version_id")
+    private Long kitVersionId;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
@@ -57,6 +57,7 @@ public class MaturityLevelJpaEntity {
     public MaturityLevelJpaEntity(Long id) {
         this.id = id;
     }
+
     @OneToMany(mappedBy = "affectedLevel", cascade = CascadeType.REMOVE)
     private List<LevelCompetenceJpaEntity> affectedCompetences;
 
@@ -72,7 +73,7 @@ public class MaturityLevelJpaEntity {
                                   Integer index,
                                   String title,
                                   Integer value,
-                                  Long kitId,
+                                  Long kitVersionId,
                                   LocalDateTime creationTime,
                                   LocalDateTime lastModificationTime,
                                   UUID createdBy,
@@ -83,7 +84,7 @@ public class MaturityLevelJpaEntity {
         this.index = index;
         this.title = title;
         this.value = value;
-        this.kitId = kitId;
+        this.kitVersionId = kitVersionId;
         this.creationTime = creationTime;
         this.lastModificationTime = lastModificationTime;
         this.createdBy = createdBy;

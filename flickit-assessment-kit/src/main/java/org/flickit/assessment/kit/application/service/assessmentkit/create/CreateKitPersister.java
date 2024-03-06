@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface CreateKitPersister {
 
-    void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId);
+    void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitVersionId, UUID currentUserId);
 
     int order();
 

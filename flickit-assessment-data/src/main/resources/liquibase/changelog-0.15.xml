@@ -147,6 +147,282 @@
         </update>
     </changeSet>
 
+    <!--Create kit_version table-->
+    <changeSet id="0.15-19" author="MKouhestani">
+        <createTable tableName="fak_kit_version">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fak_kit_version"/>
+            </column>
+            <column name="kit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Populate the fak_kit_version table with data -->
+    <changeSet id="0.15-20" author="MKouhestani">
+        <sql>
+            INSERT INTO fak_kit_version (id, kit_id, status)
+            SELECT id, id, 0 FROM fak_assessment_kit;
+        </sql>
+    </changeSet>
+
+    <!--Create seq for it-->
+    <changeSet id="0.15-21" author="MKouhestani">
+        <createSequence sequenceName="fak_kit_version_id_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <!--Set seq next value to start from kit seq next value (so they can have same ids for now)-->
+    <changeSet id="0.15-22" author="MKouhestani">
+        <sql>SELECT setval('fak_kit_version_id_seq', nextVal('fak_assessment_kit_id_seq'))</sql>
+    </changeSet>
+
+    <!--Add kit_version id to kit table-->
+    <changeSet id="0.15-23" author="MKouhestani">
+        <addColumn tableName="fak_assessment_kit">
+            <column name="kit_version_id" type="bigint" valueComputed="id"/>
+        </addColumn>
+    </changeSet>
+
+    <!--Drop fk and unique constraints of that 6 entities for kit and create them with kit_version-->
+    <!--Subject-->
+    <changeSet id="0.15-24" author="MKouhestani">
+        <dropForeignKeyConstraint baseTableName="fak_subject" constraintName="fk_fak_subject_assessmentkit"/>
+    </changeSet>
+
+    <changeSet id="0.15-25" author="MKouhestani">
+        <dropUniqueConstraint tableName="fak_subject" constraintName="uq_fak_subject_code_kitid"/>
+        <dropUniqueConstraint tableName="fak_subject" constraintName="uq_fak_subject_index_kitid"/>
+        <dropUniqueConstraint tableName="fak_subject" constraintName="uq_fak_subject_title_kitid"/>
+    </changeSet>
+
+    <!--Attribute-->
+    <changeSet id="0.15-26" author="MKouhestani">
+        <dropForeignKeyConstraint baseTableName="fak_attribute" constraintName="fk_fak_attribute_assessmentkit"/>
+    </changeSet>
+
+    <changeSet id="0.15-27" author="MKouhestani">
+        <dropUniqueConstraint tableName="fak_attribute" constraintName="uq_fak_attribute_code_kitid"/>
+    </changeSet>
+
+    <!--Questionnaire-->
+    <changeSet id="0.15-28" author="MKouhestani">
+        <dropForeignKeyConstraint baseTableName="fak_questionnaire" constraintName="fk_fak_questionnaire_assessmentkit"/>
+    </changeSet>
+
+    <changeSet id="0.15-29" author="MKouhestani">
+        <dropUniqueConstraint tableName="fak_questionnaire" constraintName="uq_fak_questionnaire_code_kitid"/>
+        <dropUniqueConstraint tableName="fak_questionnaire" constraintName="uq_fak_questionnaire_index_kitid"/>
+        <dropUniqueConstraint tableName="fak_questionnaire" constraintName="uq_fak_questionnaire_title_kitid"/>
+    </changeSet>
+
+    <!--Question-->
+    <changeSet id="0.15-30" author="MKouhestani">
+        <dropForeignKeyConstraint baseTableName="fak_question" constraintName="fk_fak_question_assessmentkit"/>
+    </changeSet>
+    <!--Must create a constraint on kit_version_id and code-->
+
+    <!--AnswerOption-->
+    <changeSet id="0.15-31" author="MKouhestani">
+        <dropForeignKeyConstraint baseTableName="fak_answer_option" constraintName="fk_fak_answeroption_assessmentkit"/>
+    </changeSet>
+    <!--Must create a constraint on kit_version_id and code-->
+
+    <!--MaturityLevel-->
+    <changeSet id="0.15-32" author="MKouhestani">
+        <dropForeignKeyConstraint baseTableName="fak_maturity_level" constraintName="fk_fak_maturitylevel_assessmentkit"/>
+    </changeSet>
+
+    <changeSet id="0.15-33" author="MKouhestani">
+        <dropUniqueConstraint tableName="fak_maturity_level" constraintName="fak_maturitylevel_code_kitid"/>
+        <dropUniqueConstraint tableName="fak_maturity_level" constraintName="fak_maturitylevel_index_kitid"/>
+        <dropUniqueConstraint tableName="fak_maturity_level" constraintName="fak_maturitylevel_title_kitid"/>
+        <dropUniqueConstraint tableName="fak_maturity_level" constraintName="uq_fak_maturitylevel_value_kitid"/>
+    </changeSet>
+
+    <!--Rename all the kit_id columns to kit_version_id-->
+    <changeSet id="0.15-34" author="MKouhestani">
+        <renameColumn tableName="fak_subject" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.15-35" author="MKouhestani">
+        <renameColumn tableName="fak_attribute" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.15-36" author="MKouhestani">
+        <renameColumn tableName="fak_questionnaire" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.15-37" author="MKouhestani">
+        <renameColumn tableName="fak_question" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.15-38" author="MKouhestani">
+        <renameColumn tableName="fak_answer_option" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <changeSet id="0.15-39" author="MKouhestani">
+        <renameColumn tableName="fak_maturity_level" oldColumnName="kit_id" newColumnName="kit_version_id"/>
+    </changeSet>
+
+    <!--Add fk-->
+    <changeSet id="0.15-40" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fak_subject"
+                                 baseColumnNames="kit_version_id"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_subject_kitversion"/>
+    </changeSet>
+
+    <changeSet id="0.15-41" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fak_attribute"
+                                 baseColumnNames="kit_version_id"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_attribute_kitversion"/>
+    </changeSet>
+
+    <changeSet id="0.15-42" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fak_questionnaire"
+                                 baseColumnNames="kit_version_id"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_questionnaire_kitversion"/>
+    </changeSet>
+
+    <changeSet id="0.15-43" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fak_question"
+                                 baseColumnNames="kit_version_id"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_question_kitversion"/>
+    </changeSet>
+
+    <changeSet id="0.15-44" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fak_answer_option"
+                                 baseColumnNames="kit_version_id"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_answeroption_kitversion"/>
+    </changeSet>
+
+    <changeSet id="0.15-45" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fak_maturity_level"
+                                 baseColumnNames="kit_version_id"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_maturitylevel_kitversion"/>
+    </changeSet>
+
+    <!--Add unique constraints-->
+    <!--Subject-->
+    <changeSet id="0.15-46" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, code"
+                             constraintName="uq_fak_subject_code_kitversionid"
+                             tableName="fak_subject"/>
+    </changeSet>
+
+    <changeSet id="0.15-47" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_subject_index_kitversionid"
+                             tableName="fak_subject"/>
+    </changeSet>
+
+    <changeSet id="0.15-48" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, title"
+                             constraintName="uq_fak_subject_title_kitversionid"
+                             tableName="fak_subject"/>
+    </changeSet>
+
+    <!--Attribute-->
+    <changeSet id="0.15-49" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, code"
+                             constraintName="uq_fak_attribute_code_kitversionid"
+                             tableName="fak_attribute"/>
+    </changeSet>
+
+    <!--Questionnaire-->
+    <changeSet id="0.15-50" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, code"
+                             constraintName="uq_fak_questionnaire_code_kitversionid"
+                             tableName="fak_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.15-51" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_questionnaire_index_kitversionid"
+                             tableName="fak_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.15-52" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, title"
+                             constraintName="uq_fak_questionnaire_title_kitversionid"
+                             tableName="fak_questionnaire"/>
+    </changeSet>
+
+    <!--Question-->
+    <changeSet id="0.15-53" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, code, questionnaire_id"
+                             constraintName="uq_fak_question_code_kitversionid_questionnaireid"
+                             tableName="fak_question"/>
+    </changeSet>
+
+    <!--AnswerOption-->
+    <changeSet id="0.15-54" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, index, question_id"
+                             constraintName="uq_fak_answeroption_index_kitversionid_questionid"
+                             tableName="fak_answer_option"/>
+    </changeSet>
+
+    <!--MaturityLevel-->
+    <changeSet id="0.15-55" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, code"
+                             constraintName="uq_fak_maturitylevel_code_kitversionid"
+                             tableName="fak_maturity_level"/>
+    </changeSet>
+
+    <changeSet id="0.15-56" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_maturitylevel_index_kitversionid"
+                             tableName="fak_maturity_level"/>
+    </changeSet>
+
+    <changeSet id="0.15-57" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, title"
+                             constraintName="uq_fak_maturitylevel_title_kitversionid"
+                             tableName="fak_maturity_level"/>
+    </changeSet>
+
+    <changeSet id="0.15-58" author="MKouhestani">
+        <addUniqueConstraint columnNames="kit_version_id, value"
+                             constraintName="uq_fak_maturitylevel_value_kitversionid"
+                             tableName="fak_maturity_level"/>
+    </changeSet>
+
+    <!--Add kit_version_id column to assessment result-->
+    <changeSet id="0.15-59" author="MKouhestani">
+        <addColumn tableName="fac_assessment_result">
+            <column name="kit_version_id" type="bigint"
+                    valueComputed="fak_assessment_kit.kit_version_id FROM fak_assessment_kit
+                    LEFT JOIN fac_assessment ON fak_assessment_kit.id = fac_assessment.assessment_kit_id
+                    WHERE assessment_id = fac_assessment.id" defaultValue="0"/>
+        </addColumn>
+    </changeSet>
+
+    <!--Add fk for kit_id in kit version-->
+    <changeSet id="0.15-60" author="MKouhestani">
+        <addForeignKeyConstraint baseTableName="fak_kit_version"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitversion_assessmentkit"/>
+    </changeSet>
+
     <changeSet id="0.15-63" author="Mahdi Rezazadeh">
         <addColumn tableName="fak_question">
             <column name="cost" type="int" defaultValueNumeric="1">

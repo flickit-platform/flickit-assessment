@@ -50,7 +50,7 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             Subject savedSubject = savedSubjectCodesMap.get(dslSubject.getCode());
 
             if (savedSubject == null) {
-                Long persistedSubjectId = createSubjectPort.persist(toCreateParam(dslSubject, savedKit.getId(), currentUserId));
+                Long persistedSubjectId = createSubjectPort.persist(toCreateParam(dslSubject, savedKit.getKitVersionId(), currentUserId));
                 addedCodeToIdMap.put(dslSubject.getCode(), persistedSubjectId);
                 log.debug("Subject[id={}, code={}] created", persistedSubjectId, dslSubject.getCode());
             } else if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
@@ -72,14 +72,14 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
         return new UpdateKitPersisterResult(!addedCodeToIdMap.isEmpty());
     }
 
-    private CreateSubjectPort.Param toCreateParam(SubjectDslModel dslSubject, long kitId, UUID currentUserId) {
+    private CreateSubjectPort.Param toCreateParam(SubjectDslModel dslSubject, long kitVersionId, UUID currentUserId) {
         return new CreateSubjectPort.Param(
             dslSubject.getCode(),
             dslSubject.getTitle(),
             dslSubject.getIndex(),
             dslSubject.getWeight(),
             dslSubject.getDescription(),
-            kitId,
+            kitVersionId,
             currentUserId
         );
     }

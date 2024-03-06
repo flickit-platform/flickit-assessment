@@ -28,7 +28,7 @@ public class AnswerOptionMapper {
             UUID.randomUUID(),
             param.index(),
             param.title(),
-            param.kitId(),
+            param.kitVersionId(),
             param.questionId(),
             creationTime,
             creationTime,

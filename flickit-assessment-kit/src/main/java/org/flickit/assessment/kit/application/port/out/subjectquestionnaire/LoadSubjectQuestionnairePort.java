@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface LoadSubjectQuestionnairePort {
 
-    List<SubjectQuestionnaire> loadByKitId(long assessmentKitId);
+    List<SubjectQuestionnaire> loadByKitVersionId(long kitVersionId);
 }

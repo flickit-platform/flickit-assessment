@@ -31,8 +31,8 @@ public class AnswerOptionJpaEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "question_id", nullable = false)
     private Long questionId;
