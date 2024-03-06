@@ -55,6 +55,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     @Query("""
            SELECT DISTINCT q.id AS  questionId,
+                q.cost AS questionCost,
                 anso.index AS answeredOptionIndex,
                 qanso.id AS optionId,
                 qanso.index AS optionIndex,
