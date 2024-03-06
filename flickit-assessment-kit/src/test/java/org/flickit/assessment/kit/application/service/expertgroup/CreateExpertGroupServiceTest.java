@@ -27,13 +27,13 @@ class CreateExpertGroupServiceTest {
 
     @Test
     void testCreateExpertGroup_validParams_persistResult() {
-        long expectedId = new  Random().nextLong();
+        long expectedId = new Random().nextLong();
         when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(expectedId);
         when(createExpertGroupAccessPort.persist(any(CreateExpertGroupAccessPort.Param.class))).thenReturn(new Random().nextLong());
 
         var result = service.createExpertGroup(param);
         assertNotNull(result, "The result of createExpertGroup service" +
-            "should be CreateExpertGroupUseCase.Result");
+            "should be CreateExpertGroupUseCase.Member");
         assertEquals(expectedId, result.id(), "The result should be long ID");
     }
 

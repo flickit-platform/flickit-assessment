@@ -21,20 +21,24 @@ public interface GetExpertGroupMembersUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @Min(value = 1, message = GET_EXPERT_GROUP_LIST_SIZE_MIN)
-        @Max(value = 100, message = GET_EXPERT_GROUP_LIST_SIZE_MAX)
-        int size;
-
-        @Min(value = 0, message = GET_EXPERT_GROUP_LIST_PAGE_MIN)
-        int page;
-
-        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        @NotNull(message = GET_EXPERT_GROUP_MEMBERS_ID_NOT_NULL)
         Long id;
 
-        public Param(int size, int page, long expertGroupId) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        @Min(value = 1, message = GET_EXPERT_GROUP_MEMBERS_SIZE_MIN)
+        @Max(value = 100, message = GET_EXPERT_GROUP_MEMBERS_SIZE_MAX)
+        int size;
+
+        @Min(value = 0, message = GET_EXPERT_GROUP_MEMBERS_PAGE_MIN)
+        int page;
+
+        public Param(long expertGroupId, UUID currentUserId, int size, int page) {
+            this.id = expertGroupId;
+            this.currentUserId = currentUserId;
             this.size = size;
             this.page = page;
-            this.id = expertGroupId;
             this.validateSelf();
         }
     }

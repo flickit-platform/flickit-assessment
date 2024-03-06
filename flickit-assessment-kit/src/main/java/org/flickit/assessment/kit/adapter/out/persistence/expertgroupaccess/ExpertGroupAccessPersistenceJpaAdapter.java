@@ -28,9 +28,9 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadExpertGroupMembersPort.Result> loadExpertGroupMembers(LoadExpertGroupMembersPort.Param param) {
-        var pageResult = repository.findExpertGroupMembers(param.expertGroupId(),
-            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, UserJpaEntity.Fields.NAME));
+    public PaginatedResponse<Member> loadExpertGroupMembers(long expertGroupId, int page, int size) {
+        var pageResult = repository.findExpertGroupMembers(expertGroupId,
+            PageRequest.of(page, size, Sort.Direction.ASC, UserJpaEntity.Fields.NAME));
 
         var items = pageResult
             .stream()
