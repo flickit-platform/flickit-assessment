@@ -100,7 +100,7 @@ class MaturityLevelUpdateKitPersisterTest {
             .build();
 
         Long persistedLevelId = levelThree().getId();
-        when(createMaturityLevelPort.persist(any(), eq(savedKit.getId()), any(UUID.class))).thenReturn(persistedLevelId);
+        when(createMaturityLevelPort.persist(any(), eq(savedKit.getKitVersionId()), any(UUID.class))).thenReturn(persistedLevelId);
         UUID currentUserId = UUID.randomUUID();
         when(createLevelCompetencePort.persist(persistedLevelId, levelTwo().getId(), 75, currentUserId)).thenReturn(1L);
         when(createLevelCompetencePort.persist(persistedLevelId, levelThree().getId(), 60, currentUserId)).thenReturn(2L);

@@ -10,5 +10,6 @@ import java.util.List;
 public class AssessmentKit {
 
     private final long id;
+    private final Long kitVersion;
     private final List<MaturityLevel> maturityLevels;
 }

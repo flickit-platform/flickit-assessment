@@ -85,7 +85,7 @@ public class MinioAdapter implements
                 .object(objectName)
                 .build());
 
-        return new String(stream.readAllBytes());
+        return new String(stream.readAllBytes(), UTF_8);
     }
 
     @SneakyThrows

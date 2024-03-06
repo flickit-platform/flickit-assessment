@@ -4,11 +4,11 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
-import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateKitTagRelationPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,6 +40,7 @@ class CreateKitByDslServiceTest {
     private static final UUID DSL_JSON_VERSION_ID = UUID.randomUUID();
     private static final String DSL_JSON = "sample/json/file/path/" + DSL_JSON_VERSION_ID;
     private static final Long KIT_ID = 1L;
+    private static final Long KIT_VERSION_ID = 1L;
     private static final String TITLE = "title";
     private static final String SUMMARY = "summary";
     private static final String ABOUT = "about";
@@ -84,11 +86,11 @@ class CreateKitByDslServiceTest {
             Boolean.FALSE,
             EXPERT_GROUP_ID,
             currentUserId);
-        when(createAssessmentKitPort.persist(kitCreateParam)).thenReturn(KIT_ID);
+        when(createAssessmentKitPort.persist(kitCreateParam)).thenReturn(new CreateAssessmentKitPort.Result(KIT_ID, KIT_VERSION_ID));
 
         doNothing().when(persister).persist(any(), eq(KIT_ID), eq(currentUserId));
 
-        doNothing().when(updateKitDslPort).update(KIT_DSL_ID, KIT_ID);
+        doNothing().when(updateKitDslPort).update(anyLong(), anyLong(), any(), any());
 
         UUID expertGroupMemberId = UUID.randomUUID();
         List<LoadExpertGroupMemberIdsPort.Result> expertGroupMembers = List.of(

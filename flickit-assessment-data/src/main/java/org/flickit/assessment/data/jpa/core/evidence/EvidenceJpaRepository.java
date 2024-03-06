@@ -16,21 +16,45 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         Long questionId, UUID assessmentId, Pageable pageable);
 
     @Modifying
-    @Query("UPDATE EvidenceJpaEntity e SET " +
-        "e.description = :description, " +
-        "e.lastModificationTime = :lastModificationTime, " +
-        "e.lastModifiedBy = :lastModifiedBy " +
-        "WHERE e.id = :id")
+    @Query("""
+        UPDATE EvidenceJpaEntity e SET
+            e.description = :description,
+            e.type = :type,
+            e.lastModificationTime = :lastModificationTime,
+            e.lastModifiedBy = :lastModifiedBy
+        WHERE e.id = :id
+        """)
     void update(@Param(value = "id") UUID id,
                 @Param(value = "description") String description,
+                @Param(value = "type") Integer type,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
 
     @Modifying
-    @Query("UPDATE EvidenceJpaEntity e SET " +
-        "e.deleted = true " +
-        "WHERE e.id = :id")
+    @Query("""
+        UPDATE EvidenceJpaEntity e SET
+            e.deleted = true
+        WHERE e.id = :id
+        """)
     void delete(@Param(value = "id") UUID id);
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
+
+    @Query(value = """
+            SELECT evd.description
+            FROM QuestionJpaEntity q
+                LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
+                WHERE evd.assessmentId = :assessmentId
+                    AND evd.type = :type
+                    AND evd.deleted = false
+                    AND q.id IN (SELECT qs.id
+                                 FROM QuestionJpaEntity qs
+                                 LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
+                                 WHERE qi.attributeId = :attributeId)
+                ORDER BY evd.lastModificationTime DESC
+        """)
+    Page<String> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(@Param(value = "assessmentId") UUID assessmentId,
+                                                                                       @Param(value = "attributeId") Long attributeId,
+                                                                                       @Param(value = "type") Integer type,
+                                                                                       Pageable pageable);
 }

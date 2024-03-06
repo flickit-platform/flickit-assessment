@@ -22,18 +22,19 @@ public class QuestionnaireMapper {
         );
     }
 
-    static QuestionnaireJpaEntity mapToJpaEntityToPersist(Questionnaire questionnaire, Long kitId, UUID createdBy) {
+    static QuestionnaireJpaEntity mapToJpaEntityToPersist(Questionnaire questionnaire, Long kitVersionId, UUID createdBy) {
         return new QuestionnaireJpaEntity(
             null,
+            UUID.randomUUID(),
             questionnaire.getCode(),
             questionnaire.getIndex(),
             questionnaire.getTitle(),
             questionnaire.getDescription(),
+            kitVersionId,
             questionnaire.getCreationTime(),
             questionnaire.getLastModificationTime(),
             createdBy,
-            createdBy,
-            kitId
+            createdBy
         );
     }
 }

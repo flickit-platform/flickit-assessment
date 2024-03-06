@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.14-01" author="Ali Sedaghat">
+        <renameTable oldTableName="baseinfo_assessmentkitdsl" newTableName="fak_kit_dsl"/>
+    </changeSet>
+
+    <changeSet id="0.14-02" author="Ali Sedaghat">
+        <renameColumn tableName="fak_kit_dsl" oldColumnName="dsl_file" newColumnName="dsl_path"/>
+    </changeSet>
+
+    <changeSet id="0.14-03" author="Ali Sedaghat">
+        <sql>alter table fak_kit_dsl
+            rename constraint baseinfo_profiledsl_pkey to pk_fak_kit_dsl;</sql>
+    </changeSet>
+
+    <changeSet id="0.14-04" author="Ali Sedaghat">
+        <dropAllForeignKeyConstraints baseTableName="fak_kit_dsl"/>
+    </changeSet>
+
+    <changeSet id="0.14-05" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_kit_dsl" constraintName="baseinfo_profiledsl_profile_id_key"/>
+    </changeSet>
+
+    <changeSet id="0.14-06" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_dsl" baseColumnNames="assessment_kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitdsl_assessmentkit"
+                                 deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.14-07" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_kit_dsl" columnNames="assessment_kit_id"
+                             constraintName="uq_fak_kitdsl_assessmentkit"/>
+    </changeSet>
+
+    <changeSet id="0.14-08" author="Ali Sedaghat">
+        <sql>create table fak_kit_dsl_copy as table fak_kit_dsl;</sql>
+    </changeSet>
+
+    <changeSet id="0.14-09" author="Ali Sedaghat">
+        <delete tableName="fak_kit_dsl">
+            <where>assessment_kit_id is null</where>
+        </delete>
+    </changeSet>
+
+    <changeSet id="0.14-10" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_dsl">
+            <column name="created_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-11" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_dsl">
+            <column name="last_modified_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-12" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_dsl"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitdsl_user_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.14-13" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_dsl"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitdsl_user_lastmodifiedby"/>
+    </changeSet>
+
+    <changeSet id="0.14-14" author="Ali Sedaghat">
+        <update tableName="fak_kit_dsl">
+            <column name="created_by" valueComputed="fak_assessment_kit.created_by FROM fak_assessment_kit
+            WHERE fak_kit_dsl.assessment_kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.14-15" author="Ali Sedaghat">
+        <update tableName="fak_kit_dsl">
+            <column name="last_modified_by" valueComputed="fak_assessment_kit.last_modified_by FROM fak_assessment_kit
+             WHERE fak_kit_dsl.assessment_kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.14-16" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_kit_dsl" columnName="created_by"/>
+    </changeSet>
+
+    <changeSet id="0.14-17" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_kit_dsl" columnName="last_modified_by"/>
+    </changeSet>
+
+    <changeSet id="0.14-18" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_dsl">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-19" author="Ali Sedaghat">
+        <renameColumn tableName="fak_assessment_kit" oldColumnName="last_modification_date" newColumnName="last_modification_time"/>
+    </changeSet>
+
+    <changeSet id="0.14-20" author="Ali Sedaghat">
+        <update tableName="fak_kit_dsl">
+            <column name="last_modification_time" valueComputed="fak_assessment_kit.last_modification_time FROM fak_assessment_kit
+             WHERE fak_kit_dsl.assessment_kit_id = fak_assessment_kit.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.14-21" author="Ali Sedaghat">
+        <addNotNullConstraint tableName="fak_kit_dsl" columnName="last_modification_time"/>
+    </changeSet>
+
+    <changeSet id="0.14-22" author="Ali Sedaghat">
+        <renameSequence oldSequenceName="baseinfo_profiledsl_id_seq" newSequenceName="fak_kit_dsl_id_seq"/>
+    </changeSet>
+
+    <changeSet id="0.14-23" author="Ali Sedaghat">
+        <addColumn tableName="fac_evidence">
+            <column name="type" type="tinyint"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

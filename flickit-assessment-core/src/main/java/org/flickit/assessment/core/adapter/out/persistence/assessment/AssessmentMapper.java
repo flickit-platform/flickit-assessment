@@ -32,7 +32,7 @@ public class AssessmentMapper {
     }
 
     public static Assessment mapToDomainModel(AssessmentJpaEntity entity) {
-        AssessmentKit kit = new AssessmentKit(entity.getAssessmentKitId(), null);
+        AssessmentKit kit = new AssessmentKit(entity.getAssessmentKitId(), null, null);
         return mapToDomainModel(entity, kit);
     }
 

@@ -18,8 +18,8 @@ public class QuestionnairePersistenceJpaAdapter implements
     private final QuestionnaireJpaRepository repository;
 
     @Override
-    public Long persist(Questionnaire questionnaire, long kitId, UUID createdBy) {
-        return repository.save(QuestionnaireMapper.mapToJpaEntityToPersist(questionnaire, kitId, createdBy)).getId();
+    public Long persist(Questionnaire questionnaire, long kitVersionId, UUID createdBy) {
+        return repository.save(QuestionnaireMapper.mapToJpaEntityToPersist(questionnaire, kitVersionId, createdBy)).getId();
     }
 
     @Override

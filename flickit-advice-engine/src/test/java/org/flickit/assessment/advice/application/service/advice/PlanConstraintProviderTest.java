@@ -6,7 +6,7 @@ import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.junit.jupiter.api.Test;
 
-import static org.flickit.assessment.advice.application.service.QuestionMother.createQuestionWithTargetAndOptionIndexes;
+import static org.flickit.assessment.advice.test.fixture.application.QuestionMother.createQuestionWithTargetAndOptionIndexes;
 
 class PlanConstraintProviderTest {
     ConstraintVerifier<PlanConstraintProvider, Plan> constraintVerifier = ConstraintVerifier.build(

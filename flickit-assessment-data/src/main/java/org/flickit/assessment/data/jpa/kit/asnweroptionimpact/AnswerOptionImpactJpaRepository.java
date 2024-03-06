@@ -13,8 +13,6 @@ public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOpt
 
     List<AnswerOptionImpactJpaEntity> findAllByQuestionImpactId(Long impactId);
 
-    void deleteByQuestionImpactIdAndOptionId(Long questionImpactId, Long optionId);
-
     @Modifying
     @Query("""
         UPDATE AnswerOptionImpactJpaEntity a
@@ -27,4 +25,5 @@ public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOpt
                     @Param("value") Double value,
                     @Param("lastModificationTime") LocalDateTime lastModificationTime,
                     @Param("lastModifiedBy") UUID lastModifiedBy);
+
 }

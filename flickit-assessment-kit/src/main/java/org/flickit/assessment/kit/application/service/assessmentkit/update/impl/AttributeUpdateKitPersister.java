@@ -79,7 +79,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
         Map<String, Long> savedNewAttrCodeToIdMap = new HashMap<>();
         addedAttributeCodes.forEach(code -> {
             Long subjectId = subjectCodeToSubjectId.get(attrCodeToAttrDslModel.get(code).getSubjectCode());
-            Long persistedAttributeId = createAttribute(attrCodeToAttrDslModel.get(code), subjectId, savedKit.getId(), currentUserId);
+            Long persistedAttributeId = createAttribute(attrCodeToAttrDslModel.get(code), subjectId, savedKit.getKitVersionId(), currentUserId);
             savedNewAttrCodeToIdMap.put(code, persistedAttributeId);
         });
 
@@ -111,7 +111,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
         log.debug("Attribute[id={}, code={}] updated", savedAttribute.getId(), savedAttribute.getCode());
     }
 
-    private long createAttribute(AttributeDslModel dslAttribute, long subjectId, long kitId, UUID createdBy) {
+    private long createAttribute(AttributeDslModel dslAttribute, long subjectId, long kitVersionId, UUID createdBy) {
         Attribute attribute = new Attribute(
             null,
             dslAttribute.getCode(),
@@ -124,7 +124,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
             createdBy,
             createdBy
         );
-        long persistedAttributeId = createAttributePort.persist(attribute, subjectId, kitId);
+        long persistedAttributeId = createAttributePort.persist(attribute, subjectId, kitVersionId);
         log.debug("Attribute[id={}, code={}] created", persistedAttributeId, dslAttribute.getCode());
         return persistedAttributeId;
     }
