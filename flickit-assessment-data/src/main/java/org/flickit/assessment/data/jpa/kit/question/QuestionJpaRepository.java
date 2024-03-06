@@ -82,7 +82,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                AND qi.attributeId = :attributeId)
                AND qi.maturityLevel.id = :maturityLevelId
         """)
-    List<ImprovableImpactfulQuestionView> findImprovableImpactfulQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
+    List<ImprovableImpactfulQuestionView> findAdvisableImprovableImpactfulQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
 
     @Query("""
             SELECT
