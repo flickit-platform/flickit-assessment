@@ -39,7 +39,6 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND));
 
         UUID assessmentResultId = assessmentResultEntity.getId();
-        Long kitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
         long kitVersionId = assessmentResultEntity.getKitVersionId();
 
         var svEntity = subjectValueRepo.findBySubjectIdAndAssessmentResult_Id(subjectId, assessmentResultId)
