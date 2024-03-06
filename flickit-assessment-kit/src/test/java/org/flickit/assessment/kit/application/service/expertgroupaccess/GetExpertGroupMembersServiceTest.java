@@ -36,8 +36,12 @@ class GetExpertGroupMembersServiceTest {
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
+    int count = 0;
+
     @Test
     void testGetExpertGroupMembers_ValidInputs_ValidResults() {
+        String expectedDownloadLink = "downloadLink";
+
         PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, page, size, "title", "asc", 2);
 
         when(existsExpertGroupByIdPort.existsById(any(Long.class))).thenReturn(true);
@@ -63,6 +67,8 @@ class GetExpertGroupMembersServiceTest {
 
     @Test
     void testGetExpertGroupMembers_CurrentUserIsNotOwner_ResultWithoutEmail() {
+        String expectedDownloadLink = "downloadLink";
+
         PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, page, size, "title", "asc", 2);
 
         when(existsExpertGroupByIdPort.existsById(any(Long.class))).thenReturn(true);
@@ -88,6 +94,7 @@ class GetExpertGroupMembersServiceTest {
     }
 
     private GetExpertGroupMembersUseCase.Member portToUseCaseResult(LoadExpertGroupMembersPort.Member portMember) {
+        String expectedDownloadLink = "downloadLink";
         return new GetExpertGroupMembersUseCase.Member(
             portMember.id(),
             portMember.email(),
@@ -98,14 +105,11 @@ class GetExpertGroupMembersServiceTest {
         );
     }
 
-    int count = 0;
-    String expectedDownloadLink = "downloadLink";
     UUID currentUserId = UUID.randomUUID();
     long expertGroupId = 123L;
     int page = 0;
     int size = 10;
     GetExpertGroupMembersUseCase.Param param = new GetExpertGroupMembersUseCase.Param(expertGroupId, currentUserId, size, page);
-
     LoadExpertGroupMembersPort.Member member1 = createPortResult(UUID.randomUUID());
     LoadExpertGroupMembersPort.Member member2 = createPortResult(UUID.randomUUID());
     List<LoadExpertGroupMembersPort.Member> portMembers = List.of(member1, member2);
