@@ -40,6 +40,9 @@ public class QuestionJpaEntity {
     @Column(name = "may_not_be_applicable", nullable = false)
     private Boolean mayNotBeApplicable;
 
+    @Column(name = "cost", nullable = false)
+    private Integer cost;
+
     @Column(name = "kit_id", nullable = false)
     private Long kitId;
 
