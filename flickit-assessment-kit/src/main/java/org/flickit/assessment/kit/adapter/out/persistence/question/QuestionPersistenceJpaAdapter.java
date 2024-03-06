@@ -23,6 +23,7 @@ public class QuestionPersistenceJpaAdapter implements
             param.index(),
             param.hint(),
             param.mayNotBeApplicable(),
+            param.cost(),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }

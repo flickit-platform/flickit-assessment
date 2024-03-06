@@ -19,6 +19,7 @@ public class QuestionMapper {
             entity.getIndex(),
             entity.getHint(),
             entity.getMayNotBeApplicable(),
+            entity.getCost(),
             entity.getQuestionnaireId(),
             entity.getCreationTime(),
             entity.getLastModificationTime()
@@ -35,6 +36,7 @@ public class QuestionMapper {
             param.title(),
             param.hint(),
             param.mayNotBeApplicable(),
+            param.cost(),
             param.kitId(),
             param.questionnaireId(),
             creationTime,
