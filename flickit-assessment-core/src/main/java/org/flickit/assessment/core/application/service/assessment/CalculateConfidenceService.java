@@ -58,7 +58,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
     }
 
     private void reinitializeAssessmentResult(AssessmentResult assessmentResult) {
-        var allSubjects = loadSubjectsPort.loadByKitIdWithAttributes(assessmentResult.getAssessment().getAssessmentKit().getId());
+        var allSubjects = loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId());
 
         List<SubjectValue> newSubjectValues = createNewSubjectValues(allSubjects, assessmentResult.getSubjectValues(), assessmentResult.getId());
         List<SubjectValue> allSubjectValues = new ArrayList<>(assessmentResult.getSubjectValues());

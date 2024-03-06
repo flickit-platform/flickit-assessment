@@ -7,6 +7,7 @@ import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
@@ -46,6 +47,9 @@ class CreateAssessmentServiceTest {
     @Mock
     private CreateQualityAttributeValuePort createQualityAttributeValuePort;
 
+    @Mock
+    private LoadAssessmentKitVersionIdPort loadAssessmentKitVersionIdPort;
+
     @Test
     void testCreateAssessment_ValidParam_PersistsAndReturnsId() {
         UUID createdBy = UUID.randomUUID();
@@ -59,7 +63,7 @@ class CreateAssessmentServiceTest {
         UUID expectedId = UUID.randomUUID();
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
         List<Subject> expectedResponse = List.of();
-        when(loadSubjectsPort.loadByKitIdWithAttributes(any())).thenReturn(expectedResponse);
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
         assertEquals(expectedId, result.id());
@@ -90,7 +94,7 @@ class CreateAssessmentServiceTest {
         UUID expectedResultId = UUID.randomUUID();
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(expectedResultId);
         List<Subject> expectedResponse = List.of();
-        when(loadSubjectsPort.loadByKitIdWithAttributes(any())).thenReturn(expectedResponse);
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
 
         service.createAssessment(param);
 
@@ -104,7 +108,8 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_ValidParam_PersistsSubjectValues() {
-        Long assessmentKitId = 1L;
+        long assessmentKitId = 1L;
+        long kitVersionId = 123L;
         UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
@@ -125,7 +130,8 @@ class CreateAssessmentServiceTest {
             new Subject(1L, "subject1", List.of(qa1, qa2)),
             new Subject(3L, "subject3", List.of(qa5))
         );
-        when(loadSubjectsPort.loadByKitIdWithAttributes(assessmentKitId)).thenReturn(expectedSubjects);
+        when(loadAssessmentKitVersionIdPort.loadVersionId(assessmentKitId)).thenReturn(kitVersionId);
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId)).thenReturn(expectedSubjects);
 
         service.createAssessment(param);
 
@@ -134,7 +140,8 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_ValidCommand_PersistsQualityAttributeValue() {
-        Long assessmentKitId = 1L;
+        long assessmentKitId = 1L;
+        Long kitVersionId = 123L;
         UUID createdBy = UUID.randomUUID();
         Param param = new Param(
             1L,
@@ -154,7 +161,8 @@ class CreateAssessmentServiceTest {
             new Subject(2L, "subject1", List.of(qa3, qa4)),
             new Subject(3L, "subject3", List.of(qa5))
         );
-        when(loadSubjectsPort.loadByKitIdWithAttributes(assessmentKitId)).thenReturn(expectedSubjects);
+        when(loadAssessmentKitVersionIdPort.loadVersionId(assessmentKitId)).thenReturn(kitVersionId);
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId)).thenReturn(expectedSubjects);
 
         service.createAssessment(param);
 
@@ -172,7 +180,7 @@ class CreateAssessmentServiceTest {
             createdBy
         );
         List<Subject> expectedResponse = List.of();
-        when(loadSubjectsPort.loadByKitIdWithAttributes(any())).thenReturn(expectedResponse);
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
 
         service.createAssessment(param);
 

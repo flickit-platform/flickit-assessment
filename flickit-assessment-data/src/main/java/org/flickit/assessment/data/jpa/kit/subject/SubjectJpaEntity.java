@@ -42,8 +42,8 @@ public class SubjectJpaEntity {
     @Column(name = "weight", nullable = false)
     private Integer weight = 1;
 
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

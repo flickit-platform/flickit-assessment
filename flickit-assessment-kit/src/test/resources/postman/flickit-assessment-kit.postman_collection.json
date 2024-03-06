@@ -352,50 +352,6 @@
 			"response": []
 		},
 		{
-			"name": "Create Expert Group",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "picture",
-							"type": "file",
-							"src": "/home/maziyar/Pictures/Screenshots/Screenshot from 2024-01-13 08-59-19.png"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups"
-					],
-					"query": [
-						{
-							"key": "picture",
-							"value": "",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Get Dsl Download Link",
 			"request": {
 				"method": "GET",
