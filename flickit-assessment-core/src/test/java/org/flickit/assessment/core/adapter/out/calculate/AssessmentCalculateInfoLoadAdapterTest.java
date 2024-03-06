@@ -15,7 +15,6 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
@@ -69,8 +68,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
     private AnswerOptionRestAdapter answerOptionRestAdapter;
     @Mock
     private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
-    @Mock
-    private AssessmentKitJpaRepository kitRepository;
 
 
     @Test
@@ -306,7 +303,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.answerEntities());
         when(answerOptionRestAdapter.loadAnswerOptionByIds(any()))
             .thenReturn(context.answerOptionDtos());
-        when(kitRepository.loadKitVersionId(any())).thenReturn(context.assessmentResultEntity().getAssessment().getAssessmentKitId());
     }
 
     private List<QuestionJoinQuestionImpactView> questionJoinImpactView(List<QuestionJpaEntity> questionEntities, Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap) {

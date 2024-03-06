@@ -62,7 +62,7 @@ class ReportAssessmentServiceTest {
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentResult.getAssessment().getId());
 
         when(loadReportInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(loadAttributeValueListPort.loadAll(assessmentResult.getId(), kit.getId(), maturityLevels)).thenReturn(qaValues);
+        when(loadAttributeValueListPort.loadAll(assessmentResult.getId(), kit.getKitVersion(), maturityLevels)).thenReturn(qaValues);
 
         doNothing().when(validateAssessmentResult).validate(assessmentResult.getAssessment().getId());
 

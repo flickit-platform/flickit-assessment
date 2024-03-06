@@ -15,7 +15,6 @@ import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMatu
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.springframework.stereotype.Component;
@@ -41,7 +40,6 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final AttributeMaturityScoreJpaRepository attributeMaturityScoreRepository;
     private final AttributeJpaRepository attributeRepository;
-    private final AssessmentKitJpaRepository kitRepository;
 
     @Override
     public List<QualityAttributeValue> persistAll(List<Long> qualityAttributeIds, UUID assessmentResultId) {
@@ -64,8 +62,7 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<QualityAttributeValue> loadAll(UUID assessmentResultId, Long kitId, Map<Long, MaturityLevel> maturityLevels) {
-        Long kitVersionId = kitRepository.loadKitVersionId(kitId);
+    public List<QualityAttributeValue> loadAll(UUID assessmentResultId, Long kitVersionId, Map<Long, MaturityLevel> maturityLevels) {
         List<QualityAttributeValueJpaEntity> entities = repository.findByAssessmentResultIdAndKitVersionId(assessmentResultId, kitVersionId);
 
         return toAttributeValues(entities, maturityLevels);
