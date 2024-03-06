@@ -41,7 +41,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
     }
 
     @Override
-    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
+    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitVersionId, UUID currentUserId) {
         Map<String, Long> questionnaires = ctx.get(KEY_QUESTIONNAIRES);
         Map<String, Long> attributes = ctx.get(KEY_ATTRIBUTES);
         Map<String, Long> maturityLevels = ctx.get(KEY_MATURITY_LEVELS);
@@ -55,23 +55,24 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                 questionnaires.get(code),
                 attributes,
                 maturityLevels,
-                kitId,
+                kitVersionId,
                 currentUserId
             ));
+
     }
 
     private void createQuestions(Map<String, QuestionDslModel> dslQuestions,
                                  Long questionnaireId,
                                  Map<String, Long> attributes,
                                  Map<String, Long> maturityLevels,
-                                 Long kitId,
+                                 Long kitVersionId,
                                  UUID currentUserId) {
 
         if (dslQuestions == null || dslQuestions.isEmpty())
             return;
 
         dslQuestions.values().forEach(dslQuestion ->
-            createQuestion(dslQuestion, questionnaireId, attributes, maturityLevels, kitId, currentUserId)
+            createQuestion(dslQuestion, questionnaireId, attributes, maturityLevels, kitVersionId, currentUserId)
         );
     }
 
@@ -79,7 +80,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                                 Long questionnaireId,
                                 Map<String, Long> attributes,
                                 Map<String, Long> maturityLevels,
-                                Long kitId,
+                                Long kitVersionId,
                                 UUID currentUserId) {
 
         var createParam = new CreateQuestionPort.Param(
@@ -89,7 +90,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             dslQuestion.getDescription(),
             dslQuestion.isMayNotBeApplicable(),
             dslQuestion.isAdvisable(),
-            kitId,
+            kitVersionId,
             questionnaireId,
             currentUserId
         );
@@ -98,7 +99,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
             questionId, dslQuestion.getCode(), dslQuestion.getQuestionnaireCode());
 
-        Map<Integer, Long> optionIndexToIdMap = createAnswerOptions(dslQuestion, questionId, kitId, currentUserId);
+        Map<Integer, Long> optionIndexToIdMap = createAnswerOptions(dslQuestion, questionId, kitVersionId, currentUserId);
 
         dslQuestion.getQuestionImpacts().forEach(impact -> {
             Long attributeId = attributes.get(impact.getAttributeCode());
@@ -107,17 +108,17 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         });
     }
 
-    private Map<Integer, Long> createAnswerOptions(QuestionDslModel dslQuestion, Long questionId, Long kitId, UUID currentUserId) {
+    private Map<Integer, Long> createAnswerOptions(QuestionDslModel dslQuestion, Long questionId, Long kitVersionId, UUID currentUserId) {
         Map<Integer, Long> optionIndexToIdMap = new HashMap<>();
         dslQuestion.getAnswerOptions().forEach(option -> {
-            var answerOption = createAnswerOption(option, questionId, kitId, currentUserId);
+            var answerOption = createAnswerOption(option, questionId, kitVersionId, currentUserId);
             optionIndexToIdMap.put(answerOption.getIndex(), answerOption.getId());
         });
         return optionIndexToIdMap;
     }
 
-    private AnswerOption createAnswerOption(AnswerOptionDslModel option, Long questionId, Long kitId, UUID currentUserId) {
-        var createOptionParam = new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, kitId, currentUserId);
+    private AnswerOption createAnswerOption(AnswerOptionDslModel option, Long questionId, Long kitVersionId, UUID currentUserId) {
+        var createOptionParam = new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, kitVersionId, currentUserId);
 
         var optionId = createAnswerOptionPort.persist(createOptionParam);
         log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",

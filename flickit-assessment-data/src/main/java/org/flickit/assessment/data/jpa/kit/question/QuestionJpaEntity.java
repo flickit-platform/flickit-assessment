@@ -43,8 +43,8 @@ public class QuestionJpaEntity {
     @Column(name = "advisable", nullable = false)
     private Boolean advisable;
 
-    @Column(name = "kit_id", nullable = false)
-    private Long kitId;
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "questionnaire_id", nullable = false)
     private Long questionnaireId;

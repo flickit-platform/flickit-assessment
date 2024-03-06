@@ -26,8 +26,8 @@ public class SubjectQuestionnairePersistenceJpaAdapter implements
     private final SubjectQuestionnaireJpaRepository repository;
 
     @Override
-    public List<SubjectQuestionnaire> loadByKitId(long assessmentKitId) {
-        List<SubjectQuestionnaireJpaEntity> entities = repository.findAllByAssessmentKitId(assessmentKitId);
+    public List<SubjectQuestionnaire> loadByKitVersionId(long kitVersionId) {
+        List<SubjectQuestionnaireJpaEntity> entities = repository.findAllByKitVersionId(kitVersionId);
         return entities.stream().map(SubjectQuestionnaireMapper::mapToDomainModel).toList();
     }
 

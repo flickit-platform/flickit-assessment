@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, Long> {
 
-    List<QuestionnaireJpaEntity> findAllByKitId(Long kitId);
+    List<QuestionnaireJpaEntity> findAllByKitVersionId(Long kitVersionId);
 
     @Modifying
     @Query("""

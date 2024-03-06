@@ -74,7 +74,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
         doMocks(context);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        when(maturityLevelJpaAdapter.loadByKitIdWithCompetences(context.assessmentResultEntity.getAssessment().getAssessmentKitId()))
+        when(maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(context.assessmentResultEntity.getKitVersionId()))
             .thenReturn(maturityLevels);
 
         var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
@@ -292,9 +292,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.subjectValues());
         when(qualityAttrValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.qualityAttributeValues());
-        when(subjectRepository.loadByKitIdWithAttributes(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
+        when(subjectRepository.loadByKitVersionIdWithAttributes(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(context.subjects);
-        when(questionRepository.loadByAssessmentKitId(context.assessmentResultEntity().getAssessment().getAssessmentKitId()))
+        when(questionRepository.loadByKitVersionId(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(questionJoinImpactView(context.questionEntities, context.questionIdToImpactsMap));
         when(answerRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.answerEntities());

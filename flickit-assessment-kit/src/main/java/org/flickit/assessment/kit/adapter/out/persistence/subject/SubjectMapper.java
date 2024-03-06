@@ -37,7 +37,7 @@ public class SubjectMapper {
             param.title(),
             param.description(),
             param.weight(),
-            param.kitId(),
+            param.kitVersionId(),
             creationTime,
             creationTime,
             param.createdBy(),
