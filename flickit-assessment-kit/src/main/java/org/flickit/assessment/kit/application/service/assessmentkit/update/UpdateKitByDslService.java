@@ -62,9 +62,8 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
     private void validateUserIsExpertGroupOwner(long expertGroupId, UUID currentUserId) {
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
             .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
-        if (!ownerId.equals(currentUserId)) {
+        if (!ownerId.equals(currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        }
     }
 
     private void validateChanges(AssessmentKit savedKit, AssessmentKitDslModel dslKit) {

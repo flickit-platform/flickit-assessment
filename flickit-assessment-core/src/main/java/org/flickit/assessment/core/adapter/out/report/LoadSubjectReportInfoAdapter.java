@@ -10,7 +10,6 @@ import org.flickit.assessment.core.application.port.out.subject.LoadSubjectRepor
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
-    private final AssessmentKitJpaRepository kitRepository;
 
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
     private final QualityAttributeValuePersistenceJpaAdapter attributeValuePersistenceJpaAdapter;
@@ -42,7 +40,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
         UUID assessmentResultId = assessmentResultEntity.getId();
         Long kitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
-        Long kitVersionId = kitRepository.loadKitVersionId(kitId);
+        long kitVersionId = assessmentResultEntity.getKitVersionId();
 
         var svEntity = subjectValueRepo.findBySubjectIdAndAssessmentResult_Id(subjectId, assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
@@ -53,7 +51,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
         var attributeValues = attributeValuePersistenceJpaAdapter.loadBySubjectId(assessmentResultId, subjectId, maturityLevels);
         SubjectValue subjectValue = new SubjectValue(svEntity.getId(),
-            new Subject(svEntity.getSubjectId()),
+            new Subject(svEntity.getSubjectId(), null),
             attributeValues,
             findMaturityLevelById(maturityLevels, svEntity.getMaturityLevelId()),
             svEntity.getConfidenceValue()
@@ -61,7 +59,8 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
         return new AssessmentResult(
             assessmentResultId,
-            buildAssessment(assessmentResultEntity.getAssessment(), maturityLevels),
+            buildAssessment(assessmentResultEntity.getAssessment(), kitVersionId, maturityLevels),
+            kitVersionId,
             List.of(subjectValue),
             findMaturityLevelById(maturityLevels, assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
@@ -72,8 +71,8 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             assessmentResultEntity.getLastConfidenceCalculationTime());
     }
 
-    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, Map<Long, MaturityLevel> maturityLevels) {
-        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), new ArrayList<>(maturityLevels.values()));
+    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId, Map<Long, MaturityLevel> maturityLevels) {
+        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), kitVersionId, new ArrayList<>(maturityLevels.values()));
         return mapToDomainModel(assessmentEntity, kit);
     }
 

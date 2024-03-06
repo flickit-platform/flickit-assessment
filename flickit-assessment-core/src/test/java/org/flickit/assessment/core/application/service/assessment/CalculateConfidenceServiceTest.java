@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLas
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class CalculateConfidenceServiceTest {
     private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
 
     @Mock
-    private LoadSubjectPort loadSubjectPort;
+    private LoadSubjectsPort loadSubjectsPort;
 
     @Mock
     private CreateSubjectValuePort createSubjectValuePort;
@@ -83,7 +83,7 @@ class CalculateConfidenceServiceTest {
         Param param = new Param(assessmentResult.getAssessment().getId());
 
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(loadSubjectPort.loadByKitIdWithAttributes(any())).thenReturn(subjects);
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
 
         LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(kitLastMajorModificationTime);
@@ -131,7 +131,7 @@ class CalculateConfidenceServiceTest {
 
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
-        when(loadSubjectPort.loadByKitIdWithAttributes(any())).thenReturn(subjects);
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
         when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
         when(createAttributeValuePort.persistAll(anyList(), any())).thenReturn(List.of(newAttributeValue));
 

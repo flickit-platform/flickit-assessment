@@ -12,6 +12,6 @@ public interface CreateAssessmentResultPort {
      */
     UUID persist(Param param);
 
-    record Param(UUID assessmentId, Long kitId, LocalDateTime lastModificationTime, boolean isCalculateValid, boolean isConfidenceValid) {
+    record Param(UUID assessmentId, long kitVersionId, LocalDateTime lastModificationTime, boolean isCalculateValid, boolean isConfidenceValid) {
     }
 }

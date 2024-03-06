@@ -18,6 +18,7 @@ public class AssessmentResult {
 
     private final UUID id;
     private final Assessment assessment;
+    private final long kitVersionId;
 
     @Setter
     private List<SubjectValue> subjectValues;
@@ -43,9 +44,11 @@ public class AssessmentResult {
     @Setter
     private LocalDateTime lastConfidenceCalculationTime;
 
-    public AssessmentResult(UUID assessmentResultId, Assessment assessment, List<SubjectValue> subjectValues, LocalDateTime lastCalculationTime, LocalDateTime lastConfidenceCalculationTime) {
+    public AssessmentResult(UUID assessmentResultId, Assessment assessment, long kitVersionId, List<SubjectValue> subjectValues,
+                            LocalDateTime lastCalculationTime, LocalDateTime lastConfidenceCalculationTime) {
         this.id = assessmentResultId;
         this.assessment = assessment;
+        this.kitVersionId = kitVersionId;
         this.subjectValues = subjectValues;
         this.lastCalculationTime = lastCalculationTime;
         this.lastConfidenceCalculationTime = lastConfidenceCalculationTime;

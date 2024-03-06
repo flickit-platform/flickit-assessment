@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -29,9 +30,9 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
 
     @Override
     public List<Result> loadAttributeCurrentAndTargetLevelIndex(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
-        var maturityLevels = maturityLevelRepository.findAllInKitWithOneId(attributeLevelTargets.get(0).getMaturityLevelId());
+        var maturityLevels = maturityLevelRepository.findAllInKitVersionWithOneId(attributeLevelTargets.get(0).getMaturityLevelId());
         var maturityLevelsIdMap = maturityLevels.stream()
-            .collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+            .collect(Collectors.toMap(MaturityLevelJpaEntity::getId, Function.identity()));
 
         var attributeIds = attributeLevelTargets.stream()
             .map(AttributeLevelTarget::getAttributeId)

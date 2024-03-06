@@ -31,8 +31,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .toList();
     }
 
-    public List<MaturityLevel> loadByKitIdWithCompetences(Long kitId) {
-        List<MaturityJoinCompetenceView> results = repository.findAllByKitIdWithCompetence(kitId);
+    public List<MaturityLevel> loadByKitVersionIdWithCompetences(Long kitVersionId) {
+        List<MaturityJoinCompetenceView> results = repository.findAllByKitVersionIdWithCompetence(kitVersionId);
 
         Map<Long, List<MaturityJoinCompetenceView>> collect = results.stream()
             .collect(Collectors.groupingBy(x -> x.getMaturityLevel().getId()));

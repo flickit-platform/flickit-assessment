@@ -227,7 +227,7 @@ class AttributeUpdateKitPersisterTest {
             .attributes(List.of(dslAttrOne, dslAttrTwo, dslAttrThree))
             .build();
 
-        when(createAttributePort.persist(any(), eq(subject.getId()), any())).thenReturn(attrThree.getId());
+        when(createAttributePort.persist(any(), eq(subject.getId()), eq(savedKit.getKitVersionId()))).thenReturn(attrThree.getId());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         Map<String, Long> subjectsCodeToIdMap = Stream.of(subject).collect(toMap(Subject::getCode, Subject::getId));

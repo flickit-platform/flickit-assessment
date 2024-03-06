@@ -17,7 +17,6 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
@@ -44,7 +43,6 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
     private final SubjectValueJpaRepository subjectValueRepo;
     private final QuestionJpaRepository questionRepository;
     private final SubjectJpaRepository subjectRepository;
-    private final AssessmentKitJpaRepository kitRepository;
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
                    List<QualityAttributeValueJpaEntity> allAttributeValueEntities,
@@ -57,8 +55,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND));
         UUID assessmentResultId = assessmentResultEntity.getId();
-        Long assessmentKitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
-        Long kitVersionId = kitRepository.loadKitVersionId(assessmentKitId);
+        long kitVersionId = assessmentResultEntity.getKitVersionId();
 
         /*
          load all subjectValue and attributeValue entities
@@ -68,11 +65,11 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         var allAttributeValueEntities = attributeValueRepo.findByAssessmentResultIdAndKitVersionId(assessmentResultId, kitVersionId);
 
         // load all subjects and their related attributes (by assessmentKit)
-        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByKitIdWithAttributes(assessmentKitId).stream()  // TODO Later: we can change to load by kitVersionId
+        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByKitVersionIdWithAttributes(kitVersionId).stream()
             .collect(toMap(SubjectJpaEntity::getId, x -> x, (s1, s2) -> s1));
 
         // load all questions with their impacts (by assessmentKit)
-        List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByAssessmentKitId(assessmentKitId); // TODO Later: we can change to load by kitVersionId
+        List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByKitVersionId(kitVersionId);
         Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> impactfulQuestions = mapQuestionToImpacts(allQuestionsJoinImpactViews);
 
 
@@ -91,7 +88,8 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
         return new AssessmentResult(
             assessmentResultId,
-            buildAssessment(assessmentResultEntity.getAssessment()),
+            buildAssessment(assessmentResultEntity.getAssessment(), kitVersionId),
+            kitVersionId,
             subjectValues,
             assessmentResultEntity.getLastCalculationTime(),
             assessmentResultEntity.getLastConfidenceCalculationTime());
@@ -226,8 +224,8 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * @param assessmentEntity loaded assessment entity
      * @return assessment with all information needed for calculation
      */
-    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity) {
-        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), null);
+    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId) {
+        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), kitVersionId,null);
         return mapToDomainModel(assessmentEntity, kit);
     }
 }
