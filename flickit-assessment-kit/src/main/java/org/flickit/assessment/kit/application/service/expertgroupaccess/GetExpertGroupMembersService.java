@@ -33,7 +33,7 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
 
     @Override
     public PaginatedResponse<Member> getExpertGroupMembers(Param param) {
-        if (!checkExpertGroupExistsPort.checkExpertGroupExistsById(param.getId()))
+        if (!checkExpertGroupExistsPort.existsById(param.getId()))
             throw new ResourceNotFoundException(GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND);
 
         var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), param.getPage(), param.getSize());

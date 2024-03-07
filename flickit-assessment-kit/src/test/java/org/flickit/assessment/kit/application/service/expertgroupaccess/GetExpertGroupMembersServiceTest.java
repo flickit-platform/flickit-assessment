@@ -44,7 +44,7 @@ class GetExpertGroupMembersServiceTest {
 
         PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, page, size, "title", "asc", 2);
 
-        when(checkExpertGroupExistsPort.checkExpertGroupExistsById(any(Long.class))).thenReturn(true);
+        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(Optional.ofNullable(currentUserId));
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(any(Long.class), any(Integer.class), any(Integer.class))).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
@@ -61,7 +61,7 @@ class GetExpertGroupMembersServiceTest {
 
     @Test
     void testGetExpertGroupMembers_InvalidExpertGroupId_ExpertGroupNotFound() {
-        when(checkExpertGroupExistsPort.checkExpertGroupExistsById(any(Long.class))).thenReturn(false);
+        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(false);
         assertThrows(ResourceNotFoundException.class, ()->service.getExpertGroupMembers(param));
     }
 
@@ -71,7 +71,7 @@ class GetExpertGroupMembersServiceTest {
 
         PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, page, size, "title", "asc", 2);
 
-        when(checkExpertGroupExistsPort.checkExpertGroupExistsById(any(Long.class))).thenReturn(true);
+        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(Optional.ofNullable(currentUserId));
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(any(Long.class), any(Integer.class), any(Integer.class))).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
