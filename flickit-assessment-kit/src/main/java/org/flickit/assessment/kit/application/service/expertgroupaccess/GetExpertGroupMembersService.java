@@ -30,19 +30,16 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
 
-
     @Override
     public PaginatedResponse<Member> getExpertGroupMembers(Param param) {
         if (!checkExpertGroupExistsPort.existsById(param.getId()))
             throw new ResourceNotFoundException(GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND);
 
-        var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), param.getPage(), param.getSize());
-
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(param.getId())
             .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
 
+        var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), param.getPage(), param.getSize());
         boolean userIsOwner = ownerId.equals(param.getCurrentUserId());
-
         var members = mapToMembers(portResult.getItems(), userIsOwner);
 
         return new PaginatedResponse<>(
