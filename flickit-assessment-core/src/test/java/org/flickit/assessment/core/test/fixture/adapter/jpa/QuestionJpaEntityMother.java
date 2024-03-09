@@ -10,7 +10,7 @@ public class QuestionJpaEntityMother {
     public static int index = 1;
     public static final int DEFAULT_COST = 1;
 
-    public static QuestionJpaEntity questionEntity(Long questionId, Long kitId, Long questionnaireId, boolean mayNotBeApplicable) {
+    public static QuestionJpaEntity questionEntity(Long questionId, Long kitId, Long questionnaireId, boolean mayNotBeApplicable, boolean advisable) {
         LocalDateTime creationTime = LocalDateTime.now();
         return new QuestionJpaEntity(
             questionId,
@@ -20,6 +20,7 @@ public class QuestionJpaEntityMother {
             "title" + questionId,
             "description" + questionId,
             mayNotBeApplicable,
+            advisable,
             DEFAULT_COST,
             kitId,
             questionnaireId,

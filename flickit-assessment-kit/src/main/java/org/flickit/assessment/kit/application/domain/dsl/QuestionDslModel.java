@@ -19,5 +19,6 @@ public class QuestionDslModel extends BaseDslModel {
     @JsonProperty("answers")
     List<AnswerOptionDslModel> answerOptions;
     boolean mayNotBeApplicable;
+    boolean advisable;
     int cost;
 }
