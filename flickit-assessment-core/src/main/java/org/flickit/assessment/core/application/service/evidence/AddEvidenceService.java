@@ -46,7 +46,7 @@ public class AddEvidenceService implements AddEvidenceUseCase {
             LocalDateTime.now(),
             param.getCreatedById(),
             param.getAssessmentId(),
-            param.getQuestionId(),
+            param.getQuestionRefNum(),
             param.getType() != null ? EvidenceType.valueOf(param.getType()).ordinal() : null
         );
     }

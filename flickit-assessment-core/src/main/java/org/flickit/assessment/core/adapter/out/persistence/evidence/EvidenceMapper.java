@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvidenceMapper {
 
-    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param, UUID questionRefNum) {
+    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param) {
         return new EvidenceJpaEntity(
             null,
             param.description(),
@@ -21,8 +21,7 @@ public class EvidenceMapper {
             param.createdById(),
             param.createdById(),
             param.assessmentId(),
-            param.questionId(),
-            questionRefNum,
+            param.questionRefNum(),
             param.type(),
             false
         );

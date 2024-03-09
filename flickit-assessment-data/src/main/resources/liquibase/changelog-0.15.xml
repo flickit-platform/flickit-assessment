@@ -435,4 +435,8 @@
         <dropDefaultValue tableName="fak_question" columnName="advisable"/>
     </changeSet>
 
+    <changeSet id="0.15-63" author="Ali Sedaghat">
+        <dropNotNullConstraint tableName="fac_evidence" columnName="question_id"/>
+    </changeSet>
+
 </databaseChangeLog>

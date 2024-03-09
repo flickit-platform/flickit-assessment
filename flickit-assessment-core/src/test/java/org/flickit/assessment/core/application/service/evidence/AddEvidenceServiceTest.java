@@ -39,7 +39,7 @@ class AddEvidenceServiceTest {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
             UUID.randomUUID(),
-            1L,
+            UUID.randomUUID(),
             "POSITIVE",
             UUID.randomUUID()
         );
@@ -58,7 +58,7 @@ class AddEvidenceServiceTest {
         assertEquals(param.getDescription(), createPortParam.getValue().description());
         assertEquals(param.getCreatedById(), createPortParam.getValue().createdById());
         assertEquals(param.getAssessmentId(), createPortParam.getValue().assessmentId());
-        assertEquals(param.getQuestionId(), createPortParam.getValue().questionId());
+        assertEquals(param.getQuestionRefNum(), createPortParam.getValue().questionRefNum());
         assertNotNull(createPortParam.getValue().creationTime());
         assertNotNull(createPortParam.getValue().lastModificationTime());
     }
@@ -68,7 +68,7 @@ class AddEvidenceServiceTest {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
             UUID.randomUUID(),
-            1L,
+            UUID.randomUUID(),
             "POSITIVE",
             UUID.randomUUID()
         );
@@ -87,7 +87,7 @@ class AddEvidenceServiceTest {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
             UUID.randomUUID(),
-            1L,
+            UUID.randomUUID(),
             "POSITIVE",
             UUID.randomUUID()
         );

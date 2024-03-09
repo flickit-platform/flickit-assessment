@@ -12,8 +12,8 @@ import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
 
-    Page<EvidenceJpaEntity> findByQuestionIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(
-        Long questionId, UUID assessmentId, Pageable pageable);
+    Page<EvidenceJpaEntity> findByQuestionRefNumAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(
+        UUID questionRefNum, UUID assessmentId, Pageable pageable);
 
     @Modifying
     @Query("""
@@ -43,7 +43,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     @Query(value = """
             SELECT evd.description
             FROM QuestionJpaEntity q
-                LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
+                LEFT JOIN EvidenceJpaEntity evd ON q.refNum = evd.questionRefNum
                 WHERE evd.assessmentId = :assessmentId
                     AND evd.type = :type
                     AND evd.deleted = false

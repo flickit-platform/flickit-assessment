@@ -35,13 +35,13 @@ class GetEvidenceListServiceTest {
 
     @Test
     void testGetEvidenceList_ResultsFound_2ItemsReturned() {
-        Long question1Id = 1L;
+        UUID question1RefNum = UUID.randomUUID();
         EvidenceListItem evidence1Q1 = createEvidence();
         EvidenceListItem evidence2Q1 = createEvidence();
         UUID ASSESSMENT_ID = UUID.randomUUID();
 
         when(checkAssessmentExistencePort.existsById(ASSESSMENT_ID)).thenReturn(true);
-        when(loadEvidencesPort.loadNotDeletedEvidences(question1Id, ASSESSMENT_ID, 0, 10))
+        when(loadEvidencesPort.loadNotDeletedEvidences(question1RefNum, ASSESSMENT_ID, 0, 10))
             .thenReturn(new PaginatedResponse<>(
                 List.of(evidence1Q1, evidence2Q1),
                 0,
@@ -50,17 +50,17 @@ class GetEvidenceListServiceTest {
                 "DESC",
                 2));
 
-        PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new Param(question1Id, ASSESSMENT_ID, 10, 0));
+        PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new Param(question1RefNum, ASSESSMENT_ID, 10, 0));
 
         assertEquals(2, result.getItems().size());
     }
 
     @Test
     void testGetEvidenceList_ResultsFound_NoItemReturned() {
-        Long QUESTION2_ID = 2L;
+        UUID QUESTION2_REF_NUM = UUID.randomUUID();
         UUID ASSESSMENT_ID = UUID.randomUUID();
         when(checkAssessmentExistencePort.existsById(ASSESSMENT_ID)).thenReturn(true);
-        when(loadEvidencesPort.loadNotDeletedEvidences(QUESTION2_ID, ASSESSMENT_ID, 0, 10))
+        when(loadEvidencesPort.loadNotDeletedEvidences(QUESTION2_REF_NUM, ASSESSMENT_ID, 0, 10))
             .thenReturn(new PaginatedResponse<>(
                 new ArrayList<>(),
                 0,
@@ -69,7 +69,7 @@ class GetEvidenceListServiceTest {
                 "DESC",
                 0));
 
-        PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new Param(QUESTION2_ID, ASSESSMENT_ID, 10, 0));
+        PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new Param(QUESTION2_REF_NUM, ASSESSMENT_ID, 10, 0));
 
         assertEquals(0, result.getItems().size());
     }
@@ -77,7 +77,8 @@ class GetEvidenceListServiceTest {
     @Test
     void testGetEvidenceList_InvalidAssessmentId_ThrowNotFoundException() {
         UUID ASSESSMENT_ID = UUID.randomUUID();
-        Param param = new Param(0L, ASSESSMENT_ID, 10, 0);
+        UUID QUESTION_REF_NUM = UUID.randomUUID();
+        Param param = new Param(QUESTION_REF_NUM, ASSESSMENT_ID, 10, 0);
         when(checkAssessmentExistencePort.existsById(ASSESSMENT_ID)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> service.getEvidenceList(param));

@@ -24,7 +24,7 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
         if (!checkAssessmentExistencePort.existsById(param.getAssessmentId()))
             throw new ResourceNotFoundException(GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND);
         return loadEvidencesPort.loadNotDeletedEvidences(
-            param.getQuestionId(),
+            param.getQuestionRefNum(),
             param.getAssessmentId(),
             param.getPage(),
             param.getSize()

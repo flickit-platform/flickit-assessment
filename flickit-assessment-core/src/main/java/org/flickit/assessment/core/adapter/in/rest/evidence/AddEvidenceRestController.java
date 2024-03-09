@@ -30,7 +30,7 @@ public class AddEvidenceRestController {
         return new AddEvidenceUseCase.Param(
             requestDto.description(),
             requestDto.assessmentId(),
-            requestDto.questionId(),
+            requestDto.questionRefNum(),
             requestDto.type(),
             currentUserId
         );
