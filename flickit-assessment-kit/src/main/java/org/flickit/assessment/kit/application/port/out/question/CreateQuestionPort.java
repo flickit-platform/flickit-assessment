@@ -13,6 +13,7 @@ public interface CreateQuestionPort {
         String hint,
         Boolean mayNotBeApplicable,
         Boolean advisable,
+        Integer cost,
         Long kitVersionId,
         Long questionnaireId,
         UUID createdBy) {

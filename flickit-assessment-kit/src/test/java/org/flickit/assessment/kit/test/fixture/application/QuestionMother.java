@@ -8,7 +8,7 @@ public class QuestionMother {
 
     private static Long id = 134L;
 
-    public static Question createQuestion(String code, String title, int index, String hint, boolean mayNotBeApplicable, boolean advisable, Long questionnaireId) {
+    public static Question createQuestion(String code, String title, int index, String hint, boolean mayNotBeApplicable, boolean advisable, int cost, Long questionnaireId) {
         return new Question(
             id++,
             code,
@@ -17,6 +17,7 @@ public class QuestionMother {
             hint,
             mayNotBeApplicable,
             advisable,
+            cost,
             questionnaireId,
             LocalDateTime.now(),
             LocalDateTime.now()

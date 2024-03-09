@@ -23,6 +23,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 q.index = :index,
                 q.mayNotBeApplicable = :mayNotBeApplicable,
                 q.advisable = :advisable,
+                q.cost = :cost,
                 q.lastModificationTime = :lastModificationTime,
                 q.lastModifiedBy = :lastModifiedBy
             WHERE q.id = :id
@@ -33,6 +34,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 @Param("hint") String hint,
                 @Param("mayNotBeApplicable") Boolean mayNotBeApplicable,
                 @Param("advisable") Boolean advisable,
+                @Param("cost") Integer cost,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 

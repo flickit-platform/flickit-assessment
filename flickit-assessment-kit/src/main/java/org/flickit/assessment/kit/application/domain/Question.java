@@ -18,6 +18,7 @@ public class Question {
     private final String hint;
     private final Boolean mayNotBeApplicable;
     private final Boolean advisable;
+    private final int cost;
     @Setter
     private List<QuestionImpact> impacts;
     @Setter

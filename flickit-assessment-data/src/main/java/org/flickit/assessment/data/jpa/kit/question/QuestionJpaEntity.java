@@ -43,6 +43,9 @@ public class QuestionJpaEntity {
     @Column(name = "advisable", nullable = false)
     private Boolean advisable;
 
+    @Column(name = "cost", nullable = false)
+    private Integer cost;
+
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 

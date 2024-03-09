@@ -179,6 +179,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             dslQuestion.getDescription(),
             dslQuestion.isMayNotBeApplicable(),
             dslQuestion.isAdvisable(),
+            dslQuestion.getCost(),
             kitVersionId,
             questionnaireId,
             currentUserId);
@@ -241,7 +242,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             !Objects.equals(savedQuestion.getHint(), dslQuestion.getDescription()) ||
             savedQuestion.getIndex() != dslQuestion.getIndex() ||
             !savedQuestion.getMayNotBeApplicable().equals(dslQuestion.isMayNotBeApplicable()) ||
-            !savedQuestion.getAdvisable().equals(dslQuestion.isAdvisable())) {
+            !savedQuestion.getAdvisable().equals(dslQuestion.isAdvisable()) ||
+            savedQuestion.getCost() != dslQuestion.getCost()) {
             var updateParam = new UpdateQuestionPort.Param(
                 savedQuestion.getId(),
                 dslQuestion.getTitle(),
@@ -249,6 +251,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 dslQuestion.getDescription(),
                 dslQuestion.isMayNotBeApplicable(),
                 dslQuestion.isAdvisable(),
+                dslQuestion.getCost(),
                 LocalDateTime.now(),
                 currentUserId
             );

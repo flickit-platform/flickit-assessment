@@ -13,6 +13,7 @@ public interface UpdateQuestionPort {
                  String hint,
                  Boolean mayNotBeApplicable,
                  Boolean advisable,
+                 Integer cost,
                  LocalDateTime lastModificationTime,
                  UUID lastModifiedBy) {
     }
