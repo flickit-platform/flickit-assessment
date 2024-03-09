@@ -67,9 +67,9 @@ class ReportSubjectServiceTest {
 
         ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(
             assessmentResult.getAssessment().getId(),
-            subjectValue.getSubject().getId());
+            subjectValue.getSubject().getRefNum());
 
-        when(loadSubjectReportInfoPort.load(assessmentResult.getAssessment().getId(), subjectValue.getSubject().getId()))
+        when(loadSubjectReportInfoPort.load(assessmentResult.getAssessment().getId(), subjectValue.getSubject().getRefNum()))
             .thenReturn(assessmentResult);
         doNothing().when(validateAssessmentResult).validate(assessmentResult.getAssessment().getId());
 

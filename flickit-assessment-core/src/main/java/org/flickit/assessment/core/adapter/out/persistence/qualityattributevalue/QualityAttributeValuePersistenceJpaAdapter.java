@@ -66,8 +66,8 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
         return toAttributeValues(entities, maturityLevels);
     }
 
-    public List<QualityAttributeValue> loadBySubjectId(UUID assessmentResultId, Long subjectId, Map<Long, MaturityLevel> maturityLevels) {
-        List<QualityAttributeValueJpaEntity> entities = repository.findByAssessmentResultIdAndSubjectId(assessmentResultId, subjectId);
+    public List<QualityAttributeValue> loadBySubjectRefNum(UUID assessmentResultId, UUID subjectRefNum, Map<Long, MaturityLevel> maturityLevels) {
+        List<QualityAttributeValueJpaEntity> entities = repository.findByAssessmentResultIdAndSubjectRefNum(assessmentResultId, subjectRefNum);
 
         return toAttributeValues(entities, maturityLevels);
     }

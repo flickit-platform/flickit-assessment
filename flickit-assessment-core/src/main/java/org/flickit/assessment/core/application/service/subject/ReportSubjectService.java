@@ -36,13 +36,13 @@ public class ReportSubjectService implements ReportSubjectUseCase {
     public SubjectReport reportSubject(Param param) {
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var assessmentResult = loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId());
+        var assessmentResult = loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectRefNum());
 
         var maturityLevels = assessmentResult.getAssessment().getAssessmentKit().getMaturityLevels();
 
         var subjectValue = assessmentResult.getSubjectValues()
             .stream()
-            .filter(s -> s.getSubject().getId() == param.getSubjectId())
+            .filter(s -> s.getSubject().getRefNum().equals(param.getSubjectRefNum()))
             .findAny()
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
 

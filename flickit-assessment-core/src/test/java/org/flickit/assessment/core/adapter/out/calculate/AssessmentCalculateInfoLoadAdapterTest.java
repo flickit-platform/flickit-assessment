@@ -110,7 +110,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
                 .filter(sv -> sv.getId() == entity.getId())
                 .findFirst()
                 .ifPresentOrElse(
-                    sv -> assertEquals(entity.getSubjectId(), sv.getSubject().getId()),
+                    sv -> assertEquals(entity.getSubjectRefNum(), sv.getSubject().getRefNum()),
                     Assertions::fail
                 )
         );
@@ -188,9 +188,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var subjectValue3 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
         List<SubjectValueJpaEntity> subjectValues = List.of(subjectValue1, subjectValue2, subjectValue3);
 
-        var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(), 1, List.of(attribute1, attribute2));
-        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(), 1, List.of(attribute3, attribute4));
-        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), 1, List.of(attribute5, attribute6));
+        var subject1 = subjectWithAttributes(subjectValue1.getSubjectRefNum(), 1, List.of(attribute1, attribute2));
+        var subject2 = subjectWithAttributes(subjectValue2.getSubjectRefNum(), 1, List.of(attribute3, attribute4));
+        var subject3 = subjectWithAttributes(subjectValue3.getSubjectRefNum(), 1, List.of(attribute5, attribute6));
         List<SubjectJpaEntity> subjects = List.of(subject1, subject2, subject3);
 
         var question1 = questionEntity(1L, kitId, 1L, Boolean.FALSE);

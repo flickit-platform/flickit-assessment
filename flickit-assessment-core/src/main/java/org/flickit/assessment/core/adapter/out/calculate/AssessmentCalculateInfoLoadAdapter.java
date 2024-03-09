@@ -209,8 +209,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                                                          Map<Long, SubjectJpaEntity> subjectIdToEntity,
                                                          List<SubjectValueJpaEntity> subjectValueEntities) {
         List<SubjectValue> subjectValues = new ArrayList<>();
-        Map<Long, SubjectValueJpaEntity> subjectIdToValue = subjectValueEntities.stream()
-            .collect(toMap(SubjectValueJpaEntity::getSubjectId, sv -> sv));
+        Map<UUID, SubjectValueJpaEntity> subjectRefNumToValue = subjectValueEntities.stream()
+            .collect(toMap(SubjectValueJpaEntity::getSubjectRefNum, sv -> sv));
 
         for (Map.Entry<Long, SubjectJpaEntity> sEntity : subjectIdToEntity.entrySet()) {
             List<QualityAttribute> attributes = sEntity.getValue().getAttributes().stream()
@@ -221,7 +221,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                 .toList();
             if (qavList.isEmpty())
                 continue;
-            SubjectValueJpaEntity svEntity = subjectIdToValue.get(sEntity.getKey());
+            SubjectValueJpaEntity svEntity = subjectRefNumToValue.get(sEntity.getValue().getRefNum());
             subjectValues.add(new SubjectValue(svEntity.getId(), SubjectMapper.mapToDomainModel(sEntity.getValue(), attributes), qavList));
         }
         return subjectValues;

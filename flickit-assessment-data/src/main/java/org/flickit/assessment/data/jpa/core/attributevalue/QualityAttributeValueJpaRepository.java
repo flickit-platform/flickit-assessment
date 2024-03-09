@@ -20,9 +20,9 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
         SELECT av
         FROM QualityAttributeValueJpaEntity av
         LEFT JOIN AttributeJpaEntity att ON av.qualityAttributeId = att.id and av.assessmentResult.id = :resultId
-        WHERE att.subject.id = :subjectId
+        WHERE att.subject.refNum = :subjectRefNum
         """)
-    List<QualityAttributeValueJpaEntity> findByAssessmentResultIdAndSubjectId(UUID resultId, Long subjectId);
+    List<QualityAttributeValueJpaEntity> findByAssessmentResultIdAndSubjectRefNum(UUID resultId, UUID subjectRefNum);
 
     @Modifying
     @Query("update QualityAttributeValueJpaEntity a set a.maturityLevelId = :maturityLevelId where a.id = :id")

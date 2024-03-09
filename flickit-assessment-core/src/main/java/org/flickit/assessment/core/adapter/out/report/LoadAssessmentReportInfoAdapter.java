@@ -11,6 +11,8 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
+    private final SubjectJpaRepository subjectRepository;
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
     @Override
@@ -61,11 +64,17 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     }
 
     private List<SubjectValue> buildSubjectValues(List<SubjectValueJpaEntity> subjectValueEntities, Map<Long, MaturityLevel> maturityLevels) {
+        var subjectRefNums = subjectValueEntities.stream()
+            .map(SubjectValueJpaEntity::getSubjectRefNum)
+            .toList();
+        var subjectEntities = subjectRepository.findAllByReferenceNumber(subjectRefNums);
+        var subjectRefNumToEntityMap = subjectEntities.stream()
+            .collect(toMap(SubjectJpaEntity::getRefNum, s -> s));
         return subjectValueEntities.stream()
             .map(x ->
                 new SubjectValue(
                     x.getId(),
-                    new Subject(x.getSubjectId(), null, null),
+                    new Subject(subjectRefNumToEntityMap.get(x.getSubjectRefNum()).getId(), null, null),
                     null,
                     findMaturityLevelById(maturityLevels, x.getMaturityLevelId()),
                     x.getConfidenceValue())

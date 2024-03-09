@@ -9,7 +9,11 @@ import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -28,12 +32,13 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
+    private final SubjectJpaRepository subjectRepository;
 
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
     private final QualityAttributeValuePersistenceJpaAdapter attributeValuePersistenceJpaAdapter;
 
     @Override
-    public AssessmentResult load(UUID assessmentId, Long subjectId) {
+    public AssessmentResult load(UUID assessmentId, UUID subjectRefNum) {
 
         var assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND));
@@ -42,20 +47,15 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
         Long kitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
         long kitVersionId = assessmentResultEntity.getKitVersionId();
 
-        var svEntity = subjectValueRepo.findBySubjectIdAndAssessmentResult_Id(subjectId, assessmentResultId)
+        var svEntity = subjectValueRepo.findBySubjectRefNumAndAssessmentResult_Id(subjectRefNum, assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
 
         Map<Long, MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitId(kitId)
             .stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
 
-        var attributeValues = attributeValuePersistenceJpaAdapter.loadBySubjectId(assessmentResultId, subjectId, maturityLevels);
-        SubjectValue subjectValue = new SubjectValue(svEntity.getId(),
-            new Subject(svEntity.getSubjectId(), null),
-            attributeValues,
-            findMaturityLevelById(maturityLevels, svEntity.getMaturityLevelId()),
-            svEntity.getConfidenceValue()
-        );
+        var attributeValues = attributeValuePersistenceJpaAdapter.loadBySubjectRefNum(assessmentResultId, subjectRefNum, maturityLevels);
+        SubjectValue subjectValue = buildSubjectValue(svEntity, attributeValues, maturityLevels);
 
         return new AssessmentResult(
             assessmentResultId,
@@ -69,6 +69,17 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             assessmentResultEntity.getLastModificationTime(),
             assessmentResultEntity.getLastCalculationTime(),
             assessmentResultEntity.getLastConfidenceCalculationTime());
+    }
+
+    @NotNull
+    private SubjectValue buildSubjectValue(SubjectValueJpaEntity svEntity, List<QualityAttributeValue> attributeValues, Map<Long, MaturityLevel> maturityLevels) {
+        SubjectJpaEntity subjectEntity = subjectRepository.findByRefNum(svEntity.getSubjectRefNum());
+        return new SubjectValue(svEntity.getId(),
+            new Subject(subjectEntity.getId(), svEntity.getSubjectRefNum(), null),
+            attributeValues,
+            findMaturityLevelById(maturityLevels, svEntity.getMaturityLevelId()),
+            svEntity.getConfidenceValue()
+        );
     }
 
     private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId, Map<Long, MaturityLevel> maturityLevels) {

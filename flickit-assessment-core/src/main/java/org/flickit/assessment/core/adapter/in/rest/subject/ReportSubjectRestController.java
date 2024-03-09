@@ -17,16 +17,16 @@ public class ReportSubjectRestController {
 
     private final ReportSubjectUseCase useCase;
 
-    @GetMapping("/assessments/{assessmentId}/report/subjects/{subjectId}")
+    @GetMapping("/assessments/{assessmentId}/report/subjects/{subjectRefNum}")
     public ResponseEntity<SubjectReport> reportSubject(
         @PathVariable("assessmentId") UUID assessmentId,
-        @PathVariable("subjectId") Long subjectId) {
-        var param = toParam(assessmentId, subjectId);
+        @PathVariable("subjectRefNum") UUID subjectRefNum) {
+        var param = toParam(assessmentId, subjectRefNum);
         var result = useCase.reportSubject(param);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private ReportSubjectUseCase.Param toParam(UUID assessmentId, Long subjectId) {
-        return new ReportSubjectUseCase.Param(assessmentId, subjectId);
+    private ReportSubjectUseCase.Param toParam(UUID assessmentId, UUID subjectRefNum) {
+        return new ReportSubjectUseCase.Param(assessmentId, subjectRefNum);
     }
 }

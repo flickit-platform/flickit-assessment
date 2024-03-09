@@ -7,13 +7,11 @@ import java.util.UUID;
 
 public class SubjectValueJpaEntityMother {
 
-    private static long subjectId = 134L;
-
     public static SubjectValueJpaEntity subjectValueWithNullMaturityLevel(AssessmentResultJpaEntity assessmentResultJpaEntity) {
         return new SubjectValueJpaEntity(
             UUID.randomUUID(),
             assessmentResultJpaEntity,
-            subjectId++,
+            assessmentResultJpaEntity.getKitVersionId(),
             UUID.randomUUID(),
             null,
             null

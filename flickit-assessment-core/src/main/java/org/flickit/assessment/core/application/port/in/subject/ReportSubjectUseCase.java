@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.domain.report.SubjectReport;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_SUBJECT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_SUBJECT_REF_NUM_NOT_NULL;
 
 public interface ReportSubjectUseCase {
 
@@ -22,12 +22,12 @@ public interface ReportSubjectUseCase {
         @NotNull(message = REPORT_SUBJECT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = REPORT_SUBJECT_ID_NOT_NULL)
-        Long subjectId;
+        @NotNull(message = REPORT_SUBJECT_REF_NUM_NOT_NULL)
+        UUID subjectRefNum;
 
-        public Param(UUID assessmentId, Long subjectId) {
+        public Param(UUID assessmentId, UUID subjectRefNum) {
             this.assessmentId = assessmentId;
-            this.subjectId = subjectId;
+            this.subjectRefNum = subjectRefNum;
             this.validateSelf();
         }
     }
