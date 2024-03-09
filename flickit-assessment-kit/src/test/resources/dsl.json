@@ -71,7 +71,8 @@
           "index": 2
         }
       ],
-      "mayNotBeApplicable": false
+      "mayNotBeApplicable": false,
+      "advisable": true
     },
     {
       "code": "m2",
@@ -166,7 +167,8 @@
           "index": 4
         }
       ],
-      "mayNotBeApplicable": true
+      "mayNotBeApplicable": true,
+      "advisable": false
     }
   ],
   "subjectModels": [
