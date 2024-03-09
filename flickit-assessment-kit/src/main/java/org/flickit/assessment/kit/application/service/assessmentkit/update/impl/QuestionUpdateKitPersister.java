@@ -242,7 +242,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             !Objects.equals(savedQuestion.getHint(), dslQuestion.getDescription()) ||
             savedQuestion.getIndex() != dslQuestion.getIndex() ||
             !savedQuestion.getMayNotBeApplicable().equals(dslQuestion.isMayNotBeApplicable()) ||
-            !savedQuestion.getAdvisable().equals(dslQuestion.isAdvisable())) ||
+            !savedQuestion.getAdvisable().equals(dslQuestion.isAdvisable()) ||
             savedQuestion.getCost() != dslQuestion.getCost()) {
             var updateParam = new UpdateQuestionPort.Param(
                 savedQuestion.getId(),
