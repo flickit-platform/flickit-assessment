@@ -7,7 +7,6 @@ import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListU
 import org.flickit.assessment.core.application.port.out.evidence.*;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaRepository;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -25,7 +24,6 @@ public class EvidencePersistenceJpaAdapter implements
     LoadAttributeEvidencesPort {
 
     private final EvidenceJpaRepository repository;
-    private final QuestionJpaRepository questionRepository;
 
     @Override
     public UUID persist(CreateEvidencePort.Param param) {
