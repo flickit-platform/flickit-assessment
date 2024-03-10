@@ -7,8 +7,13 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.users.application.port.out.expertgroup.CreateExpertGroupPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupPort;
+import org.flickit.assessment.users.application.domain.ExpertGroup;
+import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -17,9 +22,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToDomainModel;
-import static org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
+import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToDomainModel;
+import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
+import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
