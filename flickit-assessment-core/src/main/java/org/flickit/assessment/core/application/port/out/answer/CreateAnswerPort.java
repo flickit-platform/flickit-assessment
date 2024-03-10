@@ -13,7 +13,7 @@ public interface CreateAnswerPort {
 
     record Param(UUID assessmentResultId,
                  Long questionnaireId,
-                 Long questionId,
+                 UUID questionRefNum,
                  Long answerOptionId,
                  Integer confidenceLevelId,
                  Boolean isNotApplicable,

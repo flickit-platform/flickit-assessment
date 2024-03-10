@@ -33,7 +33,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
+        var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionRefNum());
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
         Integer confidenceLevelId = param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
         confidenceLevelId = (answerOptionId != null || Objects.equals(Boolean.TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
@@ -71,7 +71,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return new CreateAnswerPort.Param(
             assessmentResultId,
             param.getQuestionnaireId(),
-            param.getQuestionId(),
+            param.getQuestionRefNum(),
             answerOptionId,
             confidenceLevelId,
             param.getIsNotApplicable(),

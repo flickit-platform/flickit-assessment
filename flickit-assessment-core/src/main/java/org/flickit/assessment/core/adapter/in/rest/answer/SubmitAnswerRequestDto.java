@@ -1,4 +1,7 @@
 package org.flickit.assessment.core.adapter.in.rest.answer;
 
-public record SubmitAnswerRequestDto(Long questionnaireId, Long questionId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable) {
+import java.util.UUID;
+
+public record SubmitAnswerRequestDto(Long questionnaireId, UUID questionRefNum, Long answerOptionId,
+                                     Integer confidenceLevelId, Boolean isNotApplicable) {
 }

@@ -24,8 +24,8 @@ public interface SubmitAnswerUseCase {
         @NotNull(message = SUBMIT_ANSWER_QUESTIONNAIRE_ID_NOT_NULL)
         Long questionnaireId;
 
-        @NotNull(message = SUBMIT_ANSWER_QUESTION_ID_NOT_NULL)
-        Long questionId;
+        @NotNull(message = SUBMIT_ANSWER_QUESTION_REF_NUM_NOT_NULL)
+        UUID questionRefNum;
 
         Long answerOptionId;
 
@@ -36,10 +36,10 @@ public interface SubmitAnswerUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(UUID assessmentId, Long questionnaireId, Long questionId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable, UUID currentUserId) {
+        public Param(UUID assessmentId, Long questionnaireId, UUID questionRefNum, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.questionnaireId = questionnaireId;
-            this.questionId = questionId;
+            this.questionRefNum = questionRefNum;
             this.answerOptionId = answerOptionId;
             this.confidenceLevelId = confidenceLevelId;
             this.isNotApplicable = isNotApplicable;

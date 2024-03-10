@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID> {
 
-    Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId);
+    Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionRefNum(UUID assessmentResultId, UUID questionRefNum);
 
     List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 

@@ -10,18 +10,17 @@ import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerMapper {
 
-    public static AnswerJpaEntity mapCreateParamToJpaEntity(CreateAnswerPort.Param param, UUID questionRefNum) {
+    public static AnswerJpaEntity mapCreateParamToJpaEntity(CreateAnswerPort.Param param) {
         return new AnswerJpaEntity(
             null,
             null,
             param.questionnaireId(),
-            param.questionId(),
-            questionRefNum,
+            null,
+            param.questionRefNum(),
             param.answerOptionId(),
             param.confidenceLevelId(),
             param.isNotApplicable(),

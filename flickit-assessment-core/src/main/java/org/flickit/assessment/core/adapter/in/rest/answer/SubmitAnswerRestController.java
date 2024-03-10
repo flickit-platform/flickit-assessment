@@ -32,7 +32,7 @@ public class SubmitAnswerRestController {
         return new SubmitAnswerUseCase.Param(
             assessmentId,
             requestDto.questionnaireId(),
-            requestDto.questionId(),
+            requestDto.questionRefNum(),
             requestDto.answerOptionId(),
             requestDto.confidenceLevelId(),
             requestDto.isNotApplicable(),
