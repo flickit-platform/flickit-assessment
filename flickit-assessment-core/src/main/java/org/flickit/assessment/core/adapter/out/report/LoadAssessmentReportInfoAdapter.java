@@ -67,7 +67,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var subjectRefNums = subjectValueEntities.stream()
             .map(SubjectValueJpaEntity::getSubjectRefNum)
             .toList();
-        var subjectEntities = subjectRepository.findAllByReferenceNumber(subjectRefNums);
+        var subjectEntities = subjectRepository.findAllByRefNumIn(subjectRefNums);
         var subjectRefNumToEntityMap = subjectEntities.stream()
             .collect(toMap(SubjectJpaEntity::getRefNum, s -> s));
         return subjectValueEntities.stream()
