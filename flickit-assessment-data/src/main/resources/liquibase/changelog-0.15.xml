@@ -423,7 +423,19 @@
                                  constraintName="fk_fak_kitversion_assessmentkit"/>
     </changeSet>
 
-    <changeSet id="0.15-64" author="MKouhestani">
+    <changeSet id="0.15-61" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_question">
+            <column name="advisable" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.15-62" author="Mahdi Rezazadeh">
+        <dropDefaultValue tableName="fak_question" columnName="advisable"/>
+    </changeSet>
+
+    <changeSet id="0.15-63" author="MKouhestani">
         <addColumn tableName="fac_subject_value">
             <column name="kit_version_id" type="bigint" valueComputed="fak_assessment_kit.kit_version_id FROM fak_assessment_kit
                     LEFT JOIN fac_assessment ON fak_assessment_kit.id = fac_assessment.assessment_kit_id
@@ -434,13 +446,13 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.15-65" author="MKouhestani">
+    <changeSet id="0.15-64" author="MKouhestani">
         <addUniqueConstraint columnNames="assessment_result_id, kit_version_id, subject_ref_num"
                              constraintName="uq_fac_assessmentresult_kitversion_subject_subjectvalue"
                              tableName="fac_subject_value"/>
     </changeSet>
 
-    <changeSet id="0.15-66" author="MKouhestani">
+    <changeSet id="0.15-65" author="MKouhestani">
         <dropNotNullConstraint tableName="fac_subject_value" columnName="subject_id"/>
     </changeSet>
 
