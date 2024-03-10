@@ -9,7 +9,6 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.flickit.assessment.users.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.flickit.assessment.users.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,14 +18,12 @@ import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.flickit.assessment.users.adapter.out.minio.MinioConstants.*;
 import static org.flickit.assessment.users.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
 @Component
 @AllArgsConstructor
 public class MinioAdapter implements
-    LoadKitDSLJsonFilePort,
     UploadExpertGroupPicturePort,
     CreateFileDownloadLinkPort {
 
@@ -47,23 +44,6 @@ public class MinioAdapter implements
 
     private String getContentType(@Nullable String contentType) {
         return (contentType != null) ? contentType : "org/flickit/assessment/users/octet-stream";
-    }
-
-    @SneakyThrows
-    @Override
-    public String loadDslJson(String dslJsonFullPath) {
-        String bucketName = dslJsonFullPath.substring(0, dslJsonFullPath.indexOf(SLASH));
-        String objectName = dslJsonFullPath.substring(dslJsonFullPath.indexOf(SLASH));
-
-        checkFileExistence(bucketName, objectName);
-
-        InputStream stream = minioClient
-            .getObject(GetObjectArgs.builder()
-                .bucket(bucketName)
-                .object(objectName)
-                .build());
-
-        return new String(stream.readAllBytes(), UTF_8);
     }
 
     @SneakyThrows

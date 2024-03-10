@@ -77,6 +77,11 @@
                 <artifactId>flickit-advice-engine</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>org.flickit</groupId>
+                <artifactId>flickit-assessment-users</artifactId>
+                <version>${revision}</version>
+            </dependency>
 		</dependencies>
 	</dependencyManagement>
 
