@@ -23,6 +23,7 @@
 		<module>flickit-assessment-server</module>
 		<module>flickit-assessment-common</module>
         <module>flickit-advice-engine</module>
+        <module>flickit-assessment-users</module>
     </modules>
 
 	<properties>
