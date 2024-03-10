@@ -45,7 +45,7 @@ public interface GetAnswerListUseCase {
 
     record AnswerListItem(
         UUID id,
-        Long questionId,
+        UUID questionRefNum,
         Long answerOptionId,
         ConfidenceLevel confidenceLevel,
         Boolean isNotApplicable){

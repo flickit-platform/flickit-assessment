@@ -33,7 +33,7 @@ public class AnswerMapper {
         ConfidenceLevel confidenceLevel = answer.getConfidenceLevelId() != null ? ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()) : null;
         return new AnswerListItem(
             answer.getId(),
-            answer.getQuestionId(),
+            answer.getQuestionRefNum(),
             answer.getAnswerOptionId(),
             confidenceLevel,
             answer.getIsNotApplicable()
