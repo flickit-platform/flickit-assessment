@@ -24,6 +24,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP
 public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
+
     private final CheckExpertGroupExistsPort checkExpertGroupExistsPort;
     private final LoadExpertGroupMembersPort loadExpertGroupMembersPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
