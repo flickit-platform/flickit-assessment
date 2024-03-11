@@ -9,8 +9,6 @@ import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsVie
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.flickit.assessment.users.application.port.out.expertgroup.CreateExpertGroupPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort;
-import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
-import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupPort;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
@@ -19,8 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToDomainModel;
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
@@ -29,18 +25,11 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GRO
 @Component("usersExpertGroupJpaRepository")
 @RequiredArgsConstructor
 public class ExpertGroupPersistenceJpaAdapter implements
-    LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
-    LoadExpertGroupMemberIdsPort,
     CreateExpertGroupPort,
     LoadExpertGroupPort {
 
     private final ExpertGroupJpaRepository repository;
-
-    @Override
-    public Optional<UUID> loadOwnerId(Long expertGroupId) {
-        return Optional.of(repository.loadOwnerIdById(expertGroupId));
-    }
 
     @Override
     public Long persist(CreateExpertGroupPort.Param param) {
@@ -76,14 +65,6 @@ public class ExpertGroupPersistenceJpaAdapter implements
             .map(GetExpertGroupListUseCase.Member::new)
             .toList();
         return mapToPortResult(item, members);
-    }
-
-    @Override
-    public List<LoadExpertGroupMemberIdsPort.Result> loadMemberIds(long expertGroupId) {
-        List<UUID> memberIds = repository.findMemberIdsByExpertGroupId(expertGroupId);
-        return memberIds.stream()
-            .map(LoadExpertGroupMemberIdsPort.Result::new)
-            .toList();
     }
 
     @Override
