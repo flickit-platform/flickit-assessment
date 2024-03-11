@@ -58,7 +58,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             invalidateAssessmentResultPort.invalidateById(assessmentResult.getId(), isCalculateValid, !isConfidenceLevelChanged);
         }
 
-        log.debug("Question [{}] answered by user [{}].", param.getQuestionId(), param.getCurrentUserId());
+        log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswer.get().getId());
+
         return new Result(loadedAnswer.get().getId());
     }
 
