@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionMapper {
@@ -18,6 +19,7 @@ public class QuestionMapper {
             entity.getIndex(),
             entity.getHint(),
             entity.getMayNotBeApplicable(),
+            entity.getAdvisable(),
             entity.getQuestionnaireId(),
             entity.getCreationTime(),
             entity.getLastModificationTime()
@@ -25,16 +27,20 @@ public class QuestionMapper {
     }
 
     public static QuestionJpaEntity mapToJpaEntity(CreateQuestionPort.Param param) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new QuestionJpaEntity(
             null,
+            UUID.randomUUID(),
             param.code(),
             param.index(),
             param.title(),
             param.hint(),
             param.mayNotBeApplicable(),
+            param.advisable(),
+            param.kitVersionId(),
             param.questionnaireId(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            creationTime,
+            creationTime,
             param.createdBy(),
             param.createdBy()
         );

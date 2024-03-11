@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, Long> {
 
-    List<QuestionnaireJpaEntity> findAllByKitId(Long kitId);
+    List<QuestionnaireJpaEntity> findAllByKitVersionId(Long kitVersionId);
 
     @Modifying
     @Query("""
@@ -30,5 +30,5 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         @Param(value = "description") String description,
         @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
         @Param(value = "lastModifiedBy") UUID lastModifiedBy
-        );
+    );
 }

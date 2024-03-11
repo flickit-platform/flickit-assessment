@@ -26,13 +26,13 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public List<MaturityLevel> loadByKitId(Long kitId) {
-        return repository.findAllByKitId(kitId).stream()
+        return repository.findAllByKitVersionId(kitId).stream()
             .map(levelEntity -> mapToDomainModel(levelEntity, null))
             .toList();
     }
 
-    public List<MaturityLevel> loadByKitIdWithCompetences(Long kitId) {
-        List<MaturityJoinCompetenceView> results = repository.findAllByKitIdWithCompetence(kitId);
+    public List<MaturityLevel> loadByKitVersionIdWithCompetences(Long kitVersionId) {
+        List<MaturityJoinCompetenceView> results = repository.findAllByKitVersionIdWithCompetence(kitVersionId);
 
         Map<Long, List<MaturityJoinCompetenceView>> collect = results.stream()
             .collect(Collectors.groupingBy(x -> x.getMaturityLevel().getId()));

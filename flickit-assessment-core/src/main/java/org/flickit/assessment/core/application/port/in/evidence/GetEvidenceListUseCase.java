@@ -31,7 +31,7 @@ public interface GetEvidenceListUseCase {
         @NotNull(message = GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @Min(value = 10, message = GET_EVIDENCE_LIST_SIZE_MIN)
+        @Min(value = 1, message = GET_EVIDENCE_LIST_SIZE_MIN)
         @Max(value = 100, message = GET_EVIDENCE_LIST_SIZE_MAX)
         int size;
 
@@ -52,5 +52,6 @@ public interface GetEvidenceListUseCase {
         String description,
         UUID createdById,
         UUID assessmentId,
+        String type,
         LocalDateTime lastModificationTime){}
 }

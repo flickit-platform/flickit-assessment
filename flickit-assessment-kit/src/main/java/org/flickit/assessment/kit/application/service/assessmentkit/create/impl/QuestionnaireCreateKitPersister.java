@@ -31,12 +31,12 @@ public class QuestionnaireCreateKitPersister implements CreateKitPersister {
     }
 
     @Override
-    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
+    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitVersionId, UUID currentUserId) {
         List<QuestionnaireDslModel> dslQuestionnaires = dslKit.getQuestionnaires();
 
         Map<String, Long> questionnaireCodeToIdMap = new HashMap<>();
         dslQuestionnaires.forEach(q -> {
-            Long persistedQuestionnaireId = createQuestionnaire(q, kitId, currentUserId);
+            Long persistedQuestionnaireId = createQuestionnaire(q, kitVersionId, currentUserId);
             questionnaireCodeToIdMap.put(q.getCode(), persistedQuestionnaireId);
         });
 
@@ -44,7 +44,7 @@ public class QuestionnaireCreateKitPersister implements CreateKitPersister {
         log.debug("Final questionnaires: {}", questionnaireCodeToIdMap);
     }
 
-    private Long createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitId, UUID currentUserId) {
+    private Long createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitVersionId, UUID currentUserId) {
         var createParam = new Questionnaire(
             null,
             newQuestionnaire.getCode(),
@@ -55,7 +55,7 @@ public class QuestionnaireCreateKitPersister implements CreateKitPersister {
             LocalDateTime.now()
         );
 
-        long persistedId = createQuestionnairePort.persist(createParam, kitId, currentUserId);
+        long persistedId = createQuestionnairePort.persist(createParam, kitVersionId, currentUserId);
         log.debug("Questionnaire[id={}, code={}] created.", persistedId, newQuestionnaire.getCode());
 
         return persistedId;

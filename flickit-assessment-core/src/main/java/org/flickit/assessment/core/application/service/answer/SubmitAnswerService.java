@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.answer;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCase;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -55,6 +57,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             updateAnswerPort.update(updateParam);
             invalidateAssessmentResultPort.invalidateById(assessmentResult.getId(), isCalculateValid, !isConfidenceLevelChanged);
         }
+
+        log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswer.get().getId());
 
         return new Result(loadedAnswer.get().getId());
     }

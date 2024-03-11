@@ -55,7 +55,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND));
         UUID assessmentResultId = assessmentResultEntity.getId();
-        Long assessmentKitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
+        long kitVersionId = assessmentResultEntity.getKitVersionId();
 
         /*
          load all subjectValue and attributeValue entities
@@ -65,11 +65,11 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         var allAttributeValueEntities = attributeValueRepo.findByAssessmentResultId(assessmentResultId);
 
         // load all subjects and their related attributes (by assessmentKit)
-        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByKitIdWithAttributes(assessmentKitId).stream()
+        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByKitVersionIdWithAttributes(kitVersionId).stream()
             .collect(toMap(SubjectJpaEntity::getId, x -> x, (s1, s2) -> s1));
 
         // load all questions with their impacts (by assessmentKit)
-        List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByAssessmentKitId(assessmentKitId);
+        List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByKitVersionId(kitVersionId);
         Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> impactfulQuestions = mapQuestionToImpacts(allQuestionsJoinImpactViews);
 
 
@@ -88,7 +88,8 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
         return new AssessmentResult(
             assessmentResultId,
-            buildAssessment(assessmentResultEntity.getAssessment()),
+            buildAssessment(assessmentResultEntity.getAssessment(), kitVersionId),
+            kitVersionId,
             subjectValues,
             assessmentResultEntity.getLastCalculationTime(),
             assessmentResultEntity.getLastConfidenceCalculationTime());
@@ -218,8 +219,8 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * @param assessmentEntity loaded assessment entity
      * @return assessment with all information needed for calculation
      */
-    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity) {
-        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), null);
+    private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId) {
+        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), kitVersionId,null);
         return mapToDomainModel(assessmentEntity, kit);
     }
 }

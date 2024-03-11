@@ -7,11 +7,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Long> {
 
-    List<SubjectJpaEntity> findAllByKitId(Long kitId);
+    List<SubjectJpaEntity> findAllByKitVersionId(Long kitVersionId);
 
     @Modifying
     @Query("""
@@ -35,9 +36,22 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
     @Query("""
             SELECT s as subject
             FROM SubjectJpaEntity s
-                JOIN FETCH s.attributes a
-            WHERE s.kitId = :kitId
+            JOIN FETCH s.attributes a
+            WHERE s.kitVersionId = :kitVersionId
         """)
-    List<SubjectJpaEntity> loadByKitIdWithAttributes(Long kitId);
+    List<SubjectJpaEntity> loadByKitVersionIdWithAttributes(@Param(value = "kitVersionId") Long kitVersionId);
 
+    @Query("""
+            SELECT s as subject
+            FROM SubjectJpaEntity s
+            WHERE s.id = :id AND s.kitVersionId = :kitVersionId
+        """)
+    Optional<SubjectJpaEntity> findByIdAndKitVersionId(@Param(value = "id") long id, @Param(value = "kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT s.refNum
+            FROM SubjectJpaEntity s
+            WHERE s.id = :subjectId
+        """)
+    UUID findRefNumById(@Param(value = "subjectId") Long subjectId);
 }

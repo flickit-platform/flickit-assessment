@@ -9,11 +9,11 @@ import java.util.Map;
 @AllArgsConstructor
 public class Option {
 
-    private long id;
-    private int index;
-    private Map<AttributeLevelScore, Double> promisedScores;
-    private double progress;
-    private int questionCost;
+    private final long id;
+    private final int index;
+    private final Map<AttributeLevelScore, Double> promisedScores;
+    private final double progress;
+    private final int questionCost;
 
     public double getAttributeLevelPromisedScore(AttributeLevelScore attributeLevelScore) {
         return promisedScores.get(attributeLevelScore);

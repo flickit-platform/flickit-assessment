@@ -31,7 +31,8 @@ public static AssessmentKit simpleKit() {
         EXPERT_GROUP_ID,
         null,
         null,
-        null);
+        null,
+        id++);
 }
 
     public static AssessmentKit completeKit(List<Subject> subjects, List<MaturityLevel> maturityLevels, List<Questionnaire> questionnaires) {
@@ -48,7 +49,8 @@ public static AssessmentKit simpleKit() {
             EXPERT_GROUP_ID,
             subjects,
             maturityLevels,
-            questionnaires);
+            questionnaires,
+            id++);
     }
 
     public static AssessmentKit kitWithMaturityLevels(List<MaturityLevel> maturityLevels) {
@@ -65,7 +67,8 @@ public static AssessmentKit simpleKit() {
             EXPERT_GROUP_ID,
             null,
             maturityLevels,
-            null);
+            null,
+            id++);
     }
 
     public static AssessmentKit kitWithQuestionnaires(List<Questionnaire> questionnaires) {
@@ -82,8 +85,8 @@ public static AssessmentKit simpleKit() {
             EXPERT_GROUP_ID,
             null,
             null,
-            questionnaires
-        );
+            questionnaires,
+            id++);
     }
 
     public static AssessmentKit kitWithSubjects(List<Subject> subjects) {
@@ -100,7 +103,8 @@ public static AssessmentKit simpleKit() {
             EXPERT_GROUP_ID,
             subjects,
             null,
-            null);
+            null,
+            id++);
     }
 
     public static AssessmentKit kitWithSubjectsAndQuestionnaires(List<Subject> subjects, List<Questionnaire> questionnaires) {
@@ -117,6 +121,7 @@ public static AssessmentKit simpleKit() {
             EXPERT_GROUP_ID,
             subjects,
             null,
-            questionnaires);
+            questionnaires,
+            id++);
     }
 }

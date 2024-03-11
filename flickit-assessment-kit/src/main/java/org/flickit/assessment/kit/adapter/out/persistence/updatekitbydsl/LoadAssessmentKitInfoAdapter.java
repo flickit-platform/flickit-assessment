@@ -51,8 +51,9 @@ public class LoadAssessmentKitInfoAdapter implements
     public AssessmentKit load(Long kitId) {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
             () -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+        Long kitVersionId = entity.getKitVersionId();
 
-        List<Subject> subjects = subjectRepository.findAllByKitId(kitId).stream()
+        List<Subject> subjects = subjectRepository.findAllByKitVersionId(kitVersionId).stream()
             .map(e -> {
                 List<Attribute> attributes = attributeRepository.findAllBySubjectId(e.getId()).stream()
                     .map(AttributeMapper::mapToDomainModel)
@@ -60,18 +61,18 @@ public class LoadAssessmentKitInfoAdapter implements
                 return SubjectMapper.mapToDomainModel(e, attributes);})
             .toList();
 
-        List<MaturityLevel> levels = maturityLevelRepository.findAllByKitId(kitId).stream()
+        List<MaturityLevel> levels = maturityLevelRepository.findAllByKitVersionId(kitVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
         setLevelCompetences(levels);
 
-        List<Question> questions = questionRepository.findByKitId(kitId).stream()
+        List<Question> questions = questionRepository.findAllByKitVersionId(kitVersionId).stream()
             .map(QuestionMapper::mapToDomainModel)
             .toList();
         setQuestionImpacts(questions);
         setQuestionOptions(questions);
 
-        List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitId(kitId).stream()
+        List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionId(kitVersionId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
             .toList();
         setQuestions(questionnaires, questions);
@@ -89,7 +90,8 @@ public class LoadAssessmentKitInfoAdapter implements
             entity.getExpertGroupId(),
             subjects,
             levels,
-            questionnaires
+            questionnaires,
+            kitVersionId
         );
     }
 
