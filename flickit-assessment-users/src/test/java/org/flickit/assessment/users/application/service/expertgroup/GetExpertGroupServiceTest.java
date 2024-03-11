@@ -5,7 +5,6 @@ import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupPort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.flickit.assessment.users.application.service.expertgroup.GetExpertGroupService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -20,8 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 import static org.flickit.assessment.users.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
