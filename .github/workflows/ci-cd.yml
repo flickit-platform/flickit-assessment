@@ -177,7 +177,8 @@ jobs:
     needs: [sonar]
     name: tag and release
     runs-on: ubuntu-latest
-    if: ${{ ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) &&
+    if: ${{ ((github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, '/refs/heads/releases'))) ||
+      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) &&
       !contains( needs.sonar.outputs.project_version , 'SNAPSHOT') }}
 
     permissions:
