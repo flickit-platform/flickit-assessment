@@ -48,7 +48,7 @@ public interface GetExpertGroupMembersUseCase {
         String email,
         String displayName,
         String bio,
-        String picture,
+        String pictureLink,
         String linkedin) {
     }
 }
