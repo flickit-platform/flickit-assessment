@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import static org.flickit.assessment.users.adapter.out.minio.MinioConstants.*;
 import static org.flickit.assessment.users.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
-@Component
+@Component("usersMinioAdapter")
 @AllArgsConstructor
 public class MinioAdapter implements
     UploadExpertGroupPicturePort,
@@ -31,6 +31,7 @@ public class MinioAdapter implements
     public static final String DOT = ".";
     private final MinioClient minioClient;
     private final MinioConfigProperties properties;
+
 
     @SneakyThrows
     private void writeFile(String bucketName, String fileObjectName, InputStream fileInputStream, @Nullable String contentType) {
@@ -43,7 +44,7 @@ public class MinioAdapter implements
     }
 
     private String getContentType(@Nullable String contentType) {
-        return (contentType != null) ? contentType : "org/flickit/assessment/users/octet-stream";
+        return (contentType != null) ? contentType : "application/octet-stream";
     }
 
     @SneakyThrows

@@ -6,11 +6,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@Configuration("usersMinioConfig")
 @EnableConfigurationProperties(MinioConfigProperties.class)
 public class MinioConfig {
 
-    @Bean
+    @Bean("usersMinioClient")
     @SneakyThrows
     public MinioClient minioClient(MinioConfigProperties properties) {
         return MinioClient.builder()
