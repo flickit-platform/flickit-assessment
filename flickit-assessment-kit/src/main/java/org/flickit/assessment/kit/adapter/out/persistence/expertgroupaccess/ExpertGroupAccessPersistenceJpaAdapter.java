@@ -10,17 +10,9 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class ExpertGroupAccessPersistenceJpaAdapter implements
-    CreateExpertGroupAccessPort,
     CheckExpertGroupAccessPort {
 
     private final ExpertGroupAccessJpaRepository repository;
-
-    @Override
-    public Long persist(Param param) {
-        ExpertGroupAccessJpaEntity unsavedEntity = ExpertGroupAccessMapper.mapCreateParamToJpaEntity(param);
-        ExpertGroupAccessJpaEntity savedEntity = repository.save(unsavedEntity);
-        return savedEntity.getId();
-    }
 
     @Override
     public boolean checkIsMember(long expertGroupId, UUID userId) {
