@@ -36,8 +36,6 @@ class GetExpertGroupMembersServiceTest {
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
-    int count = 0;
-
     @Test
     void testGetExpertGroupMembers_ValidInputs_ValidResults() {
         UUID currentUserId = UUID.randomUUID();
@@ -109,7 +107,6 @@ class GetExpertGroupMembersServiceTest {
     }
 
     private LoadExpertGroupMembersPort.Member createPortResult(UUID memberId) {
-        count++;
         return new LoadExpertGroupMembersPort.Member(
             memberId,
             "email" + memberId + "@example.com",
