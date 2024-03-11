@@ -26,7 +26,7 @@
     </modules>
 
 	<properties>
-		<revision>0.14.0</revision>
+		<revision>0.14.1-SNAPSHOT</revision>
 
 		<java.version>17</java.version>
 		<spring-boot.version>3.0.6</spring-boot.version>
