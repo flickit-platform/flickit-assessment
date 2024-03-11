@@ -57,7 +57,7 @@ public class EvidencePersistenceJpaAdapter implements
             param.description(),
             param.type(),
             param.lastModificationTime(),
-            param.lastModifiedById()
+            param.lastModifiedBy()
         );
         return new UpdateEvidencePort.Result(param.id());
     }

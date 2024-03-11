@@ -70,7 +70,7 @@ class AddEvidenceUseCaseParamTest {
         UUID questionRefNum = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new AddEvidenceUseCase.Param("desc", assessmentId, questionRefNum, "POSITIVE", null));
-        assertThat(throwable).hasMessage("createdById: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("createdBy: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test

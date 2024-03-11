@@ -11,7 +11,7 @@ public interface UpdateEvidencePort {
                  String description,
                  Integer type,
                  LocalDateTime lastModificationTime,
-                 UUID lastModifiedById) {
+                 UUID lastModifiedBy) {
     }
 
     record Result(UUID id) {

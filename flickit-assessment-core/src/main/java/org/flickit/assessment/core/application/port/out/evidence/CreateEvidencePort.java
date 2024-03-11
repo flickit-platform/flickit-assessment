@@ -10,7 +10,7 @@ public interface CreateEvidencePort {
     record Param(String description,
                  LocalDateTime creationTime,
                  LocalDateTime lastModificationTime,
-                 UUID createdById,
+                 UUID createdBy,
                  UUID assessmentId,
                  UUID questionRefNum,
                  Integer type) {

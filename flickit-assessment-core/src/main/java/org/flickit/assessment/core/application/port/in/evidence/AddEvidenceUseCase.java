@@ -36,7 +36,7 @@ public interface AddEvidenceUseCase {
         UUID questionRefNum;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID createdById;
+        UUID createdBy;
 
         @EnumValue(enumClass = EvidenceType.class, message = ADD_EVIDENCE_TYPE_INVALID)
         String type;
@@ -45,11 +45,11 @@ public interface AddEvidenceUseCase {
                      UUID assessmentId,
                      UUID questionRefNum,
                      String type,
-                     UUID createdById) {
+                     UUID createdBy) {
             this.description = description;
             this.assessmentId = assessmentId;
             this.questionRefNum = questionRefNum;
-            this.createdById = createdById;
+            this.createdBy = createdBy;
             this.type = type;
             this.validateSelf();
         }

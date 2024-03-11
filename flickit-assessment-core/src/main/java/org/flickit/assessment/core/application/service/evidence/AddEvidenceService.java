@@ -31,7 +31,7 @@ public class AddEvidenceService implements AddEvidenceUseCase {
         if (!checkAssessmentExistencePort.existsById(param.getAssessmentId()))
             throw new ResourceNotFoundException(ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND);
 
-        if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedById()))
+        if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedBy()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var createPortParam = toCreatePortParam(param);
@@ -44,7 +44,7 @@ public class AddEvidenceService implements AddEvidenceUseCase {
             param.getDescription(),
             LocalDateTime.now(),
             LocalDateTime.now(),
-            param.getCreatedById(),
+            param.getCreatedBy(),
             param.getAssessmentId(),
             param.getQuestionRefNum(),
             param.getType() != null ? EvidenceType.valueOf(param.getType()).ordinal() : null

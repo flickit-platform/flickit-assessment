@@ -7,8 +7,6 @@ import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListU
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 
-import java.util.UUID;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvidenceMapper {
 
@@ -18,8 +16,8 @@ public class EvidenceMapper {
             param.description(),
             param.creationTime(),
             param.lastModificationTime(),
-            param.createdById(),
-            param.createdById(),
+            param.createdBy(),
+            param.createdBy(),
             param.assessmentId(),
             param.questionRefNum(),
             param.type(),

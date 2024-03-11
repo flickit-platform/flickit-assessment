@@ -45,7 +45,7 @@ class AddEvidenceServiceTest {
         );
         UUID expectedId = UUID.randomUUID();
         when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedById())).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedBy())).thenReturn(true);
         when(createEvidencePort.persist(any(CreateEvidencePort.Param.class))).thenReturn(expectedId);
 
         AddEvidenceUseCase.Result result = service.addEvidence(param);
@@ -56,7 +56,7 @@ class AddEvidenceServiceTest {
         verify(createEvidencePort).persist(createPortParam.capture());
 
         assertEquals(param.getDescription(), createPortParam.getValue().description());
-        assertEquals(param.getCreatedById(), createPortParam.getValue().createdById());
+        assertEquals(param.getCreatedBy(), createPortParam.getValue().createdBy());
         assertEquals(param.getAssessmentId(), createPortParam.getValue().assessmentId());
         assertEquals(param.getQuestionRefNum(), createPortParam.getValue().questionRefNum());
         assertNotNull(createPortParam.getValue().creationTime());
@@ -93,7 +93,7 @@ class AddEvidenceServiceTest {
         );
 
         when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedById())).thenReturn(false);
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedBy())).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.addEvidence(param));
     }

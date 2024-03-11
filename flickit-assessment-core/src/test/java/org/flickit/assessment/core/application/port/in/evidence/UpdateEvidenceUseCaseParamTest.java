@@ -90,6 +90,6 @@ class UpdateEvidenceUseCaseParamTest {
         UUID id = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateEvidenceUseCase.Param(id,"new_description", "POSITIVE", null));
-        assertThat(throwable).hasMessage("lastModifiedById: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("lastModifiedBy: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }
