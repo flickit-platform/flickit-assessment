@@ -20,8 +20,6 @@ public class RuntimeExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     ErrorResponseDto handle(RuntimeException ex) {
         log.error("An unexpected error occurred", ex);
-        if (ex.getMessage() != null)
-            return new ErrorResponseDto(INTERNAL_ERROR, ex.getMessage());
         return new ErrorResponseDto(INTERNAL_ERROR, MessageBundle.message("common.internal.error"));
     }
 }
