@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
@@ -41,4 +43,53 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE a.id = :id
         """)
     void updateKitVersionId(@Param(value = "id") Long id, @Param(value = "kitVersionId") Long kitVersionId);
+
+    @Query("""
+            SELECT COUNT(q)
+            FROM QuestionnaireJpaEntity q
+            WHERE q.kitVersionId = :kitVersionId
+        """)
+    Long getKitQuestionnaireCount(@Param(value = "kitVersionId") Long kitVersionId);
+
+    @Query("""
+            SELECT COUNT(a)
+            FROM AttributeJpaEntity a
+            WHERE a.kitVersionId = :kitVersionId
+        """)
+    Long getKitAttributeCount(@Param(value = "kitVersionId") Long kitVersionId);
+
+    @Query("""
+            SELECT COUNT(q)
+            FROM QuestionJpaEntity q
+            WHERE q.kitVersionId = :kitVersionId
+        """)
+    Long getKitQuestionCount(@Param(value = "kitVersionId") Long kitVersionId);
+
+    @Query("""
+            SELECT COUNT(ml)
+            FROM MaturityLevelJpaEntity ml
+            WHERE ml.kitVersionId = :kitVersionId
+        """)
+    Long getKitMaturityLevelCount(@Param(value = "kitVersionId") Long kitVersionId);
+
+    @Query("""
+            SELECT COUNT(l)
+            FROM KitLikeJpaEntity l
+            WHERE l.kitId =  :kitId
+        """)
+    Long getKitLikeCount(@Param(value = "kitId") Long kitId);
+
+    @Query("""
+            SELECT COUNT(a)
+            FROM AssessmentJpaEntity a
+            WHERE a.assessmentKitId = :kitId
+        """)
+    Long getKitAssessmentCount(@Param(value = "kitId") Long kitId);
+
+    @Query("""
+            SELECT s
+            FROM SubjectJpaEntity s
+            WHERE s.kitVersionId = :kitVersionId
+        """)
+    List<SubjectJpaEntity> getKitSubjects(@Param(value = "kitVersionId") Long kitVersionId);
 }

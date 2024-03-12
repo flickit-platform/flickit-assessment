@@ -6,6 +6,7 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_STATS_KIT_ID_NOT_NULL;
 
@@ -35,7 +36,7 @@ public interface GetKitStatsUseCase {
         Long maturityLevelsCount,
         Long likes,
         Long assessmentCounts,
-        KitStatSubject subject,
+        List<KitStatSubject> subjects,
         KitStatExpertGroup expertGroup
     ) {
     }

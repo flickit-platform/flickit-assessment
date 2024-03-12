@@ -34,7 +34,7 @@ public class GetKitStatsRestController {
             kitStatsResult.maturityLevelsCount(),
             kitStatsResult.likes(),
             kitStatsResult.assessmentCounts(),
-            kitStatsResult.subject(),
+            kitStatsResult.subjects(),
             kitStatsResult.expertGroup()
         );
     }
