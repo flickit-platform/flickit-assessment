@@ -33,4 +33,8 @@ public class QuestionMother {
         return new Question(id++, null, null);
     }
 
+    public static Question withIdAndQuestionnaireId(long id, long questionnaireId) {
+        return new Question(id, questionnaireId, null);
+    }
+
 }

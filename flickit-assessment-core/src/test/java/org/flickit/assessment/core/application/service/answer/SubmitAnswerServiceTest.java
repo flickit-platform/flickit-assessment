@@ -1,18 +1,18 @@
 package org.flickit.assessment.core.application.service.answer;
 
-import org.flickit.assessment.core.application.domain.Answer;
-import org.flickit.assessment.core.application.domain.AnswerOption;
-import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
+import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
 import org.flickit.assessment.core.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
+import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -49,6 +49,12 @@ class SubmitAnswerServiceTest {
     private LoadAnswerPort loadAnswerPort;
 
     @Mock
+    private LoadAnswerOptionPort loadAnswerOptionPort;
+
+    @Mock
+    private LoadQuestionPort loadQuestionPort;
+
+    @Mock
     private InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
     @Test
@@ -57,9 +63,15 @@ class SubmitAnswerServiceTest {
         UUID savedAnswerId = UUID.randomUUID();
         Long answerOptionId = 2L;
         Boolean isNotApplicable = Boolean.FALSE;
+        Long questionId = 5L;
+
+        Question question = QuestionMother.withIdAndQuestionnaireId(questionId, QUESTIONNAIRE_ID);
+        AnswerOption answerOption = AnswerOptionMother.optionWithQuestionId(questionId);
 
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_REF_NUM)).thenReturn(Optional.empty());
+        when(loadAnswerOptionPort.loadById(answerOptionId)).thenReturn(Optional.of(answerOption));
+        when(loadQuestionPort.loadByRefNum(assessmentResult.getKitVersionId(), QUESTION_REF_NUM)).thenReturn(Optional.of(question));
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
 
         var param = new SubmitAnswerUseCase.Param(assessmentResult.getId(), QUESTIONNAIRE_ID, QUESTION_REF_NUM, answerOptionId, ConfidenceLevel.getDefault().getId(), isNotApplicable, UUID.randomUUID());
@@ -84,9 +96,13 @@ class SubmitAnswerServiceTest {
         AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         UUID savedAnswerId = UUID.randomUUID();
         Boolean isNotApplicable = Boolean.FALSE;
+        Long questionId = 5L;
+
+        Question question = QuestionMother.withIdAndQuestionnaireId(questionId, QUESTIONNAIRE_ID);
 
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_REF_NUM)).thenReturn(Optional.empty());
+        when(loadQuestionPort.loadByRefNum(assessmentResult.getKitVersionId(), QUESTION_REF_NUM)).thenReturn(Optional.of(question));
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
 
         var param = new SubmitAnswerUseCase.Param(assessmentResult.getId(), QUESTIONNAIRE_ID, QUESTION_REF_NUM, null, ConfidenceLevel.getDefault().getId(), isNotApplicable, UUID.randomUUID());
@@ -111,9 +127,15 @@ class SubmitAnswerServiceTest {
         UUID savedAnswerId = UUID.randomUUID();
         Long answerOptionId = 1L;
         Boolean isNotApplicable = Boolean.TRUE;
+        Long questionId = 5L;
+
+        Question question = QuestionMother.withIdAndQuestionnaireId(questionId, QUESTIONNAIRE_ID);
+        AnswerOption answerOption = AnswerOptionMother.optionWithQuestionId(questionId);
 
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_REF_NUM)).thenReturn(Optional.empty());
+        when(loadAnswerOptionPort.loadById(answerOptionId)).thenReturn(Optional.of(answerOption));
+        when(loadQuestionPort.loadByRefNum(assessmentResult.getKitVersionId(), QUESTION_REF_NUM)).thenReturn(Optional.of(question));
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
 
         var param = new SubmitAnswerUseCase.Param(assessmentResult.getId(), QUESTIONNAIRE_ID, QUESTION_REF_NUM, answerOptionId, ConfidenceLevel.getDefault().getId(), isNotApplicable, UUID.randomUUID());
@@ -157,7 +179,9 @@ class SubmitAnswerServiceTest {
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_REF_NUM);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.TRUE);
-        verifyNoInteractions(createAnswerPort);
+        verifyNoInteractions(createAnswerPort,
+            loadAnswerOptionPort,
+            loadQuestionPort);
     }
 
     @Test
@@ -187,7 +211,9 @@ class SubmitAnswerServiceTest {
 
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class), eq(Boolean.FALSE), eq(Boolean.TRUE));
-        verifyNoInteractions(createAnswerPort);
+        verifyNoInteractions(createAnswerPort,
+            loadAnswerOptionPort,
+            loadQuestionPort);
     }
 
     @Test
@@ -203,7 +229,11 @@ class SubmitAnswerServiceTest {
         service.submitAnswer(param);
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_REF_NUM);
-        verifyNoInteractions(createAnswerPort, updateAnswerPort, invalidateAssessmentResultPort);
+        verifyNoInteractions(createAnswerPort,
+            updateAnswerPort,
+            invalidateAssessmentResultPort,
+            loadAnswerOptionPort,
+            loadQuestionPort);
     }
 
     @Test
@@ -234,7 +264,9 @@ class SubmitAnswerServiceTest {
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_REF_NUM);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.TRUE);
-        verifyNoInteractions(createAnswerPort);
+        verifyNoInteractions(createAnswerPort,
+            loadAnswerOptionPort,
+            loadQuestionPort);
     }
 
     @Test
@@ -250,7 +282,11 @@ class SubmitAnswerServiceTest {
 
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(any());
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_REF_NUM);
-        verifyNoInteractions(createAnswerPort, updateAnswerPort, invalidateAssessmentResultPort);
+        verifyNoInteractions(createAnswerPort,
+            updateAnswerPort,
+            invalidateAssessmentResultPort,
+            loadAnswerOptionPort,
+            loadQuestionPort);
     }
 
     @Test
@@ -277,6 +313,8 @@ class SubmitAnswerServiceTest {
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_REF_NUM);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.TRUE, Boolean.FALSE);
-        verifyNoInteractions(createAnswerPort);
+        verifyNoInteractions(createAnswerPort,
+            loadAnswerOptionPort,
+            loadQuestionPort);
     }
 }
