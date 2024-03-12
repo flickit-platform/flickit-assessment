@@ -10,7 +10,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_STATS_KI
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class GetKitStatsUseCaseParamTest {
+class GetKitStatsUseCaseParamTest {
 
     @Test
     void testGetKitUserList_kitIdIsNull_ErrorMessage() {
