@@ -71,10 +71,10 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         } catch (InterruptedException e) {
             log.error("Finding best solution for assessment {} interrupted", assessmentId, e.getCause());
             Thread.currentThread().interrupt();
-            throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION, e);
+            throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         } catch (ExecutionException e) {
             log.error("Error occurred while calculating best solution for assessment {}", assessmentId, e.getCause());
-            throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION, e);
+            throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         }
         return mapToResult(plan);
     }
