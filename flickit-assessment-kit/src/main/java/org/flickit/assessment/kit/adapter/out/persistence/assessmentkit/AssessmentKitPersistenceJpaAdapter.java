@@ -14,6 +14,7 @@ import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
@@ -36,7 +37,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     DeleteKitUserAccessPort,
     LoadKitMinimalInfoPort,
     CreateAssessmentKitPort,
-    UpdateKitLastMajorModificationTimePort {
+    UpdateKitLastMajorModificationTimePort,
+    LoadKitEditableInfoPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -112,5 +114,25 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public void updateLastMajorModificationTime(Long kitId, LocalDateTime lastMajorModificationTime) {
         repository.updateLastMajorModificationTime(kitId, lastMajorModificationTime);
+    }
+
+    @Override
+    public GetKitEditableInfoUseCase.KitEditableInfo loadKitEditableInfo(Long kitId) {
+        AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_EDITABLE_INFO_KIT_ID_NOT_FOUND));
+
+        var tags = repository.findKitTags(kitId).stream()
+            .map(t -> new GetKitEditableInfoUseCase.KitEditableInfoTag(t.getId(), t.getTitle()))
+            .toList();
+
+        return new GetKitEditableInfoUseCase.KitEditableInfo(
+            kitEntity.getId(),
+            kitEntity.getTitle(),
+            kitEntity.getSummary(),
+            kitEntity.getPublished(),
+            0L,
+            kitEntity.getAbout(),
+            tags
+        );
     }
 }
