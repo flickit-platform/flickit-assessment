@@ -23,7 +23,7 @@ public class UpdateEvidenceService implements UpdateEvidenceUseCase {
             param.getDescription(),
             param.getType() != null ? EvidenceType.valueOf(param.getType()).ordinal() : null,
             LocalDateTime.now(),
-            param.getLastModifiedById()
+            param.getLastModifiedBy()
         );
         return new UpdateEvidenceUseCase.Result(updateEvidencePort.update(updateParam).id());
     }

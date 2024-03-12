@@ -107,4 +107,15 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.id = :questionId
         """)
     Optional<UUID> findRefNumById(@Param("questionId") Long questionId);
+
+    @Query("""
+            SELECT CASE WHEN EXISTS (SELECT 1
+            FROM QuestionJpaEntity q JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id
+            JOIN KitVersionJpaEntity kv ON qn.kitVersionId = kv.id
+            JOIN AssessmentKitJpaEntity k ON kv.kit.id = k.id
+            JOIN AssessmentJpaEntity asm ON asm.assessmentKitId = k.id
+            WHERE q.refNum = :questionRefNum AND asm.id = :assessmentId)
+            THEN TRUE ELSE FALSE END
+    """)
+    boolean existsByRefNumAndAssessmentId(UUID questionRefNum, UUID assessmentId);
 }

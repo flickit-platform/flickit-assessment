@@ -32,24 +32,24 @@ public interface AddEvidenceUseCase {
         @NotNull(message = ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = ADD_EVIDENCE_QUESTION_ID_NOT_NULL)
-        Long questionId;
+        @NotNull(message = ADD_EVIDENCE_QUESTION_REF_NUM_NOT_NULL)
+        UUID questionRefNum;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID createdById;
+        UUID createdBy;
 
         @EnumValue(enumClass = EvidenceType.class, message = ADD_EVIDENCE_TYPE_INVALID)
         String type;
 
         public Param(String description,
                      UUID assessmentId,
-                     Long questionId,
+                     UUID questionRefNum,
                      String type,
-                     UUID createdById) {
+                     UUID createdBy) {
             this.description = description;
             this.assessmentId = assessmentId;
-            this.questionId = questionId;
-            this.createdById = createdById;
+            this.questionRefNum = questionRefNum;
+            this.createdBy = createdBy;
             this.type = type;
             this.validateSelf();
         }

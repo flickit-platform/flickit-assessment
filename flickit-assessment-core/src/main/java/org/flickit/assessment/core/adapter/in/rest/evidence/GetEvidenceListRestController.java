@@ -22,17 +22,17 @@ public class GetEvidenceListRestController {
 
     @GetMapping("/evidences")
     public ResponseEntity<PaginatedResponse<EvidenceListItem>> getEvidenceList(
-        @RequestParam(value = "questionId", required = false) // validated in the use-case param
-        Long questionId,
+        @RequestParam(value = "questionRefNum", required = false) // validated in the use-case param
+        UUID questionRefNum,
         @RequestParam(value = "assessmentId", required = false) // validated in the use-case param
         UUID assessmentId,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page) {
-        PaginatedResponse<EvidenceListItem> result = useCase.getEvidenceList(toParam(questionId, assessmentId, size, page));
+        PaginatedResponse<EvidenceListItem> result = useCase.getEvidenceList(toParam(questionRefNum, assessmentId, size, page));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private GetEvidenceListUseCase.Param toParam(Long questionId, UUID assessmentId, int size, int page) {
-        return new GetEvidenceListUseCase.Param(questionId, assessmentId, size, page);
+    private GetEvidenceListUseCase.Param toParam(UUID questionRefNum, UUID assessmentId, int size, int page) {
+        return new GetEvidenceListUseCase.Param(questionRefNum, assessmentId, size, page);
     }
 }

@@ -42,9 +42,6 @@ public class EvidenceJpaEntity {
     @Column(name = "assessment_id", nullable = false)
     private UUID assessmentId;
 
-    @Column(name = "question_id", nullable = false)
-    private Long questionId;
-
     @Column(name = "question_ref_num", nullable = false)
     private UUID questionRefNum;
 

@@ -6,6 +6,7 @@ import org.flickit.assessment.core.application.port.in.evidence.AddEvidenceUseCa
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
+import org.flickit.assessment.core.application.port.out.question.CheckQuestionKitExistencePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -34,18 +35,22 @@ class AddEvidenceServiceTest {
     @Mock
     private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
 
+    @Mock
+    private CheckQuestionKitExistencePort checkQuestionKitExistencePort;
+
     @Test
     void testAddEvidence_ValidParam_PersistsAndReturnsId() {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
             UUID.randomUUID(),
-            1L,
+            UUID.randomUUID(),
             "POSITIVE",
             UUID.randomUUID()
         );
         UUID expectedId = UUID.randomUUID();
         when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedById())).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedBy())).thenReturn(true);
+        when(checkQuestionKitExistencePort.existsByRefNumAndAssessmentId(param.getQuestionRefNum(), param.getAssessmentId())).thenReturn(true);
         when(createEvidencePort.persist(any(CreateEvidencePort.Param.class))).thenReturn(expectedId);
 
         AddEvidenceUseCase.Result result = service.addEvidence(param);
@@ -56,9 +61,9 @@ class AddEvidenceServiceTest {
         verify(createEvidencePort).persist(createPortParam.capture());
 
         assertEquals(param.getDescription(), createPortParam.getValue().description());
-        assertEquals(param.getCreatedById(), createPortParam.getValue().createdById());
+        assertEquals(param.getCreatedBy(), createPortParam.getValue().createdBy());
         assertEquals(param.getAssessmentId(), createPortParam.getValue().assessmentId());
-        assertEquals(param.getQuestionId(), createPortParam.getValue().questionId());
+        assertEquals(param.getQuestionRefNum(), createPortParam.getValue().questionRefNum());
         assertNotNull(createPortParam.getValue().creationTime());
         assertNotNull(createPortParam.getValue().lastModificationTime());
     }
@@ -68,7 +73,7 @@ class AddEvidenceServiceTest {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
             UUID.randomUUID(),
-            1L,
+            UUID.randomUUID(),
             "POSITIVE",
             UUID.randomUUID()
         );
@@ -87,14 +92,31 @@ class AddEvidenceServiceTest {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
             UUID.randomUUID(),
-            1L,
+            UUID.randomUUID(),
             "POSITIVE",
             UUID.randomUUID()
         );
 
         when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedById())).thenReturn(false);
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedBy())).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.addEvidence(param));
+    }
+
+    @Test
+    void testAddEvidence_InvalidQuestionRefNum_ThrowNotFoundException() {
+        AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
+            "desc",
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            "POSITIVE",
+            UUID.randomUUID()
+        );
+
+        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedBy())).thenReturn(true);
+        when(checkQuestionKitExistencePort.existsByRefNumAndAssessmentId(param.getQuestionRefNum(), param.getAssessmentId())).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> service.addEvidence(param));
     }
 }

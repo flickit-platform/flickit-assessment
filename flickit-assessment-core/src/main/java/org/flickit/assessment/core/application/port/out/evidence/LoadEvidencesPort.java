@@ -7,6 +7,6 @@ import java.util.UUID;
 
 public interface LoadEvidencesPort {
 
-    PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size);
+    PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(UUID questionRefNum, UUID assessmentId, int page, int size);
 
 }

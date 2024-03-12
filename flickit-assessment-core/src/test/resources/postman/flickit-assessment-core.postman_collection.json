@@ -255,7 +255,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"description\": \"description1\",\n    \"assessmentId\": \"136960fa-4040-4f3b-ac34-a71a67d29941\",\n    \"questionId\": 9110,\n    \"type\": \"POSITIVE\"\n}",
+					"raw": "{\n    \"description\": \"description1\",\n    \"assessmentId\": \"136960fa-4040-4f3b-ac34-a71a67d29941\",\n    \"questionRefNum\": \"c1f250a8-8daa-47e4-a9e3-5da95b24caaa\",\n    \"type\": \"POSITIVE\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -397,7 +397,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/evidences?questionId=1&assessmentId=c4e0b4a4-66a1-4383-872f-be9fc6c3cecb&size=10&page=0",
+					"raw": "{{base_url}}/{{api_path}}/evidences?questionRefNum=c1f250a8-8daa-47e4-a9e3-5da95b24caaa&assessmentId=136960fa-4040-4f3b-ac34-a71a67d29941&size=10&page=0",
 					"host": [
 						"{{base_url}}"
 					],
@@ -407,12 +407,12 @@
 					],
 					"query": [
 						{
-							"key": "questionId",
-							"value": "1"
+							"key": "questionRefNum",
+							"value": "c1f250a8-8daa-47e4-a9e3-5da95b24caaa"
 						},
 						{
 							"key": "assessmentId",
-							"value": "c4e0b4a4-66a1-4383-872f-be9fc6c3cecb"
+							"value": "136960fa-4040-4f3b-ac34-a71a67d29941"
 						},
 						{
 							"key": "size",

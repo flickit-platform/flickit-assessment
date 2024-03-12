@@ -25,8 +25,8 @@ public interface GetEvidenceListUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_EVIDENCE_LIST_QUESTION_ID_NOT_NULL)
-        Long questionId;
+        @NotNull(message = GET_EVIDENCE_LIST_QUESTION_REF_NUM_NOT_NULL)
+        UUID questionRefNum;
 
         @NotNull(message = GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
@@ -38,8 +38,8 @@ public interface GetEvidenceListUseCase {
         @Min(value = 0, message = GET_EVIDENCE_LIST_PAGE_MIN)
         int page;
 
-        public Param(Long questionId, UUID assessmentId, int size, int page) {
-            this.questionId = questionId;
+        public Param(UUID questionRefNum, UUID assessmentId, int size, int page) {
+            this.questionRefNum = questionRefNum;
             this.assessmentId = assessmentId;
             this.size = size;
             this.page = page;
