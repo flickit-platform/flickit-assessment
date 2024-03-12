@@ -107,4 +107,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.id = :questionId
         """)
     Optional<UUID> findRefNumById(@Param("questionId") Long questionId);
+
+    Optional<QuestionJpaEntity> findByKitVersionIdAndRefNum(long kitVersionId, UUID refNum);
 }

@@ -435,4 +435,13 @@
         <dropDefaultValue tableName="fak_question" columnName="advisable"/>
     </changeSet>
 
+    <changeSet id="0.15-63" author="Mahdi Rezazadeh">
+        <dropNotNullConstraint tableName="fac_answer" columnName="question_id"/>
+    </changeSet>
+
+    <changeSet id="0.15-64" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fac_answer"
+                             columnNames="assessment_result_id, question_ref_num"
+                             constraintName="uq_fac_answer_assessmentResultId_questionRefNum"/>
+    </changeSet>
 </databaseChangeLog>
