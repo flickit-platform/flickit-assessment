@@ -10,6 +10,7 @@ import java.util.List;
 public class Question {
 
     private final long id;
+    private final Long questionnaireId;
     private final List<QuestionImpact> impacts;
 
     public QuestionImpact findImpactByMaturityLevel(MaturityLevel maturityLevel) {

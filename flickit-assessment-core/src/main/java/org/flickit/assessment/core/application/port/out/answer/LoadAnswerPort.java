@@ -7,6 +7,6 @@ import java.util.UUID;
 
 public interface LoadAnswerPort {
 
-    Optional<Answer> load(UUID assessmentResultId, Long questionId);
+    Optional<Answer> load(UUID assessmentResultId, UUID questionRefNum);
 
 }

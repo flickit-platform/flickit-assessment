@@ -39,4 +39,10 @@ public class AnswerOptionMother {
             onLevelThree(1),
             onLevelFour(1)));
     }
+
+    public static AnswerOption optionWithQuestionId(long questionId) {
+        return new AnswerOption(id++, questionId, List.of(
+            onLevelThree(1),
+            onLevelFour(1)));
+    }
 }

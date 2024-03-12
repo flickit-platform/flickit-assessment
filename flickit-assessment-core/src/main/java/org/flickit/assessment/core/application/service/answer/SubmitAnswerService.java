@@ -8,15 +8,17 @@ import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCas
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
+import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Slf4j
 @Service
@@ -28,6 +30,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final CreateAnswerPort createAnswerPort;
     private final LoadAnswerPort loadAnswerPort;
     private final UpdateAnswerPort updateAnswerPort;
+    private final LoadAnswerOptionPort loadAnswerOptionPort;
+    private final LoadQuestionPort loadQuestionPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
 
     @Override
@@ -35,13 +39,13 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
+        var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionRefNum());
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
         Integer confidenceLevelId = param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
         confidenceLevelId = (answerOptionId != null || Objects.equals(Boolean.TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
 
         if (loadedAnswer.isEmpty()) {
-            return saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId);
+            return saveAnswer(param, assessmentResult.getKitVersionId(), assessmentResult.getId(), answerOptionId, confidenceLevelId);
         }
 
         var loadedAnswerOptionId = loadedAnswer.get().getSelectedOption() == null ? null : loadedAnswer.get().getSelectedOption().getId();
@@ -63,7 +67,11 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return new Result(loadedAnswer.get().getId());
     }
 
-    private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
+    private Result saveAnswer(Param param, long kitVersionId, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
+        checkQuestionBelongsQuestionnaire(kitVersionId, param.getQuestionnaireId(), param.getQuestionRefNum());
+        if (param.getAnswerOptionId() != null)
+            checkAnswerOptionBelongsQuestion(kitVersionId, param.getQuestionRefNum(), param.getAnswerOptionId());
+
         UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId));
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId, Boolean.FALSE, Boolean.FALSE);
@@ -71,11 +79,29 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return new Result(savedAnswerId);
     }
 
+    private void checkQuestionBelongsQuestionnaire(long kitVersionId, Long questionnaireId, UUID questionRefNum) {
+        var question = loadQuestionPort.loadByRefNum(kitVersionId, questionRefNum)
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND));
+
+        if (!Objects.equals(question.getQuestionnaireId(), questionnaireId))
+            throw new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND);
+    }
+
+    private void checkAnswerOptionBelongsQuestion(long kitVersionId, UUID questionRefNum, Long answerOptionId) {
+        var question = loadQuestionPort.loadByRefNum(kitVersionId, questionRefNum)
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND));
+        var answerOption = loadAnswerOptionPort.loadById(answerOptionId)
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND));
+
+        if (answerOption.getQuestionId() != question.getId())
+            throw new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND);
+    }
+
     private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
         return new CreateAnswerPort.Param(
             assessmentResultId,
             param.getQuestionnaireId(),
-            param.getQuestionId(),
+            param.getQuestionRefNum(),
             answerOptionId,
             confidenceLevelId,
             param.getIsNotApplicable(),
