@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.user;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
+import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.kit.application.domain.User;
 import org.flickit.assessment.kit.application.port.out.user.LoadUserByEmailPort;
 import org.flickit.assessment.kit.application.port.out.user.LoadUserPort;
