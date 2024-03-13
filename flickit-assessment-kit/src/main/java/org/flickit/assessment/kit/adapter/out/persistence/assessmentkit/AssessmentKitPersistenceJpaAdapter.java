@@ -130,7 +130,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
             kitEntity.getTitle(),
             kitEntity.getSummary(),
             kitEntity.getPublished(),
-            0L,
+            0D,
             kitEntity.getAbout(),
             tags
         );

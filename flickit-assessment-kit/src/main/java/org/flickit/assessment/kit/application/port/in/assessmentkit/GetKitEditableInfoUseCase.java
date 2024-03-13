@@ -31,7 +31,7 @@ public interface GetKitEditableInfoUseCase {
         String title,
         String summary,
         Boolean isActive,
-        Long price,
+        Double price,
         String about,
         List<KitEditableInfoTag> tags
     ) {}
