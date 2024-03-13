@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Component
+@Component("kitExpertGroupPersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,

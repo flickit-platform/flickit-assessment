@@ -22,7 +22,7 @@ import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.E
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 
-@Component("usersExpertGroupJpaRepository")
+@Component
 @RequiredArgsConstructor
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupListPort,
