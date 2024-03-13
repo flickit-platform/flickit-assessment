@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.config;
+package org.flickit.assessment.data.config;
 
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
