@@ -28,13 +28,4 @@ public class ErrorMessageKey {
     public static final String CREATE_EXPERT_GROUP_WEBSITE_NOT_URL = "create-expert-group.website.notUrl";
     public static final String CREATE_EXPERT_GROUP_WEBSITE_SIZE_MIN = "create-expert-group.website.size.min";
     public static final String CREATE_EXPERT_GROUP_WEBSITE_SIZE_MAX = "create-expert-group.website.size.max";
-
-    public static String entityNameSingleFirst(String fieldName) {
-        return String.format("entities.%s.single.first", fieldName);
-    }
-
-    public static String entityNamePlural(String fieldName) {
-        return String.format("entities.%s.plural", fieldName);
-    }
-
 }
