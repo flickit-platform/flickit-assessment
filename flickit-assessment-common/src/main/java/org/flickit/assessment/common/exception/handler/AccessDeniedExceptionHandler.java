@@ -1,6 +1,5 @@
 package org.flickit.assessment.common.exception.handler;
 
-import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
 
-
-@Slf4j
 @RestControllerAdvice
 public class AccessDeniedExceptionHandler {
 
@@ -21,7 +18,6 @@ public class AccessDeniedExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     ErrorResponseDto handle(AccessDeniedException ex) {
-        log.error(ex.getMessage(), ex);
         return new ErrorResponseDto(ACCESS_DENIED, MessageBundle.message(ex.getMessage()));
     }
 }

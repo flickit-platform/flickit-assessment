@@ -1,7 +1,6 @@
 package org.flickit.assessment.advice.adapter.in.rest.advice;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.Param;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.Result;
