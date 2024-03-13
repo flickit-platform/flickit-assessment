@@ -1,5 +1,6 @@
 package org.flickit.assessment.advice.adapter.in.rest.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static org.flickit.assessment.advice.adapter.in.rest.exception.api.ErrorCodes.ADVICE_CALCULATION_ERROR;
 
+@Slf4j
 @RestControllerAdvice
 public class FinalSolutionNotFoundExceptionHandler {
 
@@ -18,6 +20,7 @@ public class FinalSolutionNotFoundExceptionHandler {
     @ExceptionHandler(FinalSolutionNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     ErrorResponseDto handle(FinalSolutionNotFoundException ex) {
+        log.error("Advice calculation error", ex);
         return new ErrorResponseDto(ADVICE_CALCULATION_ERROR, MessageBundle.message(ex.getMessage()));
     }
 }
