@@ -14,6 +14,7 @@ import org.flickit.assessment.data.jpa.kit.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
@@ -36,7 +37,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     DeleteKitUserAccessPort,
     LoadKitMinimalInfoPort,
     CreateAssessmentKitPort,
-    UpdateKitLastMajorModificationTimePort {
+    UpdateKitLastMajorModificationTimePort,
+    UpdateKitInfoPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -112,5 +114,23 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public void updateLastMajorModificationTime(Long kitId, LocalDateTime lastMajorModificationTime) {
         repository.updateLastMajorModificationTime(kitId, lastMajorModificationTime);
+    }
+
+    @Override
+    public EditKitInfoUseCase.Result update(EditKitInfoUseCase.Param param) {
+        AssessmentKitJpaEntity kitEntity = repository.findById(param.getAssessmentKitId())
+            .orElseThrow(() -> new ResourceNotFoundException(EDIT_KIT_INFO_KIT_ID_NOT_FOUND));
+        AssessmentKitJpaEntity toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param);
+        AssessmentKitJpaEntity updatedEntity = repository.save(toBeUpdatedEntity);
+        // update tags
+        return new EditKitInfoUseCase.Result(
+            updatedEntity.getTitle(),
+            updatedEntity.getSummary(),
+            updatedEntity.getPublished(),
+            updatedEntity.getIsPrivate(),
+            0D,
+            updatedEntity.getAbout(),
+            List.of()
+        );
     }
 }
