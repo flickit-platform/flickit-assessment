@@ -25,11 +25,10 @@ public class CreateAdviceRestController {
     @PostMapping("/assessments/{assessmentId}/advice")
     ResponseEntity<CreateAdviceResponseDto> createAdvice(@PathVariable("assessmentId") UUID assessmentId,
                                                          @RequestBody CreateAdviceRequestDto requestDto) {
-        throw new FinalSolutionNotFoundException("common.currentUser.notAllowed");
-        //UUID currentUserId = userContext.getUser().id();
-        //Param param = toParam(assessmentId, requestDto, currentUserId);
-        //Result result = useCase.createAdvice(param);
-        //return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
+        UUID currentUserId = userContext.getUser().id();
+        Param param = toParam(assessmentId, requestDto, currentUserId);
+        Result result = useCase.createAdvice(param);
+        return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 
     private Param toParam(UUID assessmentId, CreateAdviceRequestDto requestDto, UUID currentUserId) {
