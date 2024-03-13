@@ -87,6 +87,22 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL = "create-kit-by-dsl.tag-ids.notNull";
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
 
+    public static final String EDIT_KIT_INFO_KIT_ID_NOT_NULL = "edit-kit-info.kitId.notNull";
+    public static final String EDIT_KIT_INFO_TITLE_NOT_BLANK = "edit-kit-info.title.notBlank";
+    public static final String EDIT_KIT_INFO_TITLE_SIZE_MIN = "edit-kit-info.title.size.min";
+    public static final String EDIT_KIT_INFO_TITLE_SIZE_MAX = "edit-kit-info.title.size.max";
+    public static final String EDIT_KIT_INFO_SUMMARY_NOT_BLANK = "edit-kit-info.summary.notBlank";
+    public static final String EDIT_KIT_INFO_SUMMARY_SIZE_MIN = "edit-kit-info.summary.size.min";
+    public static final String EDIT_KIT_INFO_SUMMARY_SIZE_MAX = "edit-kit-info.summary.size.max";
+    public static final String EDIT_KIT_INFO_IS_ACTIVE_NOT_NULL = "edit-kit-info.isActive.notNull";
+    public static final String EDIT_KIT_INFO_IS_PRIVATE_NOT_NULL = "edit-kit-info.isPrivate.notNull";
+    public static final String EDIT_KIT_INFO_PRICE_NOT_NULL = "edit-kit-info.price.notNull";
+    public static final String EDIT_KIT_INFO_ABOUT_NOT_BLANK = "edit-kit-info.about.notBlank";
+    public static final String EDIT_KIT_INFO_ABOUT_SIZE_MIN = "edit-kit-info.about.size.min";
+    public static final String EDIT_KIT_INFO_ABOUT_SIZE_MAX = "edit-kit-info.about.size.max";
+    public static final String EDIT_KIT_INFO_TAGS_NOT_NULL = "edit-kit-info.tags.notNull";
+    public static final String EDIT_KIT_INFO_KIT_ID_NOT_FOUND =  "edit-kit-info.kitId.notFound";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
