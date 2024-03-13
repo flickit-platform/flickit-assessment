@@ -1,6 +1,7 @@
 package org.flickit.assessment.advice.adapter.in.rest.advice;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.Param;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.Result;
@@ -24,10 +25,11 @@ public class CreateAdviceRestController {
     @PostMapping("/assessments/{assessmentId}/advice")
     ResponseEntity<CreateAdviceResponseDto> createAdvice(@PathVariable("assessmentId") UUID assessmentId,
                                                          @RequestBody CreateAdviceRequestDto requestDto) {
-        UUID currentUserId = userContext.getUser().id();
-        Param param = toParam(assessmentId, requestDto, currentUserId);
-        Result result = useCase.createAdvice(param);
-        return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
+        throw new FinalSolutionNotFoundException("common.currentUser.notAllowed");
+        //UUID currentUserId = userContext.getUser().id();
+        //Param param = toParam(assessmentId, requestDto, currentUserId);
+        //Result result = useCase.createAdvice(param);
+        //return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 
     private Param toParam(UUID assessmentId, CreateAdviceRequestDto requestDto, UUID currentUserId) {
