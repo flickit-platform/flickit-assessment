@@ -2,8 +2,8 @@ package org.flickit.assessment.users.adapter.out.persistence.expertgroup;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupJpaEntity;
-import org.flickit.assessment.data.jpa.kit.expertgroup.ExpertGroupWithDetailsView;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.CreateExpertGroupPort.Param;

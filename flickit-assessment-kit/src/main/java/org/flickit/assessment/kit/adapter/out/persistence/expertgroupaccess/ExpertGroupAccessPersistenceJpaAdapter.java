@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.expertgroupaccess.*;
+import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.*;
 import org.springframework.stereotype.Component;
 

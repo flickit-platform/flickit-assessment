@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.user;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
+import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.domain.User;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 

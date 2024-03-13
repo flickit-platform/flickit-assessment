@@ -2,7 +2,7 @@ package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
+import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 
 import java.time.LocalDateTime;
 import java.util.Set;
