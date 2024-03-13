@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.expertgroupaccess.*;
 import org.springframework.stereotype.Component;
 
-@Component("usersExpertGroupAccessPersistenceJpaAdapter")
+@Component
 @RequiredArgsConstructor
 public class ExpertGroupAccessPersistenceJpaAdapter implements
     CreateExpertGroupAccessPort{
