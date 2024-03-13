@@ -401,7 +401,27 @@
 				}
 			},
 			"response": []
-		}
+		},
+        {
+            "name": "Get Kit Editable Info",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{base_url}}/{{api_path}}/assessment-kits/get/308",
+                "host": [
+                  "{{base_url}}"
+                ],
+                "path": [
+                  "{{api_path}}",
+                  "assessment-kits",
+                  "get",
+                  "308"
+                ]
+              }
+            },
+            "response": []
+        }
 	],
 	"event": [
 		{
