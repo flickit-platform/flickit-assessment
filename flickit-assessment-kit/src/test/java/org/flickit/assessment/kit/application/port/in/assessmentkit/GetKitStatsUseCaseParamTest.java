@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetKitStatsUseCaseParamTest {
 
     @Test
-    void testGetKitUserList_kitIdIsNull_ErrorMessage() {
+    void testGetKitStats_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetKitStatsUseCase.Param(null));
         assertThat(throwable).hasMessage("assessmentKitId: " + GET_KIT_STATS_KIT_ID_NOT_NULL);
