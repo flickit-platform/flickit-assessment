@@ -20,7 +20,6 @@ public class FinalSolutionNotFoundExceptionHandler {
     @ExceptionHandler(FinalSolutionNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     ErrorResponseDto handle(FinalSolutionNotFoundException ex) {
-        log.error("Advice calculation error", ex);
         return new ErrorResponseDto(ADVICE_CALCULATION_ERROR, MessageBundle.message(ex.getMessage()));
     }
 }
