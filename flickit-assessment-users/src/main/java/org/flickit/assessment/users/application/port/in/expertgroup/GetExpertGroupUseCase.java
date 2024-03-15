@@ -1,15 +1,15 @@
-package org.flickit.assessment.kit.application.port.in.expertgroup;
+package org.flickit.assessment.users.application.port.in.expertgroup;
 
+import org.flickit.assessment.users.application.domain.ExpertGroup;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
 
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL;
 
 public interface GetExpertGroupUseCase {
 

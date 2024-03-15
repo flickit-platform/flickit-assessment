@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.in.expertgroup;
+package org.flickit.assessment.users.application.port.in.expertgroup;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 public interface GetExpertGroupListUseCase {
 
