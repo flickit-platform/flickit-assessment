@@ -1,12 +1,12 @@
-package org.flickit.assessment.kit.application.service.expertgroup;
+package org.flickit.assessment.users.application.service.expertgroup;
 
+import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpertGroupUseCase;
+import org.flickit.assessment.users.application.port.out.expertgroup.CreateExpertGroupPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
+import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessStatus;
-import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CreateExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.UploadExpertGroupPicturePort;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
