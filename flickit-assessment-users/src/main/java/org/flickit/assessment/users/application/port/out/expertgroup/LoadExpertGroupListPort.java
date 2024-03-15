@@ -1,7 +1,7 @@
-package org.flickit.assessment.kit.application.port.out.expertgroup;
+package org.flickit.assessment.users.application.port.out.expertgroup;
 
+import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase.Member;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.Member;
 
 import java.util.List;
 import java.util.UUID;
