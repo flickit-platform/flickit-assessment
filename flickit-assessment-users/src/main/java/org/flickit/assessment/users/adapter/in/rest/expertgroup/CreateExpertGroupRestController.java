@@ -1,9 +1,9 @@
-package org.flickit.assessment.kit.adapter.in.rest.expertgroup;
+package org.flickit.assessment.users.adapter.in.rest.expertgroup;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase;
-import org.flickit.assessment.kit.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
+import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpertGroupUseCase;
+import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
