@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.in.rest.expertgroupaccess;
+package org.flickit.assessment.users.adapter.in.rest.expertgroupaccess;
 
 import java.util.UUID;
 
