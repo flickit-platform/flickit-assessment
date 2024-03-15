@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.out.expertgroup;
+package org.flickit.assessment.users.application.port.out.expertgroup;
 
 import org.springframework.web.multipart.MultipartFile;
 

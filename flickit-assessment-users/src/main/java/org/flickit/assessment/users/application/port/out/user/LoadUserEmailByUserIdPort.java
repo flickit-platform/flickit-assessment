@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.out.user;
+package org.flickit.assessment.users.application.port.out.user;
 
 import java.util.UUID;
 
