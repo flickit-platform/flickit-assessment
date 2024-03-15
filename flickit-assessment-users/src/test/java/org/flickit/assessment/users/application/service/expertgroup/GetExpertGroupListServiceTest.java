@@ -1,12 +1,12 @@
-package org.flickit.assessment.kit.application.service.expertgroup;
+package org.flickit.assessment.users.application.service.expertgroup;
 
+import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupListUseCase.Member;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
-import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
+import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase.Member;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
+import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

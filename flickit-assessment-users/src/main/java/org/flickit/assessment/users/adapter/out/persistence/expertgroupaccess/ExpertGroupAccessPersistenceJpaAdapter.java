@@ -1,12 +1,8 @@
-package org.flickit.assessment.kit.adapter.out.persistence.expertgroupaccess;
+package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.*;
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessJpaEntity;
-import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessJpaRepository;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteTokenCheckPort;
+import org.flickit.assessment.data.jpa.users.expertgroupaccess.*;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -17,7 +13,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     CreateExpertGroupAccessPort,
     CheckExpertGroupAccessPort,
     InviteExpertGroupMemberPort,
-    InviteTokenCheckPort {
+    InviteTokenCheckPort{
 
     private final ExpertGroupAccessJpaRepository repository;
 

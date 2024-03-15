@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.kit.expertgroupaccess;
+package org.flickit.assessment.data.jpa.users.expertgroupaccess;
 
 public enum ExpertGroupAccessStatus {
 

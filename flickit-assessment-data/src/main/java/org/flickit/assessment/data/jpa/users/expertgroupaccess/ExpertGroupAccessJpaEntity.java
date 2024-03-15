@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.kit.expertgroupaccess;
+package org.flickit.assessment.data.jpa.users.expertgroupaccess;
 
 import jakarta.persistence.*;
 import lombok.*;

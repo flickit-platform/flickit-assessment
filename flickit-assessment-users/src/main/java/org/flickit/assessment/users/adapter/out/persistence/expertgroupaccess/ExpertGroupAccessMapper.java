@@ -1,10 +1,10 @@
-package org.flickit.assessment.kit.adapter.out.persistence.expertgroupaccess;
+package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessJpaEntity;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
+import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExpertGroupAccessMapper {

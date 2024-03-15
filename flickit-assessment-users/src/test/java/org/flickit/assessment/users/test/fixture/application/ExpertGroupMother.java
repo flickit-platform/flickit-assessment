@@ -1,6 +1,6 @@
-package org.flickit.assessment.kit.test.fixture.application;
+package org.flickit.assessment.users.test.fixture.application;
 
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.users.application.domain.ExpertGroup;
 
 import java.util.UUID;
 
