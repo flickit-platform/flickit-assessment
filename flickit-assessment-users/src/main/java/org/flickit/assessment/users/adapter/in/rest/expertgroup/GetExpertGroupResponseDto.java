@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.in.rest.expertgroup;
+package org.flickit.assessment.users.adapter.in.rest.expertgroup;
 
 public record GetExpertGroupResponseDto(long id,
                                         String title,

@@ -1,10 +1,10 @@
-package org.flickit.assessment.kit.application.service.expertgroup;
+package org.flickit.assessment.users.application.service.expertgroup;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
-import org.flickit.assessment.kit.application.port.in.expertgroup.GetExpertGroupUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.users.application.domain.ExpertGroup;
+import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupUseCase;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupPort;
+import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
