@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.config;
+package org.flickit.assessment.data.config;
 
 import io.minio.MinioClient;
 import lombok.SneakyThrows;
