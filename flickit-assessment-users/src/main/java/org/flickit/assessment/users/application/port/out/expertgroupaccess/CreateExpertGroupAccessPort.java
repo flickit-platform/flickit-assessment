@@ -1,6 +1,6 @@
-package org.flickit.assessment.kit.application.port.out.expertgroupaccess;
+package org.flickit.assessment.users.application.port.out.expertgroupaccess;
 
-import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessStatus;
+import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessStatus;
 
 import java.util.UUID;
 

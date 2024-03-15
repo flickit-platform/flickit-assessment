@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.out.expertgroup;
+package org.flickit.assessment.users.application.port.out.expertgroup;
 
 public interface CheckExpertGroupExistsPort {
     boolean existsById(long id);
