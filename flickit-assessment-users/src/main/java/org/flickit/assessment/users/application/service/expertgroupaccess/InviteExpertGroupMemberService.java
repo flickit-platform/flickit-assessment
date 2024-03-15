@@ -1,25 +1,25 @@
-package org.flickit.assessment.kit.application.service.expertgroupaccess;
+package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.data.jpa.kit.expertgroupaccess.ExpertGroupAccessStatus;
-import org.flickit.assessment.kit.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
-import org.flickit.assessment.kit.application.port.out.mail.SendExpertGroupInvitationMailPort;
-import org.flickit.assessment.kit.application.port.out.user.LoadUserEmailByUserIdPort;
+import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessStatus;
+import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteTokenCheckPort;
+import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInvitationMailPort;
+import org.flickit.assessment.users.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteTokenCheckPort;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_OWNER_ID_ACCESS_DENIED;
+import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_OWNER_ID_ACCESS_DENIED;
 
 @Service
 @Transactional
