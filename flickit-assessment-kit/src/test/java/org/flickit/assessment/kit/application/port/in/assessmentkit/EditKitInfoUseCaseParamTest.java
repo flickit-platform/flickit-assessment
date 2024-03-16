@@ -15,7 +15,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class EditKitInfoUseCaseParamTest {
+class EditKitInfoUseCaseParamTest {
 
     private static final Long KIT_ID = 1L;
     private static final String TITLE = "title";
