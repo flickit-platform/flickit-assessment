@@ -12,7 +12,7 @@
 
     <changeSet id="0.16-02" author="Maziyar Gerami">
         <addColumn tableName="baseinfo_expertgroupaccess">
-            <column name="status" type="varchar(20)" defaultValue="ACTIVE">
+            <column name="status" type="tinyint" defaultValue="1">
                 <constraints nullable="false"/>
             </column>
         </addColumn>

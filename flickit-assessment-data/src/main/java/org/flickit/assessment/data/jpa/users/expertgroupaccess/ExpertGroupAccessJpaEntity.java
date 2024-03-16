@@ -37,7 +37,6 @@ public class ExpertGroupAccessJpaEntity {
     @Column(name = "invite_token")
     private UUID inviteToken;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private int status;
 }
