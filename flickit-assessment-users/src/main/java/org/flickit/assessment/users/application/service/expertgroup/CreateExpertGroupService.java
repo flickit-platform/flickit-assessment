@@ -4,7 +4,7 @@ import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpert
 import org.flickit.assessment.users.application.port.out.expertgroup.CreateExpertGroupPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
-import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessStatus;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
