@@ -39,5 +39,5 @@ public class ExpertGroupAccessJpaEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private ExpertGroupAccessStatus status;
+    private int status;
 }
