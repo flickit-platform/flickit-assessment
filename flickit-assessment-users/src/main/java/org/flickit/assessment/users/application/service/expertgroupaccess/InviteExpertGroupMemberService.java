@@ -48,9 +48,9 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         if (!isOwner)
             throw new AccessDeniedException(INVITE_EXPERT_GROUP_MEMBER_OWNER_ID_ACCESS_DENIED);
 
-        boolean isInserted = inviteExpertGroupMemberPort.persist(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
+        var result = inviteExpertGroupMemberPort.persist(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
 
-        if (isInserted)
+        if (result != null)
             new Thread(() ->
                 sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken)).start();
     }
