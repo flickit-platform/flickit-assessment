@@ -15,9 +15,7 @@ public class AssessmentKitDataConstraintErrorMapper implements DataConstraintErr
         entry("uq_fak_assessmentkit_code", CREATE_KIT_BY_DSL_KIT_TITLE_DUPLICATE),
         entry("fk_fak_kit_user_access_account_user", GRANT_USER_ACCESS_TO_KIT_USER_ID_NOT_FOUND),
         entry("fk_fak_kit_user_access_assessmentkit", GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND),
-        entry("fak_kit_user_access_pkey", GRANT_USER_ACCESS_TO_KIT_USER_ID_DUPLICATE),
-        entry("baseinfo_expertgroup_name_key", CREATE_EXPERT_GROUP_TITLE_DUPLICATE),
-        entry("uq_baseinfo_expertgroupaccess_expertgroupid_userid", INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_UNIQUE));
+        entry("fak_kit_user_access_pkey", GRANT_USER_ACCESS_TO_KIT_USER_ID_DUPLICATE));
 
     @Override
     public boolean contains(String constraintName) {
