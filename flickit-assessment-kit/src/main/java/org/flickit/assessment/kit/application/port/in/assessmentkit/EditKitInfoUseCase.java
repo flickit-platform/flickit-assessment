@@ -25,8 +25,8 @@ public interface EditKitInfoUseCase {
         Long assessmentKitId;
 
         @NotBlank(message = EDIT_KIT_INFO_TITLE_NOT_BLANK)
-        @Size(min = 50, message = EDIT_KIT_INFO_TITLE_SIZE_MIN)
-        @Size(max = 100, message = EDIT_KIT_INFO_TITLE_SIZE_MAX)
+        @Size(min = 3, message = EDIT_KIT_INFO_TITLE_SIZE_MIN)
+        @Size(max = 50, message = EDIT_KIT_INFO_TITLE_SIZE_MAX)
         String title;
 
         @NotBlank(message = EDIT_KIT_INFO_SUMMARY_NOT_BLANK)
@@ -64,6 +64,7 @@ public interface EditKitInfoUseCase {
             this.price = price;
             this.about = about;
             this.tags = tags;
+            this.validateSelf();
         }
     }
 
