@@ -1,12 +1,13 @@
-package org.flickit.assessment.kit.application.service.expertgroupaccess;
+package org.flickit.assessment.users.application.service.expertgroupaccess;
 
-import org.flickit.assessment.common.exception.*;
-import org.flickit.assessment.kit.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.InviteTokenCheckPort;
-import org.flickit.assessment.kit.application.port.out.user.LoadUserEmailByUserIdPort;
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.users.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
+import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteTokenCheckPort;
+import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

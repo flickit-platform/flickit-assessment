@@ -21,7 +21,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GRO
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToDomainModel;
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
 
-@Component("usersExpertGroupPersistenceJpaAdapter")
+@Component
 @RequiredArgsConstructor
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupListPort,
