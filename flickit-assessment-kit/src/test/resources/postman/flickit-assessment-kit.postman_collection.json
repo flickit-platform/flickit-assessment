@@ -401,7 +401,42 @@
 				}
 			},
 			"response": []
-		}
+		},
+        {
+            "name": "Edit Kit Info",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "{{authorization_header}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"data\": {\n        \"title\": \"New title\"\n    }\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/{{api_path}}/assessment-kits/update/386",
+                "host": [
+                  "{{base_url}}"
+                ],
+                "path": [
+                  "{{api_path}}",
+                  "assessment-kits",
+                  "update",
+                  "386"
+                ]
+              }
+            },
+            "response": []
+        }
 	],
 	"event": [
 		{
