@@ -12,8 +12,7 @@ import java.util.UUID;
 public class ExpertGroupAccessPersistenceJpaAdapter implements
     CreateExpertGroupAccessPort,
     CheckExpertGroupAccessPort,
-    InviteExpertGroupMemberPort,
-    InviteTokenCheckPort{
+    InviteExpertGroupMemberPort{
 
     private final ExpertGroupAccessJpaRepository repository;
 
@@ -30,13 +29,9 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public void persist(InviteExpertGroupMemberPort.Param param) {
+    public boolean persist(InviteExpertGroupMemberPort.Param param) {
         ExpertGroupAccessJpaEntity unsavedEntity = (ExpertGroupAccessMapper.mapInviteParamToJpaEntity(param));
         repository.save(unsavedEntity);
-    }
-
-    @Override
-    public boolean checkInviteToken(UUID inviteToke) {
-        return repository.existsByInviteToken(inviteToke);
+        return true;
     }
 }

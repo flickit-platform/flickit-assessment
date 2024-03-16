@@ -7,7 +7,6 @@ import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
-import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteTokenCheckPort;
 import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInvitationMailPort;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,6 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
 
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     private final CheckExpertGroupExistsPort checkExpertGroupExistsPort;
-    private final InviteTokenCheckPort inviteTokenCheckPort;
     private final CheckExpertGroupOwnerPort checkExpertGroupOwnerPort;
     private final InviteExpertGroupMemberPort inviteExpertGroupMemberPort;
     private final SendExpertGroupInvitationMailPort sendExpertGroupInvitationMailPort;
@@ -45,13 +43,13 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         if (!expertGroupExists)
             throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
 
-        boolean isOwner = checkExpertGroupOwnerPort.checkIsOwner(param.getExpertGroupId(), param.getUserId());
+        boolean isOwner = checkExpertGroupOwnerPort.checkIsOwner(param.getExpertGroupId(), param.getCurrentUserId());
+
         if (!isOwner)
             throw new AccessDeniedException(INVITE_EXPERT_GROUP_MEMBER_OWNER_ID_ACCESS_DENIED);
 
-        inviteExpertGroupMemberPort.persist(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
+        boolean isInserted = inviteExpertGroupMemberPort.persist(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
 
-        boolean isInserted = inviteTokenCheckPort.checkInviteToken(inviteToken);
         if (isInserted)
             new Thread(() ->
                 sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken)).start();
