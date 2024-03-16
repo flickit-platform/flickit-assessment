@@ -15,30 +15,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToDomainModel;
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
 
-@Component("kitExpertGroupPersistenceJpaAdapter")
+@Component("usersExpertGroupPersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class ExpertGroupPersistenceJpaAdapter implements
-    LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
-    LoadExpertGroupMemberIdsPort,
     CreateExpertGroupPort,
     LoadExpertGroupPort,
     CheckExpertGroupExistsPort,
     CheckExpertGroupOwnerPort {
 
     private final ExpertGroupJpaRepository repository;
-
-    @Override
-    public Optional<UUID> loadOwnerId(Long expertGroupId) {
-        return Optional.of(repository.loadOwnerIdById(expertGroupId));
-    }
 
     @Override
     public Long persist(CreateExpertGroupPort.Param param) {
@@ -74,14 +66,6 @@ public class ExpertGroupPersistenceJpaAdapter implements
             .map(GetExpertGroupListUseCase.Member::new)
             .toList();
         return mapToPortResult(item, members);
-    }
-
-    @Override
-    public List<LoadExpertGroupMemberIdsPort.Result> loadMemberIds(long expertGroupId) {
-        List<UUID> memberIds = repository.findMemberIdsByExpertGroupId(expertGroupId);
-        return memberIds.stream()
-            .map(LoadExpertGroupMemberIdsPort.Result::new)
-            .toList();
     }
 
     @Override
