@@ -1,26 +1,18 @@
 package org.flickit.assessment.kit.adapter.out.persistence.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.expertgroupaccess.*;
+import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.*;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Component
+@Component("kitExpertGroupAccessPersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class ExpertGroupAccessPersistenceJpaAdapter implements
-    CreateExpertGroupAccessPort,
     CheckExpertGroupAccessPort {
 
     private final ExpertGroupAccessJpaRepository repository;
-
-    @Override
-    public Long persist(Param param) {
-        ExpertGroupAccessJpaEntity unsavedEntity = ExpertGroupAccessMapper.mapCreateParamToJpaEntity(param);
-        ExpertGroupAccessJpaEntity savedEntity = repository.save(unsavedEntity);
-        return savedEntity.getId();
-    }
 
     @Override
     public boolean checkIsMember(long expertGroupId, UUID userId) {
