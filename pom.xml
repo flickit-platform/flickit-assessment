@@ -23,6 +23,7 @@
 		<module>flickit-assessment-server</module>
 		<module>flickit-assessment-common</module>
         <module>flickit-advice-engine</module>
+        <module>flickit-assessment-users</module>
     </modules>
 
 	<properties>
@@ -74,6 +75,11 @@
             <dependency>
                 <groupId>org.flickit</groupId>
                 <artifactId>flickit-advice-engine</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flickit</groupId>
+                <artifactId>flickit-assessment-users</artifactId>
                 <version>${revision}</version>
             </dependency>
 		</dependencies>
