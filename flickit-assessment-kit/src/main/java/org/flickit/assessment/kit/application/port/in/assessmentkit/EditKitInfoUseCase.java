@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
@@ -24,31 +23,24 @@ public interface EditKitInfoUseCase {
         @NotNull(message = EDIT_KIT_INFO_KIT_ID_NOT_NULL)
         Long assessmentKitId;
 
-        @NotBlank(message = EDIT_KIT_INFO_TITLE_NOT_BLANK)
         @Size(min = 3, message = EDIT_KIT_INFO_TITLE_SIZE_MIN)
         @Size(max = 50, message = EDIT_KIT_INFO_TITLE_SIZE_MAX)
         String title;
 
-        @NotBlank(message = EDIT_KIT_INFO_SUMMARY_NOT_BLANK)
         @Size(min = 3, message = EDIT_KIT_INFO_SUMMARY_SIZE_MIN)
         @Size(max = 200, message = EDIT_KIT_INFO_SUMMARY_SIZE_MAX)
         String summary;
 
-        @NotNull(message = EDIT_KIT_INFO_IS_ACTIVE_NOT_NULL)
         Boolean isActive;
 
-        @NotNull(message = EDIT_KIT_INFO_IS_PRIVATE_NOT_NULL)
         Boolean isPrivate;
 
-        @NotNull(message = EDIT_KIT_INFO_PRICE_NOT_NULL)
         Double price;
 
-        @NotBlank(message = EDIT_KIT_INFO_ABOUT_NOT_BLANK)
         @Size(min = 3, message = EDIT_KIT_INFO_ABOUT_SIZE_MIN)
         @Size(max = 1000, message = EDIT_KIT_INFO_ABOUT_SIZE_MAX)
         String about;
 
-        @NotNull(message = EDIT_KIT_INFO_TAGS_NOT_NULL)
         List<Long> tags;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

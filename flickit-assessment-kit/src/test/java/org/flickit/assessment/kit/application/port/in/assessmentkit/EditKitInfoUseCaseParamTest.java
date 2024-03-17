@@ -41,13 +41,6 @@ class EditKitInfoUseCaseParamTest {
     }
 
     @Test
-    void testEditKitInfo_TitleIsBlank_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, null, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
-        assertThat(throwable).hasMessage("title: " + EDIT_KIT_INFO_TITLE_NOT_BLANK);
-    }
-
-    @Test
     void testEditKitInfo_TitleIsLessThanLimit_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new EditKitInfoUseCase.Param(KIT_ID, MIN_TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
@@ -59,13 +52,6 @@ class EditKitInfoUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new EditKitInfoUseCase.Param(KIT_ID, MAX_TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("title: " + EDIT_KIT_INFO_TITLE_SIZE_MAX);
-    }
-
-    @Test
-    void testEditKitInfo_SummaryIsBlank_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, null, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
-        assertThat(throwable).hasMessage("summary: " + EDIT_KIT_INFO_SUMMARY_NOT_BLANK);
     }
 
     @Test
@@ -83,34 +69,6 @@ class EditKitInfoUseCaseParamTest {
     }
 
     @Test
-    void testEditKitInfo_isActiveIsNull_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, null, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
-        assertThat(throwable).hasMessage("isActive: " + EDIT_KIT_INFO_IS_ACTIVE_NOT_NULL);
-    }
-
-    @Test
-    void testEditKitInfo_isPrivateIsNull_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, null, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
-        assertThat(throwable).hasMessage("isPrivate: " + EDIT_KIT_INFO_IS_PRIVATE_NOT_NULL);
-    }
-
-    @Test
-    void testEditKitInfo_PriceIsNull_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, null, ABOUT, TAGS, CURRENT_USER_ID));
-        assertThat(throwable).hasMessage("price: " + EDIT_KIT_INFO_PRICE_NOT_NULL);
-    }
-
-    @Test
-    void testEditKitInfo_AboutIsBlank_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-        () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, null, TAGS, CURRENT_USER_ID));
-        assertThat(throwable).hasMessage("about: " + EDIT_KIT_INFO_ABOUT_NOT_BLANK);
-    }
-
-    @Test
     void testEditKitInfo_AboutIsLessThanLimit_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, MIN_ABOUT, TAGS, CURRENT_USER_ID));
@@ -122,13 +80,6 @@ class EditKitInfoUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, MAX_ABOUT, TAGS, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("about: " + EDIT_KIT_INFO_ABOUT_SIZE_MAX);
-    }
-
-    @Test
-    void testEditKitInfo_TagsIsNull_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, null, CURRENT_USER_ID));
-        assertThat(throwable).hasMessage("tags: " + EDIT_KIT_INFO_TAGS_NOT_NULL);
     }
 
     @Test

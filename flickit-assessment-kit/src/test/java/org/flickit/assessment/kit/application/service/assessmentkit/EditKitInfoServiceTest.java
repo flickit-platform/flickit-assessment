@@ -52,7 +52,7 @@ class EditKitInfoServiceTest {
 
     @Test
     void testEditKitInfo_KitNotFound_ErrorMessage() {
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID);
+        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
@@ -63,7 +63,7 @@ class EditKitInfoServiceTest {
 
     @Test
     void testEditKitInfo_ExpertGroupNotFound_ErrorMessage() {
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID);
+        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
         when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
@@ -75,7 +75,7 @@ class EditKitInfoServiceTest {
 
     @Test
     void testEditKitInfo_CurrentUserNotAllowed_ErrorMessage() {
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID);
+        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
         when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(UUID.randomUUID()));
@@ -88,7 +88,7 @@ class EditKitInfoServiceTest {
     @Test
     void testEditKitInfo_EditTitle_ValidResults() {
         String newTitle = "new title";
-        var param = new EditKitInfoUseCase.Param(KIT_ID, newTitle, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID);
+        var param = new EditKitInfoUseCase.Param(KIT_ID, newTitle, null, null, null, null, null, null, CURRENT_USER_ID);
         var result = new EditKitInfoUseCase.Result(newTitle, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
@@ -98,19 +98,12 @@ class EditKitInfoServiceTest {
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
 
         assertEquals(newTitle, serviceResult.title());
-
-        assertEquals(SUMMARY, serviceResult.summary());
-        assertEquals(IS_ACTIVE, serviceResult.isActive());
-        assertEquals(IS_PRIVATE, serviceResult.isPrivate());
-        assertEquals(PRICE, serviceResult.price());
-        assertEquals(ABOUT, serviceResult.about());
-        assertEquals(TAGS.size(), serviceResult.tags().size());
     }
 
     @Test
     void testEditKitInfo_EditSummary_ValidResults() {
         String newSummary = "new summary";
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, newSummary, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID);
+        var param = new EditKitInfoUseCase.Param(KIT_ID, null, newSummary, null, null, null, null, null, CURRENT_USER_ID);
         var result = new EditKitInfoUseCase.Result(TITLE, newSummary, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
@@ -120,19 +113,12 @@ class EditKitInfoServiceTest {
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
 
         assertEquals(newSummary, serviceResult.summary());
-
-        assertEquals(TITLE, serviceResult.title());
-        assertEquals(IS_ACTIVE, serviceResult.isActive());
-        assertEquals(IS_PRIVATE, serviceResult.isPrivate());
-        assertEquals(PRICE, serviceResult.price());
-        assertEquals(ABOUT, serviceResult.about());
-        assertEquals(TAGS.size(), serviceResult.tags().size());
     }
 
     @Test
     void testEditKitInfo_EditIsActive_ValidResults() {
         Boolean newIsActive = !IS_ACTIVE;
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, newIsActive, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID);
+        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, newIsActive, null, null, null, null, CURRENT_USER_ID);
         var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, newIsActive, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
@@ -142,19 +128,12 @@ class EditKitInfoServiceTest {
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
 
         assertEquals(newIsActive, serviceResult.isActive());
-
-        assertEquals(TITLE, serviceResult.title());
-        assertEquals(SUMMARY, serviceResult.summary());
-        assertEquals(IS_PRIVATE, serviceResult.isPrivate());
-        assertEquals(PRICE, serviceResult.price());
-        assertEquals(ABOUT, serviceResult.about());
-        assertEquals(TAGS.size(), serviceResult.tags().size());
     }
 
     @Test
     void testEditKitInfo_EditIsPrivate_ValidResults() {
         Boolean newIsPrivate = !IS_ACTIVE;
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, newIsPrivate, PRICE, ABOUT, TAGS, CURRENT_USER_ID);
+        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, newIsPrivate, null, null, null, CURRENT_USER_ID);
         var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, newIsPrivate, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
@@ -164,19 +143,12 @@ class EditKitInfoServiceTest {
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
 
         assertEquals(newIsPrivate, serviceResult.isPrivate());
-
-        assertEquals(TITLE, serviceResult.title());
-        assertEquals(SUMMARY, serviceResult.summary());
-        assertEquals(IS_ACTIVE, serviceResult.isActive());
-        assertEquals(PRICE, serviceResult.price());
-        assertEquals(ABOUT, serviceResult.about());
-        assertEquals(TAGS.size(), serviceResult.tags().size());
     }
 
     @Test
     void testEditKitInfo_EditPrice_ValidResults() {
         Double newPrice = 2D;
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, newPrice, ABOUT, TAGS, CURRENT_USER_ID);
+        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, null, newPrice, null, null, CURRENT_USER_ID);
         var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
@@ -186,19 +158,12 @@ class EditKitInfoServiceTest {
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
 
         assertEquals(PRICE, serviceResult.price());
-
-        assertEquals(TITLE, serviceResult.title());
-        assertEquals(SUMMARY, serviceResult.summary());
-        assertEquals(IS_ACTIVE, serviceResult.isActive());
-        assertEquals(IS_PRIVATE, serviceResult.isPrivate());
-        assertEquals(ABOUT, serviceResult.about());
-        assertEquals(TAGS.size(), serviceResult.tags().size());
     }
 
     @Test
     void testEditKitInfo_EditAbout_ValidResults() {
         String newAbout = "new about";
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, newAbout, TAGS, CURRENT_USER_ID);
+        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, null, null, newAbout, null, CURRENT_USER_ID);
         var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, newAbout, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
@@ -208,20 +173,13 @@ class EditKitInfoServiceTest {
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
 
         assertEquals(newAbout, serviceResult.about());
-
-        assertEquals(TITLE, serviceResult.title());
-        assertEquals(SUMMARY, serviceResult.summary());
-        assertEquals(IS_ACTIVE, serviceResult.isActive());
-        assertEquals(IS_PRIVATE, serviceResult.isPrivate());
-        assertEquals(PRICE, serviceResult.price());
-        assertEquals(TAGS.size(), serviceResult.tags().size());
     }
 
     @Test
     void testEditKitInfo_EditTags_ValidResults() {
         var newEditKitInfoTag = new EditKitInfoUseCase.EditKitInfoTag(3L, "new tag title");
         List<Long> newTags = List.of(3L);
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, newTags, CURRENT_USER_ID);
+        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, null, null, null, newTags, CURRENT_USER_ID);
         var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(newEditKitInfoTag));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
@@ -232,13 +190,6 @@ class EditKitInfoServiceTest {
 
         assertEquals(newTags.size(), serviceResult.tags().size());
         assertEquals(newTags.get(0), serviceResult.tags().get(0).id());
-
-        assertEquals(TITLE, serviceResult.title());
-        assertEquals(SUMMARY, serviceResult.summary());
-        assertEquals(IS_ACTIVE, serviceResult.isActive());
-        assertEquals(IS_PRIVATE, serviceResult.isPrivate());
-        assertEquals(PRICE, serviceResult.price());
-        assertEquals(ABOUT, serviceResult.about());
     }
 
 }
