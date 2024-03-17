@@ -15,6 +15,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionM
 import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitStatsUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
@@ -36,7 +37,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     DeleteKitUserAccessPort,
     LoadKitMinimalInfoPort,
     CreateAssessmentKitPort,
-    UpdateKitLastMajorModificationTimePort {
+    UpdateKitLastMajorModificationTimePort,
+    LoadKitStatsPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -112,5 +114,34 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public void updateLastMajorModificationTime(Long kitId, LocalDateTime lastMajorModificationTime) {
         repository.updateLastMajorModificationTime(kitId, lastMajorModificationTime);
+    }
+
+    @Override
+    public GetKitStatsUseCase.Result loadKitStats(Long kitId) {
+        AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_STATS_KIT_ID_NOT_FOUND));
+        Long questionnaireCount = repository.getKitQuestionnaireCount(kitEntity.getKitVersionId());
+        Long attributeCount = repository.getKitAttributeCount(kitEntity.getKitVersionId());
+        Long questionCount = repository.getKitQuestionCount(kitEntity.getKitVersionId());
+        Long maturityLevelCount = repository.getKitMaturityLevelCount(kitEntity.getKitVersionId());
+        Long likeCount = repository.getKitLikeCount(kitId);
+        Long assessmentCount = repository.getKitAssessmentCount(kitId);
+        List<GetKitStatsUseCase.KitStatSubject> subjects = repository.getKitSubjects(kitEntity.getKitVersionId()).stream()
+            .map(s -> new GetKitStatsUseCase.KitStatSubject(s.getTitle()))
+            .toList();
+        ExpertGroupJpaEntity expertGroupEntity = expertGroupRepository.findById(kitEntity.getExpertGroupId())
+            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
+        return new GetKitStatsUseCase.Result(
+            kitEntity.getCreationTime(),
+            kitEntity.getLastModificationTime(),
+            questionnaireCount,
+            attributeCount,
+            questionCount,
+            maturityLevelCount,
+            likeCount,
+            assessmentCount,
+            subjects,
+            new GetKitStatsUseCase.KitStatExpertGroup(expertGroupEntity.getId(), expertGroupEntity.getTitle())
+        );
     }
 }
