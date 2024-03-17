@@ -19,10 +19,6 @@
     </changeSet>
 
     <changeSet id="0.16-03" author="Maziyar Gerami">
-        <dropNotNullConstraint tableName="baseinfo_expertgroupaccess" columnName="user_id"/>
-    </changeSet>
-
-    <changeSet id="0.16-04" author="Maziyar Gerami">
         <addColumn tableName="baseinfo_expertgroupaccess">
             <column name="invite_token" type="uuid" defaultValue="null">
                 <constraints nullable="true"/>
@@ -30,12 +26,12 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.16-05" author="Maziyar Gerami">
+    <changeSet id="0.16-04" author="Maziyar Gerami">
         <addUniqueConstraint tableName="baseinfo_expertgroupaccess" columnNames="expert_group_id,user_id"
-                             constraintName="uq_baseinfo_expertgroupaccess_expertgroupid_userid"/>
+                             constraintName="uq_fau_expertgroupaccess_expertgroupid_userid"/>
     </changeSet>
 
-    <changeSet id="0.16-06" author="Mayizar Gerami">
+    <changeSet id="0.16-05" author="Mayizar Gerami">
         <addColumn tableName="baseinfo_expertgroupaccess">
             <column name="invite_date" type="${datetime_with_time_zone_type}" defaultValue="null">
                 <constraints nullable="true"/>
