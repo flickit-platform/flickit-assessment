@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+
+    <changeSet id="0.16-01" author="Maziyar Gerami">
+        <dropColumn tableName="baseinfo_expertgroupaccess" columnName="id"/>
+    </changeSet>
+
+    <changeSet id="0.16-02" author="Maziyar Gerami">
+        <renameTable oldTableName="baseinfo_expertgroupaccess" newTableName="fau_expert_group_user_access"/>
+    </changeSet>
+
+    <changeSet id="0.16-03" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="created_by_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-04" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_expert_group_user_access"
+                                 baseColumnNames="created_by_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_expert_group_user_access"/>
+    </changeSet>
+
+    <changeSet id="0.16-05" author="Maziyar Gerami">
+        <update tableName="fau_expert_group_user_access">
+            <column name="created_by_id" valueComputed="baseinfo_expertgroup.owner_id FROM baseinfo_expertgroup WHERE
+            baseinfo_expertgroup.id = expert_group_id"/>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>
