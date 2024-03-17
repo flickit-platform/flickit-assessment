@@ -46,7 +46,6 @@ class EditKitInfoServiceTest {
     private static final Boolean IS_PRIVATE = Boolean.FALSE;
     private static final Double PRICE = 0D;
     private static final String ABOUT = "about";
-    private static final List<Long> TAGS = List.of(2L);
     private static final EditKitInfoUseCase.EditKitInfoTag EDIT_KIT_INFO_TAG = new EditKitInfoUseCase.EditKitInfoTag(2L, "tag title");
     private static final UUID CURRENT_USER_ID = UUID.randomUUID();
 
