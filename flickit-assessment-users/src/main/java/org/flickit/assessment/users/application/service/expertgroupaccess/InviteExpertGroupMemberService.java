@@ -45,6 +45,8 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
 
         boolean isOwner = checkExpertGroupOwnerPort.checkIsOwner(param.getExpertGroupId(), param.getCurrentUserId());
 
+        //if (! (expertGroupExists && isOwner)) throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
+
         if (!isOwner)
             throw new AccessDeniedException(INVITE_EXPERT_GROUP_MEMBER_OWNER_ID_ACCESS_DENIED);
 
