@@ -67,4 +67,17 @@
                               tableName="fau_expert_group_user_access"/>
     </changeSet>
 
+    <changeSet id="0.16-11" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"
+                    defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
