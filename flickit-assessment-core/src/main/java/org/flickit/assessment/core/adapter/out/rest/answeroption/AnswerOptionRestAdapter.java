@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -36,7 +37,10 @@ public class AnswerOptionRestAdapter {
         int from = 0;
         while (from < count) {
             List<Long> limitedSubList = answerOptionIds.subList(from, Math.min(from + limit, count));
-            commaSeparatedIds = limitedSubList.stream().map(String::valueOf).collect(Collectors.joining(","));
+            commaSeparatedIds = limitedSubList.stream()
+                .filter(Objects::nonNull)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
             fetchedAnswerOptions.addAll(loadAnswerOptions(commaSeparatedIds));
             from += limit;
         }
@@ -64,5 +68,4 @@ public class AnswerOptionRestAdapter {
             responseEntity.getBody().items() :
             List.of();
     }
-
 }

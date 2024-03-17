@@ -18,7 +18,8 @@ public class QuestionDslModelMother {
         String questionnaireCode,
         List<QuestionImpactDslModel> questionImpacts,
         List<AnswerOptionDslModel> answerOptions,
-        boolean mayNotBeApplicable) {
+        boolean mayNotBeApplicable,
+        boolean advisable) {
 
         return QuestionDslModel.builder()
             .code(code)
@@ -29,6 +30,7 @@ public class QuestionDslModelMother {
             .questionImpacts(questionImpacts)
             .answerOptions(answerOptions)
             .mayNotBeApplicable(mayNotBeApplicable)
+            .advisable(advisable)
             .build();
     }
 

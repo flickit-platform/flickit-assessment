@@ -51,6 +51,8 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
         var topStrengths = topAttributeResolver.getTopStrengths();
         var topWeaknesses = topAttributeResolver.getTopWeaknesses();
 
+        log.debug("AssessmentReport returned for assessmentId=[{}].", param.getAssessmentId());
+
         return new AssessmentReport(
             assessmentReportItem,
             topStrengths,
