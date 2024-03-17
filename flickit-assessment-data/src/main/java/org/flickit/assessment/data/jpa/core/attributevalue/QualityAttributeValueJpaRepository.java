@@ -22,7 +22,7 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
     @Query("""
         SELECT av
         FROM QualityAttributeValueJpaEntity av
-        LEFT JOIN AttributeJpaEntity att ON av.attributeRefNum = att.refNum and av.kitVersionId = att.kitVersionId and av.assessmentResult.id = :resultId
+        LEFT JOIN AttributeJpaEntity att ON av.attributeRefNum = att.refNum and av.assessmentResult.kitVersionId = att.kitVersionId and av.assessmentResult.id = :resultId
         WHERE att.subject.id = :subjectId
         """)
     List<QualityAttributeValueJpaEntity> findByAssessmentResultIdAndSubjectId(UUID resultId, Long subjectId);
@@ -37,5 +37,5 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
     void updateConfidenceValueById(@Param(value = "id") UUID id,
                                    @Param(value = "confidenceValue") Double confidenceValue);
 
-    List<QualityAttributeValueJpaEntity> findByAssessmentResultIdAndKitVersionId(UUID assessmentResultId, Long kitVersionId);
+    List<QualityAttributeValueJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 }

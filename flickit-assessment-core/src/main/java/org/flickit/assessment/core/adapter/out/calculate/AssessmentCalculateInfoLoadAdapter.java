@@ -22,7 +22,6 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
@@ -70,7 +69,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
          that are already saved with this assessmentResult
          */
         var subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
-        var allAttributeValueEntities = qualityAttrValueRepo.findByAssessmentResultIdAndKitVersionId(assessmentResultId, kitVersionId);
+        var allAttributeValueEntities = qualityAttrValueRepo.findByAssessmentResultId(assessmentResultId);
 
         // load all subjects and their related attributes (by assessmentKit)
         Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByKitVersionIdWithAttributes(kitVersionId).stream()
@@ -138,14 +137,14 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .flatMap(x -> x.getAttributes().stream())
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
 
-        Map<UUID, Long> attributeIdToRefNoMap = context.subjectIdToEntity().values().stream()
+        Map<UUID, Long> attributeIdToRefNumMap = context.subjectIdToEntity().values().stream()
             .flatMap(x -> x.getAttributes().stream())
             .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
 
         Map<Long, QualityAttributeValue> attrIdToValue = new HashMap<>();
         for (QualityAttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
             UUID attributeRefNum = qavEntity.getAttributeRefNum();
-            Long attributeId = attributeIdToRefNoMap.get(attributeRefNum);
+            Long attributeId = attributeIdToRefNumMap.get(attributeRefNum);
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
             QualityAttribute attribute = new QualityAttribute(

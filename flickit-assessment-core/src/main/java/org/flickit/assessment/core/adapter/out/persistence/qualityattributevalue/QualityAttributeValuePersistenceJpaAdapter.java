@@ -48,7 +48,7 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
 
         List<QualityAttributeValueJpaEntity> entities = qualityAttributeIds.stream().map(qualityAttributeId -> {
             UUID attributeRefNum = attributeRepository.findRefNumById(qualityAttributeId);
-            QualityAttributeValueJpaEntity qualityAttributeValue = QualityAttributeValueMapper.mapToJpaEntity(assessmentResult.getKitVersionId(), attributeRefNum);
+            QualityAttributeValueJpaEntity qualityAttributeValue = QualityAttributeValueMapper.mapToJpaEntity(attributeRefNum);
             qualityAttributeValue.setAssessmentResult(assessmentResult);
             return qualityAttributeValue;
         }).toList();
@@ -62,8 +62,8 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<QualityAttributeValue> loadAll(UUID assessmentResultId, Long kitVersionId, Map<Long, MaturityLevel> maturityLevels) {
-        List<QualityAttributeValueJpaEntity> entities = repository.findByAssessmentResultIdAndKitVersionId(assessmentResultId, kitVersionId);
+    public List<QualityAttributeValue> loadAll(UUID assessmentResultId, Map<Long, MaturityLevel> maturityLevels) {
+        List<QualityAttributeValueJpaEntity> entities = repository.findByAssessmentResultId(assessmentResultId);
 
         return toAttributeValues(entities, maturityLevels);
     }
@@ -80,13 +80,14 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
                 .collect(groupingBy(AttributeMaturityScoreJpaEntity::getAttributeValueId));
 
         List<UUID> attributeRefNums = entities.stream().map(QualityAttributeValueJpaEntity::getAttributeRefNum).toList();
-        Long kitVersionId = entities.get(0).getKitVersionId();
+        Long kitVersionId = entities.get(0).getAssessmentResult().getKitVersionId();
         Map<UUID, Long> attributeIdsToRefNumMap = attributeRepository.findAllByKitVersionIdAndRefNumIn(kitVersionId, attributeRefNums).stream()
             .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
 
         return entities.stream()
             .map(x -> new QualityAttributeValue(
-                x.getId(), new QualityAttribute(attributeIdsToRefNumMap.get(x.getAttributeRefNum()), 1, null),
+                x.getId(),
+                new QualityAttribute(attributeIdsToRefNumMap.get(x.getAttributeRefNum()), 1, null),
                 null,
                 toMaturityScore(attributeIdToScores, x),
                 maturityLevels.get(x.getMaturityLevelId()),

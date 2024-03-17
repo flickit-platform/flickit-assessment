@@ -41,7 +41,7 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
         Map<Long, MaturityLevel> maturityLevelsMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
 
-        var attributeValues = loadAttributeValueListPort.loadAll(assessmentResult.getId(), kit.getKitVersion(), maturityLevelsMap);
+        var attributeValues = loadAttributeValueListPort.loadAll(assessmentResult.getId(), maturityLevelsMap);
 
         var assessmentReportItem = buildAssessment(assessmentResult);
         var subjectReportItems = buildSubjects(assessmentResult);

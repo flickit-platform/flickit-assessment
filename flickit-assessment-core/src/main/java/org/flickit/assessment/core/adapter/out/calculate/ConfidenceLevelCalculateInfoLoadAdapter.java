@@ -62,7 +62,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
          that are already saved with this assessmentResult
          */
         var subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
-        var allAttributeValueEntities = attributeValueRepo.findByAssessmentResultIdAndKitVersionId(assessmentResultId, kitVersionId);
+        var allAttributeValueEntities = attributeValueRepo.findByAssessmentResultId(assessmentResultId);
 
         // load all subjects and their related attributes (by assessmentKit)
         Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByKitVersionIdWithAttributes(kitVersionId).stream()
@@ -124,13 +124,13 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             .flatMap(x -> x.getAttributes().stream())
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
 
-        Map<UUID, Long> attributeIdToRefNoMap = context.subjectIdToEntity().values().stream()
+        Map<UUID, Long> attributeIdToRefNumMap = context.subjectIdToEntity().values().stream()
             .flatMap(x -> x.getAttributes().stream())
             .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
 
         Map<Long, QualityAttributeValue> attributeIdToValueMap = new HashMap<>();
         for (QualityAttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
-            long attributeId = attributeIdToRefNoMap.get(qavEntity.getAttributeRefNum());
+            long attributeId = attributeIdToRefNumMap.get(qavEntity.getAttributeRefNum());
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
             QualityAttribute attribute = new QualityAttribute(
