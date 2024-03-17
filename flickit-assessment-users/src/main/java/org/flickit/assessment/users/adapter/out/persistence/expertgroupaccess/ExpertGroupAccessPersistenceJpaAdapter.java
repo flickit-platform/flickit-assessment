@@ -5,13 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.*;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
 @RequiredArgsConstructor
 public class ExpertGroupAccessPersistenceJpaAdapter implements
     CreateExpertGroupAccessPort,
-    CheckExpertGroupAccessPort,
     InviteExpertGroupMemberPort{
 
     private final ExpertGroupAccessJpaRepository repository;
@@ -21,11 +18,6 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
         ExpertGroupAccessJpaEntity unsavedEntity = ExpertGroupAccessMapper.mapCreateParamToJpaEntity(param);
         ExpertGroupAccessJpaEntity savedEntity = repository.save(unsavedEntity);
         return savedEntity.getId();
-    }
-
-    @Override
-    public boolean checkIsMember(long expertGroupId, UUID userId) {
-        return repository.existsByExpertGroupIdAndUserId(expertGroupId, userId);
     }
 
     @Override
