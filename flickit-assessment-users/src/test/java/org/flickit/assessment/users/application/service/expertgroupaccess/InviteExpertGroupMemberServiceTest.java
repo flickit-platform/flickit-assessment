@@ -35,6 +35,11 @@ class InviteExpertGroupMemberServiceTest {
 
     @Test
     void inviteMember_validParameters_success() {
+        UUID userId = UUID.randomUUID();
+        long expertGroupId = 0L;
+        UUID currentUserId = UUID.randomUUID();
+        InviteExpertGroupMemberUseCase.Param param = new InviteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
+        String email = "test@example.com";
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
@@ -51,6 +56,12 @@ class InviteExpertGroupMemberServiceTest {
 
     @Test
     void inviteMember_expertGroupNotExist_fail() {
+        UUID userId = UUID.randomUUID();
+        long expertGroupId = 0L;
+        UUID currentUserId = UUID.randomUUID();
+        InviteExpertGroupMemberUseCase.Param param = new InviteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
+        String email = "test@example.com";
+
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(false);
 
@@ -59,17 +70,16 @@ class InviteExpertGroupMemberServiceTest {
 
     @Test
     void inviteMember_expertGroupInviterNotOwner_fail() {
+        UUID userId = UUID.randomUUID();
+        long expertGroupId = 0L;
+        UUID currentUserId = UUID.randomUUID();
+        InviteExpertGroupMemberUseCase.Param param = new InviteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
+        String email = "test@example.com";
+
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(false);
 
         Assertions.assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
     }
-
-    UUID userId = UUID.randomUUID();
-    long expertGroupId = 0L;
-    UUID currentUserId = UUID.randomUUID();
-    InviteExpertGroupMemberUseCase.Param param = new InviteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
-    String email = "test@example.com";
-
 }

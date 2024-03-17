@@ -27,6 +27,14 @@ class CreateExpertGroupServiceTest {
 
     @Test
     void testCreateExpertGroup_validParams_persistResult() {
+        UUID currentUserId = UUID.randomUUID();
+        Param param = new Param("Expert Group Name",
+            "Expert Group Bio",
+            "Expert Group About",
+            null,
+            "http://www.example.com",
+            currentUserId);
+
         long expectedId = new  Random().nextLong();
         when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(expectedId);
         when(createExpertGroupAccessPort.persist(any(CreateExpertGroupAccessPort.Param.class))).thenReturn(new Random().nextLong());
@@ -39,6 +47,14 @@ class CreateExpertGroupServiceTest {
 
     @Test
     void testCreateExpertGroup_expertGroupPersistProblem_transactionRollback() {
+        UUID currentUserId = UUID.randomUUID();
+        Param param = new Param("Expert Group Name",
+            "Expert Group Bio",
+            "Expert Group About",
+            null,
+            "http://www.example.com",
+            currentUserId);
+
         when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(new Random().nextLong());
         when(createExpertGroupAccessPort.persist(any(CreateExpertGroupAccessPort.Param.class)))
             .thenThrow(new RuntimeException("Simulated exception"));
@@ -48,12 +64,4 @@ class CreateExpertGroupServiceTest {
 
         verify(createExpertGroupPort, times(1)).persist(any(CreateExpertGroupPort.Param.class));
     }
-
-    private final UUID currentUserId = UUID.randomUUID();
-    private final Param param = new Param("Expert Group Name",
-        "Expert Group Bio",
-        "Expert Group About",
-        null,
-        "http://www.example.com",
-        currentUserId);
 }
