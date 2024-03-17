@@ -1,7 +1,7 @@
 package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
 import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaEntity;
-import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
+import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
