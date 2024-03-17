@@ -34,7 +34,7 @@ public class SubjectValuePersistenceJpaAdapter implements
 
         List<SubjectValueJpaEntity> entities = subjectIds.stream().map(subjectId -> {
             UUID subjectRefNum = subjectRepository.findRefNumById(subjectId);
-            SubjectValueJpaEntity subjectValue = SubjectValueMapper.mapToJpaEntity(subjectId, subjectRefNum);
+            SubjectValueJpaEntity subjectValue = SubjectValueMapper.mapToJpaEntity(subjectRefNum);
             subjectValue.setAssessmentResult(assessmentResult);
             return subjectValue;
         }).toList();

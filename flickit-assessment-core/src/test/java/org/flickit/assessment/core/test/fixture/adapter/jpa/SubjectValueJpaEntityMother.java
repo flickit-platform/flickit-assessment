@@ -11,7 +11,6 @@ public class SubjectValueJpaEntityMother {
         return new SubjectValueJpaEntity(
             UUID.randomUUID(),
             assessmentResultJpaEntity,
-            assessmentResultJpaEntity.getKitVersionId(),
             UUID.randomUUID(),
             null,
             null

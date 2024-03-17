@@ -13,11 +13,10 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SubjectValueMapper {
 
-    public static SubjectValueJpaEntity mapToJpaEntity(Long subjectId, UUID subjectRefNum){
+    public static SubjectValueJpaEntity mapToJpaEntity(UUID subjectRefNum){
         return new SubjectValueJpaEntity(
             null,
             null,
-            subjectId,
             subjectRefNum,
             null,
             null

@@ -28,9 +28,6 @@ public class SubjectValueJpaEntity {
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 
-    @Column(name = "kit_version_id", nullable = false)
-    private Long kitVersionId;
-
     @Column(name = "subject_ref_num", nullable = false)
     private UUID subjectRefNum;
 

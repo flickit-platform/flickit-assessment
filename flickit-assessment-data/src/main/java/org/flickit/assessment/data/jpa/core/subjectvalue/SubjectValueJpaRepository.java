@@ -22,7 +22,7 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
 
     @Modifying
     @Query("update SubjectValueJpaEntity a set a.confidenceValue = :confidenceValue where a.id = :id")
-    void updateConfidenceValuelById(@Param(value = "id") UUID id,
-                                    @Param(value = "confidenceValue") Double confidenceValue);
+    void updateConfidenceValueById(@Param(value = "id") UUID id,
+                                   @Param(value = "confidenceValue") Double confidenceValue);
 
 }
