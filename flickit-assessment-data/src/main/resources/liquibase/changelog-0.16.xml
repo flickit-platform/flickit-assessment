@@ -80,4 +80,8 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.16-12" author="Maziyar Gerami">
+        <sql>alter table fau_expert_group_user_access rename constraint fau_expert_group_user_access_pkey to pk_fau_expert_group_user_access;</sql>
+    </changeSet>
+
 </databaseChangeLog>
