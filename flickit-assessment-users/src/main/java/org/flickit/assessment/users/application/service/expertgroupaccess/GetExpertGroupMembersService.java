@@ -15,7 +15,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
