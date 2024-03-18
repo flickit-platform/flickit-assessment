@@ -2,7 +2,6 @@ package org.flickit.assessment.users.adapter.in.rest.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.users.adapter.in.rest.expertgroup.CreateExpertGroupResponseDto;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,7 @@ public class InviteExpertGroupMemberRestController {
     private final UserContext userContext;
 
     @PostMapping("/expert-groups/{id}/invite")
-    public ResponseEntity<CreateExpertGroupResponseDto> inviteExpertGroupMember(
+    public ResponseEntity<Void> inviteExpertGroupMember(
         @PathVariable("id") Long expertGroupId,
         @RequestBody InviteExpertGroupMemberRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
