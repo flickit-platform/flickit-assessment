@@ -126,9 +126,9 @@ class CreateAssessmentServiceTest {
         QualityAttribute qa5 = QualityAttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
-            new Subject(2L, "subject2", List.of(qa3, qa4)),
-            new Subject(1L, "subject1", List.of(qa1, qa2)),
-            new Subject(3L, "subject3", List.of(qa5))
+            new Subject(2L, UUID.randomUUID(), "subject2", List.of(qa3, qa4)),
+            new Subject(1L, UUID.randomUUID(), "subject1", List.of(qa1, qa2)),
+            new Subject(3L, UUID.randomUUID(), "subject3", List.of(qa5))
         );
         when(loadAssessmentKitVersionIdPort.loadVersionId(assessmentKitId)).thenReturn(kitVersionId);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId)).thenReturn(expectedSubjects);
@@ -157,9 +157,9 @@ class CreateAssessmentServiceTest {
         QualityAttribute qa5 = QualityAttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
-            new Subject(1L, "subject2", List.of(qa1, qa2)),
-            new Subject(2L, "subject1", List.of(qa3, qa4)),
-            new Subject(3L, "subject3", List.of(qa5))
+            new Subject(1L, UUID.randomUUID(), "subject2", List.of(qa1, qa2)),
+            new Subject(2L, UUID.randomUUID(), "subject1", List.of(qa3, qa4)),
+            new Subject(3L, UUID.randomUUID(), "subject3", List.of(qa5))
         );
         when(loadAssessmentKitVersionIdPort.loadVersionId(assessmentKitId)).thenReturn(kitVersionId);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId)).thenReturn(expectedSubjects);

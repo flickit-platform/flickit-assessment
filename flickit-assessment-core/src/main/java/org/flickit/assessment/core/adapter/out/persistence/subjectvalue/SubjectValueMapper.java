@@ -13,11 +13,10 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SubjectValueMapper {
 
-    public static SubjectValueJpaEntity mapToJpaEntity(Long subjectId, UUID subjectRefNum){
+    public static SubjectValueJpaEntity mapToJpaEntity(UUID subjectRefNum){
         return new SubjectValueJpaEntity(
             null,
             null,
-            subjectId,
             subjectRefNum,
             null,
             null
@@ -25,7 +24,7 @@ public class SubjectValueMapper {
     }
 
     public static SubjectValue mapToDomainModel(SubjectValueJpaEntity entity, SubjectJpaEntity subjectEntity) {
-        var subject = new Subject(subjectEntity.getId(), null);
+        var subject = new Subject(subjectEntity.getId(), subjectEntity.getRefNum(), null);
         return new SubjectValue(
             entity.getId(),
             subject,

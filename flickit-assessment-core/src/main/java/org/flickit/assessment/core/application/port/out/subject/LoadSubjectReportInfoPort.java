@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface LoadSubjectReportInfoPort {
 
-    AssessmentResult load(UUID assessmentId, Long subjectId);
+    AssessmentResult load(UUID assessmentId, UUID subjectRefNum);
 }

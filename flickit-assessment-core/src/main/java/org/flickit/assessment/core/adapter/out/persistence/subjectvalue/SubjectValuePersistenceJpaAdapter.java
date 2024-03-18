@@ -8,12 +8,14 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
 @Component
@@ -32,17 +34,22 @@ public class SubjectValuePersistenceJpaAdapter implements
 
         List<SubjectValueJpaEntity> entities = subjectIds.stream().map(subjectId -> {
             UUID subjectRefNum = subjectRepository.findRefNumById(subjectId);
-            SubjectValueJpaEntity subjectValue = SubjectValueMapper.mapToJpaEntity(subjectId, subjectRefNum);
+            SubjectValueJpaEntity subjectValue = SubjectValueMapper.mapToJpaEntity(subjectRefNum);
             subjectValue.setAssessmentResult(assessmentResult);
             return subjectValue;
         }).toList();
 
         var persistedEntities = repository.saveAll(entities);
 
-        return persistedEntities.stream().map(s -> {
-            var subjectEntity = subjectRepository.getReferenceById(s.getSubjectId());
-            return SubjectValueMapper.mapToDomainModel(s, subjectEntity);
-        }).toList();
+        var subjectRefNums = persistedEntities.stream()
+            .map(SubjectValueJpaEntity::getSubjectRefNum)
+            .toList();
+        var subjectEntities = subjectRepository.findAllByRefNumIn(subjectRefNums);
+        var subjectRefNumToEntityMap = subjectEntities.stream()
+            .collect(toMap(SubjectJpaEntity::getRefNum, s -> s));
+        return persistedEntities.stream()
+            .map(s -> SubjectValueMapper.mapToDomainModel(s, subjectRefNumToEntityMap.get(s.getSubjectRefNum())))
+            .toList();
     }
 
 }
