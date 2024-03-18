@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.users.common.ErrorMessageKey;
 
 import java.util.UUID;
 
@@ -32,7 +31,7 @@ public interface GetExpertGroupMembersUseCase {
         @Max(value = 100, message = GET_EXPERT_GROUP_MEMBERS_SIZE_MAX)
         int size;
 
-        @Min(value = 0, message = ErrorMessageKey.GET_EXPERT_GROUP_MEMBERS_PAGE_MIN)
+        @Min(value = 0, message = GET_EXPERT_GROUP_MEMBERS_PAGE_MIN)
         int page;
 
         public Param(long expertGroupId, UUID currentUserId, int size, int page) {
