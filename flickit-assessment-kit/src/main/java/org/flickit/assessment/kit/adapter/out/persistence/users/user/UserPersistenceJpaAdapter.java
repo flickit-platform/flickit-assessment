@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.persistence.user;
+package org.flickit.assessment.kit.adapter.out.persistence.users.user;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
