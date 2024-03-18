@@ -16,6 +16,6 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     public Long persist(Param param) {
         ExpertGroupAccessJpaEntity unsavedEntity = ExpertGroupAccessMapper.mapCreateParamToJpaEntity(param);
         ExpertGroupAccessJpaEntity savedEntity = repository.save(unsavedEntity);
-        return savedEntity.getId();
+        return savedEntity.getExpertGroupId();
     }
 }

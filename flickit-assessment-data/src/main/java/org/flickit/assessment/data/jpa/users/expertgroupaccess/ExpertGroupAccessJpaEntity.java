@@ -3,11 +3,12 @@ package org.flickit.assessment.data.jpa.users.expertgroupaccess;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "baseinfo_expertgroupaccess")
+@Table(name = "fau_expert_group_user_access")
+@IdClass(ExpertGroupAccessId.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,21 +17,28 @@ import java.util.UUID;
 public class ExpertGroupAccessJpaEntity {
 
     @Id
-    @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_expertgroupaccess_id_seq")
-    @SequenceGenerator(name = "baseinfo_expertgroupaccess_id_seq", sequenceName = "baseinfo_expertgroupaccess_id_seq", allocationSize = 1)
-    @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
-
-    @Column(name = "expert_group_id", nullable = false)
+    @Column(name = "expert_group_id")
     private Long expertGroupId;
+
+    @Id
+    @Column(name = "user_id")
+    private UUID userId;
 
     @Column(name = "invite_email", columnDefinition = "TEXT")
     private String inviteEmail;
 
     @Column(name = "invite_expiration_date")
-    private LocalDate inviteExpirationDate;
+    private LocalDateTime inviteExpirationDate;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @Column(name = "created_by_id")
+    private UUID createdBy;
+
+    @Column(name =  "last_modified_by")
+    private UUID lastModifiedBy;
+
+    @Column(name = "creation_time")
+    private LocalDateTime creationTime;
+
+    @Column(name =  "last_modification_time")
+    private LocalDateTime lastModificationTime;
 }

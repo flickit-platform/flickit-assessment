@@ -1,7 +1,7 @@
 package org.flickit.assessment.users.application.port.out.expertgroupaccess;
 
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface CreateExpertGroupAccessPort {
@@ -10,7 +10,7 @@ public interface CreateExpertGroupAccessPort {
 
     record Param(long expertGroupId,
                  String inviteEmail,
-                 LocalDate inviteExpirationDate,
+                 LocalDateTime inviteExpirationDate,
                  UUID userId) {
     }
 }
