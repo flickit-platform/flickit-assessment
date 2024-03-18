@@ -3,12 +3,13 @@ package org.flickit.assessment.data.jpa.users.expertgroupaccess;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@IdClass(ExpertGroupAccessJpaEntity.EntityId.class)
 @Table(name = "fau_expert_group_user_access")
-@IdClass(ExpertGroupAccessId.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -41,4 +42,13 @@ public class ExpertGroupAccessJpaEntity {
 
     @Column(name =  "last_modification_time")
     private LocalDateTime lastModificationTime;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId implements Serializable {
+
+        private Long expertGroupId;
+        private UUID userId;
+    }
 }
