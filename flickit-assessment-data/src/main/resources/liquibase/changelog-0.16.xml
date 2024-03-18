@@ -78,4 +78,11 @@
                       newColumnName="title"/>
     </changeSet>
 
+    <changeSet id="0.16-12" author="Maziyar Gerami">
+        <sql>alter table fau_expert_group rename constraint baseinfo_expertgroup_pkey to pk_fau_expert_group;</sql>
+    </changeSet>
+
+    <changeSet id="0.16-13" author="Maziyar Gerami">
+        <sql>alter table fau_expert_group rename constraint baseinfo_expertgroup_name_key to uq_fac_expert_group_title;</sql>
+    </changeSet>
 </databaseChangeLog>
