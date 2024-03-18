@@ -23,10 +23,11 @@
 		<module>flickit-assessment-server</module>
 		<module>flickit-assessment-common</module>
         <module>flickit-advice-engine</module>
+        <module>flickit-assessment-users</module>
     </modules>
 
 	<properties>
-		<revision>0.15.0-SNAPSHOT</revision>
+		<revision>0.16.0-SNAPSHOT</revision>
 
 		<java.version>17</java.version>
 		<spring-boot.version>3.0.6</spring-boot.version>
@@ -74,6 +75,11 @@
             <dependency>
                 <groupId>org.flickit</groupId>
                 <artifactId>flickit-advice-engine</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flickit</groupId>
+                <artifactId>flickit-assessment-users</artifactId>
                 <version>${revision}</version>
             </dependency>
 		</dependencies>
