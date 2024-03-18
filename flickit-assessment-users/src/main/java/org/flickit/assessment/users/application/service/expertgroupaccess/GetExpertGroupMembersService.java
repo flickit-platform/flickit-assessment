@@ -1,13 +1,13 @@
-package org.flickit.assessment.kit.application.service.expertgroupaccess;
+package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.port.in.expertgroupaccess.GetExpertGroupMembersUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.LoadExpertGroupMembersPort;
-import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.users.application.port.in.expertgroupaccess.GetExpertGroupMembersUseCase;
+import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMembersPort;
+import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +28,6 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
     private final LoadExpertGroupMembersPort loadExpertGroupMembersPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
-
 
     @Override
     public PaginatedResponse<Member> getExpertGroupMembers(Param param) {

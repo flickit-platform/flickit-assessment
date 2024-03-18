@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.out.expertgroupaccess;
+package org.flickit.assessment.users.application.port.out.expertgroupaccess;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 

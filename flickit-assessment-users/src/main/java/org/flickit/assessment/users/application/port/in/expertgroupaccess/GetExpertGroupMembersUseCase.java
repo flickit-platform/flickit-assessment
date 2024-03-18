@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.in.expertgroupaccess;
+package org.flickit.assessment.users.application.port.in.expertgroupaccess;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

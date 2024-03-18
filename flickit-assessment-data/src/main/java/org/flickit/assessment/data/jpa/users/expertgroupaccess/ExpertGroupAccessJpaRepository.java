@@ -1,6 +1,6 @@
 package org.flickit.assessment.data.jpa.users.expertgroupaccess;
 
-import org.flickit.assessment.data.jpa.kit.expertgroup.MembersView;
+import org.flickit.assessment.data.jpa.users.expertgroup.MembersView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
