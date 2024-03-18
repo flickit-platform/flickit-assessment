@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class ExpertGroupAccessMapper {
 
     static ExpertGroupAccessJpaEntity mapCreateParamToJpaEntity(CreateExpertGroupAccessPort.Param param) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime creationTime = LocalDateTime.now();
         return new ExpertGroupAccessJpaEntity(
             param.expertGroupId(),
             param.userId(),
@@ -19,8 +19,8 @@ public class ExpertGroupAccessMapper {
             param.inviteExpirationDate(),
             param.userId(),
             param.userId(),
-            now,
-            now
+            creationTime,
+            creationTime
         );
     }
 }
