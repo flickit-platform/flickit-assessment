@@ -9,6 +9,7 @@ import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGro
 import org.flickit.assessment.users.application.port.out.expertgroup.CreateExpertGroupPort.Param;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -39,6 +40,7 @@ public class ExpertGroupMapper {
     }
 
     static ExpertGroupJpaEntity mapCreateParamToJpaEntity(Param param) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new ExpertGroupJpaEntity(
             null,
             param.title(),
@@ -46,7 +48,11 @@ public class ExpertGroupMapper {
             param.about(),
             param.picture(),
             param.website(),
-            param.currentUserId()
+            param.currentUserId(),
+            param.currentUserId(),
+            param.currentUserId(),
+            creationTime,
+            creationTime
         );
     }
 }
