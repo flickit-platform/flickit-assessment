@@ -14,15 +14,17 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class ExpertGroupAccessJpaEntity {
 
     @Id
-    @Column(name = "expert_group_id")
+    @EqualsAndHashCode.Include
+    @Column(name = "expert_group_id", nullable = false)
     private Long expertGroupId;
 
     @Id
-    @Column(name = "user_id")
+    @EqualsAndHashCode.Include
+    @Column(name = "user_id", nullable = false)
     private UUID userId;
 
     @Column(name = "invite_email", columnDefinition = "TEXT")
@@ -31,16 +33,16 @@ public class ExpertGroupAccessJpaEntity {
     @Column(name = "invite_expiration_date")
     private LocalDateTime inviteExpirationDate;
 
-    @Column(name = "created_by_id")
+    @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
-    @Column(name =  "last_modified_by")
+    @Column(name =  "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @Column(name = "creation_time")
+    @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
-    @Column(name =  "last_modification_time")
+    @Column(name =  "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 
     @Data
