@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface CreateExpertGroupAccessPort {
 
-    Long persist(Param param);
+    void persist(Param param);
 
     record Param(long expertGroupId,
                  String inviteEmail,

@@ -42,10 +42,9 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public Long persist(CreateExpertGroupAccessPort.Param param) {
+    public void persist(CreateExpertGroupAccessPort.Param param) {
         ExpertGroupAccessJpaEntity unsavedEntity = ExpertGroupAccessMapper.mapCreateParamToJpaEntity(param);
-        ExpertGroupAccessJpaEntity savedEntity = repository.save(unsavedEntity);
-        return savedEntity.getExpertGroupId();
+        repository.save(unsavedEntity);
     }
 
     private static LoadExpertGroupMembersPort.Member mapToResult(MembersView view) {

@@ -30,7 +30,7 @@ class CreateExpertGroupServiceTest {
     void testCreateExpertGroup_validParams_persistResult() {
         long expectedId = new Random().nextLong();
         when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(expectedId);
-        when(createExpertGroupAccessPort.persist(any(CreateExpertGroupAccessPort.Param.class))).thenReturn(new Random().nextLong());
+        doNothing().when(createExpertGroupAccessPort).persist(any(CreateExpertGroupAccessPort.Param.class));
 
         var result = service.createExpertGroup(param);
         assertNotNull(result, "The result of createExpertGroup service" +
@@ -41,8 +41,8 @@ class CreateExpertGroupServiceTest {
     @Test
     void testCreateExpertGroup_expertGroupPersistProblem_transactionRollback() {
         when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(new Random().nextLong());
-        when(createExpertGroupAccessPort.persist(any(CreateExpertGroupAccessPort.Param.class)))
-            .thenThrow(new RuntimeException("Simulated exception"));
+        doThrow(new RuntimeException("Simulated exception"))
+            .when(createExpertGroupAccessPort).persist(any(CreateExpertGroupAccessPort.Param.class));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> service.createExpertGroup(param));
         assertNotNull(exception);
