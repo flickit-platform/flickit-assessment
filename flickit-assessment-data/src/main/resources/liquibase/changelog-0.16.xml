@@ -15,51 +15,37 @@
 
     <changeSet id="0.16-03" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group">
-            <column name="created_by_id" type="uuid"/>
+            <column name="created_by" type="uuid" valueComputed="owner_id">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.16-04" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fau_expert_group"
-                                 baseColumnNames="created_by_id"
+                                 baseColumnNames="created_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fau_expert_group_createdBy"/>
+                                 constraintName="fk_fau_expertgroup_user_createdby"/>
     </changeSet>
 
     <changeSet id="0.16-05" author="Maziyar Gerami">
-        <update tableName="fau_expert_group">
-            <column name="created_by_id" valueComputed="owner_id"/>
-        </update>
-    </changeSet>
-
-    <changeSet id="0.16-06" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group">
-            <column name="last_modified_by" type="uuid"/>
+            <column name="last_modified_by" type="uuid" valueComputed="owner_id">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.16-07" author="Maziyar Gerami">
-        <update tableName="fau_expert_group">
-            <column name="last_modified_by" valueComputed="owner_id"/>
-        </update>
-    </changeSet>
-
-    <changeSet id="0.16-08" author="Maziyar Gerami">
+    <changeSet id="0.16-06" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fau_expert_group"
                                  baseColumnNames="last_modified_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fau_expert_group_lastmodifiedby"/>
+                                 constraintName="fk_fau_expertgroup_user_lastmodifiedby"/>
     </changeSet>
 
-    <changeSet id="0.16-09" author="Maziyar Gerami">
-        <addNotNullConstraint columnName="last_modified_by"
-                              constraintName="last_modified_by_not_null"
-                              tableName="fau_expert_group"/>
-    </changeSet>
-
-    <changeSet id="0.16-10" author="Maziyar Gerami">
+    <changeSet id="0.16-07" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group">
             <column name="creation_time" type="${datetime_with_time_zone_type}"
                     defaultValueComputed="current_timestamp">
@@ -72,17 +58,17 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.16-11" author="Maziyar Gerami">
+    <changeSet id="0.16-08" author="Maziyar Gerami">
         <renameColumn tableName="fau_expert_group"
                       oldColumnName="name"
                       newColumnName="title"/>
     </changeSet>
 
-    <changeSet id="0.16-12" author="Maziyar Gerami">
+    <changeSet id="0.16-09" author="Maziyar Gerami">
         <sql>alter table fau_expert_group rename constraint baseinfo_expertgroup_pkey to pk_fau_expert_group;</sql>
     </changeSet>
 
-    <changeSet id="0.16-13" author="Maziyar Gerami">
-        <sql>alter table fau_expert_group rename constraint baseinfo_expertgroup_name_key to uq_fac_expert_group_title;</sql>
+    <changeSet id="0.16-10" author="Maziyar Gerami">
+        <sql>alter table fau_expert_group rename constraint baseinfo_expertgroup_name_key to uq_fac_expertgroup_title;</sql>
     </changeSet>
 </databaseChangeLog>
