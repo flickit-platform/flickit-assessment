@@ -147,8 +147,29 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.16-24" author="Maziyar Gerami">
-        <sql>alter table fau_expert_group_user_access rename constraint fau_expert_group_user_access_pkey to pk_fau_expert_group_user_access;</sql>
+    <changeSet id="0.16-21" author="Mahnaz Khorsandi">
+        <dropForeignKeyConstraint baseTableName="fau_expert_group_user_access"
+                                  constraintName="baseinfo_expertgroup_expert_group_id_2839af9e_fk_baseinfo_"/>
     </changeSet>
 
+    <changeSet id="0.16-22" author="Mahnaz Khorsandi">
+        <addForeignKeyConstraint baseTableName="fau_expert_group_user_access"
+                                 baseColumnNames="expert_group_id"
+                                 referencedTableName="fau_expert_group"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_expertgroup_user_access_expertgroup"/>
+    </changeSet>
+
+    <changeSet id="0.16-23" author="Mahnaz Khorsandi">
+        <dropForeignKeyConstraint baseTableName="fau_expert_group_user_access"
+                                  constraintName="baseinfo_expertgroupaccess_user_id_3c79acf7_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.16-24" author="Mahnaz Khorsandi">
+        <addForeignKeyConstraint baseTableName="fau_expert_group_user_access"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_expertgroup_user_access_user"/>
+    </changeSet>
 </databaseChangeLog>
