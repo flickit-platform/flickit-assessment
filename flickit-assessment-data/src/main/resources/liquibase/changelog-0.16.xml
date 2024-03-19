@@ -71,4 +71,18 @@
     <changeSet id="0.16-10" author="Maziyar Gerami">
         <sql>alter table fau_expert_group rename constraint baseinfo_expertgroup_name_key to uq_fac_expertgroup_title;</sql>
     </changeSet>
+
+    <changeSet id="0.16-11" author="Mahnaz Khorsandi">
+        <dropForeignKeyConstraint baseTableName="fau_expert_group"
+                                  constraintName="baseinfo_expertgroup_owner_id_84de2f0a_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.16-12" author="Mahnaz Khorsandi">
+        <addForeignKeyConstraint baseTableName="fau_expert_group"
+                                 baseColumnNames="owner_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_expertgroup_user_owner"/>
+    </changeSet>
+
 </databaseChangeLog>
