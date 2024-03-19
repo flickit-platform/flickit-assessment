@@ -20,7 +20,7 @@ public class ExpertGroupJpaEntity {
     @Id
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fau_expert_group_id_seq")
-    @SequenceGenerator(name = "baseinfo_expertgroup_id_seq", sequenceName = "baseinfo_expertgroup_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "fau_expert_group_id_seq", sequenceName = "fau_expert_group_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
