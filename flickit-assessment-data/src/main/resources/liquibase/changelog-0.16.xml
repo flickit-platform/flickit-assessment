@@ -94,60 +94,47 @@
     </changeSet>
 
     <changeSet id="0.16-15" author="Maziyar Gerami">
-        <addPrimaryKey columnNames="user_id, expert_group_id"
-                       tableName="fau_expert_group_user_access"
+        <addPrimaryKey tableName="fau_expert_group_user_access"
+                       columnNames="expert_group_id, user_id"
+                       constraintName="pk_fau_expert_group_user_access"
                        validate="true"/>
     </changeSet>
 
     <changeSet id="0.16-16" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group_user_access">
-            <column name="created_by_id" type="uuid"/>
+            <column name="created_by" type="uuid"
+                    valueComputed="fau_expert_group.owner_id FROM fau_expert_group WHERE fau_expert_group.id = expert_group_id">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.16-17" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fau_expert_group_user_access"
-                                 baseColumnNames="created_by_id"
+                                 baseColumnNames="created_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fau_expert_group_user_access_createdBy"/>
+                                 constraintName="fk_fau_expertgroup_user_access_createdby"/>
     </changeSet>
 
     <changeSet id="0.16-18" author="Maziyar Gerami">
-        <update tableName="fau_expert_group_user_access">
-            <column name="created_by_id" valueComputed="baseinfo_expertgroup.owner_id FROM baseinfo_expertgroup WHERE
-            baseinfo_expertgroup.id = expert_group_id"/>
-        </update>
-    </changeSet>
-
-    <changeSet id="0.16-19" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group_user_access">
-            <column name="last_modified_by" type="uuid"/>
+            <column name="last_modified_by" type="uuid"
+                    valueComputed="fau_expert_group.owner_id FROM fau_expert_group WHERE fau_expert_group.id = expert_group_id">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.16-20" author="Maziyar Gerami">
-        <update tableName="fau_expert_group_user_access">
-            <column name="last_modified_by" valueComputed="baseinfo_expertgroup.owner_id FROM baseinfo_expertgroup WHERE
-            baseinfo_expertgroup.id = expert_group_id"/>
-        </update>
-    </changeSet>
-
-    <changeSet id="0.16-21" author="Maziyar Gerami">
+    <changeSet id="0.16-19" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fau_expert_group_user_access"
                                  baseColumnNames="last_modified_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fau_expert_group_user_access_lastmodifiedby"/>
+                                 constraintName="fk_fau_expertgroup_user_access_lastmodifiedby"/>
     </changeSet>
 
-    <changeSet id="0.16-22" author="Maziyar Gerami">
-        <addNotNullConstraint columnName="last_modified_by"
-                              constraintName="last_modified_by_not_null"
-                              tableName="fau_expert_group_user_access"/>
-    </changeSet>
-
-    <changeSet id="0.16-23" author="Maziyar Gerami">
+    <changeSet id="0.16-20" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group_user_access">
             <column name="creation_time" type="${datetime_with_time_zone_type}"
                     defaultValueComputed="current_timestamp">
