@@ -42,16 +42,16 @@ public class ExpertGroupJpaEntity {
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
 
-    @Column(name = "created_by_id")
+    @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
-    @Column(name =  "last_modified_by")
+    @Column(name =  "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @Column(name = "creation_time")
+    @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
-    @Column(name =  "last_modification_time")
+    @Column(name =  "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 
     @NoArgsConstructor(access = PRIVATE)
