@@ -48,8 +48,8 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
         repository.save(unsavedEntity);
     }
 
-    Override
-    public Long persist(InviteExpertGroupMemberPort.Param param) {
+    @Override
+    public Long invite(InviteExpertGroupMemberPort.Param param) {
         ExpertGroupAccessJpaEntity unsavedEntity = (ExpertGroupAccessMapper.mapInviteParamToJpaEntity(param));
         repository.save(unsavedEntity);
         return param.expertGroupId();

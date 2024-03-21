@@ -50,7 +50,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         if (!isOwner)
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var result = inviteExpertGroupMemberPort.persist(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
+        var result = inviteExpertGroupMemberPort.invite(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
 
         if (result != null)
             new Thread(() ->

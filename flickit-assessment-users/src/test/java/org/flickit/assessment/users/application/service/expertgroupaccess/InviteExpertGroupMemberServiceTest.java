@@ -44,14 +44,14 @@ class InviteExpertGroupMemberServiceTest {
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(true);
-        when(inviteExpertGroupMemberPort.persist(any(InviteExpertGroupMemberPort.Param.class))).thenReturn(expertGroupId);
+        when(inviteExpertGroupMemberPort.invite(any(InviteExpertGroupMemberPort.Param.class))).thenReturn(expertGroupId);
 
         service.inviteMember(param);
 
         verify(loadUserEmailByUserIdPort).loadEmail(any(UUID.class));
         verify(checkExpertGroupExistsPort).existsById(any(Long.class));
         verify(checkExpertGroupOwnerPort).checkIsOwner(any(Long.class), any(UUID.class));
-        verify(inviteExpertGroupMemberPort).persist(any());
+        verify(inviteExpertGroupMemberPort).invite(any());
     }
 
     @Test
