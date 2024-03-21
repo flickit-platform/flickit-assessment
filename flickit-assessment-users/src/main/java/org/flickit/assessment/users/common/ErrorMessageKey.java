@@ -31,11 +31,15 @@ public class ErrorMessageKey {
     public static final String CREATE_EXPERT_GROUP_WEBSITE_SIZE_MAX = "create-expert-group.website.size.max";
     public static final String CREATE_EXPERT_GROUP_TITLE_DUPLICATE = "create-expert-group.title.duplicate";
 
-
     public static final String INVITE_EXPERT_GROUP_MEMBER_OWNER_ID_ACCESS_DENIED = "invite-expert-group-member.owner-id.accessDenied";
     public static final String INVITE_EXPERT_GROUP_MEMBER_USER_ID_NOT_NULL = "invite-expert-group-member.user-id.notNull";
     public static final String INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL = "invite-expert-group-member.expert-group-id.notNull";
     public static final String INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_UNIQUE = "invite-expert-group-member.expert-group-id-user-id.duplicate";
     public static final String INVITE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND = "invite-expert-group-member.user-id.notFound";
 
+    public static final String GET_EXPERT_GROUP_MEMBERS_ID_NOT_NULL = "get-expert-group-members.id.notNull";
+    public static final String GET_EXPERT_GROUP_MEMBERS_SIZE_MIN = "get-expert-group-members.size.min";
+    public static final String GET_EXPERT_GROUP_MEMBERS_SIZE_MAX = "get-expert-group-members.size.max";
+    public static final String GET_EXPERT_GROUP_MEMBERS_PAGE_MIN = "get-expert-group-members.page.min";
+    public static final String GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND = "get-expert-group-members.expertGroup.notFound";
 }
