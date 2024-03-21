@@ -28,14 +28,18 @@ public class ExpertGroupAccessMapper {
     }
 
     static ExpertGroupAccessJpaEntity mapInviteParamToJpaEntity(InviteExpertGroupMemberPort.Param param) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new ExpertGroupAccessJpaEntity(
-            null,
             param.expertGroupId(),
+            param.userId(),
             param.inviteDate(),
             param.inviteExpirationDate(),
-            param.userId(),
             param.inviteToken(),
-            param.status().ordinal()
+            param.status().ordinal(),
+            param.createdBy(),
+            param.createdBy(),
+            creationTime,
+            creationTime
         );
     }
 }

@@ -62,11 +62,10 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         return new InviteExpertGroupMemberPort.Param(
             param.getExpertGroupId(),
             param.getUserId(),
-            param.getCurrentUserId(),
             inviteDate,
             inviteExpirationDate,
             inviteToken,
-            ExpertGroupAccessStatus.PENDING
-        );
+            ExpertGroupAccessStatus.PENDING,
+            param.getCurrentUserId());
     }
 }

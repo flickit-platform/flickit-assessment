@@ -7,7 +7,6 @@ import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
-import org.flickit.assessment.users.application.port.out.expertgroup.*;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
@@ -19,9 +18,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToDomainModel;
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
+import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +29,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
     CreateExpertGroupPort,
     LoadExpertGroupPort,
     CheckExpertGroupExistsPort,
-    LoadExpertGroupOwnerPort {
+    LoadExpertGroupOwnerPort,
+    CheckExpertGroupOwnerPort {
 
     private final ExpertGroupJpaRepository repository;
 
@@ -85,5 +85,10 @@ public class ExpertGroupPersistenceJpaAdapter implements
     @Override
     public boolean checkIsOwner(long expertGroupId, UUID userId) {
         return repository.existsByIdAndOwnerId(expertGroupId, userId);
+    }
+
+    @Override
+    public Optional<UUID> loadOwnerId(Long expertGroupId) {
+        return Optional.of(repository.loadOwnerIdById(expertGroupId));
     }
 }
