@@ -25,12 +25,13 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_I
 @AllArgsConstructor
 public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUseCase {
 
+    private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
+
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     private final CheckExpertGroupExistsPort checkExpertGroupExistsPort;
     private final CheckExpertGroupOwnerPort checkExpertGroupOwnerPort;
     private final InviteExpertGroupMemberPort inviteExpertGroupMemberPort;
     private final SendExpertGroupInvitationMailPort sendExpertGroupInvitationMailPort;
-    private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
     @Override
     public void inviteMember(Param param) {
