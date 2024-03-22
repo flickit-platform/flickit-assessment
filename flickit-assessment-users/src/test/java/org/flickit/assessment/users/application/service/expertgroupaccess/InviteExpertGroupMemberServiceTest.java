@@ -3,7 +3,6 @@ package org.flickit.assessment.users.application.service.expertgroupaccess;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
-import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
@@ -27,8 +26,6 @@ class InviteExpertGroupMemberServiceTest {
     @Mock
     private LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     @Mock
-    private CheckExpertGroupExistsPort checkExpertGroupExistsPort;
-    @Mock
     private CheckExpertGroupOwnerPort checkExpertGroupOwnerPort;
     @Mock
     private InviteExpertGroupMemberPort inviteExpertGroupMemberPort;
@@ -42,14 +39,12 @@ class InviteExpertGroupMemberServiceTest {
         String email = "test@example.com";
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(true);
         when(inviteExpertGroupMemberPort.invite(any(InviteExpertGroupMemberPort.Param.class))).thenReturn(expertGroupId);
 
         service.inviteMember(param);
 
         verify(loadUserEmailByUserIdPort).loadEmail(any(UUID.class));
-        verify(checkExpertGroupExistsPort).existsById(any(Long.class));
         verify(checkExpertGroupOwnerPort).checkIsOwner(any(Long.class), any(UUID.class));
         verify(inviteExpertGroupMemberPort).invite(any());
     }
@@ -63,7 +58,6 @@ class InviteExpertGroupMemberServiceTest {
         String email = "test@example.com";
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(false);
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> service.inviteMember(param));
     }
@@ -77,7 +71,6 @@ class InviteExpertGroupMemberServiceTest {
         String email = "test@example.com";
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(checkExpertGroupOwnerPort.checkIsOwner(any(Long.class), any(UUID.class))).thenReturn(false);
 
         Assertions.assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));

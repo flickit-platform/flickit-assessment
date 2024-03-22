@@ -27,6 +27,4 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         WHERE e.expertGroupId = :expertGroupId
         """)
     Page<MembersView> findExpertGroupMembers(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
-
-    boolean existsByInviteToken(@Param(value = "inviteToken") UUID inviteToken);
 }
