@@ -35,13 +35,13 @@ class CreateExpertGroupServiceTest {
             "http://www.example.com",
             currentUserId);
 
-        long expectedId = new  Random().nextLong();
+        long expectedId = new Random().nextLong();
         when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(expectedId);
-        when(createExpertGroupAccessPort.persist(any(CreateExpertGroupAccessPort.Param.class))).thenReturn(new Random().nextLong());
+        doNothing().when(createExpertGroupAccessPort).persist(any(CreateExpertGroupAccessPort.Param.class));
 
         var result = service.createExpertGroup(param);
         assertNotNull(result, "The result of createExpertGroup service" +
-            "should be CreateExpertGroupUseCase.Result");
+            "should be CreateExpertGroupUseCase.Member");
         assertEquals(expectedId, result.id(), "The result should be long ID");
     }
 
@@ -56,8 +56,8 @@ class CreateExpertGroupServiceTest {
             currentUserId);
 
         when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(new Random().nextLong());
-        when(createExpertGroupAccessPort.persist(any(CreateExpertGroupAccessPort.Param.class)))
-            .thenThrow(new RuntimeException("Simulated exception"));
+        doThrow(new RuntimeException("Simulated exception"))
+            .when(createExpertGroupAccessPort).persist(any(CreateExpertGroupAccessPort.Param.class));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> service.createExpertGroup(param));
         assertNotNull(exception);

@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.persistence.expertgroupaccess;
+package org.flickit.assessment.kit.adapter.out.persistence.users.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;

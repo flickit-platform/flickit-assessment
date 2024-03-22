@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
-import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_OWNER_ID_ACCESS_DENIED;
 
 @Service
 @Transactional
@@ -48,9 +48,9 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         //if (! (expertGroupExists && isOwner)) throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
 
         if (!isOwner)
-            throw new AccessDeniedException(INVITE_EXPERT_GROUP_MEMBER_OWNER_ID_ACCESS_DENIED);
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var result = inviteExpertGroupMemberPort.persist(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
+        var result = inviteExpertGroupMemberPort.invite(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
 
         if (result != null)
             new Thread(() ->
@@ -62,11 +62,10 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         return new InviteExpertGroupMemberPort.Param(
             param.getExpertGroupId(),
             param.getUserId(),
-            param.getCurrentUserId(),
             inviteDate,
             inviteExpirationDate,
             inviteToken,
-            ExpertGroupAccessStatus.PENDING
-        );
+            ExpertGroupAccessStatus.PENDING,
+            param.getCurrentUserId());
     }
 }
