@@ -35,7 +35,7 @@ public class ErrorMessageKey {
     public static final String INVITE_EXPERT_GROUP_MEMBER_OWNER_ID_ACCESS_DENIED = "invite-expert-group-member.owner-id.accessDenied";
     public static final String INVITE_EXPERT_GROUP_MEMBER_USER_ID_NOT_NULL = "invite-expert-group-member.user-id.notNull";
     public static final String INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL = "invite-expert-group-member.expert-group-id.notNull";
-    public static final String INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_UNIQUE = "invite-expert-group-member.expert-group-id-user-id.duplicate";
+    public static final String INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_DUPLICATE = "invite-expert-group-member.expert-group-id-user-id.duplicate";
     public static final String INVITE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND = "invite-expert-group-member.user-id.notFound";
 
 }
