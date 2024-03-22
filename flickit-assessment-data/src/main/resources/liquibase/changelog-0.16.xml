@@ -174,13 +174,13 @@
     </changeSet>
 
     <changeSet id="0.16-25" author="Maziyar Gerami">
-        <dropColumn tableName="baseinfo_expertgroupaccess"
+        <dropColumn tableName="fau_expert_group_user_access"
                     columnName="invite_email">
         </dropColumn>
     </changeSet>
 
     <changeSet id="0.16-26" author="Maziyar Gerami">
-        <addColumn tableName="baseinfo_expertgroupaccess">
+        <addColumn tableName="fau_expert_group_user_access">
             <column name="status" type="tinyint" defaultValue="1">
                 <constraints nullable="false"/>
             </column>
@@ -188,20 +188,20 @@
     </changeSet>
 
     <changeSet id="0.16-26" author="Maziyar Gerami">
-        <addColumn tableName="baseinfo_expertgroupaccess">
+        <addColumn tableName="fau_expert_group_user_access">
             <column name="invite_token" type="uuid" defaultValue="null">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.16-28" author="Maziyar Gerami">
-        <addUniqueConstraint tableName="baseinfo_expertgroupaccess" columnNames="expert_group_id,user_id"
+    <changeSet id="0.16-27" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fau_expert_group_user_access" columnNames="expert_group_id,user_id"
                              constraintName="uq_fau_expertgroupaccess_expertgroupid_userid"/>
     </changeSet>
 
-    <changeSet id="0.16-29" author="Mayizar Gerami">
-        <addColumn tableName="baseinfo_expertgroupaccess">
+    <changeSet id="0.16-28" author="Mayizar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
             <column name="invite_date" type="${datetime_with_time_zone_type}" defaultValue="null">
                 <constraints nullable="true"/>
             </column>
