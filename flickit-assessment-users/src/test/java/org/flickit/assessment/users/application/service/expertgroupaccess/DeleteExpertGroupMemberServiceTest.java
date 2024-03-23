@@ -27,10 +27,11 @@ class DeleteExpertGroupMemberServiceTest {
     @Test
     void inviteMember_expertGroupNotExist_fail() {
         UUID userId = UUID.randomUUID();
+        UUID token = UUID.randomUUID();
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         DeleteExpertGroupMemberUseCase.Param param =
-            new DeleteExpertGroupMemberUseCase.Param(expertGroupId,userId,currentUserId);
+            new DeleteExpertGroupMemberUseCase.Param(expertGroupId,userId,currentUserId, token);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.empty());
 
@@ -40,10 +41,11 @@ class DeleteExpertGroupMemberServiceTest {
     @Test
     void inviteMember_expertGroupInviterNotOwner_fail() {
         UUID userId = UUID.randomUUID();
+        UUID token = UUID.randomUUID();
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         DeleteExpertGroupMemberUseCase.Param param =
-            new DeleteExpertGroupMemberUseCase.Param(expertGroupId,userId,currentUserId);
+            new DeleteExpertGroupMemberUseCase.Param(expertGroupId,userId,currentUserId, token);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(UUID.randomUUID()));
 
