@@ -187,7 +187,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.16-26" author="Maziyar Gerami">
+    <changeSet id="0.16-27" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group_user_access">
             <column name="invite_token" type="uuid" defaultValue="null">
                 <constraints nullable="true"/>
@@ -195,12 +195,12 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.16-27" author="Maziyar Gerami">
+    <changeSet id="0.16-28" author="Maziyar Gerami">
         <addUniqueConstraint tableName="fau_expert_group_user_access" columnNames="expert_group_id,user_id"
                              constraintName="uq_fau_expertgroupaccess_expertgroupid_userid"/>
     </changeSet>
 
-    <changeSet id="0.16-28" author="Mayizar Gerami">
+    <changeSet id="0.16-29" author="Mayizar Gerami">
         <addColumn tableName="fau_expert_group_user_access">
             <column name="invite_date" type="${datetime_with_time_zone_type}" defaultValue="null">
                 <constraints nullable="true"/>
