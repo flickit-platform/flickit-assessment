@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
-import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInvitationMailPort;
+import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
 
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     private final InviteExpertGroupMemberPort inviteExpertGroupMemberPort;
-    private final SendExpertGroupInvitationMailPort sendExpertGroupInvitationMailPort;
+    private final SendExpertGroupInviteMailPort sendExpertGroupInviteMailPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Override
@@ -45,7 +45,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
 
         if (result != null)
             new Thread(() ->
-                sendExpertGroupInvitationMailPort.sendInviteExpertGroupMemberEmail(email, inviteToken)).start();
+                sendExpertGroupInviteMailPort.sendInvite(email, inviteToken)).start();
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
