@@ -3,7 +3,7 @@ package org.flickit.assessment.users.adapter.out.email;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInvitationMailPort;
+import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.retry.annotation.Backoff;
@@ -17,14 +17,14 @@ import java.util.UUID;
 @EnableRetry
 @AllArgsConstructor
 public class MailAdapter implements
-    SendExpertGroupInvitationMailPort {
+        SendExpertGroupInviteMailPort {
 
     private JavaMailSender mailSender;
 
     @SneakyThrows
     @Retryable(retryFor = Exception.class, maxAttempts = 10, backoff = @Backoff(delay = 10000))
     @Override
-    public void sendInviteExpertGroupMemberEmail(String to, UUID inviteToken) {
+    public void sendInvite(String to, UUID inviteToken) {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
