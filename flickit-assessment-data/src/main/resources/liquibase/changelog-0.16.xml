@@ -96,7 +96,8 @@
     <changeSet id="0.16-15" author="Maziyar Gerami">
         <addPrimaryKey tableName="fau_expert_group_user_access"
                        columnNames="expert_group_id, user_id"
-                       constraintName="pk_fau_expert_group_user_access"/>
+                       constraintName="pk_fau_expert_group_user_access"
+                       validate="true"/>
     </changeSet>
 
     <changeSet id="0.16-16" author="Maziyar Gerami">
