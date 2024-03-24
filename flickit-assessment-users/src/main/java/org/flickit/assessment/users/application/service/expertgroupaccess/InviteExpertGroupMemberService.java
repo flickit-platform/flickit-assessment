@@ -2,9 +2,11 @@ package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMemberStatusPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
 import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
@@ -15,11 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_MEMBER_EXIST;
 
 @Service
 @Transactional
@@ -29,6 +33,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
+    private final LoadExpertGroupMemberStatusPort loadExpertGroupMemberPort;
     private final InviteExpertGroupMemberPort inviteExpertGroupMemberPort;
     private final SendExpertGroupInviteMailPort sendExpertGroupInviteMailPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
@@ -36,6 +41,11 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
     @Override
     public void inviteMember(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
+        Optional<Integer> memberStatus = loadExpertGroupMemberPort.getMemberStatus(param.getExpertGroupId(), param.getUserId());
+
+        if (memberStatus.isPresent() && (memberStatus.get() == ExpertGroupAccessStatus.ACTIVE.ordinal()))
+            throw new ResourceAlreadyExistsException(INVITE_EXPERT_GROUP_MEMBER_MEMBER_EXIST);
+
         var inviteToken = UUID.randomUUID();
         var inviteDate = LocalDateTime.now();
         var inviteExpirationDate = inviteDate.plusDays(EXPIRY_DURATION.toDays());
