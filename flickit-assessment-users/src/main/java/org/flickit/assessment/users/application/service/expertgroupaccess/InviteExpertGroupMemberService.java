@@ -22,8 +22,7 @@ import java.util.UUID;
 
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
-import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_MEMBER_EXIST;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 @Service
 @Transactional
@@ -51,6 +50,9 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         var inviteExpirationDate = inviteDate.plusDays(EXPIRY_DURATION.toDays());
 
         var email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
+        if (email == null)
+            throw new ResourceNotFoundException(INVITE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND);
+
         var result = inviteExpertGroupMemberPort.invite(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
 
         if (result != null)
