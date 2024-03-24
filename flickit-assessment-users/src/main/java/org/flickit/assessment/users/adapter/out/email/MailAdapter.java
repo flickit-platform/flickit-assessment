@@ -33,8 +33,8 @@ public class MailAdapter implements
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
         helper.setTo(to);
-        helper.setSubject(MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT, inviteToken));
-        String htmlContent = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY) + inviteToken.toString();
+        helper.setSubject(MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT));
+        String htmlContent = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY, inviteToken.toString());
 
         helper.setText(htmlContent, true);
         mailSender.send(message);
