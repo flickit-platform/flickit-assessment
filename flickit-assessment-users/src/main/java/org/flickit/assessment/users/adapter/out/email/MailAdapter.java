@@ -3,6 +3,7 @@ package org.flickit.assessment.users.adapter.out.email;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -12,6 +13,9 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
+
+import static org.flickit.assessment.users.common.ConstantMessageKey.INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY;
+import static org.flickit.assessment.users.common.ConstantMessageKey.INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT;
 
 @Component
 @EnableRetry
@@ -29,11 +33,8 @@ public class MailAdapter implements
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
         helper.setTo(to);
-        helper.setSubject("Invite to join");
-
-        String htmlContent = "<p>Dear recipient,</p>"
-            + "<p>You have been invited to join our expert group. Please click the following link to confirm your invitation:</p>"
-            + "<p><a href=\"http://www.example.com/expert-groups/invite/confirm/" + inviteToken.toString() + "\">Confirm Invitation</a></p>";
+        helper.setSubject(MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT, inviteToken));
+        String htmlContent = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY) + inviteToken.toString();
 
         helper.setText(htmlContent, true);
         mailSender.send(message);
