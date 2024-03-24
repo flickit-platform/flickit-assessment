@@ -1,10 +1,13 @@
 package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMemberStatusPort;
 import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.junit.jupiter.api.Assertions;
@@ -33,6 +36,8 @@ class InviteExpertGroupMemberServiceTest {
     private SendExpertGroupInviteMailPort sendExpertGroupInviteMailPort;
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    @Mock
+    private LoadExpertGroupMemberStatusPort loadExpertGroupMemberPort;
 
 
     @Test
@@ -45,14 +50,29 @@ class InviteExpertGroupMemberServiceTest {
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+        when(loadExpertGroupMemberPort.getMemberStatus(expertGroupId, userId)).thenReturn(Optional.empty());
         when(inviteExpertGroupMemberPort.invite(any(InviteExpertGroupMemberPort.Param.class))).thenReturn(expertGroupId);
-        doNothing().when(sendExpertGroupInviteMailPort).sendInvite(anyString(),any(UUID.class));
+        doNothing().when(sendExpertGroupInviteMailPort).sendInvite(anyString(), any(UUID.class));
 
         service.inviteMember(param);
 
         verify(loadUserEmailByUserIdPort).loadEmail(any(UUID.class));
         verify(loadExpertGroupOwnerPort).loadOwnerId(any(Long.class));
         verify(inviteExpertGroupMemberPort).invite(any());
+    }
+
+    @Test
+    void inviteMember_memberExistAndActive_alreadyExist() {
+        UUID userId = UUID.randomUUID();
+        long expertGroupId = 0L;
+        UUID currentUserId = UUID.randomUUID();
+        InviteExpertGroupMemberUseCase.Param param = new InviteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
+
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+        when(loadExpertGroupMemberPort.getMemberStatus(expertGroupId, userId)).thenReturn(Optional.of(ExpertGroupAccessStatus.ACTIVE.ordinal()));
+
+        Assertions.assertThrows(ResourceAlreadyExistsException.class, () -> service.inviteMember(param));
+
     }
 
     @Test
