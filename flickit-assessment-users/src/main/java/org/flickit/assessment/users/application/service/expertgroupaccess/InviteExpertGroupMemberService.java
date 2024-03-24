@@ -36,11 +36,11 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
     @Override
     public void inviteMember(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
-        UUID inviteToken = UUID.randomUUID();
+        var inviteToken = UUID.randomUUID();
         var inviteDate = LocalDateTime.now();
         var inviteExpirationDate = inviteDate.plusDays(EXPIRY_DURATION.toDays());
-        String email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
 
+        var email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
         var result = inviteExpertGroupMemberPort.invite(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
 
         if (result != null)
