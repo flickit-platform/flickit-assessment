@@ -1,8 +1,10 @@
 package org.flickit.assessment.core.application.service.evidence;
 
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.evidence.AddEvidenceUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
+import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +31,9 @@ class AddEvidenceServiceTest {
     @Mock
     private CheckAssessmentExistencePort checkAssessmentExistencePort;
 
+    @Mock
+    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+
     @Test
     void testAddEvidence_ValidParam_PersistsAndReturnsId() {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
@@ -40,6 +45,7 @@ class AddEvidenceServiceTest {
         );
         UUID expectedId = UUID.randomUUID();
         when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedById())).thenReturn(true);
         when(createEvidencePort.persist(any(CreateEvidencePort.Param.class))).thenReturn(expectedId);
 
         AddEvidenceUseCase.Result result = service.addEvidence(param);
@@ -74,5 +80,21 @@ class AddEvidenceServiceTest {
         verify(checkAssessmentExistencePort).existsById(assessmentIdParam.capture());
         assertEquals(param.getAssessmentId(), assessmentIdParam.getValue());
         verify(createEvidencePort, never()).persist(any());
+    }
+
+    @Test
+    void testAddEvidence_InvalidCurrentUserId_ThrowDeniedAccessException() {
+        AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
+            "desc",
+            UUID.randomUUID(),
+            1L,
+            "POSITIVE",
+            UUID.randomUUID()
+        );
+
+        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedById())).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class, () -> service.addEvidence(param));
     }
 }

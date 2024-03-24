@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLas
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
     private final UpdateCalculatedResultPort updateCalculatedResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
     private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
-    private final LoadSubjectPort loadSubjectPort;
+    private final LoadSubjectsPort loadSubjectsPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createAttributeValuePort;
 
@@ -58,7 +58,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
     }
 
     private void reinitializeAssessmentResult(AssessmentResult assessmentResult) {
-        var allSubjects = loadSubjectPort.loadByKitIdWithAttributes(assessmentResult.getAssessment().getAssessmentKit().getId());
+        var allSubjects = loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId());
 
         List<SubjectValue> newSubjectValues = createNewSubjectValues(allSubjects, assessmentResult.getSubjectValues(), assessmentResult.getId());
         List<SubjectValue> allSubjectValues = new ArrayList<>(assessmentResult.getSubjectValues());

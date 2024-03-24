@@ -7,11 +7,10 @@ import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
-import org.flickit.assessment.kit.config.MinioConfigProperties;
+import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,11 +29,9 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.FILE_STORAGE_FIL
 public class MinioAdapter implements
     UploadKitDslToFileStoragePort,
     LoadKitDSLJsonFilePort,
-    UploadExpertGroupPicturePort,
     CreateFileDownloadLinkPort {
 
     public static final String SLASH = "/";
-    public static final String DOT = ".";
     private final MinioClient minioClient;
     private final MinioConfigProperties properties;
 
@@ -86,21 +83,6 @@ public class MinioAdapter implements
                 .build());
 
         return new String(stream.readAllBytes(), UTF_8);
-    }
-
-    @SneakyThrows
-    @Override
-    public String uploadPicture(MultipartFile pictureFile) {
-        String bucketName = properties.getBucketNames().getAvatar();
-        UUID uniqueDir = UUID.randomUUID();
-
-        String extension = "";
-        if (pictureFile.getOriginalFilename() != null)
-            extension = pictureFile.getOriginalFilename().substring(pictureFile.getOriginalFilename().indexOf(DOT));
-
-        String objectName = uniqueDir + PIC_FILE_NAME + extension;
-        writeFile(bucketName, objectName, pictureFile.getInputStream(), pictureFile.getContentType());
-        return bucketName + SLASH + objectName;
     }
 
     @SneakyThrows

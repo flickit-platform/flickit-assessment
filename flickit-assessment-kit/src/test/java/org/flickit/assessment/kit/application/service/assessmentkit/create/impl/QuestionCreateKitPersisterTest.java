@@ -39,8 +39,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class QuestionCreateKitPersisterTest {
 
-    private static final Long KIT_ID = 1L;
-    private static final UUID CURRENT_USER_ID = UUID.randomUUID();
     @InjectMocks
     private QuestionCreateKitPersister persister;
     @Mock
@@ -59,9 +57,12 @@ class QuestionCreateKitPersisterTest {
 
     @Test
     void testPersist_ValidInputs_SaveQuestionAndItsRelatedEntities() {
+        Long kitId = 1L;
+        UUID currentUserId = UUID.randomUUID();
+
         var levelTwo = levelTwo();
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, questionnaire.getId());
+        var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, Boolean.TRUE, questionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
         var answerOption1 = createAnswerOption(question.getId(), OPTION_TITLE, OPTION_INDEX1);
@@ -82,7 +83,7 @@ class QuestionCreateKitPersisterTest {
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
         var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE);
+        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslModel = AssessmentKitDslModel.builder()
             .questions(List.of(dslQuestion))
             .build();
@@ -93,13 +94,15 @@ class QuestionCreateKitPersisterTest {
             dslQuestion.getIndex(),
             dslQuestion.getDescription(),
             dslQuestion.isMayNotBeApplicable(),
-            CURRENT_USER_ID,
-            questionnaire.getId()
+            dslQuestion.isAdvisable(),
+            kitId,
+            questionnaire.getId(),
+            currentUserId
         );
         when(createQuestionPort.persist(createQuestionParam)).thenReturn(question.getId());
 
-        var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), question.getId(), CURRENT_USER_ID);
-        var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), question.getId(), CURRENT_USER_ID);
+        var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), question.getId(), kitId, currentUserId);
+        var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), question.getId(), kitId, currentUserId);
         when(createAnswerOptionPort.persist(createOption1Param)).thenReturn(answerOption1.getId());
         when(createAnswerOptionPort.persist(createOption2Param)).thenReturn(answerOption2.getId());
 
@@ -111,13 +114,13 @@ class QuestionCreateKitPersisterTest {
             question.getId(),
             LocalDateTime.now(),
             LocalDateTime.now(),
-            CURRENT_USER_ID,
-            CURRENT_USER_ID
+            currentUserId,
+            currentUserId
         );
         when(createQuestionImpactPort.persist(createImpact)).thenReturn(impact.getId());
 
-        var createOptionImpact1Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact1.getOptionId(), optionImpact1.getValue(), CURRENT_USER_ID);
-        var createOptionImpact2Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact2.getOptionId(), optionImpact2.getValue(), CURRENT_USER_ID);
+        var createOptionImpact1Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact1.getOptionId(), optionImpact1.getValue(), currentUserId);
+        var createOptionImpact2Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact2.getOptionId(), optionImpact2.getValue(), currentUserId);
         when(createAnswerOptionImpactPort.persist(createOptionImpact1Param)).thenReturn(optionImpact1.getId());
         when(createAnswerOptionImpactPort.persist(createOptionImpact2Param)).thenReturn(optionImpact2.getId());
 
@@ -126,7 +129,7 @@ class QuestionCreateKitPersisterTest {
         context.put(KEY_ATTRIBUTES, Map.of(attribute.getCode(), attribute.getId()));
         context.put(KEY_MATURITY_LEVELS, Map.of(levelTwo.getCode(), levelTwo.getId()));
 
-        persister.persist(context, dslModel, KIT_ID, CURRENT_USER_ID);
+        persister.persist(context, dslModel, kitId, currentUserId);
 
         // TODO: assert?
     }

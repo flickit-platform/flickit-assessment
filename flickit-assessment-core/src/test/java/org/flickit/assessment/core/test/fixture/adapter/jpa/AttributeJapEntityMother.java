@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class AttributeJapEntityMother {
 
     public static AttributeJpaEntity createAttributeEntity(Long id, Integer index, Long kitId) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new AttributeJpaEntity(
             id,
             "code" + id,
@@ -14,9 +15,9 @@ public class AttributeJapEntityMother {
             index,
             "description" + id,
             1,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            kitId
+            kitId,
+            creationTime,
+            creationTime
         );
     }
 }

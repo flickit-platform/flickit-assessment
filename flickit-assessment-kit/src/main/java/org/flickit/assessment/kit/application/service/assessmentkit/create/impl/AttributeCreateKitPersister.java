@@ -32,14 +32,14 @@ public class AttributeCreateKitPersister implements CreateKitPersister {
     }
 
     @Override
-    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitId, UUID currentUserId) {
+    public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitVersionId, UUID currentUserId) {
         List<AttributeDslModel> dslAttributes = dslKit.getAttributes();
 
         Map<String, Long> savedSubjectCodesMap = ctx.get(KEY_SUBJECTS);
 
         Map<String, Long> codeToPersistedAttributeIds = new HashMap<>();
         dslAttributes.forEach(a -> {
-            Long persistedAttributeId = createAttribute(a, savedSubjectCodesMap.get(a.getSubjectCode()), kitId, currentUserId);
+            Long persistedAttributeId = createAttribute(a, savedSubjectCodesMap.get(a.getSubjectCode()), kitVersionId, currentUserId);
             codeToPersistedAttributeIds.put(a.getCode(), persistedAttributeId);
         });
 
@@ -47,7 +47,7 @@ public class AttributeCreateKitPersister implements CreateKitPersister {
         log.debug("Final attributes: {}", codeToPersistedAttributeIds);
     }
 
-    private Long createAttribute(AttributeDslModel dslAttribute, Long subjectId, Long kitId, UUID currentUserId) {
+    private Long createAttribute(AttributeDslModel dslAttribute, Long subjectId, Long kitVersionId, UUID currentUserId) {
         Attribute attribute = new Attribute(
             null,
             dslAttribute.getCode(),
@@ -61,7 +61,7 @@ public class AttributeCreateKitPersister implements CreateKitPersister {
             currentUserId
         );
 
-        Long persistedAttributeId = createAttributePort.persist(attribute, subjectId, kitId);
+        Long persistedAttributeId = createAttributePort.persist(attribute, subjectId, kitVersionId);
         log.debug("Attribute[id={}, code={}] created.", persistedAttributeId, attribute.getCode());
 
         return persistedAttributeId;

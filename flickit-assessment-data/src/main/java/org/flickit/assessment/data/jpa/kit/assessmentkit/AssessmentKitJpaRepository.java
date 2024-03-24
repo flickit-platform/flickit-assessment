@@ -1,6 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
-import org.flickit.assessment.data.jpa.kit.user.UserJpaEntity;
+import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,6 +34,13 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.id = :kitId
         """)
     LocalDateTime loadLastMajorModificationTime(@Param("kitId") Long kitId);
+
+    @Modifying
+    @Query("""
+            UPDATE AssessmentKitJpaEntity a SET a.kitVersionId = :kitVersionId
+            WHERE a.id = :id
+        """)
+    void updateKitVersionId(@Param(value = "id") Long id, @Param(value = "kitVersionId") Long kitVersionId);
 
     @Query("""
         SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END

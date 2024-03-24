@@ -23,10 +23,11 @@
 		<module>flickit-assessment-server</module>
 		<module>flickit-assessment-common</module>
         <module>flickit-advice-engine</module>
+        <module>flickit-assessment-users</module>
     </modules>
 
 	<properties>
-		<revision>0.15.0-SNAPSHOT</revision>
+		<revision>0.16.0-SNAPSHOT</revision>
 
 		<java.version>17</java.version>
 		<spring-boot.version>3.0.6</spring-boot.version>
@@ -34,6 +35,7 @@
 		<sentry.version>7.3.0</sentry.version>
 		<archunit.version>1.1.0</archunit.version>
         <minio.version>8.5.7</minio.version>
+        <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
 		<jib-maven-plugin.version>3.3.1</jib-maven-plugin.version>
 		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
 		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
@@ -73,6 +75,11 @@
             <dependency>
                 <groupId>org.flickit</groupId>
                 <artifactId>flickit-advice-engine</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flickit</groupId>
+                <artifactId>flickit-assessment-users</artifactId>
                 <version>${revision}</version>
             </dependency>
 		</dependencies>
@@ -158,7 +165,12 @@
 			<artifactId>sentry-jdbc</artifactId>
 			<version>${sentry.version}</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

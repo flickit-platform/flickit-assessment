@@ -18,5 +18,7 @@
     <include file="classpath:liquibase/changelog-0.12.xml"/>
     <include file="classpath:liquibase/changelog-0.13.xml"/>
     <include file="classpath:liquibase/changelog-0.14.xml"/>
+    <include file="classpath:liquibase/changelog-0.15.xml"/>
+    <include file="classpath:liquibase/changelog-0.16.xml"/>
 
 </databaseChangeLog>

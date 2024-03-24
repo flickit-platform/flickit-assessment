@@ -27,6 +27,22 @@ public class AssessmentMother {
         );
     }
 
+    public static Assessment assessmentWithKitId(long kitId) {
+        counter++;
+        return new Assessment(
+            UUID.randomUUID(),
+            "my-assessment-" + counter,
+            "My Assessment " + counter,
+            AssessmentKitMother.kitWithId(kitId),
+            AssessmentColor.BLUE.getId(),
+            1L,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            0L,
+            false
+        );
+    }
+
     public static AssessmentListItem assessmentListItem(Long spaceId, Long kitId) {
         counter++;
         return new AssessmentListItem(

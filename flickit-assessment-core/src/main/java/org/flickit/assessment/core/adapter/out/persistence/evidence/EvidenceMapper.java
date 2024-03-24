@@ -7,10 +7,12 @@ import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListU
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 
+import java.util.UUID;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvidenceMapper {
 
-    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param) {
+    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param, UUID questionRefNum) {
         return new EvidenceJpaEntity(
             null,
             param.description(),
@@ -20,6 +22,7 @@ public class EvidenceMapper {
             param.createdById(),
             param.assessmentId(),
             param.questionId(),
+            questionRefNum,
             param.type(),
             false
         );

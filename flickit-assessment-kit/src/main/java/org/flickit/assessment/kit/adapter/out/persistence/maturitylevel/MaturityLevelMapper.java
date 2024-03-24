@@ -22,18 +22,20 @@ public class MaturityLevelMapper {
         );
     }
 
-    public static MaturityLevelJpaEntity mapToJpaEntityToPersist(MaturityLevel level, Long kitId, UUID createdBy) {
+    public static MaturityLevelJpaEntity mapToJpaEntityToPersist(MaturityLevel level, Long kitVersionId, UUID createdBy) {
+        LocalDateTime creationTime = LocalDateTime.now();
         return new MaturityLevelJpaEntity(
             null,
+            UUID.randomUUID(),
             level.getCode(),
             level.getIndex(),
             level.getTitle(),
             level.getValue(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            kitVersionId,
+            creationTime,
+            creationTime,
             createdBy,
-            createdBy,
-            kitId
+            createdBy
         );
     }
 }
