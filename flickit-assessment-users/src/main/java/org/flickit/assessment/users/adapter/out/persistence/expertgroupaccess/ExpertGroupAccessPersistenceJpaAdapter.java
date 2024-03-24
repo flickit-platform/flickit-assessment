@@ -13,12 +13,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class ExpertGroupAccessPersistenceJpaAdapter implements
     CreateExpertGroupAccessPort,
     LoadExpertGroupMembersPort,
-    InviteExpertGroupMemberPort {
+    InviteExpertGroupMemberPort,
+    LoadExpertGroupMemberStatusPort {
 
     private final ExpertGroupAccessJpaRepository repository;
 
@@ -63,5 +67,10 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
             view.getBio(),
             view.getPicture(),
             view.getLinkedin());
+    }
+
+    @Override
+    public Optional<Integer> getMemberStatus(long expertGroupId, UUID userId) {
+        return repository.findExpertGroupMemberStatus(expertGroupId, userId);
     }
 }
