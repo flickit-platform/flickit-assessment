@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ConstantMessageKey.INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY;
-import static org.flickit.assessment.users.common.ConstantMessageKey.INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT;
+import static org.flickit.assessment.users.common.MessageKey.INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY;
+import static org.flickit.assessment.users.common.MessageKey.INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT;
 
 @Component
 @EnableRetry
