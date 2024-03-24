@@ -12,8 +12,9 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 public class UsersDataConstraintErrorMapper implements DataConstraintErrorMapper {
 
     Map<String, String> constraintToErrorMsg = Map.ofEntries(
-        entry("baseinfo_expertgroup_name_key", CREATE_EXPERT_GROUP_TITLE_DUPLICATE),
-        entry("baseinfo_expertgroupaccess_user_id_3c79acf7_fk_account_user_id", INVITE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND),
+        entry("uq_fac_expertgroup_title", CREATE_EXPERT_GROUP_TITLE_DUPLICATE),
+        entry("fk_fau_expertgroup_user_access_user", INVITE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND),
+        entry("fk_fau_expertgroup_user_access_expertgroup", INVITE_EXPERT_GROUP_MEMBER_MEMBER_NOT_FOUND),
         entry("uq_fau_expertgroupaccess_expertgroupid_userid", INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_DUPLICATE));
 
     @Override
