@@ -4,7 +4,6 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.MessageBundle;
-import org.flickit.assessment.data.config.MailConfigProperties;
 import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -12,6 +11,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.flickit.assessment.common.config.FlickitPlatformRestProperties;
 
 import java.util.UUID;
 
@@ -25,7 +25,7 @@ public class MailAdapter implements
         SendExpertGroupInviteMailPort {
 
     private final JavaMailSender mailSender;
-    private final MailConfigProperties properties;
+    private final FlickitPlatformRestProperties properties;
 
     @SneakyThrows
     @Retryable(retryFor = Exception.class, maxAttempts = 10, backoff = @Backoff(delay = 10000))
@@ -36,8 +36,10 @@ public class MailAdapter implements
 
         helper.setTo(to);
         helper.setSubject(MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT));
-        String htmlContent = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY,
-            properties.getBaseUrl(), properties.getGetInviteUrl(), expertGroupId, inviteToken.toString());
+        String joinUrl = String.join("/", properties.getBaseUrl(), properties.getGetInviteUrl(),
+            String.valueOf(expertGroupId), inviteToken.toString());
+
+        String htmlContent = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY, joinUrl);
 
         helper.setText(htmlContent, true);
         mailSender.send(message);
