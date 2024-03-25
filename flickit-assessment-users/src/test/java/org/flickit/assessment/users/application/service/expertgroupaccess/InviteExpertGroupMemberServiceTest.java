@@ -10,7 +10,6 @@ import org.flickit.assessment.users.application.port.out.expertgroupaccess.Invit
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMemberStatusPort;
 import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_DUPLICATE;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -70,8 +74,8 @@ class InviteExpertGroupMemberServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
         when(loadExpertGroupMemberPort.getMemberStatus(expertGroupId, userId)).thenReturn(Optional.of(ExpertGroupAccessStatus.ACTIVE.ordinal()));
 
-        Assertions.assertThrows(ResourceAlreadyExistsException.class, () -> service.inviteMember(param));
-
+        var throwable = assertThrows(ResourceAlreadyExistsException.class, () -> service.inviteMember(param));
+        assertThat(throwable).hasMessage(INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_DUPLICATE);
     }
 
     @Test
@@ -83,7 +87,8 @@ class InviteExpertGroupMemberServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.inviteMember(param));
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.inviteMember(param));
+        assertThat(throwable).hasMessage(EXPERT_GROUP_ID_NOT_FOUND);
     }
 
     @Test
@@ -95,6 +100,7 @@ class InviteExpertGroupMemberServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(UUID.randomUUID()));
 
-        Assertions.assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
+        assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }
