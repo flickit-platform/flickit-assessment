@@ -4,7 +4,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.MessageBundle;
-import org.flickit.assessment.common.config.FlickitPlatformRestProperties;
+import org.flickit.assessment.data.config.MailConfigProperties;
 import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -25,7 +25,7 @@ public class MailAdapter implements
         SendExpertGroupInviteMailPort {
 
     private final JavaMailSender mailSender;
-    private final FlickitPlatformRestProperties properties;
+    private final MailConfigProperties properties;
 
     @SneakyThrows
     @Retryable(retryFor = Exception.class, maxAttempts = 10, backoff = @Backoff(delay = 10000))
