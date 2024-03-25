@@ -65,6 +65,13 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     boolean checkUserIsOwner(@Param("expertGroupId") long expertGroupId,
                              @Param("userId") UUID userId);
 
+    @Query("""
+        SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END
+        FROM AssessmentKitJpaEntity a
+        WHERE a.expertGroupId = :expertGroupId
+        """)
+    boolean checkHavingKit(@Param("expertGroupId") Long expertGroupId);
+
     @Modifying
     @Query("""
         UPDATE ExpertGroupJpaEntity e

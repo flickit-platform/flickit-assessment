@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupUseCase;
-import org.flickit.assessment.users.application.port.out.assessmentkit.CheckKitUsedByExpertGroupPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupHavingKitPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.DeleteExpertGroupPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.stereotype.Service;
@@ -22,16 +22,17 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_
 @RequiredArgsConstructor
 public class DeleteExpertGroupService implements DeleteExpertGroupUseCase {
 
-    private final CheckKitUsedByExpertGroupPort checkKitUsedByExpertGroupPort;
     private final DeleteExpertGroupPort deleteExpertGroupPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final CheckExpertGroupHavingKitPort checkExpertGroupHavingKitPort;
+
 
     @Override
     public void deleteExpertGroup(Param param) {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
-        boolean isUsed = checkKitUsedByExpertGroupPort.checkKitUsedByExpertGroupId(param.getId());
+        boolean contains = checkExpertGroupHavingKitPort.checkHavingKit(param.getId());
 
-        if (isUsed)
+        if (contains)
             throw new AccessDeniedException(DELETE_EXPERT_GROUP_ACCESS_DENIED);
 
         deleteExpertGroupPort.deleteById(param.getId());

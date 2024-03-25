@@ -2,11 +2,11 @@ package org.flickit.assessment.users.application.service.expertgroup;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.port.in.expertgroup.DeleteExpertGroupUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupExistsPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.CheckExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.CheckKitUsedByExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.DeleteExpertGroupPort;
+import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupUseCase;
+import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupHavingKitPort;
+import org.flickit.assessment.users.application.port.out.assessmentkit.CheckKitUsedByExpertGroupPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.DeleteExpertGroupPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

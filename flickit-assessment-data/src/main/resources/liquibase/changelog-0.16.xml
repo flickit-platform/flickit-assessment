@@ -174,7 +174,7 @@
     </changeSet>
 
     <changeSet id="0.14-25" author="Maziyar Gerami">
-        <addColumn tableName="baseinfo_expertgroup">
+        <addColumn tableName="fau_expert_group">
             <column name="deleted" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
