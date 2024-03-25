@@ -1,5 +1,6 @@
-package org.flickit.assessment.kit.application.port.out.assessmentkit;
+package org.flickit.assessment.users.application.port.out.expertgroup;
 
 public interface CheckKitUsedByExpertGroupPort {
     boolean checkKitUsedByExpertGroupId(Long expertGroupId);
 }
+

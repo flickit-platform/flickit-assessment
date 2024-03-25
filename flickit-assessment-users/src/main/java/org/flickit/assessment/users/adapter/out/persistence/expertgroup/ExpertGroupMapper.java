@@ -52,7 +52,8 @@ public class ExpertGroupMapper {
             param.currentUserId(),
             param.currentUserId(),
             creationTime,
-            creationTime
+            creationTime,
+            false
         );
     }
 }

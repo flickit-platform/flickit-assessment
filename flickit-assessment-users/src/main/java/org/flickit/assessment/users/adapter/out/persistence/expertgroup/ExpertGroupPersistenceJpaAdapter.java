@@ -27,11 +27,9 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GRO
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
-    LoadExpertGroupMemberIdsPort,
     CreateExpertGroupPort,
     LoadExpertGroupPort,
     CheckExpertGroupExistsPort,
-    CheckExpertGroupOwnerPort,
     DeleteExpertGroupPort {
 
     private final ExpertGroupJpaRepository repository;
@@ -78,14 +76,6 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<LoadExpertGroupMemberIdsPort.Result> loadMemberIds(long expertGroupId) {
-        List<UUID> memberIds = repository.findMemberIdsByExpertGroupId(expertGroupId);
-        return memberIds.stream()
-            .map(LoadExpertGroupMemberIdsPort.Result::new)
-            .toList();
-    }
-
-    @Override
     public ExpertGroup loadExpertGroup(long id) {
         var resultEntity = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND));
@@ -95,11 +85,6 @@ public class ExpertGroupPersistenceJpaAdapter implements
     @Override
     public boolean existsById(long id) {
         return repository.existsById(id);
-    }
-
-    @Override
-    public boolean checkIsOwner(long expertGroupId, UUID userId) {
-        return repository.checkUserIsOwner(expertGroupId, userId);
     }
 
     @Override

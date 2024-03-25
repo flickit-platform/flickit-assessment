@@ -129,12 +129,4 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.14-24" author="Maziyar Gerami">
-        <addColumn tableName="baseinfo_expertgroup">
-            <column name="deleted" type="boolean" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
 </databaseChangeLog>
