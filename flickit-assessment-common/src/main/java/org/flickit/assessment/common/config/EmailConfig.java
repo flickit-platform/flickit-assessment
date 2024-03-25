@@ -1,12 +1,9 @@
 package org.flickit.assessment.common.config;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.handler.CustomAsyncExceptionHandler;
-import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -16,7 +13,7 @@ import java.util.concurrent.Executor;
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(EmailProperties.class)
-public class EmailConfig implements AsyncConfigurer {
+public class EmailConfig {
 
     private final EmailProperties properties;
 
@@ -32,10 +29,5 @@ public class EmailConfig implements AsyncConfigurer {
         executor.setAllowCoreThreadTimeOut(properties.getExecutor().isAllowCoreThreadTimeOut());
         executor.setPrestartAllCoreThreads(properties.getExecutor().isPrestartAllCoreThreads());
         return executor;
-    }
-
-    @Override
-    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return new CustomAsyncExceptionHandler();
     }
 }
