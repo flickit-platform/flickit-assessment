@@ -57,7 +57,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
 
         if (result != null)
             new Thread(() ->
-                sendExpertGroupInviteMailPort.sendInvite(email, inviteToken)).start();
+                sendExpertGroupInviteMailPort.sendInvite(email, param.getExpertGroupId(), inviteToken)).start();
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {

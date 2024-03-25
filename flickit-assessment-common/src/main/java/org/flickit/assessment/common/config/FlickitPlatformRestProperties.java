@@ -31,6 +31,9 @@ public class FlickitPlatformRestProperties {
     @NotBlank
     private String getAnswerOptionsUrl = "/api/internal/v1/answer-options?ids=%s";
 
+    @NotBlank
+    private String getInviteUrl = "account/expert-group-invitation";
+
     private int getAnswerOptionIdsLimit = 100;
 
     @Valid
