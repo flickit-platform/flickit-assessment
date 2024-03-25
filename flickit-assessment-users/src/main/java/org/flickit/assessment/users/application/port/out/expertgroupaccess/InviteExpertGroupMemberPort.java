@@ -15,7 +15,6 @@ public interface InviteExpertGroupMemberPort {
                  LocalDateTime inviteExpirationDate,
                  UUID inviteToken,
                  ExpertGroupAccessStatus status,
-                 UUID createdBy
-                 ) {
+                 UUID createdBy) {
     }
 }

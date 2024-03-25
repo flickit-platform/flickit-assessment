@@ -39,9 +39,8 @@ class InviteExpertGroupMemberServiceTest {
     @Mock
     private LoadExpertGroupMemberStatusPort loadExpertGroupMemberPort;
 
-
     @Test
-    void inviteMember_validParameters_success() {
+    void testInviteMember_validParameters_success() {
         UUID userId = UUID.randomUUID();
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -62,7 +61,7 @@ class InviteExpertGroupMemberServiceTest {
     }
 
     @Test
-    void inviteMember_memberExistAndActive_alreadyExist() {
+    void testInviteMember_memberExistAndActive_alreadyExist() {
         UUID userId = UUID.randomUUID();
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -76,7 +75,7 @@ class InviteExpertGroupMemberServiceTest {
     }
 
     @Test
-    void inviteMember_expertGroupNotExist_fail() {
+    void testInviteMember_expertGroupNotExist_fail() {
         UUID userId = UUID.randomUUID();
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -88,7 +87,7 @@ class InviteExpertGroupMemberServiceTest {
     }
 
     @Test
-    void inviteMember_expertGroupInviterNotOwner_fail() {
+    void testInviteMember_expertGroupInviterNotOwner_fail() {
         UUID userId = UUID.randomUUID();
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
