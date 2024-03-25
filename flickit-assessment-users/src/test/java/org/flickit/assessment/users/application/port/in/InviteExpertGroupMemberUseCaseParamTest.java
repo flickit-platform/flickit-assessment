@@ -17,31 +17,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class InviteExpertGroupMemberUseCaseParamTest {
 
-    private static final Long EXPERT_GROUP_ID = 0L;
-
-    private static final UUID USER_ID = UUID.randomUUID();
-
-    private static final UUID CURRENT_USER_ID = UUID.randomUUID();
-
-
     @Test
     void testInviteExpertGroupMember_expertGroupIdIsNull_ErrorMessage() {
+        UUID userId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new InviteExpertGroupMemberUseCase.Param(null, USER_ID, CURRENT_USER_ID));
+            () -> new InviteExpertGroupMemberUseCase.Param(null, userId, currentUserId));
         assertThat(throwable).hasMessage("expertGroupId: " + INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL);
     }
 
     @Test
     void testInviteExpertGroupMember_userIdIsNull_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new InviteExpertGroupMemberUseCase.Param(EXPERT_GROUP_ID, null, CURRENT_USER_ID));
+            () -> new InviteExpertGroupMemberUseCase.Param(123L, null, currentUserId));
         assertThat(throwable).hasMessage("userId: " + INVITE_EXPERT_GROUP_MEMBER_USER_ID_NOT_NULL);
     }
 
     @Test
     void testInviteExpertGroupMember_currentUserIdIsNull_ErrorMessage() {
+        UUID userId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new InviteExpertGroupMemberUseCase.Param(EXPERT_GROUP_ID, USER_ID, null));
+            () -> new InviteExpertGroupMemberUseCase.Param(123L, userId, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
