@@ -43,7 +43,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         Optional<Integer> memberStatus = loadExpertGroupMemberPort.getMemberStatus(param.getExpertGroupId(), param.getUserId());
 
         if (memberStatus.isPresent() && (memberStatus.get() == ExpertGroupAccessStatus.ACTIVE.ordinal()))
-            throw new ResourceAlreadyExistsException(INVITE_EXPERT_GROUP_MEMBER_MEMBER_EXIST);
+            throw new ResourceAlreadyExistsException(INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_DUPLICATE);
 
         var inviteToken = UUID.randomUUID();
         var inviteDate = LocalDateTime.now();
