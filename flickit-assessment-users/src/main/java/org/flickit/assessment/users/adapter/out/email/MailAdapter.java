@@ -4,6 +4,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.data.config.MailConfigProperties;
 import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -11,7 +12,6 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.flickit.assessment.common.config.FlickitPlatformRestProperties;
 
 import java.util.UUID;
 
@@ -22,10 +22,10 @@ import static org.flickit.assessment.users.common.MessageKey.INVITE_EXPERT_GROUP
 @EnableRetry
 @AllArgsConstructor
 public class MailAdapter implements
-        SendExpertGroupInviteMailPort {
+    SendExpertGroupInviteMailPort {
 
     private final JavaMailSender mailSender;
-    private final FlickitPlatformRestProperties properties;
+    private final MailConfigProperties properties;
 
     @SneakyThrows
     @Retryable(retryFor = Exception.class, maxAttempts = 10, backoff = @Backoff(delay = 10000))
