@@ -25,7 +25,7 @@ public class MailAdapter implements
     SendExpertGroupInviteMailPort {
 
     private final JavaMailSender mailSender;
-    private final MailConfigProperties properties;
+    private final AppSpecProperties appSpecProperties;
 
     @SneakyThrows
     @Retryable(retryFor = Exception.class, maxAttempts = 10, backoff = @Backoff(delay = 10000))
