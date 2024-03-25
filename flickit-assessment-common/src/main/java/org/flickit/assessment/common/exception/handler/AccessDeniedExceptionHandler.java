@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
 
-
 @RestControllerAdvice
 public class AccessDeniedExceptionHandler {
 

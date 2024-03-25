@@ -173,13 +173,69 @@
                                  constraintName="fk_fau_expertgroup_user_access_user"/>
     </changeSet>
 
-    <changeSet id="0.16-25" author="Maziyar Gerami">
+    <changeSet id="0.16-25" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"
+                    valueComputed="fak_assessment_kit.creation_time FROM fak_assessment_kit
+                                    WHERE fak_kit_version.kit_id = fak_assessment_kit.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-26" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    valueComputed="fak_assessment_kit.last_modification_time FROM fak_assessment_kit
+                                    WHERE fak_kit_version.kit_id = fak_assessment_kit.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16.27" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="created_by" type="uuid"
+                    valueComputed="fak_assessment_kit.created_by FROM fak_assessment_kit
+                                    WHERE fak_kit_version.kit_id = fak_assessment_kit.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-28" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_version"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitversion_user_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.16-29" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="last_modified_by" type="uuid"
+                    valueComputed="fak_assessment_kit.last_modified_by FROM fak_assessment_kit
+                                    WHERE fak_kit_version.kit_id = fak_assessment_kit.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-30" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_version"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitversion_user_lastmodifiedby"/>
+    </changeSet>
+
+    <changeSet id="0.16-31" author="Maziyar Gerami">
         <dropColumn tableName="fau_expert_group_user_access"
                     columnName="invite_email">
         </dropColumn>
     </changeSet>
 
-    <changeSet id="0.16-26" author="Maziyar Gerami">
+    <changeSet id="0.16-32" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group_user_access">
             <column name="status" type="tinyint" defaultValue="1">
                 <constraints nullable="false"/>
@@ -187,7 +243,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.16-27" author="Maziyar Gerami">
+    <changeSet id="0.16-33" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group_user_access">
             <column name="invite_token" type="uuid" defaultValue="null">
                 <constraints nullable="true"/>
@@ -195,12 +251,12 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.16-28" author="Maziyar Gerami">
+    <changeSet id="0.16-34" author="Maziyar Gerami">
         <addUniqueConstraint tableName="fau_expert_group_user_access" columnNames="expert_group_id,user_id"
                              constraintName="uq_fau_expertgroupaccess_expertgroupid_userid"/>
     </changeSet>
 
-    <changeSet id="0.16-29" author="Mayizar Gerami">
+    <changeSet id="0.16-35" author="Mayizar Gerami">
         <addColumn tableName="fau_expert_group_user_access">
             <column name="invite_date" type="${datetime_with_time_zone_type}" defaultValue="null">
                 <constraints nullable="true"/>
