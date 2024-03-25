@@ -48,16 +48,11 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         var inviteToken = UUID.randomUUID();
         var inviteDate = LocalDateTime.now();
         var inviteExpirationDate = inviteDate.plusDays(EXPIRY_DURATION.toDays());
-
         var email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
-        if (email == null)
-            throw new ResourceNotFoundException(INVITE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND);
 
-        var result = inviteExpertGroupMemberPort.invite(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
-
-        if (result != null)
-            new Thread(() ->
-                sendExpertGroupInviteMailPort.sendInvite(email, param.getExpertGroupId(), inviteToken)).start();
+        inviteExpertGroupMemberPort.invite(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
+        new Thread(() ->
+            sendExpertGroupInviteMailPort.sendInvite(email, param.getExpertGroupId(), inviteToken)).start();
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {

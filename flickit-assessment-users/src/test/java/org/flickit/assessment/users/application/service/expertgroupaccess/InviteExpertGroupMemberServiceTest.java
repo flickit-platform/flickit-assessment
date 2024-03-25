@@ -51,7 +51,7 @@ class InviteExpertGroupMemberServiceTest {
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
         when(loadExpertGroupMemberPort.getMemberStatus(expertGroupId, userId)).thenReturn(Optional.empty());
-        when(inviteExpertGroupMemberPort.invite(any(InviteExpertGroupMemberPort.Param.class))).thenReturn(expertGroupId);
+        doNothing().when(inviteExpertGroupMemberPort).invite(isA(InviteExpertGroupMemberPort.Param.class));
         doNothing().when(sendExpertGroupInviteMailPort).sendInvite(anyString(), anyLong(), any(UUID.class));
 
         service.inviteMember(param);
