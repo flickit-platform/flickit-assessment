@@ -35,7 +35,7 @@ public class ErrorMessageKey {
     public static final String INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL = "invite-expert-group-member.expert-group-id.notNull";
     public static final String INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_DUPLICATE = "invite-expert-group-member.expert-group-id-user-id.duplicate";
     public static final String INVITE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND = "invite-expert-group-member.user-id.notFound";
-    public static final String INVITE_EXPERT_GROUP_MEMBER_MEMBER_NOT_FOUND = "invite-expert-group-member.member.notFound";
+    public static final String INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_FOUND = "invite-expert-group-member.expert-group-id.notFound";
 
     public static final String GET_EXPERT_GROUP_MEMBERS_ID_NOT_NULL = "get-expert-group-members.id.notNull";
     public static final String GET_EXPERT_GROUP_MEMBERS_SIZE_MIN = "get-expert-group-members.size.min";
