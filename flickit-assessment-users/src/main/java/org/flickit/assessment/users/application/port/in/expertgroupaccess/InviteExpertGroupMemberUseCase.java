@@ -28,7 +28,7 @@ public interface InviteExpertGroupMemberUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(long expertGroupId, UUID userId, UUID currentUserId) {
+        public Param(Long expertGroupId, UUID userId, UUID currentUserId) {
             this.expertGroupId = expertGroupId;
             this.userId = userId;
             this.currentUserId = currentUserId;
