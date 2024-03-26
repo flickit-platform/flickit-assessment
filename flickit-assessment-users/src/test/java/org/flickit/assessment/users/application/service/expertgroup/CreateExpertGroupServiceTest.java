@@ -1,14 +1,13 @@
 package org.flickit.assessment.users.application.service.expertgroup;
 
-
+import org.flickit.assessment.users.application.port.out.expertgroup.*;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
+import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.flickit.assessment.users.application.port.out.expertgroup.*;
-import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
-import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
 
 import java.util.Random;
 import java.util.UUID;
@@ -28,6 +27,14 @@ class CreateExpertGroupServiceTest {
 
     @Test
     void testCreateExpertGroup_validParams_persistResult() {
+        UUID currentUserId = UUID.randomUUID();
+        Param param = new Param("Expert Group Name",
+            "Expert Group Bio",
+            "Expert Group About",
+            null,
+            "http://www.example.com",
+            currentUserId);
+
         long expectedId = new Random().nextLong();
         when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(expectedId);
         doNothing().when(createExpertGroupAccessPort).persist(any(CreateExpertGroupAccessPort.Param.class));
@@ -40,6 +47,14 @@ class CreateExpertGroupServiceTest {
 
     @Test
     void testCreateExpertGroup_expertGroupPersistProblem_transactionRollback() {
+        UUID currentUserId = UUID.randomUUID();
+        Param param = new Param("Expert Group Name",
+            "Expert Group Bio",
+            "Expert Group About",
+            null,
+            "http://www.example.com",
+            currentUserId);
+
         when(createExpertGroupPort.persist(any(CreateExpertGroupPort.Param.class))).thenReturn(new Random().nextLong());
         doThrow(new RuntimeException("Simulated exception"))
             .when(createExpertGroupAccessPort).persist(any(CreateExpertGroupAccessPort.Param.class));
@@ -49,12 +64,4 @@ class CreateExpertGroupServiceTest {
 
         verify(createExpertGroupPort, times(1)).persist(any(CreateExpertGroupPort.Param.class));
     }
-
-    private final UUID currentUserId = UUID.randomUUID();
-    private final Param param = new Param("Expert Group Name",
-        "Expert Group Bio",
-        "Expert Group About",
-        null,
-        "http://www.example.com",
-        currentUserId);
 }
