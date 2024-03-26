@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.*;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.users.expertgroup.MembersView;
@@ -12,12 +13,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class ExpertGroupAccessPersistenceJpaAdapter implements
     CreateExpertGroupAccessPort,
-    LoadExpertGroupMembersPort {
+    LoadExpertGroupMembersPort,
+    InviteExpertGroupMemberPort,
+    LoadExpertGroupMemberStatusPort {
 
     private final ExpertGroupAccessJpaRepository repository;
 
@@ -47,6 +52,12 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
         repository.save(unsavedEntity);
     }
 
+    @Override
+    public void invite(InviteExpertGroupMemberPort.Param param) {
+        ExpertGroupAccessJpaEntity unsavedEntity = (ExpertGroupAccessMapper.mapInviteParamToJpaEntity(param));
+        repository.save(unsavedEntity);
+    }
+
     private static LoadExpertGroupMembersPort.Member mapToResult(MembersView view) {
         return new LoadExpertGroupMembersPort.Member(
             view.getId(),
@@ -55,5 +66,10 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
             view.getBio(),
             view.getPicture(),
             view.getLinkedin());
+    }
+
+    @Override
+    public Optional<Integer> getMemberStatus(long expertGroupId, UUID userId) {
+        return repository.findExpertGroupMemberStatus(expertGroupId, userId);
     }
 }

@@ -27,11 +27,17 @@ public class ExpertGroupAccessJpaEntity {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
-    @Column(name = "invite_email", columnDefinition = "TEXT")
-    private String inviteEmail;
+    @Column(name = "invite_date")
+    private LocalDateTime inviteDate;
 
     @Column(name = "invite_expiration_date")
     private LocalDateTime inviteExpirationDate;
+
+    @Column(name = "invite_token")
+    private UUID inviteToken;
+
+    @Column(name = "status", nullable = false)
+    private int status;
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;

@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
-@Component
+@Component("kitUserPersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class UserPersistenceJpaAdapter implements
     LoadUserPort,
-    LoadUserByEmailPort {
+    LoadUserByEmailPort{
 
     private final UserJpaRepository repository;
 

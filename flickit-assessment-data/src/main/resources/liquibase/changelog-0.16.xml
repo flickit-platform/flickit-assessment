@@ -229,7 +229,42 @@
                                  constraintName="fk_fak_kitversion_user_lastmodifiedby"/>
     </changeSet>
 
-    <changeSet id="0.14-31" author="Maziyar Gerami">
+    <changeSet id="0.16-31" author="Maziyar Gerami">
+        <dropColumn tableName="fau_expert_group_user_access"
+                    columnName="invite_email">
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.16-32" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="status" type="tinyint" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-33" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="invite_token" type="uuid" defaultValue="null">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-34" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fau_expert_group_user_access" columnNames="expert_group_id,user_id"
+                             constraintName="uq_fau_expertgroupaccess_expertgroupid_userid"/>
+    </changeSet>
+
+    <changeSet id="0.16-35" author="Mayizar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="invite_date" type="${datetime_with_time_zone_type}" defaultValue="null">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.14-36" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group">
             <column name="deleted" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>
