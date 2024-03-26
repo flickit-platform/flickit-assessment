@@ -30,9 +30,9 @@ public class DeleteExpertGroupService implements DeleteExpertGroupUseCase {
     @Override
     public void deleteExpertGroup(Param param) {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
-        boolean contains = checkExpertGroupHavingKitPort.checkHavingKit(param.getId());
+        boolean havingKit = checkExpertGroupHavingKitPort.checkHavingKit(param.getId());
 
-        if (contains)
+        if (havingKit)
             throw new AccessDeniedException(DELETE_EXPERT_GROUP_ACCESS_DENIED);
 
         deleteExpertGroupPort.deleteById(param.getId());
