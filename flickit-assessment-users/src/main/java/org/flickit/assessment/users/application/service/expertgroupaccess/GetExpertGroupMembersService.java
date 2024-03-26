@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.expertgroupaccess;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.GetExpertGroupMembersUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -59,7 +60,9 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
                 item.displayName(),
                 item.bio(),
                 createFileDownloadLinkPort.createDownloadLink(item.picture(), EXPIRY_DURATION),
-                item.linkedin()
+                item.linkedin(),
+                ExpertGroupAccessStatus.values()[item.status()],
+                item.inviteExpirationDate()
             ))
             .toList();
     }

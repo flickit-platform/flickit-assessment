@@ -1,13 +1,13 @@
 package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
-import org.flickit.assessment.users.application.port.out.expertgroupaccess.*;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.data.jpa.users.expertgroup.MembersView;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
-import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMemberStatusPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMembersPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -58,14 +58,16 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
         repository.save(unsavedEntity);
     }
 
-    private static LoadExpertGroupMembersPort.Member mapToResult(MembersView view) {
+    private static LoadExpertGroupMembersPort.Member mapToResult(ExpertGroupMembersView view) {
         return new LoadExpertGroupMembersPort.Member(
             view.getId(),
             view.getEmail(),
             view.getDisplayName(),
             view.getBio(),
             view.getPicture(),
-            view.getLinkedin());
+            view.getLinkedin(),
+            view.getStatus(),
+            view.getInviteExpirationDate());
     }
 
     @Override

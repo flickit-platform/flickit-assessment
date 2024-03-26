@@ -7,7 +7,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -49,6 +51,8 @@ public interface GetExpertGroupMembersUseCase {
         String displayName,
         String bio,
         String pictureLink,
-        String linkedin) {
+        String linkedin,
+        ExpertGroupAccessStatus status,
+        LocalDateTime inviteExpirationDate) {
     }
 }
