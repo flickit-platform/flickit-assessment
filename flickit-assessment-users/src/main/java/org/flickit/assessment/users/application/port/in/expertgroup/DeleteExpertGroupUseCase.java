@@ -12,7 +12,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_
 
 public interface DeleteExpertGroupUseCase {
 
-    void deleteExpertGroup(Param param);
+    void deleteExpertGroup (Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -23,5 +23,11 @@ public interface DeleteExpertGroupUseCase {
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
+
+        public Param(Long id, UUID currentUserId) {
+            this.id = id;
+            this.currentUserId = currentUserId;
+            this.validateSelf();
+        }
     }
 }
