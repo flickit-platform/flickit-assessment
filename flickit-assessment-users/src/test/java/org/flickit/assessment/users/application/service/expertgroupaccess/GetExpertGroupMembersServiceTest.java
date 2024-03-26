@@ -78,7 +78,7 @@ class GetExpertGroupMembersServiceTest {
         long expertGroupId = 123L;
         int page = 0;
         int size = 10;
-        GetExpertGroupMembersUseCase.Param param = new GetExpertGroupMembersUseCase.Param(expertGroupId, ExpertGroupAccessStatus.PENDING, currentUserId, size, page);
+        GetExpertGroupMembersUseCase.Param param = new GetExpertGroupMembersUseCase.Param(expertGroupId, ExpertGroupAccessStatus.PENDING.name(), currentUserId, size, page);
 
         when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(Optional.of(ownerId));

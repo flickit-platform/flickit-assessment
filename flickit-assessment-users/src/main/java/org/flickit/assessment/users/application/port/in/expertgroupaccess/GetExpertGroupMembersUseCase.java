@@ -4,10 +4,13 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.validation.EnumValue;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 
 import java.time.LocalDateTime;
@@ -28,7 +31,9 @@ public interface GetExpertGroupMembersUseCase {
         Long id;
 
         @Nullable
-        ExpertGroupAccessStatus status;
+        @Getter(AccessLevel.NONE)
+        @EnumValue(enumClass = ExpertGroupAccessStatus.class, message = GET_EXPERT_GROUP_MEMBERS_STATUS_INVALID)
+        String status;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
@@ -40,13 +45,18 @@ public interface GetExpertGroupMembersUseCase {
         @Min(value = 0, message = GET_EXPERT_GROUP_MEMBERS_PAGE_MIN)
         int page;
 
-        public Param(long expertGroupId, ExpertGroupAccessStatus status, UUID currentUserId, int size, int page) {
+        public Param(long expertGroupId, @Nullable String status, UUID currentUserId, int size, int page) {
             this.id = expertGroupId;
             this.status = status;
             this.currentUserId = currentUserId;
             this.size = size;
             this.page = page;
             this.validateSelf();
+        }
+
+        @Nullable
+        public ExpertGroupAccessStatus getStatus() {
+            return status != null ? ExpertGroupAccessStatus.valueOf(status) : null;
         }
     }
 
