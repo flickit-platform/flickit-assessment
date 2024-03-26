@@ -38,7 +38,6 @@ public class ErrorMessageKey {
     public static final String GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND = "get-expert-group-members.expertGroup.notFound";
 
     public static final String DELETE_EXPERT_GROUP_ACCESS_DENIED = "delete-expert-group.expert-group.access-denied";
-    public static final String DELETE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_FOUND = "delete-expert-group.expert-group-id.notFound";
     public static final String DELETE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group.expert-group-id.notNull";
 
 }
