@@ -42,4 +42,7 @@ public class ErrorMessageKey {
     public static final String GET_EXPERT_GROUP_MEMBERS_SIZE_MAX = "get-expert-group-members.size.max";
     public static final String GET_EXPERT_GROUP_MEMBERS_PAGE_MIN = "get-expert-group-members.page.min";
     public static final String GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND = "get-expert-group-members.expertGroup.notFound";
+
+    public static final String CONFIRM_EXPERT_GROUP_INVITE_EXPERT_GROUP_ID_NOT_NULL = "confirm-expert-group-invitation.expert-group-id.notNull";
+    public static final String CONFIRM_EXPERT_GROUP_INVITE_INVITE_TOKEN_NOT_NULL = "confirm-expert-group-invitation.expert-group-id.notNull";
 }
