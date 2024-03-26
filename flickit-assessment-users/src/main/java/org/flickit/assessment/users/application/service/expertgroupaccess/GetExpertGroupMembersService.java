@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.expertgroupaccess;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.GetExpertGroupMembersUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -37,8 +38,14 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(param.getId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND));
 
-        var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), param.getPage(), param.getSize());
         boolean userIsOwner = ownerId.equals(param.getCurrentUserId());
+
+        if (!userIsOwner && param.getStatus() == ExpertGroupAccessStatus.PENDING)
+            return new PaginatedResponse<>(List.of(), 0, 0, null, null, 0);
+
+        ExpertGroupAccessStatus requiredStatus = param.getStatus() != null ? param.getStatus() : ExpertGroupAccessStatus.ACTIVE;
+
+        var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), requiredStatus.ordinal(), param.getPage(), param.getSize());
         var members = mapToMembers(portResult.getItems(), userIsOwner);
 
         return new PaginatedResponse<>(
@@ -59,7 +66,9 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
                 item.displayName(),
                 item.bio(),
                 createFileDownloadLinkPort.createDownloadLink(item.picture(), EXPIRY_DURATION),
-                item.linkedin()
+                item.linkedin(),
+                ExpertGroupAccessStatus.values()[item.status()],
+                item.inviteExpirationDate()
             ))
             .toList();
     }
