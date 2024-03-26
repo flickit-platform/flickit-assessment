@@ -71,12 +71,5 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     List<AttributeJpaEntity> findAllByKitVersionIdAndRefNumIn(Long kitVersionId, List<UUID> refNums);
 
-    @Query("""
-        SELECT a
-        FROM AttributeJpaEntity a
-        LEFT JOIN AssessmentKitJpaEntity k ON k.kitVersionId = a.kitVersionId
-        LEFT JOIN AssessmentJpaEntity i ON i.id = :assessmentId AND i.assessmentKitId = k.id
-        WHERE a.id IN :ids
-        """)
-    List<AttributeJpaEntity> findAllByIdsAndAssessmentId(List<Long> ids, UUID assessmentId);
+    List<AttributeJpaEntity> findByIdIn(@Param(value = "ids") List<Long> ids);
 }
