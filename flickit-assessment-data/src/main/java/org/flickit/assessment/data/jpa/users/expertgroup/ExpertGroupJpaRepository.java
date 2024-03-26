@@ -68,14 +68,11 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
 
     @Query("""
             SELECT
-                e.id,
                 COUNT(DISTINCT CASE WHEN ak.published = true THEN ak.id ELSE NULL END) as publishedKitCount,
                 COUNT(DISTINCT CASE WHEN ak.published = false THEN ak.id ELSE NULL END) as unPublishedKitCount
             FROM ExpertGroupJpaEntity e
             LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId
             WHERE e.id = :expertGroupId
-            GROUP BY
-                e.id
         """)
     KitCountView countKits(@Param("expertGroupId") long expertGroupId);
 }
