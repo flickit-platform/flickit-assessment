@@ -7,6 +7,44 @@
 	},
 	"item": [
 		{
+			"name": "Invite Member to Expert Group",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"69f63c1b-6e4c-4cf6-83c6-d8a25fa602ab\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/invite",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"invite"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Expert Group List",
 			"request": {
 				"method": "GET",
@@ -117,6 +155,32 @@
 						"{{api_path}}",
 						"expert-groups",
 						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Expert Group Members",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/members",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"members"
 					]
 				}
 			},

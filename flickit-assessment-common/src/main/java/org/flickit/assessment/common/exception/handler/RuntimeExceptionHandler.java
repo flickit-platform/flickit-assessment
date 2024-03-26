@@ -7,11 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static org.flickit.assessment.common.exception.api.ErrorCodes.INTERNAL_ERROR;
 
 @Slf4j
-//@RestControllerAdvice
+@RestControllerAdvice
 public class RuntimeExceptionHandler {
 
     @ResponseBody
