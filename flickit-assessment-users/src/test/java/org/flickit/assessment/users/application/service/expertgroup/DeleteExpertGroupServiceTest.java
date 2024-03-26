@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -40,7 +39,7 @@ class DeleteExpertGroupServiceTest {
         UUID currentUserId = UUID.randomUUID();
         DeleteExpertGroupUseCase.Param param = new DeleteExpertGroupUseCase.Param(expertGroupId, currentUserId);
 
-        when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenReturn(Optional.of(currentUserId));
+        when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenReturn(currentUserId);
         when(checkExpertGroupHavingKitPort.checkHavingKit(anyLong())).thenReturn(false);
         doNothing().when(deleteExpertGroupPort).deleteById(isA(Long.class));
 
@@ -54,7 +53,7 @@ class DeleteExpertGroupServiceTest {
         UUID currentUserId = UUID.randomUUID();
         DeleteExpertGroupUseCase.Param param = new DeleteExpertGroupUseCase.Param(expertGroupId, currentUserId);
 
-        when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenReturn(Optional.of(currentUserId));
+        when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenReturn(currentUserId);
         when(checkExpertGroupHavingKitPort.checkHavingKit(anyLong())).thenReturn(true);
 
         assertThrows(AccessDeniedException.class, () -> service.deleteExpertGroup(param));
@@ -67,20 +66,8 @@ class DeleteExpertGroupServiceTest {
         UUID currentUserId = UUID.randomUUID();
         DeleteExpertGroupUseCase.Param param = new DeleteExpertGroupUseCase.Param(expertGroupId, currentUserId);
 
-        when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenReturn(Optional.empty());
+        when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenThrow(new ResourceNotFoundException(""));
 
         assertThrows(ResourceNotFoundException.class, () -> service.deleteExpertGroup(param));
-    }
-
-    @Test
-    @DisplayName("ExpertGroupId and/or owner is not valid")
-    void testDeleteExpertGroup_invalidParameters_accessDenied() {
-        long expertGroupId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        DeleteExpertGroupUseCase.Param param = new DeleteExpertGroupUseCase.Param(expertGroupId, currentUserId);
-
-        when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenReturn(Optional.of(UUID.randomUUID()));
-
-        assertThrows(AccessDeniedException.class, () -> service.deleteExpertGroup(param));
     }
 }
