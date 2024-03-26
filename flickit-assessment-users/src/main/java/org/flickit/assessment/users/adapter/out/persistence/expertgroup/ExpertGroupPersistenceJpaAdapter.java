@@ -30,8 +30,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
     CreateExpertGroupPort,
     LoadExpertGroupPort,
     CheckExpertGroupExistsPort,
-CheckExpertGroupHavingKitPort,
-    DeleteExpertGroupPort {
+    DeleteExpertGroupPort,
+    CheckExpertGroupHavingKitPort{
 
     private final ExpertGroupJpaRepository repository;
 
@@ -89,12 +89,12 @@ CheckExpertGroupHavingKitPort,
     }
 
     @Override
-    public void deleteById(Long expertGroupId) {
+    public void deleteById(long expertGroupId) {
         repository.setAsDeleted(expertGroupId);
     }
 
     @Override
-    public boolean checkHavingKit(Long expertGroupId) {
+    public boolean checkHavingKit(long expertGroupId) {
         return repository.checkHavingKit(expertGroupId);
     }
 }
