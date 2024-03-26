@@ -41,11 +41,4 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE a.id = :id
         """)
     void updateKitVersionId(@Param(value = "id") Long id, @Param(value = "kitVersionId") Long kitVersionId);
-
-    @Query("""
-        SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END
-        FROM AssessmentKitJpaEntity a
-        WHERE a.expertGroupId = :expertGroupId
-        """)
-    boolean usedByExpertGroupId(@Param("expertGroupId") Long expertGroupId);
 }
