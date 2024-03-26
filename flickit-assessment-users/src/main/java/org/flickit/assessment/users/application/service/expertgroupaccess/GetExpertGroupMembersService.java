@@ -38,7 +38,9 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(param.getId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND));
 
-        var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), param.getPage(), param.getSize());
+        ExpertGroupAccessStatus requiredStatus = param.getStatus() != null ? param.getStatus() : ExpertGroupAccessStatus.ACTIVE;
+
+        var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), requiredStatus.ordinal(), param.getPage(), param.getSize());
         boolean userIsOwner = ownerId.equals(param.getCurrentUserId());
         var members = mapToMembers(portResult.getItems(), userIsOwner);
 

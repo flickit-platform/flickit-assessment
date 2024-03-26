@@ -27,8 +27,8 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     private final ExpertGroupAccessJpaRepository repository;
 
     @Override
-    public PaginatedResponse<Member> loadExpertGroupMembers(long expertGroupId, int page, int size) {
-        var pageResult = repository.findExpertGroupMembers(expertGroupId,
+    public PaginatedResponse<Member> loadExpertGroupMembers(long expertGroupId, int status, int page, int size) {
+        var pageResult = repository.findExpertGroupMembers(expertGroupId, status,
             PageRequest.of(page, size, Sort.Direction.DESC, ExpertGroupAccessJpaEntity.Fields.CREATION_TIME));
 
         var items = pageResult

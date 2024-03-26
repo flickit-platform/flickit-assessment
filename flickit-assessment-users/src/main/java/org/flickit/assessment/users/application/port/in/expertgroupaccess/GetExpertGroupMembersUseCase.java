@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.port.in.expertgroupaccess;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -26,6 +27,9 @@ public interface GetExpertGroupMembersUseCase {
         @NotNull(message = GET_EXPERT_GROUP_MEMBERS_ID_NOT_NULL)
         Long id;
 
+        @Nullable
+        ExpertGroupAccessStatus status;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
@@ -36,8 +40,9 @@ public interface GetExpertGroupMembersUseCase {
         @Min(value = 0, message = GET_EXPERT_GROUP_MEMBERS_PAGE_MIN)
         int page;
 
-        public Param(long expertGroupId, UUID currentUserId, int size, int page) {
+        public Param(long expertGroupId, ExpertGroupAccessStatus status, UUID currentUserId, int size, int page) {
             this.id = expertGroupId;
+            this.status = status;
             this.currentUserId = currentUserId;
             this.size = size;
             this.page = page;
