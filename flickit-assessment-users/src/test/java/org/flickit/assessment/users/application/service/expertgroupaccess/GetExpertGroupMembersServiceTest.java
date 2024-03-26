@@ -152,7 +152,6 @@ class GetExpertGroupMembersServiceTest {
             expectedDownloadLink,
             portMember.linkedin(),
             ExpertGroupAccessStatus.values()[portMember.status()],
-            LocalDateTime.now()
-        );
+            portMember.inviteExpirationDate());
     }
 }
