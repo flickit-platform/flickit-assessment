@@ -3,7 +3,7 @@ package org.flickit.assessment.users.application.service.expertgroup;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupUseCase;
-import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupHavingKitPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.CountExpertGroupKitsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.DeleteExpertGroupPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.stereotype.Service;
@@ -22,15 +22,15 @@ public class DeleteExpertGroupService implements DeleteExpertGroupUseCase {
 
     private final DeleteExpertGroupPort deleteExpertGroupPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-    private final CheckExpertGroupHavingKitPort checkExpertGroupHavingKitPort;
+    private final CountExpertGroupKitsPort countExpertGroupKitsPort;
 
 
     @Override
     public void deleteExpertGroup(Param param) {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
-        boolean havingKit = checkExpertGroupHavingKitPort.checkHavingKit(param.getId());
+        var kitsCount = countExpertGroupKitsPort.countKits(param.getId());
 
-        if (havingKit)
+        if (kitsCount.publishedKitCount() > 0 || kitsCount.unpublishedKitCount() > 0 )
             throw new AccessDeniedException(DELETE_EXPERT_GROUP_ACCESS_DENIED);
 
         deleteExpertGroupPort.deleteById(param.getId());

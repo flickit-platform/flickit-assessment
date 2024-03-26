@@ -58,18 +58,23 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         """)
     List<UUID> findMemberIdsByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId);
 
-    @Query("""
-        SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END
-        FROM AssessmentKitJpaEntity a
-        WHERE a.expertGroupId = :expertGroupId
-        """)
-    boolean checkHavingKit(@Param("expertGroupId") Long expertGroupId);
-
     @Modifying
     @Query("""
         UPDATE ExpertGroupJpaEntity e
         SET e.deleted = true
         WHERE e.id = :expertGroupId
         """)
-    void setAsDeleted(@Param("expertGroupId") Long expertGroupId);
+    void delete(@Param("expertGroupId") Long expertGroupId);
+
+    @Query("""
+            SELECT
+            ak.id,
+                COUNT(DISTINCT CASE WHEN ak.published = true THEN ak.id ELSE NULL END) as publishedKitsCount,
+                COUNT(DISTINCT CASE WHEN ak.published = false THEN ak.id ELSE NULL END) as unPublishedKitsCount,
+            FROM ExpertGroupJpaEntity e
+            LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId
+            GROUP BY
+                e.id,
+        """)
+    KitCountView countKits(@Param("expertGroupId") long expertGroupId);
 }

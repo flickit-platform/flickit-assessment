@@ -3,7 +3,7 @@ package org.flickit.assessment.users.application.service.expertgroup;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupUseCase;
-import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupHavingKitPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.CountExpertGroupKitsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.DeleteExpertGroupPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.junit.jupiter.api.DisplayName;
@@ -30,33 +30,22 @@ class DeleteExpertGroupServiceTest {
     @Mock
     LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     @Mock
-    CheckExpertGroupHavingKitPort checkExpertGroupHavingKitPort;
+    CountExpertGroupKitsPort countExpertGroupKitsPort;
 
     @Test
     @DisplayName("Valid User and expert groupId")
     void testDeleteExpertGroup_validParameters_successful() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
+        CountExpertGroupKitsPort.Result result = new CountExpertGroupKitsPort.Result(0,0);
+
         DeleteExpertGroupUseCase.Param param = new DeleteExpertGroupUseCase.Param(expertGroupId, currentUserId);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenReturn(currentUserId);
-        when(checkExpertGroupHavingKitPort.checkHavingKit(anyLong())).thenReturn(false);
+        when(countExpertGroupKitsPort.countKits(anyLong())).thenReturn(result);
         doNothing().when(deleteExpertGroupPort).deleteById(isA(Long.class));
 
         assertDoesNotThrow(() -> service.deleteExpertGroup(param));
-    }
-
-    @Test
-    @DisplayName("Valid User and expert groupId")
-    void testDeleteExpertGroup_expertGroupHavingKit_accessDenied() {
-        long expertGroupId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        DeleteExpertGroupUseCase.Param param = new DeleteExpertGroupUseCase.Param(expertGroupId, currentUserId);
-
-        when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenReturn(currentUserId);
-        when(checkExpertGroupHavingKitPort.checkHavingKit(anyLong())).thenReturn(true);
-
-        assertThrows(AccessDeniedException.class, () -> service.deleteExpertGroup(param));
     }
 
     @Test
@@ -69,5 +58,28 @@ class DeleteExpertGroupServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenThrow(new ResourceNotFoundException(""));
 
         assertThrows(ResourceNotFoundException.class, () -> service.deleteExpertGroup(param));
+    }
+
+    @Test
+    @DisplayName("Valid User and expert groupId but having assessment kit")
+    void testDeleteExpertGroup_expertGroupHavingKit_accessDenied() {
+        long expertGroupId = 0L;
+        UUID currentUserId = UUID.randomUUID();
+        DeleteExpertGroupUseCase.Param param = new DeleteExpertGroupUseCase.Param(expertGroupId, currentUserId);
+        CountExpertGroupKitsPort.Result result = new CountExpertGroupKitsPort.Result(1,0);
+
+        when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenReturn(currentUserId);
+        when(countExpertGroupKitsPort.countKits(anyLong())).thenReturn(result);
+
+        assertThrows(AccessDeniedException.class, () -> service.deleteExpertGroup(param));
+
+        result = new CountExpertGroupKitsPort.Result(1,1);
+        when(countExpertGroupKitsPort.countKits(anyLong())).thenReturn(result);
+        assertThrows(AccessDeniedException.class, () -> service.deleteExpertGroup(param));
+
+        result = new CountExpertGroupKitsPort.Result(0,1);
+        when(countExpertGroupKitsPort.countKits(anyLong())).thenReturn(result);
+        assertThrows(AccessDeniedException.class, () -> service.deleteExpertGroup(param));
+
     }
 }
