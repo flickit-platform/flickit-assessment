@@ -6,6 +6,8 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class KitVersionMapper {
 
@@ -13,7 +15,11 @@ public class KitVersionMapper {
         return new KitVersionJpaEntity(
             null,
             kit,
-            status.ordinal()
+            status.ordinal(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            kit.getCreatedBy(),
+            kit.getLastModifiedBy()
         );
     }
 }
