@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteExpertGroupServiceTest {
@@ -46,6 +47,10 @@ class DeleteExpertGroupServiceTest {
         doNothing().when(deleteExpertGroupPort).deleteById(isA(Long.class));
 
         assertDoesNotThrow(() -> service.deleteExpertGroup(param));
+
+        verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(expertGroupId);
+        verify(countExpertGroupKitsPort, times(1)).countKits(expertGroupId);
+        verify(deleteExpertGroupPort, times(1)).deleteById(expertGroupId);
     }
 
     @Test
@@ -58,6 +63,9 @@ class DeleteExpertGroupServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenThrow(new ResourceNotFoundException(""));
 
         assertThrows(ResourceNotFoundException.class, () -> service.deleteExpertGroup(param));
+
+        verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(expertGroupId);
+        verifyNoInteractions(countExpertGroupKitsPort, deleteExpertGroupPort);
     }
 
     @Test
@@ -70,7 +78,6 @@ class DeleteExpertGroupServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenReturn(currentUserId);
         when(countExpertGroupKitsPort.countKits(anyLong())).thenReturn(result);
-
         assertThrows(AccessDeniedException.class, () -> service.deleteExpertGroup(param));
 
         result = new CountExpertGroupKitsPort.Result(1,1);
@@ -81,5 +88,8 @@ class DeleteExpertGroupServiceTest {
         when(countExpertGroupKitsPort.countKits(anyLong())).thenReturn(result);
         assertThrows(AccessDeniedException.class, () -> service.deleteExpertGroup(param));
 
+        verify(loadExpertGroupOwnerPort, times(3)).loadOwnerId(expertGroupId);
+        verify(countExpertGroupKitsPort, times(3)).countKits(expertGroupId);
+        verifyNoInteractions(deleteExpertGroupPort);
     }
 }
