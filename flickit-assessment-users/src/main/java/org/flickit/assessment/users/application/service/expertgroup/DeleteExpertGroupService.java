@@ -30,7 +30,7 @@ public class DeleteExpertGroupService implements DeleteExpertGroupUseCase {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
         var kitsCount = countExpertGroupKitsPort.countKits(param.getId());
 
-        if (kitsCount.publishedKitCount() > 0 || kitsCount.unpublishedKitCount() > 0 )
+        if (kitsCount.publishedKitsCount() > 0 || kitsCount.unpublishedKitsCount() > 0 )
             throw new AccessDeniedException(DELETE_EXPERT_GROUP_ACCESS_DENIED);
 
         deleteExpertGroupPort.deleteById(param.getId());

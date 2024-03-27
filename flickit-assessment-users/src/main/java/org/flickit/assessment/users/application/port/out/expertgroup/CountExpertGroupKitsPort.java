@@ -4,6 +4,6 @@ public interface CountExpertGroupKitsPort {
 
     Result countKits(long expertGroupId);
 
-    record Result(int publishedKitCount, int unpublishedKitCount) {
+    record Result(int publishedKitsCount, int unpublishedKitsCount) {
     }
 }
