@@ -66,4 +66,10 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
         WHERE a.id = :attributeId
         """)
     UUID findRefNumById(@Param("attributeId") Long attributeId);
+
+    AttributeJpaEntity findByKitVersionIdAndRefNum(Long kitVersionId, UUID refNum);
+
+    List<AttributeJpaEntity> findAllByKitVersionIdAndRefNumIn(Long kitVersionId, List<UUID> refNums);
+
+    List<AttributeJpaEntity> findByIdIn(@Param(value = "ids") List<Long> ids);
 }

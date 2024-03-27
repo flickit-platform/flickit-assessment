@@ -50,7 +50,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                 var assessmentResultJpaEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
                     .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
                 QualityAttributeValueJpaEntity attributeValueEntity =
-                    attributeValueRepository.findByQualityAttributeIdAndAssessmentResult_Id(attributeId, assessmentResultJpaEntity.getId());
+                    attributeValueRepository.findByAttributeIdAndAssessmentResult_Id(attributeId, assessmentResultJpaEntity.getId());
 
                 Double gainedScorePercentage = attributeMaturityScoreRepository
                     .findByAttributeValueIdAndMaturityLevelId(attributeValueEntity.getId(), effectiveLevelId)
