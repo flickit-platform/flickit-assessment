@@ -107,4 +107,25 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.id = :questionId
         """)
     Optional<UUID> findRefNumById(@Param("questionId") Long questionId);
+
+    @Query("""
+            SELECT
+                MIN(q.index) as index,
+                qn.id as questionnaireId
+            FROM QuestionJpaEntity q JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id
+            JOIN KitVersionJpaEntity kv ON qn.kitVersionId = kv.id
+            JOIN AssessmentResultJpaEntity ar ON ar.kitVersionId = kv.id
+            WHERE ar.id = :assessmentResultId AND q.id NOT IN (
+                SELECT
+                    fq.id
+                FROM QuestionJpaEntity fq JOIN QuestionnaireJpaEntity qsn ON fq.questionnaireId = qsn.id
+                JOIN AnswerJpaEntity ans ON  ans.questionRefNum = fq.refNum
+                WHERE ans.assessmentResult.id = :assessmentResultId and (ans.answerOptionId IS NOT NULL OR ans.isNotApplicable = TRUE))
+            AND qn.id IN (
+                SELECT fqn.id
+                FROM QuestionnaireJpaEntity fqn JOIN AnswerJpaEntity fans ON fans.questionnaireId = fqn.id
+                WHERE fans.assessmentResult.id = :assessmentResultId
+            ) GROUP BY qn.id order by qn.id
+    """)
+    List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
 }

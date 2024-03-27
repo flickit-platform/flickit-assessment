@@ -12,14 +12,17 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.kit.question.FirstUnansweredQuestionView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -82,7 +85,15 @@ public class AnswerPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
 
         var progresses = repository.getQuestionnairesProgressByAssessmentResultId(assessmentResult.getId());
-        return progresses.stream().map(p -> new QuestionnaireProgress(p.getQuestionnaireId(), p.getAnswerCount())).toList();
+        var unansweredQuestions = questionRepository.findQuestionnairesFirstUnansweredQuestion(assessmentResult.getId());
+
+        Map<Long, Integer> questionnaireIdToQuestionIndex = unansweredQuestions.stream()
+            .collect(Collectors.toMap(FirstUnansweredQuestionView::getQuestionnaireId, FirstUnansweredQuestionView::getIndex));
+        return progresses.stream()
+            .map(p -> new QuestionnaireProgress(p.getQuestionnaireId(),
+                p.getAnswerCount(),
+                questionnaireIdToQuestionIndex.get(p.getQuestionnaireId())))
+            .toList();
     }
 
     @Override
