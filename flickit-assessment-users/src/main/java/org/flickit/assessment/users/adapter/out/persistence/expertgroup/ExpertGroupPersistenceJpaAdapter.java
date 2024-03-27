@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToDomainModel;
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
-import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapKitCountToPortResult;
+import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapKitsCountToPortResult;
 import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 
@@ -98,6 +98,6 @@ public class ExpertGroupPersistenceJpaAdapter implements
     @Override
     public CountExpertGroupKitsPort.Result countKits(long expertGroupId) {
         var resultEntity =  repository.countKits(expertGroupId);
-        return mapKitCountToPortResult(resultEntity);
+        return mapKitsCountToPortResult(resultEntity);
     }
 }
