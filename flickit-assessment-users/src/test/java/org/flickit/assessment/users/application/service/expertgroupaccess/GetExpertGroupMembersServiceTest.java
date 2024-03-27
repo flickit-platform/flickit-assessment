@@ -80,7 +80,7 @@ class GetExpertGroupMembersServiceTest {
         GetExpertGroupMembersUseCase.Param param = new GetExpertGroupMembersUseCase.Param(expertGroupId, ExpertGroupAccessStatus.PENDING.name(), currentUserId, size, page);
 
         when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
-        when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(Optional.of(ownerId));
+        when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(ownerId);
 
         PaginatedResponse<GetExpertGroupMembersUseCase.Member> result = service.getExpertGroupMembers(param);
 
