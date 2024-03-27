@@ -4,8 +4,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupWithDetailsView;
+import org.flickit.assessment.data.jpa.users.expertgroup.KitsCountView;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
+import org.flickit.assessment.users.application.port.out.expertgroup.CountExpertGroupKitsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.CreateExpertGroupPort.Param;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort;
 
@@ -52,7 +54,14 @@ public class ExpertGroupMapper {
             param.currentUserId(),
             param.currentUserId(),
             creationTime,
-            creationTime
+            creationTime,
+            false
         );
+    }
+
+    public static CountExpertGroupKitsPort.Result mapKitsCountToPortResult(KitsCountView entity) {
+        return new CountExpertGroupKitsPort.Result(
+            entity.getPublishedKitsCount(),
+            entity.getUnPublishedKitsCount());
     }
 }

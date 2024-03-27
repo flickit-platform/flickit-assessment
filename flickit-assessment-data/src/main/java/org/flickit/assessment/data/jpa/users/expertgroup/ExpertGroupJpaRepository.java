@@ -3,16 +3,18 @@ package org.flickit.assessment.data.jpa.users.expertgroup;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
 
     @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id")
-    UUID loadOwnerIdById(@Param("id") Long id);
+    Optional<UUID> loadOwnerIdById(@Param("id") Long id);
 
     @Query("""
             SELECT
@@ -56,4 +58,22 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         WHERE e.expertGroupId = :expertGroupId and e.status = 1
         """)
     List<UUID> findMemberIdsByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId);
+
+    @Modifying
+    @Query("""
+        UPDATE ExpertGroupJpaEntity e
+        SET e.deleted = true
+        WHERE e.id = :expertGroupId
+        """)
+    void delete(@Param("expertGroupId") Long expertGroupId);
+
+    @Query("""
+            SELECT
+                COUNT(DISTINCT CASE WHEN ak.published = true THEN ak.id ELSE NULL END) as publishedKitsCount,
+                COUNT(DISTINCT CASE WHEN ak.published = false THEN ak.id ELSE NULL END) as unPublishedKitsCount
+            FROM ExpertGroupJpaEntity e
+            LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId
+            WHERE e.id = :expertGroupId
+        """)
+    KitsCountView countKits(@Param("expertGroupId") long expertGroupId);
 }

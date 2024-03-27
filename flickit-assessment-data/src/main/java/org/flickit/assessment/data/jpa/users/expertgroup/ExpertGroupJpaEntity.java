@@ -54,6 +54,9 @@ public class ExpertGroupJpaEntity {
     @Column(name =  "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted;
+
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
         public static final String NAME = "title";

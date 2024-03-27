@@ -19,7 +19,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
     @Override
     public Optional<UUID> loadOwnerId(Long expertGroupId) {
-        return Optional.of(repository.loadOwnerIdById(expertGroupId));
+        return repository.loadOwnerIdById(expertGroupId);
     }
 
     @Override
