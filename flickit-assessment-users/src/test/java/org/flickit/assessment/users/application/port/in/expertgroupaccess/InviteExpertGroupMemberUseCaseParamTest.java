@@ -1,7 +1,6 @@
-package org.flickit.assessment.users.application.port.in;
+package org.flickit.assessment.users.application.port.in.expertgroupaccess;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.users.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
