@@ -74,5 +74,5 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId
             WHERE e.id = :expertGroupId
         """)
-    KitCountView countKits(@Param("expertGroupId") long expertGroupId);
+    KitsCountView countKits(@Param("expertGroupId") long expertGroupId);
 }
