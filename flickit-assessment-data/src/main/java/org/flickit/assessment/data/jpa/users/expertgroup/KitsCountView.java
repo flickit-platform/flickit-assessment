@@ -2,7 +2,7 @@ package org.flickit.assessment.data.jpa.users.expertgroup;
 
 public interface KitsCountView {
 
-    int getPublishedKitCount();
+    int getPublishedKitsCount();
 
-    int getUnPublishedKitCount();
+    int getUnPublishedKitsCount();
 }

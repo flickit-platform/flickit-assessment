@@ -61,7 +61,7 @@ public class ExpertGroupMapper {
 
     public static CountExpertGroupKitsPort.Result mapKitCountToPortResult(KitsCountView entity) {
         return new CountExpertGroupKitsPort.Result(
-            entity.getPublishedKitCount(),
-            entity.getUnPublishedKitCount());
+            entity.getPublishedKitsCount(),
+            entity.getUnPublishedKitsCount());
     }
 }
