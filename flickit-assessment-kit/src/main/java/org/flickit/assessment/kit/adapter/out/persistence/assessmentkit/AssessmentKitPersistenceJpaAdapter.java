@@ -36,7 +36,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     DeleteKitUserAccessPort,
     LoadKitMinimalInfoPort,
     CreateAssessmentKitPort,
-    UpdateKitLastMajorModificationTimePort{
+    UpdateKitLastMajorModificationTimePort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
