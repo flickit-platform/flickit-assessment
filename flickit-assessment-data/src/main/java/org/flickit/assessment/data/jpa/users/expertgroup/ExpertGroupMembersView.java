@@ -1,8 +1,9 @@
 package org.flickit.assessment.data.jpa.users.expertgroup;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-public interface MembersView {
+public interface ExpertGroupMembersView {
 
     UUID getId();
     String getEmail();
@@ -10,4 +11,6 @@ public interface MembersView {
     String getBio();
     String getPicture();
     String getLinkedin();
+    int getStatus();
+    LocalDateTime getInviteExpirationDate();
 }

@@ -264,7 +264,11 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.14-36" author="Maziyar Gerami">
+    <changeSet id="0.16-36" author="MKouhestani">
+        <dropNotNullConstraint tableName="fac_quality_attribute_value" columnName="quality_attribute_id"/>
+    </changeSet>
+
+    <changeSet id="0.16-37" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group">
             <column name="deleted" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>

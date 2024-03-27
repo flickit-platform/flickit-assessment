@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @IdClass(ExpertGroupAccessJpaEntity.EntityId.class)
 @Table(name = "fau_expert_group_user_access")
@@ -58,5 +60,10 @@ public class ExpertGroupAccessJpaEntity {
 
         private Long expertGroupId;
         private UUID userId;
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String CREATION_TIME = "creationTime";
     }
 }
