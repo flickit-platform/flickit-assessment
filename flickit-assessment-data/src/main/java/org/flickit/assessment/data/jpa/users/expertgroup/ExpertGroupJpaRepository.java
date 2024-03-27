@@ -29,6 +29,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             WHERE EXISTS (
                 SELECT 1 FROM ExpertGroupAccessJpaEntity ac
                 WHERE ac.expertGroupId = e.id AND ac.userId = :userId
+                    AND ac.status = 1
             )
             GROUP BY
                 e.id,
@@ -44,7 +45,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         u.displayName as displayName
         FROM ExpertGroupAccessJpaEntity e
         LEFT JOIN UserJpaEntity u on e.userId = u.id
-        WHERE e.userId is not null and e.expertGroupId = :expertGroupId
+        WHERE e.status = 1 and e.expertGroupId = :expertGroupId
         """)
     List<String> findMembersByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
 
@@ -52,7 +53,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         SELECT
         e.userId as userId
         FROM ExpertGroupAccessJpaEntity e
-        WHERE e.expertGroupId = :expertGroupId and e.userId is not null
+        WHERE e.expertGroupId = :expertGroupId and e.status = 1
         """)
     List<UUID> findMemberIdsByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId);
 }
