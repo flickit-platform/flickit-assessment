@@ -30,8 +30,8 @@ public interface ConfirmExpertGroupInvitationUseCase {
 
         public Param(Long expertGroupId, UUID userId, UUID inviteToken) {
             this.expertGroupId = expertGroupId;
-            this.inviteToken = inviteToken;
             this.userId = userId;
+            this.inviteToken = inviteToken;
             this.validateSelf();
         }
     }

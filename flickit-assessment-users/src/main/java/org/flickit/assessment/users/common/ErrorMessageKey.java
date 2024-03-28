@@ -45,4 +45,5 @@ public class ErrorMessageKey {
 
     public static final String CONFIRM_EXPERT_GROUP_INVITATION_EXPERT_GROUP_ID_NOT_NULL = "confirm-expert-group-invitation.expert-group-id.notNull";
     public static final String CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_NOT_NULL = "confirm-expert-group-invitation.expert-group-id.notNull";
+    public static final String CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_IS_NOT_VALID = "confirm-expert-group-invitation.invite-token.notValid";
 }

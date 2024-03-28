@@ -34,7 +34,7 @@ class ConfirmExpertGroupInvitationUseCaseTest {
         UUID inviteToken = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new ConfirmExpertGroupInvitationUseCase.Param(0L, null, inviteToken));
-        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("userId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
 }

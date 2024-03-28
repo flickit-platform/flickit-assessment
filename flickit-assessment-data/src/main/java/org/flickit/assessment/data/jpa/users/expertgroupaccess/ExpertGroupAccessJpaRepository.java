@@ -4,6 +4,7 @@ import org.flickit.assessment.data.jpa.users.expertgroup.MembersView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -36,5 +37,15 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         WHERE e.expertGroupId = :expertGroupId AND e.userId = :userId
         """)
     Optional<Integer> findExpertGroupMemberStatus(@Param(value = "expertGroupId") long expertGroupId,
-                                        @Param(value = "userId") UUID userId);
+                                                  @Param(value = "userId") UUID userId);
+
+    boolean existsByExpertGroupIdAndUserIdAndInviteToken(long expertGroupId, UUID userId, UUID inviteToken);
+
+    @Modifying
+    @Query("""
+        UPDATE ExpertGroupAccessJpaEntity a
+        SET a.status = 1
+        WHERE a.inviteToken = :inviteToken
+        """)
+    boolean confirmInvitation(@Param(value = "inviteToken") UUID inviteToken);
 }
