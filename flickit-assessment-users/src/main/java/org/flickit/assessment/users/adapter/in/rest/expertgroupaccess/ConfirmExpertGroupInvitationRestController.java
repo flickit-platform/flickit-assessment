@@ -19,9 +19,9 @@ public class ConfirmExpertGroupInvitationRestController {
     @PutMapping("/expert-groups/{id}/invite/{inviteToken}/confirm")
     public ResponseEntity<Void> confirmExpertGroupMember(
         @PathVariable("id") Long expertGroupId,
-        @PathVariable("inviteToken") UUID inviteToken) {
+        @PathVariable("inviteToken") String inviteToken) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.confirmInvitation(toParam(expertGroupId, currentUserId, inviteToken));
+        useCase.confirmInvitation(toParam(expertGroupId, currentUserId, UUID.fromString(inviteToken)));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
