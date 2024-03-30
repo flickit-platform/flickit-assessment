@@ -6,6 +6,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Table(name = "fak_questionnaire")
 @Getter
@@ -51,4 +53,10 @@ public class QuestionnaireJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+
+        public static final String INDEX = "index";
+    }
 }
