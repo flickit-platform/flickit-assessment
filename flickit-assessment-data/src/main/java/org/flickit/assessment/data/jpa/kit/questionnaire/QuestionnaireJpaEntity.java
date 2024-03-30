@@ -56,7 +56,6 @@ public class QuestionnaireJpaEntity {
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
-
         public static final String INDEX = "index";
     }
 }

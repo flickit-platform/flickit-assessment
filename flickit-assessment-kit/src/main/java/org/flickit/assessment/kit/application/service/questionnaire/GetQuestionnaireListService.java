@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.QuestionnaireListItem;
 import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnaireListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;

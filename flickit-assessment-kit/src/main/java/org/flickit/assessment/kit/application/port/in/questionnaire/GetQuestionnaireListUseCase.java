@@ -7,8 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.kit.application.domain.QuestionnaireListItem;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
@@ -41,22 +41,5 @@ public interface GetQuestionnaireListUseCase {
             this.page = page;
             this.validateSelf();
         }
-    }
-
-    record QuestionnaireListItem(
-        long id,
-        String title,
-        int index,
-        int questionCount,
-        int answersCount,
-        int progress,
-        List<Subject> subjects
-    ) {
-    }
-
-    record Subject(
-        long id,
-        String title
-    ) {
     }
 }

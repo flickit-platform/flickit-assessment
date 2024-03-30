@@ -13,7 +13,7 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemVi
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectWithQuestionnaireIdView;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnaireListUseCase.QuestionnaireListItem;
+import org.flickit.assessment.kit.application.domain.QuestionnaireListItem;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;

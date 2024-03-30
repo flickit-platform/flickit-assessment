@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnaireListUseCase;
+import org.flickit.assessment.kit.application.domain.QuestionnaireListItem;
 import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnaireListUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
@@ -59,8 +59,8 @@ class GetQuestionnaireListServiceTest {
             .thenReturn(true);
 
         var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(param.getAssessmentId(), param.getSize(), param.getPage());
-        GetQuestionnaireListUseCase.Subject subject = new GetQuestionnaireListUseCase.Subject(1, "subject");
-        GetQuestionnaireListUseCase.QuestionnaireListItem questionnaire = new GetQuestionnaireListUseCase.QuestionnaireListItem(
+        QuestionnaireListItem.Subject subject = new QuestionnaireListItem.Subject(1, "subject");
+        QuestionnaireListItem questionnaire = new QuestionnaireListItem(
             0,
             "questionnaire",
             1,

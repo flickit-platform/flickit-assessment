@@ -6,7 +6,7 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectWithQuestionnaireIdView;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnaireListUseCase;
+import org.flickit.assessment.kit.application.domain.QuestionnaireListItem;
 
 import java.util.List;
 import java.util.UUID;
@@ -42,13 +42,13 @@ public class QuestionnaireMapper {
         );
     }
 
-    public static GetQuestionnaireListUseCase.QuestionnaireListItem mapToListItem(QuestionnaireListItemView questionnaireView, List<SubjectWithQuestionnaireIdView> subjectsView, int answerCount){
+    public static QuestionnaireListItem mapToListItem(QuestionnaireListItemView questionnaireView, List<SubjectWithQuestionnaireIdView> subjectsView, int answerCount){
         var subjects = subjectsView.stream()
-            .map(s -> new GetQuestionnaireListUseCase.Subject(s.getId(), s.getTitle()))
+            .map(s -> new QuestionnaireListItem.Subject(s.getId(), s.getTitle()))
             .toList();
         int progress = (int) Math.floor(((double) answerCount / questionnaireView.getQuestionCount()) * 100);
 
-        return new GetQuestionnaireListUseCase.QuestionnaireListItem(
+        return new QuestionnaireListItem(
             questionnaireView.getId(),
             questionnaireView.getTitle(),
             questionnaireView.getIndex(),
