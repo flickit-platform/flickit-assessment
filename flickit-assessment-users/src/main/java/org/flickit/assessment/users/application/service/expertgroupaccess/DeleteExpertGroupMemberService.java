@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.DeleteExpertGroupMemberUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.DeleteExpertGroupMemberPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +21,12 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_I
 public class DeleteExpertGroupMemberService implements DeleteExpertGroupMemberUseCase {
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final DeleteExpertGroupMemberPort deleteExpertGroupMemberPort;
 
     @Override
     public void deleteMember(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
-
+        deleteExpertGroupMemberPort.deleteMember(param.getUserId(), param.getExpertGroupId());
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
