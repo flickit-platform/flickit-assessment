@@ -45,7 +45,8 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
     @Modifying
     @Query("""
         UPDATE ExpertGroupAccessJpaEntity a
-        SET a.status = 1
+        SET a.status = 1,
+            a.inviteToken = null
         WHERE a.inviteToken = :inviteToken
         """)
     void confirmInvitation(@Param(value = "inviteToken") UUID inviteToken);
