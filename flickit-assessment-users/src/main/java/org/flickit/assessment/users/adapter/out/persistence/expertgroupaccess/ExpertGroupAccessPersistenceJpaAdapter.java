@@ -7,17 +7,21 @@ import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccess
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.DeleteExpertGroupMemberPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMembersPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 
 @Component
 @RequiredArgsConstructor
 public class ExpertGroupAccessPersistenceJpaAdapter implements
     CreateExpertGroupAccessPort,
-    LoadExpertGroupMembersPort {
+    LoadExpertGroupMembersPort,
+    DeleteExpertGroupMemberPort {
 
     private final ExpertGroupAccessJpaRepository repository;
 
@@ -55,5 +59,10 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
             view.getBio(),
             view.getPicture(),
             view.getLinkedin());
+    }
+
+    @Override
+    public void deleteMember(UUID userId, long expertGroupId) {
+        repository.deleteMember(userId, expertGroupId);
     }
 }

@@ -4,6 +4,7 @@ import org.flickit.assessment.data.jpa.users.expertgroup.MembersView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,4 +28,14 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         WHERE e.expertGroupId = :expertGroupId
         """)
     Page<MembersView> findExpertGroupMembers(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
+
+    @Modifying
+    @Query("""
+        UPDTAE
+        SET e.deleted = TRUE
+        FROM expert FROM ExpertGroupAccessJpaEntity e
+        WHERE WHERE e.expertGroupId = :expertGroupId and e.userId = :userId
+        """)
+    void deleteMember(@Param(value = "userId") UUID userId,
+                      @Param(value = "expertGroupId") long expertGroupId);
 }
