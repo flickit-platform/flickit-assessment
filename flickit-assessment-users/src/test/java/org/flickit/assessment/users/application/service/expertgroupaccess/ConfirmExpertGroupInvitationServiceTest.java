@@ -2,7 +2,7 @@ package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.ConfirmExpertGroupInvitationUseCase.Param;
-import org.flickit.assessment.users.application.port.out.expertgroupaccess.CheckInviteInputDataValidityPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.CheckConfirmInputDataValidityPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.CheckInviteTokenExpiryPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.ConfirmExpertGroupInvitationPort;
 import org.junit.jupiter.api.Assertions;
@@ -26,7 +26,7 @@ class ConfirmExpertGroupInvitationServiceTest {
     @InjectMocks
     private ConfirmExpertGroupInvitationService service;
     @Mock
-    private CheckInviteInputDataValidityPort checkInviteInputDataValidityPort;
+    private CheckConfirmInputDataValidityPort checkConfirmInputDataValidityPort;
     @Mock
     private CheckInviteTokenExpiryPort checkInviteTokenExpiryPort;
     @Mock
@@ -40,13 +40,13 @@ class ConfirmExpertGroupInvitationServiceTest {
         long expertGroupId = 0L;
         Param param = new Param(expertGroupId, userId, inviteToken);
 
-        when(checkInviteInputDataValidityPort.checkInputData(expertGroupId, userId, inviteToken)).thenReturn(true);
+        when(checkConfirmInputDataValidityPort.checkInputData(expertGroupId, userId, inviteToken)).thenReturn(true);
         when(checkInviteTokenExpiryPort.isInviteTokenValid(inviteToken)).thenReturn(true);
         doNothing().when(confirmExpertGroupInvitationPort).confirmInvitation(isA(UUID.class));
 
         Assertions.assertDoesNotThrow(() -> service.confirmInvitation(param));
 
-        verify(checkInviteInputDataValidityPort).checkInputData(anyLong(), any(UUID.class), any(UUID.class));
+        verify(checkConfirmInputDataValidityPort).checkInputData(anyLong(), any(UUID.class), any(UUID.class));
         verify(confirmExpertGroupInvitationPort).confirmInvitation(any(UUID.class));
     }
 
@@ -59,12 +59,12 @@ class ConfirmExpertGroupInvitationServiceTest {
         Param param = new Param(expertGroupId, userId, inviteToken);
 
 
-        when(checkInviteInputDataValidityPort.checkInputData(anyLong(), any(UUID.class), any(UUID.class))).thenReturn(false);
+        when(checkConfirmInputDataValidityPort.checkInputData(anyLong(), any(UUID.class), any(UUID.class))).thenReturn(false);
 
         Assertions.assertThrows(ResourceNotFoundException.class,
             () -> service.confirmInvitation(param));
 
-        verify(checkInviteInputDataValidityPort).checkInputData(anyLong(), any(UUID.class), any(UUID.class));
+        verify(checkConfirmInputDataValidityPort).checkInputData(anyLong(), any(UUID.class), any(UUID.class));
         verifyNoInteractions(checkInviteTokenExpiryPort);
         verifyNoInteractions(confirmExpertGroupInvitationPort);
     }
@@ -78,14 +78,14 @@ class ConfirmExpertGroupInvitationServiceTest {
         Param param = new Param(expertGroupId, userId, inviteToken);
 
 
-        when(checkInviteInputDataValidityPort.checkInputData(anyLong(), any(UUID.class), any(UUID.class))).thenReturn(true);
+        when(checkConfirmInputDataValidityPort.checkInputData(anyLong(), any(UUID.class), any(UUID.class))).thenReturn(true);
         when(checkInviteTokenExpiryPort.isInviteTokenValid(inviteToken)).thenReturn(false);
 
 
         Assertions.assertThrows(ResourceNotFoundException.class,
             () -> service.confirmInvitation(param));
 
-        verify(checkInviteInputDataValidityPort).checkInputData(anyLong(), any(UUID.class), any(UUID.class));
+        verify(checkConfirmInputDataValidityPort).checkInputData(anyLong(), any(UUID.class), any(UUID.class));
         verify(checkInviteTokenExpiryPort).isInviteTokenValid(any(UUID.class));
         verifyNoInteractions(confirmExpertGroupInvitationPort);
     }

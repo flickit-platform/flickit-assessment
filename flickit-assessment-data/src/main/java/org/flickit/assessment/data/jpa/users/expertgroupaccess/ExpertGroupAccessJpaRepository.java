@@ -48,15 +48,6 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
 
     boolean existsByExpertGroupIdAndUserIdAndInviteToken(long expertGroupId, UUID userId, UUID inviteToken);
 
-    @Modifying
-    @Query("""
-        UPDATE ExpertGroupAccessJpaEntity a
-        SET a.status = 1,
-            a.inviteToken = null
-        WHERE a.inviteToken = :inviteToken
-        """)
-    void confirmInvitation(@Param(value = "inviteToken") UUID inviteToken);
-
     @Query("""
         select case
             when count(e)> 0 then true
@@ -66,4 +57,13 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
             e.inviteToken = :inviteToken AND :now <= e.inviteExpirationDate""")
     boolean existsByInviteTokenNotExpired(@Param(value = "inviteToken") UUID inviteToken,
                                           @Param(value = "now") LocalDateTime now);
+
+    @Modifying
+    @Query("""
+        UPDATE ExpertGroupAccessJpaEntity a
+        SET a.status = 1,
+            a.inviteToken = null
+        WHERE a.inviteToken = :inviteToken
+        """)
+    void confirmInvitation(@Param(value = "inviteToken") UUID inviteToken);
 }

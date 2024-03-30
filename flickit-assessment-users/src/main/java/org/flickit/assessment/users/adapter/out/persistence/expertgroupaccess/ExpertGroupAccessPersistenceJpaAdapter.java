@@ -21,7 +21,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     LoadExpertGroupMembersPort,
     InviteExpertGroupMemberPort,
     LoadExpertGroupMemberStatusPort,
-    CheckInviteInputDataValidityPort,
+    CheckConfirmInputDataValidityPort,
     CheckInviteTokenExpiryPort,
     ConfirmExpertGroupInvitationPort {
 
