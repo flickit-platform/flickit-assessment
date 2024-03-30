@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,8 +25,8 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     InviteExpertGroupMemberPort,
     LoadExpertGroupMemberStatusPort,
     CheckInviteInputDataValidityPort,
-    ConfirmExpertGroupInvitationPort,
-    CheckInviteTokenExpiryPort {
+    CheckInviteTokenExpiryPort,
+    ConfirmExpertGroupInvitationPort {
 
     private final ExpertGroupAccessJpaRepository repository;
 
@@ -82,12 +83,12 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public void confirmInvitation(UUID inviteToken) {
-        repository.confirmInvitation(inviteToken);
+    public boolean isInviteTokenValid(UUID inviteToken) {
+        return repository.existsByInviteTokenNotExpired(inviteToken, LocalDateTime.now());
     }
 
     @Override
-    public boolean isInviteTokenValid(UUID inviteToken) {
-        return false;
+    public void confirmInvitation(UUID inviteToken) {
+        repository.confirmInvitation(inviteToken);
     }
 }
