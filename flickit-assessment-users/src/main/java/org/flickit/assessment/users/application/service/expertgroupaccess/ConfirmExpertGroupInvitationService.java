@@ -13,13 +13,13 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.CONFIRM_EXPERT
 import static org.flickit.assessment.users.common.ErrorMessageKey.CONFIRM_EXPERT_GROUP_INVITATION_INPUT_DATA_INVALID;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class ConfirmExpertGroupInvitationService implements ConfirmExpertGroupInvitationUseCase {
 
-    private CheckInviteInputDataValidityPort checkInviteInputDataValidityPort;
-    private CheckInviteTokenExpiryPort checkInviteTokenExpiryPort;
-    private ConfirmExpertGroupInvitationPort confirmExpertGroupInvitationPort;
+    private final CheckInviteInputDataValidityPort checkInviteInputDataValidityPort;
+    private final CheckInviteTokenExpiryPort checkInviteTokenExpiryPort;
+    private final ConfirmExpertGroupInvitationPort confirmExpertGroupInvitationPort;
 
     public void confirmInvitation(Param param) {
         boolean inputDataIsValid = checkInviteInputDataValidityPort
