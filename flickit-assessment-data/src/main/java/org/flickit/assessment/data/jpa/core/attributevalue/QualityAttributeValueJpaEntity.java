@@ -28,9 +28,6 @@ public class QualityAttributeValueJpaEntity {
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 
-    @Column(name = "quality_attribute_id", nullable = false)
-    private Long qualityAttributeId;
-
     @Column(name = "attribute_ref_num", nullable = false)
     private UUID attributeRefNum;
 
@@ -39,4 +36,5 @@ public class QualityAttributeValueJpaEntity {
 
     @Column(name = "confidence_value")
     private Double confidenceValue;
+
 }

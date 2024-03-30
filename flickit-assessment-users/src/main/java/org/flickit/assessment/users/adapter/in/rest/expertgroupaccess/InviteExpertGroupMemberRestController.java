@@ -22,7 +22,7 @@ public class InviteExpertGroupMemberRestController {
         @RequestBody InviteExpertGroupMemberRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.inviteMember(toParam(expertGroupId, requestDto, currentUserId));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     private InviteExpertGroupMemberUseCase.Param toParam(long expertGroupId,
