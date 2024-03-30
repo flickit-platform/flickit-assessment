@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_GROUP_TOKEN_NOT_NULL;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL;
 
 public interface DeleteExpertGroupMemberUseCase {
@@ -26,14 +25,11 @@ public interface DeleteExpertGroupMemberUseCase {
         UUID userId;
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
-        @NotNull(message = DELETE_EXPERT_GROUP_TOKEN_NOT_NULL)
-        UUID token;
 
-        public Param(long expertGroupId, UUID userId, UUID currentUserId, UUID token) {
+        public Param(Long expertGroupId, UUID userId, UUID currentUserId) {
             this.expertGroupId = expertGroupId;
             this.userId = userId;
             this.currentUserId = currentUserId;
-            this.token = token;
             this.validateSelf();
         }
     }
