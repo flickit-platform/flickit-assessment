@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,5 +48,15 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         SET a.status = 1
         WHERE a.inviteToken = :inviteToken
         """)
-    boolean confirmInvitation(@Param(value = "inviteToken") UUID inviteToken);
+    void confirmInvitation(@Param(value = "inviteToken") UUID inviteToken);
+
+    @Query("""
+        select case
+            when count(e)> 0 then true
+            else false end
+            from ExpertGroupAccessJpaEntity e
+            WHERE
+            e.inviteToken = :inviteToken AND :now <= e.inviteExpirationDate""")
+    boolean existsByInviteTokenNotExpired(@Param(value = "inviteToken") UUID inviteToken,
+                                          @Param(value = "now") LocalDateTime now);
 }
