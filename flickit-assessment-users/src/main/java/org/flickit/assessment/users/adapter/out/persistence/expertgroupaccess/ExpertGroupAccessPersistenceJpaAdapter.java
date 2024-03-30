@@ -1,6 +1,5 @@
 package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
-import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.*;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_IS_NOT_VALID;
-
 @Component
 @RequiredArgsConstructor
 public class ExpertGroupAccessPersistenceJpaAdapter implements
@@ -26,8 +23,9 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     LoadExpertGroupMembersPort,
     InviteExpertGroupMemberPort,
     LoadExpertGroupMemberStatusPort,
-    CheckInviteInputDataValidationPort,
-    ConfirmExpertGroupInvitationPort {
+    CheckInviteInputDataValidityPort,
+    ConfirmExpertGroupInvitationPort,
+    CheckInviteTokenExpiryPort {
 
     private final ExpertGroupAccessJpaRepository repository;
 
@@ -79,14 +77,17 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public void checkToken(long expertGroupId, UUID userId, UUID inviteToken) {
-        boolean exist = repository.existsByExpertGroupIdAndUserIdAndInviteToken(expertGroupId, userId, inviteToken);
-        if (!exist)
-            throw new AccessDeniedException(CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_IS_NOT_VALID);
+    public boolean checkInputData(long expertGroupId, UUID userId, UUID inviteToken) {
+        return repository.existsByExpertGroupIdAndUserIdAndInviteToken(expertGroupId, userId, inviteToken);
     }
 
     @Override
     public void confirmInvitation(UUID inviteToken) {
         repository.confirmInvitation(inviteToken);
+    }
+
+    @Override
+    public boolean isInviteTokenValid(UUID inviteToken) {
+        return false;
     }
 }
