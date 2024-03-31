@@ -1,6 +1,5 @@
 package org.flickit.assessment.users.application.service.expertgroup;
 
-import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupUseCase;
