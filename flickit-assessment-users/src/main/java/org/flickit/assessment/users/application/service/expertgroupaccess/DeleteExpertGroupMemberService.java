@@ -30,8 +30,7 @@ public class DeleteExpertGroupMemberService implements DeleteExpertGroupMemberUs
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
-        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
-            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
+        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId);
         if (!Objects.equals(expertGroupOwnerId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
