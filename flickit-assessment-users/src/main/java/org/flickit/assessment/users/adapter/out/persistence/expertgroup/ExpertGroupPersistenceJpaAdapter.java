@@ -86,7 +86,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean existsById(long id) {
+    public boolean existsByIdAndDeletedFalse(long id) {
         return repository.existsById(id);
     }
 

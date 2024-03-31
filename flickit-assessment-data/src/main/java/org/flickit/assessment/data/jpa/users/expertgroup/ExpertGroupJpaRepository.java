@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
 
-    @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id")
+    @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id and deleted=false")
     Optional<UUID> loadOwnerIdById(@Param("id") Long id);
 
     @Query("""
@@ -31,7 +31,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             WHERE EXISTS (
                 SELECT 1 FROM ExpertGroupAccessJpaEntity ac
                 WHERE ac.expertGroupId = e.id AND ac.userId = :userId
-                    AND ac.status = 1
+                    AND ac.status = 1 AND deleted=false
             )
             GROUP BY
                 e.id,
@@ -45,9 +45,10 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     @Query("""
         SELECT
         u.displayName as displayName
-        FROM ExpertGroupAccessJpaEntity e
-        LEFT JOIN UserJpaEntity u on e.userId = u.id
-        WHERE e.status = 1 and e.expertGroupId = :expertGroupId
+        FROM ExpertGroupAccessJpaEntity a
+        LEFT JOIN UserJpaEntity u on a.userId = u.id
+        LEFT JOIN ExpertGroupEntity e on a.expertGroupId = e.id
+        WHERE a.status = 1 AND a.expertGroupId = :expertGroupId AND e.deleted = FALSE
         """)
     List<String> findMembersByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
 

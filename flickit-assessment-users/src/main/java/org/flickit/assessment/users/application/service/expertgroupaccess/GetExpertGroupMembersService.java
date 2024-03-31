@@ -32,7 +32,7 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
 
     @Override
     public PaginatedResponse<Member> getExpertGroupMembers(Param param) {
-        if (!checkExpertGroupExistsPort.existsById(param.getId()))
+        if (!checkExpertGroupExistsPort.existsByIdAndDeletedFalse(param.getId()))
             throw new ResourceNotFoundException(GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND);
 
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(param.getId());
