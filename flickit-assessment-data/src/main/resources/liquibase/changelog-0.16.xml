@@ -172,4 +172,10 @@
                                  referencedColumnNames="id"
                                  constraintName="fk_fau_expertgroup_user_access_user"/>
     </changeSet>
+
+    <changeSet id="0.16-25" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="deleted" type="boolean" defaultValueBoolean="false"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

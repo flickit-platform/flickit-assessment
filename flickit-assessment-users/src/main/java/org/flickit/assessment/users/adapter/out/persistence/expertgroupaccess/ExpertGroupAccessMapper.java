@@ -20,7 +20,8 @@ public class ExpertGroupAccessMapper {
             param.userId(),
             param.userId(),
             creationTime,
-            creationTime
+            creationTime,
+            Boolean.FALSE
         );
     }
 }

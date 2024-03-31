@@ -15,11 +15,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToDomainModel;
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
+import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 
 @Component
@@ -82,7 +82,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<UUID> loadOwnerId(Long expertGroupId) {
-        return Optional.of(repository.loadOwnerIdById(expertGroupId));
+    public UUID loadOwnerId(Long expertGroupId) {
+        return repository.loadOwnerIdById(expertGroupId)
+            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
     }
 }

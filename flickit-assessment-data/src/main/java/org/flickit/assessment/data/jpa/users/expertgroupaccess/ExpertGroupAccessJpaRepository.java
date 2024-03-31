@@ -31,10 +31,9 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
 
     @Modifying
     @Query("""
-        UPDTAE
-        SET e.deleted = TRUE
-        FROM expert FROM ExpertGroupAccessJpaEntity e
-        WHERE WHERE e.expertGroupId = :expertGroupId and e.userId = :userId
+        UPDATE ExpertGroupAccessJpaEntity e SET
+            e.deleted = TRUE
+        WHERE e.expertGroupId = :expertGroupId and e.userId = :userId
         """)
     void deleteMember(@Param(value = "userId") UUID userId,
                       @Param(value = "expertGroupId") long expertGroupId);
