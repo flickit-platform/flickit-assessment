@@ -180,104 +180,6 @@
 			"response": []
 		},
 		{
-			"name": "Get Expert Group List",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups?page=0&size=20",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "0"
-						},
-						{
-							"key": "size",
-							"value": "20"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create Expert Group",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "title",
-							"value": "title",
-							"type": "text"
-						},
-						{
-							"key": "bio",
-							"value": "bio",
-							"type": "text"
-						},
-						{
-							"key": "about",
-							"value": "about",
-							"type": "text"
-						},
-						{
-							"key": "website",
-							"value": "http://www.website.com",
-							"type": "text"
-						},
-						{
-							"key": "picture",
-							"type": "file",
-							"src": "sample.png"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups"
-					],
-					"query": [
-						{
-							"key": "picture",
-							"value": "",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Upload Kit DSL",
 			"request": {
 				"method": "POST",
@@ -352,50 +254,6 @@
 			"response": []
 		},
 		{
-			"name": "Create Expert Group",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "picture",
-							"type": "file",
-							"src": "/home/maziyar/Pictures/Screenshots/Screenshot from 2024-01-13 08-59-19.png"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups"
-					],
-					"query": [
-						{
-							"key": "picture",
-							"value": "",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Get Dsl Download Link",
 			"request": {
 				"method": "GET",
@@ -420,60 +278,7 @@
 				}
 			},
 			"response": []
-		},
-		{
-			"name": "Get Expert Group",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}"
-					]
-				}
-			},
-			"response": []
-		},
-      {
-        "name": "Delete Expert Group",
-        "protocolProfileBehavior": {
-          "disabledSystemHeaders": {}
-        },
-        "request": {
-          "method": "DELETE",
-          "header": [
-            {
-              "key": "Authorization",
-              "value": "{{authorization_header}}",
-              "type": "text"
-            }
-          ],
-          "url": {
-            "raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}",
-            "host": [
-              "{{base_url}}"
-            ],
-            "path": [
-              "{{api_path}}",
-              "expert-groups",
-              "{{id}}"
-            ]
-          }
-        },
-        "response": []
-      }
+		}
 	],
 	"event": [
 		{
