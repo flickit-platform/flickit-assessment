@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.service.expertgroup;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.CountExpertGroupKitsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.DeleteExpertGroupPort;
@@ -78,15 +79,15 @@ class DeleteExpertGroupServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(anyLong())).thenReturn(currentUserId);
         when(countExpertGroupKitsPort.countKits(anyLong())).thenReturn(result);
-        assertThrows(AccessDeniedException.class, () -> service.deleteExpertGroup(param));
+        assertThrows(ValidationException.class, () -> service.deleteExpertGroup(param));
 
         result = new CountExpertGroupKitsPort.Result(1,1);
         when(countExpertGroupKitsPort.countKits(anyLong())).thenReturn(result);
-        assertThrows(AccessDeniedException.class, () -> service.deleteExpertGroup(param));
+        assertThrows(ValidationException.class, () -> service.deleteExpertGroup(param));
 
         result = new CountExpertGroupKitsPort.Result(0,1);
         when(countExpertGroupKitsPort.countKits(anyLong())).thenReturn(result);
-        assertThrows(AccessDeniedException.class, () -> service.deleteExpertGroup(param));
+        assertThrows(ValidationException.class, () -> service.deleteExpertGroup(param));
 
         verify(loadExpertGroupOwnerPort, times(3)).loadOwnerId(expertGroupId);
         verify(countExpertGroupKitsPort, times(3)).countKits(expertGroupId);
