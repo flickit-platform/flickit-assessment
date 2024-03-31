@@ -52,7 +52,7 @@ public class EvidenceJpaEntity {
     private Integer type;
 
     @Column(name = "deleted", nullable = false)
-    private Boolean deleted;
+    private boolean deleted;
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
