@@ -87,8 +87,8 @@ class InviteExpertGroupMemberServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(null);
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.inviteMember(param));
-        assertThat(throwable).hasMessage(EXPERT_GROUP_ID_NOT_FOUND);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
+        assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
     @Test

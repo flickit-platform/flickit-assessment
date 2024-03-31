@@ -32,9 +32,9 @@ class DeleteExpertGroupMemberServiceTest {
         DeleteExpertGroupMemberUseCase.Param param =
             new DeleteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
 
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.empty());
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(null);
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.deleteMember(param));
+        Assertions.assertThrows(AccessDeniedException.class, () -> service.deleteMember(param));
     }
 
     @Test
@@ -45,7 +45,7 @@ class DeleteExpertGroupMemberServiceTest {
         DeleteExpertGroupMemberUseCase.Param param =
             new DeleteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
 
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(UUID.randomUUID()));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(UUID.randomUUID());
 
         Assertions.assertThrows(AccessDeniedException.class, () -> service.deleteMember(param));
     }
