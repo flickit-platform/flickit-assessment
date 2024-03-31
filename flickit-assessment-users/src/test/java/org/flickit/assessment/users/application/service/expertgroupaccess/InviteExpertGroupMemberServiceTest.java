@@ -85,10 +85,10 @@ class InviteExpertGroupMemberServiceTest {
         UUID currentUserId = UUID.randomUUID();
         InviteExpertGroupMemberUseCase.Param param = new InviteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
 
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(null);
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenThrow (new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
-        assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.inviteMember(param));
+        assertThat(throwable).hasMessage(EXPERT_GROUP_ID_NOT_FOUND);
     }
 
     @Test
