@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_GROUP_ACCESS_DENIED;
+import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_GROUP_KITS_EXIST;
 
 @Service
 @Transactional
@@ -32,7 +32,7 @@ public class DeleteExpertGroupService implements DeleteExpertGroupUseCase {
         var kitsCount = countExpertGroupKitsPort.countKits(param.getId());
 
         if (kitsCount.publishedKitsCount() > 0 || kitsCount.unpublishedKitsCount() > 0 )
-            throw new ValidationException(DELETE_EXPERT_GROUP_ACCESS_DENIED);
+            throw new ValidationException(DELETE_EXPERT_GROUP_KITS_EXIST);
 
         deleteExpertGroupPort.deleteById(param.getId());
     }
