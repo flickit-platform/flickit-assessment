@@ -68,7 +68,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/invite//{{inviteToken}}/confirm",
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/invite/{{inviteToken}}/confirm",
 					"host": [
 						"{{base_url}}"
 					],
@@ -77,7 +77,6 @@
 						"expert-groups",
 						"{{id}}",
 						"invite",
-						"",
 						"{{inviteToken}}",
 						"confirm"
 					]
