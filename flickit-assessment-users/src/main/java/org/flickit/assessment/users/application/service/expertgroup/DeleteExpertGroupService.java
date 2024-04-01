@@ -31,7 +31,7 @@ public class DeleteExpertGroupService implements DeleteExpertGroupUseCase {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
         var kitsCount = countExpertGroupKitsPort.countKits(param.getId());
 
-        if (kitsCount.publishedKitsCount() > 0 || kitsCount.unpublishedKitsCount() > 0 )
+        if (kitsCount.publishedKitsCount() > 0 || kitsCount.unpublishedKitsCount() > 0)
             throw new ValidationException(DELETE_EXPERT_GROUP_KITS_EXIST);
 
         deleteExpertGroupPort.deleteById(param.getId());

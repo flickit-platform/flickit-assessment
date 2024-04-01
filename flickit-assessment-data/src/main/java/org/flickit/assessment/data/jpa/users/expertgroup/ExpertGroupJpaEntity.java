@@ -45,17 +45,17 @@ public class ExpertGroupJpaEntity {
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
-    @Column(name =  "last_modified_by", nullable = false)
+    @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
-    @Column(name =  "last_modification_time", nullable = false)
+    @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 
     @Column(name = "deleted", nullable = false)
-    private Boolean deleted;
+    private boolean deleted;
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
