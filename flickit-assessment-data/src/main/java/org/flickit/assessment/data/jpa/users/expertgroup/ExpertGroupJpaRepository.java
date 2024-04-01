@@ -31,7 +31,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             WHERE EXISTS (
                 SELECT 1 FROM ExpertGroupAccessJpaEntity ac
                 WHERE ac.expertGroupId = e.id AND ac.userId = :userId
-                    AND ac.status = 1 AND deleted=false
+                    AND ac.status = 1 AND e.deleted=false
             )
             GROUP BY
                 e.id,
@@ -47,8 +47,8 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         u.displayName as displayName
         FROM ExpertGroupAccessJpaEntity a
         LEFT JOIN UserJpaEntity u on a.userId = u.id
-        LEFT JOIN ExpertGroupEntity e on a.expertGroupId = e.id
-        WHERE a.status = 1 AND a.expertGroupId = :expertGroupId AND e.deleted = FALSE
+        LEFT JOIN ExpertGroupJpaEntity e on a.expertGroupId = e.id
+        WHERE a.status = 1 AND a.expertGroupId = :expertGroupId
         """)
     List<String> findMembersByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
 
@@ -77,4 +77,6 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             WHERE e.id = :expertGroupId
         """)
     KitsCountView countKits(@Param("expertGroupId") long expertGroupId);
+
+    Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
 }

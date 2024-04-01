@@ -80,7 +80,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
     @Override
     public ExpertGroup loadExpertGroup(long id) {
-        var resultEntity = repository.findById(id)
+        var resultEntity = repository.findByIdAndDeletedFalse(id)
             .orElseThrow(() -> new ResourceNotFoundException(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND));
         return mapToDomainModel(resultEntity);
     }
