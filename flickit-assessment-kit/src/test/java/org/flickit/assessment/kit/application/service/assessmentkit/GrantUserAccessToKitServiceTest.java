@@ -47,7 +47,7 @@ class GrantUserAccessToKitServiceTest {
         );
         var expertGroupId = 3L;
         when(loadExpertGroupIdPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         doNothing().when(grantUserAccessToKitPort).grantUserAccess(param.getKitId(), param.getUserId());
 
         service.grantUserAccessToKit(param);
@@ -79,7 +79,7 @@ class GrantUserAccessToKitServiceTest {
         var expertGroupId = 3L;
         when(loadExpertGroupIdPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
         var expertGroupOwnerId = UUID.randomUUID();
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(expertGroupOwnerId));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(expertGroupOwnerId);
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.grantUserAccessToKit(param));
 
@@ -98,11 +98,11 @@ class GrantUserAccessToKitServiceTest {
         );
         var expertGroupId = 3L;
         when(loadExpertGroupIdPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.empty());
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(null);
 
-        var exception = assertThrows(ResourceNotFoundException.class, () -> service.grantUserAccessToKit(param));
+        var exception = assertThrows(AccessDeniedException.class, () -> service.grantUserAccessToKit(param));
 
-        assertEquals(EXPERT_GROUP_ID_NOT_FOUND, exception.getMessage());
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verify(loadExpertGroupIdPort, times(1)).loadKitExpertGroupId(any());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
         verify(grantUserAccessToKitPort, never()).grantUserAccess(any(), any());
