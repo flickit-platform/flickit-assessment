@@ -79,4 +79,6 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     KitsCountView countKits(@Param("expertGroupId") long expertGroupId);
 
     Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
+
+    boolean existsByIdAndDeletedFalse(@Param(value = "id") long id);
 }
