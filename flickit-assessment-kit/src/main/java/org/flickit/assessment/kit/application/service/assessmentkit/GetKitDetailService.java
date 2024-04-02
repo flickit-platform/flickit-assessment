@@ -1,10 +1,13 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
@@ -14,17 +17,25 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GetKitDetailService implements GetKitDetailUseCase {
 
+    private final LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
+    private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadSubjectPort loadSubjectPort;
     private final LoadQuestionnairePort loadQuestionnairePort;
 
     @Override
     public Result getKitDetail(Param param) {
+        var expertGroupId = loadKitVersionExpertGroupPort.loadKitVersionExpertGroupId(param.getKitVersionId());
+        if (!checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId()))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId());
         var subjects = loadSubjectPort.loadByKitVersionId(param.getKitVersionId());
         var questionnaires = loadQuestionnairePort.loadByKitVersionId(param.getKitVersionId());

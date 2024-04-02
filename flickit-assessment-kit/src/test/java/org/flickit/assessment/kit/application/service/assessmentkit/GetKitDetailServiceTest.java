@@ -1,10 +1,14 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase.Result;
+import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
@@ -18,8 +22,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,6 +35,12 @@ class GetKitDetailServiceTest {
 
     @InjectMocks
     private GetKitDetailService service;
+
+    @Mock
+    private LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
+
+    @Mock
+    private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Mock
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
@@ -39,23 +53,50 @@ class GetKitDetailServiceTest {
 
     @Test
     void testGetKitDetail_WhenKitExist_shouldReturnKitDetails() {
-        long kitVersionId = 12;
+        GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, UUID.randomUUID());
+        var expertGroupId = 25L;
+
         List<MaturityLevel> maturityLevels = List.of(
             MaturityLevelMother.levelOne(),
             MaturityLevelMother.levelTwo());
         List<Subject> subjects = List.of(SubjectMother.subjectWithTitle("subject1"));
         List<Questionnaire> questionnaires = List.of(QuestionnaireMother.questionnaireWithTitle("questionnaire1"));
 
-        when(loadMaturityLevelsPort.loadByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
-        when(loadSubjectPort.loadByKitVersionId(kitVersionId)).thenReturn(subjects);
-        when(loadQuestionnairePort.loadByKitVersionId(kitVersionId)).thenReturn(questionnaires);
+        when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroupId(param.getKitVersionId())).thenReturn(expertGroupId);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())).thenReturn(true);
+        when(loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId())).thenReturn(maturityLevels);
+        when(loadSubjectPort.loadByKitVersionId(param.getKitVersionId())).thenReturn(subjects);
+        when(loadQuestionnairePort.loadByKitVersionId(param.getKitVersionId())).thenReturn(questionnaires);
 
-        Result result = service.getKitDetail(new GetKitDetailUseCase.Param(kitVersionId));
+        Result result = service.getKitDetail(param);
 
         assertEquals(maturityLevels.size(), result.maturityLevels().size());
         assertEquals(maturityLevels.get(1).getCompetences().size(),
             result.maturityLevels().get(1).competences().size());
         assertEquals(subjects.size(), result.subjects().size());
         assertEquals(questionnaires.size(), result.questionnaires().size());
+    }
+
+    @Test
+    void testGetKitDetail_WhenKitDoesNotExist_ThrowsException() {
+        GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, UUID.randomUUID());
+
+        when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroupId(param.getKitVersionId()))
+            .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitDetail(param));
+        assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
+    }
+
+    @Test
+    void testGetKitDetail_WhenUserIsNotMember_ThrowsException() {
+        GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, UUID.randomUUID());
+        var expertGroupId = 25L;
+
+        when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroupId(param.getKitVersionId())).thenReturn(expertGroupId);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())).thenReturn(false);
+
+        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getKitDetail(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
     }
 }
