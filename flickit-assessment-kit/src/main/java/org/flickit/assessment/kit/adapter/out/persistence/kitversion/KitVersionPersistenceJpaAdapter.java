@@ -7,7 +7,7 @@ import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionExpertGroupPort;
 import org.springframework.stereotype.Component;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class KitVersionPersistenceJpaAdapter implements LoadKitVersionExpertGrou
     @Override
     public Long loadKitVersionExpertGroupId(Long kitVersionId) {
         KitVersionJpaEntity entity = repository.findById(kitVersionId)
-            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
         return entity.getKit().getExpertGroupId();
     }
 }
