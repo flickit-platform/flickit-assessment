@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity, Long> {
@@ -66,6 +67,8 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
         WHERE a.id = :attributeId
         """)
     UUID findRefNumById(@Param("attributeId") Long attributeId);
+
+    List<AttributeJpaEntity> findAllByRefNumIn(Set<UUID> refNums);
 
     AttributeJpaEntity findByKitVersionIdAndRefNum(Long kitVersionId, UUID refNum);
 

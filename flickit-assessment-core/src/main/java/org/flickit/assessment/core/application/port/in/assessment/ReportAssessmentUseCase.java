@@ -6,13 +6,15 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.core.application.domain.report.AssessmentReport;
 
+import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_ASSESSMENT_ID_NOT_NULL;
 
 public interface ReportAssessmentUseCase {
 
-    AssessmentReport reportAssessment(Param param);
+    Result reportAssessment(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -21,9 +23,22 @@ public interface ReportAssessmentUseCase {
         @NotNull(message = REPORT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        public Param(UUID assessmentId) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(UUID assessmentId, UUID currentUserId) {
             this.assessmentId = assessmentId;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
+    }
+
+    record Result(
+        AssessmentReport.AssessmentReportItem assessment,
+        List<TopAttribute> topStrengths,
+        List<TopAttribute> topWeaknesses,
+        List<AssessmentReport.SubjectReportItem> subjects) {
+
+        public record TopAttribute(Long id, String title) {}
     }
 }

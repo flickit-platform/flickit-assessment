@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Long> {
@@ -54,4 +55,6 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
             WHERE s.id = :subjectId
         """)
     UUID findRefNumById(@Param(value = "subjectId") Long subjectId);
+
+    List<SubjectJpaEntity> findAllByRefNumIn(Set<UUID> refNum);
 }
