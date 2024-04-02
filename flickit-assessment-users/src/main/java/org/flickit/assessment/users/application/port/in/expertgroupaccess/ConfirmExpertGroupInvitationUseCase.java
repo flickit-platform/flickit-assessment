@@ -22,16 +22,16 @@ public interface ConfirmExpertGroupInvitationUseCase {
         @NotNull(message = CONFIRM_EXPERT_GROUP_INVITATION_EXPERT_GROUP_ID_NOT_NULL)
         Long expertGroupId;
 
-        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID userId;
-
         @NotNull(message = CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_NOT_NULL)
         UUID inviteToken;
 
-        public Param(Long expertGroupId, UUID userId, UUID inviteToken) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(Long expertGroupId, UUID inviteToken, UUID currentUserId) {
             this.expertGroupId = expertGroupId;
-            this.userId = userId;
             this.inviteToken = inviteToken;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

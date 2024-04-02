@@ -35,12 +35,12 @@ class ConfirmExpertGroupInvitationServiceTest {
     @Test
     @DisplayName("Confirm invite member invitation with valid parameters causes success confirmation")
     void testInviteMemberConfirmation_validParameters_success() {
-        UUID userId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         UUID inviteToken = UUID.randomUUID();
         long expertGroupId = 0L;
-        Param param = new Param(expertGroupId, userId, inviteToken);
+        Param param = new Param(expertGroupId, inviteToken, currentUserId);
 
-        when(checkConfirmInputDataValidityPort.checkInputData(expertGroupId, userId, inviteToken)).thenReturn(true);
+        when(checkConfirmInputDataValidityPort.checkInputData(expertGroupId, inviteToken, currentUserId)).thenReturn(true);
         when(checkInviteTokenExpiryPort.isInviteTokenValid(inviteToken)).thenReturn(true);
         doNothing().when(confirmExpertGroupInvitationPort).confirmInvitation(isA(UUID.class));
 
@@ -53,11 +53,10 @@ class ConfirmExpertGroupInvitationServiceTest {
     @Test
     @DisplayName("Confirm invite member invitation with invalid parameters causes ResourceNotFoundException")
     void testConfirmInviteMember_invalidInputData_fail() {
-        UUID userId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         UUID inviteToken = UUID.randomUUID();
         long expertGroupId = 0L;
-        Param param = new Param(expertGroupId, userId, inviteToken);
-
+        Param param = new Param(expertGroupId, inviteToken, currentUserId);
 
         when(checkConfirmInputDataValidityPort.checkInputData(anyLong(), any(UUID.class), any(UUID.class))).thenReturn(false);
 
@@ -72,10 +71,10 @@ class ConfirmExpertGroupInvitationServiceTest {
     @Test
     @DisplayName("Confirm invite member invitation with invalid parameters causes ResourceNotFoundException")
     void testConfirmInviteMember_expiredInviteToken_fail() {
-        UUID userId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         UUID inviteToken = UUID.randomUUID();
         long expertGroupId = 0L;
-        Param param = new Param(expertGroupId, userId, inviteToken);
+        Param param = new Param(expertGroupId, inviteToken, currentUserId);
 
 
         when(checkConfirmInputDataValidityPort.checkInputData(anyLong(), any(UUID.class), any(UUID.class))).thenReturn(true);

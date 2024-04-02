@@ -17,7 +17,7 @@ class ConfirmExpertGroupInvitationUseCaseTest {
         UUID inviteToken = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new ConfirmExpertGroupInvitationUseCase.Param(null, currentUserId, inviteToken));
+            () -> new ConfirmExpertGroupInvitationUseCase.Param(null, inviteToken, currentUserId));
         assertThat(throwable).hasMessage("expertGroupId: " + CONFIRM_EXPERT_GROUP_INVITATION_EXPERT_GROUP_ID_NOT_NULL);
     }
 
@@ -25,15 +25,15 @@ class ConfirmExpertGroupInvitationUseCaseTest {
     void testConfirmExpertGroupInviteParam_currentUserIdIsNull_ErrorMessage() {
         UUID inviteToken = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new ConfirmExpertGroupInvitationUseCase.Param(0L, null, inviteToken));
-        assertThat(throwable).hasMessage("userId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+            () -> new ConfirmExpertGroupInvitationUseCase.Param(0L, inviteToken, null));
+        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
     void testConfirmExpertGroupInviteParam_inviteTokenIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new ConfirmExpertGroupInvitationUseCase.Param(0L, currentUserId, null));
+            () -> new ConfirmExpertGroupInvitationUseCase.Param(0L, null, currentUserId));
         assertThat(throwable).hasMessage("inviteToken: " + CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_NOT_NULL);
     }
 }

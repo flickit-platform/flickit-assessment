@@ -23,7 +23,7 @@ public class ConfirmExpertGroupInvitationService implements ConfirmExpertGroupIn
 
     public void confirmInvitation(Param param) {
         boolean inputDataIsValid = checkConfirmInputDataValidityPort
-            .checkInputData(param.getExpertGroupId(), param.getUserId(), param.getInviteToken());
+            .checkInputData(param.getExpertGroupId(), param.getInviteToken(), param.getCurrentUserId());
         if (!inputDataIsValid)
             throw new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_INPUT_DATA_INVALID);
 

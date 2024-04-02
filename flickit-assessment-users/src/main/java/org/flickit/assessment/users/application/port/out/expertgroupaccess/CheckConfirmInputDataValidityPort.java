@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface CheckConfirmInputDataValidityPort {
 
-    boolean checkInputData(long expertGroupId, UUID userId, UUID token);
+    boolean checkInputData(long expertGroupId, UUID token, UUID userId);
 }
