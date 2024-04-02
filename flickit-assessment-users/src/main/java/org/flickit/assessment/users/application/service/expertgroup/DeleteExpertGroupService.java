@@ -2,8 +2,10 @@ package org.flickit.assessment.users.application.service.expertgroup;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupUseCase;
+import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.CountExpertGroupKitsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.DeleteExpertGroupPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -15,20 +17,26 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_GROUP_KITS_EXIST;
+import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class DeleteExpertGroupService implements DeleteExpertGroupUseCase {
 
-    private final DeleteExpertGroupPort deleteExpertGroupPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final CheckExpertGroupExistsPort checkExpertGroupExistsPort;
+    private final DeleteExpertGroupPort deleteExpertGroupPort;
     private final CountExpertGroupKitsPort countExpertGroupKitsPort;
 
 
     @Override
     public void deleteExpertGroup(Param param) {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
+
+        if(!checkExpertGroupExistsPort.existsById(param.getId()))
+            throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
+
         var kitsCount = countExpertGroupKitsPort.countKits(param.getId());
 
         if (kitsCount.publishedKitsCount() > 0 || kitsCount.unpublishedKitsCount() > 0)

@@ -92,4 +92,20 @@ class DeleteExpertGroupServiceTest {
         verify(countExpertGroupKitsPort, times(3)).countKits(expertGroupId);
         verifyNoInteractions(deleteExpertGroupPort);
     }
+
+    @Test
+    @DisplayName("Deleted expertGroup")
+    void testDeleteExpertGroup_deletedExpertGroup_expertGroupNotFoundException() {
+        long expertGroupId = 0L;
+        UUID currentUserId = UUID.randomUUID();
+        DeleteExpertGroupUseCase.Param param = new DeleteExpertGroupUseCase.Param(expertGroupId, currentUserId);
+
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
+        when(checkExpertGroupExistsPort.existsById(expertGroupId)).thenReturn(false);
+
+        verifyNoInteractions(countExpertGroupKitsPort, deleteExpertGroupPort, loadExpertGroupOwnerPort);
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.deleteExpertGroup(param));
+        Assertions.assertThat(throwable).hasMessage(EXPERT_GROUP_ID_NOT_FOUND);
+    }
 }
