@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface ConfirmExpertGroupInvitationPort {
 
-    void confirmInvitation(UUID inviteToken);
+    void confirmInvitation(long expertGroupId, UUID userId);
 }

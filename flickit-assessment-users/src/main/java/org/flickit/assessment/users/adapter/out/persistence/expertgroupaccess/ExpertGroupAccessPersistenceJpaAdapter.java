@@ -94,7 +94,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public void confirmInvitation(UUID inviteToken) {
-        repository.confirmInvitation(inviteToken);
+    public void confirmInvitation(long expertGroupId, UUID userId) {
+        repository.confirmInvitation(expertGroupId, userId);
     }
 }

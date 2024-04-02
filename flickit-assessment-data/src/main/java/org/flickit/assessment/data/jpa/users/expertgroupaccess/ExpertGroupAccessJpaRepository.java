@@ -55,6 +55,6 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
             a.inviteToken = null
         WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
         """)
-    void confirmInvitation(@Param(value = "expertGroupId") UUID expertGroupId,
+    void confirmInvitation(@Param(value = "expertGroupId") long expertGroupId,
                            @Param(value = "userId") UUID userId);
 }

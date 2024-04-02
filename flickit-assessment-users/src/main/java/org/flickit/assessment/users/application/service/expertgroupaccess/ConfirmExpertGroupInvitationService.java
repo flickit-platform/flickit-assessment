@@ -38,6 +38,6 @@ public class ConfirmExpertGroupInvitationService implements ConfirmExpertGroupIn
         if (LocalDateTime.now().isAfter(expertGroupAccess.getInviteExpirationDate()))
             throw new ValidationException(CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_EXPIRED);
 
-        confirmExpertGroupInvitationPort.confirmInvitation(param.getInviteToken());
+        confirmExpertGroupInvitationPort.confirmInvitation(param.getExpertGroupId(), param.getCurrentUserId());
     }
 }

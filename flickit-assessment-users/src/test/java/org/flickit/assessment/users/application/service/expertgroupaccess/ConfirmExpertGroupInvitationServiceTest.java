@@ -49,12 +49,12 @@ class ConfirmExpertGroupInvitationServiceTest {
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(expertGroupId, currentUserId))
             .thenReturn(expertGroupAccess);
-        doNothing().when(confirmExpertGroupInvitationPort).confirmInvitation(isA(UUID.class));
+        doNothing().when(confirmExpertGroupInvitationPort).confirmInvitation(isA(Long.class), isA(UUID.class) );
 
         assertDoesNotThrow(() -> service.confirmInvitation(param));
 
         verify(loadExpertGroupAccessPort).loadExpertGroupAccess(anyLong(), any(UUID.class));
-        verify(confirmExpertGroupInvitationPort).confirmInvitation(any(UUID.class));
+        verify(confirmExpertGroupInvitationPort).confirmInvitation(anyLong(), any(UUID.class));
     }
 
     @Test
