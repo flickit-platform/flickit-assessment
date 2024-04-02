@@ -7,6 +7,8 @@ import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.api.ErrorCodes;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,7 @@ import static org.flickit.assessment.common.adapter.out.persistence.util.Constra
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class DataIntegrityViolationExceptionHandler {
 
     private final List<DataConstraintErrorMapper> collectors;
