@@ -180,6 +180,32 @@
 			"response": []
 		},
 		{
+			"name": "Get Kit Detail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/details",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302",
+						"details"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Upload Kit DSL",
 			"request": {
 				"method": "POST",
