@@ -4,16 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class QuestionnairePersistenceJpaAdapter implements
     CreateQuestionnairePort,
-    UpdateQuestionnairePort {
+    UpdateQuestionnairePort,
+    LoadQuestionnairePort {
 
     private final QuestionnaireJpaRepository repository;
 
@@ -30,5 +33,12 @@ public class QuestionnairePersistenceJpaAdapter implements
             param.description(),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public List<Questionnaire> loadByKitVersionId(Long kitVersionId) {
+        return repository.findAllByKitVersionId(kitVersionId).stream()
+            .map(QuestionnaireMapper::mapToDomainModel)
+            .toList();
     }
 }

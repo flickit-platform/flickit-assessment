@@ -1,17 +1,23 @@
 package org.flickit.assessment.kit.adapter.out.persistence.subject;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
+import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 
 @Component
 @RequiredArgsConstructor
 public class SubjectPersistenceJpaAdapter implements
     UpdateSubjectPort,
-    CreateSubjectPort {
+    CreateSubjectPort,
+    LoadSubjectPort {
 
     private final SubjectJpaRepository repository;
 
@@ -31,4 +37,10 @@ public class SubjectPersistenceJpaAdapter implements
         return repository.save(SubjectMapper.mapToJpaEntity(param)).getId();
     }
 
+    @Override
+    public List<Subject> loadByKitVersionId(Long kitVersionId) {
+        return repository.findAllByKitVersionId(kitVersionId).stream()
+            .map((SubjectJpaEntity entity) -> SubjectMapper.mapToDomainModel(entity, null))
+            .toList();
+    }
 }
