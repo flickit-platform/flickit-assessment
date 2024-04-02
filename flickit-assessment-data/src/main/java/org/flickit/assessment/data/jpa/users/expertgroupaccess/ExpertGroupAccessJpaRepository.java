@@ -46,17 +46,8 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
     Optional<Integer> findExpertGroupMemberStatus(@Param(value = "expertGroupId") long expertGroupId,
                                                   @Param(value = "userId") UUID userId);
 
-    boolean existsByExpertGroupIdAndUserIdAndInviteToken(long expertGroupId, UUID userId, UUID inviteToken);
-
-    @Query("""
-        select case
-            when count(e)> 0 then true
-            else false end
-            from ExpertGroupAccessJpaEntity e
-            WHERE
-            e.inviteToken = :inviteToken AND :now <= e.inviteExpirationDate""")
-    boolean existsByInviteTokenNotExpired(@Param(value = "inviteToken") UUID inviteToken,
-                                          @Param(value = "now") LocalDateTime now);
+    Optional<LocalDateTime> findInviteExpirationDateByExpertGroupIdAndUserIdAndInviteToken
+        (long expertGroupId, UUID inviteToken, UUID userId);
 
     @Modifying
     @Query("""

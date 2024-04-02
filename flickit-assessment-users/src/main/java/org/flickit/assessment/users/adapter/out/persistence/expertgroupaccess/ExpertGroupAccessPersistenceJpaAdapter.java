@@ -2,6 +2,7 @@ package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.users.common.ErrorMessageKey.CONFIRM_EXPERT_GROUP_INVITATION_INPUT_DATA_INVALID;
+
 @Component
 @RequiredArgsConstructor
 public class ExpertGroupAccessPersistenceJpaAdapter implements
@@ -21,8 +24,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     LoadExpertGroupMembersPort,
     InviteExpertGroupMemberPort,
     LoadExpertGroupMemberStatusPort,
-    CheckConfirmInputDataValidityPort,
-    CheckInviteTokenExpiryPort,
+    LoadExpertGroupAccessPort,
     ConfirmExpertGroupInvitationPort {
 
     private final ExpertGroupAccessJpaRepository repository;
@@ -77,13 +79,9 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean checkInputData(long expertGroupId, UUID userId, UUID inviteToken) {
-        return repository.existsByExpertGroupIdAndUserIdAndInviteToken(expertGroupId, userId, inviteToken);
-    }
-
-    @Override
-    public boolean isInviteTokenValid(UUID inviteToken) {
-        return repository.existsByInviteTokenNotExpired(inviteToken, LocalDateTime.now());
+    public LocalDateTime loadExpirationDate(long expertGroupId, UUID inviteToken, UUID userId) {
+        return repository.findInviteExpirationDateByExpertGroupIdAndUserIdAndInviteToken(expertGroupId, inviteToken, userId)
+            .orElseThrow(() -> new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_INPUT_DATA_INVALID));
     }
 
     @Override
