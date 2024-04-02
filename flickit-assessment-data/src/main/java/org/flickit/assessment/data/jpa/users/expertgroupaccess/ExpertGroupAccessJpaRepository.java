@@ -53,7 +53,8 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         UPDATE ExpertGroupAccessJpaEntity a
         SET a.status = 1,
             a.inviteToken = null
-        WHERE a.inviteToken = :inviteToken
+        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
         """)
-    void confirmInvitation(@Param(value = "inviteToken") UUID inviteToken);
+    void confirmInvitation(@Param(value = "expertGroupId") UUID expertGroupId,
+                           @Param(value = "userId") UUID userId);
 }

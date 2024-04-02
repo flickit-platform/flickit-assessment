@@ -26,8 +26,8 @@ public class ConfirmExpertGroupInvitationRestController {
     }
 
     private ConfirmExpertGroupInvitationUseCase.Param toParam(long expertGroupId,
-                                                              UUID currentUserId,
-                                                              UUID inviteToken) {
+                                                              UUID inviteToken,
+                                                              UUID currentUserId) {
         return new ConfirmExpertGroupInvitationUseCase.Param(expertGroupId, inviteToken, currentUserId);
     }
 }
