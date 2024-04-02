@@ -55,7 +55,7 @@ class GetExpertGroupMembersServiceTest {
 
         PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, page, size, "title", "asc", 2);
 
-        when(checkExpertGroupExistsPort.existsByIdAndDeletedFalse(any(Long.class))).thenReturn(true);
+        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(currentUserId);
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(expertGroupId, 1, page, size)).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
@@ -79,7 +79,7 @@ class GetExpertGroupMembersServiceTest {
         int size = 10;
         GetExpertGroupMembersUseCase.Param param = new GetExpertGroupMembersUseCase.Param(expertGroupId, ExpertGroupAccessStatus.PENDING.name(), currentUserId, size, page);
 
-        when(checkExpertGroupExistsPort.existsByIdAndDeletedFalse(any(Long.class))).thenReturn(true);
+        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(ownerId);
 
         PaginatedResponse<GetExpertGroupMembersUseCase.Member> result = service.getExpertGroupMembers(param);
@@ -100,7 +100,7 @@ class GetExpertGroupMembersServiceTest {
         int size = 10;
         GetExpertGroupMembersUseCase.Param param = new GetExpertGroupMembersUseCase.Param(expertGroupId, null, currentUserId, size, page);
 
-        when(checkExpertGroupExistsPort.existsByIdAndDeletedFalse(any(Long.class))).thenReturn(false);
+        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(false);
         assertThrows(ResourceNotFoundException.class, ()->service.getExpertGroupMembers(param));
     }
 
@@ -118,7 +118,7 @@ class GetExpertGroupMembersServiceTest {
         List<LoadExpertGroupMembersPort.Member> portMembers = List.of(member1, member2);
         PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, page, size, "title", "asc", 2);
 
-        when(checkExpertGroupExistsPort.existsByIdAndDeletedFalse(any(Long.class))).thenReturn(true);
+        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(currentUserId);
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(expertGroupId, 1, page, size)).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
