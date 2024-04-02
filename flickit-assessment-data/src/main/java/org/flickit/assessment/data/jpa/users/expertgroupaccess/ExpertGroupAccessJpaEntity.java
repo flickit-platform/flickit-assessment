@@ -54,7 +54,7 @@ public class ExpertGroupAccessJpaEntity {
     private LocalDateTime lastModificationTime;
 
     @Column(name = "deleted", nullable = false)
-    private Boolean deleted;
+    private boolean deleted;
 
     @Data
     @NoArgsConstructor

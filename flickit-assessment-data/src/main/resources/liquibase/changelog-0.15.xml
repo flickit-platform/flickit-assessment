@@ -434,5 +434,4 @@
     <changeSet id="0.15-62" author="Mahdi Rezazadeh">
         <dropDefaultValue tableName="fak_question" columnName="advisable"/>
     </changeSet>
-
 </databaseChangeLog>
