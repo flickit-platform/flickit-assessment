@@ -43,8 +43,7 @@ public class DeleteKitUserAccessService implements DeleteKitUserAccessUseCase {
 
     private void validateCurrentUser(Long kitId, UUID currentUserId) {
         Long expertGroupId = loadKitExpertGroupPort.loadKitExpertGroupId(kitId);
-        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
-            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
+        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId);
         if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
