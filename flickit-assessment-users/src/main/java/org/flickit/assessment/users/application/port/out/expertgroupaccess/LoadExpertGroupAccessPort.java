@@ -1,9 +1,10 @@
 package org.flickit.assessment.users.application.port.out.expertgroupaccess;
 
-import java.time.LocalDateTime;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
+
 import java.util.UUID;
 
 public interface LoadExpertGroupAccessPort {
 
-    LocalDateTime loadExpirationDate(long expertGroupId, UUID token, UUID userId);
+    ExpertGroupAccess loadExpertGroupAccess(long expertGroupId, UUID userId);
 }

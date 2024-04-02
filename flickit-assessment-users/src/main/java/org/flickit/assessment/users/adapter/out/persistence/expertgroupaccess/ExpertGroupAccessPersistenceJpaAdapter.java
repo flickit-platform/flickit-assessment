@@ -6,16 +6,16 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.CONFIRM_EXPERT_GROUP_INVITATION_INPUT_DATA_INVALID;
+import static org.flickit.assessment.users.common.ErrorMessageKey.CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID;
 
 @Component
 @RequiredArgsConstructor
@@ -79,9 +79,18 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public LocalDateTime loadExpirationDate(long expertGroupId, UUID inviteToken, UUID userId) {
-        return repository.findInviteExpirationDateByExpertGroupIdAndUserIdAndInviteToken(expertGroupId, inviteToken, userId)
-            .orElseThrow(() -> new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_INPUT_DATA_INVALID));
+    public ExpertGroupAccess loadExpertGroupAccess(long expertGroupId, UUID userId) {
+        var result =  repository.findByExpertGroupIdAndAndUserId(expertGroupId, userId)
+            .orElseThrow(() -> new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID));
+        return mapToDomain (result);
+    }
+
+    private static ExpertGroupAccess mapToDomain(ExpertGroupAccessJpaEntity entity) {
+        return new ExpertGroupAccess(
+            entity.getInviteExpirationDate(),
+            entity.getInviteToken(),
+            entity.getStatus());
+
     }
 
     @Override

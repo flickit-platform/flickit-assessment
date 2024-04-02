@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,8 +45,8 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
     Optional<Integer> findExpertGroupMemberStatus(@Param(value = "expertGroupId") long expertGroupId,
                                                   @Param(value = "userId") UUID userId);
 
-    Optional<LocalDateTime> findInviteExpirationDateByExpertGroupIdAndUserIdAndInviteToken
-        (long expertGroupId, UUID inviteToken, UUID userId);
+    Optional<ExpertGroupAccessJpaEntity> findByExpertGroupIdAndAndUserId
+        (long expertGroupId, UUID userId);
 
     @Modifying
     @Query("""
