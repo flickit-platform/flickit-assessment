@@ -269,6 +269,14 @@
     </changeSet>
 
     <changeSet id="0.16-37" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group">
+            <column name="deleted" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-38" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group_user_access">
             <column name="deleted" type="boolean" defaultValueBoolean="false"/>
         </addColumn>

@@ -3,6 +3,7 @@ package org.flickit.assessment.data.jpa.users.expertgroup;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
 
-    @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id")
+    @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id and e.deleted=false")
     Optional<UUID> loadOwnerIdById(@Param("id") Long id);
 
     @Query("""
@@ -30,7 +31,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             WHERE EXISTS (
                 SELECT 1 FROM ExpertGroupAccessJpaEntity ac
                 WHERE ac.expertGroupId = e.id AND ac.userId = :userId
-                    AND ac.status = 1
+                    AND ac.status = 1 AND e.deleted=false
             )
             GROUP BY
                 e.id,
@@ -44,9 +45,10 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     @Query("""
         SELECT
         u.displayName as displayName
-        FROM ExpertGroupAccessJpaEntity e
-        LEFT JOIN UserJpaEntity u on e.userId = u.id
-        WHERE e.status = 1 and e.expertGroupId = :expertGroupId
+        FROM ExpertGroupAccessJpaEntity a
+        LEFT JOIN UserJpaEntity u on a.userId = u.id
+        LEFT JOIN ExpertGroupJpaEntity e on a.expertGroupId = e.id
+        WHERE a.status = 1 AND a.expertGroupId = :expertGroupId
         """)
     List<String> findMembersByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
 
@@ -57,4 +59,26 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         WHERE e.expertGroupId = :expertGroupId and e.status = 1
         """)
     List<UUID> findMemberIdsByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId);
+
+    @Modifying
+    @Query("""
+        UPDATE ExpertGroupJpaEntity e
+        SET e.deleted = true
+        WHERE e.id = :expertGroupId
+        """)
+    void delete(@Param("expertGroupId") Long expertGroupId);
+
+    @Query("""
+            SELECT
+                COUNT(DISTINCT CASE WHEN ak.published = true THEN ak.id ELSE NULL END) as publishedKitsCount,
+                COUNT(DISTINCT CASE WHEN ak.published = false THEN ak.id ELSE NULL END) as unPublishedKitsCount
+            FROM ExpertGroupJpaEntity e
+            LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId
+            WHERE e.id = :expertGroupId
+        """)
+    KitsCountView countKits(@Param("expertGroupId") long expertGroupId);
+
+    Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
+
+    boolean existsByIdAndDeletedFalse(@Param(value = "id") long id);
 }
