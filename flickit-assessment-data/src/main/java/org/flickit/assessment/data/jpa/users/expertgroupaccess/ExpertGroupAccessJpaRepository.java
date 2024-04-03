@@ -50,7 +50,7 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         SELECT a
         FROM ExpertGroupAccessJpaEntity a
         LEFT JOIN ExpertGroupJpaEntity e on a.expertGroupId = e.id
-        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId AND e.deleted=FALSE
+        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId AND e.deleted = FALSE
         """)
     Optional<ExpertGroupAccessJpaEntity> findByExpertGroupIdAndAndUserId(@Param(value = "expertGroupId") long expertGroupId,
                                                                          @Param(value = "userId") UUID userId);
@@ -60,11 +60,11 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         UPDATE ExpertGroupAccessJpaEntity a
         SET a.status = 1,
             a.inviteToken = null,
-            a.lastModificationTime = :modificationTime,
-            a.inviteExpirationDate = null
+            a.inviteExpirationDate = null,
+            a.lastModificationTime = :modificationTime
         WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
         """)
     void confirmInvitation(@Param(value = "expertGroupId") long expertGroupId,
                            @Param(value = "userId") UUID userId,
-                           @Param(value = "modificationTime")LocalDateTime modificationTime);
+                           @Param(value = "modificationTime") LocalDateTime modificationTime);
 }
