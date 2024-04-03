@@ -29,16 +29,13 @@ public class ConfirmExpertGroupInvitationService implements ConfirmExpertGroupIn
             .loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId())
             .orElseThrow(()-> new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID));
 
-        if (expertGroupAccess.getInviteToken() == null || expertGroupAccess.getInviteExpirationDate() == null)
-            throw new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID);
-
         if (expertGroupAccess.getStatus() == ExpertGroupAccessStatus.ACTIVE.ordinal())
             throw new ResourceAlreadyExistsException(CONFIRM_EXPERT_GROUP_INVITATION_USER_ID_DUPLICATE);
 
-        if (!expertGroupAccess.getInviteToken().equals(param.getInviteToken()))
-            throw new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_INVALID);
+        if (expertGroupAccess.getInviteToken() == null || !expertGroupAccess.getInviteToken().equals(param.getInviteToken()))
+            throw new ValidationException(CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_INVALID);
 
-        if (LocalDateTime.now().isAfter(expertGroupAccess.getInviteExpirationDate()))
+        if (expertGroupAccess.getInviteExpirationDate() == null || LocalDateTime.now().isAfter(expertGroupAccess.getInviteExpirationDate()))
             throw new ValidationException(CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_EXPIRED);
 
         confirmExpertGroupInvitationPort.confirmInvitation(param.getExpertGroupId(), param.getCurrentUserId());
