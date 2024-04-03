@@ -11,7 +11,7 @@
 
     <changeSet id="0.17-02" author="Mahdi Rezazadeh">
         <dropColumn tableName="fak_kit_like"
-                       columnName="id"/>
+                    columnName="id"/>
     </changeSet>
 
     <changeSet id="0.17-03" author="Mahdi Rezazadeh">
@@ -28,7 +28,7 @@
                                  baseColumnNames="assessment_kit_id"
                                  referencedTableName="fak_assessment_kit"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_kit_like_assessmentkit"
+                                 constraintName="fk_fak_kitlike_assessmentkit"
                                  deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>
@@ -38,7 +38,7 @@
                                  baseColumnNames="user_id"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_kit_like_account_user"
+                                 constraintName="fk_fak_kitlike_user"
                                  deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>
