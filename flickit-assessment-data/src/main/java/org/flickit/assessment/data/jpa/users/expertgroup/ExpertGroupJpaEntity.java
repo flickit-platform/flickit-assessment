@@ -3,12 +3,13 @@ package org.flickit.assessment.data.jpa.users.expertgroup;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @Entity
-@Table(name = "baseinfo_expertgroup")
+@Table(name = "fau_expert_group")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,12 +19,12 @@ public class ExpertGroupJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_expertgroup_id_seq")
-    @SequenceGenerator(name = "baseinfo_expertgroup_id_seq", sequenceName = "baseinfo_expertgroup_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fau_expert_group_id_seq")
+    @SequenceGenerator(name = "fau_expert_group_id_seq", sequenceName = "fau_expert_group_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "name", length = 100, unique = true, nullable = false)
+    @Column(name = "title", length = 100, unique = true, nullable = false)
     private String title;
 
     @Column(name = "bio", length = 200, nullable = false)
@@ -40,6 +41,21 @@ public class ExpertGroupJpaEntity {
 
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
+
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
+
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
+
+    @Column(name = "creation_time", nullable = false)
+    private LocalDateTime creationTime;
+
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {

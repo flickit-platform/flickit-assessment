@@ -44,13 +44,12 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND));
 
         UUID assessmentResultId = assessmentResultEntity.getId();
-        Long kitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
         long kitVersionId = assessmentResultEntity.getKitVersionId();
 
         var svEntity = subjectValueRepo.findBySubjectRefNumAndAssessmentResult_Id(subjectRefNum, assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
 
-        Map<Long, MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitId(kitId)
+        Map<Long, MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitVersionId(kitVersionId)
             .stream()
             .collect(toMap(MaturityLevel::getId, x -> x));
 

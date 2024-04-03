@@ -3,34 +3,67 @@ package org.flickit.assessment.data.jpa.users.expertgroupaccess;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
-@Table(name = "baseinfo_expertgroupaccess")
+@IdClass(ExpertGroupAccessJpaEntity.EntityId.class)
+@Table(name = "fau_expert_group_user_access")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class ExpertGroupAccessJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_expertgroupaccess_id_seq")
-    @SequenceGenerator(name = "baseinfo_expertgroupaccess_id_seq", sequenceName = "baseinfo_expertgroupaccess_id_seq", allocationSize = 1)
-    @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
-
     @Column(name = "expert_group_id", nullable = false)
     private Long expertGroupId;
 
-    @Column(name = "invite_email", columnDefinition = "TEXT")
-    private String inviteEmail;
-
-    @Column(name = "invite_expiration_date")
-    private LocalDate inviteExpirationDate;
-
+    @Id
+    @EqualsAndHashCode.Include
     @Column(name = "user_id", nullable = false)
     private UUID userId;
+
+    @Column(name = "invite_date")
+    private LocalDateTime inviteDate;
+
+    @Column(name = "invite_expiration_date")
+    private LocalDateTime inviteExpirationDate;
+
+    @Column(name = "invite_token")
+    private UUID inviteToken;
+
+    @Column(name = "status", nullable = false)
+    private int status;
+
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
+
+    @Column(name =  "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
+
+    @Column(name = "creation_time", nullable = false)
+    private LocalDateTime creationTime;
+
+    @Column(name =  "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId implements Serializable {
+
+        private Long expertGroupId;
+        private UUID userId;
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String CREATION_TIME = "creationTime";
+    }
 }

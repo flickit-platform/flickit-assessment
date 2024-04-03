@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.persistence.user;
+package org.flickit.assessment.kit.adapter.out.persistence.users.user;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
-@Component
+@Component("kitUserPersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class UserPersistenceJpaAdapter implements
     LoadUserPort,
-    LoadUserByEmailPort {
+    LoadUserByEmailPort{
 
     private final UserJpaRepository repository;
 

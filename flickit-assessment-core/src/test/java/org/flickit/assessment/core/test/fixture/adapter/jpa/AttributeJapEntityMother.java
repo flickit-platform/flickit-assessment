@@ -3,6 +3,7 @@ package org.flickit.assessment.core.test.fixture.adapter.jpa;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class AttributeJapEntityMother {
 
@@ -17,7 +18,8 @@ public class AttributeJapEntityMother {
             1,
             kitId,
             creationTime,
-            creationTime
+            creationTime,
+            UUID.randomUUID()
         );
     }
 }
