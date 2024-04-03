@@ -45,6 +45,46 @@
 			"response": []
 		},
 		{
+			"name": "Confirm Expert Group Invitation",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/invite/{{inviteToken}}/confirm",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"invite",
+						"{{inviteToken}}",
+						"confirm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Expert Group List",
 			"request": {
 				"method": "GET",
