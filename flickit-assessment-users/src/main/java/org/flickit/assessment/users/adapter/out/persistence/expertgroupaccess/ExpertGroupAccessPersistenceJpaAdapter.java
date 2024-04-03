@@ -4,14 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersView;
+import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessInvitationView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -80,21 +83,25 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
     @Override
     public ExpertGroupAccess loadExpertGroupAccess(long expertGroupId, UUID userId) {
-        var result =  repository.findByExpertGroupIdAndAndUserId(expertGroupId, userId)
-            .orElseThrow(() -> new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID));
-        return mapToDomain (result);
+        Page<ExpertGroupAccessInvitationView> result = repository.findByExpertGroupIdAndAndUserId(expertGroupId, userId,
+            PageRequest.of(0, 1));
+
+        return result
+            .stream()
+            .map(ExpertGroupAccessPersistenceJpaAdapter::mapToDomain)
+            .toList()
+            .get(0);
     }
 
-    private static ExpertGroupAccess mapToDomain(ExpertGroupAccessJpaEntity entity) {
+    private static ExpertGroupAccess mapToDomain(ExpertGroupAccessInvitationView entity) {
         return new ExpertGroupAccess(
             entity.getInviteExpirationDate(),
             entity.getInviteToken(),
             entity.getStatus());
-
     }
 
     @Override
     public void confirmInvitation(long expertGroupId, UUID userId) {
-        repository.confirmInvitation(expertGroupId, userId);
+        repository.confirmInvitation(expertGroupId, userId, LocalDateTime.now());
     }
 }

@@ -21,7 +21,7 @@ public class ConfirmExpertGroupInvitationRestController {
         @PathVariable("id") Long expertGroupId,
         @PathVariable("inviteToken") UUID inviteToken) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.confirmInvitation(toParam(expertGroupId, currentUserId, inviteToken));
+        useCase.confirmInvitation(toParam(expertGroupId, inviteToken, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

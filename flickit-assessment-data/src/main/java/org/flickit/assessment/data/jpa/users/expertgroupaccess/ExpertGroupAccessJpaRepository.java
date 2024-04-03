@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -45,16 +46,29 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
     Optional<Integer> findExpertGroupMemberStatus(@Param(value = "expertGroupId") long expertGroupId,
                                                   @Param(value = "userId") UUID userId);
 
-    Optional<ExpertGroupAccessJpaEntity> findByExpertGroupIdAndAndUserId
-        (long expertGroupId, UUID userId);
+    @Query("""
+        SELECT
+        a.inviteExpirationDate as inviteExpirationDate,
+        a.inviteToken as inviteToken,
+        a.status as status
+        FROM ExpertGroupAccessJpaEntity a
+        LEFT JOIN ExpertGroupJpaEntity e on a.expertGroupId = e.id
+        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId AND e.deleted=FALSE
+        """)
+    Page<ExpertGroupAccessInvitationView> findByExpertGroupIdAndAndUserId
+        (@Param(value = "expertGroupId") long expertGroupId,
+         @Param(value = "userId") UUID userId,
+         Pageable pageable);
 
     @Modifying
     @Query("""
         UPDATE ExpertGroupAccessJpaEntity a
         SET a.status = 1,
-            a.inviteToken = null
+            a.inviteToken = null,
+            a.lastModificationTime = :modificationTime
         WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
         """)
     void confirmInvitation(@Param(value = "expertGroupId") long expertGroupId,
-                           @Param(value = "userId") UUID userId);
+                           @Param(value = "userId") UUID userId,
+                           @Param(value = "modificationTime")LocalDateTime modificationTime);
 }
