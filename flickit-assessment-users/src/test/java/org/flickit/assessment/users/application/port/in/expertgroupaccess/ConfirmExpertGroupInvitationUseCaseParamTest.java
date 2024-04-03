@@ -10,7 +10,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ConfirmExpertGroupInvitationUseCaseTest {
+class ConfirmExpertGroupInvitationUseCaseParamTest {
 
     @Test
     void testConfirmExpertGroupInviteParam_expertGroupIdIsNull_ErrorMessage() {
