@@ -278,6 +278,32 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Questionnaire List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/144/questionnaires",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"144",
+						"questionnaires"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
