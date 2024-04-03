@@ -2,14 +2,11 @@ package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersView;
-import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessInvitationView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.*;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -17,8 +14,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.flickit.assessment.users.common.ErrorMessageKey.CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID;
 
 @Component
 @RequiredArgsConstructor
@@ -82,14 +77,9 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public ExpertGroupAccess loadExpertGroupAccess(long expertGroupId, UUID userId) {
-        Page<ExpertGroupAccessInvitationView> result = repository.findByExpertGroupIdAndAndUserId
-            (expertGroupId, userId, PageRequest.of(0, 1));
-
-        var access = result.stream().findFirst()
-            .orElseThrow(() -> new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID));
-
-        return (ExpertGroupAccessMapper.mapAccessViewToExpertGroupAccessModel(access));
+    public Optional<ExpertGroupAccess> loadExpertGroupAccess(long expertGroupId, UUID userId) {
+        return repository.findByExpertGroupIdAndAndUserId(expertGroupId, userId)
+            .map(ExpertGroupAccessMapper::mapAccessJpaToExpertGroupAccessModel);
     }
 
     @Override

@@ -26,7 +26,8 @@ public class ConfirmExpertGroupInvitationService implements ConfirmExpertGroupIn
 
     public void confirmInvitation(Param param) {
         ExpertGroupAccess expertGroupAccess = loadExpertGroupAccessPort
-            .loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId());
+            .loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId())
+            .orElseThrow(()-> new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID));
 
         if (expertGroupAccess.getInviteToken() == null || expertGroupAccess.getInviteExpirationDate() == null)
             throw new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID);

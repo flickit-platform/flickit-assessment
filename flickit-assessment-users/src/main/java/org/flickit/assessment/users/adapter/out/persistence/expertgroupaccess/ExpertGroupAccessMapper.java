@@ -1,6 +1,5 @@
 package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
-import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessInvitationView;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import lombok.AccessLevel;
@@ -45,7 +44,7 @@ public class ExpertGroupAccessMapper {
         );
     }
 
-    static ExpertGroupAccess mapAccessViewToExpertGroupAccessModel(ExpertGroupAccessInvitationView entity) {
+    static ExpertGroupAccess mapAccessJpaToExpertGroupAccessModel(ExpertGroupAccessJpaEntity entity) {
         return new ExpertGroupAccess(
             entity.getInviteExpirationDate(),
             entity.getInviteToken(),

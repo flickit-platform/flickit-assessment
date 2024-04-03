@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID;
@@ -48,7 +49,7 @@ class ConfirmExpertGroupInvitationServiceTest {
             new ExpertGroupAccess(expirationDate, inviteToken, ExpertGroupAccessStatus.PENDING.ordinal());
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(expertGroupId, currentUserId))
-            .thenReturn(expertGroupAccess);
+            .thenReturn(Optional.of(expertGroupAccess));
         doNothing().when(confirmExpertGroupInvitationPort).confirmInvitation(isA(Long.class), isA(UUID.class) );
 
         assertDoesNotThrow(() -> service.confirmInvitation(param));
@@ -86,7 +87,7 @@ class ConfirmExpertGroupInvitationServiceTest {
             new ExpertGroupAccess(expirationDate, inviteToken, ExpertGroupAccessStatus.PENDING.ordinal());
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(anyLong(), any(UUID.class))).
-            thenReturn(expertGroupAccess);
+            thenReturn(Optional.of(expertGroupAccess));
 
         assertThrows(ValidationException.class, () -> service.confirmInvitation(param));
 
@@ -106,7 +107,7 @@ class ConfirmExpertGroupInvitationServiceTest {
             new ExpertGroupAccess(expirationDate, inviteToken, ExpertGroupAccessStatus.ACTIVE.ordinal());
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(anyLong(), any(UUID.class))).
-            thenReturn(expertGroupAccess);
+            thenReturn(Optional.of(expertGroupAccess));
 
         assertThrows(ResourceAlreadyExistsException.class, () -> service.confirmInvitation(param));
 

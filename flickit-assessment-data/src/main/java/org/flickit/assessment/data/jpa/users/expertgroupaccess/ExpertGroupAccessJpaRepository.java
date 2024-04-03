@@ -47,18 +47,13 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
                                                   @Param(value = "userId") UUID userId);
 
     @Query("""
-        SELECT
-        a.inviteExpirationDate as inviteExpirationDate,
-        a.inviteToken as inviteToken,
-        a.status as status
+        SELECT a
         FROM ExpertGroupAccessJpaEntity a
         LEFT JOIN ExpertGroupJpaEntity e on a.expertGroupId = e.id
         WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId AND e.deleted=FALSE
         """)
-    Page<ExpertGroupAccessInvitationView> findByExpertGroupIdAndAndUserId
-        (@Param(value = "expertGroupId") long expertGroupId,
-         @Param(value = "userId") UUID userId,
-         Pageable pageable);
+    Optional<ExpertGroupAccessJpaEntity> findByExpertGroupIdAndAndUserId(@Param(value = "expertGroupId") long expertGroupId,
+                                                                         @Param(value = "userId") UUID userId);
 
     @Modifying
     @Query("""
