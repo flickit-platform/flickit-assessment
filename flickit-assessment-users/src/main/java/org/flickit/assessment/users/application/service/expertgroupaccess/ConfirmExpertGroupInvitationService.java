@@ -25,7 +25,6 @@ public class ConfirmExpertGroupInvitationService implements ConfirmExpertGroupIn
     private final ConfirmExpertGroupInvitationPort confirmExpertGroupInvitationPort;
 
     public void confirmInvitation(Param param) {
-
         ExpertGroupAccess expertGroupAccess = loadExpertGroupAccessPort
             .loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId());
 

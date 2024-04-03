@@ -45,7 +45,7 @@ public class ExpertGroupAccessMapper {
         );
     }
 
-    static ExpertGroupAccess mapAccessViewToExpertGroupModel(ExpertGroupAccessInvitationView entity) {
+    static ExpertGroupAccess mapAccessViewToExpertGroupAccessModel(ExpertGroupAccessInvitationView entity) {
         return new ExpertGroupAccess(
             entity.getInviteExpirationDate(),
             entity.getInviteToken(),

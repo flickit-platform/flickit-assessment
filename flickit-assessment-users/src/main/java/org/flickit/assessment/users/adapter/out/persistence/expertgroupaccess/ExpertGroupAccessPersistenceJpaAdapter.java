@@ -83,13 +83,13 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
     @Override
     public ExpertGroupAccess loadExpertGroupAccess(long expertGroupId, UUID userId) {
-        Page<ExpertGroupAccessInvitationView> result = repository.findByExpertGroupIdAndAndUserId(expertGroupId, userId,
-            PageRequest.of(0, 1));
+        Page<ExpertGroupAccessInvitationView> result = repository.findByExpertGroupIdAndAndUserId
+            (expertGroupId, userId, PageRequest.of(0, 1));
 
         var access = result.stream().findFirst()
             .orElseThrow(() -> new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID));
 
-        return (ExpertGroupAccessMapper.mapAccessViewToExpertGroupModel(access));
+        return (ExpertGroupAccessMapper.mapAccessViewToExpertGroupAccessModel(access));
     }
 
     @Override
