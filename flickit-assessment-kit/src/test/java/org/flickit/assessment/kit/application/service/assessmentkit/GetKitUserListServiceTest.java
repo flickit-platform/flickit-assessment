@@ -59,7 +59,7 @@ class GetKitUserListServiceTest {
             Sort.Direction.ASC.name().toLowerCase(),
             kitUserListItems.size());
         when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadKitUsersPort.loadKitUsers(any(LoadKitUsersPort.Param.class))).thenReturn(paginatedResponse);
 
         var param = new GetKitUserListUseCase.Param(kitId, page, size, currentUserId);
@@ -100,7 +100,7 @@ class GetKitUserListServiceTest {
             Sort.Direction.ASC.name().toLowerCase(),
             0);
         when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadKitUsersPort.loadKitUsers(any(LoadKitUsersPort.Param.class))).thenReturn(paginatedResponse);
 
         var param = new GetKitUserListUseCase.Param(kitId, page, size, currentUserId);

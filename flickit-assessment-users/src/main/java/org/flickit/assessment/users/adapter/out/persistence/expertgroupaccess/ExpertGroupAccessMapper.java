@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
+import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -41,5 +42,12 @@ public class ExpertGroupAccessMapper {
             creationTime,
             creationTime
         );
+    }
+
+    static ExpertGroupAccess mapAccessJpaToExpertGroupAccessModel(ExpertGroupAccessJpaEntity entity) {
+        return new ExpertGroupAccess(
+            entity.getInviteExpirationDate(),
+            entity.getInviteToken(),
+            entity.getStatus());
     }
 }
