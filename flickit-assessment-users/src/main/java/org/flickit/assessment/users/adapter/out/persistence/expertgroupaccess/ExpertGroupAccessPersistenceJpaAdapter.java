@@ -2,7 +2,6 @@ package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessInvitationView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.flickit.assessment.users.common.ErrorMessageKey.CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID;
 
 @Component
 @RequiredArgsConstructor
@@ -88,16 +85,9 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
         return result
             .stream()
-            .map(ExpertGroupAccessPersistenceJpaAdapter::mapToDomain)
+            .map(ExpertGroupAccessMapper::mapAccessViewToExpertGroupModel)
             .toList()
             .get(0);
-    }
-
-    private static ExpertGroupAccess mapToDomain(ExpertGroupAccessInvitationView entity) {
-        return new ExpertGroupAccess(
-            entity.getInviteExpirationDate(),
-            entity.getInviteToken(),
-            entity.getStatus());
     }
 
     @Override
