@@ -10,8 +10,8 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetail
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
 import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
@@ -46,10 +46,10 @@ class GetKitDetailServiceTest {
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
-    private LoadSubjectPort loadSubjectPort;
+    private LoadSubjectsPort loadSubjectsPort;
 
     @Mock
-    private LoadQuestionnairePort loadQuestionnairePort;
+    private LoadQuestionnairesPort loadQuestionnairesPort;
 
     @Test
     void testGetKitDetail_WhenKitExist_shouldReturnKitDetails() {
@@ -65,8 +65,8 @@ class GetKitDetailServiceTest {
         when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroupId(param.getKitVersionId())).thenReturn(expertGroupId);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())).thenReturn(true);
         when(loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId())).thenReturn(maturityLevels);
-        when(loadSubjectPort.loadByKitVersionId(param.getKitVersionId())).thenReturn(subjects);
-        when(loadQuestionnairePort.loadByKitVersionId(param.getKitVersionId())).thenReturn(questionnaires);
+        when(loadSubjectsPort.loadByKitVersionId(param.getKitVersionId())).thenReturn(subjects);
+        when(loadQuestionnairesPort.loadByKitVersionId(param.getKitVersionId())).thenReturn(questionnaires);
 
         Result result = service.getKitDetail(param);
 

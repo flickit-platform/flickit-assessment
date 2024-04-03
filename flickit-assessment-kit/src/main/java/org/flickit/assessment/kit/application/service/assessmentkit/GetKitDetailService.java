@@ -9,8 +9,8 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetail
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +27,8 @@ public class GetKitDetailService implements GetKitDetailUseCase {
     private final LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final LoadSubjectPort loadSubjectPort;
-    private final LoadQuestionnairePort loadQuestionnairePort;
+    private final LoadSubjectsPort loadSubjectsPort;
+    private final LoadQuestionnairesPort loadQuestionnairesPort;
 
     @Override
     public Result getKitDetail(Param param) {
@@ -37,8 +37,8 @@ public class GetKitDetailService implements GetKitDetailUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId());
-        var subjects = loadSubjectPort.loadByKitVersionId(param.getKitVersionId());
-        var questionnaires = loadQuestionnairePort.loadByKitVersionId(param.getKitVersionId());
+        var subjects = loadSubjectsPort.loadByKitVersionId(param.getKitVersionId());
+        var questionnaires = loadQuestionnairesPort.loadByKitVersionId(param.getKitVersionId());
 
         return mapToResult(maturityLevels, subjects, questionnaires);
     }
