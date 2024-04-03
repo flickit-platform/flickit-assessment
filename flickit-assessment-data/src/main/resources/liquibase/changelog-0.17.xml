@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+
+    <changeSet id="0.17-01" author="Mahdi Rezazadeh">
+        <renameTable oldTableName="baseinfo_assessmentkitlike" newTableName="fak_kit_like"/>
+    </changeSet>
+
+    <changeSet id="0.17-02" author="Mahdi Rezazadeh">
+        <dropColumn tableName="fak_kit_like"
+                       columnName="id"/>
+    </changeSet>
+
+    <changeSet id="0.17-03" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_kit_like"
+                       columnNames="assessment_kit_id, user_id"/>
+    </changeSet>
+
+    <changeSet id="0.17-04" author="Mahdi Rezazadeh">
+        <dropAllForeignKeyConstraints baseTableName="fak_kit_like"/>
+    </changeSet>
+
+    <changeSet id="0.17-05" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_kit_like"
+                                 baseColumnNames="assessment_kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kit_like_assessmentkit"
+                                 deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.17-06" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_kit_like"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kit_like_account_user"
+                                 deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
+                                 validate="true"/>
+    </changeSet>
+</databaseChangeLog>
