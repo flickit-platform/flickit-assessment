@@ -29,8 +29,8 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
             and av.assessmentResult.id = :assessmentResultId
         WHERE att.subject.refNum = :subjectRefNum
         """)
-    List<QualityAttributeValueJpaEntity> findByAssessmentResultIdAndSubjectId(@Param(value = "assessmentResultId") UUID assessmentResultId,
-                                                                              @Param(value = "subjectRefNum") UUID subjectRefNum);
+    List<QualityAttributeValueJpaEntity> findByAssessmentResultIdAndSubjectRefNum(@Param(value = "assessmentResultId") UUID assessmentResultId,
+                                                                                  @Param(value = "subjectRefNum") UUID subjectRefNum);
 
     @Modifying
     @Query("update QualityAttributeValueJpaEntity a set a.maturityLevelId = :maturityLevelId where a.id = :id")
