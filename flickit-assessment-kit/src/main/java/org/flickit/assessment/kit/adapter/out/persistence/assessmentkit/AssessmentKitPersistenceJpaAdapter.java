@@ -12,7 +12,7 @@ import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
-import org.flickit.assessment.kit.adapter.out.persistence.user.UserMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitStatsUseCase;

@@ -60,7 +60,7 @@ public class UploadKitServiceTest {
     void testUploadKit_ValidKitFile_ValidResult() {
         UUID currentUserId = UUID.randomUUID();
         Long expertGroupId = 1L;
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
 
         MultipartFile dslFile = convertZipFileToMultipartFile(ZIP_FILE_ADDR);
         QuestionnaireDslModel q1 = QuestionnaireDslModel.builder().title("Clean Architecture").description("desc").build();
@@ -95,7 +95,7 @@ public class UploadKitServiceTest {
     void testUploadKit_CurrentUserNotExpertGroupOwner_CurrentUserValidationFail() {
         UUID currentUserId = UUID.randomUUID();
         Long expertGroupId = 1L;
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(UUID.randomUUID()));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(UUID.randomUUID());
         MultipartFile dslFile = convertZipFileToMultipartFile(ZIP_FILE_ADDR);
 
         var param = new UploadKitDslUseCase.Param(dslFile, expertGroupId, currentUserId);

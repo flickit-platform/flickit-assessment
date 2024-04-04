@@ -3,6 +3,8 @@ package org.flickit.assessment.common.exception.handler;
 import org.flickit.assessment.common.exception.ValidationsException;
 import org.flickit.assessment.common.exception.api.ErrorResponsesDto;
 import org.flickit.assessment.common.exception.api.Notification;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
 @RestControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class ValidationsExceptionHandler {
 
     private static final short MAX_ERROR_NUMBER = 10;

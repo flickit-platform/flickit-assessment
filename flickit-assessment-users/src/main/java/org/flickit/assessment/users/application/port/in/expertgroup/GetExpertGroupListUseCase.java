@@ -7,12 +7,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.users.common.ErrorMessageKey;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 public interface GetExpertGroupListUseCase {
 
@@ -22,11 +22,11 @@ public interface GetExpertGroupListUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @Min(value = 1, message = ErrorMessageKey.GET_EXPERT_GROUP_LIST_SIZE_MIN)
-        @Max(value = 100, message = ErrorMessageKey.GET_EXPERT_GROUP_LIST_SIZE_MAX)
+        @Min(value = 1, message = GET_EXPERT_GROUP_LIST_SIZE_MIN)
+        @Max(value = 100, message = GET_EXPERT_GROUP_LIST_SIZE_MAX)
         int size;
 
-        @Min(value = 0, message = ErrorMessageKey.GET_EXPERT_GROUP_LIST_PAGE_MIN)
+        @Min(value = 0, message = GET_EXPERT_GROUP_LIST_PAGE_MIN)
         int page;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
