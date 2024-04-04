@@ -14,26 +14,31 @@
                     columnName="id"/>
     </changeSet>
 
-    <changeSet id="0.17-03" author="Mahdi Rezazadeh">
-        <addPrimaryKey tableName="fak_kit_like"
-                       columnNames="assessment_kit_id, user_id"/>
+    <changeSet id="0.17-03" author="Mahnaz Khorsandi">
+        <renameColumn tableName="fak_kit_like" oldColumnName="assessment_kit_id" newColumnName="kit_id"/>
     </changeSet>
 
     <changeSet id="0.17-04" author="Mahdi Rezazadeh">
-        <dropAllForeignKeyConstraints baseTableName="fak_kit_like"/>
+        <addPrimaryKey tableName="fak_kit_like"
+                       columnNames="kit_id, user_id"
+                       constraintName="pk_fak_kit_like"/>
     </changeSet>
 
     <changeSet id="0.17-05" author="Mahdi Rezazadeh">
+        <dropAllForeignKeyConstraints baseTableName="fak_kit_like"/>
+    </changeSet>
+
+    <changeSet id="0.17-06" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseTableName="fak_kit_like"
-                                 baseColumnNames="assessment_kit_id"
+                                 baseColumnNames="kit_id"
                                  referencedTableName="fak_assessment_kit"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_kitlike_assessmentkit"
+                                 constraintName="fk_fak_kitlike_kit"
                                  deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>
 
-    <changeSet id="0.17-06" author="Mahdi Rezazadeh">
+    <changeSet id="0.17-07" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseTableName="fak_kit_like"
                                  baseColumnNames="user_id"
                                  referencedTableName="account_user"

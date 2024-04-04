@@ -18,8 +18,8 @@ public class KitLikeJpaEntity extends AbstractEntity<KitLikeJpaEntity.KitLikeKey
 
     @Id
     @EqualsAndHashCode.Include
-    @Column(name = "assessment_kit_id", nullable = false)
-    private Long assessmentKitId;
+    @Column(name = "kit_id", nullable = false)
+    private Long kitId;
 
     @Id
     @EqualsAndHashCode.Include
@@ -28,14 +28,14 @@ public class KitLikeJpaEntity extends AbstractEntity<KitLikeJpaEntity.KitLikeKey
 
     @Override
     public KitLikeKey getId() {
-        return new KitLikeKey(assessmentKitId, userId);
+        return new KitLikeKey(kitId, userId);
     }
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class KitLikeKey {
-        private Long assessmentKitId;
+        private Long kitId;
         private UUID userId;
     }
 }
