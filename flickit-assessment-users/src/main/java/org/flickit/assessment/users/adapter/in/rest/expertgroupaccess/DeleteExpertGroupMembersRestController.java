@@ -22,7 +22,7 @@ public class DeleteExpertGroupMembersRestController {
         @PathVariable("userId") UUID userId) {
         var currentUserId = userContext.getUser().id();
         useCase.deleteMember(toParam(id, userId, currentUserId));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private DeleteExpertGroupMemberUseCase.Param toParam(long expertGroupId, UUID userId, UUID currentUserId) {
