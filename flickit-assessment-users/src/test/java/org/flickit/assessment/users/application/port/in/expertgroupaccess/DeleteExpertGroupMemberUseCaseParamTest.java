@@ -11,7 +11,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
-class DeleteExpertGroupMemberUseCaseTest {
+class DeleteExpertGroupMemberUseCaseParamTest {
 
     @Test
     void testDeleteExpertGroupMember_expertGroupIdIsNull_ErrorMessage() {

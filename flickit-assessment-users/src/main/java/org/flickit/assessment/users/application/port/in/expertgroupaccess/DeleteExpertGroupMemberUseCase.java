@@ -21,8 +21,10 @@ public interface DeleteExpertGroupMemberUseCase {
 
         @NotNull(message = DELETE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL)
         Long expertGroupId;
+
         @NotNull(message = DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_NULL)
         UUID userId;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
