@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
 
-    @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id and e.deleted=false")
+    @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id and deleted=false")
     Optional<UUID> loadOwnerIdById(@Param("id") Long id);
 
     @Query("""
