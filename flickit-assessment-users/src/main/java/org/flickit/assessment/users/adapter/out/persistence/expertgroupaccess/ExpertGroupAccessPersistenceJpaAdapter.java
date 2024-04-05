@@ -89,7 +89,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteMember(UUID userId, long expertGroupId) {
+    public void deleteMember(long expertGroupId, UUID userId) {
         repository.deleteMember(userId, expertGroupId);
     }
 }

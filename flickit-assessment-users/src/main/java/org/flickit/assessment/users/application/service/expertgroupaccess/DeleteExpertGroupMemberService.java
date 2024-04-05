@@ -24,7 +24,7 @@ public class DeleteExpertGroupMemberService implements DeleteExpertGroupMemberUs
     @Override
     public void deleteMember(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
-        deleteExpertGroupMemberPort.deleteMember(param.getUserId(), param.getExpertGroupId());
+        deleteExpertGroupMemberPort.deleteMember(param.getExpertGroupId(), param.getUserId());
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {

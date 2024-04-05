@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface DeleteExpertGroupMemberPort {
 
-    void deleteMember (UUID userId, long expertGroupId);
+    void deleteMember (long expertGroupId, UUID userId);
 }
