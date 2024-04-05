@@ -47,4 +47,10 @@
                                  deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>
+
+    <changeSet id="0.17-08" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="deleted" type="boolean" defaultValueBoolean="false"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
