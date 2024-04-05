@@ -5,11 +5,13 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +22,8 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     LoadExpertGroupMembersPort,
     InviteExpertGroupMemberPort,
     LoadExpertGroupMemberStatusPort,
+    LoadExpertGroupAccessPort,
+    ConfirmExpertGroupInvitationPort,
     DeleteExpertGroupMemberPort {
 
     private final ExpertGroupAccessJpaRepository repository;
@@ -71,6 +75,17 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     @Override
     public Optional<Integer> getMemberStatus(long expertGroupId, UUID userId) {
         return repository.findExpertGroupMemberStatus(expertGroupId, userId);
+    }
+
+    @Override
+    public Optional<ExpertGroupAccess> loadExpertGroupAccess(long expertGroupId, UUID userId) {
+        return repository.findByExpertGroupIdAndAndUserId(expertGroupId, userId)
+            .map(ExpertGroupAccessMapper::mapAccessJpaToExpertGroupAccessModel);
+    }
+
+    @Override
+    public void confirmInvitation(long expertGroupId, UUID userId) {
+        repository.confirmInvitation(expertGroupId, userId, LocalDateTime.now());
     }
 
     @Override
