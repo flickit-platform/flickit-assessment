@@ -16,8 +16,8 @@ import org.springframework.validation.annotation.Validated;
 public class FileProperties {
 
     @NotBlank
-    DataSize pictureMaxSize = DataSize.ofBytes(1);
+    DataSize pictureMaxSize = DataSize.ofMegabytes(2);
 
     @NotBlank
-    DataSize kitMaxSize = DataSize.ofBytes(1);
+    DataSize kitMaxSize = DataSize.ofMegabytes(5);
 }
