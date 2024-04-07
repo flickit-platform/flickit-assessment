@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GetKitStatsService implements GetKitStatsUseCase {
 
