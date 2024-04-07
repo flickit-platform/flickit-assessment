@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.domain;
+package org.flickit.assessment.core.application.domain;
 
 import java.util.List;
 

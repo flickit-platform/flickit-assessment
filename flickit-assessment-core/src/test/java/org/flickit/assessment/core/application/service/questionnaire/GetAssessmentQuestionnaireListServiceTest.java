@@ -1,11 +1,11 @@
-package org.flickit.assessment.kit.application.service.questionnaire;
+package org.flickit.assessment.core.application.service.questionnaire;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.QuestionnaireListItem;
-import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnaireListUseCase.Param;
-import org.flickit.assessment.kit.application.port.out.assessment.CheckUserAssessmentAccessPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
+import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
+import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireListUseCase.Param;
+import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
+import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class GetQuestionnaireListServiceTest {
+class GetAssessmentQuestionnaireListServiceTest {
 
     @InjectMocks
-    private GetQuestionnaireListService service;
+    private GetAssessmentQuestionnaireListService service;
 
     @Mock
     private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
@@ -43,7 +43,7 @@ class GetQuestionnaireListServiceTest {
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(false);
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireList(param));
+        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getAssessmentQuestionnaireList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
     }
 
@@ -84,7 +84,7 @@ class GetQuestionnaireListServiceTest {
         when(loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(portParam))
             .thenReturn(expectedResult);
 
-        var result = service.getQuestionnaireList(param);
+        var result = service.getAssessmentQuestionnaireList(param);
 
         assertEquals(expectedResult, result);
     }

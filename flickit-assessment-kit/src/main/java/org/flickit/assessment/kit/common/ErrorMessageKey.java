@@ -66,13 +66,6 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL = "create-kit-by-dsl.tag-ids.notNull";
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
 
-    public static final String GET_QUESTIONNAIRE_LIST_ASSESSMENT_ID_NOT_NULL = "get-questionnaire-list.assessmentId.notNull";
-    public static final String GET_QUESTIONNAIRE_LIST_CURRENT_USER_ID_NOT_NULL = "get-questionnaire-list.currentUserId.notNull";
-    public static final String GET_QUESTIONNAIRE_LIST_SIZE_MIN = "get-questionnaire-list.size.min";
-    public static final String GET_QUESTIONNAIRE_LIST_SIZE_MAX = "get-questionnaire-list.size.max";
-    public static final String GET_QUESTIONNAIRE_LIST_PAGE_MIN = "get-questionnaire-list.page.min";
-    public static final String GET_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND = "get-questionnaire-list.assessmentResultId.notFound";
-
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
