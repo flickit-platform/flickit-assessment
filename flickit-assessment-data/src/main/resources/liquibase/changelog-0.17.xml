@@ -47,4 +47,33 @@
                                  deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>
+
+    <changeSet id="0.17-08" author="Ali Sedaghat">
+        <renameTable oldTableName="baseinfo_assessmentkittag" newTableName="fak_kit_tag"/>
+    </changeSet>
+
+    <changeSet id="0.17-09" author="Ali Sedaghat">
+        <sql>alter table fak_kit_tag rename constraint baseinfo_profiletag_pkey to pk_fak_kit_tag;</sql>
+    </changeSet>
+
+    <changeSet id="0.17-10" author="Ali Sedaghat">
+        <dropUniqueConstraint constraintName="baseinfo_profiletag_code_4987a4c6_uniq" tableName="fak_kit_tag"/>
+    </changeSet>
+
+    <changeSet id="0.17-11" author="Ali Sedaghat">
+        <dropUniqueConstraint constraintName="baseinfo_profiletag_title_b2cd9f8a_uniq" tableName="fak_kit_tag"/>
+    </changeSet>
+
+    <changeSet id="0.17-12" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_kit_tag" columnNames="code" constraintName="uq_fak_kittag_code"/>
+    </changeSet>
+
+    <changeSet id="0.17-13" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_kit_tag" columnNames="title" constraintName="uq_fak_kittag_title"/>
+    </changeSet>
+
+    <changeSet id="0.17-14" author="Ali Sedaghat">
+        <renameSequence oldSequenceName="baseinfo_profiletag_id_seq" newSequenceName="fak_kit_tag_id_seq"/>
+    </changeSet>
+
 </databaseChangeLog>
