@@ -76,4 +76,53 @@
         <renameSequence oldSequenceName="baseinfo_profiletag_id_seq" newSequenceName="fak_kit_tag_id_seq"/>
     </changeSet>
 
+    <changeSet id="0.17-15" author="Ali Sedaghat">
+        <renameTable oldTableName="baseinfo_assessmentkittag_assessmentkits" newTableName="fak_kit_tag_relation"/>
+    </changeSet>
+
+    <changeSet id="0.17-16" author="Ali Sedaghat">
+        <dropColumn tableName="fak_kit_tag_relation" columnName="id"/>
+    </changeSet>
+
+    <changeSet id="0.17-17" author="Ali Sedaghat">
+        <renameColumn tableName="fak_kit_tag_relation" oldColumnName="assessmentkittag_id" newColumnName="kittag_id"/>
+    </changeSet>
+
+    <changeSet id="0.17-18" author="Ali Sedaghat">
+        <renameColumn tableName="fak_kit_tag_relation" oldColumnName="assessmentkit_id" newColumnName="kit_id"/>
+    </changeSet>
+
+    <changeSet id="0.17-19" author="Ali Sedaghat">
+        <addPrimaryKey tableName="fak_kit_tag_relation" columnNames="kittag_id,kit_id" constraintName="pk_fak_kit_tag_relation"/>
+    </changeSet>
+
+    <changeSet id="0.17-20" author="Ali Sedaghat">
+        <dropUniqueConstraint constraintName="baseinfo_profiletag_prof_profiletag_id_assessment_cb566b60_uniq"
+                              tableName="fak_kit_tag_relation"/>
+    </changeSet>
+
+    <changeSet id="0.17-21" author="Ali Sedaghat">
+        <dropAllForeignKeyConstraints baseTableName="fak_kit_tag_relation"/>
+    </changeSet>
+
+    <changeSet id="0.17-22" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_tag_relation"
+                                 baseColumnNames="kittag_id"
+                                 referencedTableName="fak_kit_tag"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kittagrelation_kittag"
+                                 deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.17-23" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_tag_relation"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kittagrelation_kit"
+                                 deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
+                                 validate="true"/>
+    </changeSet>
+
 </databaseChangeLog>
