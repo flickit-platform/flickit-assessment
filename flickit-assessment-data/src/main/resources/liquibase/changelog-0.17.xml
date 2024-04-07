@@ -47,4 +47,75 @@
                                  deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>
+
+    <changeSet id="0.17-08" author="Maziyar Gerami">
+        <renameTable oldTableName="account_space" newTableName="fau_space"/>
+    </changeSet>
+
+    <changeSet id="0.17.09" author="Maziyar Gerami">
+        <renameSequence oldSequenceName="account_space_id_seq" newSequenceName="fau_space_id_seq"/>
+    </changeSet>
+
+    <changeSet id="0.17-10" author="Maziyar gerami">
+        <renameColumn tableName="fau_space" oldColumnName="last_modification_date" newColumnName="last_modification_time"/>
+    </changeSet>
+
+    <changeSet id="0.17-11" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="created_by" type="uuid" valueComputed="owner_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.17-12" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_space"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.17-13" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="last_modified_by" type="uuid" valueComputed="owner_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.17-14" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_space"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_lastmodifiedby"/>
+    </changeSet>
+
+    <changeSet id="0.17-15" author="Maziyar Gerami">
+        <dropColumn tableName="fau_space"
+                    columnName="is_default_space"/>
+    </changeSet>
+
+    <changeSet id="0.17-16" author="Maziyar Gerami">
+        <sql>alter table fau_space rename constraint account_space_pkey to pk_fau_space;</sql>
+    </changeSet>
+
+    <changeSet id="0.17-17" author="Maziyar Gerami">
+        <sql>alter table fau_space rename constraint account_space_code_cc3cf1de_uniq to uq_fau_space_code;</sql>
+    </changeSet>
+
+    <changeSet id="0.17-18" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fau_space"
+                                  constraintName="account_space_owner_id_9c7e98ca_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.17-19" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_space"
+                                 baseColumnNames="owner_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_user_owner"/>
+    </changeSet>
+
 </databaseChangeLog>
