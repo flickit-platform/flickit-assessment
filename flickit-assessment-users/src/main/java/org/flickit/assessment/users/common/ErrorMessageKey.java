@@ -43,4 +43,14 @@ public class ErrorMessageKey {
     public static final String GET_EXPERT_GROUP_MEMBERS_PAGE_MIN = "get-expert-group-members.page.min";
     public static final String GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND = "get-expert-group-members.expertGroup.notFound";
     public static final String GET_EXPERT_GROUP_MEMBERS_STATUS_INVALID = "get-expert-group-members.status.invalid";
+
+    public static final String DELETE_EXPERT_GROUP_KITS_EXIST = "delete-expert-group.kits.exist";
+    public static final String DELETE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group.expert-group-id.notNull";
+
+    public static final String CONFIRM_EXPERT_GROUP_INVITATION_EXPERT_GROUP_ID_NOT_NULL = "confirm-expert-group-invitation.expert-group-id.notNull";
+    public static final String CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_NOT_NULL = "confirm-expert-group-invitation.invite-token.notNull";
+    public static final String CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID = "confirm-expert-group-invitation.invitation-link.notValid";
+    public static final String CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_EXPIRED = "confirm-expert-group-invitation.invite-token.expired";
+    public static final String CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_INVALID = "confirm-expert-group-invitation.invite-token.notValid";
+    public static final String CONFIRM_EXPERT_GROUP_INVITATION_USER_ID_DUPLICATE = "confirm-expert-group-invitation.userId.duplicate";
 }

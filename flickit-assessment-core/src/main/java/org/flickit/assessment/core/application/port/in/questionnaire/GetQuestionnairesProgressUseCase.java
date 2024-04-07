@@ -30,6 +30,6 @@ public interface GetQuestionnairesProgressUseCase {
     record Result(List<QuestionnaireProgress> questionnairesProgress){
     }
 
-    record QuestionnaireProgress(Long id, Integer answersCount) {
+    record QuestionnaireProgress(Long id, Integer answersCount, Integer nextQuestion) {
     }
 }
