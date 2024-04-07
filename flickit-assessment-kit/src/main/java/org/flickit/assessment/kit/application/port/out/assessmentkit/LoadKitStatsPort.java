@@ -5,5 +5,4 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitStatsU
 public interface LoadKitStatsPort {
 
     GetKitStatsUseCase.Result loadKitStats(Long kitId);
-
 }

@@ -8,12 +8,12 @@ import java.util.List;
 public record GetKitStatsResponseDto(
     LocalDateTime creationTime,
     LocalDateTime lastUpdateTime,
-    Long questionnairesCount,
-    Long attributesCount,
-    Long questionsCount,
-    Long maturityLevelsCount,
-    Long likes,
-    Long assessmentCounts,
+    Integer questionnairesCount,
+    Integer attributesCount,
+    Integer questionsCount,
+    Integer maturityLevelsCount,
+    Integer likes,
+    Integer assessmentCounts,
     List<GetKitStatsUseCase.KitStatSubject> subjects,
     GetKitStatsUseCase.KitStatExpertGroup expertGroup
 ) {

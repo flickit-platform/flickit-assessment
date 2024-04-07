@@ -5,10 +5,12 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
-import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
-import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.KitStatsView;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
@@ -44,6 +46,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final UserJpaRepository userRepository;
     private final ExpertGroupJpaRepository expertGroupRepository;
     private final KitVersionJpaRepository kitVersionRepository;
+    private final SubjectJpaRepository subjectRepository;
 
     @Override
     public Long loadKitExpertGroupId(Long kitId) {
@@ -120,13 +123,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     public GetKitStatsUseCase.Result loadKitStats(Long kitId) {
         AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_STATS_KIT_ID_NOT_FOUND));
-        Long questionnaireCount = repository.getKitQuestionnaireCount(kitEntity.getKitVersionId());
-        Long attributeCount = repository.getKitAttributeCount(kitEntity.getKitVersionId());
-        Long questionCount = repository.getKitQuestionCount(kitEntity.getKitVersionId());
-        Long maturityLevelCount = repository.getKitMaturityLevelCount(kitEntity.getKitVersionId());
-        Long likeCount = repository.getKitLikeCount(kitId);
-        Long assessmentCount = repository.getKitAssessmentCount(kitId);
-        List<GetKitStatsUseCase.KitStatSubject> subjects = repository.getKitSubjects(kitEntity.getKitVersionId()).stream()
+        KitStatsView kitStats = repository.getKitStats(kitEntity.getKitVersionId());
+        List<GetKitStatsUseCase.KitStatSubject> subjects = subjectRepository.findAllByKitVersionId(kitEntity.getKitVersionId()).stream()
             .map(s -> new GetKitStatsUseCase.KitStatSubject(s.getTitle()))
             .toList();
         ExpertGroupJpaEntity expertGroupEntity = expertGroupRepository.findById(kitEntity.getExpertGroupId())
@@ -134,12 +132,12 @@ public class AssessmentKitPersistenceJpaAdapter implements
         return new GetKitStatsUseCase.Result(
             kitEntity.getCreationTime(),
             kitEntity.getLastModificationTime(),
-            questionnaireCount,
-            attributeCount,
-            questionCount,
-            maturityLevelCount,
-            likeCount,
-            assessmentCount,
+            kitStats.getQuestionnaireCount(),
+            kitStats.getAttributeCount(),
+            kitStats.getQuestionCount(),
+            kitStats.getMaturityLevelCount(),
+            kitStats.getLikeCount(),
+            kitStats.getAssessmentCount(),
             subjects,
             new GetKitStatsUseCase.KitStatExpertGroup(expertGroupEntity.getId(), expertGroupEntity.getTitle())
         );
