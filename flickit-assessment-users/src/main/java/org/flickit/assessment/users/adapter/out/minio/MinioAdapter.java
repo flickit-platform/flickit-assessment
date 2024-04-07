@@ -36,7 +36,6 @@ public class MinioAdapter implements
     private final MinioConfigProperties properties;
     private final FileProperties fileProperties;
 
-
     @SneakyThrows
     private void writeFile(String bucketName, String fileObjectName, InputStream fileInputStream, @Nullable String contentType) {
         minioClient.putObject(PutObjectArgs.builder()
@@ -72,7 +71,7 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
-        if (filePath == null || filePath.isBlank())
+        if(filePath == null || filePath.isBlank())
             return null;
 
         String bucketName = filePath.substring(0, filePath.indexOf(SLASH));
