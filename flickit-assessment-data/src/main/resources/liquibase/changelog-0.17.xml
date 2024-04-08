@@ -85,7 +85,7 @@
     </changeSet>
 
     <changeSet id="0.17-17" author="Ali Sedaghat">
-        <renameColumn tableName="fak_kit_tag_relation" oldColumnName="assessmentkittag_id" newColumnName="kittag_id"/>
+        <renameColumn tableName="fak_kit_tag_relation" oldColumnName="assessmentkittag_id" newColumnName="tag_id"/>
     </changeSet>
 
     <changeSet id="0.17-18" author="Ali Sedaghat">
@@ -93,7 +93,7 @@
     </changeSet>
 
     <changeSet id="0.17-19" author="Ali Sedaghat">
-        <addPrimaryKey tableName="fak_kit_tag_relation" columnNames="kittag_id,kit_id" constraintName="pk_fak_kit_tag_relation"/>
+        <addPrimaryKey tableName="fak_kit_tag_relation" columnNames="tag_id,kit_id" constraintName="pk_fak_kit_tag_relation"/>
     </changeSet>
 
     <changeSet id="0.17-20" author="Ali Sedaghat">
@@ -107,10 +107,10 @@
 
     <changeSet id="0.17-22" author="Ali Sedaghat">
         <addForeignKeyConstraint baseTableName="fak_kit_tag_relation"
-                                 baseColumnNames="kittag_id"
+                                 baseColumnNames="tag_id"
                                  referencedTableName="fak_kit_tag"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fak_kittagrelation_kittag"
+                                 constraintName="fk_fak_kittagrelation_tag"
                                  deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>

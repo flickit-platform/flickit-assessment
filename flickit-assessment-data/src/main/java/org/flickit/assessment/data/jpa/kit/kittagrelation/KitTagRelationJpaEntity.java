@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.kittagrelation;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.jpa.AbstractEntity;
 
 
 @Entity
@@ -11,18 +12,23 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(KitTagRelationJpaEntity.KitTagRelationKey.class)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class KitTagRelationJpaEntity {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+public class KitTagRelationJpaEntity extends AbstractEntity<KitTagRelationJpaEntity.KitTagRelationKey> {
 
     @Id
     @EqualsAndHashCode.Include
-    @Column(name = "kittag_id", nullable = false)
+    @Column(name = "tag_id", nullable = false)
     private Long tagId;
 
     @Id
     @EqualsAndHashCode.Include
     @Column(name = "kit_id", nullable = false)
     private Long kitId;
+
+    @Override
+    public KitTagRelationKey getId() {
+        return new KitTagRelationKey(tagId, kitId);
+    }
 
     @Data
     @NoArgsConstructor
