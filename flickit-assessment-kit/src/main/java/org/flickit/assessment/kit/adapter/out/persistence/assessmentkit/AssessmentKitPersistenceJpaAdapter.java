@@ -41,7 +41,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     CreateAssessmentKitPort,
     UpdateKitLastMajorModificationTimePort,
     CountKitStatsPort,
-    LoadKitEditableInfoPort {
+    LoadAssessmentKitPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -131,22 +131,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public GetKitEditableInfoUseCase.KitEditableInfo loadKitEditableInfo(Long kitId) {
+    public AssessmentKit load(long kitId) {
         AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_EDITABLE_INFO_KIT_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
-        var tags = repository.findKitTags(kitId).stream()
-            .map(t -> new GetKitEditableInfoUseCase.KitEditableInfoTag(t.getId(), t.getTitle()))
-            .toList();
-
-        return new GetKitEditableInfoUseCase.KitEditableInfo(
-            kitEntity.getId(),
-            kitEntity.getTitle(),
-            kitEntity.getSummary(),
-            kitEntity.getPublished(),
-            0D,
-            kitEntity.getAbout(),
-            tags
-        );
+        return AssessmentKitMapper.mapToDomainModel(kitEntity);
     }
 }
