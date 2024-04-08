@@ -4,9 +4,9 @@ import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpert
 import org.flickit.assessment.users.application.port.out.expertgroup.CreateExpertGroupPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -47,9 +47,8 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
     private void createOwnerAccessToGroup(Long expertGroupId, UUID ownerId) {
         CreateExpertGroupAccessPort.Param param = new CreateExpertGroupAccessPort.Param(
             expertGroupId,
-            null,
-            null,
-            ownerId
+            ownerId,
+            ExpertGroupAccessStatus.ACTIVE
         );
         createExpertGroupAccessPort.persist(param);
     }

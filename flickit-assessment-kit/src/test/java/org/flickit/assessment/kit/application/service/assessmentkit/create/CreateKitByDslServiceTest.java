@@ -69,7 +69,7 @@ class CreateKitByDslServiceTest {
 
     @Test
     void testCreateKitByDsl_ValidInputs_CreateAndSaveKit() {
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(EXPERT_GROUP_OWNER_ID);
 
         when(loadDslJsonPathPort.loadJsonPath(KIT_DSL_ID)).thenReturn(DSL_JSON);
 
@@ -110,7 +110,7 @@ class CreateKitByDslServiceTest {
 
     @Test
     void testCreateKitByDsl_CurrentUserIsNotExpertGroupOwner_ThrowException() {
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(EXPERT_GROUP_OWNER_ID);
 
         UUID currentUserId = UUID.randomUUID();
         var param = new CreateKitByDslUseCase.Param(TITLE, SUMMARY, ABOUT, Boolean.FALSE, KIT_DSL_ID, EXPERT_GROUP_ID, List.of(1L), currentUserId);
@@ -121,7 +121,7 @@ class CreateKitByDslServiceTest {
 
     @Test
     void testCreateKitByDsl_KitDslDoesNotExist_ThrowException() {
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(EXPERT_GROUP_OWNER_ID);
 
         when(loadDslJsonPathPort.loadJsonPath(KIT_DSL_ID)).thenThrow(new ResourceNotFoundException(CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND));
 
@@ -141,7 +141,7 @@ class CreateKitByDslServiceTest {
 
     @Test
     void testCreateKitByDsl_JsonFileIsNotUploaded_ThrowException() {
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(EXPERT_GROUP_OWNER_ID);
 
         when(loadDslJsonPathPort.loadJsonPath(KIT_DSL_ID)).thenReturn(DSL_JSON);
 
