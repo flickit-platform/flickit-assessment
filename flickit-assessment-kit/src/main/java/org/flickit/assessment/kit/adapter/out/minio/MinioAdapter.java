@@ -7,10 +7,10 @@ import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
-import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.flickit.assessment.kit.adapter.out.minio.MinioConstants.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
+
 
 @Component
 @AllArgsConstructor
