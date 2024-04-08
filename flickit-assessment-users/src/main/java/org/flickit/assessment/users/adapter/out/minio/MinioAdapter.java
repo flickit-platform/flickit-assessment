@@ -1,17 +1,18 @@
 package org.flickit.assessment.users.adapter.out.minio;
 
-import io.minio.*;
+import io.minio.GetPresignedObjectUrlArgs;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.StatObjectArgs;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,8 +21,7 @@ import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PICTURE_SIZE_MAX;
-import static org.flickit.assessment.users.adapter.out.minio.MinioConstants.*;
+import static org.flickit.assessment.users.adapter.out.minio.MinioConstants.PIC_FILE_NAME;
 import static org.flickit.assessment.users.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
 @Component("usersMinioAdapter")
@@ -34,7 +34,6 @@ public class MinioAdapter implements
     public static final String DOT = ".";
     private final MinioClient minioClient;
     private final MinioConfigProperties properties;
-    private final FileProperties fileProperties;
 
     @SneakyThrows
     private void writeFile(String bucketName, String fileObjectName, InputStream fileInputStream, @Nullable String contentType) {
@@ -53,9 +52,6 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String uploadPicture(MultipartFile pictureFile) {
-        if (pictureFile.getSize() > fileProperties.getPictureMaxSize().toBytes())
-            throw new ValidationException(UPLOAD_FILE_PICTURE_SIZE_MAX);
-
         String bucketName = properties.getBucketNames().getAvatar();
         UUID uniqueDir = UUID.randomUUID();
 
