@@ -1,6 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
-public interface KitStatsView {
+public interface CountKitStatsView {
 
     Integer getQuestionnaireCount();
 

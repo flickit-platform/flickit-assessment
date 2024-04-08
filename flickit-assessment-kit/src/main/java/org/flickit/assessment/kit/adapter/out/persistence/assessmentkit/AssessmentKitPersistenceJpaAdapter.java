@@ -5,10 +5,9 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.KitStatsView;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.CountKitStatsView;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
@@ -18,7 +17,6 @@ import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitStatsUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
@@ -41,13 +39,12 @@ public class AssessmentKitPersistenceJpaAdapter implements
     LoadKitMinimalInfoPort,
     CreateAssessmentKitPort,
     UpdateKitLastMajorModificationTimePort,
-    LoadKitStatsPort {
+    CountKitStatsPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
     private final ExpertGroupJpaRepository expertGroupRepository;
     private final KitVersionJpaRepository kitVersionRepository;
-    private final SubjectJpaRepository subjectRepository;
 
     @Override
     public ExpertGroup loadKitExpertGroup(Long kitId) {
@@ -121,26 +118,13 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public GetKitStatsUseCase.Result loadKitStats(Long kitId) {
-        AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_STATS_KIT_ID_NOT_FOUND));
-        KitStatsView kitStats = repository.getKitStats(kitEntity.getKitVersionId());
-        List<GetKitStatsUseCase.KitStatSubject> subjects = subjectRepository.findAllByKitVersionId(kitEntity.getKitVersionId()).stream()
-            .map(s -> new GetKitStatsUseCase.KitStatSubject(s.getTitle()))
-            .toList();
-        ExpertGroupJpaEntity expertGroupEntity = expertGroupRepository.findById(kitEntity.getExpertGroupId())
-            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
-        return new GetKitStatsUseCase.Result(
-            kitEntity.getCreationTime(),
-            kitEntity.getLastModificationTime(),
-            kitStats.getQuestionnaireCount(),
+    public CountKitStatsPort.Result countKitStats(long kitId) {
+        CountKitStatsView kitStats = repository.countKitStats(kitId);
+        return new CountKitStatsPort.Result(kitStats.getQuestionnaireCount(),
             kitStats.getAttributeCount(),
             kitStats.getQuestionCount(),
             kitStats.getMaturityLevelCount(),
             kitStats.getLikeCount(),
-            kitStats.getAssessmentCount(),
-            subjects,
-            new GetKitStatsUseCase.KitStatExpertGroup(expertGroupEntity.getId(), expertGroupEntity.getTitle())
-        );
+            kitStats.getAssessmentCount());
     }
 }

@@ -2,12 +2,17 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitStatsUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -18,14 +23,35 @@ public class GetKitStatsService implements GetKitStatsUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
-    private final LoadKitStatsPort loadKitStatsPort;
+    private final CountKitStatsPort countKitStatsPort;
+    private final LoadSubjectsPort loadSubjectsPort;
+    private final LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
 
     @Override
     public Result getKitStats(Param param) {
-        var expertGroupId = loadKitExpertGroupPort.loadKitExpertGroupId(param.getAssessmentKitId());
-        if (!checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId()))
+        var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getAssessmentKitId());
+        if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        return loadKitStatsPort.loadKitStats(param.getAssessmentKitId());
+        var counts = countKitStatsPort.countKitStats(param.getAssessmentKitId());
+
+        AssessmentKit assessmentKit = loadAssessmentKitInfoPort.load(param.getAssessmentKitId());
+
+        List<KitStatSubject> subjects = loadSubjectsPort.loadSubjects(assessmentKit.getKitVersionId()).stream()
+            .map(s -> new GetKitStatsUseCase.KitStatSubject(s.getTitle()))
+            .toList();
+
+        return new GetKitStatsUseCase.Result(
+            assessmentKit.getCreationTime(),
+            assessmentKit.getLastModificationTime(),
+            counts.questionnairesCount(),
+            counts.attributesCount(),
+            counts.questionsCount(),
+            counts.maturityLevelsCount(),
+            counts.likes(),
+            counts.assessmentCounts(),
+            subjects,
+            new GetKitStatsUseCase.KitStatExpertGroup(expertGroup.getId(), expertGroup.getTitle())
+        );
     }
 }

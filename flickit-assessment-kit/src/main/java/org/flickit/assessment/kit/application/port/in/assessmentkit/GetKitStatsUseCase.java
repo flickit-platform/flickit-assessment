@@ -43,8 +43,7 @@ public interface GetKitStatsUseCase {
         Integer likes,
         Integer assessmentCounts,
         List<KitStatSubject> subjects,
-        KitStatExpertGroup expertGroup
-    ) {
+        KitStatExpertGroup expertGroup) {
     }
 
     record KitStatSubject(String title) {}
