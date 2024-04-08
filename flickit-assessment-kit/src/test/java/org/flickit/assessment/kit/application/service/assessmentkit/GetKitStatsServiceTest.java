@@ -75,12 +75,8 @@ class GetKitStatsServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
-        CountKitStatsPort.Result counts = new CountKitStatsPort.Result(20,
-            35,
-            115,
-            5,
-            3,
-            5);
+        CountKitStatsPort.Result counts = new CountKitStatsPort.Result(20, 35, 115,
+            5, 3, 5);
 
         when(countKitStatsPort.countKitStats(assessmentKit.getId())).thenReturn(counts);
         when(loadAssessmentKitInfoPort.load(assessmentKit.getId())).thenReturn(assessmentKit);
