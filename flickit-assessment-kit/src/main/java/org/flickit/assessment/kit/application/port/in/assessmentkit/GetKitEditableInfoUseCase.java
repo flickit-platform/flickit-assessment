@@ -19,10 +19,10 @@ public interface GetKitEditableInfoUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL)
-        Long assessmentKitId;
+        Long kitId;
 
-        public Param(Long assessmentKitId) {
-            this.assessmentKitId = assessmentKitId;
+        public Param(Long kitId) {
+            this.kitId = kitId;
             this.validateSelf();
         }
     }

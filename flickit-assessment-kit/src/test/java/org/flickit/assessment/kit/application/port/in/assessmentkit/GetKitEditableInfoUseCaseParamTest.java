@@ -16,6 +16,6 @@ class GetKitEditableInfoUseCaseParamTest {
     void testGetKitEditableInfo_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetKitEditableInfoUseCase.Param(null));
-        assertThat(throwable).hasMessage("assessmentKitId: " + GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitId: " + GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL);
     }
 }

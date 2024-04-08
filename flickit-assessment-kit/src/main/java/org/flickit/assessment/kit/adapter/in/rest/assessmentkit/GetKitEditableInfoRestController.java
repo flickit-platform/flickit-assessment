@@ -14,14 +14,14 @@ public class GetKitEditableInfoRestController {
 
     private final GetKitEditableInfoUseCase useCase;
 
-    @GetMapping("/assessment-kits/get/{assessmentKitId}")
-    public ResponseEntity<GetKitEditableInfoResponseDto> getKitEditableInfo(@PathVariable("assessmentKitId") Long assessmentKitId) {
-        var kitEditableInfo = useCase.getKitEditableInfo(toParam(assessmentKitId));
+    @GetMapping("/assessment-kits/get/{kitId}")
+    public ResponseEntity<GetKitEditableInfoResponseDto> getKitEditableInfo(@PathVariable("itId") Long kitId) {
+        var kitEditableInfo = useCase.getKitEditableInfo(toParam(kitId));
         return new ResponseEntity<>(toResponse(kitEditableInfo), HttpStatus.OK);
     }
 
-    private GetKitEditableInfoUseCase.Param toParam(Long assessmentKitId) {
-        return new GetKitEditableInfoUseCase.Param(assessmentKitId);
+    private GetKitEditableInfoUseCase.Param toParam(Long kitId) {
+        return new GetKitEditableInfoUseCase.Param(kitId);
     }
 
     private GetKitEditableInfoResponseDto toResponse(GetKitEditableInfoUseCase.KitEditableInfo kitEditableInfo) {
