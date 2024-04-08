@@ -35,7 +35,7 @@ public interface GetKitStatsUseCase {
 
     record Result(
         LocalDateTime creationTime,
-        LocalDateTime lastUpdateTime,
+        LocalDateTime lastModificationTime,
         Integer questionnairesCount,
         Integer attributesCount,
         Integer questionsCount,
@@ -48,5 +48,5 @@ public interface GetKitStatsUseCase {
 
     record KitStatSubject(String title) {}
 
-    record KitStatExpertGroup(Long id, String name) {}
+    record KitStatExpertGroup(Long id, String title) {}
 }

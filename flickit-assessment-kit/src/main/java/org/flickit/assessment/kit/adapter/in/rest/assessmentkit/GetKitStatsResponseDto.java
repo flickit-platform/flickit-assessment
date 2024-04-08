@@ -7,7 +7,7 @@ import java.util.List;
 
 public record GetKitStatsResponseDto(
     LocalDateTime creationTime,
-    LocalDateTime lastUpdateTime,
+    LocalDateTime lastModificationTime,
     Integer questionnairesCount,
     Integer attributesCount,
     Integer questionsCount,

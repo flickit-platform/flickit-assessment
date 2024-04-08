@@ -32,7 +32,7 @@ public class GetKitStatsRestController {
     private GetKitStatsResponseDto toResponse(GetKitStatsUseCase.Result kitStatsResult) {
         return new GetKitStatsResponseDto(
             kitStatsResult.creationTime(),
-            kitStatsResult.lastUpdateTime(),
+            kitStatsResult.lastModificationTime(),
             kitStatsResult.questionnairesCount(),
             kitStatsResult.attributesCount(),
             kitStatsResult.questionsCount(),

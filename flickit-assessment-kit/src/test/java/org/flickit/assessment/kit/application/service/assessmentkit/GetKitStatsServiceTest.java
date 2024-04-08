@@ -25,7 +25,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -89,7 +90,7 @@ class GetKitStatsServiceTest {
         GetKitStatsUseCase.Result kitStats = service.getKitStats(param);
 
         assertEquals(assessmentKit.getCreationTime(), kitStats.creationTime());
-        assertEquals(assessmentKit.getLastModificationTime(), kitStats.lastUpdateTime());
+        assertEquals(assessmentKit.getLastModificationTime(), kitStats.lastModificationTime());
         assertEquals(counts.questionnairesCount(), kitStats.questionnairesCount());
         assertEquals(counts.attributesCount(), kitStats.attributesCount());
         assertEquals(counts.questionsCount(), kitStats.questionsCount());
@@ -98,7 +99,7 @@ class GetKitStatsServiceTest {
         assertEquals(counts.assessmentCounts(), kitStats.assessmentCounts());
         assertEquals(subjects.size(), kitStats.subjects().size());
         assertEquals(expertGroup.getId(), kitStats.expertGroup().id());
-        assertEquals(expertGroup.getTitle(), kitStats.expertGroup().name());
+        assertEquals(expertGroup.getTitle(), kitStats.expertGroup().title());
     }
 
     @Test
