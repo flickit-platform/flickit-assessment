@@ -280,6 +280,32 @@
 			"response": []
 		},
         {
+            "name": "Get Kit Stats",
+            "request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/308/stats",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"308",
+						"stats"
+                ]
+              }
+            },
+            "response": []
+		},
+        {
             "name": "Get Kit Editable Info",
             "request": {
               "method": "GET",
