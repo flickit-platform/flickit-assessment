@@ -20,9 +20,9 @@ import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PICTURE_SIZE_MAX;
 import static org.flickit.assessment.users.adapter.out.minio.MinioConstants.*;
 import static org.flickit.assessment.users.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
-import static org.flickit.assessment.users.common.ErrorMessageKey.FILE_PROPERTIES_MAX_FILE_SIZE_EXCEEDED;
 
 @Component("usersMinioAdapter")
 @AllArgsConstructor
@@ -54,7 +54,7 @@ public class MinioAdapter implements
     @Override
     public String uploadPicture(MultipartFile pictureFile) {
         if (pictureFile.getSize() > fileProperties.getPictureMaxSize().toBytes())
-            throw new ValidationException(FILE_PROPERTIES_MAX_FILE_SIZE_EXCEEDED);
+            throw new ValidationException(UPLOAD_FILE_PICTURE_SIZE_MAX);
 
         String bucketName = properties.getBucketNames().getAvatar();
         UUID uniqueDir = UUID.randomUUID();

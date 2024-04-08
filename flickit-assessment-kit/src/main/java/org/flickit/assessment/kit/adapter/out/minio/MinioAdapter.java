@@ -9,10 +9,10 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
-import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,9 +23,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_DSL_SIZE_MAX;
 import static org.flickit.assessment.kit.adapter.out.minio.MinioConstants.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.FILE_PROPERTIES_MAX_FILE_SIZE_EXCEEDED;
 
 
 @Component
@@ -43,8 +43,8 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public UploadKitDslToFileStoragePort.Result uploadKitDsl(MultipartFile dslZipFile, String dslJsonFile) {
-        if (dslZipFile.getSize() > fileProperties.getKitMaxSize().toBytes())
-            throw new ValidationException(FILE_PROPERTIES_MAX_FILE_SIZE_EXCEEDED);
+        if (dslZipFile.getSize() > fileProperties.getDslMaxSize().toBytes())
+            throw new ValidationException(UPLOAD_FILE_DSL_SIZE_MAX);
 
         String bucketName = properties.getBucketNames().getDsl();
         UUID uniqueObjectName = UUID.randomUUID();
