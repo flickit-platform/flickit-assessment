@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.port.in.attribute.GetAttributeDetailUseCase;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -36,6 +37,15 @@ public class MaturityLevelMapper {
             creationTime,
             createdBy,
             createdBy
+        );
+    }
+
+    public static GetAttributeDetailUseCase.MaturityLevel mapToAttributeDetailDomainModel(MaturityLevelJpaEntity entity, Integer questionCount) {
+        return new GetAttributeDetailUseCase.MaturityLevel(
+            entity.getId(),
+            entity.getTitle(),
+            entity.getIndex(),
+            questionCount
         );
     }
 }

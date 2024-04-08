@@ -23,4 +23,17 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
             ml.kitVersionId = (SELECT l.kitVersionId FROM MaturityLevelJpaEntity AS l WHERE l.id = :id)
         """)
     List<MaturityLevelJpaEntity> findAllInKitVersionWithOneId(@Param(value = "id") Long id);
+
+    @Query("""
+            SELECT qi.maturityLevel FROM QuestionImpactJpaEntity qi
+            WHERE qi.attributeId = :attributeId
+            ORDER BY qi.maturityLevel.index
+        """)
+    List<MaturityLevelJpaEntity> findAllByAttributeId(@Param("attributeId") Long attributeId);
+
+    @Query("""
+            SELECT COUNT(DISTINCT qi.questionId) FROM QuestionImpactJpaEntity qi
+            WHERE qi.attributeId = :attributeId AND qi.maturityLevel.id = :id
+        """)
+    Integer countQuestionByIdAndAttributeId(@Param("id") Long id, @Param("attributeId") Long attributeId);
 }

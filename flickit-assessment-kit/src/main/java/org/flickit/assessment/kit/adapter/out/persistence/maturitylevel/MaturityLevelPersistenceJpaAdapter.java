@@ -4,17 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.port.in.attribute.GetAttributeDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAttributeMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToAttributeDetailDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 
 @Component
@@ -22,7 +26,8 @@ import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.M
 public class MaturityLevelPersistenceJpaAdapter implements
     CreateMaturityLevelPort,
     DeleteMaturityLevelPort,
-    UpdateMaturityLevelPort {
+    UpdateMaturityLevelPort,
+    LoadAttributeMaturityLevelPort {
 
     private final MaturityLevelJpaRepository repository;
 
@@ -50,5 +55,17 @@ public class MaturityLevelPersistenceJpaAdapter implements
         });
         repository.saveAll(entities);
         repository.flush();
+    }
+
+    @Override
+    public List<GetAttributeDetailUseCase.MaturityLevel> loadByAttributeId(Long attributeId) {
+        var entities = repository.findAllByAttributeId(attributeId);
+
+        List<GetAttributeDetailUseCase.MaturityLevel> result = new ArrayList<>();
+        for (MaturityLevelJpaEntity entity : entities) {
+            Integer questionCount = repository.countQuestionByIdAndAttributeId(entity.getId(), attributeId);
+            result.add(mapToAttributeDetailDomainModel(entity, questionCount));
+        }
+        return result;
     }
 }
