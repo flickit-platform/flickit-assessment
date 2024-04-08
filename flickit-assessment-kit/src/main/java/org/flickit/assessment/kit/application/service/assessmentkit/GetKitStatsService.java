@@ -29,13 +29,13 @@ public class GetKitStatsService implements GetKitStatsUseCase {
 
     @Override
     public Result getKitStats(Param param) {
-        var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getAssessmentKitId());
+        var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var counts = countKitStatsPort.countKitStats(param.getAssessmentKitId());
+        var counts = countKitStatsPort.countKitStats(param.getKitId());
 
-        AssessmentKit assessmentKit = loadAssessmentKitInfoPort.load(param.getAssessmentKitId());
+        AssessmentKit assessmentKit = loadAssessmentKitInfoPort.load(param.getKitId());
 
         List<KitStatSubject> subjects = loadSubjectsPort.loadSubjects(assessmentKit.getKitVersionId()).stream()
             .map(s -> new GetKitStatsUseCase.KitStatSubject(s.getTitle()))

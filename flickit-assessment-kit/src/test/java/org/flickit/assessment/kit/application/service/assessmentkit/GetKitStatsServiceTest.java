@@ -59,7 +59,7 @@ class GetKitStatsServiceTest {
         long kitId = 1L;
         Param param = new Param(kitId, UUID.randomUUID());
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getAssessmentKitId()))
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
             .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getKitStats(param));
@@ -73,7 +73,7 @@ class GetKitStatsServiceTest {
         Param param = new Param(assessmentKit.getId(), UUID.randomUUID());
         List<Subject> subjects = List.of(SubjectMother.subjectWithTitle("title"));
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getAssessmentKitId())).thenReturn(expertGroup);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
         CountKitStatsPort.Result counts = new CountKitStatsPort.Result(20,
@@ -108,7 +108,7 @@ class GetKitStatsServiceTest {
         long kitId = 1L;
         Param param = new Param(kitId, UUID.randomUUID());
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getAssessmentKitId())).thenReturn(expertGroup);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
         when(countKitStatsPort.countKitStats(kitId)).thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
@@ -124,7 +124,7 @@ class GetKitStatsServiceTest {
         long kitId = 1L;
         Param param = new Param(kitId, UUID.randomUUID());
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getAssessmentKitId())).thenReturn(expertGroup);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(false);
 
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getKitStats(param));

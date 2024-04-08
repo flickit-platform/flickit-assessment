@@ -18,10 +18,10 @@ public class GetKitStatsRestController {
     private final GetKitStatsUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("assessment-kits/{assessmentKitId}/stats")
-    public ResponseEntity<GetKitStatsResponseDto> getKitStats(@PathVariable("assessmentKitId") Long assessmentKitId) {
+    @GetMapping("assessment-kits/{kitId}/stats")
+    public ResponseEntity<GetKitStatsResponseDto> getKitStats(@PathVariable("kitId") Long kitId) {
         UUID currentUserId = userContext.getUser().id();
-        GetKitStatsUseCase.Result kitStatsResult = useCase.getKitStats(toParam(assessmentKitId, currentUserId));
+        GetKitStatsUseCase.Result kitStatsResult = useCase.getKitStats(toParam(kitId, currentUserId));
         return new ResponseEntity<>(toResponse(kitStatsResult), HttpStatus.OK);
     }
 

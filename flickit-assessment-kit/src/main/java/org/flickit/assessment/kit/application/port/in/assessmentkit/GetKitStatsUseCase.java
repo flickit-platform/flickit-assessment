@@ -21,13 +21,13 @@ public interface GetKitStatsUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_KIT_STATS_KIT_ID_NOT_NULL)
-        Long assessmentKitId;
+        Long kitId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long assessmentKitId, UUID currentUserId) {
-            this.assessmentKitId = assessmentKitId;
+        public Param(Long kitId, UUID currentUserId) {
+            this.kitId = kitId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
