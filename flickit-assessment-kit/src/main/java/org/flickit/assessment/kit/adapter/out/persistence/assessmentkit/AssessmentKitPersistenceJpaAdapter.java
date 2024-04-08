@@ -40,8 +40,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     LoadKitMinimalInfoPort,
     CreateAssessmentKitPort,
     UpdateKitLastMajorModificationTimePort,
-    CountKitStatsPort {
-    UpdateKitLastMajorModificationTimePort,
+    CountKitStatsPort,
     LoadKitEditableInfoPort {
 
     private final AssessmentKitJpaRepository repository;
