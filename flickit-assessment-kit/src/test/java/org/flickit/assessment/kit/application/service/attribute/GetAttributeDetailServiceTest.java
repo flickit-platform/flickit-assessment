@@ -12,6 +12,7 @@ import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckEx
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAttributeMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadAttributeQuestionCountPort;
 import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
+import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -51,12 +52,12 @@ class GetAttributeDetailServiceTest {
     @Test
     void testGetAttributeDetail_WhenAttributeExist_shouldReturnAttributeDetails() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
-        var expertGroupId = 14L;
+        var expertGroup = ExpertGroupMother.createExpertGroup();
         var expectedQuestionCount = 14;
         Attribute expectedAttribute = AttributeMother.attributeWithTitle("EgAttribute");
         List<MaturityLevel> expectedMaturityLevels = List.of(new MaturityLevel(1L, "MaturityLevelEg", 1, 15));
-        when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())).thenReturn(true);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
         when(loadAttributePort.loadByIdAndKitId(param.getAttributeId(), param.getKitId()))
             .thenReturn(Optional.of(expectedAttribute));
@@ -80,7 +81,7 @@ class GetAttributeDetailServiceTest {
     void testGetAttributeDetail_WhenKitDoesNotExist_ThrowsException() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
 
-        when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId()))
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
             .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getAttributeDetail(param));
@@ -90,10 +91,10 @@ class GetAttributeDetailServiceTest {
     @Test
     void testGetAttributeDetail_WhenUserIsNotMember_ThrowsException() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
-        var expertGroupId = 14L;
+        var expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())).thenReturn(false);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(false);
 
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getAttributeDetail(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
