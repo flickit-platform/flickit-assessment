@@ -282,18 +282,24 @@
         {
             "name": "Get Kit Stats",
             "request": {
-              "method": "GET",
-              "header": [],
-              "url": {
-                "raw": "{{base_url}}/{{api_path}}/assessment-kits/308/stats",
-                "host": [
-                  "{{base_url}}"
-                ],
-                "path": [
-                  "{{api_path}}",
-                  "assessment-kits",
-                  "308",
-                  "stats"
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/308/stats",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"308",
+						"stats"
                 ]
               }
             },
