@@ -19,9 +19,9 @@ public class KitTagJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "title", nullable = false, unique = true)
-    private String title;
-
     @Column(name = "code", nullable = false, unique = true)
     private String code;
+
+    @Column(name = "title", nullable = false, unique = true)
+    private String title;
 }
