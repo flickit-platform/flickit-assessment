@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, Long> {
@@ -31,4 +32,13 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
         @Param(value = "lastModifiedBy") UUID lastModifiedBy
     );
+
+    @Query("""
+        SELECT qn
+        FROM AssessmentKitJpaEntity k
+            JOIN KitVersionJpaEntity kv ON k.id = kv.kit.id
+            JOIN QuestionnaireJpaEntity qn ON qn.kitVersionId = kv.id
+        WHERE qn.id = :questionnaireId AND k.id = :kitId
+    """)
+    Optional<QuestionnaireJpaEntity> findQuestionnaireByIdAndKitId(Long questionnaireId, Long kitId);
 }

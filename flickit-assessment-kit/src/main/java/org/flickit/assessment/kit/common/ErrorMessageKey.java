@@ -37,6 +37,10 @@ public class ErrorMessageKey {
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_NULL = "get-kit-minimal-info.kitId.notNull";
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_FOUND = "get-kit-minimal-info.kitId.notFound";
 
+    public static final String GET_QUESTIONNAIRE_KIT_ID_NOT_NULL = "get-questionnaire.kitId.notNull";
+    public static final String GET_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "get-questionnaire.questionnaireId.notNull";
+    public static final String GET_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_FOUND = "get-questionnaire.questionnaireId.notFound";
+
     public static final String DELETE_KIT_USER_ACCESS_KIT_ID_NOT_NULL = "delete-kit-user-access.kitId.notNull";
     public static final String DELETE_KIT_USER_ACCESS_USER_ID_NOT_NULL = "delete-kit-user-access.userId.notNull";
     public static final String DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND = "delete-kit-user-access.kit-user.notFound";

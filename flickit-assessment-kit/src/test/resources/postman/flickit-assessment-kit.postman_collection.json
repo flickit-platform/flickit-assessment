@@ -278,6 +278,14 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "GetQuestionnaire",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	],
 	"event": [
