@@ -38,7 +38,9 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 e.title,
                 e.picture,
                 e.bio,
-                e.ownerId
+                e.ownerId,
+                ac.lastModificationTime
+            ORDER BY ac.lastModificationTime DESC
         """)
     Page<ExpertGroupWithDetailsView> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
 
