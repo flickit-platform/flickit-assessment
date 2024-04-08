@@ -44,6 +44,7 @@ import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJ
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,6 +68,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
     private AnswerOptionRestAdapter answerOptionRestAdapter;
     @Mock
     private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
+
 
     @Test
     void testLoad() {
@@ -175,12 +177,12 @@ class AssessmentCalculateInfoLoadAdapterTest {
         AttributeJpaEntity attribute5 = createAttributeEntity(attribute5Id, 5, kitId);
         AttributeJpaEntity attribute6 = createAttributeEntity(attribute6Id, 6, kitId);
 
-        var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1Id);
-        var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2Id);
-        var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3Id);
-        var qav4 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute4Id);
-        var qav5 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute5Id);
-        var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6Id);
+        var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1.getRefNum());
+        var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2.getRefNum());
+        var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3.getRefNum());
+        var qav4 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute4.getRefNum());
+        var qav5 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute5.getRefNum());
+        var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6.getRefNum());
         List<QualityAttributeValueJpaEntity> qualityAttributeValues = List.of(qav1, qav2, qav3, qav4, qav5, qav6);
 
         var subjectValue1 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
@@ -290,7 +292,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(Optional.of(context.assessmentResultEntity()));
         when(subjectValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.subjectValues());
-        when(qualityAttrValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
+        when(qualityAttrValueRepo.findByAssessmentResultId(eq(context.assessmentResultEntity().getId())))
             .thenReturn(context.qualityAttributeValues());
         when(subjectRepository.loadByKitVersionIdWithAttributes(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(context.subjects);

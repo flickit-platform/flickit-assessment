@@ -34,8 +34,8 @@ class GetQuestionnairesProgressServiceTest {
         UUID assessmentId = UUID.randomUUID();
         Param useCaseParam = new Param(assessmentId);
 
-        List<QuestionnaireProgress> expectedQProgresses = Arrays.asList(new QuestionnaireProgress(1L, 15),
-            new QuestionnaireProgress(2L, 17));
+        List<QuestionnaireProgress> expectedQProgresses = Arrays.asList(new QuestionnaireProgress(1L, 15, 2),
+            new QuestionnaireProgress(2L, 17, 3));
         when(getQuestionnairesProgressPort.getQuestionnairesProgressByAssessmentId(assessmentId)).thenReturn(expectedQProgresses);
 
         Result result = service.getQuestionnairesProgress(useCaseParam);

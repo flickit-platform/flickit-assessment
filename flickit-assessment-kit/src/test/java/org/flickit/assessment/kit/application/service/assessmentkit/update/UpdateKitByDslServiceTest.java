@@ -24,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -69,7 +68,7 @@ class UpdateKitByDslServiceTest {
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
-        Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
+        UUID currentUserId = UUID.randomUUID();
 
         when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
         when(loadDslJsonPathPort.loadJsonPath(kitDslId)).thenReturn(jsonPath);
@@ -79,7 +78,7 @@ class UpdateKitByDslServiceTest {
         when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class), any(UUID.class)))
             .thenReturn(new UpdateKitPersisterResult(false));
 
-        var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId.get());
+        var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId);
         service.update(param);
     }
 
@@ -90,7 +89,7 @@ class UpdateKitByDslServiceTest {
         Long kitDslId = 12L;
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
-        Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
+        UUID currentUserId = UUID.randomUUID();
 
         when(loadAssessmentKitInfoPort.load(savedKit.getId())).thenReturn(savedKit);
         when(loadDslJsonPathPort.loadJsonPath(kitDslId)).thenReturn(jsonPath);
@@ -101,7 +100,7 @@ class UpdateKitByDslServiceTest {
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(savedKit.getId()), any(LocalDateTime.class));
         doNothing().when(updateKitDslPort).update(anyLong(), anyLong(), any(), any());
 
-        var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), kitDslId, currentUserId.get());
+        var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), kitDslId, currentUserId);
         service.update(param);
     }
 
@@ -113,7 +112,7 @@ class UpdateKitByDslServiceTest {
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
-        Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
+        UUID currentUserId = UUID.randomUUID();
 
         when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
         when(loadDslJsonPathPort.loadJsonPath(kitDslId)).thenReturn(jsonPath);
@@ -124,7 +123,7 @@ class UpdateKitByDslServiceTest {
         notification.add(new InvalidAdditionError(SUBJECT, Set.of("Team")));
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(notification);
 
-        var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId.get());
+        var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId);
 
         var throwable = assertThrows(ValidationsException.class,
             () -> service.update(param));
@@ -148,7 +147,7 @@ class UpdateKitByDslServiceTest {
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
-        Optional<UUID> ownerId = Optional.of(UUID.randomUUID());
+        UUID ownerId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
 
         when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
