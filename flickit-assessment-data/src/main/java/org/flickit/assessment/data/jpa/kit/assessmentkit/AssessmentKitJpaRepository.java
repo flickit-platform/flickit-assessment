@@ -47,12 +47,12 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                 COUNT(DISTINCT l.userId) AS likeCount,
                 COUNT(DISTINCT a.id) AS assessmentCount
             FROM AssessmentKitJpaEntity k
-            JOIN QuestionnaireJpaEntity questionnaire ON k.kitVersionId = questionnaire.kitVersionId
-            JOIN AttributeJpaEntity att ON k.kitVersionId = att.kitVersionId
-            JOIN QuestionJpaEntity q ON k.kitVersionId = q.kitVersionId
-            JOIN MaturityLevelJpaEntity ml ON k.kitVersionId = ml.kitVersionId
-            JOIN KitLikeJpaEntity l ON k.id = l.kitId
-            JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
+            LEFT JOIN QuestionnaireJpaEntity questionnaire ON k.kitVersionId = questionnaire.kitVersionId
+            LEFT JOIN AttributeJpaEntity att ON k.kitVersionId = att.kitVersionId
+            LEFT JOIN QuestionJpaEntity q ON k.kitVersionId = q.kitVersionId
+            LEFT JOIN MaturityLevelJpaEntity ml ON k.kitVersionId = ml.kitVersionId
+            LEFT JOIN KitLikeJpaEntity l ON k.id = l.kitId
+            LEFT JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
             WHERE k.id = :kitId
         """)
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
