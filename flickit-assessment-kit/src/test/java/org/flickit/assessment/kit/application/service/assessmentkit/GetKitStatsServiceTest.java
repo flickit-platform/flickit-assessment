@@ -25,8 +25,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_STATS_KIT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -59,14 +58,11 @@ class GetKitStatsServiceTest {
         long kitId = 1L;
         Param param = new Param(kitId, UUID.randomUUID());
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getAssessmentKitId())).thenReturn(expertGroup);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getAssessmentKitId()))
+            .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
-        when(countKitStatsPort.countKitStats(kitId)).thenThrow(new ResourceNotFoundException(GET_KIT_STATS_KIT_ID_NOT_FOUND));
-
-        var throwable = assertThrows(ResourceNotFoundException.class,
-            () -> service.getKitStats(param));
-        assertThat(throwable).hasMessage(GET_KIT_STATS_KIT_ID_NOT_FOUND);
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getKitStats(param));
+        assertThat(throwable).hasMessage(KIT_ID_NOT_FOUND);
     }
 
     @Test
