@@ -15,6 +15,7 @@ import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitStatsUseCase;
@@ -49,9 +50,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final SubjectJpaRepository subjectRepository;
 
     @Override
-    public Long loadKitExpertGroupId(Long kitId) {
-        return repository.loadKitExpertGroupId(kitId)
+    public ExpertGroup loadKitExpertGroup(Long kitId) {
+        ExpertGroupJpaEntity entity = expertGroupRepository.findByKitId(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+        return new ExpertGroup(entity.getId(), entity.getTitle(), entity.getOwnerId());
     }
 
     @Override
@@ -72,7 +74,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
-
     }
 
     @Override

@@ -9,12 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
-
-    @Query("SELECT k.expertGroupId FROM AssessmentKitJpaEntity k where k.id = :id")
-    Optional<Long> loadKitExpertGroupId(@Param("id") Long id);
 
     @Query("SELECT u FROM UserJpaEntity u " +
         "WHERE u.id IN (SELECT ku.id.userId FROM KitUserAccessJpaEntity ku WHERE ku.id.kitId = :kitId)")
