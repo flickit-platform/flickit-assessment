@@ -77,7 +77,7 @@ class EditKitInfoServiceTest {
         var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(UUID.randomUUID()));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class,
             () -> service.editKitInfo(param));
@@ -91,7 +91,7 @@ class EditKitInfoServiceTest {
         var result = new EditKitInfoUseCase.Result(newTitle, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(CURRENT_USER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(param)).thenReturn(result);
 
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
@@ -106,7 +106,7 @@ class EditKitInfoServiceTest {
         var result = new EditKitInfoUseCase.Result(TITLE, newSummary, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(CURRENT_USER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(param)).thenReturn(result);
 
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
@@ -121,7 +121,7 @@ class EditKitInfoServiceTest {
         var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, newIsActive, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(CURRENT_USER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(param)).thenReturn(result);
 
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
@@ -136,7 +136,7 @@ class EditKitInfoServiceTest {
         var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, newIsPrivate, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(CURRENT_USER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(param)).thenReturn(result);
 
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
@@ -151,7 +151,7 @@ class EditKitInfoServiceTest {
         var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(CURRENT_USER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(param)).thenReturn(result);
 
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
@@ -166,7 +166,7 @@ class EditKitInfoServiceTest {
         var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, newAbout, List.of(EDIT_KIT_INFO_TAG));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(CURRENT_USER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(param)).thenReturn(result);
 
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
@@ -182,7 +182,7 @@ class EditKitInfoServiceTest {
         var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(newEditKitInfoTag));
 
         when(loadKitExpertGroupPort.loadKitExpertGroupId(KIT_ID)).thenReturn(EXPERT_GROUP_ID);
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(CURRENT_USER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(param)).thenReturn(result);
 
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);

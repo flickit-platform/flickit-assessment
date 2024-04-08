@@ -8,6 +8,6 @@ import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaEntit
 public class KitTagRelationMapper {
 
     public static KitTagRelationJpaEntity toJpaEntity(Long tagId, Long kitId) {
-        return new KitTagRelationJpaEntity(null, tagId, kitId);
+        return new KitTagRelationJpaEntity(tagId, kitId);
     }
 }
