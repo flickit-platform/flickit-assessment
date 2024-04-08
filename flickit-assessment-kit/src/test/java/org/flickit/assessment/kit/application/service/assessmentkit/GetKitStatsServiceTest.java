@@ -55,7 +55,6 @@ class GetKitStatsServiceTest {
 
     @Test
     void testGetKitStats_KitNotFound_ErrorMessage() {
-        ExpertGroup expertGroup = createExpertGroup();
         long kitId = 1L;
         Param param = new Param(kitId, UUID.randomUUID());
 

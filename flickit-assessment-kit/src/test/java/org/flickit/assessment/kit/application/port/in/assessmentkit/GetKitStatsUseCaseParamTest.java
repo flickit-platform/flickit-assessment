@@ -20,7 +20,7 @@ class GetKitStatsUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetKitStatsUseCase.Param(null, currentUserId));
-        assertThat(throwable).hasMessage("assessmentKitId: " + GET_KIT_STATS_KIT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitId: " + GET_KIT_STATS_KIT_ID_NOT_NULL);
     }
 
     @Test
