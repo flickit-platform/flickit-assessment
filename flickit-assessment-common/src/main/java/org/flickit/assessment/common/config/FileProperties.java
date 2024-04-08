@@ -1,5 +1,6 @@
 package org.flickit.assessment.common.config;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -14,7 +15,9 @@ import org.springframework.validation.annotation.Validated;
 @RequiredArgsConstructor
 public class FileProperties {
 
-    DataSize pictureMaxSize = DataSize.ofMegabytes(1);
+    @NotNull
+    DataSize pictureMaxSize = DataSize.ofMegabytes(2);
 
+    @NotNull
     DataSize dslMaxSize = DataSize.ofMegabytes(5);
 }
