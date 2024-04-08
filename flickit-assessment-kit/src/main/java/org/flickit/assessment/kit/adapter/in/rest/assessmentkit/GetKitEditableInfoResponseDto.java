@@ -1,6 +1,6 @@
 package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
+import org.flickit.assessment.kit.application.domain.KitTag;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ public record GetKitEditableInfoResponseDto(Long id,
                                             Boolean isActive,
                                             Double price,
                                             String about,
-                                            List<GetKitEditableInfoUseCase.KitEditableInfoTag> tags) {
+                                            List<KitTag> tags) {
 }

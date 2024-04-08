@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.kit.application.domain.KitTag;
 
 import java.util.List;
 
@@ -33,8 +34,6 @@ public interface GetKitEditableInfoUseCase {
         Boolean isActive,
         Double price,
         String about,
-        List<KitEditableInfoTag> tags
-    ) {}
-
-    record KitEditableInfoTag(Long id, String title) {}
+        List<KitTag> tags) {
+    }
 }
