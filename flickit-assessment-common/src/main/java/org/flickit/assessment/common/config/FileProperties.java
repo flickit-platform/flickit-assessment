@@ -1,23 +1,20 @@
 package org.flickit.assessment.common.config;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.annotation.Validated;
 
 @Getter
 @Setter
 @Validated
-@Configuration
+@ConfigurationProperties("app.file")
 @RequiredArgsConstructor
 public class FileProperties {
 
-    @NotBlank
-    DataSize pictureMaxSize = DataSize.ofMegabytes(2);
+    DataSize pictureMaxSize = DataSize.ofMegabytes(1);
 
-    @NotBlank
-    DataSize kitMaxSize = DataSize.ofMegabytes(5);
+    DataSize dslMaxSize = DataSize.ofMegabytes(5);
 }
