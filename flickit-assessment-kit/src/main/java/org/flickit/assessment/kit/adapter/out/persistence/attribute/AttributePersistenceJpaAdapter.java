@@ -6,8 +6,11 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.port.out.attribute.CreateAttributePort;
+import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
 
@@ -15,7 +18,8 @@ import static org.flickit.assessment.kit.adapter.out.persistence.attribute.Attri
 @RequiredArgsConstructor
 public class AttributePersistenceJpaAdapter implements
     UpdateAttributePort,
-    CreateAttributePort {
+    CreateAttributePort,
+    LoadAllAttributesPort {
 
     private final AttributeJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
@@ -36,5 +40,12 @@ public class AttributePersistenceJpaAdapter implements
     public Long persist(Attribute attribute, Long subjectId, Long kitVersionId) {
         SubjectJpaEntity subjectJpaEntity = subjectRepository.getReferenceById(subjectId);
         return repository.save(mapToJpaEntity(attribute, kitVersionId, subjectJpaEntity)).getId();
+    }
+
+    @Override
+    public List<Attribute> loadAllByIds(List<Long> attributeIds) {
+        return repository.findAllById(attributeIds).stream()
+            .map(AttributeMapper::mapToDomainModel)
+            .toList();
     }
 }

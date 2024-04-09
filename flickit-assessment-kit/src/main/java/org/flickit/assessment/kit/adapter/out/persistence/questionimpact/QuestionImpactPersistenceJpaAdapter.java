@@ -3,13 +3,18 @@ package org.flickit.assessment.kit.adapter.out.persistence.questionimpact;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
+import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuestionImpactByQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.groupingBy;
 import static org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper.mapToJpaEntityToPersist;
 
 @Component
@@ -17,7 +22,8 @@ import static org.flickit.assessment.kit.adapter.out.persistence.questionimpact.
 public class QuestionImpactPersistenceJpaAdapter implements
     CreateQuestionImpactPort,
     DeleteQuestionImpactPort,
-    UpdateQuestionImpactPort {
+    UpdateQuestionImpactPort,
+    LoadQuestionImpactByQuestionPort {
 
     private final QuestionImpactJpaRepository repository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
@@ -42,4 +48,14 @@ public class QuestionImpactPersistenceJpaAdapter implements
             param.lastModifiedBy());
     }
 
+    @Override
+    public List<AttributeImpact> loadQuestionImpactByQuestionId(Long questionId) {
+        var entities = repository.findAllByQuestionId(questionId);
+        var attributeIdToImpacts = entities.stream()
+            .collect(groupingBy(QuestionImpactJpaEntity::getAttributeId));
+
+        return attributeIdToImpacts.values().stream()
+            .map(QuestionImpactMapper::mapToQuestionDetailDomainModel)
+            .toList();
+    }
 }
