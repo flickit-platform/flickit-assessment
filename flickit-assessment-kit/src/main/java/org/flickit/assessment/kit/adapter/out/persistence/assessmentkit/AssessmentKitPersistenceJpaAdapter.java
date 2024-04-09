@@ -51,7 +51,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public ExpertGroup loadKitExpertGroup(Long kitId) {
         ExpertGroupJpaEntity entity = expertGroupRepository.findByKitId(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
         return new ExpertGroup(entity.getId(), entity.getTitle(), entity.getOwnerId());
     }
 
