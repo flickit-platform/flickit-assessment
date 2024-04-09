@@ -66,6 +66,8 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL = "create-kit-by-dsl.tag-ids.notNull";
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
 
+    public static final String GET_KIT_STATS_KIT_ID_NOT_NULL = "get-kit-stats.kitId.notNull";
+
     public static final String EDIT_KIT_INFO_KIT_ID_NOT_NULL = "edit-kit-info.kitId.notNull";
     public static final String EDIT_KIT_INFO_TITLE_SIZE_MIN = "edit-kit-info.title.size.min";
     public static final String EDIT_KIT_INFO_TITLE_SIZE_MAX = "edit-kit-info.title.size.max";

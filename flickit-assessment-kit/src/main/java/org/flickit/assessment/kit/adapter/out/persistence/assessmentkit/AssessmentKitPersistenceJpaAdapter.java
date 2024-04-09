@@ -5,6 +5,9 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.CountKitStatsView;
+import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaEntity;
@@ -18,6 +21,7 @@ import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.kittagrelation.KitTagRelationMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
@@ -45,6 +49,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     LoadKitMinimalInfoPort,
     CreateAssessmentKitPort,
     UpdateKitLastMajorModificationTimePort,
+    CountKitStatsPort,
     UpdateKitInfoPort {
 
     private final AssessmentKitJpaRepository repository;
@@ -55,9 +60,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final KitTagJpaRepository kitTagRepository;
 
     @Override
-    public Long loadKitExpertGroupId(Long kitId) {
-        return repository.loadKitExpertGroupId(kitId)
+    public ExpertGroup loadKitExpertGroup(Long kitId) {
+        ExpertGroupJpaEntity entity = expertGroupRepository.findByKitId(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+        return new ExpertGroup(entity.getId(), entity.getTitle(), entity.getOwnerId());
     }
 
     @Override
@@ -78,7 +84,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
-
     }
 
     @Override
@@ -123,6 +128,17 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public void updateLastMajorModificationTime(Long kitId, LocalDateTime lastMajorModificationTime) {
         repository.updateLastMajorModificationTime(kitId, lastMajorModificationTime);
+    }
+
+    @Override
+    public CountKitStatsPort.Result countKitStats(long kitId) {
+        CountKitStatsView kitStats = repository.countKitStats(kitId);
+        return new CountKitStatsPort.Result(kitStats.getQuestionnaireCount(),
+            kitStats.getAttributeCount(),
+            kitStats.getQuestionCount(),
+            kitStats.getMaturityLevelCount(),
+            kitStats.getLikeCount(),
+            kitStats.getAssessmentCount());
     }
 
     @Override

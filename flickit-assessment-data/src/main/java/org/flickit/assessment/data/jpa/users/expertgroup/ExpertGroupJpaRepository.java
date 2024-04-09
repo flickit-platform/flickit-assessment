@@ -17,6 +17,14 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     Optional<UUID> loadOwnerIdById(@Param("id") Long id);
 
     @Query("""
+            SELECT e
+            FROM ExpertGroupJpaEntity e
+            LEFT JOIN AssessmentKitJpaEntity a On e.id = a.expertGroupId
+            WHERE a.id = :kitId AND e.deleted = false
+        """)
+    Optional<ExpertGroupJpaEntity> findByKitId(@Param("kitId") long kitId);
+
+    @Query("""
             SELECT
                 e.id as id,
                 e.title as title,
