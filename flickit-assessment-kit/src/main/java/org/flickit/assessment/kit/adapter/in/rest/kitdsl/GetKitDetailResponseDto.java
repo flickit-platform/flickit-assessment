@@ -9,6 +9,5 @@ import java.util.List;
 public record GetKitDetailResponseDto(
     List<KitDetailMaturityLevel> maturityLevels,
     List<KitDetailSubject> subjects,
-    List<KitDetailQuestionnaire> questionnaires
-) {
+    List<KitDetailQuestionnaire> questionnaires) {
 }

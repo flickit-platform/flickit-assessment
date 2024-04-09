@@ -35,36 +35,18 @@ public interface GetKitDetailUseCase {
     record Result(
         List<KitDetailMaturityLevel> maturityLevels,
         List<KitDetailSubject> subjects,
-        List<KitDetailQuestionnaire> questionnaires
-    ) {
+        List<KitDetailQuestionnaire> questionnaires) {
     }
 
-    record KitDetailMaturityLevel(
-        long id,
-        String title,
-        int index,
-        List<Competences> competences
-    ) {
+    record KitDetailMaturityLevel(long id, String title, int index, List<Competences> competences) {
     }
 
-    record Competences(
-        String title,
-        int value,
-        long maturityLevelId
-    ) {
+    record Competences(String title, int value, long maturityLevelId) {
     }
 
-    record KitDetailSubject(
-        long id,
-        String title,
-        int index
-    ) {
+    record KitDetailSubject(long id, String title, int index) {
     }
 
-    record KitDetailQuestionnaire(
-        long id,
-        String title,
-        int index
-    ) {
+    record KitDetailQuestionnaire(long id, String title, int index) {
     }
 }
