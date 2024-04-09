@@ -3,7 +3,9 @@ package org.flickit.assessment.kit.application.service.kitdsl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.SneakyThrows;
+import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
@@ -19,29 +21,34 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_DSL_SIZE_MAX;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UploadKitServiceTest {
+public class UploadKitDSLServiceTest {
 
     public static final String ZIP_FILE_ADDR = "src/test/resources/correct-kit.zip";
+
     @InjectMocks
     private UploadKitDslService service;
+
+    @Mock
+    FileProperties fileProperties;
 
     @Mock
     private UploadKitDslToFileStoragePort uploadKitDslToFileStoragePort;
@@ -57,10 +64,12 @@ public class UploadKitServiceTest {
 
     @SneakyThrows
     @Test
-    void testUploadKit_ValidKitFile_ValidResult() {
+    void testUploadKitDsl_ValidKitFile_ValidResult() {
         UUID currentUserId = UUID.randomUUID();
         Long expertGroupId = 1L;
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+
+        when(fileProperties.getDslMaxSize()).thenReturn(DataSize.ofMegabytes(10));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
 
         MultipartFile dslFile = convertZipFileToMultipartFile(ZIP_FILE_ADDR);
         QuestionnaireDslModel q1 = QuestionnaireDslModel.builder().title("Clean Architecture").description("desc").build();
@@ -95,16 +104,34 @@ public class UploadKitServiceTest {
     void testUploadKit_CurrentUserNotExpertGroupOwner_CurrentUserValidationFail() {
         UUID currentUserId = UUID.randomUUID();
         Long expertGroupId = 1L;
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(UUID.randomUUID()));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(UUID.randomUUID());
         MultipartFile dslFile = convertZipFileToMultipartFile(ZIP_FILE_ADDR);
 
         var param = new UploadKitDslUseCase.Param(dslFile, expertGroupId, currentUserId);
+
+        when(fileProperties.getDslMaxSize()).thenReturn(DataSize.ofMegabytes(10));
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.upload(param));
         assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
-    public static MultipartFile convertZipFileToMultipartFile(String dslFilePath) throws IOException {
+    @SneakyThrows
+    @Test
+    void testUploadKit_InvalidFileSize_ThrowException() {
+        UUID currentUserId = UUID.randomUUID();
+        Long expertGroupId = 1L;
+
+        MultipartFile dslFile = convertZipFileToMultipartFile(ZIP_FILE_ADDR);
+
+        var param = new UploadKitDslUseCase.Param(dslFile, expertGroupId, currentUserId);
+
+        when(fileProperties.getDslMaxSize()).thenReturn(DataSize.ofBytes(1));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.upload(param));
+        assertThat(throwable).hasMessage(UPLOAD_FILE_DSL_SIZE_MAX);
+    }
+
+    private static MultipartFile convertZipFileToMultipartFile(String dslFilePath) throws IOException {
         try (ZipFile zipFile = new ZipFile(dslFilePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

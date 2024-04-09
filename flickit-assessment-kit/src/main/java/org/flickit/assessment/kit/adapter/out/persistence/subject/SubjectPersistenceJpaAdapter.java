@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.subject;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
@@ -38,9 +37,9 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Subject> loadByKitVersionId(Long kitVersionId) {
+    public List<Subject> loadSubjects(long kitVersionId) {
         return repository.findAllByKitVersionId(kitVersionId).stream()
-            .map((SubjectJpaEntity entity) -> SubjectMapper.mapToDomainModel(entity, null))
+            .map(e -> SubjectMapper.mapToDomainModel(e, null))
             .toList();
     }
 }

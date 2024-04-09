@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupWithDetailsView;
+import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
@@ -15,23 +16,32 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToDomainModel;
 import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
+import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapKitsCountToPortResult;
+import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
 public class ExpertGroupPersistenceJpaAdapter implements
+    LoadExpertGroupOwnerPort,
     LoadExpertGroupListPort,
     CreateExpertGroupPort,
     LoadExpertGroupPort,
     CheckExpertGroupExistsPort,
-    LoadExpertGroupOwnerPort {
+    DeleteExpertGroupPort,
+    CountExpertGroupKitsPort{
 
     private final ExpertGroupJpaRepository repository;
+
+    @Override
+    public UUID loadOwnerId(Long expertGroupId) {
+        return repository.loadOwnerIdById(expertGroupId)
+            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
+    }
 
     @Override
     public Long persist(CreateExpertGroupPort.Param param) {
@@ -54,8 +64,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            ExpertGroupJpaEntity.Fields.NAME,
-            Sort.Direction.ASC.name().toLowerCase(),
+            ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
     }
@@ -71,18 +81,24 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
     @Override
     public ExpertGroup loadExpertGroup(long id) {
-        var resultEntity = repository.findById(id)
+        var resultEntity = repository.findByIdAndDeletedFalse(id)
             .orElseThrow(() -> new ResourceNotFoundException(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND));
         return mapToDomainModel(resultEntity);
     }
 
     @Override
     public boolean existsById(long id) {
-        return repository.existsById(id);
+        return repository.existsByIdAndDeletedFalse(id);
     }
 
     @Override
-    public Optional<UUID> loadOwnerId(Long expertGroupId) {
-        return Optional.of(repository.loadOwnerIdById(expertGroupId));
+    public void deleteById(long expertGroupId) {
+        repository.delete(expertGroupId);
+    }
+
+    @Override
+    public CountExpertGroupKitsPort.Result countKits(long expertGroupId) {
+        var resultEntity =  repository.countKits(expertGroupId);
+        return mapKitsCountToPortResult(resultEntity);
     }
 }

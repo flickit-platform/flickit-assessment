@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
@@ -15,7 +15,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,12 +32,9 @@ public class GetKitUserListService implements GetKitUserListUseCase {
     }
 
     private void validateCurrentUser(Long kitId, UUID currentUserId) {
-        Long expertGroupId = loadKitExpertGroupPort.loadKitExpertGroupId(kitId);
-        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
-            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
-        if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
+        ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(kitId);
+        if (!Objects.equals(expertGroup.getOwnerId(), currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        }
     }
 
     private LoadKitUsersPort.Param toParam(Long kitId, int page, int size) {
