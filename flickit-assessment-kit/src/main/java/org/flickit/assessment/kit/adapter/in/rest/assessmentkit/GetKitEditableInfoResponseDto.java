@@ -7,8 +7,10 @@ import java.util.List;
 public record GetKitEditableInfoResponseDto(Long id,
                                             String title,
                                             String summary,
-                                            Boolean isActive,
+                                            Boolean published,
+                                            Boolean isPrivate,
                                             Double price,
                                             String about,
-                                            List<KitTag> tags) {
+                                            List<KitTag> tags,
+                                            boolean editable) {
 }
