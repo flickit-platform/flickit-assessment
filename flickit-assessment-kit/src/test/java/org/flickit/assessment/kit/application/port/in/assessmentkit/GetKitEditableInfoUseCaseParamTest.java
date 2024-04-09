@@ -17,8 +17,9 @@ class GetKitEditableInfoUseCaseParamTest {
 
     @Test
     void testGetKitEditableInfo_kitIdIsNull_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetKitEditableInfoUseCase.Param(null, UUID.randomUUID()));
+            () -> new GetKitEditableInfoUseCase.Param(null, currentUserId));
         assertThat(throwable).hasMessage("kitId: " + GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL);
     }
 
