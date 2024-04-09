@@ -125,4 +125,21 @@
                                  validate="true"/>
     </changeSet>
 
+    <changeSet id="0.7-24" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group">
+            <column name="deletion_time" type="timestamp">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.7-25" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group">
+            <column name="code" type="varchar(100)"
+            valueComputed="LOWER(title)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
