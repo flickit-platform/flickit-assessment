@@ -21,8 +21,8 @@ public class GetQuestionDetailRestController {
     private final UserContext userContext;
 
     @GetMapping("assessment-kits/{kitId}/details/questions/{questionId}")
-    public ResponseEntity<GetQuestionDetailResponseDto> getAttributeDetail(@PathVariable("kitId") Long kitId,
-                                                                           @PathVariable("questionId") Long questionId) {
+    public ResponseEntity<GetQuestionDetailResponseDto> getQuestionDetail(@PathVariable("kitId") Long kitId,
+                                                                          @PathVariable("questionId") Long questionId) {
         var currentUserId = userContext.getUser().id();
         var response = useCase.getQuestionDetail(toParam(kitId, questionId, currentUserId));
         return new ResponseEntity<>(toResponseDto(response), HttpStatus.OK);
