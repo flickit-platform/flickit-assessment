@@ -24,9 +24,6 @@ public interface GetAssessmentQuestionnaireListUseCase {
         @NotNull(message = GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = GET_ASSESSMENT_QUESTIONNAIRE_LIST_CURRENT_USER_ID_NOT_NULL)
-        UUID currentUserId;
-
         @Min(value = 1, message = GET_ASSESSMENT_QUESTIONNAIRE_LIST_SIZE_MIN)
         @Max(value = 50, message = GET_ASSESSMENT_QUESTIONNAIRE_LIST_SIZE_MAX)
         int size;
@@ -34,11 +31,14 @@ public interface GetAssessmentQuestionnaireListUseCase {
         @Min(value = 0, message = GET_ASSESSMENT_QUESTIONNAIRE_LIST_PAGE_MIN)
         int page;
 
-        public Param(UUID assessmentId, UUID currentUserId, int size, int page) {
+        @NotNull(message = GET_ASSESSMENT_QUESTIONNAIRE_LIST_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(UUID assessmentId, int size, int page, UUID currentUserId) {
             this.assessmentId = assessmentId;
-            this.currentUserId = currentUserId;
             this.size = size;
             this.page = page;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

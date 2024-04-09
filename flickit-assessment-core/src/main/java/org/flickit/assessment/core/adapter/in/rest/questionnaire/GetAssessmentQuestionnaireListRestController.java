@@ -26,13 +26,12 @@ public class GetAssessmentQuestionnaireListRestController {
         @PathVariable("assessmentId") UUID assessmentId,
         @RequestParam(defaultValue = "50") int size,
         @RequestParam(defaultValue = "0") int page) {
-
         UUID currentUserId = userContext.getUser().id();
-        var result = useCase.getAssessmentQuestionnaireList(toParam(assessmentId, currentUserId, size, page));
+        var result = useCase.getAssessmentQuestionnaireList(toParam(assessmentId, size, page, currentUserId));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private GetAssessmentQuestionnaireListUseCase.Param toParam(UUID assessmentId, UUID currentUserId, int size, int page) {
-        return new GetAssessmentQuestionnaireListUseCase.Param(assessmentId, currentUserId, size, page);
+    private GetAssessmentQuestionnaireListUseCase.Param toParam(UUID assessmentId, int size, int page, UUID currentUserId) {
+        return new GetAssessmentQuestionnaireListUseCase.Param(assessmentId, size, page, currentUserId);
     }
 }
