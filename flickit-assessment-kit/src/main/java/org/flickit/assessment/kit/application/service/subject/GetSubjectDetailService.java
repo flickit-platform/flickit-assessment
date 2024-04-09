@@ -22,8 +22,8 @@ public class GetSubjectDetailService implements GetSubjectDetailUseCase {
 
     @Override
     public Result getSubjectDetail(Param param) {
-        Long expertGroupId = loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId());
-        if(!checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId()))
+        var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
+        if(!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         return loadSubjectDetailPort.loadByIdAndKitId(param.getSubjectId(), param.getKitId());

@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -40,10 +41,10 @@ class GetSubjectDetailServiceTest {
     @Test
     void testGetSubjectDetail_WhenKitExist_shouldReturnKitDetails() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
-        var expertGroupId = 14L;
+        var expertGroup = createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())).thenReturn(true);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
         GetSubjectDetailUseCase.Result expectedResult = new GetSubjectDetailUseCase.Result(
             123,
@@ -68,7 +69,7 @@ class GetSubjectDetailServiceTest {
     void testGetSubjectDetail_WhenKitDoesNotExist_ThrowsException() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
 
-        when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId()))
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
             .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getSubjectDetail(param));
@@ -78,10 +79,10 @@ class GetSubjectDetailServiceTest {
     @Test
     void testGetSubjectDetail_WhenUserIsNotMember_ThrowsException() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
-        var expertGroupId = 14L;
+        var expertGroup = createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())).thenReturn(false);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(false);
 
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getSubjectDetail(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
