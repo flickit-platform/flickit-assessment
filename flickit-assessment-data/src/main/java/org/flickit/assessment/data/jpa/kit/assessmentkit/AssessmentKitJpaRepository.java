@@ -1,6 +1,5 @@
 package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
-import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
@@ -58,11 +56,4 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.id = :kitId
         """)
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
-
-    @Query("""
-            SELECT t
-            FROM KitTagJpaEntity t
-            LEFT JOIN KitTagRelationJpaEntity kt ON kt.kitId = :kitId
-        """)
-    List<KitTagJpaEntity> findKitTags(Long kitId);
 }
