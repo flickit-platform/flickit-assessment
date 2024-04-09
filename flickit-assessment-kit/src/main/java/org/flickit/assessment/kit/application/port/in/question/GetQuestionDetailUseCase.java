@@ -60,7 +60,8 @@ public interface GetQuestionDetailUseCase {
                          Integer index) {
     }
 
-    record OptionValue(Integer index,
-                       Integer value) {
+    record OptionValue(Long id,
+                       Integer index,
+                       Double value) {
     }
 }
