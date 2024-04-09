@@ -28,14 +28,14 @@ public class SpaceJpaEntity {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
+    @Column(name = "owner_id", nullable = false)
+    private UUID ownerId;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
     @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
-
-    @Column(name = "owner_id", nullable = false)
-    private UUID ownerId;
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
