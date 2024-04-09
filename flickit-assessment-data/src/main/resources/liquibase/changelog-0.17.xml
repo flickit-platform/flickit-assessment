@@ -125,4 +125,10 @@
                                  validate="true"/>
     </changeSet>
 
+    <changeSet id="0.7-24" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="last_seen" type="timestamp"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
