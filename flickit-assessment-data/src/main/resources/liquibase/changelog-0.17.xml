@@ -150,7 +150,7 @@
                                  baseColumnNames="created_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fau_space_createdby"/>
+                                 constraintName="fk_fau_space_user_createdby"/>
     </changeSet>
 
     <changeSet id="0.17-29" author="Maziyar Gerami">
@@ -166,12 +166,11 @@
                                  baseColumnNames="last_modified_by"
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
-                                 constraintName="fk_fau_space_lastmodifiedby"/>
+                                 constraintName="fk_fau_space_user_lastmodifiedby"/>
     </changeSet>
 
     <changeSet id="0.17-31" author="Maziyar Gerami">
-        <dropColumn tableName="fau_space"
-                    columnName="is_default_space"/>
+        <dropColumn tableName="fau_space" columnName="is_default_space"/>
     </changeSet>
 
     <changeSet id="0.17-32" author="Maziyar Gerami">
