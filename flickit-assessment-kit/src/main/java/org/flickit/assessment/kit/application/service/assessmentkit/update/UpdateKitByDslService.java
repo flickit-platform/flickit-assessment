@@ -8,7 +8,7 @@ import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitFullInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLastMajorModificationTimePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
@@ -31,7 +31,7 @@ import static org.flickit.assessment.kit.adapter.in.rest.exception.api.ErrorCode
 @RequiredArgsConstructor
 public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
-    private final LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
+    private final LoadAssessmentKitFullInfoPort loadAssessmentKitFullInfoPort;
     private final LoadDslJsonPathPort loadDslJsonPathPort;
     private final LoadKitDSLJsonFilePort loadKitDSLJsonFilePort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
@@ -42,7 +42,7 @@ public class UpdateKitByDslService implements UpdateKitByDslUseCase {
 
     @Override
     public void update(Param param) {
-        AssessmentKit savedKit = loadAssessmentKitInfoPort.load(param.getKitId());
+        AssessmentKit savedKit = loadAssessmentKitFullInfoPort.load(param.getKitId());
         String dslJsonPath = loadDslJsonPathPort.loadJsonPath(param.getKitDslId());
         String dslContent = loadKitDSLJsonFilePort.loadDslJson(dslJsonPath);
         AssessmentKitDslModel dslKit = DslTranslator.parseJson(dslContent);
