@@ -5,7 +5,6 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitTag;
-import org.flickit.assessment.kit.application.domain.User;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
@@ -46,10 +45,6 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
             0D,
             assessmentKit.getAbout(),
             tags,
-            isEditable(param, expertGroup));
-    }
-
-    private static boolean isEditable(Param param, ExpertGroup expertGroup) {
-        return expertGroup.getOwnerId() == param.getCurrentUserId();
+            expertGroup.getOwnerId().equals(param.getCurrentUserId()));
     }
 }
