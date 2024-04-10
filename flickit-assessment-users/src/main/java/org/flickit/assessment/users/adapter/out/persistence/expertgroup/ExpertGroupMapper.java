@@ -46,6 +46,7 @@ public class ExpertGroupMapper {
         return new ExpertGroupJpaEntity(
             null,
             param.title(),
+            param.title().toLowerCase(),
             param.bio(),
             param.about(),
             param.picture(),
@@ -55,7 +56,8 @@ public class ExpertGroupMapper {
             param.currentUserId(),
             creationTime,
             creationTime,
-            false
+            false,
+            null
         );
     }
 

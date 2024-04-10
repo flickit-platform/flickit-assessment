@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,8 +93,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteById(long expertGroupId) {
-        repository.delete(expertGroupId);
+    public void deleteById(long expertGroupId, LocalDateTime deletionTime) {
+        repository.delete(expertGroupId, deletionTime);
     }
 
     @Override

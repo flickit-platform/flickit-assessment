@@ -24,8 +24,11 @@ public class ExpertGroupJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "title", length = 100, unique = true, nullable = false)
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
+
+    @Column(name = "code", length = 100, nullable = false)
+    private String code;
 
     @Column(name = "bio", length = 200, nullable = false)
     private String bio;
@@ -56,6 +59,9 @@ public class ExpertGroupJpaEntity {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
+
+    @Column(name = "deletion_time")
+    private LocalDateTime deletionTime;
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {

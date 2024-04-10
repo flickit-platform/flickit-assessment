@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -73,10 +74,12 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     @Modifying
     @Query("""
         UPDATE ExpertGroupJpaEntity e
-        SET e.deleted = true
+        SET e.deleted = true,
+            e.deletionTime = :deletionTime
         WHERE e.id = :expertGroupId
         """)
-    void delete(@Param("expertGroupId") Long expertGroupId);
+    void delete(@Param("expertGroupId") Long expertGroupId,
+                @Param("deletionTime") LocalDateTime deletionTime);
 
     @Query("""
             SELECT

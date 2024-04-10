@@ -6,13 +6,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 import static java.util.Map.entry;
-import static org.flickit.assessment.users.common.ErrorMessageKey.CREATE_EXPERT_GROUP_TITLE_DUPLICATE;
+import static org.flickit.assessment.users.common.ErrorMessageKey.CREATE_EXPERT_GROUP_CODE_DELETION_TIME_DUPLICATE;
 
 @Component
 public class AssessmentUsersDataConstraintErrorMapper implements DataConstraintErrorMapper {
 
     Map<String, String> constraintToErrorMsg = Map.ofEntries(
-        entry("baseinfo_expertgroup_name_key", CREATE_EXPERT_GROUP_TITLE_DUPLICATE));
+        entry("uq_fau_expert_group_code_deletion_time", CREATE_EXPERT_GROUP_CODE_DELETION_TIME_DUPLICATE));
 
     @Override
     public boolean contains(String constraintName) {

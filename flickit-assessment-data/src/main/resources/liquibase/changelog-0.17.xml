@@ -147,8 +147,9 @@
     </changeSet>
 
     <changeSet id="0.7.27" author="Maziyar Gerami">
-        <addUniqueConstraint tableName="fau_expert_group"
-                             columnNames="title, deletion_time"
-                             constraintName="uq_fau_expert_group_title_deletiontime"/>
+        <sql>
+            CREATE UNIQUE INDEX uq_fau_expert_group_code_deletion_time ON fau_expert_group (code) WHERE deletion_time IS NULL;
+        </sql>
     </changeSet>
+
 </databaseChangeLog>
