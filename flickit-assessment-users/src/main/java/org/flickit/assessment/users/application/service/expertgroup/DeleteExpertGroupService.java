@@ -12,7 +12,6 @@ import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertG
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -43,7 +42,7 @@ public class DeleteExpertGroupService implements DeleteExpertGroupUseCase {
         if (kitsCount.publishedKitsCount() > 0 || kitsCount.unpublishedKitsCount() > 0)
             throw new ValidationException(DELETE_EXPERT_GROUP_KITS_EXIST);
 
-        deleteExpertGroupPort.deleteById(param.getId(), LocalDateTime.now());
+        deleteExpertGroupPort.deleteById(param.getId(), System.currentTimeMillis());
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {

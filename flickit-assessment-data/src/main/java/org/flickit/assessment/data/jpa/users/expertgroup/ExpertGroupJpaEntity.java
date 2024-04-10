@@ -60,8 +60,8 @@ public class ExpertGroupJpaEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
-    @Column(name = "deletion_time")
-    private LocalDateTime deletionTime;
+    @Column(name = "deletion_time", nullable = false)
+    private long deletionTime;
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {

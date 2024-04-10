@@ -57,7 +57,7 @@ public class ExpertGroupMapper {
             creationTime,
             creationTime,
             false,
-            null
+            0
         );
     }
 

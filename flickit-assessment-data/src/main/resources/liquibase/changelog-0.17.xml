@@ -127,7 +127,7 @@
 
     <changeSet id="0.7-24" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group">
-            <column name="deletion_time" type="timestamp">
+            <column name="deletion_time" type="bigint" defaultValueNumeric="0">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
@@ -146,10 +146,10 @@
         <dropUniqueConstraint tableName="fau_expert_group"  constraintName="uq_fac_expertgroup_title"/>
     </changeSet>
 
-    <changeSet id="0.7.27" author="Maziyar Gerami">
-        <sql>
-            CREATE UNIQUE INDEX uq_fau_expert_group_code_deletion_time ON fau_expert_group (code) WHERE deletion_time IS NULL;
-        </sql>
+    <changeSet id="0.7-27" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fau_expert_group"
+                             columnNames="code, deletion_time"
+                             constraintName="uq_fau_expert_group_code_deletion_time"/>
     </changeSet>
 
 </databaseChangeLog>
