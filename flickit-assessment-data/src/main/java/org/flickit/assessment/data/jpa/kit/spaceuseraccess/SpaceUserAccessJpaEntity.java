@@ -34,4 +34,7 @@ public class SpaceUserAccessJpaEntity {
     @Column(name = "invite_expiration_date")
     private LocalDateTime inviteExpirationDate;
 
+    @Column(name= "last_seen")
+    private LocalDateTime lastSeen;
+
 }
