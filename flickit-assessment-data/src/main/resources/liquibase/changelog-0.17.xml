@@ -194,4 +194,44 @@
                                  constraintName="fk_fau_space_user_owner"/>
     </changeSet>
 
+    <changeSet id="0.17-36" author="Maziyar Gerami">
+        <renameTable oldTableName="account_useraccess" newTableName="fau_space_user_access" />
+    </changeSet>
+
+    <changeSet id="0.17-37" author="Maziyar Gerami">
+        <dropColumn tableName="fau_space_user_access" columnName="id" />
+    </changeSet>
+
+    <changeSet id="0.17-38" author="Maziyar Gerami">
+        <addColumn tableName="fau_space_user_access">
+            <column name="created_by" type="uuid" valueComputed="fau_space.owner_id FROM fau_space WHERE fau_space.id = space_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.17-39" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_space_user_access"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_user_access_user_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.17-40" author="Maziyar Gerami">
+        <addColumn tableName="fau_space_user_access">
+            <column name="last_modified_by" type="uuid" valueComputed="fau_space.owner_id FROM fau_space WHERE id = fau_space_user_access.space_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.17-41" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_space_user_access"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_user_access_user_lastmodifiedby"/>
+    </changeSet>
+
 </databaseChangeLog>
