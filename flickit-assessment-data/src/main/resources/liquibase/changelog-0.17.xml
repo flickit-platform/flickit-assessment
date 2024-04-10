@@ -125,7 +125,76 @@
                                  validate="true"/>
     </changeSet>
 
-    <changeSet id="0.7-24" author="Maziyar Gerami">
+    <changeSet id="0.17-24" author="Maziyar Gerami">
+        <renameTable oldTableName="account_space" newTableName="fau_space"/>
+    </changeSet>
+
+    <changeSet id="0.17.25" author="Maziyar Gerami">
+        <renameSequence oldSequenceName="account_space_id_seq" newSequenceName="fau_space_id_seq"/>
+    </changeSet>
+
+    <changeSet id="0.17-26" author="Maziyar gerami">
+        <renameColumn tableName="fau_space" oldColumnName="last_modification_date" newColumnName="last_modification_time"/>
+    </changeSet>
+
+    <changeSet id="0.17-27" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="created_by" type="uuid" valueComputed="owner_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.17-28" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_space"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_user_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.17-29" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="last_modified_by" type="uuid" valueComputed="owner_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.17-30" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_space"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_user_lastmodifiedby"/>
+    </changeSet>
+
+    <changeSet id="0.17-31" author="Maziyar Gerami">
+        <dropColumn tableName="fau_space" columnName="is_default_space"/>
+    </changeSet>
+
+    <changeSet id="0.17-32" author="Maziyar Gerami">
+        <sql>alter table fau_space rename constraint account_space_pkey to pk_fau_space;</sql>
+    </changeSet>
+
+    <changeSet id="0.17-33" author="Maziyar Gerami">
+        <sql>alter table fau_space rename constraint account_space_code_cc3cf1de_uniq to uq_fau_space_code;</sql>
+    </changeSet>
+
+    <changeSet id="0.17-34" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fau_space"
+                                  constraintName="account_space_owner_id_9c7e98ca_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.17-35" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_space"
+                                 baseColumnNames="owner_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_user_owner"/>
+    </changeSet>
+
+    <changeSet id="0.17-36" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group">
             <column name="deletion_time" type="bigint" defaultValueNumeric="0">
                 <constraints nullable="true"/>
@@ -133,7 +202,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.7-25" author="Maziyar Gerami">
+    <changeSet id="0.17-36" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group">
             <column name="code" type="varchar(100)"
             valueComputed="LOWER(title)">
@@ -142,11 +211,11 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.7-26" author="Maziyar Gerami">
+    <changeSet id="0.17-37" author="Maziyar Gerami">
         <dropUniqueConstraint tableName="fau_expert_group"  constraintName="uq_fac_expertgroup_title"/>
     </changeSet>
 
-    <changeSet id="0.7-27" author="Maziyar Gerami">
+    <changeSet id="0.17-38" author="Maziyar Gerami">
         <addUniqueConstraint tableName="fau_expert_group"
                              columnNames="code, deletion_time"
                              constraintName="uq_fau_expert_group_code_deletion_time"/>

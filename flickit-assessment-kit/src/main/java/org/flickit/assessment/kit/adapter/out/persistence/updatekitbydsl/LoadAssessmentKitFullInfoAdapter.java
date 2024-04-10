@@ -22,7 +22,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.Question
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitFullInfoPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -33,8 +33,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND
 
 @Component
 @AllArgsConstructor
-public class LoadAssessmentKitInfoAdapter implements
-    LoadAssessmentKitInfoPort {
+public class LoadAssessmentKitFullInfoAdapter implements
+    LoadAssessmentKitFullInfoPort {
 
     private final AssessmentKitJpaRepository repository;
     private final MaturityLevelJpaRepository maturityLevelRepository;

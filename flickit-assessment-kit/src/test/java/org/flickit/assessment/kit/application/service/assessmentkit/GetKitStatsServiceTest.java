@@ -8,7 +8,7 @@ import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitStatsUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitStatsUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
@@ -48,7 +48,7 @@ class GetKitStatsServiceTest {
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Mock
-    private LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
+    private LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Mock
     private LoadSubjectsPort loadSubjectsPort;
@@ -79,7 +79,7 @@ class GetKitStatsServiceTest {
             5, 3, 5);
 
         when(countKitStatsPort.countKitStats(assessmentKit.getId())).thenReturn(counts);
-        when(loadAssessmentKitInfoPort.load(assessmentKit.getId())).thenReturn(assessmentKit);
+        when(loadAssessmentKitPort.load(assessmentKit.getId())).thenReturn(assessmentKit);
         when(loadSubjectsPort.loadSubjects(assessmentKit.getKitVersionId())).thenReturn(subjects);
 
         GetKitStatsUseCase.Result kitStats = service.getKitStats(param);
