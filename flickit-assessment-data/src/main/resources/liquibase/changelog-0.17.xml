@@ -234,4 +234,43 @@
                                  constraintName="fk_fau_space_user_access_user_lastmodifiedby"/>
     </changeSet>
 
+    <changeSet id="0.17-42" author="Maziyar Gerami">
+        <addColumn tableName="fau_space_user_access">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"
+                    defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.17-43" author="Maziyar Geram">
+        <dropForeignKeyConstraint baseTableName="fau_space_user_access"
+                                  constraintName="account_useraccess_space_id_c683395f_fk_account_space_id"/>
+    </changeSet>
+
+    <changeSet id="0.17-44" author="Maziyar Geram">
+        <addForeignKeyConstraint baseTableName="fau_space_user_access"
+                                 baseColumnNames="space_id"
+                                 referencedTableName="fau_space"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_user_access_space"/>
+    </changeSet>
+
+    <changeSet id="0.17-45" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fau_space_user_access"
+                                  constraintName="account_useraccess_user_id_abb729d3_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.17-46" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_space_user_access"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_user_access_user"/>
+    </changeSet>
+
 </databaseChangeLog>
