@@ -31,7 +31,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             WHERE EXISTS (
                 SELECT 1 FROM ExpertGroupAccessJpaEntity ac
                 WHERE ac.expertGroupId = e.id AND ac.userId = :userId
-                    AND ac.status = 1 AND e.deleted=false
+                    AND ac.status = 1
             )
             GROUP BY
                 e.id,
@@ -62,8 +62,8 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
 
     @Modifying
     @Query("""
-        UPDATE ExpertGroupJpaEntity e
-        SET e.deleted = true
+        DELETE
+        FROM ExpertGroupJpaEntity e
         WHERE e.id = :expertGroupId
         """)
     void delete(@Param("expertGroupId") Long expertGroupId);
@@ -78,7 +78,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         """)
     KitsCountView countKits(@Param("expertGroupId") long expertGroupId);
 
-    Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
+    Optional<ExpertGroupJpaEntity> findById(long id);
 
-    boolean existsByIdAndDeletedFalse(@Param(value = "id") long id);
+    boolean existsById(@Param(value = "id") long id);
 }

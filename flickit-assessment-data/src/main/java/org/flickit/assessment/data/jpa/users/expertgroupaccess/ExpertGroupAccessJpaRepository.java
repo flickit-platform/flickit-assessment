@@ -28,7 +28,7 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
         LEFT JOIN UserJpaEntity u on e.userId = u.id
         WHERE e.expertGroupId = :expertGroupId
-            AND e.status = :status and g.deleted = FALSE and e.deleted=FALSE
+            AND e.status = :status and g.deleted = FALSE
         """)
     Page<ExpertGroupMembersView> findExpertGroupMembers(@Param(value = "expertGroupId") Long expertGroupId,
                                                         @Param(value = "status") int status,
@@ -39,7 +39,7 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         e.status as status
         FROM ExpertGroupAccessJpaEntity e
         LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
-        WHERE e.expertGroupId = :expertGroupId AND e.userId = :userId AND g.deleted = FALSE AND e.deleted = FALSE
+        WHERE e.expertGroupId = :expertGroupId AND e.userId = :userId AND g.deleted = FALSE
         """)
     Optional<Integer> findExpertGroupMemberStatus(@Param(value = "expertGroupId") long expertGroupId,
                                                   @Param(value = "userId") UUID userId);
@@ -48,7 +48,7 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         SELECT a
         FROM ExpertGroupAccessJpaEntity a
         LEFT JOIN ExpertGroupJpaEntity e on a.expertGroupId = e.id
-        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId AND a.deleted = FALSE AND e.deleted = FALSE
+        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
         """)
     Optional<ExpertGroupAccessJpaEntity> findByExpertGroupIdAndAndUserId(@Param(value = "expertGroupId") long expertGroupId,
                                                                          @Param(value = "userId") UUID userId);
@@ -60,18 +60,18 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
             a.inviteToken = null,
             a.inviteExpirationDate = null,
             a.lastModificationTime = :modificationTime
-        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId AND a.deleted = FALSE
+        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
         """)
     void confirmInvitation(@Param(value = "expertGroupId") long expertGroupId,
                            @Param(value = "userId") UUID userId,
                            @Param(value = "modificationTime") LocalDateTime modificationTime);
 
-    boolean existsByExpertGroupIdAndUserIdAndDeletedFalse(@Param(value = "expertGroupId") long expertGroupId,
+    boolean existsByExpertGroupIdAndUserId(@Param(value = "expertGroupId") long expertGroupId,
                                            @Param(value = "userId") UUID userId);
     @Modifying
     @Query("""
-        UPDATE ExpertGroupAccessJpaEntity e SET
-            e.deleted = TRUE
+        DELETE
+        FROM ExpertGroupAccessJpaEntity e
         WHERE e.expertGroupId = :expertGroupId and e.userId = :userId
         """)
     void deleteMember(@Param(value = "userId") UUID userId,

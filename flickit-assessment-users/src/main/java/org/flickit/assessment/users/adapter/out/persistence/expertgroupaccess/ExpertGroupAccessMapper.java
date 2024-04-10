@@ -24,8 +24,7 @@ public class ExpertGroupAccessMapper {
             param.userId(),
             param.userId(),
             creationTime,
-            creationTime,
-            Boolean.FALSE
+            creationTime
         );
     }
 
@@ -41,8 +40,7 @@ public class ExpertGroupAccessMapper {
             param.createdBy(),
             param.createdBy(),
             creationTime,
-            creationTime,
-            Boolean.FALSE
+            creationTime
         );
     }
 
