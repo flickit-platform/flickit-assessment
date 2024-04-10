@@ -247,12 +247,12 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.17-43" author="Maziyar Geram">
+    <changeSet id="0.17-43" author="Maziyar Gerami">
         <dropForeignKeyConstraint baseTableName="fau_space_user_access"
                                   constraintName="account_useraccess_space_id_c683395f_fk_account_space_id"/>
     </changeSet>
 
-    <changeSet id="0.17-44" author="Maziyar Geram">
+    <changeSet id="0.17-44" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fau_space_user_access"
                                  baseColumnNames="space_id"
                                  referencedTableName="fau_space"
