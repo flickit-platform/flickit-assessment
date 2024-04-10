@@ -3,11 +3,13 @@ package org.flickit.assessment.data.jpa.kit.spaceuseraccess;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "account_useraccess")
+@IdClass(SpaceUserAccessJpaEntity.EntityId.class)
+@Table(name = "fau_space")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,14 +19,11 @@ public class SpaceUserAccessJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_useraccess_id_seq")
-    @SequenceGenerator(name = "account_useraccess_id_seq", sequenceName = "account_useraccess_id_seq", allocationSize = 1)
-    @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
-
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
 
+    @Id
+    @EqualsAndHashCode.Include
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
@@ -33,5 +32,14 @@ public class SpaceUserAccessJpaEntity {
 
     @Column(name = "invite_expiration_date")
     private LocalDateTime inviteExpirationDate;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId implements Serializable {
+
+        private Long spaceId;
+        private UUID userId;
+    }
 
 }
