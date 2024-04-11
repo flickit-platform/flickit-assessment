@@ -194,5 +194,4 @@
                                  constraintName="fk_fau_space_user_owner"/>
     </changeSet>
 
-
 </databaseChangeLog>
