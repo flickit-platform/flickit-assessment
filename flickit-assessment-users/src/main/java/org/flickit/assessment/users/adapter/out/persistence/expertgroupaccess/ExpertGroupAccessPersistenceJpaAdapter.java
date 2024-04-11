@@ -31,7 +31,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<Member> loadExpertGroupMembers(long expertGroupId, int status, int page, int size) {
         var pageResult = repository.findExpertGroupMembers(expertGroupId, status,
-            PageRequest.of(page, size, Sort.Direction.DESC, ExpertGroupAccessJpaEntity.Fields.CREATION_TIME));
+            PageRequest.of(page, size, Sort.Direction.DESC, ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME));
 
         var items = pageResult
             .stream()
@@ -42,7 +42,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            ExpertGroupAccessJpaEntity.Fields.CREATION_TIME,
+            ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );

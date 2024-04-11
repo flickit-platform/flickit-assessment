@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupWithDetailsView;
+import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
@@ -63,8 +64,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            ExpertGroupJpaEntity.Fields.NAME,
-            Sort.Direction.ASC.name().toLowerCase(),
+            ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
     }

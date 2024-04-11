@@ -17,6 +17,14 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     Optional<UUID> loadOwnerIdById(@Param("id") Long id);
 
     @Query("""
+            SELECT e
+            FROM ExpertGroupJpaEntity e
+            LEFT JOIN AssessmentKitJpaEntity a On e.id = a.expertGroupId
+            WHERE a.id = :kitId AND e.deleted = false
+        """)
+    Optional<ExpertGroupJpaEntity> findByKitId(@Param("kitId") long kitId);
+
+    @Query("""
             SELECT
                 e.id as id,
                 e.title as title,
@@ -38,7 +46,9 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 e.title,
                 e.picture,
                 e.bio,
-                e.ownerId
+                e.ownerId,
+                ac.lastModificationTime
+            ORDER BY ac.lastModificationTime DESC
         """)
     Page<ExpertGroupWithDetailsView> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
 

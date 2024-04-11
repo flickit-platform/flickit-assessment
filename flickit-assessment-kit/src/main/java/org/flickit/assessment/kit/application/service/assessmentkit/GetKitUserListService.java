@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
@@ -31,11 +32,9 @@ public class GetKitUserListService implements GetKitUserListUseCase {
     }
 
     private void validateCurrentUser(Long kitId, UUID currentUserId) {
-        Long expertGroupId = loadKitExpertGroupPort.loadKitExpertGroupId(kitId);
-        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId);
-        if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
+        ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(kitId);
+        if (!Objects.equals(expertGroup.getOwnerId(), currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        }
     }
 
     private LoadKitUsersPort.Param toParam(Long kitId, int page, int size) {

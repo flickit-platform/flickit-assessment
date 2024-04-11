@@ -28,11 +28,14 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
         LEFT JOIN UserJpaEntity u on e.userId = u.id
         WHERE e.expertGroupId = :expertGroupId
-            AND e.status = :status and g.deleted = FALSE
+            AND e.status = :status AND g.deleted = FALSE
         """)
     Page<ExpertGroupMembersView> findExpertGroupMembers(@Param(value = "expertGroupId") Long expertGroupId,
                                                         @Param(value = "status") int status,
                                                         Pageable pageable);
+
+    boolean existsByExpertGroupIdAndUserId(@Param(value = "expertGroupId") long expertGroupId,
+                                           @Param(value = "userId") UUID userId);
 
     @Query("""
         SELECT
@@ -48,7 +51,7 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         SELECT a
         FROM ExpertGroupAccessJpaEntity a
         LEFT JOIN ExpertGroupJpaEntity e on a.expertGroupId = e.id
-        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
+        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId AND e.deleted = FALSE
         """)
     Optional<ExpertGroupAccessJpaEntity> findByExpertGroupIdAndAndUserId(@Param(value = "expertGroupId") long expertGroupId,
                                                                          @Param(value = "userId") UUID userId);
@@ -66,8 +69,6 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
                            @Param(value = "userId") UUID userId,
                            @Param(value = "modificationTime") LocalDateTime modificationTime);
 
-    boolean existsByExpertGroupIdAndUserId(@Param(value = "expertGroupId") long expertGroupId,
-                                           @Param(value = "userId") UUID userId);
     @Modifying
     @Query("""
         DELETE
