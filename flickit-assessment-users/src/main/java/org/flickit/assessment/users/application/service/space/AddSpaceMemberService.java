@@ -18,6 +18,7 @@ import java.util.UUID;
 import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_INVITEE_ACCESS_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
     @Override
     public void addMember(long spaceId, String email, UUID currentUserId) {
-        var space = loadSpacePort.getById(spaceId);
+        var space = loadSpacePort.loadById(spaceId);
         if (space == null)
             throw new ResourceNotFoundException(ADD_SPACE_MEMBER_SPACE_ID_NOT_FOUND);
 

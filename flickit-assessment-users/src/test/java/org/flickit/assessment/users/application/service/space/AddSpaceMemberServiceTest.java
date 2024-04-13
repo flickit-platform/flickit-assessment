@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.service.space;
 
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.out.space.CheckMemberSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.users.application.port.out.space.AddSpaceMemberPort;
@@ -40,7 +41,7 @@ class AddSpaceMemberServiceTest {
         UUID userId = UUID.randomUUID();
         var portResult = new LoadSpacePort.Result("spaceTitle");
 
-        when(loadSpacePort.getById(spaceId)).thenReturn(portResult);
+        when(loadSpacePort.loadById(spaceId)).thenReturn(portResult);
         when(checkMemberSpaceAccessPort.checkAccess(currentUserId)).thenReturn(true);
         when(loadUserIdByEmailPort.loadByEmail(email)).thenReturn(userId);
         when(checkMemberSpaceAccessPort.checkAccess(userId)).thenReturn(false);
@@ -49,10 +50,26 @@ class AddSpaceMemberServiceTest {
 
         assertDoesNotThrow(() -> service.addMember(spaceId, email, currentUserId));
 
-        verify(loadUserIdByEmailPort).loadByEmail(email);
-        verify(loadSpacePort).getById(spaceId);
+        verify(loadSpacePort).loadById(spaceId);
         verify(checkMemberSpaceAccessPort, times(2)).checkAccess(any(UUID.class));
+        verify(loadUserIdByEmailPort).loadByEmail(email);
         verify(addSpaceMemberPort).addMemberAccess(anyLong(), any(UUID.class), any(UUID.class), any(LocalDateTime.class));
 
+    }
+
+    @Test
+    @DisplayName("Adding a member to an invalid space should cause ResourceNotFoundException")
+    void addSpaceMember_invalidSpace_ResourceNotFoundException(){
+        long spaceId = 0;
+        String email = "admin@asta.org";
+        UUID currentUserId = UUID.randomUUID();
+
+        when(loadSpacePort.loadById(spaceId)).thenReturn(null);
+
+        assertThrows(ResourceNotFoundException.class, ()-> service.addMember(spaceId,email,currentUserId));
+        verify(loadSpacePort).loadById(spaceId);
+        verifyNoInteractions(checkMemberSpaceAccessPort);
+        verifyNoInteractions(loadUserIdByEmailPort);
+        verifyNoInteractions(addSpaceMemberPort);
     }
 }
