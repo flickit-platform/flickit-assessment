@@ -37,7 +37,7 @@ class EditKitInfoUseCaseParamTest {
     void testEditKitInfo_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new EditKitInfoUseCase.Param(null, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
-        assertThat(throwable).hasMessage("assessmentKitId: " + EDIT_KIT_INFO_KIT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitId: " + EDIT_KIT_INFO_KIT_ID_NOT_NULL);
     }
 
     @Test
