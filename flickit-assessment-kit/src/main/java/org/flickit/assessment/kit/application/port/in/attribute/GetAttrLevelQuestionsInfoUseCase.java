@@ -36,6 +36,7 @@ public interface GetAttrLevelQuestionsInfoUseCase {
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
             this.currentUserId = currentUserId;
+            validateSelf();
         }
     }
 
