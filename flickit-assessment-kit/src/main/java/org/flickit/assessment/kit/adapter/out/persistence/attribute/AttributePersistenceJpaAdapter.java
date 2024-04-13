@@ -5,6 +5,7 @@ import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.port.out.attribute.CheckAttributeExistByAttributeIdAndKitIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.CreateAttributePort;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,8 @@ import static org.flickit.assessment.kit.adapter.out.persistence.attribute.Attri
 @RequiredArgsConstructor
 public class AttributePersistenceJpaAdapter implements
     UpdateAttributePort,
-    CreateAttributePort {
+    CreateAttributePort,
+    CheckAttributeExistByAttributeIdAndKitIdPort {
 
     private final AttributeJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
@@ -36,5 +38,10 @@ public class AttributePersistenceJpaAdapter implements
     public Long persist(Attribute attribute, Long subjectId, Long kitVersionId) {
         SubjectJpaEntity subjectJpaEntity = subjectRepository.getReferenceById(subjectId);
         return repository.save(mapToJpaEntity(attribute, kitVersionId, subjectJpaEntity)).getId();
+    }
+
+    @Override
+    public boolean checkAttrExistsByAttrIdAndKitId(Long attributeId, Long kitId) {
+        return repository.existByAttributeIdAndKitId(attributeId, kitId);
     }
 }

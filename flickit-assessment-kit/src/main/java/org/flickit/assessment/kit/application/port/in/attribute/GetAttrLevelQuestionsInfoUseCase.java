@@ -41,6 +41,9 @@ public interface GetAttrLevelQuestionsInfoUseCase {
 
     record Result(Long id, String title, int index, int questionsCount, List<Question> questions) {
 
-        public record Question(int index, String title, Boolean mayNotBeApplicable) {}
+        public record Question(int index, String title, Boolean mayNotBeApplicable, List<AnswerOption> answerOptions) {
+
+            public record AnswerOption(int index, String title, double value) {}
+        }
     }
 }

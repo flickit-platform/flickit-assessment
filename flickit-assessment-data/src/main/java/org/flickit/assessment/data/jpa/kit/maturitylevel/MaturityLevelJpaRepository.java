@@ -23,4 +23,15 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
             ml.kitVersionId = (SELECT l.kitVersionId FROM MaturityLevelJpaEntity AS l WHERE l.id = :id)
         """)
     List<MaturityLevelJpaEntity> findAllInKitVersionWithOneId(@Param(value = "id") Long id);
+
+    @Query("""
+        SELECT CASE WHEN EXISTS
+            (SELECT 1
+             FROM MaturityLevelJpaEntity m
+                JOIN KitVersionJpaEntity kv ON m.kitVersionId = kv.id
+                JOIN AssessmentKitJpaEntity k ON kv.kit.id = k.id
+             WHERE m.id = :levelId AND k.id = :kitId)
+        THEN TRUE ELSE FALSE END
+    """)
+    boolean existsByLevelIdAndKitId(@Param("levelId")Long levelId, @Param("kitId")Long kitId);
 }

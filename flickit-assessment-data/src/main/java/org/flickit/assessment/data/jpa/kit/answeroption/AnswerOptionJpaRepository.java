@@ -26,4 +26,20 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     List<AnswerOptionJpaEntity> findByQuestionId(Long questionId);
 
+    @Query("""
+        SELECT
+            ao.index AS index,
+            ao.title AS title,
+            ao.questionId AS questionId,
+            aoi.value AS impactValue
+        FROM AnswerOptionJpaEntity ao
+            JOIN  AnswerOptionImpactJpaEntity aoi ON ao.id = aoi.optionId
+            JOIN QuestionImpactJpaEntity qi ON aoi.questionImpact.id = qi.id
+        WHERE qi.attributeId = :attributeId
+            AND qi.maturityLevel.id = :maturityLevelId
+            AND ao.questionId IN (:questionIds)
+    """)
+    List<ImpactfulAnswerOptionView> findAllByAttrIdAndMaturityLevelIdAndQuestionIdIn(@Param("attributeId") Long attributeId,
+                                                                                     @Param("maturityLevelId") Long maturityLevelId,
+                                                                                     @Param("questionIds") List<Long> questionIds);
 }
