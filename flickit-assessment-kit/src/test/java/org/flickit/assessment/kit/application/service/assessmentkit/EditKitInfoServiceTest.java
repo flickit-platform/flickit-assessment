@@ -9,8 +9,8 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoU
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkittag.LoadKitTagPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.KitTagMother;
@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,7 +51,7 @@ class EditKitInfoServiceTest {
     private LoadAssessmentKitPort loadKitPort;
 
     @Mock
-    private LoadKitTagPort loadKitTagPort;
+    private LoadKitTagsListPort loadKitTagsListPort;
 
     private static final Long KIT_ID = 1L;
     private static final String TITLE = "title";
@@ -262,8 +261,8 @@ class EditKitInfoServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(assessmentKit.getId())).thenReturn(expertGroup);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
-        when(loadKitPort.load(assessmentKit.getId())).thenReturn(Optional.of(assessmentKit));
-        when(loadKitTagPort.load(assessmentKit.getId())).thenReturn(kitTags);
+        when(loadKitPort.load(assessmentKit.getId())).thenReturn(assessmentKit);
+        when(loadKitTagsListPort.load(assessmentKit.getId())).thenReturn(kitTags);
 
         EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
 

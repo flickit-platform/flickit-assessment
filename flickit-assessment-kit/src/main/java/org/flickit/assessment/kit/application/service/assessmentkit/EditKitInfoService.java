@@ -2,14 +2,13 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkittag.LoadKitTagPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +18,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EDIT_KIT_INFO_KIT_ID_NOT_FOUND;
 
 @Service
 @Transactional
@@ -30,7 +28,7 @@ public class EditKitInfoService implements EditKitInfoUseCase {
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final UpdateKitInfoPort updateKitInfoPort;
     private final LoadAssessmentKitPort loadKitPort;
-    private final LoadKitTagPort loadKitTagPort;
+    private final LoadKitTagsListPort loadKitTagsListPort;
 
     @Override
     public Result editKitInfo(Param param) {
@@ -38,9 +36,8 @@ public class EditKitInfoService implements EditKitInfoUseCase {
         if (containsNonNullParam(param)) {
             return updateKitInfoPort.update(toPortParam(param));
         } else {
-            var kit = loadKitPort.load(param.getAssessmentKitId())
-                .orElseThrow(() -> new ResourceNotFoundException(EDIT_KIT_INFO_KIT_ID_NOT_FOUND));
-            var tags = loadKitTagPort.load(param.getAssessmentKitId())
+            var kit = loadKitPort.load(param.getAssessmentKitId());
+            var tags = loadKitTagsListPort.load(param.getAssessmentKitId())
                 .stream().map(t -> new EditKitInfoTag(t.getId(), t.getTitle()))
                 .toList();
             return toResult(kit, tags);
