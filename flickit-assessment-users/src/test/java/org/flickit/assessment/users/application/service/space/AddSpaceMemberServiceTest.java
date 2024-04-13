@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.service.space;
 
+import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.out.space.CheckMemberSpaceAccessPort;
@@ -93,8 +94,8 @@ class AddSpaceMemberServiceTest {
     }
 
     @Test
-    @DisplayName("Adding a not-member to a space should cause ResourceNotException")
-    void addSpaceMember_inviteeIsNotMember_ResourceNotException(){
+    @DisplayName("Adding a non-flickit user to a space should cause ResourceNotFoundException")
+    void addSpaceMember_inviteeIsNotFlickitUser_ResourceNotException(){
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
@@ -107,6 +108,28 @@ class AddSpaceMemberServiceTest {
         assertThrows(ResourceNotFoundException.class, ()-> service.addMember(spaceId,email,currentUserId));
         verify(loadSpacePort).loadById(spaceId);
         verify(checkMemberSpaceAccessPort).checkAccess(currentUserId);
+        verify(loadUserIdByEmailPort).loadByEmail(email);
+        verifyNoInteractions(addSpaceMemberPort);
+    }
+
+    @Test
+    @DisplayName("Adding an already-member user to a space should cause ResourceAlreadyExistsException")
+    void addSpaceMember_inviteeIsMember_ResourceAlreadyExistsException(){
+        long spaceId = 0;
+        String email = "admin@asta.org";
+        UUID currentUserId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+
+        var portResult = new LoadSpacePort.Result("spaceTitle");
+
+        when(loadSpacePort.loadById(spaceId)).thenReturn(portResult);
+        when(checkMemberSpaceAccessPort.checkAccess(currentUserId)).thenReturn(true);
+        when(loadUserIdByEmailPort.loadByEmail(email)).thenReturn(userId);
+        when(checkMemberSpaceAccessPort.checkAccess(userId)).thenReturn(true);
+
+        assertThrows(ResourceAlreadyExistsException.class, ()-> service.addMember(spaceId,email,currentUserId));
+        verify(loadSpacePort).loadById(spaceId);
+        verify(checkMemberSpaceAccessPort, times(2)).checkAccess(any(UUID.class));
         verify(loadUserIdByEmailPort).loadByEmail(email);
         verifyNoInteractions(addSpaceMemberPort);
     }
