@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.KitTag;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
@@ -38,7 +39,7 @@ public class EditKitInfoService implements EditKitInfoUseCase {
         } else {
             var kit = loadKitPort.load(param.getAssessmentKitId());
             var tags = loadKitTagsListPort.load(param.getAssessmentKitId())
-                .stream().map(t -> new EditKitInfoTag(t.getId(), t.getTitle()))
+                .stream().map(t -> new KitTag(t.getId(), t.getTitle()))
                 .toList();
             return toResult(kit, tags);
         }
@@ -77,7 +78,7 @@ public class EditKitInfoService implements EditKitInfoUseCase {
         );
     }
 
-    private Result toResult(AssessmentKit kit, List<EditKitInfoTag> tags) {
+    private Result toResult(AssessmentKit kit, List<KitTag> tags) {
         return new Result(
             kit.getTitle(),
             kit.getSummary(),

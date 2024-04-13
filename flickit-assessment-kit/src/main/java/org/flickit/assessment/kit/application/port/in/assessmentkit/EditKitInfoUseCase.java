@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.kit.application.domain.KitTag;
 
 import java.util.List;
 import java.util.UUID;
@@ -66,8 +67,6 @@ public interface EditKitInfoUseCase {
                   Boolean isPrivate,
                   Double price,
                   String about,
-                  List<EditKitInfoTag> tags) {
+                  List<KitTag> tags) {
     }
-
-    record EditKitInfoTag(Long id, String title) {}
 }

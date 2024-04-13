@@ -21,6 +21,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionM
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.domain.KitTag;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
@@ -162,7 +163,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         );
     }
 
-    private List<EditKitInfoUseCase.EditKitInfoTag> updateKitTags(Long kitId, List<Long> tags) {
+    private List<KitTag> updateKitTags(Long kitId, List<Long> tags) {
         var loadedTags = kitTagRepository.findAllByKitId(kitId);
         if (tags != null && !tags.isEmpty()) {
             var kitTagRelations = kitTagRelationRepository.findAllByKitId(kitId);
@@ -191,7 +192,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         }
         return loadedTags.stream()
             .sorted(Comparator.comparingLong(KitTagJpaEntity::getId))
-            .map(i -> new EditKitInfoUseCase.EditKitInfoTag(i.getId(), i.getTitle()))
+            .map(i -> new KitTag(i.getId(), i.getTitle()))
             .toList();
     }
 

@@ -1,6 +1,6 @@
 package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
-import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
+import org.flickit.assessment.kit.application.domain.KitTag;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public record EditKitInfoResponseDto(String title,
                                      Boolean isPrivate,
                                      Double price,
                                      String about,
-                                     List<EditKitInfoUseCase.EditKitInfoTag> tags) {
+                                     List<KitTag> tags) {
 }
 
 

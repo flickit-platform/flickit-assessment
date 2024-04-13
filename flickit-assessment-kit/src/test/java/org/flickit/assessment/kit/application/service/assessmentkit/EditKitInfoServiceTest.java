@@ -60,7 +60,7 @@ class EditKitInfoServiceTest {
     private static final Boolean IS_PRIVATE = Boolean.FALSE;
     private static final Double PRICE = 0D;
     private static final String ABOUT = "about";
-    private static final EditKitInfoUseCase.EditKitInfoTag EDIT_KIT_INFO_TAG = new EditKitInfoUseCase.EditKitInfoTag(2L, "tag title");
+    private static final KitTag EDIT_KIT_INFO_TAG = new KitTag(2L, "tag title");
     private static final UUID CURRENT_USER_ID = UUID.randomUUID();
 
     @Test
@@ -228,7 +228,7 @@ class EditKitInfoServiceTest {
 
     @Test
     void testEditKitInfo_EditTags_ValidResults() {
-        var newEditKitInfoTag = new EditKitInfoUseCase.EditKitInfoTag(3L, "new tag title");
+        var newEditKitInfoTag = new KitTag(3L, "new tag title");
         List<Long> newTags = List.of(3L);
         var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, null, null, null, newTags, CURRENT_USER_ID);
         var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(newEditKitInfoTag));
@@ -246,7 +246,7 @@ class EditKitInfoServiceTest {
         assertEquals(KIT_ID, portParam.getValue().assessmentKitId());
         assertIterableEquals(newTags, portParam.getValue().tags());
         assertEquals(newTags.size(), serviceResult.tags().size());
-        assertEquals(newTags.get(0), serviceResult.tags().get(0).id());
+        assertEquals(newTags.get(0), serviceResult.tags().get(0).getId());
     }
 
     @Test
