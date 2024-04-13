@@ -68,6 +68,8 @@ public class ErrorMessageKey {
 
     public static final String GET_KIT_STATS_KIT_ID_NOT_NULL = "get-kit-stats.kitId.notNull";
 
+    public static final String GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL = "get-kit-editable-info.kitId.notNull";
+
     public static final String GET_QUESTION_DETAIL_KIT_ID_NOT_NULL = "get-question-detail.kitId.notNull";
     public static final String GET_QUESTION_DETAIL_QUESTION_ID_NOT_NULL = "get-question-detail.questionId.notNull";
     public static final String GET_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND = "get-question-detail.questionId.notFound";
