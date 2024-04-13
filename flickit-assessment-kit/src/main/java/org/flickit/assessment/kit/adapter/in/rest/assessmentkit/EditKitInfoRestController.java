@@ -19,17 +19,17 @@ public class EditKitInfoRestController {
     private final EditKitInfoUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("/assessment-kits/update/{assessmentKitId}")
-    public ResponseEntity<EditKitInfoResponseDto> editKitInfo(@PathVariable("assessmentKitId") Long assessmentKitId,
-                                        @RequestBody EditKitInfoRequestDto request) {
+    @PostMapping("/assessment-kits/update/{kitId}")
+    public ResponseEntity<EditKitInfoResponseDto> editKitInfo(@PathVariable("kitId") Long kitId,
+                                                              @RequestBody EditKitInfoRequestDto request) {
         UUID currentUserId = userContext.getUser().id();
-        EditKitInfoUseCase.Result result = useCase.editKitInfo(toParam(assessmentKitId, request, currentUserId));
+        EditKitInfoUseCase.Result result = useCase.editKitInfo(toParam(kitId, request, currentUserId));
         return new ResponseEntity<>(toResponse(result), HttpStatus.OK);
     }
 
-    private EditKitInfoUseCase.Param toParam(Long assessmentKitId, EditKitInfoRequestDto request, UUID currentUserId) {
+    private EditKitInfoUseCase.Param toParam(Long kitId, EditKitInfoRequestDto request, UUID currentUserId) {
         return new EditKitInfoUseCase.Param(
-            assessmentKitId,
+            kitId,
             request.data().title(),
             request.data().summary(),
             request.data().isActive(),

@@ -22,7 +22,7 @@ public interface EditKitInfoUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = EDIT_KIT_INFO_KIT_ID_NOT_NULL)
-        Long assessmentKitId;
+        Long kitId;
 
         @Size(min = 3, message = EDIT_KIT_INFO_TITLE_SIZE_MIN)
         @Size(max = 50, message = EDIT_KIT_INFO_TITLE_SIZE_MAX)
@@ -47,8 +47,8 @@ public interface EditKitInfoUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long assessmentKitId, String title, String summary, Boolean isActive, Boolean isPrivate, Double price, String about, List<Long> tags, UUID currentUserId) {
-            this.assessmentKitId = assessmentKitId;
+        public Param(Long kitId, String title, String summary, Boolean isActive, Boolean isPrivate, Double price, String about, List<Long> tags, UUID currentUserId) {
+            this.kitId = kitId;
             this.currentUserId = currentUserId;
             this.title = title;
             this.summary = summary;

@@ -33,12 +33,12 @@ public class EditKitInfoService implements EditKitInfoUseCase {
 
     @Override
     public Result editKitInfo(Param param) {
-        validateCurrentUser(param.getAssessmentKitId(), param.getCurrentUserId());
+        validateCurrentUser(param.getKitId(), param.getCurrentUserId());
         if (containsNonNullParam(param)) {
             return updateKitInfoPort.update(toPortParam(param));
         } else {
-            var kit = loadKitPort.load(param.getAssessmentKitId());
-            var tags = loadKitTagsListPort.load(param.getAssessmentKitId())
+            var kit = loadKitPort.load(param.getKitId());
+            var tags = loadKitTagsListPort.load(param.getKitId())
                 .stream().map(t -> new KitTag(t.getId(), t.getTitle()))
                 .toList();
             return toResult(kit, tags);
@@ -65,7 +65,7 @@ public class EditKitInfoService implements EditKitInfoUseCase {
 
     private UpdateKitInfoPort.Param toPortParam(Param param) {
         return new UpdateKitInfoPort.Param(
-            param.getAssessmentKitId(),
+            param.getKitId(),
             param.getTitle(),
             param.getSummary(),
             param.getIsActive(),
