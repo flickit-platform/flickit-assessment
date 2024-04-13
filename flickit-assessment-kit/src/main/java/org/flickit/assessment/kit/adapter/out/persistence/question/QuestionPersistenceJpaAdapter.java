@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.question;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.ImpactfulAnswerOptionView;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
@@ -13,6 +12,7 @@ import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPo
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,6 +62,8 @@ public class QuestionPersistenceJpaAdapter implements
 
         Map<Long, List<ImpactfulAnswerOptionView>> questionIdToImpactfulAnswerOptionViews = impactfulAnswerOptionViews.stream()
             .collect(Collectors.groupingBy(ImpactfulAnswerOptionView::getQuestionId));
+
+        questionIdToImpactfulAnswerOptionViews.forEach((k, v) -> v.sort(Comparator.comparing(ImpactfulAnswerOptionView::getIndex)));
 
         List<Result.Question> questions = questionEntities.stream()
             .map(e -> {
