@@ -17,4 +17,11 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
         WHERE u.id = :userId
         """)
     String findEmailByUserId(@Param(value = "userId") UUID userId);
+
+    @Query("""
+        SELECT u.id AS userId
+        FROM UserJpaEntity u
+        WHERE u.email = :email
+        """)
+    UUID findUserIdByEmail(@Param(value = "email") String email);
 }
