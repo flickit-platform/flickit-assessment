@@ -42,13 +42,22 @@ public class GetQuestionDetailService implements GetQuestionDetailUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var answerOptions = loadAnswerOptionsByQuestionPort.loadByQuestionIdAndKitId(param.getQuestionId(), param.getKitId());
-        if (answerOptions.isEmpty())
+        if (answerOptions.isEmpty()) {
             throw new ResourceNotFoundException(GET_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND);
-
-        var loadedAttributeImpacts = loadQuestionImpactByQuestionPort.loadQuestionImpactByQuestionId(param.getQuestionId());
-
+        }
         var options = answerOptions.stream().map(this::toOption)
             .toList();
+
+        List<Impact> attributeImpacts = loadAttributeImpacts(param, answerOptions);
+        return new Result(options, attributeImpacts);
+    }
+
+    private Option toOption(AnswerOption answerOption) {
+        return new Option(answerOption.getIndex(), answerOption.getTitle());
+    }
+
+    private List<Impact> loadAttributeImpacts(Param param, List<AnswerOption> answerOptions) {
+        var loadedAttributeImpacts = loadQuestionImpactByQuestionPort.loadQuestionImpactByQuestionId(param.getQuestionId());
 
         var answerIdToIndexMap = answerOptions.stream()
             .collect(toMap(AnswerOption::getId, AnswerOption::getIndex));
@@ -57,14 +66,9 @@ public class GetQuestionDetailService implements GetQuestionDetailUseCase {
             .toList();
         var attributeIdToTitleMap = loadAllAttributesPort.loadAllByIds(attributeIds).stream()
             .collect(toMap(Attribute::getId, Attribute::getTitle));
-        var attributeImpacts = loadedAttributeImpacts.stream()
+        return loadedAttributeImpacts.stream()
             .map(attributeImpact -> toAttributeImpact(answerIdToIndexMap, attributeIdToTitleMap, attributeImpact))
             .toList();
-        return new Result(options, attributeImpacts);
-    }
-
-    private Option toOption(AnswerOption answerOption) {
-        return new Option(answerOption.getIndex(), answerOption.getTitle());
     }
 
     private Impact toAttributeImpact(Map<Long, Integer> answerIdToIndexMap, Map<Long, String> attributeIdToTitleMap, AttributeImpact attributeImpact) {
