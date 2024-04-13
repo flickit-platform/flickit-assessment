@@ -43,7 +43,6 @@ class GetQuestionDetailServiceTest {
     @Mock
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
-
     @Mock
     private LoadAnswerOptionsByQuestionAndKitPort loadAnswerOptionsByQuestionPort;
 
