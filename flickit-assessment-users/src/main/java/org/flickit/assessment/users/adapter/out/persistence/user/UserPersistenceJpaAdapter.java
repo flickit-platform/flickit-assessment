@@ -1,6 +1,6 @@
 package org.flickit.assessment.users.adapter.out.persistence.user;
 
-import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class UserPersistenceJpaAdapter implements
     public UUID loadByEmail(String email) {
         UUID userId = repository.findUserIdByEmail(email);
         if (userId == null)
-            throw new ValidationException(ADD_SPACE_MEMBER_USER_ID_NOT_FOUND);
+            throw new ResourceNotFoundException(ADD_SPACE_MEMBER_USER_ID_NOT_FOUND);
         return userId;
     }
 }

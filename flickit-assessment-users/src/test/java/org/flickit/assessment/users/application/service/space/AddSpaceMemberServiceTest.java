@@ -91,4 +91,23 @@ class AddSpaceMemberServiceTest {
         verifyNoInteractions(loadUserIdByEmailPort);
         verifyNoInteractions(addSpaceMemberPort);
     }
+
+    @Test
+    @DisplayName("Adding a not-member to a space should cause ResourceNotException")
+    void addSpaceMember_inviteeIsNotMember_ResourceNotException(){
+        long spaceId = 0;
+        String email = "admin@asta.org";
+        UUID currentUserId = UUID.randomUUID();
+        var portResult = new LoadSpacePort.Result("spaceTitle");
+
+        when(loadSpacePort.loadById(spaceId)).thenReturn(portResult);
+        when(checkMemberSpaceAccessPort.checkAccess(currentUserId)).thenReturn(true);
+        when(loadUserIdByEmailPort.loadByEmail(email)).thenThrow(new ResourceNotFoundException(""));
+
+        assertThrows(ResourceNotFoundException.class, ()-> service.addMember(spaceId,email,currentUserId));
+        verify(loadSpacePort).loadById(spaceId);
+        verify(checkMemberSpaceAccessPort).checkAccess(currentUserId);
+        verify(loadUserIdByEmailPort).loadByEmail(email);
+        verifyNoInteractions(addSpaceMemberPort);
+    }
 }
