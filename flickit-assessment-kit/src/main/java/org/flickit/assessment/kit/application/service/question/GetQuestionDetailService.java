@@ -12,6 +12,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpe
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuestionImpactByQuestionPort;
+import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuestionImpactByQuestionPort.AttributeImpact;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,33 +44,34 @@ public class GetQuestionDetailService implements GetQuestionDetailUseCase {
         var answerOptions = loadAnswerOptionsByQuestionPort.loadByQuestionIdAndKitId(param.getQuestionId(), param.getKitId());
         if (answerOptions.isEmpty())
             throw new ResourceNotFoundException(GET_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND);
+
+        var loadedAttributeImpacts = loadQuestionImpactByQuestionPort.loadQuestionImpactByQuestionId(param.getQuestionId());
+
+        var options = answerOptions.stream().map(this::toOption)
+            .toList();
+
         var answerIdToIndexMap = answerOptions.stream()
             .collect(toMap(AnswerOption::getId, AnswerOption::getIndex));
-
-        var portAttributeImpacts = loadQuestionImpactByQuestionPort.loadQuestionImpactByQuestionId(param.getQuestionId());
-        var attributeIds = portAttributeImpacts.stream()
-            .map(LoadQuestionImpactByQuestionPort.AttributeImpact::attributeId)
+        var attributeIds = loadedAttributeImpacts.stream()
+            .map(AttributeImpact::attributeId)
             .toList();
         var attributeIdToTitleMap = loadAllAttributesPort.loadAllByIds(attributeIds).stream()
             .collect(toMap(Attribute::getId, Attribute::getTitle));
-
-        var options = answerOptions.stream().map(this::mapToOption)
-            .toList();
-        var attributeImpacts = portAttributeImpacts.stream()
-            .map(attributeImpact -> mapToAttributeImpact(answerIdToIndexMap, attributeIdToTitleMap, attributeImpact))
+        var attributeImpacts = loadedAttributeImpacts.stream()
+            .map(attributeImpact -> toAttributeImpact(answerIdToIndexMap, attributeIdToTitleMap, attributeImpact))
             .toList();
         return new Result(options, attributeImpacts);
     }
 
-    private Option mapToOption(AnswerOption answerOption) {
+    private Option toOption(AnswerOption answerOption) {
         return new Option(answerOption.getIndex(), answerOption.getTitle());
     }
 
-    private Impact mapToAttributeImpact(Map<Long, Integer> answerIdToIndexMap, Map<Long, String> attributeIdToTitleMap, LoadQuestionImpactByQuestionPort.AttributeImpact attributeImpact) {
+    private Impact toAttributeImpact(Map<Long, Integer> answerIdToIndexMap, Map<Long, String> attributeIdToTitleMap, AttributeImpact attributeImpact) {
         var attributeId = attributeImpact.attributeId();
         var title = attributeIdToTitleMap.get(attributeId);
         var affectedLevels = attributeImpact.affectedLevels().stream()
-            .map(affectedLevel -> mapToAffectedLevel(answerIdToIndexMap, affectedLevel))
+            .map(affectedLevel -> toAffectedLevel(answerIdToIndexMap, affectedLevel))
             .toList();
         return new Impact(attributeId,
             title,
@@ -77,10 +79,10 @@ public class GetQuestionDetailService implements GetQuestionDetailUseCase {
         );
     }
 
-    private AffectedLevel mapToAffectedLevel(Map<Long, Integer> answerIdToIndexMap, LoadQuestionImpactByQuestionPort.AffectedLevel affectedLevel) {
+    private AffectedLevel toAffectedLevel(Map<Long, Integer> answerIdToIndexMap, LoadQuestionImpactByQuestionPort.AffectedLevel affectedLevel) {
         var maturityLevel = affectedLevel.maturityLevel();
         List<OptionValue> optionValues = affectedLevel.optionValues().stream()
-            .map(answer -> mapToOptionValue(answerIdToIndexMap, answer))
+            .map(answer -> toOptionValue(answerIdToIndexMap, answer))
             .toList();
 
         return new AffectedLevel(
@@ -90,7 +92,7 @@ public class GetQuestionDetailService implements GetQuestionDetailUseCase {
         );
     }
 
-    private OptionValue mapToOptionValue(Map<Long, Integer> answerIdToIndexMap, AnswerOptionImpact answer) {
+    private OptionValue toOptionValue(Map<Long, Integer> answerIdToIndexMap, AnswerOptionImpact answer) {
         var id = answer.getOptionId();
         return new OptionValue(id, answerIdToIndexMap.get(id), answer.getValue());
     }
