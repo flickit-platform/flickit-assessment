@@ -36,7 +36,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
@@ -144,10 +145,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public EditKitInfoUseCase.Result update(UpdateKitInfoPort.Param param) {
-        var kitEntity = repository.findById(param.assessmentKitId())
+        var kitEntity = repository.findById(param.kitId())
             .orElseThrow(() -> new ResourceNotFoundException(EDIT_KIT_INFO_KIT_ID_NOT_FOUND));
 
-        var tags = updateKitTags(param.assessmentKitId(), param.tags());
+        var tags = updateKitTags(param.kitId(), param.tags());
 
         var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param);
 
@@ -163,34 +164,28 @@ public class AssessmentKitPersistenceJpaAdapter implements
         );
     }
 
-    private List<KitTag> updateKitTags(Long kitId, List<Long> tags) {
-        var loadedTags = kitTagRepository.findAllByKitId(kitId);
-        if (tags != null && !tags.isEmpty()) {
-            var kitTagRelations = kitTagRelationRepository.findAllByKitId(kitId);
+    private List<KitTag> updateKitTags(Long kitId, Set<Long> tags) {
+        Set<Long> savedTags = kitTagRelationRepository.findAllByKitId(kitId).stream()
+            .map(KitTagRelationJpaEntity::getTagId)
+            .collect(Collectors.toSet());
 
-            var newKitTagIds = tags.stream()
-                .filter(tag -> kitTagRelations.stream().noneMatch(kt -> Objects.equals(kt.getTagId(), tag)))
-                .toList();
-            var toBeSavedKitTagIds = newKitTagIds.stream()
-                .map(newKitTag -> KitTagRelationMapper.toJpaEntity(newKitTag, kitId))
-                .toList();
-            kitTagRelationRepository.saveAll(toBeSavedKitTagIds);
-            List<KitTagJpaEntity> newTags = kitTagRepository.findAllById(newKitTagIds);
-            loadedTags.addAll(newTags);
+        var removedTags = savedTags.stream()
+            .filter(t -> !tags.contains(t))
+            .collect(Collectors.toSet());
 
-            var deletedKitTags = kitTagRelations.stream()
-                .filter(kitTag -> tags.stream().noneMatch(tag -> Objects.equals(tag, kitTag.getTagId())))
-                .toList();
-            var toBeDeletedKitTagIds = deletedKitTags.stream()
-                .map(KitTagRelationJpaEntity::getId)
-                .toList();
-            kitTagRelationRepository.deleteAllById(toBeDeletedKitTagIds);
-            List<Long> deletedTagIds = deletedKitTags.stream()
-                .map(KitTagRelationJpaEntity::getTagId)
-                .toList();
-            loadedTags.removeIf(t -> deletedTagIds.contains(t.getId()));
-        }
-        return loadedTags.stream()
+        var addedTags = tags.stream()
+            .filter(t -> !savedTags.contains(t))
+            .collect(Collectors.toSet());
+
+        kitTagRelationRepository.saveAll(addedTags.stream()
+            .map(tagId -> KitTagRelationMapper.toJpaEntity(tagId, kitId))
+            .collect(Collectors.toSet()));
+
+        kitTagRelationRepository.deleteAllById(removedTags.stream()
+            .map(tagId -> new KitTagRelationJpaEntity.KitTagRelationKey(tagId, kitId))
+            .collect(Collectors.toSet()));
+
+        return kitTagRepository.findAllByKitId(kitId).stream()
             .sorted(Comparator.comparingLong(KitTagJpaEntity::getId))
             .map(i -> new KitTag(i.getId(), i.getTitle()))
             .toList();

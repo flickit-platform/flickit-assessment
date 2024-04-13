@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -72,7 +73,7 @@ public class EditKitInfoService implements EditKitInfoUseCase {
             param.getIsPrivate(),
             param.getPrice(),
             param.getAbout(),
-            param.getTags(),
+            new HashSet<>(param.getTags()),
             param.getCurrentUserId(),
             LocalDateTime.now()
         );

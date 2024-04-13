@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.port.out.assessmentkit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface UpdateKitInfoPort {
@@ -17,7 +17,7 @@ public interface UpdateKitInfoPort {
                  Boolean isPrivate,
                  Double price,
                  String about,
-                 List<Long> tags,
+                 Set<Long> tags,
                  UUID currentUserId,
                  LocalDateTime lastModificationTime) {
     }
