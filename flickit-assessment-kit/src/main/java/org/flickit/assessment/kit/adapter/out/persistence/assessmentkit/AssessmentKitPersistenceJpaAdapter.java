@@ -14,6 +14,7 @@ import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
@@ -39,7 +40,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     LoadKitMinimalInfoPort,
     CreateAssessmentKitPort,
     UpdateKitLastMajorModificationTimePort,
-    CountKitStatsPort {
+    CountKitStatsPort,
+    LoadAssessmentKitPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -126,5 +128,13 @@ public class AssessmentKitPersistenceJpaAdapter implements
             kitStats.getMaturityLevelCount(),
             kitStats.getLikeCount(),
             kitStats.getAssessmentCount());
+    }
+
+    @Override
+    public AssessmentKit load(long kitId) {
+        AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+
+        return AssessmentKitMapper.mapToDomainModel(kitEntity);
     }
 }
