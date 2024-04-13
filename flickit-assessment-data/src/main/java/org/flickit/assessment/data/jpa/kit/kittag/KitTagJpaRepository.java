@@ -8,9 +8,10 @@ import java.util.List;
 public interface KitTagJpaRepository extends JpaRepository<KitTagJpaEntity, Long> {
 
     @Query("""
-            SELECT tag
-            FROM KitTagJpaEntity tag
-            JOIN KitTagRelationJpaEntity kittag ON kittag.tagId = tag.id AND kittag.kitId = :kitId
+            SELECT t
+            FROM KitTagJpaEntity t
+            JOIN KitTagRelationJpaEntity r On t.id = r.tagId
+            WHERE r.kitId = :kitId
         """)
-    List<KitTagJpaEntity> findAllByKitId(Long kitId);
+    List<KitTagJpaEntity> findAllByKitId(long kitId);
 }

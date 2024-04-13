@@ -53,7 +53,7 @@ public class AssessmentKitMapper {
         );
     }
 
-    public static AssessmentKit toDomainModel(AssessmentKitJpaEntity entity) {
+    public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity) {
         return new AssessmentKit(
             entity.getId(),
             entity.getCode(),
@@ -68,7 +68,6 @@ public class AssessmentKitMapper {
             null,
             null,
             null,
-            entity.getKitVersionId()
-        );
+            entity.getKitVersionId());
     }
 }

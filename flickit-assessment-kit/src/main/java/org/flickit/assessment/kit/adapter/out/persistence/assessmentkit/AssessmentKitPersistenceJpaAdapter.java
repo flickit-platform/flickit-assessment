@@ -36,7 +36,6 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
@@ -197,8 +196,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<AssessmentKit> load(Long kitId) {
-        return repository.findById(kitId)
-            .map(AssessmentKitMapper::toDomainModel);
+    public AssessmentKit load(long kitId) {
+        AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+
+        return AssessmentKitMapper.mapToDomainModel(kitEntity);
     }
 }

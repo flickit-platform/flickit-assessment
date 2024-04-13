@@ -8,6 +8,5 @@ import lombok.RequiredArgsConstructor;
 public class KitTag {
 
     private final long id;
-    private final String code;
     private final String title;
 }

@@ -68,6 +68,8 @@ public class ErrorMessageKey {
 
     public static final String GET_KIT_STATS_KIT_ID_NOT_NULL = "get-kit-stats.kitId.notNull";
 
+    public static final String GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL = "get-kit-editable-info.kitId.notNull";
+
     public static final String EDIT_KIT_INFO_KIT_ID_NOT_NULL = "edit-kit-info.kitId.notNull";
     public static final String EDIT_KIT_INFO_TITLE_SIZE_MIN = "edit-kit-info.title.size.min";
     public static final String EDIT_KIT_INFO_TITLE_SIZE_MAX = "edit-kit-info.title.size.max";
