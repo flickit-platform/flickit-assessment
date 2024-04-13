@@ -6,21 +6,20 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.CountKitStatsView;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
-import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
-import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.kittagrelation.KitTagRelationMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
@@ -37,6 +36,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
@@ -50,7 +50,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     CreateAssessmentKitPort,
     UpdateKitLastMajorModificationTimePort,
     CountKitStatsPort,
-    UpdateKitInfoPort {
+    UpdateKitInfoPort,
+    LoadAssessmentKitPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -142,15 +143,15 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public EditKitInfoUseCase.Result update(EditKitInfoUseCase.Param param) {
-        AssessmentKitJpaEntity kitEntity = repository.findById(param.getAssessmentKitId())
+    public EditKitInfoUseCase.Result update(UpdateKitInfoPort.Param param) {
+        var kitEntity = repository.findById(param.assessmentKitId())
             .orElseThrow(() -> new ResourceNotFoundException(EDIT_KIT_INFO_KIT_ID_NOT_FOUND));
 
-        var tags = updateKitTags(param.getAssessmentKitId(), param.getTags());
+        var tags = updateKitTags(param.assessmentKitId(), param.tags());
 
-        AssessmentKitJpaEntity toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param);
+        var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param);
 
-        AssessmentKitJpaEntity updatedEntity = repository.save(toBeUpdatedEntity);
+        var updatedEntity = repository.save(toBeUpdatedEntity);
         return new EditKitInfoUseCase.Result(
             updatedEntity.getTitle(),
             updatedEntity.getSummary(),
@@ -193,5 +194,11 @@ public class AssessmentKitPersistenceJpaAdapter implements
             .sorted(Comparator.comparingLong(KitTagJpaEntity::getId))
             .map(i -> new EditKitInfoUseCase.EditKitInfoTag(i.getId(), i.getTitle()))
             .toList();
+    }
+
+    @Override
+    public Optional<AssessmentKit> load(Long kitId) {
+        return repository.findById(kitId)
+            .map(AssessmentKitMapper::toDomainModel);
     }
 }

@@ -3,8 +3,9 @@ package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -32,22 +33,41 @@ public class AssessmentKitMapper {
         );
     }
 
-    public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, EditKitInfoUseCase.Param param) {
+    public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param) {
         return new AssessmentKitJpaEntity(
             entity.getId(),
             entity.getCode(),
-            param.getTitle() != null ? param.getTitle() : entity.getTitle(),
-            param.getSummary() != null ? param.getSummary() : entity.getSummary(),
-            param.getAbout() != null ? param.getAbout() : entity.getAbout(),
-            param.getIsActive() != null ? param.getIsActive() : entity.getPublished(),
-            param.getIsPrivate() != null ? param.getIsPrivate() : entity.getIsPrivate(),
+            param.title() != null ? param.title() : entity.getTitle(),
+            param.summary() != null ? param.summary() : entity.getSummary(),
+            param.about() != null ? param.about() : entity.getAbout(),
+            param.isActive() != null ? param.isActive() : entity.getPublished(),
+            param.isPrivate() != null ? param.isPrivate() : entity.getIsPrivate(),
             entity.getExpertGroupId(),
             entity.getCreationTime(),
-            entity.getLastModificationTime(),
+            param.lastModificationTime(),
             entity.getCreatedBy(),
-            param.getCurrentUserId(),
+            param.currentUserId(),
             entity.getAccessGrantedUsers(),
             entity.getLastMajorModificationTime(),
+            entity.getKitVersionId()
+        );
+    }
+
+    public static AssessmentKit toDomainModel(AssessmentKitJpaEntity entity) {
+        return new AssessmentKit(
+            entity.getId(),
+            entity.getCode(),
+            entity.getTitle(),
+            entity.getSummary(),
+            entity.getAbout(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime(),
+            entity.getPublished(),
+            entity.getIsPrivate(),
+            entity.getExpertGroupId(),
+            null,
+            null,
+            null,
             entity.getKitVersionId()
         );
     }
