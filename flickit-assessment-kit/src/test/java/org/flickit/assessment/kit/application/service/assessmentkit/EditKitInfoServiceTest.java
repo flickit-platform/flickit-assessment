@@ -116,7 +116,7 @@ class EditKitInfoServiceTest {
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
 
-        assertEquals(KIT_ID, portParam.getValue().assessmentKitId());
+        assertEquals(KIT_ID, portParam.getValue().kitId());
         assertEquals(newTitle, portParam.getValue().title());
         assertEquals(newTitle, serviceResult.title());
     }
@@ -137,7 +137,7 @@ class EditKitInfoServiceTest {
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
 
-        assertEquals(KIT_ID, portParam.getValue().assessmentKitId());
+        assertEquals(KIT_ID, portParam.getValue().kitId());
         assertEquals(newSummary, portParam.getValue().summary());
         assertEquals(newSummary, serviceResult.summary());
     }
@@ -158,7 +158,7 @@ class EditKitInfoServiceTest {
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
 
-        assertEquals(KIT_ID, portParam.getValue().assessmentKitId());
+        assertEquals(KIT_ID, portParam.getValue().kitId());
         assertEquals(newIsActive, portParam.getValue().isActive());
         assertEquals(newIsActive, serviceResult.isActive());
     }
@@ -179,7 +179,7 @@ class EditKitInfoServiceTest {
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
 
-        assertEquals(KIT_ID, portParam.getValue().assessmentKitId());
+        assertEquals(KIT_ID, portParam.getValue().kitId());
         assertEquals(newIsPrivate, portParam.getValue().isPrivate());
         assertEquals(newIsPrivate, serviceResult.isPrivate());
     }
@@ -200,7 +200,7 @@ class EditKitInfoServiceTest {
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
 
-        assertEquals(KIT_ID, portParam.getValue().assessmentKitId());
+        assertEquals(KIT_ID, portParam.getValue().kitId());
         assertEquals(newPrice, portParam.getValue().price());
         assertEquals(PRICE, serviceResult.price());
     }
@@ -221,7 +221,7 @@ class EditKitInfoServiceTest {
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
 
-        assertEquals(KIT_ID, portParam.getValue().assessmentKitId());
+        assertEquals(KIT_ID, portParam.getValue().kitId());
         assertEquals(newAbout, portParam.getValue().about());
         assertEquals(newAbout, serviceResult.about());
     }
@@ -243,7 +243,7 @@ class EditKitInfoServiceTest {
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
 
-        assertEquals(KIT_ID, portParam.getValue().assessmentKitId());
+        assertEquals(KIT_ID, portParam.getValue().kitId());
         assertIterableEquals(newTags, portParam.getValue().tags());
         assertEquals(newTags.size(), serviceResult.tags().size());
         assertEquals(newTags.get(0), serviceResult.tags().get(0).getId());

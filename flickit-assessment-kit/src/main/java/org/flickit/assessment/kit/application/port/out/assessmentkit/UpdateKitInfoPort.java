@@ -10,7 +10,7 @@ public interface UpdateKitInfoPort {
 
     EditKitInfoUseCase.Result update(Param param);
 
-    record Param(Long assessmentKitId,
+    record Param(Long kitId,
                  String title,
                  String summary,
                  Boolean isActive,
