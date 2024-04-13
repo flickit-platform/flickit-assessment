@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.CheckKitExistByIdPort;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.attribute.GetAttrLevelQuestionsInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
@@ -15,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -22,22 +26,25 @@ public class GetAttrLevelQuestionsInfoService implements GetAttrLevelQuestionsIn
 
     private final CheckAttributeExistByAttributeIdAndKitIdPort checkAttrExistByAttIdAndKitIdPort;
     private final CheckMaturityLevelExistByLevelIdAndKitIdPort checkLevelExistByLevelIdAndKitIdPort;
+    private final CheckKitExistByIdPort checkKitExistByIdPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final LoadAttrLevelQuestionsInfoPort loadAttrLevelQuestionsInfoPort;
 
     @Override
     public Result getAttrLevelQuestionsInfo(Param param) {
-        ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
+        if (!checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId()))
+            throw new ResourceNotFoundException(KIT_ID_NOT_FOUND);
 
+        ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
-            throw new AccessDeniedException("");
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (!checkAttrExistByAttIdAndKitIdPort.checkAttrExistsByAttrIdAndKitId(param.getAttributeId(), param.getKitId()))
-            throw new ResourceNotFoundException("");
+            throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
         if (!checkLevelExistByLevelIdAndKitIdPort.checkLevelExistByLevelIdAndKitIdPort(param.getMaturityLevelId(), param.getKitId()))
-            throw new ResourceNotFoundException("");
+            throw new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND);
 
         LoadAttrLevelQuestionsInfoPort.Result attrLevelQuestionsInfo =
             loadAttrLevelQuestionsInfoPort.loadAttrLevelQuestionsInfo(param.getAttributeId(), param.getMaturityLevelId());
@@ -55,6 +62,5 @@ public class GetAttrLevelQuestionsInfoService implements GetAttrLevelQuestionsIn
             attrLevelQuestionsInfo.index(),
             attrLevelQuestionsInfo.questionsCount(),
             questions);
-
     }
 }

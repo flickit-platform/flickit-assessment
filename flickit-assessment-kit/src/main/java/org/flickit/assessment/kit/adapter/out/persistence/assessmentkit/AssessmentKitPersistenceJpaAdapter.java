@@ -41,7 +41,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     CreateAssessmentKitPort,
     UpdateKitLastMajorModificationTimePort,
     CountKitStatsPort,
-    LoadAssessmentKitPort {
+    LoadAssessmentKitPort,
+    CheckKitExistByIdPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -136,5 +137,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         return AssessmentKitMapper.mapToDomainModel(kitEntity);
+    }
+
+    @Override
+    public boolean checkKitExistByIdPort(Long kitId) {
+        return repository.existsById(kitId);
     }
 }
