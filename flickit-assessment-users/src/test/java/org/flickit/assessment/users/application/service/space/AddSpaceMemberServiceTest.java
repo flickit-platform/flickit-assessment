@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.out.space.CheckMemberSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.users.application.port.out.space.AddSpaceMemberPort;
@@ -69,6 +70,24 @@ class AddSpaceMemberServiceTest {
         assertThrows(ResourceNotFoundException.class, ()-> service.addMember(spaceId,email,currentUserId));
         verify(loadSpacePort).loadById(spaceId);
         verifyNoInteractions(checkMemberSpaceAccessPort);
+        verifyNoInteractions(loadUserIdByEmailPort);
+        verifyNoInteractions(addSpaceMemberPort);
+    }
+
+    @Test
+    @DisplayName("Adding a member to an invalid space should cause ResourceNotFoundException")
+    void addSpaceMember_inviterIsNotSpaceMember_ValidationException(){
+        long spaceId = 0;
+        String email = "admin@asta.org";
+        UUID currentUserId = UUID.randomUUID();
+        var portResult = new LoadSpacePort.Result("spaceTitle");
+
+        when(loadSpacePort.loadById(spaceId)).thenReturn(portResult);
+        when(checkMemberSpaceAccessPort.checkAccess(currentUserId)).thenReturn(false);
+
+        assertThrows(ValidationException.class, ()-> service.addMember(spaceId,email,currentUserId));
+        verify(loadSpacePort).loadById(spaceId);
+        verify(checkMemberSpaceAccessPort).checkAccess(currentUserId);
         verifyNoInteractions(loadUserIdByEmailPort);
         verifyNoInteractions(addSpaceMemberPort);
     }
