@@ -10,7 +10,6 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInf
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
@@ -27,7 +26,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,9 +39,6 @@ class UpdateKitInfoServiceTest {
 
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
-
-    @Mock
-    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Mock
     private UpdateKitInfoPort updateKitInfoPort;
@@ -62,7 +57,8 @@ class UpdateKitInfoServiceTest {
     private static final Double PRICE = 0D;
     private static final String ABOUT = "about";
     private static final KitTag EDIT_KIT_INFO_TAG = new KitTag(2L, "tag title");
-    private static final UUID CURRENT_USER_ID = UUID.randomUUID();
+    private static final ExpertGroup EXPERT_GROUP = ExpertGroupMother.createExpertGroup();
+    private static final UUID CURRENT_USER_ID = EXPERT_GROUP.getOwnerId();
 
     @Test
     void testUpdateKitInfo_KitNotFound_ErrorMessage() {
@@ -76,25 +72,11 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_ExpertGroupNotFound_ErrorMessage() {
-        var param = new Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
-
-        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
-
-        var throwable = assertThrows(ResourceNotFoundException.class,
-            () -> service.updateKitInfo(param));
-        assertThat(throwable).hasMessage(EXPERT_GROUP_ID_NOT_FOUND);
-    }
-
-    @Test
     void testUpdateKitInfo_CurrentUserNotAllowed_ErrorMessage() {
-        var param = new Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
+        UUID currentUserId = UUID.randomUUID();
+        var param = new Param(KIT_ID, TITLE, null, null, null, null, null, null, currentUserId);
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(UUID.randomUUID());
+        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(EXPERT_GROUP);
 
         var throwable = assertThrows(AccessDeniedException.class,
             () -> service.updateKitInfo(param));
@@ -106,10 +88,8 @@ class UpdateKitInfoServiceTest {
         String newTitle = "new title";
         var param = new Param(KIT_ID, newTitle, null, null, null, null, null, null, CURRENT_USER_ID);
         var result = new Result(newTitle, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(EXPERT_GROUP);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
         Result serviceResult = service.updateKitInfo(param);
@@ -127,10 +107,8 @@ class UpdateKitInfoServiceTest {
         String newSummary = "new summary";
         var param = new Param(KIT_ID, null, newSummary, null, null, null, null, null, CURRENT_USER_ID);
         var result = new Result(TITLE, newSummary, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(EXPERT_GROUP);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
         Result serviceResult = service.updateKitInfo(param);
@@ -148,10 +126,8 @@ class UpdateKitInfoServiceTest {
         Boolean newPublished = !PUBLISHED;
         var param = new Param(KIT_ID, null, null, newPublished, null, null, null, null, CURRENT_USER_ID);
         var result = new Result(TITLE, SUMMARY, newPublished, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(EXPERT_GROUP);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
         Result serviceResult = service.updateKitInfo(param);
@@ -169,10 +145,8 @@ class UpdateKitInfoServiceTest {
         Boolean newIsPrivate = !PUBLISHED;
         var param = new Param(KIT_ID, null, null, null, newIsPrivate, null, null, null, CURRENT_USER_ID);
         var result = new Result(TITLE, SUMMARY, PUBLISHED, newIsPrivate, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(EXPERT_GROUP);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
         Result serviceResult = service.updateKitInfo(param);
@@ -190,10 +164,8 @@ class UpdateKitInfoServiceTest {
         Double newPrice = 2D;
         var param = new Param(KIT_ID, null, null, null, null, newPrice, null, null, CURRENT_USER_ID);
         var result = new Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(EXPERT_GROUP);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
         Result serviceResult = service.updateKitInfo(param);
@@ -211,10 +183,8 @@ class UpdateKitInfoServiceTest {
         String newAbout = "new about";
         var param = new Param(KIT_ID, null, null, null, null, null, newAbout, null, CURRENT_USER_ID);
         var result = new Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, newAbout, List.of(EDIT_KIT_INFO_TAG));
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(EXPERT_GROUP);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
         Result serviceResult = service.updateKitInfo(param);
@@ -233,10 +203,8 @@ class UpdateKitInfoServiceTest {
         List<Long> newTags = List.of(3L);
         var param = new Param(KIT_ID, null, null, null, null, null, null, newTags, CURRENT_USER_ID);
         var result = new Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(newUpdateKitInfoTag));
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(EXPERT_GROUP);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
         Result serviceResult = service.updateKitInfo(param);
@@ -258,10 +226,8 @@ class UpdateKitInfoServiceTest {
             KitTagMother.createKitTag("security")
         );
         var param = new Param(assessmentKit.getId(), null, null, null, null, null, null, null, CURRENT_USER_ID);
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(assessmentKit.getId())).thenReturn(expertGroup);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(assessmentKit.getId())).thenReturn(EXPERT_GROUP);
         when(loadKitPort.load(assessmentKit.getId())).thenReturn(assessmentKit);
         when(loadKitTagsListPort.load(assessmentKit.getId())).thenReturn(kitTags);
 
@@ -277,5 +243,4 @@ class UpdateKitInfoServiceTest {
         assertEquals(assessmentKit.getAbout(), serviceResult.about());
         assertEquals(kitTags.size(), serviceResult.tags().size());
     }
-
 }

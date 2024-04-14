@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInf
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +26,6 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class UpdateKitInfoService implements UpdateKitInfoUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
-    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final UpdateKitInfoPort updateKitInfoPort;
     private final LoadAssessmentKitPort loadKitPort;
     private final LoadKitTagsListPort loadKitTagsListPort;
@@ -47,9 +45,8 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
     }
 
     private void validateCurrentUser(Long kitId, UUID currentUserId) {
-        Long expertGroupId = loadKitExpertGroupPort.loadKitExpertGroup(kitId).getId();
-        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId);
-        if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
+        var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(kitId);
+        if (!Objects.equals(expertGroup.getOwnerId(), currentUserId)) {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
     }
@@ -73,7 +70,7 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             param.getIsPrivate(),
             param.getPrice(),
             param.getAbout(),
-            new HashSet<>(param.getTags()),
+            param.getTags() != null ? new HashSet<>(param.getTags()) : new HashSet<>(),
             param.getCurrentUserId(),
             LocalDateTime.now()
         );
