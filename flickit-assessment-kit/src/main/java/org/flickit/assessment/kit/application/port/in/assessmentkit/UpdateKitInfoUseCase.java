@@ -13,9 +13,9 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
-public interface EditKitInfoUseCase {
+public interface UpdateKitInfoUseCase {
 
-    Result editKitInfo(Param param);
+    Result updateKitInfo(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

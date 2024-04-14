@@ -5,7 +5,8 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitTag;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase.Result;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
@@ -33,10 +34,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class EditKitInfoServiceTest {
+class UpdateKitInfoServiceTest {
 
     @InjectMocks
-    private EditKitInfoService service;
+    private UpdateKitInfoService service;
 
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
@@ -64,54 +65,54 @@ class EditKitInfoServiceTest {
     private static final UUID CURRENT_USER_ID = UUID.randomUUID();
 
     @Test
-    void testEditKitInfo_KitNotFound_ErrorMessage() {
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
+    void testUpdateKitInfo_KitNotFound_ErrorMessage() {
+        var param = new Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class,
-            () -> service.editKitInfo(param));
+            () -> service.updateKitInfo(param));
         assertThat(throwable).hasMessage(KIT_ID_NOT_FOUND);
     }
 
     @Test
-    void testEditKitInfo_ExpertGroupNotFound_ErrorMessage() {
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
+    void testUpdateKitInfo_ExpertGroupNotFound_ErrorMessage() {
+        var param = new Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class,
-            () -> service.editKitInfo(param));
+            () -> service.updateKitInfo(param));
         assertThat(throwable).hasMessage(EXPERT_GROUP_ID_NOT_FOUND);
     }
 
     @Test
-    void testEditKitInfo_CurrentUserNotAllowed_ErrorMessage() {
-        var param = new EditKitInfoUseCase.Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
+    void testUpdateKitInfo_CurrentUserNotAllowed_ErrorMessage() {
+        var param = new Param(KIT_ID, TITLE, null, null, null, null, null, null, CURRENT_USER_ID);
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class,
-            () -> service.editKitInfo(param));
+            () -> service.updateKitInfo(param));
         assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
     @Test
-    void testEditKitInfo_EditTitle_ValidResults() {
+    void testUpdateKitInfo_EditTitle_ValidResults() {
         String newTitle = "new title";
-        var param = new EditKitInfoUseCase.Param(KIT_ID, newTitle, null, null, null, null, null, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(newTitle, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
+        var param = new Param(KIT_ID, newTitle, null, null, null, null, null, null, CURRENT_USER_ID);
+        var result = new Result(newTitle, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
-        EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
+        Result serviceResult = service.updateKitInfo(param);
 
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
@@ -122,17 +123,17 @@ class EditKitInfoServiceTest {
     }
 
     @Test
-    void testEditKitInfo_EditSummary_ValidResults() {
+    void testUpdateKitInfo_EditSummary_ValidResults() {
         String newSummary = "new summary";
-        var param = new EditKitInfoUseCase.Param(KIT_ID, null, newSummary, null, null, null, null, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, newSummary, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
+        var param = new Param(KIT_ID, null, newSummary, null, null, null, null, null, CURRENT_USER_ID);
+        var result = new Result(TITLE, newSummary, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
-        EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
+        Result serviceResult = service.updateKitInfo(param);
 
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
@@ -143,17 +144,17 @@ class EditKitInfoServiceTest {
     }
 
     @Test
-    void testEditKitInfo_EditPublished_ValidResults() {
+    void testUpdateKitInfo_EditPublished_ValidResults() {
         Boolean newPublished = !PUBLISHED;
-        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, newPublished, null, null, null, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, newPublished, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
+        var param = new Param(KIT_ID, null, null, newPublished, null, null, null, null, CURRENT_USER_ID);
+        var result = new Result(TITLE, SUMMARY, newPublished, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
-        EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
+        Result serviceResult = service.updateKitInfo(param);
 
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
@@ -164,17 +165,17 @@ class EditKitInfoServiceTest {
     }
 
     @Test
-    void testEditKitInfo_EditIsPrivate_ValidResults() {
+    void testUpdateKitInfo_EditIsPrivate_ValidResults() {
         Boolean newIsPrivate = !PUBLISHED;
-        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, newIsPrivate, null, null, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, PUBLISHED, newIsPrivate, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
+        var param = new Param(KIT_ID, null, null, null, newIsPrivate, null, null, null, CURRENT_USER_ID);
+        var result = new Result(TITLE, SUMMARY, PUBLISHED, newIsPrivate, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
-        EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
+        Result serviceResult = service.updateKitInfo(param);
 
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
@@ -185,17 +186,17 @@ class EditKitInfoServiceTest {
     }
 
     @Test
-    void testEditKitInfo_EditPrice_ValidResults() {
+    void testUpdateKitInfo_EditPrice_ValidResults() {
         Double newPrice = 2D;
-        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, null, newPrice, null, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
+        var param = new Param(KIT_ID, null, null, null, null, newPrice, null, null, CURRENT_USER_ID);
+        var result = new Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
-        EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
+        Result serviceResult = service.updateKitInfo(param);
 
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
@@ -206,17 +207,17 @@ class EditKitInfoServiceTest {
     }
 
     @Test
-    void testEditKitInfo_EditAbout_ValidResults() {
+    void testUpdateKitInfo_EditAbout_ValidResults() {
         String newAbout = "new about";
-        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, null, null, newAbout, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, newAbout, List.of(EDIT_KIT_INFO_TAG));
+        var param = new Param(KIT_ID, null, null, null, null, null, newAbout, null, CURRENT_USER_ID);
+        var result = new Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, newAbout, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
-        EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
+        Result serviceResult = service.updateKitInfo(param);
 
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
@@ -227,18 +228,18 @@ class EditKitInfoServiceTest {
     }
 
     @Test
-    void testEditKitInfo_EditTags_ValidResults() {
-        var newEditKitInfoTag = new KitTag(3L, "new tag title");
+    void testUpdateKitInfo_EditTags_ValidResults() {
+        var newUpdateKitInfoTag = new KitTag(3L, "new tag title");
         List<Long> newTags = List.of(3L);
-        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, null, null, null, newTags, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(newEditKitInfoTag));
+        var param = new Param(KIT_ID, null, null, null, null, null, null, newTags, CURRENT_USER_ID);
+        var result = new Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(newUpdateKitInfoTag));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroup.getId())).thenReturn(CURRENT_USER_ID);
         when(updateKitInfoPort.update(any())).thenReturn(result);
 
-        EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
+        Result serviceResult = service.updateKitInfo(param);
 
         ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
@@ -250,13 +251,13 @@ class EditKitInfoServiceTest {
     }
 
     @Test
-    void testEditKitInfo_EditNothing_ValidResults() {
+    void testUpdateKitInfo_EditNothing_ValidResults() {
         AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
         List<KitTag> kitTags = List.of(
             KitTagMother.createKitTag("software"),
             KitTagMother.createKitTag("security")
         );
-        var param = new EditKitInfoUseCase.Param(assessmentKit.getId(), null, null, null, null, null, null, null, CURRENT_USER_ID);
+        var param = new Param(assessmentKit.getId(), null, null, null, null, null, null, null, CURRENT_USER_ID);
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(assessmentKit.getId())).thenReturn(expertGroup);
@@ -264,7 +265,7 @@ class EditKitInfoServiceTest {
         when(loadKitPort.load(assessmentKit.getId())).thenReturn(assessmentKit);
         when(loadKitTagsListPort.load(assessmentKit.getId())).thenReturn(kitTags);
 
-        EditKitInfoUseCase.Result serviceResult = service.editKitInfo(param);
+        Result serviceResult = service.updateKitInfo(param);
 
         verify(updateKitInfoPort, never()).update(any());
 

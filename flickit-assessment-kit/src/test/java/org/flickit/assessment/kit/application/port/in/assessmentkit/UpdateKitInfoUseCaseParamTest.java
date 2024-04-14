@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase.Param;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,7 +16,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-class EditKitInfoUseCaseParamTest {
+class UpdateKitInfoUseCaseParamTest {
 
     private static final Long KIT_ID = 1L;
     private static final String TITLE = "title";
@@ -34,58 +35,58 @@ class EditKitInfoUseCaseParamTest {
     private static final UUID CURRENT_USER_ID = UUID.randomUUID();
 
     @Test
-    void testEditKitInfo_kitIdIsNull_ErrorMessage() {
+    void testUpdateKitInfo_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(null, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(null, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("kitId: " + EDIT_KIT_INFO_KIT_ID_NOT_NULL);
     }
 
     @Test
-    void testEditKitInfo_TitleIsLessThanLimit_ErrorMessage() {
+    void testUpdateKitInfo_TitleIsLessThanLimit_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, MIN_TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(KIT_ID, MIN_TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("title: " + EDIT_KIT_INFO_TITLE_SIZE_MIN);
     }
 
     @Test
-    void testEditKitInfo_TitleIsMoreThanLimit_ErrorMessage() {
+    void testUpdateKitInfo_TitleIsMoreThanLimit_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, MAX_TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(KIT_ID, MAX_TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("title: " + EDIT_KIT_INFO_TITLE_SIZE_MAX);
     }
 
     @Test
-    void testEditKitInfo_SummaryIsLessThanLimit_ErrorMessage() {
+    void testUpdateKitInfo_SummaryIsLessThanLimit_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, MIN_SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(KIT_ID, TITLE, MIN_SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("summary: " + EDIT_KIT_INFO_SUMMARY_SIZE_MIN);
     }
 
     @Test
-    void testEditKitInfo_SummaryIsMoreThanLimit_ErrorMessage() {
+    void testUpdateKitInfo_SummaryIsMoreThanLimit_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, MAX_SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(KIT_ID, TITLE, MAX_SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("summary: " + EDIT_KIT_INFO_SUMMARY_SIZE_MAX);
     }
 
     @Test
-    void testEditKitInfo_AboutIsLessThanLimit_ErrorMessage() {
+    void testUpdateKitInfo_AboutIsLessThanLimit_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, MIN_ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, MIN_ABOUT, TAGS, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("about: " + EDIT_KIT_INFO_ABOUT_SIZE_MIN);
     }
 
     @Test
-    void testEditKitInfo_AboutIsMoreThanLimit_ErrorMessage() {
+    void testUpdateKitInfo_AboutIsMoreThanLimit_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, MAX_ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, MAX_ABOUT, TAGS, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("about: " + EDIT_KIT_INFO_ABOUT_SIZE_MAX);
     }
 
     @Test
-    void testEditKitInfo_CurrentUserIdIsNull_ErrorMessage() {
+    void testUpdateKitInfo_CurrentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new EditKitInfoUseCase.Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, null));
+            () -> new Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }

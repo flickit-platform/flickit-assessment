@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitTag;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
@@ -24,7 +24,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class EditKitInfoService implements EditKitInfoUseCase {
+public class UpdateKitInfoService implements UpdateKitInfoUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
@@ -33,7 +33,7 @@ public class EditKitInfoService implements EditKitInfoUseCase {
     private final LoadKitTagsListPort loadKitTagsListPort;
 
     @Override
-    public Result editKitInfo(Param param) {
+    public Result updateKitInfo(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
         if (containsNonNullParam(param)) {
             return updateKitInfoPort.update(toPortParam(param));

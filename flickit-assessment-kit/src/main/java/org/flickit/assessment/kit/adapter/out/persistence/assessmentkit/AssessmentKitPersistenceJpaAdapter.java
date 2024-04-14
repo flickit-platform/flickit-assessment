@@ -23,9 +23,9 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitTag;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.EditKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
 import org.springframework.data.domain.Page;
@@ -144,7 +144,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public EditKitInfoUseCase.Result update(UpdateKitInfoPort.Param param) {
+    public UpdateKitInfoUseCase.Result update(UpdateKitInfoPort.Param param) {
         var kitEntity = repository.findById(param.kitId())
             .orElseThrow(() -> new ResourceNotFoundException(EDIT_KIT_INFO_KIT_ID_NOT_FOUND));
 
@@ -153,7 +153,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param);
 
         var updatedEntity = repository.save(toBeUpdatedEntity);
-        return new EditKitInfoUseCase.Result(
+        return new UpdateKitInfoUseCase.Result(
             updatedEntity.getTitle(),
             updatedEntity.getSummary(),
             updatedEntity.getPublished(),
