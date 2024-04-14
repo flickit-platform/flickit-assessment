@@ -1,10 +1,12 @@
 package org.flickit.assessment.kit.application.service.questionnaire;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.questionnaire.GetKitQuestionnaireDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
+import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +23,7 @@ import static org.mockito.Mockito.when;
 class GetQuestionnaireServiceTest {
 
     @InjectMocks
-    private GetKitQuestionnaireDetailService getQuestionnaireService;
+    private GetKitQuestionnaireDetailService service;
 
     @Mock
     private LoadKitQuestionnaireDetailPort loadKitQuestionnaireDetailPort;
@@ -31,31 +33,6 @@ class GetQuestionnaireServiceTest {
 
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
-
-    @Test
-    void testGetQuestionnaire_ValidInput_ValidResult() {
-        Long kitId = 1L;
-        Long questionnaireId = 2L;
-        long expertGroupId = 3L;
-        UUID currentUserId = UUID.randomUUID();
-
-        GetKitQuestionnaireDetailUseCase.Param param = new GetKitQuestionnaireDetailUseCase.Param(kitId,
-            questionnaireId,
-            currentUserId);
-
-        LoadKitQuestionnaireDetailPort.Result result = new LoadKitQuestionnaireDetailPort.Result(5,
-            List.of("team"),
-            "desc",
-            List.of(new LoadKitQuestionnaireDetailPort.Result.Question(1L, "title", 1, Boolean.TRUE)));
-
-        when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, currentUserId)).thenReturn(true);
-        when(loadKitQuestionnaireDetailPort.loadKitQuestionnaireDetail(questionnaireId, kitId)).thenReturn(result);
-
-        LoadKitQuestionnaireDetailPort.Result questionnaire = getQuestionnaireService.getKitQuestionnaireDetail(param);
-
-        assertNotNull(questionnaire);
-    }
 
     @Test
     void testGetQuestionnaire_CurrentUserIsNotMemberOfExpertGroup_ThrowsException() {
@@ -71,6 +48,43 @@ class GetQuestionnaireServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, currentUserId)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> getQuestionnaireService.getKitQuestionnaireDetail(param));
+        assertThrows(AccessDeniedException.class, () -> service.getKitQuestionnaireDetail(param));
+    }
+
+    @Test
+    void testGetQuestionnaire_ValidInput_ValidResult() {
+        long kitId = 1L;
+        long questionnaireId = 2L;
+        long expertGroupId = 3L;
+        UUID currentUserId = UUID.randomUUID();
+
+        GetKitQuestionnaireDetailUseCase.Param param = new GetKitQuestionnaireDetailUseCase.Param(kitId,
+            questionnaireId,
+            currentUserId);
+
+        Question question = QuestionMother.createQuestion("qCode",
+            "qTitle",
+            1,
+            "qHint",
+            true,
+            true,
+            1L);
+
+        var expectedResult = new LoadKitQuestionnaireDetailPort.Result(5,
+            List.of("team"),
+            "desc",
+            List.of(question));
+
+        when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, currentUserId)).thenReturn(true);
+        when(loadKitQuestionnaireDetailPort.loadKitQuestionnaireDetail(questionnaireId, kitId)).thenReturn(expectedResult);
+
+        GetKitQuestionnaireDetailUseCase.Result actualResult = service.getKitQuestionnaireDetail(param);
+
+        assertNotNull(actualResult);
+        assertEquals(expectedResult.description(), actualResult.description());
+        assertEquals(expectedResult.questionsCount(), actualResult.questionsCount());
+        assertEquals(expectedResult.questions(), actualResult.questions());
+        assertEquals(expectedResult.relatedSubjects(), actualResult.relatedSubjects());
     }
 }

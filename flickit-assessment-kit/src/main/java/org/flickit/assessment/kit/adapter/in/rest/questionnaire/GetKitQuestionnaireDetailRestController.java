@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.adapter.in.rest.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.questionnaire.GetKitQuestionnaireDetailUseCase;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort.Result;
+import org.flickit.assessment.kit.application.port.in.questionnaire.GetKitQuestionnaireDetailUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,9 +33,18 @@ public class GetKitQuestionnaireDetailRestController {
     }
 
     private GetKitQuestionnaireDetailResponseDto toResponseDto(Result result) {
+        var questions = result.questions().stream()
+            .map(e -> new GetKitQuestionnaireDetailResponseDto.Question(e.getId(),
+                e.getTitle(),
+                e.getIndex(),
+                e.getMayNotBeApplicable(),
+                e.getHint(),
+                e.getAdvisable()))
+            .toList();
+
         return new GetKitQuestionnaireDetailResponseDto(result.questionsCount(),
             result.relatedSubjects(),
             result.description(),
-            result.questions());
+            questions);
     }
 }

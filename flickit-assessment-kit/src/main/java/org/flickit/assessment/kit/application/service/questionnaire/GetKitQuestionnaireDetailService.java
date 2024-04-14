@@ -6,7 +6,6 @@ import org.flickit.assessment.kit.application.port.in.questionnaire.GetKitQuesti
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort.Result;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +26,11 @@ public class GetKitQuestionnaireDetailService implements GetKitQuestionnaireDeta
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())) {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
-        return port.loadKitQuestionnaireDetail(param.getQuestionnaireId(), param.getKitId());
+        var kitQuestionnaireDetail = port.loadKitQuestionnaireDetail(param.getQuestionnaireId(), param.getKitId());
+
+        return new Result(kitQuestionnaireDetail.questionsCount(),
+            kitQuestionnaireDetail.relatedSubjects(),
+            kitQuestionnaireDetail.description(),
+            kitQuestionnaireDetail.questions());
     }
 }

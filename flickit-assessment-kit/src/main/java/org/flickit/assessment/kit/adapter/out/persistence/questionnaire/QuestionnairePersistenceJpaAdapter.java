@@ -8,6 +8,8 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
+import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
+import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
@@ -56,8 +58,8 @@ public class QuestionnairePersistenceJpaAdapter implements
             .map(SubjectJpaEntity::getTitle)
             .toList();
 
-        List<Result.Question> questions = questionEntities.stream()
-            .map(e -> new Result.Question(e.getId(), e.getTitle(), e.getIndex(), e.getMayNotBeApplicable()))
+        List<Question> questions = questionEntities.stream()
+            .map(QuestionMapper::mapToDomainModel)
             .toList();
 
         return new Result(questionEntities.size(), relatedSubjects, questionnaireEntity.getDescription(), questions);
