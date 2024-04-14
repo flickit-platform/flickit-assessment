@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,75 +17,105 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class UpdateKitInfoUseCaseParamTest {
 
-    private static final Long KIT_ID = 1L;
-    private static final String TITLE = "title";
-    private static final String MIN_TITLE = "t";
-    private static final String MAX_TITLE = RandomStringUtils.randomAlphabetic(51);
-    private static final String SUMMARY = "summary";
-    private static final String MIN_SUMMARY = "s";
-    private static final String MAX_SUMMARY = RandomStringUtils.randomAlphabetic(201);
-    private static final Boolean IS_ACTIVE = Boolean.TRUE;
-    private static final Boolean IS_PRIVATE = Boolean.FALSE;
-    private static final Double PRICE = 0D;
-    private static final String ABOUT = "about";
-    private static final String MIN_ABOUT = "a";
-    private static final String MAX_ABOUT = RandomStringUtils.randomAlphabetic(1001);
-    private static final List<Long> TAGS = List.of(2L, 3L);
-    private static final UUID CURRENT_USER_ID = UUID.randomUUID();
-
     @Test
     void testUpdateKitInfo_kitIdIsNull_ErrorMessage() {
+        String title = "title";
+        String summary = "SUMMARY";
+        String about = "about";
+        UUID currentUserId = UUID.randomUUID();
+
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(null, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(null, title, summary, null, null, null, about, null, currentUserId));
         assertThat(throwable).hasMessage("kitId: " + EDIT_KIT_INFO_KIT_ID_NOT_NULL);
     }
 
     @Test
     void testUpdateKitInfo_TitleIsLessThanLimit_ErrorMessage() {
+        Long kitId = 1L;
+        String summary = "SUMMARY";
+        String minTitle = "t";
+        String about = "about";
+        UUID currentUserId = UUID.randomUUID();
+
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(KIT_ID, MIN_TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(kitId, minTitle, summary, null, null, null, about, null, currentUserId));
         assertThat(throwable).hasMessage("title: " + EDIT_KIT_INFO_TITLE_SIZE_MIN);
     }
 
     @Test
     void testUpdateKitInfo_TitleIsMoreThanLimit_ErrorMessage() {
+        Long kitId = 1L;
+        String summary = "SUMMARY";
+        String maxTitle = RandomStringUtils.randomAlphabetic(51);
+        String about = "about";
+        UUID currentUserId = UUID.randomUUID();
+
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(KIT_ID, MAX_TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(kitId, maxTitle, summary, null, null, null, about, null, currentUserId));
         assertThat(throwable).hasMessage("title: " + EDIT_KIT_INFO_TITLE_SIZE_MAX);
     }
 
     @Test
     void testUpdateKitInfo_SummaryIsLessThanLimit_ErrorMessage() {
+        Long kitId = 1L;
+        String title = "title";
+        String minSummary = "s";
+        String about = "about";
+        UUID currentUserId = UUID.randomUUID();
+
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(KIT_ID, TITLE, MIN_SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(kitId, title, minSummary, null, null, null, about, null, currentUserId));
         assertThat(throwable).hasMessage("summary: " + EDIT_KIT_INFO_SUMMARY_SIZE_MIN);
     }
 
     @Test
     void testUpdateKitInfo_SummaryIsMoreThanLimit_ErrorMessage() {
+        Long kitId = 1L;
+        String title = "title";
+        String maxSummary = RandomStringUtils.randomAlphabetic(201);
+        String about = "about";
+        UUID currentUserId = UUID.randomUUID();
+
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(KIT_ID, TITLE, MAX_SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(kitId, title, maxSummary, null, null, null, about, null, currentUserId));
         assertThat(throwable).hasMessage("summary: " + EDIT_KIT_INFO_SUMMARY_SIZE_MAX);
     }
 
     @Test
     void testUpdateKitInfo_AboutIsLessThanLimit_ErrorMessage() {
+        Long kitId = 1L;
+        String title = "title";
+        String summary = "SUMMARY";
+        String minAbout = "a";
+        UUID currentUserId = UUID.randomUUID();
+
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, MIN_ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(kitId, title, summary, null, null, null, minAbout, null, currentUserId));
         assertThat(throwable).hasMessage("about: " + EDIT_KIT_INFO_ABOUT_SIZE_MIN);
     }
 
     @Test
     void testUpdateKitInfo_AboutIsMoreThanLimit_ErrorMessage() {
+        Long kitId = 1L;
+        String title = "title";
+        String summary = "SUMMARY";
+        String maxAbout = RandomStringUtils.randomAlphabetic(1001);
+        UUID currentUserId = UUID.randomUUID();
+
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, MAX_ABOUT, TAGS, CURRENT_USER_ID));
+            () -> new Param(kitId, title, summary, null, null, null, maxAbout, null, currentUserId));
         assertThat(throwable).hasMessage("about: " + EDIT_KIT_INFO_ABOUT_SIZE_MAX);
     }
 
     @Test
     void testUpdateKitInfo_CurrentUserIdIsNull_ErrorMessage() {
+        Long kitId = 1L;
+        String title = "title";
+        String summary = "SUMMARY";
+        String about = "about";
+
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(KIT_ID, TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, TAGS, null));
+            () -> new Param(kitId, title, summary, null, null, null, about, null, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }
