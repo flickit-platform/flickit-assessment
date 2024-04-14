@@ -334,7 +334,7 @@
 		{
 			"name": "Update Kit Info",
 			"request": {
-				"method": "POST",
+				"method": "PATCH",
 				"header": [
 					{
 						"key": "Authorization",
@@ -352,14 +352,13 @@
                 }
               },
               "url": {
-                "raw": "{{base_url}}/{{api_path}}/assessment-kits/update/386",
+                "raw": "{{base_url}}/{{api_path}}/assessment-kits/386",
                 "host": [
                   "{{base_url}}"
                 ],
                 "path": [
                   "{{api_path}}",
                   "assessment-kits",
-                  "update",
                   "386"
                 ]
               }

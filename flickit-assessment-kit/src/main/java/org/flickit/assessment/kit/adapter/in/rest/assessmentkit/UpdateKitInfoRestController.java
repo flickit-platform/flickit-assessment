@@ -7,8 +7,8 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInf
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,7 +21,7 @@ public class UpdateKitInfoRestController {
     private final UpdateKitInfoUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("/assessment-kits/update/{kitId}")
+    @PatchMapping("/assessment-kits/{kitId}")
     public ResponseEntity<UpdateKitInfoResponseDto> updateKitInfo(@PathVariable("kitId") Long kitId,
                                                                   @RequestBody UpdateKitInfoRequestDto request) {
         var currentUserId = userContext.getUser().id();
