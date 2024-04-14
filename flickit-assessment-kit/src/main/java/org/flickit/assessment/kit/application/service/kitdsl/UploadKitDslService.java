@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.kitdsl.UploadKitDslUseCase;
 import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
@@ -18,12 +20,14 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_DSL_SIZE_MAX;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UploadKitDslService implements UploadKitDslUseCase {
 
+    private final FileProperties fileProperties;
     private final ParsDslFilePort parsDslFilePort;
     private final UploadKitDslToFileStoragePort uploadKitDslToFileStoragePort;
     private final CreateKitDslPort createKitDslPort;
@@ -32,6 +36,9 @@ public class UploadKitDslService implements UploadKitDslUseCase {
     @SneakyThrows
     @Override
     public Long upload(UploadKitDslUseCase.Param param) {
+        if (param.getDslFile().getSize() > fileProperties.getDslMaxSize().toBytes())
+            throw new ValidationException(UPLOAD_FILE_DSL_SIZE_MAX);
+
         UUID currentUserId = param.getCurrentUserId();
         validateCurrentUser(param.getExpertGroupId(), currentUserId);
 

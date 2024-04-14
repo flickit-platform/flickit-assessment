@@ -14,4 +14,8 @@ public class ErrorMessageKey {
     public static final String COMMON_ASSESSMENT_RESULT_NOT_FOUND = "common.assessmentResult.notFound";
     public static final String COMMON_ASSESSMENT_RESULT_NOT_VALID = "common.assessmentResult.notValid";
 
+    public static final String UPLOAD_FILE_PICTURE_SIZE_MAX = "upload-file.picture-size.max";
+    public static final String UPLOAD_FILE_DSL_SIZE_MAX = "upload-file.dsl-size.max";
+    public static final String UPLOAD_FILE_SIZE_MAX = "upload-file.size.max";
+
 }

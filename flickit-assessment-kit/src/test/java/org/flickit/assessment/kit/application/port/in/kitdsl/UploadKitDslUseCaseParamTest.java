@@ -5,14 +5,12 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.application.service.kitdsl.UploadKitServiceTest.ZIP_FILE_ADDR;
-import static org.flickit.assessment.kit.application.service.kitdsl.UploadKitServiceTest.convertZipFileToMultipartFile;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPLOAD_KIT_DSL_EXPERT_GROUP_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPLOAD_KIT_DSL_KIT_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,7 +30,7 @@ class UploadKitDslUseCaseParamTest {
     @SneakyThrows
     @Test
     void testUploadKit_ExpertGroupIdIsNull_ErrorMessage() {
-        MultipartFile dslFile = convertZipFileToMultipartFile(ZIP_FILE_ADDR);
+        var dslFile = new MockMultipartFile("dsl", "dsl.zip", null, "some file".getBytes());
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UploadKitDslUseCase.Param(dslFile, null, currentUserId));
@@ -42,7 +40,7 @@ class UploadKitDslUseCaseParamTest {
     @SneakyThrows
     @Test
     void testUploadKit_CurrentUserIdIsNull_ErrorMessage() {
-        MultipartFile dslFile = convertZipFileToMultipartFile(ZIP_FILE_ADDR);
+        var dslFile = new MockMultipartFile("dsl", "dsl.zip", null, "some file".getBytes());
         Long expertGroupId = 1L;
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UploadKitDslUseCase.Param(dslFile, expertGroupId, null));
