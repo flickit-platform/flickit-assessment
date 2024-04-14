@@ -140,7 +140,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public void update(UpdateKitInfoPort.Param param) {
         var kitEntity = repository.findById(param.kitId())
-            .orElseThrow(() -> new ResourceNotFoundException(EDIT_KIT_INFO_KIT_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_INFO_KIT_ID_NOT_FOUND));
 
         if (param.tags() != null)
             updateKitTags(param.kitId(), param.tags());

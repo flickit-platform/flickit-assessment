@@ -20,15 +20,15 @@ public interface UpdateKitInfoUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = EDIT_KIT_INFO_KIT_ID_NOT_NULL)
+        @NotNull(message = UPDATE_KIT_INFO_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @Size(min = 3, message = EDIT_KIT_INFO_TITLE_SIZE_MIN)
-        @Size(max = 50, message = EDIT_KIT_INFO_TITLE_SIZE_MAX)
+        @Size(min = 3, message = UPDATE_KIT_INFO_TITLE_SIZE_MIN)
+        @Size(max = 50, message = UPDATE_KIT_INFO_TITLE_SIZE_MAX)
         String title;
 
-        @Size(min = 3, message = EDIT_KIT_INFO_SUMMARY_SIZE_MIN)
-        @Size(max = 200, message = EDIT_KIT_INFO_SUMMARY_SIZE_MAX)
+        @Size(min = 3, message = UPDATE_KIT_INFO_SUMMARY_SIZE_MIN)
+        @Size(max = 200, message = UPDATE_KIT_INFO_SUMMARY_SIZE_MAX)
         String summary;
 
         Boolean published;
@@ -37,11 +37,11 @@ public interface UpdateKitInfoUseCase {
 
         Double price;
 
-        @Size(min = 3, message = EDIT_KIT_INFO_ABOUT_SIZE_MIN)
-        @Size(max = 1000, message = EDIT_KIT_INFO_ABOUT_SIZE_MAX)
+        @Size(min = 3, message = UPDATE_KIT_INFO_ABOUT_SIZE_MIN)
+        @Size(max = 1000, message = UPDATE_KIT_INFO_ABOUT_SIZE_MAX)
         String about;
 
-        @Size(min = 1, message = EDIT_KIT_INFO_TAGS_SIZE_MIN)
+        @Size(min = 1, message = UPDATE_KIT_INFO_TAGS_SIZE_MIN)
         List<Long> tags;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

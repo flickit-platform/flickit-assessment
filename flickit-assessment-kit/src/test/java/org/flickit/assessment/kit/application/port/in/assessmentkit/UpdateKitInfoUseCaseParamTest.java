@@ -27,7 +27,7 @@ class UpdateKitInfoUseCaseParamTest {
 
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(null, title, summary, null, null, null, about, null, currentUserId));
-        assertThat(throwable).hasMessage("kitId: " + EDIT_KIT_INFO_KIT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitId: " + UPDATE_KIT_INFO_KIT_ID_NOT_NULL);
     }
 
     @Test
@@ -40,7 +40,7 @@ class UpdateKitInfoUseCaseParamTest {
 
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitId, minTitle, summary, null, null, null, about, null, currentUserId));
-        assertThat(throwable).hasMessage("title: " + EDIT_KIT_INFO_TITLE_SIZE_MIN);
+        assertThat(throwable).hasMessage("title: " + UPDATE_KIT_INFO_TITLE_SIZE_MIN);
     }
 
     @Test
@@ -53,7 +53,7 @@ class UpdateKitInfoUseCaseParamTest {
 
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitId, maxTitle, summary, null, null, null, about, null, currentUserId));
-        assertThat(throwable).hasMessage("title: " + EDIT_KIT_INFO_TITLE_SIZE_MAX);
+        assertThat(throwable).hasMessage("title: " + UPDATE_KIT_INFO_TITLE_SIZE_MAX);
     }
 
     @Test
@@ -66,7 +66,7 @@ class UpdateKitInfoUseCaseParamTest {
 
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitId, title, minSummary, null, null, null, about, null, currentUserId));
-        assertThat(throwable).hasMessage("summary: " + EDIT_KIT_INFO_SUMMARY_SIZE_MIN);
+        assertThat(throwable).hasMessage("summary: " + UPDATE_KIT_INFO_SUMMARY_SIZE_MIN);
     }
 
     @Test
@@ -79,7 +79,7 @@ class UpdateKitInfoUseCaseParamTest {
 
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitId, title, maxSummary, null, null, null, about, null, currentUserId));
-        assertThat(throwable).hasMessage("summary: " + EDIT_KIT_INFO_SUMMARY_SIZE_MAX);
+        assertThat(throwable).hasMessage("summary: " + UPDATE_KIT_INFO_SUMMARY_SIZE_MAX);
     }
 
     @Test
@@ -92,7 +92,7 @@ class UpdateKitInfoUseCaseParamTest {
 
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitId, title, summary, null, null, null, minAbout, null, currentUserId));
-        assertThat(throwable).hasMessage("about: " + EDIT_KIT_INFO_ABOUT_SIZE_MIN);
+        assertThat(throwable).hasMessage("about: " + UPDATE_KIT_INFO_ABOUT_SIZE_MIN);
     }
 
     @Test
@@ -105,7 +105,7 @@ class UpdateKitInfoUseCaseParamTest {
 
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitId, title, summary, null, null, null, maxAbout, null, currentUserId));
-        assertThat(throwable).hasMessage("about: " + EDIT_KIT_INFO_ABOUT_SIZE_MAX);
+        assertThat(throwable).hasMessage("about: " + UPDATE_KIT_INFO_ABOUT_SIZE_MAX);
     }
 
     @Test
@@ -115,7 +115,7 @@ class UpdateKitInfoUseCaseParamTest {
 
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(123L, null, null, null, null, null, null, tags, currentUserId));
-        assertThat(throwable).hasMessage("tags: " + EDIT_KIT_INFO_TAGS_SIZE_MIN);
+        assertThat(throwable).hasMessage("tags: " + UPDATE_KIT_INFO_TAGS_SIZE_MIN);
     }
 
     @Test
