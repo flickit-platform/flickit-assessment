@@ -5,8 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.kit.application.domain.Question;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort.Result;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +18,7 @@ public interface GetKitQuestionnaireDetailUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<GetKitMinimalInfoUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_QUESTIONNAIRE_KIT_ID_NOT_NULL)
         Long kitId;
