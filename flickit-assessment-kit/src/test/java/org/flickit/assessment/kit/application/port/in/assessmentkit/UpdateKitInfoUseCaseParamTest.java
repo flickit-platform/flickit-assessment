@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -105,6 +106,16 @@ class UpdateKitInfoUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitId, title, summary, null, null, null, maxAbout, null, currentUserId));
         assertThat(throwable).hasMessage("about: " + EDIT_KIT_INFO_ABOUT_SIZE_MAX);
+    }
+
+    @Test
+    void testUpdateKitInfo_tagsIsEmpty_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
+        List<Long> tags = List.of();
+
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new Param(123L, null, null, null, null, null, null, tags, currentUserId));
+        assertThat(throwable).hasMessage("tags: " + EDIT_KIT_INFO_TAGS_SIZE_MIN);
     }
 
     @Test

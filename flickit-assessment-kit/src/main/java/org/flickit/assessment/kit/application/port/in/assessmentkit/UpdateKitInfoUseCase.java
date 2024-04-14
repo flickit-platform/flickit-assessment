@@ -41,6 +41,7 @@ public interface UpdateKitInfoUseCase {
         @Size(max = 1000, message = EDIT_KIT_INFO_ABOUT_SIZE_MAX)
         String about;
 
+        @Size(min = 1, message = EDIT_KIT_INFO_TAGS_SIZE_MIN)
         List<Long> tags;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
