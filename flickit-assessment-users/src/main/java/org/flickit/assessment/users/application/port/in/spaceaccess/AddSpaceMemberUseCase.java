@@ -13,7 +13,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 
 public interface AddSpaceMemberUseCase {
 
-    void addMember(long spaceId, String email, UUID currentUserId);
+    void addMember(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

@@ -28,8 +28,9 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
     private final AddSpaceMemberPort addSpaceMemberPort;
 
     @Override
-    public void addMember(long spaceId, String email, UUID currentUserId) {
-        var space = loadSpacePort.loadSpace(spaceId);
+    public void addMember(Param param) {
+        var currentUserId = param.getCurrentUserId();
+        var space = loadSpacePort.loadSpace(param.getSpaceId());
         if (space == null)
             throw new ValidationException(ADD_SPACE_MEMBER_SPACE_ID_NOT_FOUND);
 
@@ -37,12 +38,16 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
         if(!inviterHasAccess)
             throw new AccessDeniedException(ADD_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
 
-        UUID userId = loadUserIdByEmailPort.loadByEmail(email);
+        UUID userId = loadUserIdByEmailPort.loadByEmail(param.getEmail());
 
         boolean inviteeHasAccess = checkMemberSpaceAccessPort.checkAccess(userId);
         if (inviteeHasAccess)
             throw new ResourceAlreadyExistsException(ADD_SPACE_MEMBER_INVITEE_ACCESS_FOUND);
 
-        addSpaceMemberPort.addMemberAccess(spaceId, userId, currentUserId, LocalDateTime.now());
+        addSpaceMemberPort.addMemberAccess(toParam(space.getId(), userId, currentUserId, LocalDateTime.now()));
+    }
+
+    AddSpaceMemberPort.Param toParam(long spaceId, UUID userId, UUID currentUserId, LocalDateTime inviteTime){
+        return new AddSpaceMemberPort.Param(spaceId, userId, currentUserId, inviteTime);
     }
 }

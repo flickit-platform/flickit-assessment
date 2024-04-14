@@ -5,5 +5,8 @@ import java.util.UUID;
 
 public interface AddSpaceMemberPort {
 
-    void addMemberAccess(long spaceId, UUID invitee, UUID inviter, LocalDateTime inviteTime);
+    void addMemberAccess(Param param);
+
+    record Param(long spaceId, UUID invitee, UUID inviter, LocalDateTime localDateTime){
+    }
 }
