@@ -332,7 +332,7 @@
 			"response": []
 		},
 		{
-			"name": "Edit Kit Info",
+			"name": "Update Kit Info",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -344,7 +344,7 @@
               ],
               "body": {
                 "mode": "raw",
-                "raw": "{\n    \"data\": {\n        \"title\": \"New title\"\n    }\n}",
+                "raw": "{\n    \"title\": \"New title\"\n}",
                 "options": {
                   "raw": {
                     "language": "json"
