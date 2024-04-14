@@ -8,7 +8,14 @@ public interface LoadAttrLevelQuestionsInfoPort {
 
     record Result(Long id, String title, int index, int questionsCount, List<Question> questions) {
 
-        public record Question(int index, String title, Boolean mayNotBeApplicable, List<AnswerOption> answerOption) {
+        public record Question(
+            int index,
+            String title,
+            boolean mayNotBeApplicable,
+            int weight,
+            String questionnaire,
+            List<AnswerOption> answerOption
+        ) {
 
             public record AnswerOption(int index, String title, double value) {}
         }

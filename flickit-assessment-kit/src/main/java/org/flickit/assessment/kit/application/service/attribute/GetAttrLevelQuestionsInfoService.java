@@ -54,7 +54,12 @@ public class GetAttrLevelQuestionsInfoService implements GetAttrLevelQuestionsIn
                 var answerOptions = e.answerOption().stream()
                     .map(x -> new Result.Question.AnswerOption(x.index(), x.title(), x.value()))
                     .toList();
-                return new Result.Question(e.index(), e.title(), e.mayNotBeApplicable(), answerOptions);
+                return new Result.Question(e.index(),
+                    e.title(),
+                    e.mayNotBeApplicable(),
+                    e.weight(),
+                    e.questionnaire(),
+                    answerOptions);
             }).toList();
 
         return new Result(attrLevelQuestionsInfo.id(),

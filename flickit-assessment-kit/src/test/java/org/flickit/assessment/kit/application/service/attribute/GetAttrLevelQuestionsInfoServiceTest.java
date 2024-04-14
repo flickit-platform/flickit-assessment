@@ -142,7 +142,9 @@ class GetAttrLevelQuestionsInfoServiceTest {
         var question = new LoadAttrLevelQuestionsInfoPort.Result.Question(
             1,
             "questionTitle",
-            Boolean.TRUE,
+            true,
+            1,
+            "questionnaireTitle",
             List.of(answerOption));
         LoadAttrLevelQuestionsInfoPort.Result result = new LoadAttrLevelQuestionsInfoPort.Result(
             1L,
@@ -166,6 +168,8 @@ class GetAttrLevelQuestionsInfoServiceTest {
         assertEquals(question.title(), actualQuestion.title());
         assertEquals(question.index(), actualQuestion.index());
         assertTrue(actualQuestion.mayNotBeApplicable());
+        assertEquals(question.weight(), actualQuestion.weight());
+        assertEquals(question.questionnaire(), actualQuestion.questionnaire());
         GetAttrLevelQuestionsInfoUseCase.Result.Question.AnswerOption actualAnswerOption = actualQuestion.answerOptions().get(0);
         assertNotNull(actualAnswerOption);
         assertEquals(answerOption.title(), actualAnswerOption.title());

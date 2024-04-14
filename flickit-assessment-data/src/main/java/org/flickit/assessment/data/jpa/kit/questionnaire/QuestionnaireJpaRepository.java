@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.questionnaire;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -31,4 +32,14 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
         @Param(value = "lastModifiedBy") UUID lastModifiedBy
     );
+
+
+    @Query("""
+        SELECT
+            qn.id AS id,
+            qn.title AS title
+        FROM QuestionnaireJpaEntity qn
+        WHERE qn.id IN :ids
+    """)
+    List<QuestionnaireTitleView> findAllTitlesById(@NotNull Iterable<Long> ids);
 }

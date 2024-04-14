@@ -130,13 +130,19 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
 
     @Query("""
-        SELECT q
+        SELECT
+            q.id AS id,
+            q.index AS index,
+            q.title AS title,
+            q.mayNotBeApplicable AS mayNotBeApplicable,
+            qi.weight AS weight,
+            q.questionnaireId AS questionnaireId
         FROM QuestionJpaEntity q
             JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
             JOIN AttributeJpaEntity a ON qi.attributeId = a.id
             JOIN MaturityLevelJpaEntity m ON qi.maturityLevel.id = m.id
         WHERE a.id = :attributeId AND m.id = :maturityLevelId
     """)
-    List<QuestionJpaEntity> findByAttributeIdAndMaturityLevelId(@Param("attributeId") Long attributeId,
+    List<AttrLevelQuestionView> findByAttributeIdAndMaturityLevelId(@Param("attributeId") Long attributeId,
                                                                 @Param("maturityLevelId") Long maturityLevelId);
 }
