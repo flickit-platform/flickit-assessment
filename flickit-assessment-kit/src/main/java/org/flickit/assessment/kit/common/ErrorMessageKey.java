@@ -79,6 +79,7 @@ public class ErrorMessageKey {
     public static final String EDIT_KIT_INFO_ABOUT_SIZE_MIN = "edit-kit-info.about.size.min";
     public static final String EDIT_KIT_INFO_ABOUT_SIZE_MAX = "edit-kit-info.about.size.max";
     public static final String EDIT_KIT_INFO_TAGS_SIZE_MIN = "edit-kit-info.tags.size.min";
+    public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFount";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
