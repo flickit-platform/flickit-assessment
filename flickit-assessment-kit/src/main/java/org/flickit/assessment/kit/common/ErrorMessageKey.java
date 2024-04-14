@@ -13,6 +13,8 @@ public class ErrorMessageKey {
     public static final String FIND_MATURITY_LEVEL_ID_NOT_FOUND = "find-maturity-level.id.notFound";
     public static final String KIT_ID_NOT_FOUND = "kit.id.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
+    public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
+    public static final String QUESTIONNAIRE_QUESTIONNAIRE_ID_KIT_ID_NOT_FOUND = "questionnaire.questionnaireId-kitId.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -39,7 +41,6 @@ public class ErrorMessageKey {
 
     public static final String GET_QUESTIONNAIRE_KIT_ID_NOT_NULL = "get-questionnaire.kitId.notNull";
     public static final String GET_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "get-questionnaire.questionnaireId.notNull";
-    public static final String GET_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_FOUND = "get-questionnaire.questionnaireId.notFound";
 
     public static final String DELETE_KIT_USER_ACCESS_KIT_ID_NOT_NULL = "delete-kit-user-access.kitId.notNull";
     public static final String DELETE_KIT_USER_ACCESS_USER_ID_NOT_NULL = "delete-kit-user-access.userId.notNull";

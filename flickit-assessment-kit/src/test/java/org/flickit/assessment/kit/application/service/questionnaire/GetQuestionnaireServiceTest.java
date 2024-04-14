@@ -1,10 +1,14 @@
 package org.flickit.assessment.kit.application.service.questionnaire;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.questionnaire.GetKitQuestionnaireDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.CheckKitExistByIdPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.CheckQuestionnaireExistByIdAndKitIdPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.CheckQuestionnaireExistByIdPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
 import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
@@ -34,6 +38,30 @@ class GetQuestionnaireServiceTest {
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
 
+    @Mock
+    private CheckKitExistByIdPort checkKitExistByIdPort;
+
+    @Mock
+    private CheckQuestionnaireExistByIdPort checkQuestionnaireExistByIdPort;
+
+    @Mock
+    private CheckQuestionnaireExistByIdAndKitIdPort checkQuestionnaireExistByIdAndKitIdPort;
+
+    @Test
+    void testGetQuestionnaire_KitDoesNotExistById_ThrowsException() {
+        Long kitId = 1L;
+        Long questionnaireId = 2L;
+        UUID currentUserId = UUID.randomUUID();
+
+        GetKitQuestionnaireDetailUseCase.Param param = new GetKitQuestionnaireDetailUseCase.Param(kitId,
+            questionnaireId,
+            currentUserId);
+
+        when(checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId())).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionnaireDetail(param));
+    }
+
     @Test
     void testGetQuestionnaire_CurrentUserIsNotMemberOfExpertGroup_ThrowsException() {
         Long kitId = 1L;
@@ -45,11 +73,54 @@ class GetQuestionnaireServiceTest {
             questionnaireId,
             currentUserId);
 
-        when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
+        when(checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId())).thenReturn(true);
+        when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, currentUserId)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.getKitQuestionnaireDetail(param));
     }
+
+    @Test
+    void testGetQuestionnaire_QuestionnaireIdDoesNotExist_ThrowsException() {
+        Long kitId = 1L;
+        Long questionnaireId = 2L;
+        long expertGroupId = 3L;
+        UUID currentUserId = UUID.randomUUID();
+
+        GetKitQuestionnaireDetailUseCase.Param param = new GetKitQuestionnaireDetailUseCase.Param(kitId,
+            questionnaireId,
+            currentUserId);
+
+        when(checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId())).thenReturn(true);
+        when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, currentUserId)).thenReturn(true);
+        when(checkQuestionnaireExistByIdPort.checkQuestionnaireExistById(param.getQuestionnaireId())).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionnaireDetail(param));
+    }
+
+    @Test
+    void testGetQuestionnaire_QuestionnaireWithGivenIdAndKitIdDoesNotExist_ThrowsException() {
+        Long kitId = 1L;
+        Long questionnaireId = 2L;
+        long expertGroupId = 3L;
+        UUID currentUserId = UUID.randomUUID();
+
+        GetKitQuestionnaireDetailUseCase.Param param = new GetKitQuestionnaireDetailUseCase.Param(kitId,
+            questionnaireId,
+            currentUserId);
+
+        when(checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId())).thenReturn(true);
+        when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, currentUserId)).thenReturn(true);
+        when(checkQuestionnaireExistByIdPort.checkQuestionnaireExistById(param.getQuestionnaireId())).thenReturn(true);
+        when(checkQuestionnaireExistByIdAndKitIdPort.checkQuestionnaireExistByIdAndKitId(param.getQuestionnaireId(), kitId))
+            .thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionnaireDetail(param));
+    }
+
+
 
     @Test
     void testGetQuestionnaire_ValidInput_ValidResult() {
@@ -75,8 +146,12 @@ class GetQuestionnaireServiceTest {
             "desc",
             List.of(question));
 
-        when(loadKitExpertGroupPort.loadKitExpertGroupId(kitId)).thenReturn(expertGroupId);
+        when(checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId())).thenReturn(true);
+        when(loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, currentUserId)).thenReturn(true);
+        when(checkQuestionnaireExistByIdPort.checkQuestionnaireExistById(param.getQuestionnaireId())).thenReturn(true);
+        when(checkQuestionnaireExistByIdAndKitIdPort.checkQuestionnaireExistByIdAndKitId(param.getQuestionnaireId(), kitId))
+            .thenReturn(true);
         when(loadKitQuestionnaireDetailPort.loadKitQuestionnaireDetail(questionnaireId, kitId)).thenReturn(expectedResult);
 
         GetKitQuestionnaireDetailUseCase.Result actualResult = service.getKitQuestionnaireDetail(param);

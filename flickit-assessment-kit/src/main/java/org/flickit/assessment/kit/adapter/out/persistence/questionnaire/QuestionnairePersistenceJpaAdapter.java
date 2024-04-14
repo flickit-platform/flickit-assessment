@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.questionnaire;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
@@ -11,22 +10,20 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
-
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
 public class QuestionnairePersistenceJpaAdapter implements
     CreateQuestionnairePort,
     UpdateQuestionnairePort,
-    LoadKitQuestionnaireDetailPort {
+    LoadKitQuestionnaireDetailPort,
+    CheckQuestionnaireExistByIdPort,
+    CheckQuestionnaireExistByIdAndKitIdPort {
 
     private final QuestionnaireJpaRepository repository;
     private final QuestionJpaRepository questionRepository;
@@ -49,8 +46,7 @@ public class QuestionnairePersistenceJpaAdapter implements
 
     @Override
     public Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitId) {
-        QuestionnaireJpaEntity questionnaireEntity = repository.findQuestionnaireByIdAndKitId(questionnaireId, kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_FOUND));
+        QuestionnaireJpaEntity questionnaireEntity = repository.findQuestionnaireByIdAndKitId(questionnaireId, kitId).get();
         List<QuestionJpaEntity> questionEntities = questionRepository.findAllByQuestionnaireIdOrderByIndexAsc(questionnaireId);
         List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByQuestionnaireId(questionnaireId);
 
@@ -63,5 +59,15 @@ public class QuestionnairePersistenceJpaAdapter implements
             .toList();
 
         return new Result(questionEntities.size(), relatedSubjects, questionnaireEntity.getDescription(), questions);
+    }
+
+    @Override
+    public boolean checkQuestionnaireExistById(Long questionnaireId) {
+        return repository.existsById(questionnaireId);
+    }
+
+    @Override
+    public boolean checkQuestionnaireExistByIdAndKitId(Long questionnaireId, Long kitId) {
+        return repository.existsByIdAndKitId(questionnaireId, kitId);
     }
 }
