@@ -10,6 +10,7 @@ public interface UpdateKitInfoPort {
 
     record Param(Long kitId,
                  String title,
+                 String code,
                  String summary,
                  Boolean published,
                  Boolean isPrivate,

@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.application.domain.AssessmentKit.generateSlugCode;
 
 @Service
 @Transactional
@@ -49,9 +50,11 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
     }
 
     private UpdateKitInfoPort.Param toPortParam(Param param) {
+        String code = generateSlugCode(param.getTitle());
         return new UpdateKitInfoPort.Param(
             param.getKitId(),
             param.getTitle(),
+            code,
             param.getSummary(),
             param.getPublished(),
             param.getIsPrivate(),
