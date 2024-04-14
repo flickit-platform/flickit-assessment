@@ -28,14 +28,14 @@ public class GetKitQuestionnaireDetailRestController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    private GetKitQuestionnaireDetailUseCase.Param toParam(Long kitId, Long questionnaireId, UUID currentUserId) {
+        return new GetKitQuestionnaireDetailUseCase.Param(kitId, questionnaireId, currentUserId);
+    }
+
     private GetKitQuestionnaireDetailResponseDto toResponseDto(Result result) {
         return new GetKitQuestionnaireDetailResponseDto(result.questionsCount(),
             result.relatedSubjects(),
             result.description(),
             result.questions());
-    }
-
-    private GetKitQuestionnaireDetailUseCase.Param toParam(Long kitId, Long questionnaireId, UUID currentUserId) {
-        return new GetKitQuestionnaireDetailUseCase.Param(kitId, questionnaireId, currentUserId);
     }
 }
