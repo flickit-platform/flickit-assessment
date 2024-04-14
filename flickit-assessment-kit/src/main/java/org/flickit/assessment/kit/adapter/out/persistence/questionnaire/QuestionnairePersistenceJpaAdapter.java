@@ -10,7 +10,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_QUESTIONNAIR
 public class QuestionnairePersistenceJpaAdapter implements
     CreateQuestionnairePort,
     UpdateQuestionnairePort,
-    LoadQuestionnairePort {
+    LoadKitQuestionnaireDetailPort {
 
     private final QuestionnaireJpaRepository repository;
     private final QuestionJpaRepository questionRepository;
@@ -46,7 +46,7 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public Result loadQuestionnaire(Long questionnaireId, Long kitId) {
+    public Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitId) {
         QuestionnaireJpaEntity questionnaireEntity = repository.findQuestionnaireByIdAndKitId(questionnaireId, kitId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_FOUND));
         List<QuestionJpaEntity> questionEntities = questionRepository.findAllByQuestionnaireIdOrderByIndexAsc(questionnaireId);

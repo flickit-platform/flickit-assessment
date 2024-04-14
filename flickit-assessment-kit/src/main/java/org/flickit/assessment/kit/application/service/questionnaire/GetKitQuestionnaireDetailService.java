@@ -2,11 +2,11 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnaireUseCase;
+import org.flickit.assessment.kit.application.port.in.questionnaire.GetKitQuestionnaireDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort.Result;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort.Result;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,18 +15,18 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetQuestionnaireService implements GetQuestionnaireUseCase {
+public class GetKitQuestionnaireDetailService implements GetKitQuestionnaireDetailUseCase {
 
-    private final LoadQuestionnairePort port;
+    private final LoadKitQuestionnaireDetailPort port;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
 
     @Override
-    public Result getQuestionnaire(Param param) {
+    public Result getKitQuestionnaireDetail(Param param) {
         Long expertGroupId = loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId());
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())) {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
-        return port.loadQuestionnaire(param.getQuestionnaireId(), param.getKitId());
+        return port.loadKitQuestionnaireDetail(param.getQuestionnaireId(), param.getKitId());
     }
 }
