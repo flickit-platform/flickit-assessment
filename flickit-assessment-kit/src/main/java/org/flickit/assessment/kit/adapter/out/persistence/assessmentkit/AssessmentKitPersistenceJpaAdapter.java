@@ -6,7 +6,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.CountKitStatsView;
-import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
@@ -55,7 +54,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final ExpertGroupJpaRepository expertGroupRepository;
     private final KitVersionJpaRepository kitVersionRepository;
     private final KitTagRelationJpaRepository kitTagRelationRepository;
-    private final KitTagJpaRepository kitTagRepository;
 
     @Override
     public ExpertGroup loadKitExpertGroup(Long kitId) {
@@ -144,7 +142,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var kitEntity = repository.findById(param.kitId())
             .orElseThrow(() -> new ResourceNotFoundException(EDIT_KIT_INFO_KIT_ID_NOT_FOUND));
 
-        updateKitTags(param.kitId(), param.tags());
+        if (param.tags() != null)
+            updateKitTags(param.kitId(), param.tags());
 
         var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param);
         repository.save(toBeUpdatedEntity);
