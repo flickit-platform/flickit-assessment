@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.service.space;
 
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -87,7 +88,7 @@ class AddSpaceMemberServiceTest {
         when(loadSpacePort.loadSpace(spaceId)).thenReturn(portResult);
         when(checkMemberSpaceAccessPort.checkAccess(currentUserId)).thenReturn(false);
 
-        assertThrows(ValidationException.class, ()-> service.addMember(spaceId,email,currentUserId));
+        assertThrows(AccessDeniedException.class, ()-> service.addMember(spaceId,email,currentUserId));
         verify(loadSpacePort).loadSpace(spaceId);
         verify(checkMemberSpaceAccessPort).checkAccess(currentUserId);
         verifyNoInteractions(loadUserIdByEmailPort);

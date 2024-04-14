@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.spaceaccess.AddSpaceMemberUseCase;
@@ -14,8 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_INVITEE_ACCESS_FOUND;
-import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 @Service
 @Transactional
@@ -29,11 +29,13 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
     @Override
     public void addMember(long spaceId, String email, UUID currentUserId) {
-        loadSpacePort.loadSpace(spaceId);
+        var space = loadSpacePort.loadSpace(spaceId);
+        if (space == null)
+            throw new ValidationException(ADD_SPACE_MEMBER_SPACE_ID_NOT_FOUND);
 
         boolean inviterHasAccess = checkMemberSpaceAccessPort.checkAccess(currentUserId);
         if(!inviterHasAccess)
-            throw new ValidationException(ADD_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
+            throw new AccessDeniedException(ADD_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
 
         UUID userId = loadUserIdByEmailPort.loadByEmail(email);
 
