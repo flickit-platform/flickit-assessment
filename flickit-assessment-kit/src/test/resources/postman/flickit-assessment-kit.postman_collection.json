@@ -3,7 +3,7 @@
 		"_postman_id": "ced9fd61-142c-4259-9aae-0aac1e7c97b0",
 		"name": "flickit-assessment-kit",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "6692064"
+		"_exporter_id": "11099181"
 	},
 	"item": [
 		{
@@ -330,7 +330,41 @@
 				}
 			},
 			"response": []
-		}
+		},
+		{
+			"name": "Update Kit Info",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"title\": \"New title\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/{{api_path}}/assessment-kits/386",
+                "host": [
+                  "{{base_url}}"
+                ],
+                "path": [
+                  "{{api_path}}",
+                  "assessment-kits",
+                  "386"
+                ]
+              }
+            },
+            "response": []
+        }
 	],
 	"event": [
 		{
