@@ -57,7 +57,7 @@ public class EditKitInfoService implements EditKitInfoUseCase {
     private boolean containsNonNullParam(Param param) {
         return Objects.nonNull(param.getTitle()) ||
             Objects.nonNull(param.getSummary()) ||
-            Objects.nonNull(param.getIsActive()) ||
+            Objects.nonNull(param.getPublished()) ||
             Objects.nonNull(param.getIsPrivate()) ||
             Objects.nonNull(param.getPrice()) ||
             Objects.nonNull(param.getAbout()) ||
@@ -69,7 +69,7 @@ public class EditKitInfoService implements EditKitInfoUseCase {
             param.getKitId(),
             param.getTitle(),
             param.getSummary(),
-            param.getIsActive(),
+            param.getPublished(),
             param.getIsPrivate(),
             param.getPrice(),
             param.getAbout(),

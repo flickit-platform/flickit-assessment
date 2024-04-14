@@ -32,7 +32,7 @@ public class EditKitInfoRestController {
             kitId,
             request.data().title(),
             request.data().summary(),
-            request.data().isActive(),
+            request.data().published(),
             request.data().isPrivate(),
             request.data().price(),
             request.data().about(),
@@ -45,7 +45,7 @@ public class EditKitInfoRestController {
         return new EditKitInfoResponseDto(
             result.title(),
             result.summary(),
-            result.isActive(),
+            result.published(),
             result.isPrivate(),
             result.price(),
             result.about(),

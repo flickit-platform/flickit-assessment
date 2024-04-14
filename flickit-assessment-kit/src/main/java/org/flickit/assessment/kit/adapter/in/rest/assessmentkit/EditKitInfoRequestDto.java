@@ -9,7 +9,7 @@ public record EditKitInfoRequestDto(EditKitInfoData data) {
 
 record EditKitInfoData(@JsonIgnoreProperties(ignoreUnknown = true) String title,
                        @JsonIgnoreProperties(ignoreUnknown = true) String summary,
-                       @JsonIgnoreProperties(ignoreUnknown = true) Boolean isActive,
+                       @JsonIgnoreProperties(ignoreUnknown = true) Boolean published,
                        @JsonIgnoreProperties(ignoreUnknown = true) Boolean isPrivate,
                        @JsonIgnoreProperties(ignoreUnknown = true) Double price,
                        @JsonIgnoreProperties(ignoreUnknown = true) String about,

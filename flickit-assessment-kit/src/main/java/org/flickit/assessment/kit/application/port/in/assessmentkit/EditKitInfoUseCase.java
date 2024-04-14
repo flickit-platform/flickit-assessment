@@ -32,7 +32,7 @@ public interface EditKitInfoUseCase {
         @Size(max = 200, message = EDIT_KIT_INFO_SUMMARY_SIZE_MAX)
         String summary;
 
-        Boolean isActive;
+        Boolean published;
 
         Boolean isPrivate;
 
@@ -47,12 +47,12 @@ public interface EditKitInfoUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitId, String title, String summary, Boolean isActive, Boolean isPrivate, Double price, String about, List<Long> tags, UUID currentUserId) {
+        public Param(Long kitId, String title, String summary, Boolean published, Boolean isPrivate, Double price, String about, List<Long> tags, UUID currentUserId) {
             this.kitId = kitId;
             this.currentUserId = currentUserId;
             this.title = title;
             this.summary = summary;
-            this.isActive = isActive;
+            this.published = published;
             this.isPrivate = isPrivate;
             this.price = price;
             this.about = about;
@@ -63,7 +63,7 @@ public interface EditKitInfoUseCase {
 
     record Result(String title,
                   String summary,
-                  Boolean isActive,
+                  Boolean published,
                   Boolean isPrivate,
                   Double price,
                   String about,

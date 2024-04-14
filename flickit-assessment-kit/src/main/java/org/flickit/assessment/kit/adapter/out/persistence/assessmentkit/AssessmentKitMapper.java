@@ -40,7 +40,7 @@ public class AssessmentKitMapper {
             param.title() != null ? param.title() : entity.getTitle(),
             param.summary() != null ? param.summary() : entity.getSummary(),
             param.about() != null ? param.about() : entity.getAbout(),
-            param.isActive() != null ? param.isActive() : entity.getPublished(),
+            param.published() != null ? param.published() : entity.getPublished(),
             param.isPrivate() != null ? param.isPrivate() : entity.getIsPrivate(),
             entity.getExpertGroupId(),
             entity.getCreationTime(),

@@ -6,7 +6,7 @@ import java.util.List;
 
 public record EditKitInfoResponseDto(String title,
                                      String summary,
-                                     Boolean isActive,
+                                     Boolean published,
                                      Boolean isPrivate,
                                      Double price,
                                      String about,

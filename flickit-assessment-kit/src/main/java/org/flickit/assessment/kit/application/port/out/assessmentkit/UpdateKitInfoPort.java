@@ -13,7 +13,7 @@ public interface UpdateKitInfoPort {
     record Param(Long kitId,
                  String title,
                  String summary,
-                 Boolean isActive,
+                 Boolean published,
                  Boolean isPrivate,
                  Double price,
                  String about,

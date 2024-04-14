@@ -56,7 +56,7 @@ class EditKitInfoServiceTest {
     private static final Long KIT_ID = 1L;
     private static final String TITLE = "title";
     private static final String SUMMARY = "summary";
-    private static final Boolean IS_ACTIVE = Boolean.TRUE;
+    private static final Boolean PUBLISHED = Boolean.TRUE;
     private static final Boolean IS_PRIVATE = Boolean.FALSE;
     private static final Double PRICE = 0D;
     private static final String ABOUT = "about";
@@ -104,7 +104,7 @@ class EditKitInfoServiceTest {
     void testEditKitInfo_EditTitle_ValidResults() {
         String newTitle = "new title";
         var param = new EditKitInfoUseCase.Param(KIT_ID, newTitle, null, null, null, null, null, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(newTitle, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
+        var result = new EditKitInfoUseCase.Result(newTitle, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
@@ -125,7 +125,7 @@ class EditKitInfoServiceTest {
     void testEditKitInfo_EditSummary_ValidResults() {
         String newSummary = "new summary";
         var param = new EditKitInfoUseCase.Param(KIT_ID, null, newSummary, null, null, null, null, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, newSummary, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
+        var result = new EditKitInfoUseCase.Result(TITLE, newSummary, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
@@ -143,10 +143,10 @@ class EditKitInfoServiceTest {
     }
 
     @Test
-    void testEditKitInfo_EditIsActive_ValidResults() {
-        Boolean newIsActive = !IS_ACTIVE;
-        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, newIsActive, null, null, null, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, newIsActive, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
+    void testEditKitInfo_EditPublished_ValidResults() {
+        Boolean newPublished = !PUBLISHED;
+        var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, newPublished, null, null, null, null, CURRENT_USER_ID);
+        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, newPublished, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
@@ -159,15 +159,15 @@ class EditKitInfoServiceTest {
         verify(updateKitInfoPort, times(1)).update(portParam.capture());
 
         assertEquals(KIT_ID, portParam.getValue().kitId());
-        assertEquals(newIsActive, portParam.getValue().isActive());
-        assertEquals(newIsActive, serviceResult.isActive());
+        assertEquals(newPublished, portParam.getValue().published());
+        assertEquals(newPublished, serviceResult.published());
     }
 
     @Test
     void testEditKitInfo_EditIsPrivate_ValidResults() {
-        Boolean newIsPrivate = !IS_ACTIVE;
+        Boolean newIsPrivate = !PUBLISHED;
         var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, newIsPrivate, null, null, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, newIsPrivate, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
+        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, PUBLISHED, newIsPrivate, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
@@ -188,7 +188,7 @@ class EditKitInfoServiceTest {
     void testEditKitInfo_EditPrice_ValidResults() {
         Double newPrice = 2D;
         var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, null, newPrice, null, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
+        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
@@ -209,7 +209,7 @@ class EditKitInfoServiceTest {
     void testEditKitInfo_EditAbout_ValidResults() {
         String newAbout = "new about";
         var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, null, null, newAbout, null, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, newAbout, List.of(EDIT_KIT_INFO_TAG));
+        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, newAbout, List.of(EDIT_KIT_INFO_TAG));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
@@ -231,7 +231,7 @@ class EditKitInfoServiceTest {
         var newEditKitInfoTag = new KitTag(3L, "new tag title");
         List<Long> newTags = List.of(3L);
         var param = new EditKitInfoUseCase.Param(KIT_ID, null, null, null, null, null, null, newTags, CURRENT_USER_ID);
-        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, IS_ACTIVE, IS_PRIVATE, PRICE, ABOUT, List.of(newEditKitInfoTag));
+        var result = new EditKitInfoUseCase.Result(TITLE, SUMMARY, PUBLISHED, IS_PRIVATE, PRICE, ABOUT, List.of(newEditKitInfoTag));
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(KIT_ID)).thenReturn(expertGroup);
@@ -270,7 +270,7 @@ class EditKitInfoServiceTest {
 
         assertEquals(assessmentKit.getTitle(), serviceResult.title());
         assertEquals(assessmentKit.getSummary(), serviceResult.summary());
-        assertEquals(assessmentKit.isPublished(), serviceResult.isActive());
+        assertEquals(assessmentKit.isPublished(), serviceResult.published());
         assertEquals(assessmentKit.isPrivate(), serviceResult.isPrivate());
         assertEquals(0.0, serviceResult.price());
         assertEquals(assessmentKit.getAbout(), serviceResult.about());
