@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.questionnaire.GetKitQuestionnaireDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CheckKitExistByIdPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
@@ -33,8 +34,8 @@ public class GetKitQuestionnaireDetailService implements GetKitQuestionnaireDeta
         if (!checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId()))
             throw new ResourceNotFoundException(KIT_ID_NOT_FOUND);
 
-        Long expertGroupId = loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId());
-        if (!checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())) {
+        ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
+        if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())) {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
 
