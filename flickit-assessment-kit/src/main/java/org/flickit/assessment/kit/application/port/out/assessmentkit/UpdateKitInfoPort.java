@@ -9,8 +9,8 @@ public interface UpdateKitInfoPort {
     void update(Param param);
 
     record Param(Long kitId,
-                 String title,
                  String code,
+                 String title,
                  String summary,
                  Boolean published,
                  Boolean isPrivate,

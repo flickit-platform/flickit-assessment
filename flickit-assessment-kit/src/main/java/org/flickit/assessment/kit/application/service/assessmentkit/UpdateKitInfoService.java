@@ -27,16 +27,16 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
     @Override
     public void updateKitInfo(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
-        if (containsNonNullParam(param)) {
+        if (containsNonNullParam(param))
             updateKitInfoPort.update(toPortParam(param));
-        }
+
     }
 
     private void validateCurrentUser(Long kitId, UUID currentUserId) {
         var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(kitId);
-        if (!Objects.equals(expertGroup.getOwnerId(), currentUserId)) {
+        if (!Objects.equals(expertGroup.getOwnerId(), currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        }
+
     }
 
     private boolean containsNonNullParam(Param param) {
@@ -50,11 +50,10 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
     }
 
     private UpdateKitInfoPort.Param toPortParam(Param param) {
-        String code = param.getTitle() != null ? generateSlugCode(param.getTitle()) : null;
         return new UpdateKitInfoPort.Param(
             param.getKitId(),
+            param.getTitle() != null ? generateSlugCode(param.getTitle()) : null,
             param.getTitle(),
-            code,
             param.getSummary(),
             param.getPublished(),
             param.getIsPrivate(),
