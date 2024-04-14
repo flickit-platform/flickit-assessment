@@ -20,91 +20,70 @@ class UpdateKitInfoUseCaseParamTest {
 
     @Test
     void testUpdateKitInfo_kitIdIsNull_ErrorMessage() {
-        String title = "title";
-        String summary = "SUMMARY";
-        String about = "about";
         UUID currentUserId = UUID.randomUUID();
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(null, title, summary, null, null, null, about, null, currentUserId));
+            () -> new Param(null, "title", "summary", null, null, null, "about", null, currentUserId));
         assertThat(throwable).hasMessage("kitId: " + UPDATE_KIT_INFO_KIT_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateKitInfo_TitleIsLessThanLimit_ErrorMessage() {
-        Long kitId = 1L;
-        String summary = "SUMMARY";
+    void testUpdateKitInfo_TitleLengthIsLessThanLimit_ErrorMessage() {
         String minTitle = "t";
-        String about = "about";
         UUID currentUserId = UUID.randomUUID();
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(kitId, minTitle, summary, null, null, null, about, null, currentUserId));
+            () -> new Param(123L, minTitle, "summary", null, null, null, "about", null, currentUserId));
         assertThat(throwable).hasMessage("title: " + UPDATE_KIT_INFO_TITLE_SIZE_MIN);
     }
 
     @Test
-    void testUpdateKitInfo_TitleIsMoreThanLimit_ErrorMessage() {
-        Long kitId = 1L;
-        String summary = "SUMMARY";
+    void testUpdateKitInfo_TitleLengthIsMoreThanLimit_ErrorMessage() {
         String maxTitle = RandomStringUtils.randomAlphabetic(51);
-        String about = "about";
         UUID currentUserId = UUID.randomUUID();
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(kitId, maxTitle, summary, null, null, null, about, null, currentUserId));
+            () -> new Param(123L, maxTitle, "summary", null, null, null, "about", null, currentUserId));
         assertThat(throwable).hasMessage("title: " + UPDATE_KIT_INFO_TITLE_SIZE_MAX);
     }
 
     @Test
-    void testUpdateKitInfo_SummaryIsLessThanLimit_ErrorMessage() {
-        Long kitId = 1L;
-        String title = "title";
+    void testUpdateKitInfo_SummaryLengthIsLessThanLimit_ErrorMessage() {
         String minSummary = "s";
-        String about = "about";
         UUID currentUserId = UUID.randomUUID();
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(kitId, title, minSummary, null, null, null, about, null, currentUserId));
+            () -> new Param(123L, "title", minSummary, null, null, null, "about", null, currentUserId));
         assertThat(throwable).hasMessage("summary: " + UPDATE_KIT_INFO_SUMMARY_SIZE_MIN);
     }
 
     @Test
-    void testUpdateKitInfo_SummaryIsMoreThanLimit_ErrorMessage() {
-        Long kitId = 1L;
-        String title = "title";
+    void testUpdateKitInfo_SummaryLengthIsMoreThanLimit_ErrorMessage() {
         String maxSummary = RandomStringUtils.randomAlphabetic(201);
-        String about = "about";
         UUID currentUserId = UUID.randomUUID();
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(kitId, title, maxSummary, null, null, null, about, null, currentUserId));
+            () -> new Param(123L, "title", maxSummary, null, null, null, "about", null, currentUserId));
         assertThat(throwable).hasMessage("summary: " + UPDATE_KIT_INFO_SUMMARY_SIZE_MAX);
     }
 
     @Test
     void testUpdateKitInfo_AboutIsLessThanLimit_ErrorMessage() {
-        Long kitId = 1L;
-        String title = "title";
-        String summary = "SUMMARY";
         String minAbout = "a";
         UUID currentUserId = UUID.randomUUID();
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(kitId, title, summary, null, null, null, minAbout, null, currentUserId));
+            () -> new Param(123L, "title", "summary", null, null, null, minAbout, null, currentUserId));
         assertThat(throwable).hasMessage("about: " + UPDATE_KIT_INFO_ABOUT_SIZE_MIN);
     }
 
     @Test
     void testUpdateKitInfo_AboutIsMoreThanLimit_ErrorMessage() {
-        Long kitId = 1L;
-        String title = "title";
-        String summary = "SUMMARY";
         String maxAbout = RandomStringUtils.randomAlphabetic(1001);
         UUID currentUserId = UUID.randomUUID();
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(kitId, title, summary, null, null, null, maxAbout, null, currentUserId));
+            () -> new Param(123L, "title", "summary", null, null, null, maxAbout, null, currentUserId));
         assertThat(throwable).hasMessage("about: " + UPDATE_KIT_INFO_ABOUT_SIZE_MAX);
     }
 
@@ -120,13 +99,8 @@ class UpdateKitInfoUseCaseParamTest {
 
     @Test
     void testUpdateKitInfo_CurrentUserIdIsNull_ErrorMessage() {
-        Long kitId = 1L;
-        String title = "title";
-        String summary = "SUMMARY";
-        String about = "about";
-
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(kitId, title, summary, null, null, null, about, null, null));
+            () -> new Param(123L, null, null, null, null, null, null, null, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }
