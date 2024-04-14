@@ -50,7 +50,7 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
     }
 
     private UpdateKitInfoPort.Param toPortParam(Param param) {
-        String code = generateSlugCode(param.getTitle());
+        String code = param.getTitle() != null ? generateSlugCode(param.getTitle()) : null;
         return new UpdateKitInfoPort.Param(
             param.getKitId(),
             param.getTitle(),
