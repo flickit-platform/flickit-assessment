@@ -6,7 +6,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.CountKitStatsView;
-import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaRepository;
@@ -21,11 +20,9 @@ import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionM
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
-import org.flickit.assessment.kit.application.domain.KitTag;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
 import org.springframework.data.domain.Page;
@@ -34,7 +31,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -144,27 +140,17 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public UpdateKitInfoUseCase.Result update(UpdateKitInfoPort.Param param) {
+    public void update(UpdateKitInfoPort.Param param) {
         var kitEntity = repository.findById(param.kitId())
             .orElseThrow(() -> new ResourceNotFoundException(EDIT_KIT_INFO_KIT_ID_NOT_FOUND));
 
-        var tags = updateKitTags(param.kitId(), param.tags());
+        updateKitTags(param.kitId(), param.tags());
 
         var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param);
-
-        var updatedEntity = repository.save(toBeUpdatedEntity);
-        return new UpdateKitInfoUseCase.Result(
-            updatedEntity.getTitle(),
-            updatedEntity.getSummary(),
-            updatedEntity.getPublished(),
-            updatedEntity.getIsPrivate(),
-            0D,
-            updatedEntity.getAbout(),
-            tags
-        );
+        repository.save(toBeUpdatedEntity);
     }
 
-    private List<KitTag> updateKitTags(Long kitId, Set<Long> tags) {
+    private void updateKitTags(Long kitId, Set<Long> tags) {
         Set<Long> savedTags = kitTagRelationRepository.findAllByKitId(kitId).stream()
             .map(KitTagRelationJpaEntity::getTagId)
             .collect(Collectors.toSet());
@@ -184,11 +170,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
         kitTagRelationRepository.deleteAllById(removedTags.stream()
             .map(tagId -> new KitTagRelationJpaEntity.KitTagRelationKey(tagId, kitId))
             .collect(Collectors.toSet()));
-
-        return kitTagRepository.findAllByKitId(kitId).stream()
-            .sorted(Comparator.comparingLong(KitTagJpaEntity::getId))
-            .map(i -> new KitTag(i.getId(), i.getTitle()))
-            .toList();
     }
 
     @Override

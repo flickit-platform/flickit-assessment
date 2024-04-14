@@ -2,19 +2,14 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.KitTag;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -27,20 +22,12 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final UpdateKitInfoPort updateKitInfoPort;
-    private final LoadAssessmentKitPort loadKitPort;
-    private final LoadKitTagsListPort loadKitTagsListPort;
 
     @Override
-    public Result updateKitInfo(Param param) {
+    public void updateKitInfo(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
         if (containsNonNullParam(param)) {
-            return updateKitInfoPort.update(toPortParam(param));
-        } else {
-            var kit = loadKitPort.load(param.getKitId());
-            var tags = loadKitTagsListPort.load(param.getKitId())
-                .stream().map(t -> new KitTag(t.getId(), t.getTitle()))
-                .toList();
-            return toResult(kit, tags);
+            updateKitInfoPort.update(toPortParam(param));
         }
     }
 
@@ -70,21 +57,9 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             param.getIsPrivate(),
             param.getPrice(),
             param.getAbout(),
-            param.getTags() != null ? new HashSet<>(param.getTags()) : new HashSet<>(),
+            param.getTags() != null ? new HashSet<>(param.getTags()) : null,
             param.getCurrentUserId(),
             LocalDateTime.now()
-        );
-    }
-
-    private Result toResult(AssessmentKit kit, List<KitTag> tags) {
-        return new Result(
-            kit.getTitle(),
-            kit.getSummary(),
-            kit.isPublished(),
-            kit.isPrivate(),
-            0.0,
-            kit.getAbout(),
-            tags
         );
     }
 }

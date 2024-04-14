@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase.Param;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -22,11 +21,11 @@ public class UpdateKitInfoRestController {
     private final UserContext userContext;
 
     @PatchMapping("/assessment-kits/{kitId}")
-    public ResponseEntity<UpdateKitInfoResponseDto> updateKitInfo(@PathVariable("kitId") Long kitId,
-                                                                  @RequestBody UpdateKitInfoRequestDto request) {
+    public ResponseEntity<Void> updateKitInfo(@PathVariable("kitId") Long kitId,
+                                              @RequestBody UpdateKitInfoRequestDto request) {
         var currentUserId = userContext.getUser().id();
-        var result = useCase.updateKitInfo(toParam(kitId, request, currentUserId));
-        return new ResponseEntity<>(toResponse(result), HttpStatus.OK);
+        useCase.updateKitInfo(toParam(kitId, request, currentUserId));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private Param toParam(Long kitId, UpdateKitInfoRequestDto request, UUID currentUserId) {
@@ -40,18 +39,6 @@ public class UpdateKitInfoRestController {
             request.about(),
             request.tags(),
             currentUserId
-        );
-    }
-
-    private UpdateKitInfoResponseDto toResponse(Result result) {
-        return new UpdateKitInfoResponseDto(
-            result.title(),
-            result.summary(),
-            result.published(),
-            result.isPrivate(),
-            result.price(),
-            result.about(),
-            result.tags()
         );
     }
 }

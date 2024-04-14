@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.kit.application.domain.KitTag;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +14,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface UpdateKitInfoUseCase {
 
-    Result updateKitInfo(Param param);
+    void updateKitInfo(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -59,14 +58,5 @@ public interface UpdateKitInfoUseCase {
             this.tags = tags;
             this.validateSelf();
         }
-    }
-
-    record Result(String title,
-                  String summary,
-                  Boolean published,
-                  Boolean isPrivate,
-                  Double price,
-                  String about,
-                  List<KitTag> tags) {
     }
 }
