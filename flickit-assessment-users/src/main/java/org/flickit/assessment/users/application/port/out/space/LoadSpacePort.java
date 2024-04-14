@@ -1,9 +1,9 @@
 package org.flickit.assessment.users.application.port.out.space;
 
+import org.flickit.assessment.users.application.domain.Space;
+
 public interface LoadSpacePort {
 
-    Result loadById(long spaceId);
+    Space loadSpace(long spaceId);
 
-    record Result(String title){
-    }
 }

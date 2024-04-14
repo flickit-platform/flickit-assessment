@@ -2,11 +2,10 @@ package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.users.application.port.in.space.AddSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.space.AddSpaceMemberPort;
-import org.flickit.assessment.users.application.port.out.space.CheckMemberSpaceAccessPort;
+import org.flickit.assessment.users.application.port.in.spaceaccess.AddSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.out.spaceaccess.AddSpaceMemberPort;
+import org.flickit.assessment.users.application.port.out.spaceaccess.CheckMemberSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserIdByEmailPort;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_INVITEE_ACCESS_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND;
 
@@ -31,9 +29,7 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
     @Override
     public void addMember(long spaceId, String email, UUID currentUserId) {
-        var space = loadSpacePort.loadById(spaceId);
-        if (space == null)
-            throw new ResourceNotFoundException(ADD_SPACE_MEMBER_SPACE_ID_NOT_FOUND);
+        loadSpacePort.loadSpace(spaceId);
 
         boolean inviterHasAccess = checkMemberSpaceAccessPort.checkAccess(currentUserId);
         if(!inviterHasAccess)
@@ -46,6 +42,5 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
             throw new ResourceAlreadyExistsException(ADD_SPACE_MEMBER_INVITEE_ACCESS_FOUND);
 
         addSpaceMemberPort.addMemberAccess(spaceId, userId, currentUserId, LocalDateTime.now());
-
     }
 }

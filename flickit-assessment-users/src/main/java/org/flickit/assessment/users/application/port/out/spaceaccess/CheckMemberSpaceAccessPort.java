@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.application.port.out.space;
+package org.flickit.assessment.users.application.port.out.spaceaccess;
 
 import java.util.UUID;
 
