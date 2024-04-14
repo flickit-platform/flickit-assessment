@@ -82,6 +82,7 @@ class UpdateKitInfoServiceTest {
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
         UUID currentUserId = expertGroup.getOwnerId();
         String newTitle = "new title";
+        String newCode = "new-title";
         var param = new Param(kitId, newTitle, null, null, null, null, null, null, currentUserId);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
@@ -94,6 +95,7 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(kitId, portParam.getValue().kitId());
         assertEquals(newTitle, portParam.getValue().title());
+        assertEquals(newCode, portParam.getValue().code());
     }
 
     @Test

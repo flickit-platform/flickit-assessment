@@ -36,7 +36,7 @@ public class AssessmentKitMapper {
     public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param) {
         return new AssessmentKitJpaEntity(
             entity.getId(),
-            entity.getCode(),
+            param.code() != null ? param.code() : entity.getCode(),
             param.title() != null ? param.title() : entity.getTitle(),
             param.summary() != null ? param.summary() : entity.getSummary(),
             param.about() != null ? param.about() : entity.getAbout(),
