@@ -24,11 +24,11 @@ public class ExpertGroupJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "title", length = 100, nullable = false)
-    private String title;
-
     @Column(name = "code", length = 100, nullable = false)
     private String code;
+
+    @Column(name = "title", length = 100, nullable = false)
+    private String title;
 
     @Column(name = "bio", length = 200, nullable = false)
     private String bio;
