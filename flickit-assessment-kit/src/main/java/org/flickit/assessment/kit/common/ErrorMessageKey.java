@@ -69,7 +69,7 @@ public class ErrorMessageKey {
 
     public static final String GET_KIT_STATS_KIT_ID_NOT_NULL = "get-kit-stats.kitId.notNull";
 
-    public static final String GET_KIT_DETAIL_KIT_VERSION_ID_NOT_NULL = "get-kit-detail.kitVersionId.notNull";
+    public static final String GET_KIT_DETAIL_KIT_ID_NOT_NULL = "get-kit-detail.kitId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);

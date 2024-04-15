@@ -25,8 +25,8 @@ public class GetKitDetailRestController {
         return new ResponseEntity<>(toResponseDto(response), HttpStatus.OK);
     }
 
-    private GetKitDetailUseCase.Param toParam(Long kitVersionId, UUID currentUserId) {
-        return new GetKitDetailUseCase.Param(kitVersionId, currentUserId);
+    private GetKitDetailUseCase.Param toParam(Long kitId, UUID currentUserId) {
+        return new GetKitDetailUseCase.Param(kitId, currentUserId);
     }
 
     private GetKitDetailResponseDto toResponseDto(GetKitDetailUseCase.Result result) {
