@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -84,10 +84,10 @@ class GetKitDetailServiceTest {
         GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, UUID.randomUUID());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
-            .thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
+            .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitDetail(param));
-        assertEquals(KIT_VERSION_ID_NOT_FOUND, exception.getMessage());
+        assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
     }
 
     @Test

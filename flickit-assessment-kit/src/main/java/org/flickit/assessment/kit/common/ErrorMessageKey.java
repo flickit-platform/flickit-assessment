@@ -12,7 +12,6 @@ public class ErrorMessageKey {
 
     public static final String FIND_MATURITY_LEVEL_ID_NOT_FOUND = "find-maturity-level.id.notFound";
     public static final String KIT_ID_NOT_FOUND = "kit.id.notFound";
-    public static final String KIT_VERSION_ID_NOT_FOUND = "kitVersion.id.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
