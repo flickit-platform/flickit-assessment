@@ -54,6 +54,8 @@ public class ErrorMessageKey {
     public static final String CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_INVALID = "confirm-expert-group-invitation.invite-token.notValid";
     public static final String CONFIRM_EXPERT_GROUP_INVITATION_USER_ID_DUPLICATE = "confirm-expert-group-invitation.userId.duplicate";
 
-    public static final String INVITE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "add-space-member.space-id.notUll";
-    public static final String INVITE_SPACE_MEMBER_EMAIL_NOT_NULL = "add-space-member.email.notNull";
+    public static final String INVITE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "invite-space-member.space-id.notUll";
+    public static final String INVITE_SPACE_MEMBER_EMAIL_NOT_NULL = "invite-space-member.email.notNull";
+    public static final String INVITE_SPACE_MEMBER_SPACE_ID_NOT_FOUND = "invite-space-member.space-id.notFound";
+    public static final String INVITE_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND = "invite-space-member.inviter-access.notFound";
 }
