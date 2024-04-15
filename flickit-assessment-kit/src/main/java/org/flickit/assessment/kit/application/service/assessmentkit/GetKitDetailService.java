@@ -37,9 +37,9 @@ public class GetKitDetailService implements GetKitDetailUseCase {
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var maturityLevels = loadMaturityLevelsPort.loadByKitId(param.getKitId());
-        var subjects = loadSubjectsPort.loadSubjects(param.getKitId());
-        var questionnaires = loadQuestionnairesPort.loadAllByKitId(param.getKitId());
+        var maturityLevels = loadMaturityLevelsPort.loadByKitIdOrderByIndex(param.getKitId());
+        var subjects = loadSubjectsPort.loadSubjectsOrderByIndex(param.getKitId());
+        var questionnaires = loadQuestionnairesPort.loadAllByKitIdOrderByIndex(param.getKitId());
 
         return mapToResult(maturityLevels, subjects, questionnaires);
     }

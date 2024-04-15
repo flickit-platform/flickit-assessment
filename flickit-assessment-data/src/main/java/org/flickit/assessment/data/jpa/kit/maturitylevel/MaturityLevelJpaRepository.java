@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, Long> {
 
-    List<MaturityLevelJpaEntity> findAllByKitVersionId(Long kitVersionId);
+    List<MaturityLevelJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
     @Query("""
             SELECT l as maturityLevel, c as levelCompetence

@@ -41,12 +41,12 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Questionnaire> loadAllByKitId(Long kitId) {
+    public List<Questionnaire> loadAllByKitIdOrderByIndex(Long kitId) {
         var kitVersionId = assessmentKitRepository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
             .getKitVersionId();
 
-        return repository.findAllByKitVersionId(kitVersionId).stream()
+        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
             .toList();
     }

@@ -42,12 +42,12 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Subject> loadSubjects(long kitId) {
+    public List<Subject> loadSubjectsOrderByIndex(long kitId) {
         var kitVersionId = assessmentKitRepository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
             .getKitVersionId();
 
-        return repository.findAllByKitVersionId(kitVersionId).stream()
+        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(e -> SubjectMapper.mapToDomainModel(e, null))
             .toList();
     }

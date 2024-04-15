@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface LoadSubjectsPort {
 
-    List<Subject> loadSubjects(long kitVersionId);
+    List<Subject> loadSubjectsOrderByIndex(long kitVersionId);
 }
