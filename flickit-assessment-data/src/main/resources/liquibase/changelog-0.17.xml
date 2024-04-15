@@ -197,15 +197,14 @@
     <changeSet id="0.17-36" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group">
             <column name="deletion_time" type="bigint" defaultValueNumeric="0">
-                <constraints nullable="true"/>
+                <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="0.17-37" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group">
-            <column name="code" type="varchar(100)"
-            valueComputed="LOWER(title)">
+            <column name="code" type="varchar(100)" valueComputed="LOWER(REGEXP_REPLACE(title, '[\s]', '-', 'g'))">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
