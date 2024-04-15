@@ -6,9 +6,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class SpaceAccessJpaAdapter implements
-AddSpaceMemberPort,
-    CheckMemberSpaceAccessPort
-{
+    AddSpaceMemberPort,
+    CheckMemberSpaceAccessPort {
     @Override
     public void addMemberAccess(Param param) {
 

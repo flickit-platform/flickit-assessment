@@ -5,5 +5,4 @@ import org.flickit.assessment.users.application.domain.Space;
 public interface LoadSpacePort {
 
     Space loadSpace(long spaceId);
-
 }
