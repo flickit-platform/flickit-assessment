@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitStatsUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
@@ -25,7 +25,7 @@ public class GetKitStatsService implements GetKitStatsUseCase {
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final CountKitStatsPort countKitStatsPort;
     private final LoadSubjectsPort loadSubjectsPort;
-    private final LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
+    private final LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Override
     public Result getKitStats(Param param) {
@@ -35,7 +35,7 @@ public class GetKitStatsService implements GetKitStatsUseCase {
 
         var counts = countKitStatsPort.countKitStats(param.getKitId());
 
-        AssessmentKit assessmentKit = loadAssessmentKitInfoPort.load(param.getKitId());
+        AssessmentKit assessmentKit = loadAssessmentKitPort.load(param.getKitId());
 
         List<KitStatSubject> subjects = loadSubjectsPort.loadSubjectsOrderByIndex(assessmentKit.getKitVersionId()).stream()
             .map(s -> new GetKitStatsUseCase.KitStatSubject(s.getTitle()))
