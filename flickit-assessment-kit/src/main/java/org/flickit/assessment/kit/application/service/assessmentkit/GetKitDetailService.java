@@ -2,10 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
-import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.domain.Subject;
+import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -16,8 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparingLong;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -45,18 +45,11 @@ public class GetKitDetailService implements GetKitDetailUseCase {
     }
 
     private Result mapToResult(List<MaturityLevel> maturityLevels, List<Subject> subjects, List<Questionnaire> questionnaires) {
-        var maturityLevelIdTitleMap = maturityLevels.stream()
-            .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getTitle));
+        var maturityLevelIdMap = maturityLevels.stream()
+            .collect(Collectors.toMap(MaturityLevel::getId, Function.identity()));
+
         var kitDetailMaturityLevels = maturityLevels.stream()
-            .map(m -> new KitDetailMaturityLevel(m.getId(), m.getTitle(), m.getIndex(),
-                m.getCompetences().stream()
-                    .map(c -> {
-                        long id = c.getEffectiveLevelId();
-                        String title = maturityLevelIdTitleMap.get(id);
-                        return new Competences(title, c.getValue(), id);
-                    })
-                    .toList()
-            ))
+            .map(maturityLevel -> toKitDetailMaturityLevel(maturityLevel, maturityLevelIdMap))
             .toList();
 
         var kitDetailSubjects = subjects.stream()
@@ -68,5 +61,19 @@ public class GetKitDetailService implements GetKitDetailUseCase {
             .toList();
 
         return new Result(kitDetailMaturityLevels, kitDetailSubjects, kitDetailQuestionnaires);
+    }
+
+    private KitDetailMaturityLevel toKitDetailMaturityLevel(MaturityLevel maturityLevel, Map<Long, MaturityLevel> maturityLevelIdMap) {
+        var competences = maturityLevel.getCompetences().stream()
+            .sorted(comparingLong(MaturityLevelCompetence::getValue)) // sort by value
+            .map(c -> {
+                long id = c.getEffectiveLevelId();
+                return new Competences(maturityLevelIdMap.get(id).getTitle(), c.getValue(), id);
+            })
+            .toList();
+        return new KitDetailMaturityLevel(maturityLevel.getId(),
+            maturityLevel.getTitle(),
+            maturityLevel.getIndex(),
+            competences);
     }
 }
