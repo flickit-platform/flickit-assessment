@@ -1,6 +1,8 @@
 package org.flickit.assessment.kit.adapter.out.persistence.questionnaire;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+
 @Component
 @RequiredArgsConstructor
 public class QuestionnairePersistenceJpaAdapter implements
@@ -19,6 +23,7 @@ public class QuestionnairePersistenceJpaAdapter implements
     LoadQuestionnairesPort {
 
     private final QuestionnaireJpaRepository repository;
+    private final AssessmentKitJpaRepository assessmentKitRepository;
 
     @Override
     public Long persist(Questionnaire questionnaire, long kitVersionId, UUID createdBy) {
@@ -36,7 +41,11 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Questionnaire> loadByKitVersionId(Long kitVersionId) {
+    public List<Questionnaire> loadAllByKitId(Long kitId) {
+        var kitVersionId = assessmentKitRepository.findById(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
+            .getKitVersionId();
+
         return repository.findAllByKitVersionId(kitVersionId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
             .toList();

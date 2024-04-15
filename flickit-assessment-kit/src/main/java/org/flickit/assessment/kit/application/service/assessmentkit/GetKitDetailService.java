@@ -2,12 +2,13 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
@@ -24,7 +25,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class GetKitDetailService implements GetKitDetailUseCase {
 
-    private final LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
+    private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadSubjectsPort loadSubjectsPort;
@@ -32,13 +33,13 @@ public class GetKitDetailService implements GetKitDetailUseCase {
 
     @Override
     public Result getKitDetail(Param param) {
-        var expertGroupId = loadKitVersionExpertGroupPort.loadKitVersionExpertGroupId(param.getKitVersionId());
-        if (!checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId()))
+        ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
+        if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId());
-        var subjects = loadSubjectsPort.loadSubjects(param.getKitVersionId());
-        var questionnaires = loadQuestionnairesPort.loadByKitVersionId(param.getKitVersionId());
+        var maturityLevels = loadMaturityLevelsPort.loadByKitId(param.getKitId());
+        var subjects = loadSubjectsPort.loadSubjects(param.getKitId());
+        var questionnaires = loadQuestionnairesPort.loadAllByKitId(param.getKitId());
 
         return mapToResult(maturityLevels, subjects, questionnaires);
     }

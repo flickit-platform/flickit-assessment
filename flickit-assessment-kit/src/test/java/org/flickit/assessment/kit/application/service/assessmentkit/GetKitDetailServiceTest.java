@@ -7,11 +7,12 @@ import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase.Result;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
+import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
 import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
@@ -37,7 +38,7 @@ class GetKitDetailServiceTest {
     private GetKitDetailService service;
 
     @Mock
-    private LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
+    private LoadKitExpertGroupPort loadKitExpertGroupPort;
 
     @Mock
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
@@ -53,8 +54,9 @@ class GetKitDetailServiceTest {
 
     @Test
     void testGetKitDetail_WhenKitExist_shouldReturnKitDetails() {
-        GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, UUID.randomUUID());
-        var expertGroupId = 25L;
+        var expertGroup = ExpertGroupMother.createExpertGroup();
+        var currentUserId = expertGroup.getOwnerId();
+        GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, currentUserId);
 
         List<MaturityLevel> maturityLevels = List.of(
             MaturityLevelMother.levelOne(),
@@ -62,11 +64,11 @@ class GetKitDetailServiceTest {
         List<Subject> subjects = List.of(SubjectMother.subjectWithTitle("subject1"));
         List<Questionnaire> questionnaires = List.of(QuestionnaireMother.questionnaireWithTitle("questionnaire1"));
 
-        when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroupId(param.getKitVersionId())).thenReturn(expertGroupId);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())).thenReturn(true);
-        when(loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId())).thenReturn(maturityLevels);
-        when(loadSubjectsPort.loadSubjects(param.getKitVersionId())).thenReturn(subjects);
-        when(loadQuestionnairesPort.loadByKitVersionId(param.getKitVersionId())).thenReturn(questionnaires);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(maturityLevels);
+        when(loadSubjectsPort.loadSubjects(param.getKitId())).thenReturn(subjects);
+        when(loadQuestionnairesPort.loadAllByKitId(param.getKitId())).thenReturn(questionnaires);
 
         Result result = service.getKitDetail(param);
 
@@ -81,7 +83,7 @@ class GetKitDetailServiceTest {
     void testGetKitDetail_WhenKitDoesNotExist_ThrowsException() {
         GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, UUID.randomUUID());
 
-        when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroupId(param.getKitVersionId()))
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
             .thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitDetail(param));
@@ -90,11 +92,11 @@ class GetKitDetailServiceTest {
 
     @Test
     void testGetKitDetail_WhenUserIsNotMember_ThrowsException() {
+        var expertGroup = ExpertGroupMother.createExpertGroup();
         GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, UUID.randomUUID());
-        var expertGroupId = 25L;
 
-        when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroupId(param.getKitVersionId())).thenReturn(expertGroupId);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId())).thenReturn(false);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(false);
 
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getKitDetail(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());

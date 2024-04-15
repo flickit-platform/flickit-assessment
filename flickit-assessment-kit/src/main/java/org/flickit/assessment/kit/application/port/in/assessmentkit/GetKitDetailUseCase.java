@@ -20,13 +20,13 @@ public interface GetKitDetailUseCase {
     class Param extends SelfValidating<GetKitDownloadLinkUseCase.Param> {
 
         @NotNull(message = GET_KIT_DETAIL_KIT_VERSION_ID_NOT_NULL)
-        Long kitVersionId;
+        Long kitId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitVersionId, UUID currentUserId) {
-            this.kitVersionId = kitVersionId;
+        public Param(Long kitId, UUID currentUserId) {
+            this.kitId = kitId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
