@@ -7,7 +7,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.spaceaccess.AddSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.spaceaccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceaccess.CheckMemberSpaceAccessPort;
-import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
+import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistencePort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserIdByEmailPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
-    private final LoadSpacePort loadSpacePort;
+    private final CheckSpaceExistencePort checkSpaceExistencePort;
     private final CheckMemberSpaceAccessPort checkMemberSpaceAccessPort;
     private final LoadUserIdByEmailPort loadUserIdByEmailPort;
     private final AddSpaceMemberPort addSpaceMemberPort;
@@ -30,8 +30,7 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
     @Override
     public void addMember(Param param) {
         var currentUserId = param.getCurrentUserId();
-        var space = loadSpacePort.loadSpace(param.getSpaceId());
-        if (space == null)
+        if (!checkSpaceExistencePort.existsById(param.getSpaceId()))
             throw new ValidationException(ADD_SPACE_MEMBER_SPACE_ID_NOT_FOUND);
 
         boolean inviterHasAccess = checkMemberSpaceAccessPort.checkAccess(currentUserId);
@@ -44,7 +43,7 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
         if (inviteeHasAccess)
             throw new ResourceAlreadyExistsException(ADD_SPACE_MEMBER_INVITEE_ACCESS_FOUND);
 
-        addSpaceMemberPort.addMemberAccess(toParam(space.getId(), userId, currentUserId, LocalDateTime.now()));
+        addSpaceMemberPort.addMemberAccess(toParam(param.getSpaceId(), userId, currentUserId, LocalDateTime.now()));
     }
 
     AddSpaceMemberPort.Param toParam(long spaceId, UUID userId, UUID currentUserId, LocalDateTime inviteTime){
