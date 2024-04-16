@@ -289,13 +289,23 @@
     </changeSet>
 
     <changeSet id="0.17-51" author="Maziyar Gerami">
+        <delete tableName="fau_space_user_access">
+            <where>user_id IS NULL</where>
+        </delete>
+    </changeSet>
+
+    <changeSet id="0.17-52" author="Maziyar Gerami">
+        <addNotNullConstraint tableName="fau_space_user_access" columnName="user_id" />
+    </changeSet>
+
+    <changeSet id="0.17-53" author="Maziyar Gerami">
         <addPrimaryKey tableName="fau_space_user_access"
                        columnNames="space_id, user_id"
                        constraintName="pk_fau_space_user_access"
                        validate="true"/>
     </changeSet>
 
-    <changeSet id="0.17-52" author="Maziyar Gerami">
+    <changeSet id="0.17-54" author="Maziyar Gerami">
         <createTable tableName="fau_space_invitee">
             <column name="id" type="uuid">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_fau_space_invitee"/>
@@ -318,7 +328,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="0.17-53" author="Maziyar Gerami">
+    <changeSet id="0.17-55" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fau_space_invitee"
                                  baseColumnNames="space_id"
                                  referencedTableName="fau_space"
@@ -326,7 +336,7 @@
                                  constraintName="fk_fau_space_invitee_space"/>
     </changeSet>
 
-    <changeSet id="0.17-54" author="Maziyar Gerami">
+    <changeSet id="0.17-56" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fau_space_invitee"
                                  baseColumnNames="created_by"
                                  referencedTableName="account_user"
@@ -334,20 +344,10 @@
                                  constraintName="fk_fau_space_invitee_user_createdby"/>
     </changeSet>
 
-    <changeSet id="0.17-55" author="Maziyar Gerami">
+    <changeSet id="0.17-57" author="Maziyar Gerami">
         <addUniqueConstraint tableName="fau_space_invitee"
                              columnNames="space_id, email"
                              constraintName="uq_fau_space_invitee_spaceid_email"/>
-    </changeSet>
-
-    <changeSet id="0.17-56" author="Maziyar Gerami">
-        <delete tableName="fau_space_user_access">
-            <where>user_id IS NULL</where>
-        </delete>
-    </changeSet>
-
-    <changeSet id="0.17-57" author="Maziyar Gerami">
-        <addNotNullConstraint tableName="fau_space_user_access" columnName="user_id" />
     </changeSet>
 
 </databaseChangeLog>
