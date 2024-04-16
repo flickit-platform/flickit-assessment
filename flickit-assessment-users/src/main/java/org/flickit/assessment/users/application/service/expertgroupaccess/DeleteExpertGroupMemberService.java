@@ -17,5 +17,4 @@ public class DeleteExpertGroupMemberService implements DeleteExpertGroupMemberUs
     public void deleteMember(Param param) {
         deleteExpertGroupMemberPort.deleteMember(param.getExpertGroupId(), param.getUserId());
     }
-
 }
