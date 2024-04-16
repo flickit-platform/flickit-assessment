@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 
-@Component(value = "kitQuestionnairePersistenceJpaAdapter")
+@Component
 @RequiredArgsConstructor
 public class QuestionnairePersistenceJpaAdapter implements
     CreateQuestionnairePort,
