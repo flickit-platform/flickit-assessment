@@ -23,14 +23,14 @@ class GetAssessmentQuestionnaireListUseCaseParamTest {
     @Test
     void testGetQuestionnaireListParam_assessmentIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(null, CURRENT_USER_ID, SIZE, PAGE));
+            () -> new Param(null, SIZE, PAGE, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("assessmentId: " + GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
     void testGetQuestionnaireListParam_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(ASSESSMENT_ID, null, SIZE, PAGE));
+            () -> new Param(ASSESSMENT_ID, SIZE, PAGE, null));
         assertThat(throwable).hasMessage("currentUserId: " + GET_ASSESSMENT_QUESTIONNAIRE_LIST_CURRENT_USER_ID_NOT_NULL);
     }
 
@@ -38,7 +38,7 @@ class GetAssessmentQuestionnaireListUseCaseParamTest {
     void testGetQuestionnaireListParam_sizeLessThanMin_ErrorMessage() {
         var size = -1;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(ASSESSMENT_ID, CURRENT_USER_ID, size, PAGE));
+            () -> new Param(ASSESSMENT_ID, size, PAGE, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("size: " + GET_ASSESSMENT_QUESTIONNAIRE_LIST_SIZE_MIN);
     }
 
@@ -46,7 +46,7 @@ class GetAssessmentQuestionnaireListUseCaseParamTest {
     void testGetQuestionnaireListParam_sizeGreaterThanMax_ErrorMessage() {
         var size = 51;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(ASSESSMENT_ID, CURRENT_USER_ID, size, PAGE));
+            () -> new Param(ASSESSMENT_ID, size, PAGE, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("size: " + GET_ASSESSMENT_QUESTIONNAIRE_LIST_SIZE_MAX);
     }
 
@@ -54,7 +54,7 @@ class GetAssessmentQuestionnaireListUseCaseParamTest {
     void testGetQuestionnaireListParam_PageLessThanMin_ErrorMessage() {
         var page = -1;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(ASSESSMENT_ID, CURRENT_USER_ID, SIZE, page));
+            () -> new Param(ASSESSMENT_ID, SIZE, page, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("page: " + GET_ASSESSMENT_QUESTIONNAIRE_LIST_PAGE_MIN);
     }
 }
