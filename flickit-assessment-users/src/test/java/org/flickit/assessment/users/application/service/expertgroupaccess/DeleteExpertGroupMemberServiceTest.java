@@ -29,7 +29,7 @@ class DeleteExpertGroupMemberServiceTest {
     DeleteExpertGroupMemberPort deleteExpertGroupMemberPort;
 
     @Test
-    @DisplayName("Delete 'Expert Group' with valid parameters should cause a successful deletion")
+    @DisplayName("Delete 'Expert Group Member' with valid parameters should cause a successful deletion")
     void deleteMember_validParameter_successful() {
         UUID userId = UUID.randomUUID();
         long expertGroupId = 0L;
@@ -47,7 +47,7 @@ class DeleteExpertGroupMemberServiceTest {
     }
 
     @Test
-    @DisplayName("Delete 'Expert Group' with invalid member should cause a ResourceNotFoundException")
+    @DisplayName("Delete 'Expert Group Member' when user is not a member should cause a ResourceNotFoundException")
     void deleteMember_userNotMember_ResourceNotFoundException() {
         UUID userId = UUID.randomUUID();
         long expertGroupId = 0L;
@@ -65,7 +65,7 @@ class DeleteExpertGroupMemberServiceTest {
     }
 
     @Test
-    @DisplayName("Delete 'Expert Group' with invalid expert group should cause a AccessDeniedException")
+    @DisplayName("Delete 'Expert Group Member' with invalid expert group should cause a AccessDeniedException")
     void deleteMember_expertGroupNotExist_AccessDeniedException() {
         UUID userId = UUID.randomUUID();
         long expertGroupId = 0L;
@@ -81,7 +81,7 @@ class DeleteExpertGroupMemberServiceTest {
     }
 
     @Test
-    @DisplayName("Delete 'Expert Group' with invalid owner should cause a AccessDeniedException")
+    @DisplayName("Delete 'Expert Group Member' with invalid owner should cause a AccessDeniedException")
     void deleteMember_currentUserNotOwner_AccessDeniedException() {
         UUID userId = UUID.randomUUID();
         long expertGroupId = 0L;
