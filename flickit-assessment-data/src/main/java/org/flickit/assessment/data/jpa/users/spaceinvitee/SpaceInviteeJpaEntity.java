@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.users.spaceinvitee;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -17,6 +18,7 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SpaceInviteeJpaEntity {
 
+    @Id
     @Column(name = "id", nullable = false)
     UUID id;
 
