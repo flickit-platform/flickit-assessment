@@ -3,6 +3,8 @@ package org.flickit.assessment.data.jpa.kit.kittag;
 import jakarta.persistence.*;
 import lombok.*;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Table(name = "fak_kit_tag")
 @Getter
@@ -24,4 +26,9 @@ public class KitTagJpaEntity {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String NAME = "code";
+    }
 }

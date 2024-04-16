@@ -1,0 +1,70 @@
+package org.flickit.assessment.kit.application.service.kittag;
+
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaEntity;
+import org.flickit.assessment.kit.application.domain.KitTag;
+import org.flickit.assessment.kit.application.port.in.kittag.GetKitTagListUseCase;
+import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class GetKitTagListServiceTest {
+
+    @InjectMocks
+    private GetKitTagListService getKitTagListService;
+
+    @Mock
+    private LoadKitTagListPort loadKitTagListPort;
+
+    @Test
+    void testGetKitTagList_ValidInput_EmptyResult() {
+        int page = 0;
+        int size = 10;
+
+        PaginatedResponse<KitTag> paginatedResponse = new PaginatedResponse<>(
+            Collections.emptyList(),
+            page,
+            size,
+            KitTagJpaEntity.Fields.NAME,
+            Sort.Direction.ASC.name().toLowerCase(),
+            0);
+        when(loadKitTagListPort.load(page, size)).thenReturn(paginatedResponse);
+
+        PaginatedResponse<KitTag> result = getKitTagListService.getKitTagList(new GetKitTagListUseCase.Param(page, size));
+        assertNotNull(result);
+        assertTrue(result.getItems().isEmpty());
+    }
+
+    @Test
+    void testGetKitTagList_ValidInput_ValidResult() {
+        int page = 0;
+        int size = 10;
+
+        List<KitTag> kitTags = List.of(new KitTag(1, "tagCode1", "tagTitle1"),
+            new KitTag(2, "tagCode2", "tagTitle2"));
+
+        PaginatedResponse<KitTag> paginatedResponse = new PaginatedResponse<>(
+            kitTags,
+            page,
+            size,
+            KitTagJpaEntity.Fields.NAME,
+            Sort.Direction.ASC.name().toLowerCase(),
+            0);
+        when(loadKitTagListPort.load(page, size)).thenReturn(paginatedResponse);
+
+        PaginatedResponse<KitTag> result = getKitTagListService.getKitTagList(new GetKitTagListUseCase.Param(page, size));
+        assertNotNull(result);
+        assertEquals(kitTags.size(), result.getItems().size());
+    }
+}
