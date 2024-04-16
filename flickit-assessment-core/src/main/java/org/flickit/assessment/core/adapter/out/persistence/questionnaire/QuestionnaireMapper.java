@@ -11,7 +11,10 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionnaireMapper {
 
-    public static QuestionnaireListItem mapToListItem(QuestionnaireListItemView questionnaireView, List<SubjectWithQuestionnaireIdView> subjectsView, int answerCount){
+    public static QuestionnaireListItem mapToListItem(QuestionnaireListItemView questionnaireView,
+                                                      List<SubjectWithQuestionnaireIdView> subjectsView,
+                                                      int answerCount,
+                                                      int nextQuestion){
         var subjects = subjectsView.stream()
             .map(s -> new QuestionnaireListItem.Subject(s.getId(), s.getTitle()))
             .toList();
@@ -23,6 +26,7 @@ public class QuestionnaireMapper {
             questionnaireView.getIndex(),
             questionnaireView.getQuestionCount(),
             answerCount,
+            nextQuestion,
             progress,
             subjects
         );

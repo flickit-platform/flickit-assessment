@@ -8,6 +8,7 @@ public record QuestionnaireListItem(
     int index,
     int questionCount,
     int answersCount,
+    int nextQuestion,
     int progress,
     List<Subject> subjects) {
 

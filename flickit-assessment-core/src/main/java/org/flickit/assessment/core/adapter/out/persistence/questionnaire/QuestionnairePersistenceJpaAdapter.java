@@ -9,6 +9,8 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answer.QuestionnaireIdAndAnswerCountView;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.kit.question.FirstUnansweredQuestionView;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
@@ -31,6 +33,7 @@ public class QuestionnairePersistenceJpaAdapter implements LoadQuestionnairesByA
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final SubjectJpaRepository subjectRepository;
     private final AnswerJpaRepository answerRepository;
+    private final QuestionJpaRepository questionRepository;
 
     @Override
     public PaginatedResponse<QuestionnaireListItem> loadAllByAssessmentId(LoadQuestionnairesByAssessmentIdPort.Param param) {
@@ -48,10 +51,14 @@ public class QuestionnairePersistenceJpaAdapter implements LoadQuestionnairesByA
             .stream()
             .collect(Collectors.toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
 
+        var questionnaireToNextQuestionMap = questionRepository.findQuestionnairesFirstUnansweredQuestion(assessmentResult.getId()).stream()
+            .collect(Collectors.toMap(FirstUnansweredQuestionView::getQuestionnaireId, FirstUnansweredQuestionView::getIndex));
+
         var items = pageResult.getContent().stream()
             .map(q -> mapToListItem(q,
                 questionnaireIdToSubjectMap.get(q.getId()),
-                questionnairesProgress.getOrDefault(q.getId(), 0)))
+                questionnairesProgress.getOrDefault(q.getId(), 0),
+                questionnaireToNextQuestionMap.getOrDefault(q.getId(), 1)))
             .toList();
 
         return new PaginatedResponse<>(
