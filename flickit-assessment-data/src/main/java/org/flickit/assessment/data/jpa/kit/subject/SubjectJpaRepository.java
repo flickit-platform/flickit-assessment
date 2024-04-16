@@ -54,4 +54,13 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
             WHERE s.id = :subjectId
         """)
     UUID findRefNumById(@Param(value = "subjectId") Long subjectId);
+
+    @Query("""
+            SELECT s.id AS id, s.title AS title, sq.questionnaireId AS questionnaireId
+            FROM SubjectJpaEntity s
+            JOIN SubjectQuestionnaireJpaEntity sq
+                ON s.id = sq.subjectId
+            WHERE sq.questionnaireId IN :questionnaireIds
+        """)
+    List<SubjectWithQuestionnaireIdView> findAllWithQuestionnaireIdByKitVersionId(@Param(value = "questionnaireIds") List<Long> questionnaireIds);
 }
