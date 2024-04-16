@@ -199,10 +199,18 @@
     </changeSet>
 
     <changeSet id="0.17-37" author="Maziyar Gerami">
-        <dropColumn tableName="fau_space_user_access" columnName="id" />
+        <dropColumn tableName="fau_space_user_access" columnName="invite_email" />
     </changeSet>
 
     <changeSet id="0.17-38" author="Maziyar Gerami">
+        <dropColumn tableName="fau_space_user_access" columnName="invite_expiration_date" />
+    </changeSet>
+
+    <changeSet id="0.17-39" author="Maziyar Gerami">
+        <dropColumn tableName="fau_space_user_access" columnName="id" />
+    </changeSet>
+
+    <changeSet id="0.17-40" author="Maziyar Gerami">
         <addColumn tableName="fau_space_user_access">
             <column name="created_by" type="uuid" valueComputed="fau_space.owner_id FROM fau_space WHERE fau_space.id = space_id">
                 <constraints nullable="false"/>
@@ -210,7 +218,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.17-39" author="Maziyar Gerami">
+    <changeSet id="0.17-41" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fau_space_user_access"
                                  baseColumnNames="created_by"
                                  referencedTableName="account_user"
@@ -218,29 +226,9 @@
                                  constraintName="fk_fau_space_user_access_user_createdby"/>
     </changeSet>
 
-    <changeSet id="0.17-40" author="Maziyar Gerami">
-        <addColumn tableName="fau_space_user_access">
-            <column name="last_modified_by" type="uuid" valueComputed="fau_space.owner_id FROM fau_space WHERE id = fau_space_user_access.space_id">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="0.17-41" author="Maziyar Gerami">
-        <addForeignKeyConstraint baseTableName="fau_space_user_access"
-                                 baseColumnNames="last_modified_by"
-                                 referencedTableName="account_user"
-                                 referencedColumnNames="id"
-                                 constraintName="fk_fau_space_user_access_user_lastmodifiedby"/>
-    </changeSet>
-
     <changeSet id="0.17-42" author="Maziyar Gerami">
         <addColumn tableName="fau_space_user_access">
             <column name="creation_time" type="${datetime_with_time_zone_type}"
-                    defaultValueComputed="current_timestamp">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
                     defaultValueComputed="current_timestamp">
                 <constraints nullable="false"/>
             </column>
@@ -271,6 +259,51 @@
                                  referencedTableName="account_user"
                                  referencedColumnNames="id"
                                  constraintName="fk_fau_space_user_access_user"/>
+    </changeSet>
+
+    <changeSet id="0.17-47" author="Maziyar Gerami">
+        <createTable tableName="fau_space_invitee">
+            <column name="id" type="uuid">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_fau_space_invitee"/>
+            </column>
+            <column name="space_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(254)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expiration_date" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.17-48" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_space_invitee"
+                                 baseColumnNames="space_id"
+                                 referencedTableName="fau_space"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_invitee_space"/>
+    </changeSet>
+
+    <changeSet id="0.17-49" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_space_invitee"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_space_invitee_user_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.17-50" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fau_space_invitee"
+                             columnNames="space_id, email"
+                             constraintName="uq_fau_space_invitee_spaceid_email"/>
     </changeSet>
 
 </databaseChangeLog>

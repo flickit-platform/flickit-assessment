@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.kit.spaceuseraccess;
+package org.flickit.assessment.data.jpa.users.spaceuseraccess;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @IdClass(SpaceUserAccessJpaEntity.EntityId.class)
-@Table(name = "fau_space")
+@Table(name = "fau_space_user_access")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,11 +27,11 @@ public class SpaceUserAccessJpaEntity {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
-    @Column(name = "invite_email")
-    private String inviteEmail;
+    @Column(name = "creation_time", nullable = false)
+    private LocalDateTime creationTime;
 
-    @Column(name = "invite_expiration_date")
-    private LocalDateTime inviteExpirationDate;
+    @Column(name = "created_by", nullable = false)
+    private String createdBy;
 
     @Data
     @NoArgsConstructor
