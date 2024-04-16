@@ -53,7 +53,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
             () -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
         Long kitVersionId = entity.getKitVersionId();
 
-        List<Subject> subjects = subjectRepository.findAllByKitVersionId(kitVersionId).stream()
+        List<Subject> subjects = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(e -> {
                 List<Attribute> attributes = attributeRepository.findAllBySubjectId(e.getId()).stream()
                     .map(AttributeMapper::mapToDomainModel)
@@ -61,7 +61,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
                 return SubjectMapper.mapToDomainModel(e, attributes);})
             .toList();
 
-        List<MaturityLevel> levels = maturityLevelRepository.findAllByKitVersionId(kitVersionId).stream()
+        List<MaturityLevel> levels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
         setLevelCompetences(levels);
@@ -72,7 +72,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
         setQuestionImpacts(questions);
         setQuestionOptions(questions);
 
-        List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionId(kitVersionId).stream()
+        List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
             .toList();
         setQuestions(questionnaires, questions);

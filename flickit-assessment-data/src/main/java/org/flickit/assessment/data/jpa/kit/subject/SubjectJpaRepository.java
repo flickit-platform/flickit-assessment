@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Long> {
 
-    List<SubjectJpaEntity> findAllByKitVersionId(Long kitVersionId);
+    List<SubjectJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
     @Modifying
     @Query("""
