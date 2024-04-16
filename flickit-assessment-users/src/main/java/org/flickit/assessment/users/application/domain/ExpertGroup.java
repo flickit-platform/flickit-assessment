@@ -16,4 +16,11 @@ public class ExpertGroup {
     private final String picture;
     private final String website;
     private final UUID ownerId;
+
+    public static String generateSlugCode(String title) {
+        return title
+            .toLowerCase()
+            .strip()
+            .replaceAll("\\s+", "-");
+    }
 }

@@ -6,7 +6,6 @@ import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,9 +35,6 @@ class GetKitUserListServiceTest {
 
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
-
-    @Mock
-    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Test
     void testGetKitUserList_ValidInputs_ValidResults() {
