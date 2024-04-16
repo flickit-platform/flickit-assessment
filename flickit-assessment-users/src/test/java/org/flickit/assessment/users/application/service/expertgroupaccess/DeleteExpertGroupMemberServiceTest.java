@@ -2,12 +2,9 @@ package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.DeleteExpertGroupMemberUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.DeleteExpertGroupMemberPort;
-import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupAccessPort;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,8 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -31,8 +26,6 @@ class DeleteExpertGroupMemberServiceTest {
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     @Mock
-    LoadExpertGroupAccessPort loadExpertGroupAccessPort;
-    @Mock
     DeleteExpertGroupMemberPort deleteExpertGroupMemberPort;
 
     @Test
@@ -45,14 +38,11 @@ class DeleteExpertGroupMemberServiceTest {
             new DeleteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
-        when((loadExpertGroupAccessPort.loadExpertGroupAccess(expertGroupId,userId)))
-            .thenReturn(Optional.of(new ExpertGroupAccess(LocalDateTime.now(), UUID.randomUUID(), 1)));
         doNothing().when(deleteExpertGroupMemberPort).deleteMember(expertGroupId, userId);
 
         assertDoesNotThrow(() -> service.deleteMember(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verify(loadExpertGroupAccessPort).loadExpertGroupAccess(expertGroupId, userId);
         verify(deleteExpertGroupMemberPort).deleteMember(expertGroupId, userId);
     }
 
@@ -66,12 +56,12 @@ class DeleteExpertGroupMemberServiceTest {
             new DeleteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
-        when(loadExpertGroupAccessPort.loadExpertGroupAccess(expertGroupId, userId)).thenReturn(Optional.empty());
+        doThrow(new ResourceNotFoundException(""))
+            .when(deleteExpertGroupMemberPort).deleteMember(expertGroupId, userId);
 
         assertThrows(ResourceNotFoundException.class, () -> service.deleteMember(param));
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verify(loadExpertGroupAccessPort).loadExpertGroupAccess(expertGroupId, userId);
-        verifyNoInteractions(deleteExpertGroupMemberPort);
+        verify(deleteExpertGroupMemberPort).deleteMember(expertGroupId, userId);
     }
 
     @Test
@@ -87,7 +77,6 @@ class DeleteExpertGroupMemberServiceTest {
 
         assertThrows(AccessDeniedException.class, () -> service.deleteMember(param));
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(loadExpertGroupAccessPort);
         verifyNoInteractions(deleteExpertGroupMemberPort);
     }
 
@@ -104,7 +93,6 @@ class DeleteExpertGroupMemberServiceTest {
 
         assertThrows(AccessDeniedException.class, () -> service.deleteMember(param));
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(loadExpertGroupAccessPort);
         verifyNoInteractions(deleteExpertGroupMemberPort);
     }
 }
