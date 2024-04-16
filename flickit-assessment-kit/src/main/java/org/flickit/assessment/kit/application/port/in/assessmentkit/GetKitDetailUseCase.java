@@ -17,7 +17,7 @@ public interface GetKitDetailUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<GetKitDownloadLinkUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_KIT_DETAIL_KIT_ID_NOT_NULL)
         Long kitId;
