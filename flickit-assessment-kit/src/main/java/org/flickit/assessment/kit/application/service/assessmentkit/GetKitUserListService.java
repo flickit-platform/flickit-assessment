@@ -7,7 +7,6 @@ import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +22,6 @@ public class GetKitUserListService implements GetKitUserListUseCase {
 
     private final LoadKitUsersPort loadKitUsersPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
-    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Override
     public PaginatedResponse<UserListItem> getKitUserList(Param param) {

@@ -92,8 +92,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteById(long expertGroupId) {
-        repository.delete(expertGroupId);
+    public void deleteById(long expertGroupId, long deletionTime) {
+        repository.delete(expertGroupId, deletionTime);
     }
 
     @Override

@@ -195,6 +195,32 @@
     </changeSet>
 
     <changeSet id="0.17-36" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group">
+            <column name="deletion_time" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.17-37" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group">
+            <column name="code" type="varchar(100)" valueComputed="LOWER(REGEXP_REPLACE(title, '[\s]', '-', 'g'))">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.17-38" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fau_expert_group"  constraintName="uq_fac_expertgroup_title"/>
+    </changeSet>
+
+    <changeSet id="0.17-39" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fau_expert_group"
+                             columnNames="code, deletion_time"
+                             constraintName="uq_fau_expert_group_code_deletion_time"/>
+    </changeSet>
+
+    <changeSet id="0.17-40" author="Maziyar Gerami">
         <addColumn tableName="fau_space">
             <column name="last_seen" type="timestamp"/>
         </addColumn>
