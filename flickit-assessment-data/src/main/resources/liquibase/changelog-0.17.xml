@@ -271,11 +271,21 @@
     </changeSet>
 
     <changeSet id="0.17-48" author="Maziyar Gerami">
+        <delete tableName="fau_space_user_access">
+            <where>user_id IS NULL</where>
+        </delete>
+    </changeSet>
+
+    <changeSet id="0.17-49" author="Maziyar Gerami">
+        <addNotNullConstraint tableName="fau_space_user_access" columnName="user_id"/>
+    </changeSet>
+
+    <changeSet id="0.17-50" author="Maziyar Gerami">
         <dropForeignKeyConstraint baseTableName="fau_space_user_access"
                                   constraintName="account_useraccess_user_id_abb729d3_fk_account_user_id"/>
     </changeSet>
 
-    <changeSet id="0.17-49" author="Maziyar Gerami">
+    <changeSet id="0.17-51" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fau_space_user_access"
                                  baseColumnNames="user_id"
                                  referencedTableName="account_user"
@@ -284,19 +294,10 @@
     </changeSet>
 
 
-    <changeSet id="0.17-50" author="Maziyar Gerami">
+    <changeSet id="0.17-52" author="Maziyar Gerami">
         <dropColumn tableName="fau_space_user_access" columnName="id" />
     </changeSet>
 
-    <changeSet id="0.17-51" author="Maziyar Gerami">
-        <delete tableName="fau_space_user_access">
-            <where>user_id IS NULL</where>
-        </delete>
-    </changeSet>
-
-    <changeSet id="0.17-52" author="Maziyar Gerami">
-        <addNotNullConstraint tableName="fau_space_user_access" columnName="user_id" />
-    </changeSet>
 
     <changeSet id="0.17-53" author="Maziyar Gerami">
         <addPrimaryKey tableName="fau_space_user_access"
