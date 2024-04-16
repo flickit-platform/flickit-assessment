@@ -47,6 +47,9 @@ class InviteSpaceMemberServiceTest {
         assertThrows(ValidationException.class, () -> service.inviteMember(param));
 
         verify(checkSpaceExistencePort).existsById(spaceId);
+        verifyNoInteractions(checkMemberSpaceAccessPort);
+        verifyNoInteractions(loadUserIdByEmailPort);
+        verifyNoInteractions(inviteSpaceMemberPort);
     }
 
     @Test
@@ -62,6 +65,9 @@ class InviteSpaceMemberServiceTest {
         assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
 
         verify(checkSpaceExistencePort).existsById(spaceId);
+        verify(checkMemberSpaceAccessPort).checkAccess(currentUserId);
+        verifyNoInteractions(loadUserIdByEmailPort);
+        verifyNoInteractions(inviteSpaceMemberPort);
     }
 
     @Test
@@ -79,6 +85,10 @@ class InviteSpaceMemberServiceTest {
         assertThrows(ResourceAlreadyExistsException.class, () -> service.inviteMember(param));
 
         verify(checkSpaceExistencePort).existsById(spaceId);
+        verify(checkMemberSpaceAccessPort).checkAccess(currentUserId);
+        verify(loadUserIdByEmailPort).loadByEmail(email);
+        verifyNoInteractions(inviteSpaceMemberPort);
+
     }
 
     @Test
@@ -87,14 +97,18 @@ class InviteSpaceMemberServiceTest {
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
-        var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
+        var usecaseParam = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
         when(checkMemberSpaceAccessPort.checkAccess(currentUserId)).thenReturn(true);
         when(loadUserIdByEmailPort.loadByEmail(email)).thenReturn(null);
         doNothing().when(inviteSpaceMemberPort).inviteMember(isA(InviteSpaceMemberPort.Param.class));
 
-        assertDoesNotThrow(() -> service.inviteMember(param));
+        assertDoesNotThrow(() -> service.inviteMember(usecaseParam));
 
         verify(checkSpaceExistencePort).existsById(spaceId);
+        verify(checkSpaceExistencePort).existsById(spaceId);
+        verify(checkMemberSpaceAccessPort).checkAccess(currentUserId);
+        verify(loadUserIdByEmailPort).loadByEmail(email);
+        verify(inviteSpaceMemberPort).inviteMember(any(InviteSpaceMemberPort.Param.class));
     }
 }
