@@ -1,6 +1,6 @@
 package org.flickit.assessment.users.application.service.expertgroupaccess;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.DeleteExpertGroupMemberUseCase;
@@ -18,7 +18,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DeleteExpertGroupMemberService implements DeleteExpertGroupMemberUseCase {
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
