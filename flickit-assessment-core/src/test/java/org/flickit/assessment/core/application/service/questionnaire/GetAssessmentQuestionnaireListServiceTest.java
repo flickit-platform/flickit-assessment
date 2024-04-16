@@ -36,10 +36,10 @@ class GetAssessmentQuestionnaireListServiceTest {
     void testGetQuestionnaireList_InvalidCurrentUser_ThrowsException() {
         Param param = new Param(
             UUID.randomUUID(),
-            UUID.randomUUID(),
             10,
-            0
-        );
+            0,
+            UUID.randomUUID()
+            );
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(false);
 
@@ -51,9 +51,9 @@ class GetAssessmentQuestionnaireListServiceTest {
     void testGetQuestionnaireList_ValidParams_ReturnListSuccessfully() {
         Param param = new Param(
             UUID.randomUUID(),
-            UUID.randomUUID(),
             10,
-            0
+            0,
+            UUID.randomUUID()
         );
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(true);
@@ -66,6 +66,7 @@ class GetAssessmentQuestionnaireListServiceTest {
             1,
             1,
             0,
+            1,
             0,
             List.of(
                 subject
