@@ -2,6 +2,7 @@ package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -90,6 +93,8 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
     @Override
     public void deleteMember(long expertGroupId, UUID userId) {
-        repository.deleteMember(userId, expertGroupId);
+        ExpertGroupAccessJpaEntity entity = repository.findByExpertGroupIdAndAndUserId(expertGroupId, userId)
+            .orElseThrow(() -> new ResourceNotFoundException(DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND));
+        repository.delete(entity);
     }
 }
