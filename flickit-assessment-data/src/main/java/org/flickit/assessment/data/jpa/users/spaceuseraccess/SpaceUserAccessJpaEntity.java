@@ -33,6 +33,9 @@ public class SpaceUserAccessJpaEntity {
     @Column(name = "created_by", nullable = false)
     private String createdBy;
 
+    @Column(name= "last_seen")
+    private LocalDateTime lastSeen;
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
