@@ -34,26 +34,18 @@ class GetAssessmentQuestionnaireListServiceTest {
 
     @Test
     void testGetQuestionnaireList_InvalidCurrentUser_ThrowsException() {
-        Param param = new Param(
-            UUID.randomUUID(),
-            10,
-            0,
-            UUID.randomUUID()
-            );
+        Param param = new Param(UUID.randomUUID(), 10, 0, UUID.randomUUID()
+        );
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(false);
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getAssessmentQuestionnaireList(param));
+        var exception = assertThrows(AccessDeniedException.class, () -> service.getAssessmentQuestionnaireList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
     }
 
     @Test
     void testGetQuestionnaireList_ValidParams_ReturnListSuccessfully() {
-        Param param = new Param(
-            UUID.randomUUID(),
-            10,
-            0,
-            UUID.randomUUID()
+        Param param = new Param(UUID.randomUUID(), 10, 0, UUID.randomUUID()
         );
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(true);
@@ -68,19 +60,14 @@ class GetAssessmentQuestionnaireListServiceTest {
             0,
             1,
             0,
-            List.of(
-                subject
-            )
-        );
+            List.of(subject));
         var expectedResult = new PaginatedResponse<>(
-            List.of(
-                questionnaire),
+            List.of(questionnaire),
             0,
             10,
             "index",
             "asc",
-            1
-        );
+            1);
 
         when(loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(portParam))
             .thenReturn(expectedResult);

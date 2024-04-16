@@ -15,46 +15,49 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class GetAssessmentQuestionnaireListUseCaseParamTest {
 
-    private static final UUID ASSESSMENT_ID = UUID.randomUUID();
-    private static final UUID CURRENT_USER_ID = UUID.randomUUID();
-    private static final int SIZE = 10;
-    private static final int PAGE = 0;
-
     @Test
     void testGetQuestionnaireListParam_assessmentIdIsNull_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(null, SIZE, PAGE, CURRENT_USER_ID));
+            () -> new Param(null, 10, 0, currentUserId));
         assertThat(throwable).hasMessage("assessmentId: " + GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
     void testGetQuestionnaireListParam_currentUserIdIsNull_ErrorMessage() {
+        UUID assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(ASSESSMENT_ID, SIZE, PAGE, null));
+            () -> new Param(assessmentId, 10, 0, null));
         assertThat(throwable).hasMessage("currentUserId: " + GET_ASSESSMENT_QUESTIONNAIRE_LIST_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
     void testGetQuestionnaireListParam_sizeLessThanMin_ErrorMessage() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         var size = -1;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(ASSESSMENT_ID, size, PAGE, CURRENT_USER_ID));
+            () -> new Param(assessmentId, size, 0, currentUserId));
         assertThat(throwable).hasMessage("size: " + GET_ASSESSMENT_QUESTIONNAIRE_LIST_SIZE_MIN);
     }
 
     @Test
     void testGetQuestionnaireListParam_sizeGreaterThanMax_ErrorMessage() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         var size = 51;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(ASSESSMENT_ID, size, PAGE, CURRENT_USER_ID));
+            () -> new Param(assessmentId, size, 0, currentUserId));
         assertThat(throwable).hasMessage("size: " + GET_ASSESSMENT_QUESTIONNAIRE_LIST_SIZE_MAX);
     }
 
     @Test
     void testGetQuestionnaireListParam_PageLessThanMin_ErrorMessage() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         var page = -1;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new Param(ASSESSMENT_ID, SIZE, page, CURRENT_USER_ID));
+            () -> new Param(assessmentId, 10, page, currentUserId));
         assertThat(throwable).hasMessage("page: " + GET_ASSESSMENT_QUESTIONNAIRE_LIST_PAGE_MIN);
     }
 }
