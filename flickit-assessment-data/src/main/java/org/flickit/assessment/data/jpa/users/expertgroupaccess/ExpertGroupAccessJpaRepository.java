@@ -68,13 +68,4 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
     void confirmInvitation(@Param(value = "expertGroupId") long expertGroupId,
                            @Param(value = "userId") UUID userId,
                            @Param(value = "modificationTime") LocalDateTime modificationTime);
-
-    @Modifying
-    @Query("""
-        DELETE
-        FROM ExpertGroupAccessJpaEntity e
-        WHERE e.expertGroupId = :expertGroupId and e.userId = :userId
-        """)
-    void deleteMember(@Param(value = "userId") UUID userId,
-                      @Param(value = "expertGroupId") long expertGroupId);
 }
