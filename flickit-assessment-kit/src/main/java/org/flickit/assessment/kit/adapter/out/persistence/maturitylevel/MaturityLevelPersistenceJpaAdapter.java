@@ -59,7 +59,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<MaturityLevel> loadByKitIdOrderByIndex(Long kitId) {
+    public List<MaturityLevel> loadByKitId(Long kitId) {
         var kitVersionId = assessmentKitRepository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
             .getKitVersionId();

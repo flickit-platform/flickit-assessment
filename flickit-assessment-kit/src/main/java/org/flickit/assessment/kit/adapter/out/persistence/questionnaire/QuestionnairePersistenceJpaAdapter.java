@@ -41,7 +41,7 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Questionnaire> loadAllByKitIdOrderByIndex(Long kitId) {
+    public List<Questionnaire> loadByKitId(Long kitId) {
         var kitVersionId = assessmentKitRepository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
             .getKitVersionId();

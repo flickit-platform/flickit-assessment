@@ -66,9 +66,9 @@ class GetKitDetailServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadMaturityLevelsPort.loadByKitIdOrderByIndex(param.getKitId())).thenReturn(maturityLevels);
-        when(loadSubjectsPort.loadSubjectsOrderByIndex(param.getKitId())).thenReturn(subjects);
-        when(loadQuestionnairesPort.loadAllByKitIdOrderByIndex(param.getKitId())).thenReturn(questionnaires);
+        when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(maturityLevels);
+        when(loadSubjectsPort.loadByKitId(param.getKitId())).thenReturn(subjects);
+        when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(questionnaires);
 
         Result result = service.getKitDetail(param);
 

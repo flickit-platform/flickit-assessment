@@ -42,7 +42,7 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Subject> loadSubjectsOrderByIndex(long kitId) {
+    public List<Subject> loadByKitId(long kitId) {
         var kitVersionId = assessmentKitRepository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
             .getKitVersionId();
