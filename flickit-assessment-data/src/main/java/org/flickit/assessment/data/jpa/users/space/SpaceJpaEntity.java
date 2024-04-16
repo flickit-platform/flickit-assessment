@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.kit.space;
+package org.flickit.assessment.data.jpa.users.space;
 
 import jakarta.persistence.*;
 import lombok.*;
