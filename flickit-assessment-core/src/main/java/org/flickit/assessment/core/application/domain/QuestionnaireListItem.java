@@ -7,7 +7,7 @@ public record QuestionnaireListItem(
     String title,
     int index,
     int questionCount,
-    int answersCount,
+    int answerCount,
     int nextQuestion,
     int progress,
     List<Subject> subjects) {
