@@ -367,30 +367,59 @@
 						"value": "{{authorization_header}}",
 						"type": "text"
 					}
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"title\": \"New title\"\n}",
-                "options": {
-                  "raw": {
-                    "language": "json"
-                  }
-                }
-              },
-              "url": {
-                "raw": "{{base_url}}/{{api_path}}/assessment-kits/386",
-                "host": [
-                  "{{base_url}}"
-                ],
-                "path": [
-                  "{{api_path}}",
-                  "assessment-kits",
-                  "386"
-                ]
-              }
-            },
-            "response": []
-        }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"New title\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/386",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"386"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Kit Tags",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kit/tags?page=0&size=20",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kit",
+						"tags"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "20"
+						}
+					]
+				}
+			},
+			"response": []
+		}
 	],
 	"event": [
 		{
