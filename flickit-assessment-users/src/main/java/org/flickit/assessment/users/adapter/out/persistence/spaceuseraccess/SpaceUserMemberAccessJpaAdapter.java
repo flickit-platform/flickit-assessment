@@ -25,6 +25,6 @@ public class SpaceUserMemberAccessJpaAdapter implements
 
     @Override
     public boolean checkIsMember(long spaceId, UUID userId) {
-        return repository.existsBySpaceIdAndUserId(userId, spaceId);
+        return repository.existsByUserIdAndSpaceId(userId, spaceId);
     }
 }

@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface SpaceUserAccessJpaRepository extends JpaRepository<SpaceUserAccessJpaEntity, Long> {
 
-    boolean existsBySpaceIdAndUserId(UUID userId, Long spaceId);
+    boolean existsByUserIdAndSpaceId(UUID userId, Long spaceId);
 }
