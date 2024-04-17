@@ -37,11 +37,10 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
         if (!checkMemberSpaceAccessPort.checkAccess(currentUserId))
             throw new AccessDeniedException(INVITE_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
 
-        if (loadUserIdByEmailPort.loadByEmail(param.getEmail())!=null)
+        if (loadUserIdByEmailPort.loadByEmail(param.getEmail()) != null)
             throw new ResourceAlreadyExistsException(INVITE_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
 
         inviteSpaceMemberPort.inviteMember(toParam(param.getSpaceId(), param.getEmail(), currentUserId, LocalDateTime.now()));
-
     }
 
     private InviteSpaceMemberPort.Param toParam(Long spaceId, String email, UUID currentUserId, LocalDateTime now) {
