@@ -3,20 +3,17 @@ package org.flickit.assessment.kit.adapter.out.persistence.subject;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
-import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
+import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.application.domain.Subject;
-import org.flickit.assessment.kit.application.port.in.subject.GetSubjectDetailUseCase;
-import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectDetailPort;
-import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
+import org.flickit.assessment.kit.application.port.out.subject.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 
 
@@ -26,12 +23,11 @@ public class SubjectPersistenceJpaAdapter implements
     UpdateSubjectPort,
     CreateSubjectPort,
     LoadSubjectsPort,
-    LoadSubjectDetailPort {
+    LoadSubjectDetailPort,
+    CheckSubjectExistencePort {
 
     private final SubjectJpaRepository repository;
-    private final AssessmentKitJpaRepository assessmentKitRepository;
-    private final QuestionJpaRepository questionRepository;
-    private final AttributeJpaRepository attributeRepository;
+    private final AssessmentKitJpaRepository kitRepository;
 
     @Override
     public void update(UpdateSubjectPort.Param param) {
@@ -52,22 +48,23 @@ public class SubjectPersistenceJpaAdapter implements
     @Override
     public List<Subject> loadSubjects(long kitVersionId) {
         return repository.findAllByKitVersionId(kitVersionId).stream()
-            .map(e -> SubjectMapper.mapToDomainModel(e, null))
+            .map(e -> mapToDomainModel(e, null))
             .toList();
     }
 
     @Override
-    public GetSubjectDetailUseCase.Result loadByIdAndKitId(Long subjectId, Long kitId) {
-        var kitVersionId = assessmentKitRepository.findById(kitId)
+    public boolean exist(long kitId, long subjectId) {
+        Long kitVersionId = kitRepository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
             .getKitVersionId();
 
-        var subject = repository.findByIdAndKitVersionId(subjectId, kitVersionId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND));
-        var questionCount = questionRepository.countDistinctBySubjectId(subjectId);
-        var attributes = attributeRepository.findAllBySubjectId(subjectId).stream()
-            .map(a -> new GetSubjectDetailUseCase.Attribute(a.getId(), a.getIndex(), a.getTitle()))
-            .toList();
-        return new GetSubjectDetailUseCase.Result(questionCount, subject.getDescription(), attributes);
+        return repository.findByIdAndKitVersionId(subjectId, kitVersionId).isPresent();
+    }
+
+    @Override
+    public Optional<Subject> loadById(long subjectId) {
+        return repository.findById(subjectId)
+            .map((SubjectJpaEntity entity) -> mapToDomainModel(entity,
+                entity.getAttributes().stream().map(AttributeMapper::mapToDomainModel).toList()));
     }
 }

@@ -9,21 +9,21 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_SUBJECT_DETAIL_KIT_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_SUBJECT_DETAIL_SUBJECT_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_KIT_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_NULL;
 
-public interface GetSubjectDetailUseCase {
+public interface GetKitSubjectDetailUseCase {
 
-    Result getSubjectDetail(Param param);
+    Result getKitSubjectDetail(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_SUBJECT_DETAIL_KIT_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_SUBJECT_DETAIL_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotNull(message = GET_SUBJECT_DETAIL_SUBJECT_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_NULL)
         Long subjectId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
@@ -37,7 +37,7 @@ public interface GetSubjectDetailUseCase {
         }
     }
 
-    record Result(Integer questionCount,
+    record Result(Integer questionsCount,
                   String description,
                   List<Attribute> attributes) {
     }
