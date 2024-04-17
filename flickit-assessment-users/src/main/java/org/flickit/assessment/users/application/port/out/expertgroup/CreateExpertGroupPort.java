@@ -6,7 +6,8 @@ public interface CreateExpertGroupPort {
 
     Long persist(Param param);
 
-    record Param(String title,
+    record Param(String code,
+                 String title,
                  String bio,
                  String about,
                  String picture,

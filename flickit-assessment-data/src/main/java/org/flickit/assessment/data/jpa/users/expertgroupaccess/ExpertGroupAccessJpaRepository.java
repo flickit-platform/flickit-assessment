@@ -41,7 +41,8 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         SELECT
         e.status as status
         FROM ExpertGroupAccessJpaEntity e
-        WHERE e.expertGroupId = :expertGroupId AND e.userId = :userId
+        LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
+        WHERE e.expertGroupId = :expertGroupId AND e.userId = :userId AND g.deleted = FALSE
         """)
     Optional<Integer> findExpertGroupMemberStatus(@Param(value = "expertGroupId") long expertGroupId,
                                                   @Param(value = "userId") UUID userId);

@@ -1,6 +1,8 @@
 package org.flickit.assessment.kit.adapter.out.persistence.questionnaire;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
@@ -10,22 +12,29 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+
 @Component
 @RequiredArgsConstructor
 public class QuestionnairePersistenceJpaAdapter implements
     CreateQuestionnairePort,
     UpdateQuestionnairePort,
+    LoadQuestionnairesPort,
     LoadKitQuestionnaireDetailPort,
     CheckQuestionnaireExistByIdPort,
     CheckQuestionnaireExistByIdAndKitIdPort {
 
     private final QuestionnaireJpaRepository repository;
+    private final AssessmentKitJpaRepository assessmentKitRepository;
     private final QuestionJpaRepository questionRepository;
     private final SubjectJpaRepository subjectRepository;
 
@@ -42,6 +51,17 @@ public class QuestionnairePersistenceJpaAdapter implements
             param.description(),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public List<Questionnaire> loadByKitId(Long kitId) {
+        var kitVersionId = assessmentKitRepository.findById(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
+            .getKitVersionId();
+
+        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+            .map(QuestionnaireMapper::mapToDomainModel)
+            .toList();
     }
 
     @Override
