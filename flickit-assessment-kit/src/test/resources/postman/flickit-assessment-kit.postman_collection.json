@@ -380,17 +380,43 @@
               "url": {
                 "raw": "{{base_url}}/{{api_path}}/assessment-kits/386",
                 "host": [
-                  "{{base_url}}"
-                ],
-                "path": [
-                  "{{api_path}}",
-                  "assessment-kits",
-                  "386"
-                ]
-              }
-            },
-            "response": []
-        }
+					"{{base_url}}"
+				],
+				  "path": [
+					  "{{api_path}}",
+					  "assessment-kits",
+					  "386"
+				  ]
+			  }
+			},
+			"response": []
+		},
+		{
+			"name": "Toggle Kit Like",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/386/likes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"386",
+						"likes"
+					]
+				}
+			},
+			"response": []
+		}
 	],
 	"event": [
 		{
