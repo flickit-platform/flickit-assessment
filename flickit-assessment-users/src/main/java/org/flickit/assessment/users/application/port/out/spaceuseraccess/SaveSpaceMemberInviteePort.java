@@ -1,11 +1,11 @@
-package org.flickit.assessment.users.application.port.out.spaceaccess;
+package org.flickit.assessment.users.application.port.out.spaceuseraccess;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public interface InviteSpaceMemberPort {
+public interface SaveSpaceMemberInviteePort {
 
-    void inviteMember(Param param);
+    void persist(Param param);
 
     record Param(long spaceId, String inviteeMail, UUID inviterId, LocalDateTime inviteDate) {
     }

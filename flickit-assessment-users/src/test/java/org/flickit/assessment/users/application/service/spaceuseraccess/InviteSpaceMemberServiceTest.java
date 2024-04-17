@@ -1,12 +1,13 @@
-package org.flickit.assessment.users.application.service.spaceaccess;
+package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.spaceaccess.CheckMemberSpaceAccessPort;
-import org.flickit.assessment.users.application.port.out.spaceaccess.CheckSpaceExistencePort;
-import org.flickit.assessment.users.application.port.out.spaceaccess.InviteSpaceMemberPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.SendInviteMailPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceMemberAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceExistencePort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.SaveSpaceMemberInviteePort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserIdByEmailPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,11 +29,13 @@ class InviteSpaceMemberServiceTest {
     @Mock
     private CheckSpaceExistencePort checkSpaceExistencePort;
     @Mock
-    private CheckMemberSpaceAccessPort checkMemberSpaceAccessPort;
+    private CheckSpaceMemberAccessPort checkSpaceMemberAccessPort;
     @Mock
     LoadUserIdByEmailPort loadUserIdByEmailPort;
     @Mock
-    InviteSpaceMemberPort inviteSpaceMemberPort;
+    SaveSpaceMemberInviteePort saveSpaceMemberInviteePort;
+    @Mock
+    SendInviteMailPort SendInviteMailPort;
 
     @Test
     @DisplayName("Inviting member to an invalid space should cause a ValidationException")
@@ -47,9 +49,10 @@ class InviteSpaceMemberServiceTest {
         assertThrows(ValidationException.class, () -> service.inviteMember(param));
 
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verifyNoInteractions(checkMemberSpaceAccessPort);
+        verifyNoInteractions(checkSpaceMemberAccessPort);
         verifyNoInteractions(loadUserIdByEmailPort);
-        verifyNoInteractions(inviteSpaceMemberPort);
+        verifyNoInteractions(saveSpaceMemberInviteePort);
+        verifyNoInteractions(SendInviteMailPort);
     }
 
     @Test
@@ -60,14 +63,15 @@ class InviteSpaceMemberServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
-        when(checkMemberSpaceAccessPort.checkAccess(currentUserId)).thenReturn(false);
+        when(checkSpaceMemberAccessPort.checkAccess(currentUserId)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
 
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verify(checkMemberSpaceAccessPort).checkAccess(currentUserId);
+        verify(checkSpaceMemberAccessPort).checkAccess(currentUserId);
         verifyNoInteractions(loadUserIdByEmailPort);
-        verifyNoInteractions(inviteSpaceMemberPort);
+        verifyNoInteractions(saveSpaceMemberInviteePort);
+        verifyNoInteractions(SendInviteMailPort);
     }
 
     @Test
@@ -79,16 +83,16 @@ class InviteSpaceMemberServiceTest {
         UUID userId = UUID.randomUUID();
         var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
-        when(checkMemberSpaceAccessPort.checkAccess(currentUserId)).thenReturn(true);
+        when(checkSpaceMemberAccessPort.checkAccess(currentUserId)).thenReturn(true);
         when(loadUserIdByEmailPort.loadByEmail(email)).thenReturn(userId);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> service.inviteMember(param));
 
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verify(checkMemberSpaceAccessPort).checkAccess(currentUserId);
+        verify(checkSpaceMemberAccessPort).checkAccess(currentUserId);
         verify(loadUserIdByEmailPort).loadByEmail(email);
-        verifyNoInteractions(inviteSpaceMemberPort);
-
+        verifyNoInteractions(saveSpaceMemberInviteePort);
+        verifyNoInteractions(SendInviteMailPort);
     }
 
     @Test
@@ -99,16 +103,18 @@ class InviteSpaceMemberServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var usecaseParam = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
-        when(checkMemberSpaceAccessPort.checkAccess(currentUserId)).thenReturn(true);
+        when(checkSpaceMemberAccessPort.checkAccess(currentUserId)).thenReturn(true);
         when(loadUserIdByEmailPort.loadByEmail(email)).thenReturn(null);
-        doNothing().when(inviteSpaceMemberPort).inviteMember(isA(InviteSpaceMemberPort.Param.class));
+        doNothing().when(saveSpaceMemberInviteePort).persist(isA(SaveSpaceMemberInviteePort.Param.class));
+        doNothing().when(SendInviteMailPort).sendInviteMail(email);
 
         assertDoesNotThrow(() -> service.inviteMember(usecaseParam));
 
         verify(checkSpaceExistencePort).existsById(spaceId);
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verify(checkMemberSpaceAccessPort).checkAccess(currentUserId);
+        verify(checkSpaceMemberAccessPort).checkAccess(currentUserId);
         verify(loadUserIdByEmailPort).loadByEmail(email);
-        verify(inviteSpaceMemberPort).inviteMember(any(InviteSpaceMemberPort.Param.class));
+        verify(saveSpaceMemberInviteePort).persist(any(SaveSpaceMemberInviteePort.Param.class));
+        verify(SendInviteMailPort).sendInviteMail(email);
     }
 }
