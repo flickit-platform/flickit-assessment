@@ -61,7 +61,7 @@ public class ErrorMessageKey {
     public static final String ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL = "add-space-member.spaceId.notUll";
     public static final String ADD_SPACE_MEMBER_EMAIL_NOT_NULL = "add-space-member.email.notNull";
     public static final String ADD_SPACE_MEMBER_SPACE_ID_NOT_FOUND = "add-space-member.spaceId.notFound";
-    public static final String ADD_SPACE_MEMBER_INVITEE_ACCESS_FOUND = "add-space-member.invitee-access.found";
+    public static final String ADD_SPACE_MEMBER_INVITEE_ACCESS_DUPLICATE = "add-space-member.invitee-access.duplicate";
     public static final String ADD_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND = "add-space-member.inviter-access.notFound";
     public static final String ADD_SPACE_MEMBER_USER_ID_NOT_FOUND = "add-space-member.email.notFound";
 }

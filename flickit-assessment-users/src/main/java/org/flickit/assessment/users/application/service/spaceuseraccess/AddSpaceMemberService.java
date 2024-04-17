@@ -42,7 +42,7 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
         boolean inviteeHasAccess = checkSpaceMemberAccessPort.checkIsMember(spaceId, userId);
         if (inviteeHasAccess)
-            throw new ResourceAlreadyExistsException(ADD_SPACE_MEMBER_INVITEE_ACCESS_FOUND);
+            throw new ResourceAlreadyExistsException(ADD_SPACE_MEMBER_INVITEE_ACCESS_DUPLICATE);
 
         addSpaceMemberPort.persist(toParam(spaceId, userId, currentUserId, LocalDateTime.now()));
     }
