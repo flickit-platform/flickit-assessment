@@ -83,6 +83,8 @@ public class ErrorMessageKey {
 
     public static final String GET_KIT_DETAIL_KIT_ID_NOT_NULL = "get-kit-detail.kitId.notNull";
 
+    public static final String TOGGLE_KIT_LIKE_KIT_ID_NOT_NULL = "toggle-kit-like.kitId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
