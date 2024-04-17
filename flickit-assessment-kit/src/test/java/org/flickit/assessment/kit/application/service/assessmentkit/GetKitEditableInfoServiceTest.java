@@ -67,7 +67,7 @@ class GetKitEditableInfoServiceTest {
         GetKitEditableInfoUseCase.Param param = new GetKitEditableInfoUseCase.Param(kitId, currentUserId);
 
         AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
-        List<KitTag> tags = List.of(new KitTag(1L, "Tag1"));
+        List<KitTag> tags = List.of(new KitTag(1L, "tagCode1", "Tag1"));
         ExpertGroup expertGroup = new ExpertGroup(1L, null, currentUserId);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);

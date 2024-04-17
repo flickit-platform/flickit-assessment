@@ -9,6 +9,6 @@ import org.flickit.assessment.kit.application.domain.KitTag;
 public class KitTagMapper {
 
     public static KitTag toDomainModel(KitTagJpaEntity entity) {
-        return new KitTag(entity.getId(), entity.getTitle());
+        return new KitTag(entity.getId(), entity.getCode(), entity.getTitle());
     }
 }
