@@ -7,6 +7,6 @@ public interface AddSpaceMemberPort {
 
     void persist(Param param);
 
-    record Param(long spaceId, UUID invitee, UUID inviter, LocalDateTime localDateTime){
+    record Param(long spaceId, UUID invitee, UUID inviter, LocalDateTime creationTime){
     }
 }

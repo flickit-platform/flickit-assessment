@@ -23,7 +23,6 @@ public class AddSpaceMemberRestController {
         useCase.addMember(toParam(id, request, currentUserId));
 
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
     private AddSpaceMemberUseCase.Param toParam(Long id, AddSpaceMemberRequestDto request, UUID currentUserId) {
