@@ -27,7 +27,7 @@ public class SubjectPersistenceJpaAdapter implements
     CheckSubjectExistencePort {
 
     private final SubjectJpaRepository repository;
-    private final AssessmentKitJpaRepository kitRepository;
+    private final AssessmentKitJpaRepository assessmentKitRepository;
 
     @Override
     public void update(UpdateSubjectPort.Param param) {
@@ -46,15 +46,19 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Subject> loadSubjects(long kitVersionId) {
-        return repository.findAllByKitVersionId(kitVersionId).stream()
-            .map(e -> mapToDomainModel(e, null))
+    public List<Subject> loadByKitId(long kitId) {
+        var kitVersionId = assessmentKitRepository.findById(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
+            .getKitVersionId();
+
+        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+            .map(e -> SubjectMapper.mapToDomainModel(e, null))
             .toList();
     }
 
     @Override
     public boolean exist(long kitId, long subjectId) {
-        Long kitVersionId = kitRepository.findById(kitId)
+        Long kitVersionId = assessmentKitRepository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
             .getKitVersionId();
 

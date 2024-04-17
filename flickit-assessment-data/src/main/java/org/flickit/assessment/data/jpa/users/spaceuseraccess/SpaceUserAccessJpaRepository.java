@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.kit.spaceuseraccess;
+package org.flickit.assessment.data.jpa.users.spaceuseraccess;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
