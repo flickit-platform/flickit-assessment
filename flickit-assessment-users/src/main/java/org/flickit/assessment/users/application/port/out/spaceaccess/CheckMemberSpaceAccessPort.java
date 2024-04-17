@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface CheckMemberSpaceAccessPort {
 
-    Boolean checkAccess(UUID userId);
+    boolean checkIsMember(long spaceId, UUID userId);
 }

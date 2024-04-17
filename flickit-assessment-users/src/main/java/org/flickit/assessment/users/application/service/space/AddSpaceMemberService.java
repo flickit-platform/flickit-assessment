@@ -30,23 +30,24 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
     @Override
     public void addMember(Param param) {
         var currentUserId = param.getCurrentUserId();
-        if (!checkSpaceExistencePort.existsById(param.getSpaceId()))
+        var spaceId = param.getSpaceId();
+        if (!checkSpaceExistencePort.existsById(spaceId))
             throw new ValidationException(ADD_SPACE_MEMBER_SPACE_ID_NOT_FOUND);
 
-        boolean inviterHasAccess = checkMemberSpaceAccessPort.checkAccess(currentUserId);
-        if(!inviterHasAccess)
+        boolean inviterHasAccess = checkMemberSpaceAccessPort.checkIsMember(spaceId, currentUserId);
+        if (!inviterHasAccess)
             throw new AccessDeniedException(ADD_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
 
         UUID userId = loadUserIdByEmailPort.loadByEmail(param.getEmail());
 
-        boolean inviteeHasAccess = checkMemberSpaceAccessPort.checkAccess(userId);
+        boolean inviteeHasAccess = checkMemberSpaceAccessPort.checkIsMember(spaceId, userId);
         if (inviteeHasAccess)
             throw new ResourceAlreadyExistsException(ADD_SPACE_MEMBER_INVITEE_ACCESS_FOUND);
 
-        addSpaceMemberPort.addMemberAccess(toParam(param.getSpaceId(), userId, currentUserId, LocalDateTime.now()));
+        addSpaceMemberPort.persist(toParam(spaceId, userId, currentUserId, LocalDateTime.now()));
     }
 
-    AddSpaceMemberPort.Param toParam(long spaceId, UUID userId, UUID currentUserId, LocalDateTime inviteTime){
+    AddSpaceMemberPort.Param toParam(long spaceId, UUID userId, UUID currentUserId, LocalDateTime inviteTime) {
         return new AddSpaceMemberPort.Param(spaceId, userId, currentUserId, inviteTime);
     }
 }
