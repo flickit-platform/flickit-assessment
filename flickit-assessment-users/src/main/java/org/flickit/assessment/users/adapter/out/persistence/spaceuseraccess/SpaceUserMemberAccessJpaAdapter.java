@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class SpaceUserAccessJpaAdapter implements
+public class SpaceUserMemberAccessJpaAdapter implements
     AddSpaceMemberPort,
-    CheckMemberSpaceAccessPort {
+    CheckSpaceMemberAccessPort {
 
     private final SpaceUserAccessJpaRepository repository;
 

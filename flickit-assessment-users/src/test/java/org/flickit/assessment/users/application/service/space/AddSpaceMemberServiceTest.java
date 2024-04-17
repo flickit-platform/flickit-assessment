@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckMemberSpaceAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceMemberAccessPort;
 import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistencePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserIdByEmailPort;
@@ -32,7 +32,7 @@ class AddSpaceMemberServiceTest {
     @Mock
     private LoadUserIdByEmailPort loadUserIdByEmailPort;
     @Mock
-    private CheckMemberSpaceAccessPort checkMemberSpaceAccessPort;
+    private CheckSpaceMemberAccessPort checkSpaceMemberAccessPort;
     @Mock
     private AddSpaceMemberPort addSpaceMemberPort;
 
@@ -46,15 +46,15 @@ class AddSpaceMemberServiceTest {
         var param = new AddSpaceMemberUseCase.Param(spaceId,email,currentUserId);
 
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
-        when(checkMemberSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
+        when(checkSpaceMemberAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadUserIdByEmailPort.loadByEmail(email)).thenReturn(userId);
-        when(checkMemberSpaceAccessPort.checkIsMember(spaceId, userId)).thenReturn(false);
+        when(checkSpaceMemberAccessPort.checkIsMember(spaceId, userId)).thenReturn(false);
         doNothing().when(addSpaceMemberPort).persist(isA(AddSpaceMemberPort.Param.class));
 
         assertDoesNotThrow(() -> service.addMember(param));
 
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verify(checkMemberSpaceAccessPort, times(2)).checkIsMember(anyLong(), any(UUID.class));
+        verify(checkSpaceMemberAccessPort, times(2)).checkIsMember(anyLong(), any(UUID.class));
         verify(loadUserIdByEmailPort).loadByEmail(email);
         verify(addSpaceMemberPort).persist(any(AddSpaceMemberPort.Param.class));
 
@@ -71,7 +71,7 @@ class AddSpaceMemberServiceTest {
 
         assertThrows(ValidationException.class, ()-> service.addMember(param));
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verifyNoInteractions(checkMemberSpaceAccessPort);
+        verifyNoInteractions(checkSpaceMemberAccessPort);
         verifyNoInteractions(loadUserIdByEmailPort);
         verifyNoInteractions(addSpaceMemberPort);
     }
@@ -83,13 +83,13 @@ class AddSpaceMemberServiceTest {
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
         var param = new AddSpaceMemberUseCase.Param(spaceId,email,currentUserId);
-
+CheckSpaceMemberAccessPort
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
-        when(checkMemberSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
+        when(checkSpaceMemberAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, ()-> service.addMember(param));
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verify(checkMemberSpaceAccessPort).checkIsMember(spaceId, currentUserId);
+        verify(checkSpaceMemberAccessPort).checkIsMember(spaceId, currentUserId);
         verifyNoInteractions(loadUserIdByEmailPort);
         verifyNoInteractions(addSpaceMemberPort);
     }
@@ -103,12 +103,12 @@ class AddSpaceMemberServiceTest {
         var param = new AddSpaceMemberUseCase.Param(spaceId,email,currentUserId);
 
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
-        when(checkMemberSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
+        when(checkSpaceMemberAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadUserIdByEmailPort.loadByEmail(email)).thenThrow(new ResourceNotFoundException(""));
 
         assertThrows(ResourceNotFoundException.class, ()-> service.addMember(param));
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verify(checkMemberSpaceAccessPort).checkIsMember(spaceId, currentUserId);
+        verify(checkSpaceMemberAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadUserIdByEmailPort).loadByEmail(email);
         verifyNoInteractions(addSpaceMemberPort);
     }
@@ -123,13 +123,13 @@ class AddSpaceMemberServiceTest {
         var param = new AddSpaceMemberUseCase.Param(spaceId,email,currentUserId);
 
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
-        when(checkMemberSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
+        when(checkSpaceMemberAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadUserIdByEmailPort.loadByEmail(email)).thenReturn(userId);
-        when(checkMemberSpaceAccessPort.checkIsMember(spaceId, userId)).thenReturn(true);
+        when(checkSpaceMemberAccessPort.checkIsMember(spaceId, userId)).thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, ()-> service.addMember(param));
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verify(checkMemberSpaceAccessPort, times(2)).checkIsMember(anyLong(), any(UUID.class));
+        verify(checkSpaceMemberAccessPort, times(2)).checkIsMember(anyLong(), any(UUID.class));
         verify(loadUserIdByEmailPort).loadByEmail(email);
         verifyNoInteractions(addSpaceMemberPort);
     }

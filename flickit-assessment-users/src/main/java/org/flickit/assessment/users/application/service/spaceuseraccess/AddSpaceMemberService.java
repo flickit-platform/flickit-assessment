@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckMemberSpaceAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceMemberAccessPort;
 import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistencePort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserIdByEmailPort;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
     private final CheckSpaceExistencePort checkSpaceExistencePort;
-    private final CheckMemberSpaceAccessPort checkMemberSpaceAccessPort;
+    private final CheckSpaceMemberAccessPort checkSpaceMemberAccessPort;
     private final LoadUserIdByEmailPort loadUserIdByEmailPort;
     private final AddSpaceMemberPort addSpaceMemberPort;
 
@@ -34,13 +34,13 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
         if (!checkSpaceExistencePort.existsById(spaceId))
             throw new ValidationException(ADD_SPACE_MEMBER_SPACE_ID_NOT_FOUND);
 
-        boolean inviterHasAccess = checkMemberSpaceAccessPort.checkIsMember(spaceId, currentUserId);
+        boolean inviterHasAccess = checkSpaceMemberAccessPort.checkIsMember(spaceId, currentUserId);
         if (!inviterHasAccess)
             throw new AccessDeniedException(ADD_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
 
         UUID userId = loadUserIdByEmailPort.loadByEmail(param.getEmail());
 
-        boolean inviteeHasAccess = checkMemberSpaceAccessPort.checkIsMember(spaceId, userId);
+        boolean inviteeHasAccess = checkSpaceMemberAccessPort.checkIsMember(spaceId, userId);
         if (inviteeHasAccess)
             throw new ResourceAlreadyExistsException(ADD_SPACE_MEMBER_INVITEE_ACCESS_FOUND);
 
