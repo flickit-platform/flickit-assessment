@@ -9,7 +9,8 @@ import java.util.UUID;
 
 @Component("adviceSpacePersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class SpaceUserAccessPersistenceJpaAdapter implements CheckSpaceAccessPort {
+public class SpaceUserAccessPersistenceJpaAdapter implements
+    CheckSpaceAccessPort {
 
     private final SpaceUserAccessJpaRepository repository;
 
