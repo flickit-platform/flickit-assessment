@@ -7,15 +7,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Component("adviceSpacePersistenceJpaAdapter")
+@Component
 @RequiredArgsConstructor
-public class SpaceUserAccessPersistenceJpaAdapter implements
-        CheckSpaceAccessPort {
+public class SpaceUserAccessPersistenceJpaAdapter implements CheckSpaceAccessPort {
 
     private final SpaceUserAccessJpaRepository repository;
 
     @Override
     public boolean checkIsMember(long spaceId, UUID userId) {
-        return repository.existsByUserIdAndSpaceId(userId, spaceId);
+        return repository.existsByUserIdAndSpaceId(spaceId, userId);
     }
 }
