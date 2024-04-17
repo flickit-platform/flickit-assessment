@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.flickit.assessment.users.application.port.in.spaceaccess.AddSpaceMemberUseCase;
 
 import java.util.UUID;
@@ -17,14 +14,19 @@ import java.util.UUID;
 public class AddSpaceMemberRestController {
 
     private final UserContext userContext;
-    private final AddSpaceMemberUseCase addSpaceMemberUseCase;
+    private final AddSpaceMemberUseCase useCase;
 
-    @PostMapping("/spaces/{id}/member")
+    @PostMapping("/spaces/{id}/members")
     public ResponseEntity<Void> addSpaceMember(@PathVariable("id") Long id,
-                                               @RequestParam("email") String email){
+                                               @RequestBody AddSpaceMemberRequestDto request) {
         UUID currentUserId = userContext.getUser().id();
+        useCase.addMember(toParam(id, request, currentUserId));
 
         return new ResponseEntity<>(HttpStatus.OK);
 
+    }
+
+    private AddSpaceMemberUseCase.Param toParam(Long id, AddSpaceMemberRequestDto request, UUID currentUserId) {
+        return new AddSpaceMemberUseCase.Param(id, request.email(), currentUserId);
     }
 }
