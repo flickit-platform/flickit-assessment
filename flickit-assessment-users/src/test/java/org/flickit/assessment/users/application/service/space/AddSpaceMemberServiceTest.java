@@ -83,7 +83,7 @@ class AddSpaceMemberServiceTest {
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
         var param = new AddSpaceMemberUseCase.Param(spaceId,email,currentUserId);
-CheckSpaceMemberAccessPort
+
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
         when(checkSpaceMemberAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
 
