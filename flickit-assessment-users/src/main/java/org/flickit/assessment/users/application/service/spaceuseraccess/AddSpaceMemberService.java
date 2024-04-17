@@ -1,12 +1,12 @@
-package org.flickit.assessment.users.application.service.space;
+package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.users.application.port.in.spaceaccess.AddSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.spaceaccess.AddSpaceMemberPort;
-import org.flickit.assessment.users.application.port.out.spaceaccess.CheckMemberSpaceAccessPort;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckMemberSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistencePort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserIdByEmailPort;
 import org.springframework.stereotype.Service;

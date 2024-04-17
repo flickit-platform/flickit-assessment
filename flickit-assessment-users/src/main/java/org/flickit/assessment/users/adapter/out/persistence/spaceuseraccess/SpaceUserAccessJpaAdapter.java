@@ -1,16 +1,16 @@
-package org.flickit.assessment.users.adapter.out.persistence.spaceaccess;
+package org.flickit.assessment.users.adapter.out.persistence.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaRepository;
-import org.flickit.assessment.users.application.port.out.spaceaccess.*;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.*;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class SpaceAccessJpaAdapter implements
+public class SpaceUserAccessJpaAdapter implements
     AddSpaceMemberPort,
     CheckMemberSpaceAccessPort {
 

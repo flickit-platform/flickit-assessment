@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.application.port.out.spaceaccess;
+package org.flickit.assessment.users.application.port.out.spaceuseraccess;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

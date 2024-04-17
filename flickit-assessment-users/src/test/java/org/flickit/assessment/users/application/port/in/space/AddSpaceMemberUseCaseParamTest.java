@@ -1,7 +1,7 @@
 package org.flickit.assessment.users.application.port.in.space;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.users.application.port.in.spaceaccess.AddSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

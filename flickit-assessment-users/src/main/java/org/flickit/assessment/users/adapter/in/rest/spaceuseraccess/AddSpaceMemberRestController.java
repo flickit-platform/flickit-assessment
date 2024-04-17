@@ -1,11 +1,11 @@
-package org.flickit.assessment.users.adapter.in.rest.space;
+package org.flickit.assessment.users.adapter.in.rest.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.flickit.assessment.users.application.port.in.spaceaccess.AddSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
 
 import java.util.UUID;
 
