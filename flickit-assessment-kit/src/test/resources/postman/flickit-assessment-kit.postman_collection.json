@@ -390,7 +390,35 @@
               }
             },
             "response": []
-        }
+        },
+		{
+			"name": "Get Subject Detail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/144/details/subjects/5",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"144",
+						"details",
+						"subjects",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
 	],
 	"event": [
 		{
