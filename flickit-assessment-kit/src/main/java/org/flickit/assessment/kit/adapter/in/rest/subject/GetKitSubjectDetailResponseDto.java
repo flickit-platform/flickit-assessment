@@ -4,7 +4,7 @@ import org.flickit.assessment.kit.application.port.in.subject.GetKitSubjectDetai
 
 import java.util.List;
 
-public record GetKitSubjectDetailResponseDto(int questionCount,
+public record GetKitSubjectDetailResponseDto(int questionsCount,
                                              String description,
                                              List<Attribute> attributes) {
 }

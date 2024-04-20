@@ -37,13 +37,9 @@ public interface GetKitSubjectDetailUseCase {
         }
     }
 
-    record Result(Integer questionsCount,
-                  String description,
-                  List<Attribute> attributes) {
+    record Result(int questionsCount, String description, List<Attribute> attributes) {
     }
 
-    record Attribute(Long id,
-                     Integer index,
-                     String title) {
+    record Attribute(long id, int index, String title) {
     }
 }
