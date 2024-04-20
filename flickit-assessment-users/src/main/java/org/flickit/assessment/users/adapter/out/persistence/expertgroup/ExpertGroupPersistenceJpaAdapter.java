@@ -98,7 +98,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
     @Override
     public CountExpertGroupKitsPort.Result countKits(long expertGroupId) {
-        var resultEntity =  repository.countKits(expertGroupId);
+        var resultEntity = repository.countKits(expertGroupId);
         return mapKitsCountToPortResult(resultEntity);
     }
 }
