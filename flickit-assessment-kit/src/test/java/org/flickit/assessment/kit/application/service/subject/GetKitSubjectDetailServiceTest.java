@@ -49,7 +49,6 @@ class GetKitSubjectDetailServiceTest {
     @Mock
     private CountSubjectQuestionsPort countSubjectQuestionsPort;
 
-
     @Test
     void testGetKitSubjectDetail_WhenSubjectExist_ShouldReturnSubjectDetails() {
         var param = new Param(2000L, 2L, UUID.randomUUID());

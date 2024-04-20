@@ -13,28 +13,26 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GetKitSubjectDetailUseCaseParamTest {
 
-    public static final Long KIT_ID = 25L;
-    public static final Long SUBJECT_ID = 11L;
-    public static final UUID CURRENT_USER_ID = UUID.randomUUID();
-
     @Test
     void testGetKitSubjectDetail_kitIdIsNull_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetKitSubjectDetailUseCase.Param(null, SUBJECT_ID, CURRENT_USER_ID));
+            () -> new GetKitSubjectDetailUseCase.Param(null, 11L, currentUserId));
         assertThat(throwable).hasMessage("kitId: " + GET_KIT_SUBJECT_DETAIL_KIT_ID_NOT_NULL);
     }
 
     @Test
     void testGetKitSubjectDetail_subjectIdIsNull_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetKitSubjectDetailUseCase.Param(KIT_ID, null, CURRENT_USER_ID));
+            () -> new GetKitSubjectDetailUseCase.Param(123L, null, currentUserId));
         assertThat(throwable).hasMessage("subjectId: " + GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
     void testGetKitSubjectDetail_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetKitSubjectDetailUseCase.Param(KIT_ID, SUBJECT_ID, null));
+            () -> new GetKitSubjectDetailUseCase.Param(123L, 11L, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }
