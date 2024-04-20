@@ -13,7 +13,7 @@ public class SpacePersistenceJpaAdapter implements
     private final SpaceJpaRepository repository;
 
     @Override
-    public boolean existsById(Long id) {
+    public boolean existsById(long id) {
         return repository.existsById(id);
     }
 }
