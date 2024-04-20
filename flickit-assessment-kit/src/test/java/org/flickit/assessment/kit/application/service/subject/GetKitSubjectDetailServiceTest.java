@@ -5,9 +5,8 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.subject.GetKitSubjectDetailUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.subject.CheckSubjectExistencePort;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectDetailPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
 import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
 import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
 import org.junit.jupiter.api.Test;
@@ -17,11 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,10 +38,7 @@ class GetKitSubjectDetailServiceTest {
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Mock
-    private CheckSubjectExistencePort checkSubjectExistencePort;
-
-    @Mock
-    private LoadSubjectDetailPort loadSubjectDetailPort;
+    private LoadSubjectPort loadSubjectPort;
 
     @Mock
     private CountSubjectQuestionsPort countSubjectQuestionsPort;
@@ -59,8 +53,7 @@ class GetKitSubjectDetailServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(checkSubjectExistencePort.exist(param.getKitId(), param.getSubjectId())).thenReturn(true);
-        when(loadSubjectDetailPort.loadById(param.getSubjectId())).thenReturn(Optional.of(subject));
+        when(loadSubjectPort.load(param.getKitId(), param.getSubjectId())).thenReturn(subject);
         when(countSubjectQuestionsPort.countBySubjectId(param.getSubjectId())).thenReturn(questionsCount);
 
         var result = service.getKitSubjectDetail(param);
@@ -73,19 +66,6 @@ class GetKitSubjectDetailServiceTest {
         assertEquals(attribute.getId(), resultAttribute.id());
         assertEquals(attribute.getTitle(), resultAttribute.title());
         assertEquals(attribute.getIndex(), resultAttribute.index());
-    }
-
-    @Test
-    void testGetKitSubjectDetail_WhenSubjectDoesNotExist_ThrowsException() {
-        var param = new Param(2000L, 2L, UUID.randomUUID());
-        var expertGroup = createExpertGroup();
-
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(checkSubjectExistencePort.exist(param.getKitId(), param.getSubjectId())).thenReturn(false);
-
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitSubjectDetail(param));
-        assertEquals(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND, exception.getMessage());
     }
 
     @Test

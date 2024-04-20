@@ -3,17 +3,19 @@ package org.flickit.assessment.kit.adapter.out.persistence.subject;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.application.domain.Subject;
-import org.flickit.assessment.kit.application.port.out.subject.*;
+import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
+import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 
 
@@ -23,8 +25,7 @@ public class SubjectPersistenceJpaAdapter implements
     UpdateSubjectPort,
     CreateSubjectPort,
     LoadSubjectsPort,
-    LoadSubjectDetailPort,
-    CheckSubjectExistencePort {
+    LoadSubjectPort {
 
     private final SubjectJpaRepository repository;
     private final AssessmentKitJpaRepository assessmentKitRepository;
@@ -57,18 +58,10 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean exist(long kitId, long subjectId) {
-        Long kitVersionId = assessmentKitRepository.findById(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
-            .getKitVersionId();
-
-        return repository.findByIdAndKitVersionId(subjectId, kitVersionId).isPresent();
-    }
-
-    @Override
-    public Optional<Subject> loadById(long subjectId) {
-        return repository.findById(subjectId)
-            .map((SubjectJpaEntity entity) -> mapToDomainModel(entity,
-                entity.getAttributes().stream().map(AttributeMapper::mapToDomainModel).toList()));
+    public Subject load(long kitId, long subjectId) {
+        var subject = repository.findByIdAndKitId(kitId, subjectId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND));
+        return mapToDomainModel(subject,
+            subject.getAttributes().stream().map(AttributeMapper::mapToDomainModel).toList());
     }
 }

@@ -2,18 +2,15 @@ package org.flickit.assessment.kit.application.service.subject;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.subject.GetKitSubjectDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.subject.CheckSubjectExistencePort;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectDetailPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,8 +19,7 @@ public class GetKitSubjectDetailService implements GetKitSubjectDetailUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
-    private final CheckSubjectExistencePort checkSubjectExistencePort;
-    private final LoadSubjectDetailPort loadSubjectDetailPort;
+    private final LoadSubjectPort loadSubjectPort;
     private final CountSubjectQuestionsPort countSubjectQuestionsPort;
 
     @Override
@@ -32,11 +28,7 @@ public class GetKitSubjectDetailService implements GetKitSubjectDetailUseCase {
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (!checkSubjectExistencePort.exist(param.getKitId(), param.getSubjectId()))
-            throw new ResourceNotFoundException(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND);
-
-        var subject = loadSubjectDetailPort.loadById(param.getSubjectId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND));
+        var subject = loadSubjectPort.load(param.getKitId(), param.getSubjectId());
         var attributes = subject.getAttributes().stream().map(this::toAttribute).toList();
         var questionsCount = countSubjectQuestionsPort.countBySubjectId(param.getSubjectId());
         return new Result(questionsCount, subject.getDescription(), attributes);
