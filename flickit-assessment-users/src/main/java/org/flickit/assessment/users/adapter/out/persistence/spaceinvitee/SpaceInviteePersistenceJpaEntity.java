@@ -11,9 +11,16 @@ public class SpaceInviteePersistenceJpaEntity implements
     SaveSpaceMemberInviteePort {
 
     private final SpaceInviteeJpaRepository repository;
+
     @Override
     public void persist(SaveSpaceMemberInviteePort.Param param) {
         var entity = SpaceInviteeMapper.mapCreateParamToJpaEntity(param);
-        repository.save(entity);
+        boolean isExist = repository.existsBySpaceIdAndEmail(param.spaceId(), param.inviteeMail());
+        if (isExist) {
+            repository.update(param.spaceId(), param.inviteeMail(), param.inviteDate(),
+                param.inviteExpirationDate(), param.inviterId());
+        } else {
+            repository.save(entity);
+        }
     }
 }

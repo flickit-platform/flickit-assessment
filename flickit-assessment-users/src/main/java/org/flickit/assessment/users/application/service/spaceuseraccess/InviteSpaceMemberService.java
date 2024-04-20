@@ -13,6 +13,7 @@ import org.flickit.assessment.users.application.port.out.spaceuseraccess.SendInv
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -23,6 +24,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_SPACE_M
 @Transactional
 @RequiredArgsConstructor
 public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
+
+    private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
     private final CheckSpaceExistencePort checkSpaceExistencePort;
     private final CheckSpaceMemberAccessPort checkSpaceMemberAccessPort;
@@ -42,11 +45,14 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
         if (loadUserIdByEmailPort.loadByEmail(param.getEmail()) != null)
             throw new ResourceAlreadyExistsException(INVITE_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
 
-        saveSpaceMemberInviteePort.persist(toParam(param.getSpaceId(), param.getEmail(), currentUserId, LocalDateTime.now()));
+        var inviteDate = LocalDateTime.now();
+        var inviteExpirationDate = inviteDate.plusDays(EXPIRY_DURATION.toDays());
+        saveSpaceMemberInviteePort.persist(toParam(param.getSpaceId(), param.getEmail(), currentUserId, inviteDate, inviteExpirationDate));
         sendInviteMailPort.sendInviteMail(param.getEmail());
     }
 
-    private SaveSpaceMemberInviteePort.Param toParam(Long spaceId, String email, UUID currentUserId, LocalDateTime now) {
-        return new SaveSpaceMemberInviteePort.Param(spaceId, email, currentUserId, now);
+    private SaveSpaceMemberInviteePort.Param toParam(Long spaceId, String email, UUID currentUserId,
+                                                     LocalDateTime inviteDate, LocalDateTime inviteExpirationDate) {
+        return new SaveSpaceMemberInviteePort.Param(spaceId, email, currentUserId, inviteDate, inviteExpirationDate);
     }
 }
