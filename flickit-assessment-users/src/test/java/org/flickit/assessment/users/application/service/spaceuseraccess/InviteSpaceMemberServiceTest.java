@@ -63,12 +63,12 @@ class InviteSpaceMemberServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
-        when(checkSpaceMemberAccessPort.checkAccess(currentUserId)).thenReturn(false);
+        when(checkSpaceMemberAccessPort.checkIsMember(currentUserId)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
 
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verify(checkSpaceMemberAccessPort).checkAccess(currentUserId);
+        verify(checkSpaceMemberAccessPort).checkIsMember(currentUserId);
         verifyNoInteractions(loadUserIdByEmailPort);
         verifyNoInteractions(saveSpaceMemberInviteePort);
         verifyNoInteractions(SendInviteMailPort);
@@ -83,13 +83,13 @@ class InviteSpaceMemberServiceTest {
         UUID userId = UUID.randomUUID();
         var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
-        when(checkSpaceMemberAccessPort.checkAccess(currentUserId)).thenReturn(true);
+        when(checkSpaceMemberAccessPort.checkIsMember(currentUserId)).thenReturn(true);
         when(loadUserIdByEmailPort.loadByEmail(email)).thenReturn(userId);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> service.inviteMember(param));
 
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verify(checkSpaceMemberAccessPort).checkAccess(currentUserId);
+        verify(checkSpaceMemberAccessPort).checkIsMember(currentUserId);
         verify(loadUserIdByEmailPort).loadByEmail(email);
         verifyNoInteractions(saveSpaceMemberInviteePort);
         verifyNoInteractions(SendInviteMailPort);
@@ -103,7 +103,7 @@ class InviteSpaceMemberServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var usecaseParam = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
-        when(checkSpaceMemberAccessPort.checkAccess(currentUserId)).thenReturn(true);
+        when(checkSpaceMemberAccessPort.checkIsMember(currentUserId)).thenReturn(true);
         when(loadUserIdByEmailPort.loadByEmail(email)).thenReturn(null);
         doNothing().when(saveSpaceMemberInviteePort).persist(isA(SaveSpaceMemberInviteePort.Param.class));
         doNothing().when(SendInviteMailPort).sendInviteMail(email);
@@ -112,7 +112,7 @@ class InviteSpaceMemberServiceTest {
 
         verify(checkSpaceExistencePort).existsById(spaceId);
         verify(checkSpaceExistencePort).existsById(spaceId);
-        verify(checkSpaceMemberAccessPort).checkAccess(currentUserId);
+        verify(checkSpaceMemberAccessPort).checkIsMember(currentUserId);
         verify(loadUserIdByEmailPort).loadByEmail(email);
         verify(saveSpaceMemberInviteePort).persist(any(SaveSpaceMemberInviteePort.Param.class));
         verify(SendInviteMailPort).sendInviteMail(email);

@@ -36,7 +36,7 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
         if (!checkSpaceExistencePort.existsById(param.getSpaceId()))
             throw new ValidationException(INVITE_SPACE_MEMBER_SPACE_ID_NOT_FOUND);
 
-        if (!checkSpaceMemberAccessPort.checkAccess(currentUserId))
+        if (!checkSpaceMemberAccessPort.checkIsMember(currentUserId))
             throw new AccessDeniedException(INVITE_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
 
         if (loadUserIdByEmailPort.loadByEmail(param.getEmail()) != null)

@@ -1,13 +1,10 @@
 package org.flickit.assessment.users.adapter.out.persistence.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
-import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceExistencePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceMemberAccessPort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.SaveSpaceMemberInviteePort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -16,8 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SpaceUserAccessPersistenceJpaAdapter implements
     CheckSpaceExistencePort,
-    CheckSpaceMemberAccessPort,
-    SaveSpaceMemberInviteePort {
+    CheckSpaceMemberAccessPort {
 
     private final SpaceUserAccessJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -31,10 +27,4 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
         return userRepository.existsById(userId);
     }
 
-    @Override
-    public void persist(Param param) {
-        var entity = new SpaceUserAccessJpaEntity(param.spaceId(), param.inviteeMail(), param.inviteDate(), param.inviterId(),
-            param.inviteDate())
-        repository.save(n)
-    }
 }
