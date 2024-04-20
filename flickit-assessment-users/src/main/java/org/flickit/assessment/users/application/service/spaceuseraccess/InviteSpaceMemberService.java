@@ -51,8 +51,8 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
         sendInviteMailPort.sendInviteMail(param.getEmail());
     }
 
-    private SaveSpaceMemberInviteePort.Param toParam(Long spaceId, String email, UUID currentUserId,
-                                                     LocalDateTime inviteDate, LocalDateTime inviteExpirationDate) {
-        return new SaveSpaceMemberInviteePort.Param(spaceId, email, currentUserId, inviteDate, inviteExpirationDate);
+    private SaveSpaceMemberInviteePort.Param toParam(Long spaceId, String email, UUID createdBy,
+                                                     LocalDateTime creationTime, LocalDateTime expirationDate) {
+        return new SaveSpaceMemberInviteePort.Param(spaceId, email, createdBy, creationTime, expirationDate);
     }
 }
