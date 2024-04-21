@@ -11,6 +11,7 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMatur
 import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAttributeMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
