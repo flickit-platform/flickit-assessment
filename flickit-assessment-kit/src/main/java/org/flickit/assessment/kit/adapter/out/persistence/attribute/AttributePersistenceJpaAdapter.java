@@ -53,7 +53,7 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public int countByAttributeId(long attributeId) {
-        return repository.countAllByAttributeId(attributeId);
+    public int countQuestions(long attributeId) {
+        return repository.countAttributeImpactfulQuestions(attributeId);
     }
 }

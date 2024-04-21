@@ -61,7 +61,7 @@ class GetKitAttributeDetailServiceTest {
 
         when(loadAttributePort.load(param.getAttributeId(), param.getKitId()))
             .thenReturn(expectedAttribute);
-        when(countAttributeImpactfulQuestionsPort.countByAttributeId(param.getAttributeId()))
+        when(countAttributeImpactfulQuestionsPort.countQuestions(param.getAttributeId()))
             .thenReturn(expectedQuestionCount);
         when(loadAttributeMaturityLevelsPort.loadAttributeLevels(param.getKitId(), param.getAttributeId()))
             .thenReturn(expectedMaturityLevels);
