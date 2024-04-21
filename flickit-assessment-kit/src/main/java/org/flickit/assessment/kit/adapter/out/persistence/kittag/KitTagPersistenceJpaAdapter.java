@@ -19,7 +19,7 @@ public class KitTagPersistenceJpaAdapter implements LoadKitTagsListPort {
     public List<KitTag> load(long kitId) {
         List<KitTagJpaEntity> entities = repository.findAllByKitId(kitId);
         return entities.stream()
-            .map(entity -> new KitTag(entity.getId(), entity.getTitle()))
+            .map(KitTagMapper::toDomainModel)
             .toList();
     }
 }

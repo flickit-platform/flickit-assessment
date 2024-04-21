@@ -70,6 +70,27 @@ public class ErrorMessageKey {
 
     public static final String GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL = "get-kit-editable-info.kitId.notNull";
 
+    public static final String UPDATE_KIT_INFO_KIT_ID_NOT_NULL = "update-kit-info.kitId.notNull";
+    public static final String UPDATE_KIT_INFO_KIT_ID_NOT_FOUND = "update-kit-info.kitId.notFound";
+    public static final String UPDATE_KIT_INFO_TITLE_SIZE_MIN = "update-kit-info.title.size.min";
+    public static final String UPDATE_KIT_INFO_TITLE_SIZE_MAX = "update-kit-info.title.size.max";
+    public static final String UPDATE_KIT_INFO_SUMMARY_SIZE_MIN = "update-kit-info.summary.size.min";
+    public static final String UPDATE_KIT_INFO_SUMMARY_SIZE_MAX = "update-kit-info.summary.size.max";
+    public static final String UPDATE_KIT_INFO_ABOUT_SIZE_MIN = "update-kit-info.about.size.min";
+    public static final String UPDATE_KIT_INFO_ABOUT_SIZE_MAX = "update-kit-info.about.size.max";
+    public static final String UPDATE_KIT_INFO_TAGS_SIZE_MIN = "update-kit-info.tags.size.min";
+    public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFount";
+
+    public static final String GET_KIT_DETAIL_KIT_ID_NOT_NULL = "get-kit-detail.kitId.notNull";
+
+    public static final String GET_KIT_SUBJECT_DETAIL_KIT_ID_NOT_NULL = "get-kit-subject-detail.kitId.notNull";
+    public static final String GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_NULL = "get-kit-subject-detail.subjectId.notNull";
+    public static final String GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND = "get-kit-subject-detail.subjectId.notFound";
+
+    public static final String GET_KIT_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL = "get-kit-attribute-detail.kitId.notNull";
+    public static final String GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL = "get-kit-attribute-detail.attributeId.notNull";
+    public static final String GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND = "get-kit-attribute-detail.attributeId.notFound";
+
     public static final String GET_QUESTION_DETAIL_KIT_ID_NOT_NULL = "get-question-detail.kitId.notNull";
     public static final String GET_QUESTION_DETAIL_QUESTION_ID_NOT_NULL = "get-question-detail.questionId.notNull";
     public static final String GET_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND = "get-question-detail.questionId.notFound";

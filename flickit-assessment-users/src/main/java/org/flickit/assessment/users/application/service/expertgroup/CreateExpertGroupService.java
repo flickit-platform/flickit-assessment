@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PICTURE_SIZE_MAX;
+import static org.flickit.assessment.users.application.domain.ExpertGroup.generateSlugCode;
 
 @Service
 @Transactional
@@ -43,6 +44,7 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
     private CreateExpertGroupPort.Param toCreateExpertGroupParam(Param param, String pictureFilePath) {
         return new CreateExpertGroupPort.Param(
+            generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getBio(),
             param.getAbout(),

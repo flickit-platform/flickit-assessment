@@ -21,7 +21,6 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_
 import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,13 +53,13 @@ class DeleteExpertGroupServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(countExpertGroupKitsPort.countKits(expertGroupId)).thenReturn(result);
         when(checkExpertGroupExistsPort.existsById(expertGroupId)).thenReturn(true);
-        doNothing().when(deleteExpertGroupPort).deleteById(isA(Long.class));
+        doNothing().when(deleteExpertGroupPort).deleteById(anyLong(),anyLong());
 
         assertDoesNotThrow(() -> service.deleteExpertGroup(param));
 
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(expertGroupId);
         verify(countExpertGroupKitsPort, times(1)).countKits(expertGroupId);
-        verify(deleteExpertGroupPort, times(1)).deleteById(expertGroupId);
+        verify(deleteExpertGroupPort, times(1)).deleteById(anyLong(), anyLong());
     }
 
     @Test

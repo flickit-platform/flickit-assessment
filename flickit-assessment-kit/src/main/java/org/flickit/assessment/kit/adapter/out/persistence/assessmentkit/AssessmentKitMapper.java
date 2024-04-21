@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -29,6 +30,26 @@ public class AssessmentKitMapper {
             new HashSet<>(),
             LocalDateTime.now(),
             kitVersionId
+        );
+    }
+
+    public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param) {
+        return new AssessmentKitJpaEntity(
+            entity.getId(),
+            param.code() != null ? param.code() : entity.getCode(),
+            param.title() != null ? param.title() : entity.getTitle(),
+            param.summary() != null ? param.summary() : entity.getSummary(),
+            param.about() != null ? param.about() : entity.getAbout(),
+            param.published() != null ? param.published() : entity.getPublished(),
+            param.isPrivate() != null ? param.isPrivate() : entity.getIsPrivate(),
+            entity.getExpertGroupId(),
+            entity.getCreationTime(),
+            param.lastModificationTime(),
+            entity.getCreatedBy(),
+            param.currentUserId(),
+            entity.getAccessGrantedUsers(),
+            entity.getLastMajorModificationTime(),
+            entity.getKitVersionId()
         );
     }
 

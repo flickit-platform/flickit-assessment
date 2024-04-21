@@ -53,4 +53,8 @@ public class ErrorMessageKey {
     public static final String CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_EXPIRED = "confirm-expert-group-invitation.invite-token.expired";
     public static final String CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_INVALID = "confirm-expert-group-invitation.invite-token.notValid";
     public static final String CONFIRM_EXPERT_GROUP_INVITATION_USER_ID_DUPLICATE = "confirm-expert-group-invitation.userId.duplicate";
+
+    public static final String DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_NULL = "delete-expert-group-member.userId.notNull";
+    public static final String DELETE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group-member.expert-group-id.notNull";
+    public static final String DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND = "delete-expert-group-member.userId.notFound";
 }

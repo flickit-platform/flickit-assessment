@@ -73,10 +73,12 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     @Modifying
     @Query("""
         UPDATE ExpertGroupJpaEntity e
-        SET e.deleted = true
+        SET e.deleted = true,
+            e.deletionTime = :deletionTime
         WHERE e.id = :expertGroupId
         """)
-    void delete(@Param("expertGroupId") Long expertGroupId);
+    void delete(@Param("expertGroupId") Long expertGroupId,
+                @Param("deletionTime") long deletionTime);
 
     @Query("""
             SELECT
