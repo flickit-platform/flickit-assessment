@@ -39,4 +39,6 @@ public class QuestionPersistenceJpaAdapter implements
     public int countBySubjectId(long subjectId) {
         return repository.countDistinctBySubjectId(subjectId);
     }
+
+
 }
