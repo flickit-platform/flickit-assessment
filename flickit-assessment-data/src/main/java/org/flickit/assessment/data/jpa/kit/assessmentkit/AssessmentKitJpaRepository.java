@@ -56,4 +56,12 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.id = :kitId
         """)
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
+
+    @Query("""
+        SELECT COUNT(a)
+        FROM AssessmentKitJpaEntity k
+            JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
+        where k.id = :kitId
+    """)
+    long countKitAssessments(@Param("kitId") Long kitId);
 }
