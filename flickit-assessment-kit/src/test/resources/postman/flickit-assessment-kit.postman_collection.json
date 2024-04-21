@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "929a2186-9141-4fcb-b5a6-7b43c5991f20",
+		"_postman_id": "ced9fd61-142c-4259-9aae-0aac1e7c97b0",
 		"name": "flickit-assessment-kit",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "11099181"
@@ -180,6 +180,32 @@
 			"response": []
 		},
 		{
+			"name": "Get Kit Detail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/details",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302",
+						"details"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Upload Kit DSL",
 			"request": {
 				"method": "POST",
@@ -279,9 +305,9 @@
 			},
 			"response": []
 		},
-        {
-            "name": "Get Kit Stats",
-            "request": {
+		{
+			"name": "Get Kit Stats",
+			"request": {
 				"method": "GET",
 				"header": [
 					{
@@ -300,10 +326,98 @@
 						"assessment-kits",
 						"308",
 						"stats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Kit Editable Info",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/308/info",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"308",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Kit Info",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"title\": \"New title\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/{{api_path}}/assessment-kits/386",
+                "host": [
+                  "{{base_url}}"
+                ],
+                "path": [
+                  "{{api_path}}",
+                  "assessment-kits",
+                  "386"
                 ]
               }
             },
             "response": []
+        },
+		{
+			"name": "Get Subject Detail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/144/details/subjects/5",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"144",
+						"details",
+						"subjects",
+						"5"
+					]
+				}
+			},
+			"response": []
 		},
 		{
 			"name": "Get Attribute Detail",

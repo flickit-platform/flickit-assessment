@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,4 +41,13 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         "a.lastModifiedBy = :currentUserId " +
         "WHERE a.id = :answerId")
     void update(UUID answerId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable, UUID currentUserId);
+
+    @Query("""
+        SELECT a.questionnaireId AS questionnaireId, COUNT(a.questionnaireId) AS answerCount
+        FROM AnswerJpaEntity a
+        WHERE a.assessmentResult.id=:assessmentResultId AND a.questionnaireId IN :questionnaireIds
+            AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+        GROUP BY a.questionnaireId
+        """)
+    List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(@Param(value = "assessmentResultId") UUID assessmentResultId, @Param(value = "questionnaireIds") List<Long> questionnaireIds);
 }

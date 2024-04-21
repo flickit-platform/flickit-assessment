@@ -1,0 +1,8 @@
+### Checklist
+Before you label your PR as 'Ready To Review', please check the below list and put an 'X' char into each bracket;
+
+[ ] - Did you update the Postman file?
+[ ] - Did you update the corresponding document?
+[ ] - Did you review the PR by yourself?
+[ ] - Did you merge the main branch into this branch recently?
+[ ] - Did you remove the probable extra code?

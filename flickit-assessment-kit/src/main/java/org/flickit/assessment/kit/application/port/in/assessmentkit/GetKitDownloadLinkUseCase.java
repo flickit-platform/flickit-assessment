@@ -8,7 +8,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_DOWNLOAD_LINK_KIT_ID_NOT_NULL;
 
 public interface GetKitDownloadLinkUseCase {
 
@@ -27,6 +27,7 @@ public interface GetKitDownloadLinkUseCase {
         public Param(Long kitId, UUID currentUserId) {
             this.kitId = kitId;
             this.currentUserId = currentUserId;
+            this.validateSelf();
         }
     }
 }

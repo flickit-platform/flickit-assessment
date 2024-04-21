@@ -6,14 +6,18 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.CountKitStatsView;
+import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
+import org.flickit.assessment.kit.adapter.out.persistence.kittagrelation.KitTagRelationMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
@@ -27,6 +31,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
@@ -39,12 +45,15 @@ public class AssessmentKitPersistenceJpaAdapter implements
     LoadKitMinimalInfoPort,
     CreateAssessmentKitPort,
     UpdateKitLastMajorModificationTimePort,
-    CountKitStatsPort {
+    CountKitStatsPort,
+    UpdateKitInfoPort,
+    LoadAssessmentKitPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
     private final ExpertGroupJpaRepository expertGroupRepository;
     private final KitVersionJpaRepository kitVersionRepository;
+    private final KitTagRelationJpaRepository kitTagRelationRepository;
 
     @Override
     public ExpertGroup loadKitExpertGroup(Long kitId) {
@@ -126,5 +135,45 @@ public class AssessmentKitPersistenceJpaAdapter implements
             kitStats.getMaturityLevelCount(),
             kitStats.getLikeCount(),
             kitStats.getAssessmentCount());
+    }
+
+    @Override
+    public void update(UpdateKitInfoPort.Param param) {
+        var kitEntity = repository.findById(param.kitId())
+            .orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_INFO_KIT_ID_NOT_FOUND));
+
+        if (param.tags() != null)
+            updateKitTags(param.kitId(), param.tags());
+
+        var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param);
+        repository.save(toBeUpdatedEntity);
+    }
+
+    private void updateKitTags(Long kitId, Set<Long> tags) {
+        Set<Long> savedTags = kitTagRelationRepository.findAllByKitId(kitId).stream()
+            .map(KitTagRelationJpaEntity::getTagId)
+            .collect(Collectors.toSet());
+
+        var removedTags = savedTags.stream()
+            .filter(t -> !tags.contains(t))
+            .collect(Collectors.toSet());
+
+        var addedTags = tags.stream()
+            .filter(t -> !savedTags.contains(t))
+            .collect(Collectors.toSet());
+
+        kitTagRelationRepository.saveAll(addedTags.stream()
+            .map(tagId -> KitTagRelationMapper.toJpaEntity(tagId, kitId))
+            .collect(Collectors.toSet()));
+
+        kitTagRelationRepository.deleteByKitIdAndTagIdIn(kitId, removedTags);
+    }
+
+    @Override
+    public AssessmentKit load(long kitId) {
+        AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+
+        return AssessmentKitMapper.mapToDomainModel(kitEntity);
     }
 }
