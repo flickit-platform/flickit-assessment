@@ -12,9 +12,9 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL;
 
-public interface GetAttributeDetailUseCase {
+public interface GetKitAttributeDetailUseCase {
 
-    Result getAttributeDetail(Param param);
+    Result getKitAttributeDetail(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)

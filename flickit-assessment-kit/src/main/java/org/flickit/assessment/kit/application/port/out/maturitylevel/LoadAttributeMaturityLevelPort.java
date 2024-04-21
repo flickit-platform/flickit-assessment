@@ -1,10 +1,10 @@
 package org.flickit.assessment.kit.application.port.out.maturitylevel;
 
-import org.flickit.assessment.kit.application.port.in.attribute.GetAttributeDetailUseCase;
+import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase;
 
 import java.util.List;
 
 public interface LoadAttributeMaturityLevelPort {
 
-    List<GetAttributeDetailUseCase.MaturityLevel> loadByAttributeId(Long attributeId);
+    List<GetKitAttributeDetailUseCase.MaturityLevel> loadByAttributeId(Long attributeId);
 }

@@ -3,9 +3,9 @@ package org.flickit.assessment.kit.application.service.attribute;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.port.in.attribute.GetAttributeDetailUseCase.MaturityLevel;
-import org.flickit.assessment.kit.application.port.in.attribute.GetAttributeDetailUseCase.Param;
-import org.flickit.assessment.kit.application.port.in.attribute.GetAttributeDetailUseCase.Result;
+import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase.MaturityLevel;
+import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase.Result;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class GetAttributeDetailServiceTest {
+class GetKitAttributeDetailServiceTest {
 
     @InjectMocks
-    private GetAttributeDetailService service;
+    private GetKitAttributeDetailService service;
 
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
@@ -50,7 +50,7 @@ class GetAttributeDetailServiceTest {
     private LoadAttributeMaturityLevelPort loadAttributeMaturityLevelPort;
 
     @Test
-    void testGetAttributeDetail_WhenAttributeExist_shouldReturnAttributeDetails() {
+    void testGetKitAttributeDetail_WhenAttributeExist_shouldReturnAttributeDetails() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var expectedQuestionCount = 14;
@@ -66,7 +66,7 @@ class GetAttributeDetailServiceTest {
         when(loadAttributeMaturityLevelPort.loadByAttributeId(param.getAttributeId()))
             .thenReturn(expectedMaturityLevels);
 
-        Result result = service.getAttributeDetail(param);
+        Result result = service.getKitAttributeDetail(param);
 
         assertEquals(expectedAttribute.getId(), result.id());
         assertEquals(expectedAttribute.getIndex(), result.index());
@@ -78,25 +78,25 @@ class GetAttributeDetailServiceTest {
     }
 
     @Test
-    void testGetAttributeDetail_WhenKitDoesNotExist_ThrowsException() {
+    void testGetKitAttributeDetail_WhenKitDoesNotExist_ThrowsException() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
             .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getAttributeDetail(param));
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitAttributeDetail(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
     }
 
     @Test
-    void testGetAttributeDetail_WhenUserIsNotMember_ThrowsException() {
+    void testGetKitAttributeDetail_WhenUserIsNotMember_ThrowsException() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(false);
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getAttributeDetail(param));
+        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getKitAttributeDetail(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
     }
 }

@@ -6,7 +6,7 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaReposit
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.port.in.attribute.GetAttributeDetailUseCase;
+import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAttributeMaturityLevelPort;
@@ -75,10 +75,10 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<GetAttributeDetailUseCase.MaturityLevel> loadByAttributeId(Long attributeId) {
+    public List<GetKitAttributeDetailUseCase.MaturityLevel> loadByAttributeId(Long attributeId) {
         var entities = repository.findAllByAttributeId(attributeId);
 
-        List<GetAttributeDetailUseCase.MaturityLevel> result = new ArrayList<>();
+        List<GetKitAttributeDetailUseCase.MaturityLevel> result = new ArrayList<>();
         for (MaturityLevelJpaEntity entity : entities) {
             Integer questionCount = repository.countQuestionByIdAndAttributeId(entity.getId(), attributeId);
             result.add(mapToAttributeDetailDomainModel(entity, questionCount));
