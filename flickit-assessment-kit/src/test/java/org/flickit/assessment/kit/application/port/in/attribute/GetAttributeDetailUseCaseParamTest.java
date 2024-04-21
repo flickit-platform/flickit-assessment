@@ -7,8 +7,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GetAttributeDetailUseCaseParamTest {
@@ -21,14 +21,14 @@ class GetAttributeDetailUseCaseParamTest {
     void testGetAttributeDetail_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAttributeDetailUseCase.Param(null, ATTRIBUTE_ID, CURRENT_USER_ID));
-        assertThat(throwable).hasMessage("kitId: " + GET_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitId: " + GET_KIT_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL);
     }
 
     @Test
     void testGetAttributeDetail_attributeIdsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAttributeDetailUseCase.Param(KIT_ID, null, CURRENT_USER_ID));
-        assertThat(throwable).hasMessage("attributeId: " + GET_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("attributeId: " + GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test

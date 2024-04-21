@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,7 +33,7 @@ public class GetAttributeDetailService implements GetAttributeDetailUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var attribute = loadAttributePort.loadByIdAndKitId(param.getAttributeId(), param.getKitId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND));
         var questionCount = loadAttributeQuestionCountPort.loadByAttributeId(param.getAttributeId());
         var maturityLevels = loadAttributeMaturityLevelPort.loadByAttributeId(param.getAttributeId());
 

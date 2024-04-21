@@ -87,9 +87,9 @@ public class ErrorMessageKey {
     public static final String GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_NULL = "get-kit-subject-detail.subjectId.notNull";
     public static final String GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND = "get-kit-subject-detail.subjectId.notFound";
 
-    public static final String GET_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL = "get-attribute-detail.kitId.notNull";
-    public static final String GET_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL = "get-attribute-detail.attributeId.notNull";
-    public static final String GET_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND = "get-attribute-detail.attributeId.notFound";
+    public static final String GET_KIT_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL = "get-kit-attribute-detail.kitId.notNull";
+    public static final String GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL = "get-kit-attribute-detail.attributeId.notNull";
+    public static final String GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND = "get-kit-attribute-detail.attributeId.notFound";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);

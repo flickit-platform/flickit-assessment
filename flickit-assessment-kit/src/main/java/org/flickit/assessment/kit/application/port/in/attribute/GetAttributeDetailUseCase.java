@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL;
 
 public interface GetAttributeDetailUseCase {
 
@@ -20,10 +20,10 @@ public interface GetAttributeDetailUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotNull(message = GET_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
