@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
@@ -56,4 +59,40 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.id = :kitId
         """)
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
+
+    @Query("""
+            SELECT k AS kit, g AS expertGroup
+                FROM AssessmentKitJpaEntity k
+                LEFT JOIN ExpertGroupJpaEntity g
+                    ON k.expertGroupId = g.id
+            WHERE k.published = TRUE AND k.isPrivate = FALSE
+            ORDER BY k.title
+        """)
+    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(Pageable pageable);
+
+    @Query("""
+            SELECT k AS kit, g AS expertGroup
+                FROM AssessmentKitJpaEntity k
+                LEFT JOIN ExpertGroupJpaEntity g
+                    ON k.expertGroupId = g.id
+                JOIN ExpertGroupAccessJpaEntity ega
+                    ON k.expertGroupId = ega.expertGroupId
+            WHERE k.published = TRUE AND k.isPrivate = TRUE
+            AND ega.userId = :userId
+            ORDER BY k.title
+        """)
+    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(UUID userId, PageRequest of);
+
+    @Query("""
+            SELECT
+                k.id AS id,
+                COUNT(DISTINCT l.userId) AS likeCount,
+                COUNT(DISTINCT a.id) AS assessmentCount
+            FROM AssessmentKitJpaEntity k
+            LEFT JOIN KitLikeJpaEntity l ON k.id = l.kitId
+            LEFT JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
+            WHERE k.id IN :kitIds
+            GROUP BY k.id
+        """)
+    List<CountKitStatsView> countKitStats(@Param(value = "kitIds") List<Long> kitIds);
 }
