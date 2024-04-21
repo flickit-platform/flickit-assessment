@@ -50,8 +50,8 @@ public interface GetKitListUseCase {
         String title,
         String summary,
         boolean isPrivate,
-        int likeCount,
-        int assessmentCount,
+        int likes,
+        int assessmentsCount,
         ExpertGroup expertGroup,
         List<KitTag> tags
     ) {

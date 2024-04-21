@@ -34,7 +34,7 @@ public class GetKitListService implements GetKitListUseCase {
         if (Boolean.FALSE.equals(param.getIsPrivate())) {
             kitsPage = loadPublishedKitListPort.loadPublicKits(param.getPage(), param.getSize());
         } else {
-            kitsPage = loadPublishedKitListPort.loadPrivateKit(param.getCurrentUserId(), param.getPage(), param.getSize());
+            kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), param.getPage(), param.getSize());
         }
         var ids = kitsPage.getItems().stream().map((Result t) -> t.kit().getId()).toList();
 
@@ -50,7 +50,7 @@ public class GetKitListService implements GetKitListUseCase {
             k.kit().getSummary(),
             k.kit().isPrivate(),
             idToStatsMap.get(k.kit().getId()).likes(),
-            idToStatsMap.get(k.kit().getId()).assessmentCounts(),
+            idToStatsMap.get(k.kit().getId()).assessmentsCount(),
             toExpertGroup(k.expertGroup()),
             idToKitTagsMap.get(k.kit().getId()).stream()
                 .flatMap(result -> result.kitTags().stream())

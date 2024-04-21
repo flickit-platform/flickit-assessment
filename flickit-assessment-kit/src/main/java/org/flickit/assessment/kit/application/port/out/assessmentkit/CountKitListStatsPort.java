@@ -9,7 +9,7 @@ public interface CountKitListStatsPort {
     record Result(
         long id,
         int likes,
-        int assessmentCounts
+        int assessmentsCount
     ) {
     }
 }

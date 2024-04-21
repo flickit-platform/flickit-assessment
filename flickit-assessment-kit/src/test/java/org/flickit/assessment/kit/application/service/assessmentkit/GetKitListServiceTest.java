@@ -86,13 +86,13 @@ class GetKitListServiceTest {
         assertEquals(assessmentKit.getTitle(), item.title());
         assertEquals(assessmentKit.getSummary(), item.summary());
         assertEquals(assessmentKit.isPrivate(), item.isPrivate());
-        assertEquals(3, item.likeCount());
-        assertEquals(15, item.assessmentCount());
+        assertEquals(3, item.likes());
+        assertEquals(15, item.assessmentsCount());
         assertEquals(expertGroup.getId(), item.expertGroup().id());
         assertEquals(expertGroup.getTitle(), item.expertGroup().title());
         assertEquals(expertGroupPictureAddress, item.expertGroup().pictureAddress());
 
-        verify(loadPublishedKitListPort, never()).loadPrivateKit(any(), anyInt(), anyInt());
+        verify(loadPublishedKitListPort, never()).loadPrivateKits(any(), anyInt(), anyInt());
     }
 
     @Test
@@ -116,7 +116,7 @@ class GetKitListServiceTest {
         );
         var sampleTag = KitTagMother.createKitTag("sample tag");
 
-        when(loadPublishedKitListPort.loadPrivateKit(param.getCurrentUserId(), param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
@@ -139,8 +139,8 @@ class GetKitListServiceTest {
         assertEquals(assessmentKit.getTitle(), item.title());
         assertEquals(assessmentKit.getSummary(), item.summary());
         assertEquals(assessmentKit.isPrivate(), item.isPrivate());
-        assertEquals(3, item.likeCount());
-        assertEquals(15, item.assessmentCount());
+        assertEquals(3, item.likes());
+        assertEquals(15, item.assessmentsCount());
         assertEquals(expertGroup.getId(), item.expertGroup().id());
         assertEquals(expertGroup.getTitle(), item.expertGroup().title());
         assertEquals(expertGroupPictureAddress, item.expertGroup().pictureAddress());
@@ -164,7 +164,7 @@ class GetKitListServiceTest {
             0
         );
 
-        when(loadPublishedKitListPort.loadPrivateKit(param.getCurrentUserId(), param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(List.of())).thenReturn(List.of());
         when(loadKitTagsListPort.loadByKitIds(List.of())).thenReturn(List.of());

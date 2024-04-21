@@ -202,7 +202,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPrivateKit(UUID userId, int page, int size) {
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPrivateKits(UUID userId, int page, int size) {
         var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
