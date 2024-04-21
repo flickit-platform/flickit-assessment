@@ -11,6 +11,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 public interface AcceptSpaceInvitationsUseCase {
 
+    void acceptInvitations (Param param);
+
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {

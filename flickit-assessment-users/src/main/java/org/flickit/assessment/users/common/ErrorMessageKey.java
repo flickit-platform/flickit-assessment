@@ -60,4 +60,5 @@ public class ErrorMessageKey {
 
     public static final String ACCEPT_SPACE_INVITATIONS_USER_ID_NOT_NULL = "accept-space-invitations.userId.notNull";
     public static final String ACCEPT_SPACE_INVITATIONS_EMAIL_NOT_NULL = "accept-space-invitations.email.notNull";
+    public static final String ACCEPT_SPACE_INVITATIONS_USER_ID_EMAIL_NOT_FOUND = "accept-space-invitations.userId-email.notFound";
 }
