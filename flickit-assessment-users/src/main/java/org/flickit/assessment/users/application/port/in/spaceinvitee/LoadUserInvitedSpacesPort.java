@@ -3,7 +3,7 @@ package org.flickit.assessment.users.application.port.in.spaceinvitee;
 import java.util.List;
 import java.util.UUID;
 
-public interface LoadUserInvitedSpaces {
+public interface LoadUserInvitedSpacesPort {
 
     List<Result> loadSpacesIds(String email);
 

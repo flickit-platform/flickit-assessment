@@ -1,7 +1,7 @@
 package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadUserInvitedSpaces;
+import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadUserInvitedSpacesPort;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +25,7 @@ class AcceptSpaceInvitationsServiceTest {
     @Mock
     private LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     @Mock
-    private LoadUserInvitedSpaces loadUserInvitedSpaces;
+    private LoadUserInvitedSpacesPort loadUserInvitedSpacesPort;
     //@Mock
     //private DeleteUserInvitation deleteUserInvitation;
 
@@ -53,7 +53,7 @@ class AcceptSpaceInvitationsServiceTest {
 
         assertThrows(ResourceNotFoundException.class, () -> service.acceptInvitations(param));
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
-        verifyNoInteractions(loadUserInvitedSpaces);
+        verifyNoInteractions(loadUserInvitedSpacesPort);
     }
 
     @Test
@@ -64,10 +64,10 @@ class AcceptSpaceInvitationsServiceTest {
         AcceptSpaceInvitationsUseCase.Param param = new AcceptSpaceInvitationsUseCase.Param(userId, email);
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(loadUserInvitedSpaces.loadSpacesIds(email)).thenReturn(null);
+        when(loadUserInvitedSpacesPort.loadSpacesIds(email)).thenReturn(null);
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
-        verify(loadUserInvitedSpaces).loadSpacesIds(email);
+        verify(loadUserInvitedSpacesPort).loadSpacesIds(email);
     }
 }
