@@ -42,13 +42,4 @@ public class MaturityLevelMapper {
             createdBy
         );
     }
-
-    public static GetKitAttributeDetailUseCase.MaturityLevel mapToAttributeDetailDomainModel(MaturityLevelJpaEntity entity, Integer questionCount) {
-        return new GetKitAttributeDetailUseCase.MaturityLevel(
-            entity.getId(),
-            entity.getTitle(),
-            entity.getIndex(),
-            questionCount
-        );
-    }
 }
