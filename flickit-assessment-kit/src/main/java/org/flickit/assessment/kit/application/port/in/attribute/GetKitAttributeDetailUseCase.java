@@ -47,8 +47,8 @@ public interface GetKitAttributeDetailUseCase {
     }
 
     record MaturityLevel(Long id,
-                         String title,
                          Integer index,
+                         String title,
                          Integer questionCount) {
     }
 }

@@ -33,7 +33,7 @@ public class GetKitAttributeDetailService implements GetKitAttributeDetailUseCas
         var attribute = loadAttributePort.load(param.getAttributeId(), param.getKitId());
         var questionCount = countAttributeImpactfulQuestionsPort.countQuestions(param.getAttributeId());
         var maturityLevels = loadAttributeMaturityLevelsPort.loadAttributeLevels(param.getKitId(), param.getAttributeId()).stream()
-            .map(e -> new GetKitAttributeDetailUseCase.MaturityLevel(e.id(), e.title(), e.index(), e.questionCount()))
+            .map(e -> new GetKitAttributeDetailUseCase.MaturityLevel(e.id(), e.index(), e.title(), e.questionCount()))
             .toList();
 
         return new Result(
