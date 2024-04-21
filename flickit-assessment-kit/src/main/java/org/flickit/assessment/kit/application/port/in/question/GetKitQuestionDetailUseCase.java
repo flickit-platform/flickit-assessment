@@ -12,9 +12,9 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_QUESTION_DETAIL_KIT_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_NULL;
 
-public interface GetQuestionDetailUseCase {
+public interface GetKitQuestionDetailUseCase {
 
-    Result getQuestionDetail(Param param);
+    Result getKitQuestionDetail(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
@@ -37,12 +37,10 @@ public interface GetQuestionDetailUseCase {
         }
     }
 
-    record Result(List<Option> options,
-                  List<Impact> attributeImpacts) {
+    record Result(List<Option> options, List<Impact> attributeImpacts) {
     }
 
-    record Option(Integer index,
-                  String title) {
+    record Option(Integer index, String title) {
     }
 
     record Impact(Long id,

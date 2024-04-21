@@ -11,30 +11,30 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_QUESTION
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class GetQuestionDetailUseCaseParamTest {
+class GetKitQuestionDetailUseCaseParamTest {
 
     public static final Long KIT_ID = 25L;
     public static final Long QUESTION_ID = 11L;
     public static final UUID CURRENT_USER_ID = UUID.randomUUID();
 
     @Test
-    void testGetQuestionDetail_kitIdIsNull_ErrorMessage() {
+    void testGetKitQuestionDetail_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetQuestionDetailUseCase.Param(null, QUESTION_ID, CURRENT_USER_ID));
+            () -> new GetKitQuestionDetailUseCase.Param(null, QUESTION_ID, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("kitId: " + GET_KIT_QUESTION_DETAIL_KIT_ID_NOT_NULL);
     }
 
     @Test
-    void testGetQuestionDetail_questionIdIsNull_ErrorMessage() {
+    void testGetKitQuestionDetail_questionIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetQuestionDetailUseCase.Param(KIT_ID, null, CURRENT_USER_ID));
+            () -> new GetKitQuestionDetailUseCase.Param(KIT_ID, null, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("questionId: " + GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_NULL);
     }
 
     @Test
-    void testGetQuestionDetail_currentUserIdIsNull_ErrorMessage() {
+    void testGetKitQuestionDetail_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetQuestionDetailUseCase.Param(KIT_ID, QUESTION_ID, null));
+            () -> new GetKitQuestionDetailUseCase.Param(KIT_ID, QUESTION_ID, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }

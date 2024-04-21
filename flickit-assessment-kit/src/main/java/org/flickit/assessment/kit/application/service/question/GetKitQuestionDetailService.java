@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AnswerOptionImpact;
 import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.port.in.question.GetQuestionDetailUseCase;
+import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionAndKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
@@ -27,7 +27,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_QUESTION
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetQuestionDetailService implements GetQuestionDetailUseCase {
+public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
@@ -36,7 +36,7 @@ public class GetQuestionDetailService implements GetQuestionDetailUseCase {
     private final LoadAllAttributesPort loadAllAttributesPort;
 
     @Override
-    public Result getQuestionDetail(Param param) {
+    public Result getKitQuestionDetail(Param param) {
         var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);

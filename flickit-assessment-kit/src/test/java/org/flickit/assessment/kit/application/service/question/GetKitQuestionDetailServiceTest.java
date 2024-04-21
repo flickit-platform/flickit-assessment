@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.question;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.port.in.question.GetQuestionDetailUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionAndKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
@@ -32,10 +32,10 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class GetQuestionDetailServiceTest {
+class GetKitQuestionDetailServiceTest {
 
     @InjectMocks
-    private GetQuestionDetailService service;
+    private GetKitQuestionDetailService service;
 
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
@@ -53,7 +53,7 @@ class GetQuestionDetailServiceTest {
     private LoadAllAttributesPort loadAllAttributesPort;
 
     @Test
-    void testGetQuestionDetail_WhenQuestionExist_shouldReturnQuestionDetails() {
+    void testGetKitQuestionDetail_WhenQuestionExist_shouldReturnQuestionDetails() {
         var questionId = 2L;
         var param = new Param(2000L, questionId, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
@@ -89,7 +89,7 @@ class GetQuestionDetailServiceTest {
         when(loadQuestionImpactByQuestionPort.loadQuestionImpactByQuestionId(param.getQuestionId())).thenReturn(List.of(attributeImpact));
         when(loadAllAttributesPort.loadAllByIds(List.of(attribute.getId()))).thenReturn(List.of(attribute));
 
-        var result = service.getQuestionDetail(param);
+        var result = service.getKitQuestionDetail(param);
         var impact = result.attributeImpacts().get(0);
 
         assertEquals(answerOptions.size(), result.options().size());
@@ -107,13 +107,13 @@ class GetQuestionDetailServiceTest {
     }
 
     @Test
-    void testGetQuestionDetail_WhenKitDoesNotExist_ThrowsException() {
+    void testGetKitQuestionDetail_WhenKitDoesNotExist_ThrowsException() {
         var param = new Param(2000L, 2L, UUID.randomUUID());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
             .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
-        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionDetail(param));
+        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(
             checkExpertGroupAccessPort,
@@ -124,7 +124,7 @@ class GetQuestionDetailServiceTest {
     }
 
     @Test
-    void testGetQuestionDetail_WhenQuestionDoesNotExist_ThrowsException() {
+    void testGetKitQuestionDetail_WhenQuestionDoesNotExist_ThrowsException() {
         var questionId = 2L;
         var param = new Param(2000L, questionId, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
@@ -133,7 +133,7 @@ class GetQuestionDetailServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAnswerOptionsByQuestionPort.loadByQuestionIdAndKitId(param.getQuestionId(), param.getKitId())).thenReturn(List.of());
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionDetail(param));
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(
             loadQuestionImpactByQuestionPort,
@@ -142,14 +142,14 @@ class GetQuestionDetailServiceTest {
     }
 
     @Test
-    void testGetQuestionDetail_WhenUserIsNotMember_ThrowsException() {
+    void testGetKitQuestionDetail_WhenUserIsNotMember_ThrowsException() {
         var param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(false);
 
-        var exception = assertThrows(AccessDeniedException.class, () -> service.getQuestionDetail(param));
+        var exception = assertThrows(AccessDeniedException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verifyNoInteractions(
             loadAnswerOptionsByQuestionPort,
