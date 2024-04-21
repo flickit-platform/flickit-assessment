@@ -390,7 +390,37 @@
               }
             },
             "response": []
-        }
+        },
+		{
+			"name": "Get Kit List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits?isPrivate=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits"
+					],
+					"query": [
+						{
+							"key": "isPrivate",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		}
 	],
 	"event": [
 		{
