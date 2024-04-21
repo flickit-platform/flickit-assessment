@@ -21,7 +21,7 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND;
 
 
 @Service
@@ -43,7 +43,7 @@ public class GetQuestionDetailService implements GetQuestionDetailUseCase {
 
         var answerOptions = loadAnswerOptionsByQuestionPort.loadByQuestionIdAndKitId(param.getQuestionId(), param.getKitId());
         if (answerOptions.isEmpty()) {
-            throw new ResourceNotFoundException(GET_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND);
+            throw new ResourceNotFoundException(GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND);
         }
         var options = answerOptions.stream().map(this::toOption)
             .toList();

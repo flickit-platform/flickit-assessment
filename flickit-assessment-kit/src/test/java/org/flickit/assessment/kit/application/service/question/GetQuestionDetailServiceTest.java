@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -134,7 +134,7 @@ class GetQuestionDetailServiceTest {
         when(loadAnswerOptionsByQuestionPort.loadByQuestionIdAndKitId(param.getQuestionId(), param.getKitId())).thenReturn(List.of());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionDetail(param));
-        assertEquals(GET_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND, exception.getMessage());
+        assertEquals(GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(
             loadQuestionImpactByQuestionPort,
             loadAllAttributesPort
