@@ -20,7 +20,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND
 
 @Component
 @RequiredArgsConstructor
-public class MaturityLevelsPersistenceJpaAdapter implements
+public class MaturityLevelPersistenceJpaAdapter implements
     CreateMaturityLevelPort,
     DeleteMaturityLevelPort,
     UpdateMaturityLevelPort,
