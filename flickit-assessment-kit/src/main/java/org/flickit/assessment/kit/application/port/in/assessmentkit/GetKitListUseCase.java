@@ -14,24 +14,23 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_ASSESSMENT_KIT_LIST_PAGE_MIN;
 
-public interface GetAssessmentKitListUseCase {
+public interface GetKitListUseCase {
 
-    PaginatedResponse<AssessmentKitListItem> getAssessmentKitList(Param param);
+    PaginatedResponse<KitListItem> getKitList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_ASSESSMENT_KIT_LIST_IS_PRIVATE_NOT_NULL)
+        @NotNull(message = GET_KIT_LIST_IS_PRIVATE_NOT_NULL)
         Boolean isPrivate;
 
-        @Min(value = 0, message = GET_ASSESSMENT_KIT_LIST_PAGE_MIN)
+        @Min(value = 0, message = GET_KIT_LIST_PAGE_MIN)
         int page;
 
-        @Min(value = 1, message = GET_ASSESSMENT_KIT_LIST_SIZE_MIN)
-        @Max(value = 100, message = GET_ASSESSMENT_KIT_LIST_SIZE_MAX)
+        @Min(value = 1, message = GET_KIT_LIST_SIZE_MIN)
+        @Max(value = 100, message = GET_KIT_LIST_SIZE_MAX)
         int size;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
@@ -46,7 +45,7 @@ public interface GetAssessmentKitListUseCase {
         }
     }
 
-    record AssessmentKitListItem(
+    record KitListItem(
         long id,
         String title,
         String summary,
@@ -57,7 +56,11 @@ public interface GetAssessmentKitListUseCase {
         List<KitTag> tags
     ) {
 
-        public record ExpertGroup(long id, String name, String pictureAddress) {
+        public record ExpertGroup(
+            long id,
+            String title,
+            String pictureAddress
+        ) {
         }
     }
 }

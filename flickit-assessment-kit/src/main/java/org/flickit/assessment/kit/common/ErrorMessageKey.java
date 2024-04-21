@@ -34,10 +34,10 @@ public class ErrorMessageKey {
     public static final String GET_KIT_USER_LIST_SIZE_MIN = "get-kit-user-list.size.min";
     public static final String GET_KIT_USER_LIST_SIZE_MAX = "get-kit-user-list.size.max";
 
-    public static final String GET_ASSESSMENT_KIT_LIST_IS_PRIVATE_NOT_NULL = "get-assessment-kit.list.isPrivate.notNull";
-    public static final String GET_ASSESSMENT_KIT_LIST_PAGE_MIN = "get-assessment-kit-list.page.min";
-    public static final String GET_ASSESSMENT_KIT_LIST_SIZE_MIN = "get-assessment-kit-list.size.min";
-    public static final String GET_ASSESSMENT_KIT_LIST_SIZE_MAX = "get-assessment-kit-list.size.max";
+    public static final String GET_KIT_LIST_IS_PRIVATE_NOT_NULL = "get-kit-list.isPrivate.notNull";
+    public static final String GET_KIT_LIST_PAGE_MIN = "get-kit-list.page.min";
+    public static final String GET_KIT_LIST_SIZE_MIN = "get-kit-list.size.min";
+    public static final String GET_KIT_LIST_SIZE_MAX = "get-kit-list.size.max";
 
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_NULL = "get-kit-minimal-info.kitId.notNull";
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_FOUND = "get-kit-minimal-info.kitId.notFound";
