@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadUserInvitedSpaces;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,15 @@ public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseC
 
     private LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
 
+    private LoadUserInvitedSpaces loadUserInvitedSpaces;
+
     @Override
     public void acceptInvitations(Param param) {
         var email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
 
         if (!Objects.equals(email, param.getEmail()))
             throw new ResourceNotFoundException(ACCEPT_SPACE_INVITATIONS_USER_ID_EMAIL_NOT_FOUND);
+
+        var portResult = loadUserInvitedSpaces.loadSpacesIds(param.getEmail());
     }
 }
