@@ -33,7 +33,8 @@ public class GetKitAttributeDetailRestController {
     }
 
     private GetKitAttributeDetailResponseDto toResponseDto(Result result) {
-        return new GetKitAttributeDetailResponseDto(result.id(),
+        return new GetKitAttributeDetailResponseDto(
+            result.id(),
             result.index(),
             result.title(),
             result.questionCount(),

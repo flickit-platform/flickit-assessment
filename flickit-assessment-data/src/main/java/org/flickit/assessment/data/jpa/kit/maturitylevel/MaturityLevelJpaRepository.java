@@ -25,11 +25,11 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
     List<MaturityLevelJpaEntity> findAllInKitVersionWithOneId(@Param(value = "id") Long id);
 
     @Query("""
-        SELECT
-            a.id as id,
-            a.index as index,
-            a.title as title,
-            COUNT(DISTINCT CASE WHEN qi.maturityLevel.id = a.id THEN qi.questionId ELSE NULL END) as questionCount
+            SELECT
+                a.id as id,
+                a.index as index,
+                a.title as title,
+                COUNT(DISTINCT CASE WHEN qi.maturityLevel.id = a.id THEN qi.questionId ELSE NULL END) as questionCount
             FROM MaturityLevelJpaEntity a
             LEFT JOIN KitVersionJpaEntity kv On kv.id = a.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi ON qi.attributeId = :attributeId
