@@ -136,12 +136,4 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             ) GROUP BY qn.id order by qn.id
     """)
     List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
-
-    @Query("""
-        SELECT COUNT(DISTINCT q.id) FROM QuestionJpaEntity q
-        JOIN QuestionImpactJpaEntity qi
-            ON qi.questionId = q.id
-        WHERE qi.attributeId = :attributeId
-        """)
-    Integer countAllByAttributeId(@Param(value = "attributeId") Long attributeId);
 }

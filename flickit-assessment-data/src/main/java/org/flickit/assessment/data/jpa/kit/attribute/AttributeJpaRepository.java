@@ -74,5 +74,19 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     List<AttributeJpaEntity> findByIdIn(@Param(value = "ids") List<Long> ids);
 
-    Optional<AttributeJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
+    @Query("""
+            SELECT a as attribute
+            FROM AttributeJpaEntity a
+            LEFT JOIN KitVersionJpaEntity kv On kv.id = a.kitVersionId
+            WHERE a.id = :id AND kv.kit.id = :kitId
+        """)
+    Optional<AttributeJpaEntity> findByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
+
+    @Query("""
+        SELECT COUNT(DISTINCT q.id) FROM QuestionJpaEntity q
+        JOIN QuestionImpactJpaEntity qi
+            ON qi.questionId = q.id
+        WHERE qi.attributeId = :attributeId
+        """)
+    Integer countAllByAttributeId(@Param(value = "attributeId") Long attributeId);
 }

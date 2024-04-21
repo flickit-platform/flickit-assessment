@@ -2,18 +2,16 @@ package org.flickit.assessment.kit.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.attribute.CountAttributeImpactfulQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAttributeMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.question.LoadAttributeQuestionCountPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAttributeMaturityLevelsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,8 +21,8 @@ public class GetKitAttributeDetailService implements GetKitAttributeDetailUseCas
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadAttributePort loadAttributePort;
-    private final LoadAttributeQuestionCountPort loadAttributeQuestionCountPort;
-    private final LoadAttributeMaturityLevelPort loadAttributeMaturityLevelPort;
+    private final CountAttributeImpactfulQuestionsPort countAttributeImpactfulQuestionsPort;
+    private final LoadAttributeMaturityLevelsPort loadAttributeMaturityLevelsPort;
 
     @Override
     public Result getKitAttributeDetail(Param param) {
@@ -32,10 +30,11 @@ public class GetKitAttributeDetailService implements GetKitAttributeDetailUseCas
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var attribute = loadAttributePort.loadByIdAndKitId(param.getAttributeId(), param.getKitId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND));
-        var questionCount = loadAttributeQuestionCountPort.loadByAttributeId(param.getAttributeId());
-        var maturityLevels = loadAttributeMaturityLevelPort.loadByAttributeId(param.getAttributeId());
+        var attribute = loadAttributePort.load(param.getAttributeId(), param.getKitId());
+        var questionCount = countAttributeImpactfulQuestionsPort.countByAttributeId(param.getAttributeId());
+        var maturityLevels = loadAttributeMaturityLevelsPort.loadAttributeLevels(param.getKitId(), param.getAttributeId()).stream()
+            .map(e -> new GetKitAttributeDetailUseCase.MaturityLevel(e.id(), e.title(), e.index(), e.questionCount()))
+            .toList();
 
         return new Result(
             attribute.getId(),

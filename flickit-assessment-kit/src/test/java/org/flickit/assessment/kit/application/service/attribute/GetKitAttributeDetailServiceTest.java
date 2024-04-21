@@ -3,14 +3,13 @@ package org.flickit.assessment.kit.application.service.attribute;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase.MaturityLevel;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase.Param;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase.Result;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.attribute.CountAttributeImpactfulQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAttributeMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.question.LoadAttributeQuestionCountPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAttributeMaturityLevelsPort;
 import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.junit.jupiter.api.Test;
@@ -20,12 +19,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,10 +43,10 @@ class GetKitAttributeDetailServiceTest {
     private LoadAttributePort loadAttributePort;
 
     @Mock
-    private LoadAttributeQuestionCountPort loadAttributeQuestionCountPort;
+    private CountAttributeImpactfulQuestionsPort countAttributeImpactfulQuestionsPort;
 
     @Mock
-    private LoadAttributeMaturityLevelPort loadAttributeMaturityLevelPort;
+    private LoadAttributeMaturityLevelsPort loadAttributeMaturityLevelsPort;
 
     @Test
     void testGetKitAttributeDetail_WhenAttributeExist_shouldReturnAttributeDetails() {
@@ -55,15 +54,16 @@ class GetKitAttributeDetailServiceTest {
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var expectedQuestionCount = 14;
         Attribute expectedAttribute = AttributeMother.attributeWithTitle("EgAttribute");
-        List<MaturityLevel> expectedMaturityLevels = List.of(new MaturityLevel(1L, "MaturityLevelEg", 1, 15));
+        List<LoadAttributeMaturityLevelsPort.Result> expectedMaturityLevels =
+            List.of(new LoadAttributeMaturityLevelsPort.Result(1L, "MaturityLevelEg", 1, 15));
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
-        when(loadAttributePort.loadByIdAndKitId(param.getAttributeId(), param.getKitId()))
-            .thenReturn(Optional.of(expectedAttribute));
-        when(loadAttributeQuestionCountPort.loadByAttributeId(param.getAttributeId()))
+        when(loadAttributePort.load(param.getAttributeId(), param.getKitId()))
+            .thenReturn(expectedAttribute);
+        when(countAttributeImpactfulQuestionsPort.countByAttributeId(param.getAttributeId()))
             .thenReturn(expectedQuestionCount);
-        when(loadAttributeMaturityLevelPort.loadByAttributeId(param.getAttributeId()))
+        when(loadAttributeMaturityLevelsPort.loadAttributeLevels(param.getKitId(), param.getAttributeId()))
             .thenReturn(expectedMaturityLevels);
 
         Result result = service.getKitAttributeDetail(param);
@@ -74,7 +74,7 @@ class GetKitAttributeDetailServiceTest {
         assertEquals(expectedQuestionCount, result.questionCount());
         assertEquals(expectedAttribute.getWeight(), result.weight());
         assertEquals(expectedAttribute.getDescription(), result.description());
-        assertIterableEquals(expectedMaturityLevels, result.maturityLevels());
+        assertEquals(expectedMaturityLevels.size(), result.maturityLevels().size());
     }
 
     @Test

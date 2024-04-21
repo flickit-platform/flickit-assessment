@@ -6,33 +6,26 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaReposit
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAttributeMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToAttributeDetailDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
-public class MaturityLevelPersistenceJpaAdapter implements
+public class MaturityLevelsPersistenceJpaAdapter implements
     CreateMaturityLevelPort,
     DeleteMaturityLevelPort,
     UpdateMaturityLevelPort,
     LoadMaturityLevelsPort,
-    LoadAttributeMaturityLevelPort {
+    LoadAttributeMaturityLevelsPort {
 
     private final MaturityLevelJpaRepository repository;
     private final AssessmentKitJpaRepository assessmentKitRepository;
@@ -75,14 +68,9 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<GetKitAttributeDetailUseCase.MaturityLevel> loadByAttributeId(Long attributeId) {
-        var entities = repository.findAllByAttributeId(attributeId);
-
-        List<GetKitAttributeDetailUseCase.MaturityLevel> result = new ArrayList<>();
-        for (MaturityLevelJpaEntity entity : entities) {
-            Integer questionCount = repository.countQuestionByIdAndAttributeId(entity.getId(), attributeId);
-            result.add(mapToAttributeDetailDomainModel(entity, questionCount));
-        }
-        return result;
+    public List<LoadAttributeMaturityLevelsPort.Result> loadAttributeLevels(long kitId, long attributeId) {
+        return repository.loadAttributeLevels(kitId, attributeId).stream()
+            .map(e -> new LoadAttributeMaturityLevelsPort.Result(e.getId(), e.getTitle(), e.getIndex(), e.getQuestionCount()))
+            .toList();
     }
 }
