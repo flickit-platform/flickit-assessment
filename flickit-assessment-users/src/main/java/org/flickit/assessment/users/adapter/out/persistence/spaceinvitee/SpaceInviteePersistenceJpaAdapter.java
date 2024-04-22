@@ -32,7 +32,7 @@ public class SpaceInviteePersistenceJpaAdapter implements
             .toList();
     }
 
-    private static Invitation mapInviteeEntityToPortResult(SpaceInviteeJpaEntity entities) {
-        return new Invitation(entities.getSpaceId(), entities.getCreatedBy());
+    private static Invitation mapInviteeEntityToPortResult(SpaceInviteeJpaEntity entity) {
+        return new Invitation(entity.getSpaceId(), entity.getExpirationDate(), entity.getCreatedBy());
     }
 }

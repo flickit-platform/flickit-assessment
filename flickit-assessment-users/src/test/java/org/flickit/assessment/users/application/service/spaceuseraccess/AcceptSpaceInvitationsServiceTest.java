@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -75,6 +76,7 @@ class AcceptSpaceInvitationsServiceTest {
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
         verify(loadSpaceUserInvitationsPort).loadInvitations(email);
         verifyNoInteractions(deleteSpaceUserInvitations);
+        verifyNoInteractions(createSpaceUserAccessPort);
     }
 
     @Test
@@ -84,7 +86,7 @@ class AcceptSpaceInvitationsServiceTest {
         long spaceId = 0L;
         String email = "test@example.com";
         AcceptSpaceInvitationsUseCase.Param param = new AcceptSpaceInvitationsUseCase.Param(userId, email);
-        var portResult = Stream.of(new LoadSpaceUserInvitationsPort.Invitation(spaceId, userId)).toList();
+        var portResult = Stream.of(new LoadSpaceUserInvitationsPort.Invitation(spaceId, LocalDateTime.now().plusDays(1), userId)).toList();
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);
@@ -94,6 +96,26 @@ class AcceptSpaceInvitationsServiceTest {
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
         verify(loadSpaceUserInvitationsPort).loadInvitations(email);
         verify(createSpaceUserAccessPort).createAccess(any());
+        verify(deleteSpaceUserInvitations).delete(email);
+    }
+
+    @Test
+    @DisplayName("If user invited to some spaces, but space is expire it should not throws any exceptions")
+    void testAcceptSpaceInvitations_invitedSpacesIsExpired_successful() {
+        UUID userId = UUID.randomUUID();
+        long spaceId = 0L;
+        String email = "test@example.com";
+        AcceptSpaceInvitationsUseCase.Param param = new AcceptSpaceInvitationsUseCase.Param(userId, email);
+        var portResult = Stream.of(new LoadSpaceUserInvitationsPort.Invitation(spaceId, LocalDateTime.now().minusDays(1), userId)).toList();
+
+        when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
+        when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);
+        doNothing().when(deleteSpaceUserInvitations).delete(email);
+
+        assertDoesNotThrow(() -> service.acceptInvitations(param));
+        verify(loadUserEmailByUserIdPort).loadEmail(userId);
+        verify(loadSpaceUserInvitationsPort).loadInvitations(email);
+        verifyNoInteractions(createSpaceUserAccessPort);
         verify(deleteSpaceUserInvitations).delete(email);
     }
 }

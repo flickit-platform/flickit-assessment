@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -36,12 +37,17 @@ public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseC
 
         var invitations = loadSpaceUserInvitationsPort.loadInvitations(param.getEmail());
 
-        List<CreateSpaceUserAccessPort.Param> result;
-        if (invitations != null){
-            result = invitations.stream().map(i -> toUserAccessPortParam(i, param.getUserId())).toList();
-            createSpaceUserAccessPort.createAccess(result);
+        List<CreateSpaceUserAccessPort.Param> validInvitations = new ArrayList<>();
+        if (invitations != null) {
+            validInvitations = invitations.stream()
+                .filter(i -> i.expirationDate().isAfter(LocalDateTime.now()))
+                .map(i -> toUserAccessPortParam(i, param.getUserId())).toList();
+
             deleteSpaceUserInvitations.delete(email);
         }
+
+        if (!validInvitations.isEmpty())
+            createSpaceUserAccessPort.createAccess(validInvitations);
     }
 
     private CreateSpaceUserAccessPort.Param toUserAccessPortParam(LoadSpaceUserInvitationsPort.Invitation invitation, UUID userId) {
