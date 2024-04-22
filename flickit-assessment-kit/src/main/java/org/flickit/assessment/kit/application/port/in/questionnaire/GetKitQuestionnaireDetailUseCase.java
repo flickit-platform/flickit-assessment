@@ -20,10 +20,10 @@ public interface GetKitQuestionnaireDetailUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_QUESTIONNAIRE_KIT_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_QUESTIONNAIRE_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotNull(message = GET_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL)
         Long questionnaireId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
