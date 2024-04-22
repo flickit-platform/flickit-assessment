@@ -23,6 +23,7 @@ public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseC
 
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     private final LoadUserInvitedSpacesPort loadUserInvitedSpacesPort;
+    private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Override
     public void acceptInvitations(Param param) {
@@ -34,8 +35,10 @@ public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseC
         var portResult = loadUserInvitedSpacesPort.loadSpacesIds(param.getEmail());
 
         List<CreateSpaceUserAccessPort.Param> result;
-        if (portResult != null)
+        if (portResult != null){
             result = portResult.stream().map(s -> toUserAccessPortParam(s, param.getUserId())).toList();
+            createSpaceUserAccessPort.createAccess(result);
+        }
     }
 
     private CreateSpaceUserAccessPort.Param toUserAccessPortParam(LoadUserInvitedSpacesPort.Result portResult, UUID userId) {
