@@ -418,7 +418,63 @@
 				}
 			},
 			"response": []
-		}
+		},
+		{
+			"name": "Get Attribute Detail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/144/details/attributes/5",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"144",
+						"details",
+						"attributes",
+						"5"
+					]
+				}
+			},
+			"response": []
+        },
+      {
+        "name": "Get Kit Questionnaire Detail",
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "{{authorization_header}}",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/381/details/questionnaires/2914",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessment-kits",
+              "381",
+              "details",
+              "questionnaires",
+              "2914"
+            ]
+          }
+        },
+        "response": []
+      }
 	],
 	"event": [
 		{
