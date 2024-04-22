@@ -58,15 +58,4 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
             WHERE qn.id = :questionnaireId AND k.id = :kitId
         """)
     Optional<QuestionnaireJpaEntity> findQuestionnaireByIdAndKitId(@Param("questionnaireId") Long questionnaireId, @Param("kitId") Long kitId);
-
-    @Query("""
-        SELECT CASE WHEN EXISTS
-            (SELECT 1
-             FROM QuestionnaireJpaEntity qn
-                JOIN KitVersionJpaEntity kv ON qn.kitVersionId = kv.id
-                JOIN AssessmentKitJpaEntity k ON kv.kit.id = k.id
-             WHERE qn.id = :questionnaireId AND k.id = :kitId)
-        THEN TRUE ELSE FALSE END
-    """)
-    boolean existsByIdAndKitId(@Param("questionnaireId") Long questionnaireId, @Param("kitId") Long kitId);
 }
