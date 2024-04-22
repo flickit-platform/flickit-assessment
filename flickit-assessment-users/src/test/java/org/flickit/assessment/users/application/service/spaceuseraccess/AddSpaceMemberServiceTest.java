@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.application.service.space;
+package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
