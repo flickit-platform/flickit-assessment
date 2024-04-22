@@ -14,7 +14,6 @@ public class ErrorMessageKey {
     public static final String KIT_ID_NOT_FOUND = "kit.id.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
     public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
-    public static final String QUESTIONNAIRE_QUESTIONNAIRE_ID_KIT_ID_NOT_FOUND = "questionnaire.questionnaireId-kitId.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
