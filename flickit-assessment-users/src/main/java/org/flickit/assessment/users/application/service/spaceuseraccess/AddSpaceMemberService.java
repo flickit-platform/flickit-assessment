@@ -29,10 +29,8 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
     @Override
     public void addMember(Param param) {
-        var currentUserId = param.getCurrentUserId();
-        var spaceId = param.getSpaceId();
-        if (!checkSpaceExistencePort.existsById(spaceId))
-            throw new ValidationException(ADD_SPACE_MEMBER_SPACE_ID_NOT_FOUND);
+        UUID currentUserId = param.getCurrentUserId();
+        long spaceId = param.getSpaceId();
 
         boolean inviterHasAccess = checkSpaceMemberAccessPort.checkIsMember(spaceId, currentUserId);
         if (!inviterHasAccess)

@@ -27,8 +27,7 @@ class AddSpaceMemberServiceTest {
 
     @InjectMocks
     AddSpaceMemberService service;
-    @Mock
-    private CheckSpaceExistencePort checkSpaceExistencePort;
+
     @Mock
     private LoadUserIdByEmailPort loadUserIdByEmailPort;
     @Mock
