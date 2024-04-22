@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,7 +14,7 @@ public class AcceptSpaceInvitationRestController {
 
     private final AcceptSpaceInvitationsUseCase useCase;
 
-    @PostMapping("/spaces/new-users")
+    @PutMapping("/spaces/new-users")
     public ResponseEntity<Void> inviteExpertGroupMember(
         @RequestBody AcceptSpaceInvitationRequestDto requestDto) {
         useCase.acceptInvitations(toParam(requestDto));
