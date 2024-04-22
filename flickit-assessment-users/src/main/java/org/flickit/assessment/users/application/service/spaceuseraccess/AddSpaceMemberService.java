@@ -22,9 +22,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
-    private final CheckSpaceExistencePort checkSpaceExistencePort;
-    private final CheckSpaceMemberAccessPort checkSpaceMemberAccessPort;
-    private final LoadUserIdByEmailPort loadUserIdByEmailPort;
+    private final CheckSpaceAccessPort checkSpaceAccessPort;
+    private final LoadUserPort loadUserPort;
     private final AddSpaceMemberPort addSpaceMemberPort;
 
     @Override
@@ -32,13 +31,13 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
         UUID currentUserId = param.getCurrentUserId();
         long spaceId = param.getSpaceId();
 
-        boolean inviterHasAccess = checkSpaceMemberAccessPort.checkIsMember(spaceId, currentUserId);
+        boolean inviterHasAccess = checkSpaceAccessPort.checkIsMember(spaceId, currentUserId);
         if (!inviterHasAccess)
             throw new AccessDeniedException(ADD_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
 
         UUID userId = loadUserIdByEmailPort.loadByEmail(param.getEmail());
 
-        boolean inviteeHasAccess = checkSpaceMemberAccessPort.checkIsMember(spaceId, userId);
+        boolean inviteeHasAccess = checkSpaceAccessPort.checkIsMember(spaceId, userId);
         if (inviteeHasAccess)
             throw new ResourceAlreadyExistsException(ADD_SPACE_MEMBER_INVITEE_ACCESS_DUPLICATE);
 
