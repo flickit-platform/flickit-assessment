@@ -34,11 +34,11 @@ public class GetKitQuestionnaireDetailRestController {
 
     private GetKitQuestionnaireDetailResponseDto toResponseDto(Result result) {
         var questions = result.questions().stream()
-            .map(e -> new GetKitQuestionnaireDetailResponseDto.Question(e.getId(),
+            .map(e -> new GetKitQuestionnaireDetailResponseDto.Question(
+                e.getId(),
                 e.getTitle(),
                 e.getIndex(),
                 e.getMayNotBeApplicable(),
-                e.getHint(),
                 e.getAdvisable()))
             .toList();
 
