@@ -17,8 +17,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND;
-import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_SPACE_MEMBER_SPACE_ID_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 @Service
 @Transactional
@@ -43,7 +42,7 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
             throw new AccessDeniedException(INVITE_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
 
         if (loadUserIdByEmailPort.loadByEmail(param.getEmail()) != null)
-            throw new ResourceAlreadyExistsException(INVITE_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
+            throw new ResourceAlreadyExistsException(INVITE_SPACE_MEMBER_INVITEE_DUPLICATE);
 
         var inviteDate = LocalDateTime.now();
         var inviteExpirationDate = inviteDate.plusDays(EXPIRY_DURATION.toDays());
