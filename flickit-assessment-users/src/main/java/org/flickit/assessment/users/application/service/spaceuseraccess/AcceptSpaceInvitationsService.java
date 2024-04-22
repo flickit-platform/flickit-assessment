@@ -34,21 +34,21 @@ public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseC
         if (!Objects.equals(email, param.getEmail()))
             throw new ResourceNotFoundException(ACCEPT_SPACE_INVITATIONS_USER_ID_EMAIL_NOT_FOUND);
 
-        var portResult = loadSpaceUserInvitationsPort.loadInvitations(param.getEmail());
+        var invitations = loadSpaceUserInvitationsPort.loadInvitations(param.getEmail());
 
         List<CreateSpaceUserAccessPort.Param> result;
-        if (portResult != null){
-            result = portResult.stream().map(s -> toUserAccessPortParam(s, param.getUserId())).toList();
+        if (invitations != null){
+            result = invitations.stream().map(i -> toUserAccessPortParam(i, param.getUserId())).toList();
             createSpaceUserAccessPort.createAccess(result);
             deleteSpaceUserInvitations.delete(email);
         }
     }
 
-    private CreateSpaceUserAccessPort.Param toUserAccessPortParam(LoadSpaceUserInvitationsPort.Result portResult, UUID userId) {
+    private CreateSpaceUserAccessPort.Param toUserAccessPortParam(LoadSpaceUserInvitationsPort.Invitation invitation, UUID userId) {
         return new CreateSpaceUserAccessPort.Param(
-            portResult.spaceId(),
+            invitation.spaceId(),
             userId,
             LocalDateTime.now(),
-            portResult.createdBy());
+            invitation.createdBy());
     }
 }

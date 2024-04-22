@@ -24,7 +24,7 @@ public class SpaceInviteePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Result> loadInvitations(String email) {
+    public List<Invitation> loadInvitations(String email) {
         var invitee = repository.findByEmail(email);
         return invitee
             .stream()
@@ -32,7 +32,7 @@ public class SpaceInviteePersistenceJpaAdapter implements
             .toList();
     }
 
-    private static Result mapInviteeEntityToPortResult(SpaceInviteeJpaEntity entities) {
-        return new Result(entities.getSpaceId(), entities.getCreatedBy());
+    private static Invitation mapInviteeEntityToPortResult(SpaceInviteeJpaEntity entities) {
+        return new Invitation(entities.getSpaceId(), entities.getCreatedBy());
     }
 }

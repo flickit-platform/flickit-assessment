@@ -84,7 +84,7 @@ class AcceptSpaceInvitationsServiceTest {
         long spaceId = 0L;
         String email = "test@example.com";
         AcceptSpaceInvitationsUseCase.Param param = new AcceptSpaceInvitationsUseCase.Param(userId, email);
-        var portResult = Stream.of(new LoadSpaceUserInvitationsPort.Result(spaceId, userId)).toList();
+        var portResult = Stream.of(new LoadSpaceUserInvitationsPort.Invitation(spaceId, userId)).toList();
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);
