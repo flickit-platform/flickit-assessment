@@ -54,6 +54,14 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 
     @Query("""
+            SELECT COUNT (DISTINCT q.id) FROM QuestionJpaEntity q
+            LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
+            LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id
+            WHERE at.subject.id = :subjectId
+        """)
+    Integer countDistinctBySubjectId(@Param("subjectId") long subjectId);
+
+    @Query("""
            SELECT DISTINCT q.id AS  questionId,
                 anso.index AS answeredOptionIndex,
                 qanso.id AS optionId,
@@ -128,4 +136,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             ) GROUP BY qn.id order by qn.id
     """)
     List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
+
+    List<QuestionJpaEntity> findAllByQuestionnaireIdOrderByIndexAsc(Long questionnaireId);
 }

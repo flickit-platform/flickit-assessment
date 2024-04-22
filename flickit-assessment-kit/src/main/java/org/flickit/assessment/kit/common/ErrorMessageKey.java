@@ -13,6 +13,7 @@ public class ErrorMessageKey {
     public static final String FIND_MATURITY_LEVEL_ID_NOT_FOUND = "find-maturity-level.id.notFound";
     public static final String KIT_ID_NOT_FOUND = "kit.id.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
+    public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -82,6 +83,17 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFount";
 
     public static final String GET_KIT_DETAIL_KIT_ID_NOT_NULL = "get-kit-detail.kitId.notNull";
+
+    public static final String GET_KIT_SUBJECT_DETAIL_KIT_ID_NOT_NULL = "get-kit-subject-detail.kitId.notNull";
+    public static final String GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_NULL = "get-kit-subject-detail.subjectId.notNull";
+    public static final String GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND = "get-kit-subject-detail.subjectId.notFound";
+
+    public static final String GET_KIT_ATTRIBUTE_DETAIL_KIT_ID_NOT_NULL = "get-kit-attribute-detail.kitId.notNull";
+    public static final String GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL = "get-kit-attribute-detail.attributeId.notNull";
+    public static final String GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND = "get-kit-attribute-detail.attributeId.notFound";
+
+    public static final String GET_KIT_QUESTIONNAIRE_KIT_ID_NOT_NULL = "get-kit-questionnaire.kitId.notNull";
+    public static final String GET_KIT_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "get-kit-questionnaire.questionnaireId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
