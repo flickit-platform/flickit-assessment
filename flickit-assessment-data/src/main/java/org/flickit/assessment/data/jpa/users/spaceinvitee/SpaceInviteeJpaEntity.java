@@ -28,7 +28,7 @@ public class SpaceInviteeJpaEntity {
     @Column(name = "email", nullable = false)
     String email;
 
-    @Column(name = "expiration_time", nullable = false)
+    @Column(name = "expiration_date", nullable = false)
     LocalDateTime expirationDate;
 
     @Column(name = "creation_time", nullable = false)
