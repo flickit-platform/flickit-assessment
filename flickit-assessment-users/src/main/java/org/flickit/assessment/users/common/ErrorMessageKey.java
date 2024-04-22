@@ -10,6 +10,10 @@ public class ErrorMessageKey {
 
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
 
+    public static final String USER_BY_EMAIL_NOT_FOUND = "user-by-email.notFound";
+
+    public static final String GET_USER_BY_EMAIL_EMAIL_NOT_NULL = "get-user-by-email.email.notNull";
+
     public static final String GET_EXPERT_GROUP_LIST_PAGE_MIN = "get-expert-group-list.page.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MIN = "get-expert-group-list.size.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MAX = "get-expert-group-list.size.max";

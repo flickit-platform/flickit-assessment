@@ -9,8 +9,6 @@ import java.util.UUID;
 
 public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
 
-    Optional<UserJpaEntity> findByEmailIgnoreCase(String email);
-
     @Query("""
         SELECT u.email AS email
         FROM UserJpaEntity u
@@ -21,7 +19,7 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
     @Query("""
         SELECT u.id AS userId
         FROM UserJpaEntity u
-        WHERE u.email = :email
+        LOWER(u.email) = LOWER(:email)
         """)
-    UUID findUserIdByEmail(@Param(value = "email") String email);
+    Optional<UUID> findUserIdByEmail(@Param(value = "email") String email);
 }

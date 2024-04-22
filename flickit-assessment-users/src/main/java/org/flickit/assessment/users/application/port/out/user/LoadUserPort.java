@@ -2,7 +2,7 @@ package org.flickit.assessment.users.application.port.out.user;
 
 import java.util.UUID;
 
-public interface LoadUserIdByEmailPort {
+public interface LoadUserPort {
 
-    UUID loadByEmail (String email);
+    UUID loadUserIdByEmail(String email);
 }
