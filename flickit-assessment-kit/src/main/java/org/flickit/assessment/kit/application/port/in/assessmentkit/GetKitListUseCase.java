@@ -59,7 +59,7 @@ public interface GetKitListUseCase {
         public record ExpertGroup(
             long id,
             String title,
-            String pictureAddress
+            String picture
         ) {
         }
     }

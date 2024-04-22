@@ -52,7 +52,7 @@ class GetKitListServiceTest {
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
-        var expertGroupPictureAddress = "https://picureLink";
+        var expertGroupPictureUrl = "https://picureLink";
         var expectedKitsPage = new PaginatedResponse(
             List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
             0,
@@ -70,7 +70,7 @@ class GetKitListServiceTest {
         when(loadKitTagsListPort.loadByKitIds(kitIds)).thenReturn(
             List.of(new LoadKitListTagsListPort.Result(kitId, List.of(sampleTag))));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
-            .thenReturn(expertGroupPictureAddress);
+            .thenReturn(expertGroupPictureUrl);
 
         var kitList = service.getKitList(param);
 
@@ -90,7 +90,7 @@ class GetKitListServiceTest {
         assertEquals(15, item.assessmentsCount());
         assertEquals(expertGroup.getId(), item.expertGroup().id());
         assertEquals(expertGroup.getTitle(), item.expertGroup().title());
-        assertEquals(expertGroupPictureAddress, item.expertGroup().pictureAddress());
+        assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
 
         verify(loadPublishedKitListPort, never()).loadPrivateKits(any(), anyInt(), anyInt());
     }
@@ -105,7 +105,7 @@ class GetKitListServiceTest {
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
-        var expertGroupPictureAddress = "https://picureLink";
+        var expertGroupPictureUrl = "https://picureLink";
         var expectedKitsPage = new PaginatedResponse(
             List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
             0,
@@ -123,7 +123,7 @@ class GetKitListServiceTest {
         when(loadKitTagsListPort.loadByKitIds(kitIds)).thenReturn(
             List.of(new LoadKitListTagsListPort.Result(kitId, List.of(sampleTag))));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
-            .thenReturn(expertGroupPictureAddress);
+            .thenReturn(expertGroupPictureUrl);
 
         var kitList = service.getKitList(param);
 
@@ -143,7 +143,7 @@ class GetKitListServiceTest {
         assertEquals(15, item.assessmentsCount());
         assertEquals(expertGroup.getId(), item.expertGroup().id());
         assertEquals(expertGroup.getTitle(), item.expertGroup().title());
-        assertEquals(expertGroupPictureAddress, item.expertGroup().pictureAddress());
+        assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
 
         verify(loadPublishedKitListPort, never()).loadPublicKits(anyInt(), anyInt());
     }
