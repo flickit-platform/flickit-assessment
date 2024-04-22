@@ -80,7 +80,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
-
     }
 
     @Override
