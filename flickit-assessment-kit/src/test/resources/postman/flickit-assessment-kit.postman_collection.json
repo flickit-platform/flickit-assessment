@@ -420,9 +420,9 @@
 			"response": []
 		},
 		{
-			"name": "Delete Assessment Kit",
+			"name": "Get Attribute Detail",
 			"request": {
-				"method": "DELETE",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
@@ -431,19 +431,47 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302",
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/144/details/attributes/5",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
 						"assessment-kits",
-						"302"
+						"144",
+						"details",
+						"attributes",
+						"5"
 					]
 				}
 			},
 			"response": []
-		}
+		},
+      {
+        "name": "Delete Assessment Kit",
+        "request": {
+          "method": "DELETE",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "{{authorization_header}}",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessment-kits",
+              "302"
+            ]
+          }
+        },
+        "response": []
+      }
 	],
 	"event": [
 		{
