@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadUserInvitedSpacesPort;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase;
+import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitations;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.junit.jupiter.api.DisplayName;
@@ -12,8 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -32,8 +31,8 @@ class AcceptSpaceInvitationsServiceTest {
     private LoadUserInvitedSpacesPort loadUserInvitedSpacesPort;
     @Mock
     private CreateSpaceUserAccessPort createSpaceUserAccessPort;
-    //@Mock
-    //private DeleteUserInvitation deleteUserInvitation;
+    @Mock
+    private DeleteSpaceUserInvitations deleteSpaceUserInvitations;
 
     @Test
     @DisplayName("UserId and Email should be matched")
@@ -70,11 +69,12 @@ class AcceptSpaceInvitationsServiceTest {
         AcceptSpaceInvitationsUseCase.Param param = new AcceptSpaceInvitationsUseCase.Param(userId, email);
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(loadUserInvitedSpacesPort.loadSpacesIds(email)).thenReturn(null);
+        when(loadUserInvitedSpacesPort.loadSpaces(email)).thenReturn(null);
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
-        verify(loadUserInvitedSpacesPort).loadSpacesIds(email);
+        verify(loadUserInvitedSpacesPort).loadSpaces(email);
+        verifyNoInteractions(deleteSpaceUserInvitations);
     }
 
     @Test
@@ -87,12 +87,13 @@ class AcceptSpaceInvitationsServiceTest {
         var portResult = Stream.of(new LoadUserInvitedSpacesPort.Result(spaceId, userId)).toList();
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(loadUserInvitedSpacesPort.loadSpacesIds(email)).thenReturn(portResult);
+        when(loadUserInvitedSpacesPort.loadSpaces(email)).thenReturn(portResult);
         doNothing().when(createSpaceUserAccessPort).createAccess(any());
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
-        verify(loadUserInvitedSpacesPort).loadSpacesIds(email);
+        verify(loadUserInvitedSpacesPort).loadSpaces(email);
         verify(createSpaceUserAccessPort).createAccess(any());
+        verify(deleteSpaceUserInvitations).delete(email);
     }
 }

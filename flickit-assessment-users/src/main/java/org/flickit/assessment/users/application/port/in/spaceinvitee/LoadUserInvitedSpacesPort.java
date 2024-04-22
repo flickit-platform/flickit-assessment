@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public interface LoadUserInvitedSpacesPort {
 
-    List<Result> loadSpacesIds(String email);
+    List<Result> loadSpaces(String email);
 
     record Result(long spaceId, UUID createdBy){}
 }
