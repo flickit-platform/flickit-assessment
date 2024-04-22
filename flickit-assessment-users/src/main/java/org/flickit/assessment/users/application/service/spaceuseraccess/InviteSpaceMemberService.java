@@ -44,9 +44,9 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
         if (loadUserIdByEmailPort.loadByEmail(param.getEmail()) != null)
             throw new ResourceAlreadyExistsException(INVITE_SPACE_MEMBER_INVITEE_DUPLICATE);
 
-        var inviteDate = LocalDateTime.now();
-        var inviteExpirationDate = inviteDate.plusDays(EXPIRY_DURATION.toDays());
-        saveSpaceMemberInviteePort.persist(toParam(param.getSpaceId(), param.getEmail(), currentUserId, inviteDate, inviteExpirationDate));
+        var creationTime = LocalDateTime.now();
+        var expirationDate = creationTime.plusDays(EXPIRY_DURATION.toDays());
+        saveSpaceMemberInviteePort.persist(toParam(param.getSpaceId(), param.getEmail(), currentUserId, creationTime, expirationDate));
         sendInviteMailPort.sendInviteMail(param.getEmail());
     }
 

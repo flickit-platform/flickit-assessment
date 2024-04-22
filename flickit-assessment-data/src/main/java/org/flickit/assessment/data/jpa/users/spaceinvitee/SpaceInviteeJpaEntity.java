@@ -29,12 +29,12 @@ public class SpaceInviteeJpaEntity {
     @Column(name = "email", nullable = false)
     String email;
 
-    @Column(name = "expiration_date", nullable = false)
-    LocalDateTime expirationDate;
+    @Column(name = "created_by", nullable = false)
+    UUID createdBy;
 
     @Column(name = "creation_time", nullable = false)
     LocalDateTime creationTime;
 
-    @Column(name = "created_by", nullable = false)
-    UUID createdBy;
+    @Column(name = "expiration_date", nullable = false)
+    LocalDateTime expirationDate;
 }

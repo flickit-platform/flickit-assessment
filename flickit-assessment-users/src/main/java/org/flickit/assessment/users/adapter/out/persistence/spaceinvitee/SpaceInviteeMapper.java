@@ -12,10 +12,10 @@ public class SpaceInviteeMapper {
         return new SpaceInviteeJpaEntity(
             null,
             param.spaceId(),
-            param.inviteeMail(),
-            param.inviteDate(),
-            param.inviteExpirationDate(),
-            param.inviterId()
+            param.email(),
+            param.createdBy(),
+            param.creationTime(),
+            param.expirationDate()
         );
     }
 }

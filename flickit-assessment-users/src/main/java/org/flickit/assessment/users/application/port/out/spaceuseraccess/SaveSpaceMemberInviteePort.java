@@ -7,7 +7,7 @@ public interface SaveSpaceMemberInviteePort {
 
     void persist(Param param);
 
-    record Param(long spaceId, String inviteeMail, UUID inviterId,
-                 LocalDateTime inviteDate, LocalDateTime inviteExpirationDate) {
+    record Param(long spaceId, String email, UUID createdBy,
+                 LocalDateTime creationTime, LocalDateTime expirationDate) {
     }
 }
