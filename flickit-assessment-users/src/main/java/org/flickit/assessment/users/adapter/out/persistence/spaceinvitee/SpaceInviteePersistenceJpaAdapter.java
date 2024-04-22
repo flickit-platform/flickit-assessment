@@ -5,12 +5,12 @@ import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadUserInvitedSpacesPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitations;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class SpaceInviteePersistenceJpaAdapter implements
     LoadUserInvitedSpacesPort,

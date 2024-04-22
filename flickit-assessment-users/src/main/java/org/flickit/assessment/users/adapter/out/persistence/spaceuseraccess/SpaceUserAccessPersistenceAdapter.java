@@ -13,7 +13,7 @@ import java.util.List;
 public class SpaceUserAccessPersistenceAdapter implements
     CreateSpaceUserAccessPort {
 
-    private SpaceUserAccessJpaRepository repository;
+    private final SpaceUserAccessJpaRepository repository;
 
     @Override
     public void createAccess(List<Param> param) {
