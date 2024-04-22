@@ -31,7 +31,7 @@ public class SpaceUserAccessJpaEntity {
     private LocalDateTime creationTime;
 
     @Column(name = "created_by", nullable = false)
-    private String createdBy;
+    private UUID createdBy;
 
     @Data
     @NoArgsConstructor
