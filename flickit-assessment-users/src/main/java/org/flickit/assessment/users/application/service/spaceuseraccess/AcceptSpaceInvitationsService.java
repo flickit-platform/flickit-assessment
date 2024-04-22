@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase;
-import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitations;
+import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseC
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     private final LoadSpaceUserInvitationsPort loadSpaceUserInvitationsPort;
     private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
-    private final DeleteSpaceUserInvitations deleteSpaceUserInvitations;
+    private final DeleteSpaceUserInvitationsPort deleteSpaceUserInvitationsPort;
 
     @Override
     public void acceptInvitations(Param param) {
@@ -43,7 +43,7 @@ public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseC
                 .filter(i -> i.expirationDate().isAfter(LocalDateTime.now()))
                 .map(i -> toUserAccessPortParam(i, param.getUserId())).toList();
 
-            deleteSpaceUserInvitations.delete(email);
+            deleteSpaceUserInvitationsPort.delete(email);
         }
 
         if (!validInvitations.isEmpty())

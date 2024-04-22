@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadSpaceUserInvitationsPort;
-import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitations;
+import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SpaceInviteePersistenceJpaAdapter implements
     LoadSpaceUserInvitationsPort,
-    DeleteSpaceUserInvitations {
+    DeleteSpaceUserInvitationsPort {
 
     private final SpaceInviteeJpaRepository repository;
 
