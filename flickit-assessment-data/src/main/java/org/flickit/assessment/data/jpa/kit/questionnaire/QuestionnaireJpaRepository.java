@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, Long> {
@@ -48,4 +49,13 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
             ORDER BY q.index
         """)
     Page<QuestionnaireListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId, Pageable pageable);
+
+    @Query("""
+            SELECT qn
+            FROM AssessmentKitJpaEntity k
+                JOIN KitVersionJpaEntity kv ON k.id = kv.kit.id
+                JOIN QuestionnaireJpaEntity qn ON qn.kitVersionId = kv.id
+            WHERE qn.id = :questionnaireId AND k.id = :kitId
+        """)
+    Optional<QuestionnaireJpaEntity> findQuestionnaireByIdAndKitId(@Param("questionnaireId") Long questionnaireId, @Param("kitId") Long kitId);
 }
