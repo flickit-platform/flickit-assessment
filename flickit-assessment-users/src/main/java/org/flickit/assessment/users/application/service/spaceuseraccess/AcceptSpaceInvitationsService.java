@@ -2,7 +2,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadUserInvitedSpacesPort;
+import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitations;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
@@ -23,9 +23,10 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.ACCEPT_SPACE_I
 public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseCase {
 
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
-    private final LoadUserInvitedSpacesPort loadUserInvitedSpacesPort;
+    private final LoadSpaceUserInvitationsPort loadSpaceUserInvitationsPort;
     private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
     private final DeleteSpaceUserInvitations deleteSpaceUserInvitations;
+
     @Override
     public void acceptInvitations(Param param) {
         var email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
@@ -33,7 +34,7 @@ public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseC
         if (!Objects.equals(email, param.getEmail()))
             throw new ResourceNotFoundException(ACCEPT_SPACE_INVITATIONS_USER_ID_EMAIL_NOT_FOUND);
 
-        var portResult = loadUserInvitedSpacesPort.loadSpaces(param.getEmail());
+        var portResult = loadSpaceUserInvitationsPort.loadInvitations(param.getEmail());
 
         List<CreateSpaceUserAccessPort.Param> result;
         if (portResult != null){
@@ -43,7 +44,7 @@ public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseC
         }
     }
 
-    private CreateSpaceUserAccessPort.Param toUserAccessPortParam(LoadUserInvitedSpacesPort.Result portResult, UUID userId) {
+    private CreateSpaceUserAccessPort.Param toUserAccessPortParam(LoadSpaceUserInvitationsPort.Result portResult, UUID userId) {
         return new CreateSpaceUserAccessPort.Param(
             portResult.spaceId(),
             userId,
