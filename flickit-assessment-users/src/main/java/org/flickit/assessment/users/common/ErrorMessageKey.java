@@ -57,4 +57,8 @@ public class ErrorMessageKey {
     public static final String DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_NULL = "delete-expert-group-member.userId.notNull";
     public static final String DELETE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group-member.expert-group-id.notNull";
     public static final String DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND = "delete-expert-group-member.userId.notFound";
+
+    public static final String CREATE_SPACE_TITLE_NOT_BLANK = "create-space.title.notBlank";
+    public static final String CREATE_SPACE_TITLE_SIZE_MIN = "create-space.title.size.min";
+    public static final String CREATE_SPACE_TITLE_SIZE_MAX = "create-space.title.size.max";
 }
