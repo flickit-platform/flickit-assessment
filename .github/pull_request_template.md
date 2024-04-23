@@ -6,3 +6,6 @@ Before you label your PR as 'Ready To Review', please check the below list and p
 [ ] - Did you review the PR by yourself?
 [ ] - Did you merge the main branch into this branch recently?
 [ ] - Did you remove the probable extra code?
+[ ] - Did you labeled the PR as 'In Review'?
+[ ] - Did you update the Jira task to 'In Review'?
+[ ] - Did you add the Confluence's link to the Jira task as a description?
