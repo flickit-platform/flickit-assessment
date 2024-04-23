@@ -14,6 +14,7 @@ public class ErrorMessageKey {
     public static final String KIT_ID_NOT_FOUND = "kit.id.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
     public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
+    public static final String QUESTION_ID_NOT_FOUND = "question.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -91,6 +92,9 @@ public class ErrorMessageKey {
 
     public static final String GET_KIT_QUESTIONNAIRE_KIT_ID_NOT_NULL = "get-kit-questionnaire.kitId.notNull";
     public static final String GET_KIT_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "get-kit-questionnaire.questionnaireId.notNull";
+
+    public static final String GET_KIT_QUESTION_DETAIL_KIT_ID_NOT_NULL = "get-kit-question-detail.kitId.notNull";
+    public static final String GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_NULL = "get-kit-question-detail.questionId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
