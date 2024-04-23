@@ -7,7 +7,6 @@ import org.flickit.assessment.kit.application.port.in.attribute.GetAttrLevelQues
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttrLevelQuestionsInfoPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.CheckMaturityLevelExistByLevelIdAndKitIdPort;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,9 +25,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
     @InjectMocks
     private GetAttrLevelQuestionsInfoService service;
-
-    @Mock
-    private CheckMaturityLevelExistByLevelIdAndKitIdPort checkMaturityLevelExistByLevelIdAndKitIdPort;
 
     @Mock
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
@@ -83,8 +79,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(checkMaturityLevelExistByLevelIdAndKitIdPort.checkLevelExistByLevelIdAndKitIdPort(param.getMaturityLevelId(), param.getKitId()))
-            .thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> service.getAttrLevelQuestionsInfo(param));
     }
@@ -101,8 +95,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(checkMaturityLevelExistByLevelIdAndKitIdPort.checkLevelExistByLevelIdAndKitIdPort(param.getMaturityLevelId(), param.getKitId()))
-            .thenReturn(true);
 
         var answerOption = new LoadAttrLevelQuestionsInfoPort.Result.Question.AnswerOption(
             1,

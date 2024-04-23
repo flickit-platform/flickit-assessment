@@ -7,10 +7,6 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.CheckMaturityLevelExistByLevelIdAndKitIdPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -29,8 +25,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     DeleteMaturityLevelPort,
     UpdateMaturityLevelPort,
     LoadMaturityLevelsPort,
-    LoadAttributeMaturityLevelsPort,
-    CheckMaturityLevelExistByLevelIdAndKitIdPort {
+    LoadAttributeMaturityLevelsPort {
 
     private final MaturityLevelJpaRepository repository;
     private final AssessmentKitJpaRepository assessmentKitRepository;
@@ -77,10 +72,5 @@ public class MaturityLevelPersistenceJpaAdapter implements
         return repository.loadAttributeLevels(kitId, attributeId).stream()
             .map(e -> new LoadAttributeMaturityLevelsPort.Result(e.getId(), e.getTitle(), e.getIndex(), e.getQuestionCount()))
             .toList();
-    }
-
-    @Override
-    public boolean checkLevelExistByLevelIdAndKitIdPort(Long levelId, Long kitId) {
-        return repository.existsByLevelIdAndKitId(levelId, kitId);
     }
 }
