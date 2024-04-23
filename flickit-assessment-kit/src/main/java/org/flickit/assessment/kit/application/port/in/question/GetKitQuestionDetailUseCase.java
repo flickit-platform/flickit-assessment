@@ -40,26 +40,17 @@ public interface GetKitQuestionDetailUseCase {
     record Result(String hint, List<Option> options, List<Impact> attributeImpacts) {
     }
 
-    record Option(Integer index, String title) {
+    record Option(int index, String title) {
     }
 
-    record Impact(Long id,
-                  String title,
-                  List<AffectedLevel> affectedLevels) {
+    record Impact(long id, String title, List<AffectedLevel> affectedLevels) {
     }
 
-    record AffectedLevel(MaturityLevel maturityLevel,
-                         Integer weight,
-                         List<OptionValue> optionValues) {
-    }
+    record AffectedLevel(MaturityLevel maturityLevel, int weight, List<OptionValue> optionValues) {
+        public record MaturityLevel(long id, int index, String title) {
+        }
 
-    record MaturityLevel(Long id,
-                         String title,
-                         Integer index) {
-    }
-
-    record OptionValue(Long id,
-                       Integer index,
-                       Double value) {
+        public record OptionValue(long id, int index, double value) {
+        }
     }
 }

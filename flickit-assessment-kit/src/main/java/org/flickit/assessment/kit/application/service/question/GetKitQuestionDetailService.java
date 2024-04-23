@@ -2,26 +2,22 @@ package org.flickit.assessment.kit.application.service.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.domain.AnswerOption;
-import org.flickit.assessment.kit.application.domain.AnswerOptionImpact;
-import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionAndKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuestionImpactByQuestionPort;
-import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuestionImpactByQuestionPort.AttributeImpact;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.toMap;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND;
 
 
 @Service
@@ -31,9 +27,9 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
-    private final LoadAnswerOptionsByQuestionAndKitPort loadAnswerOptionsByQuestionPort;
-    private final LoadQuestionImpactByQuestionPort loadQuestionImpactByQuestionPort;
     private final LoadAllAttributesPort loadAllAttributesPort;
+    private final LoadQuestionPort loadQuestionPort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Override
     public Result getKitQuestionDetail(Param param) {
@@ -41,62 +37,68 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var answerOptions = loadAnswerOptionsByQuestionPort.loadByQuestionIdAndKitId(param.getQuestionId(), param.getKitId());
-        if (answerOptions.isEmpty()) {
-            throw new ResourceNotFoundException(GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_FOUND);
-        }
-        var options = answerOptions.stream().map(this::toOption)
+        Question question = loadQuestionPort.load(param.getQuestionId());
+
+        var maturityLevelsMap = loadMaturityLevelsPort.loadByKitId(param.getKitId()).stream()
+            .collect(toMap(MaturityLevel::getId, e -> e));
+        var options = question.getOptions().stream()
+            .map(opt -> new Option(opt.getIndex(), opt.getTitle()))
+            .sorted(comparingInt(Option::index))
             .toList();
 
-        List<Impact> attributeImpacts = loadAttributeImpacts(param, answerOptions);
-        return new Result(options, attributeImpacts);
-    }
+        List<Impact> attributeImpacts = loadAttributeImpacts(question, maturityLevelsMap);
 
         return new Result(question.getHint(), options, attributeImpacts);
     }
 
-    private List<Impact> loadAttributeImpacts(Param param, List<AnswerOption> answerOptions) {
-        var loadedAttributeImpacts = loadQuestionImpactByQuestionPort.loadQuestionImpactByQuestionId(param.getQuestionId());
+    private List<Impact> loadAttributeImpacts(Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
+        var impacts = question.getImpacts();
 
-        var answerIdToIndexMap = answerOptions.stream()
+        var answerIdToIndexMap = question.getOptions().stream()
             .collect(toMap(AnswerOption::getId, AnswerOption::getIndex));
-        var attributeIds = loadedAttributeImpacts.stream()
-            .map(AttributeImpact::attributeId)
-            .toList();
+
+        Map<Long, List<QuestionImpact>> attributeIdToImpacts = impacts.stream()
+            .collect(groupingBy(QuestionImpact::getAttributeId,
+                mapping(e -> e, toList())));
+
+        var attributeIds = attributeIdToImpacts.keySet().stream().toList();
+
         var attributeIdToTitleMap = loadAllAttributesPort.loadAllByIds(attributeIds).stream()
             .collect(toMap(Attribute::getId, Attribute::getTitle));
-        return loadedAttributeImpacts.stream()
-            .map(attributeImpact -> toAttributeImpact(answerIdToIndexMap, attributeIdToTitleMap, attributeImpact))
+        return attributeIds.stream()
+            .map(attributeId -> toAttributeImpact(
+                attributeId,
+                answerIdToIndexMap,
+                attributeIdToTitleMap.get(attributeId),
+                attributeIdToImpacts.get(attributeId),
+                maturityLevelsMap))
             .toList();
     }
 
-    private Impact toAttributeImpact(Map<Long, Integer> answerIdToIndexMap, Map<Long, String> attributeIdToTitleMap, AttributeImpact attributeImpact) {
-        var attributeId = attributeImpact.attributeId();
-        var title = attributeIdToTitleMap.get(attributeId);
-        var affectedLevels = attributeImpact.affectedLevels().stream()
-            .map(affectedLevel -> toAffectedLevel(answerIdToIndexMap, affectedLevel))
+    private Impact toAttributeImpact(long attributeId, Map<Long, Integer> answerIdToIndexMap, String attributeTitle,
+                                     List<QuestionImpact> attributeImpacts, Map<Long, MaturityLevel> maturityLevelsMap) {
+        var affectedLevels = attributeImpacts.stream()
+            .map(impact -> toAffectedLevel(
+                answerIdToIndexMap,
+                impact,
+                maturityLevelsMap.get(impact.getMaturityLevelId())))
             .toList();
         return new Impact(attributeId,
-            title,
+            attributeTitle,
             affectedLevels
         );
     }
 
-    private AffectedLevel toAffectedLevel(Map<Long, Integer> answerIdToIndexMap, LoadQuestionImpactByQuestionPort.AffectedLevel affectedLevel) {
-        var maturityLevel = affectedLevel.maturityLevel();
-        List<OptionValue> optionValues = affectedLevel.optionValues().stream()
-            .map(answer -> toOptionValue(answerIdToIndexMap, answer))
+    private AffectedLevel toAffectedLevel(Map<Long, Integer> answerIdToIndexMap, QuestionImpact attributeImpact,
+                                          MaturityLevel maturityLevel) {
+        List<AffectedLevel.OptionValue> optionValues = attributeImpact.getOptionImpacts().stream()
+            .map(answer -> new AffectedLevel.OptionValue(answer.getOptionId(), answerIdToIndexMap.get(answer.getOptionId()), answer.getValue()))
             .toList();
 
         return new AffectedLevel(
-            new MaturityLevel(maturityLevel.getId(), maturityLevel.getTitle(), maturityLevel.getIndex()),
-            affectedLevel.weight(),
+            new AffectedLevel.MaturityLevel(maturityLevel.getId(), maturityLevel.getIndex(), maturityLevel.getTitle()),
+            attributeImpact.getWeight(),
             optionValues
         );
-    }
-
-    private OptionValue toOptionValue(Map<Long, Integer> answerIdToIndexMap, AnswerOptionImpact answer) {
-        var id = answer.getOptionId();
-        return new OptionValue(id, answerIdToIndexMap.get(id), answer.getValue());
     }
 }
