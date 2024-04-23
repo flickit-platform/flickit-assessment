@@ -106,7 +106,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
     }
 
     private KitTag toKitTag(org.flickit.assessment.kit.application.domain.KitTag t) {
-        return new KitTag(t.getId(), t.getCode(), t.getTitle());
+        return new KitTag(t.getId(), t.getTitle());
     }
 
     private ExpertGroup toExpertGroup(org.flickit.assessment.kit.application.domain.ExpertGroup expertGroup) {

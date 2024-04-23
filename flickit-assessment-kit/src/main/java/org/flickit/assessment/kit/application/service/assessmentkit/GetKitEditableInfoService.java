@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.domain.KitTag;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
@@ -33,9 +34,7 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         AssessmentKit assessmentKit = loadAssessmentKitPort.load(param.getKitId());
-        List<KitTag> tags = loadKitTagsListPort.load(param.getKitId()).stream()
-            .map(this::toKitTag)
-            .toList();
+        List<KitTag> tags = loadKitTagsListPort.load(param.getKitId());
 
         return new KitEditableInfo(
             assessmentKit.getId(),
@@ -47,9 +46,5 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
             assessmentKit.getAbout(),
             tags,
             expertGroup.getOwnerId().equals(param.getCurrentUserId()));
-    }
-
-    private KitTag toKitTag(org.flickit.assessment.kit.application.domain.KitTag kitTag) {
-        return new KitTag(kitTag.getId(), kitTag.getTitle());
     }
 }

@@ -83,7 +83,6 @@ public interface GetPublishedKitUseCase {
     }
 
     record KitTag(Long id,
-                  String code,
                   String title) {
     }
 }
