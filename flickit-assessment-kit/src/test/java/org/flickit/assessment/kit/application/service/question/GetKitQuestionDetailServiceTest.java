@@ -94,7 +94,7 @@ class GetKitQuestionDetailServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadQuestionPort.load(question.getId())).thenReturn(question);
+        when(loadQuestionPort.load(question.getId(), kitId)).thenReturn(question);
         when(loadAllAttributesPort.loadAllByIds(List.of(attr1.getId(), attr2.getId()))).thenReturn(List.of(attr1, attr2));
         when(loadMaturityLevelsPort.loadByKitId(kitId)).thenReturn(maturityLevels);
 
@@ -142,13 +142,14 @@ class GetKitQuestionDetailServiceTest {
 
     @Test
     void testGetKitQuestionDetail_WhenQuestionDoesNotExist_ThrowsException() {
-        var questionId = 2L;
-        var param = new Param(2000L, questionId, UUID.randomUUID());
+        long kitId = 123L;
+        long questionId = 2L;
+        var param = new Param(kitId, questionId, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadQuestionPort.load(questionId)).thenThrow(new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
+        when(loadQuestionPort.load(questionId, kitId)).thenThrow(new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(QUESTION_ID_NOT_FOUND, exception.getMessage());
