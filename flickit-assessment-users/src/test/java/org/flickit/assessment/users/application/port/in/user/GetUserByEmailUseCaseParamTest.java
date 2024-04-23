@@ -1,10 +1,10 @@
-package org.flickit.assessment.kit.application.port.in.user;
+package org.flickit.assessment.users.application.port.in.user;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_USER_BY_EMAIL_EMAIL_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.GET_USER_BY_EMAIL_EMAIL_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GetUserByEmailUseCaseParamTest {
