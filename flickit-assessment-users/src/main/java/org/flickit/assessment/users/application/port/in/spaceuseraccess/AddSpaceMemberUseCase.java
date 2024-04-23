@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.port.in.spaceuseraccess;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -22,7 +23,7 @@ public interface AddSpaceMemberUseCase {
         @NotNull(message = ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL)
         Long spaceId;
 
-        @NotNull(message = ADD_SPACE_MEMBER_EMAIL_NOT_NULL)
+        @NotBlank(message = ADD_SPACE_MEMBER_EMAIL_NOT_NULL)
         String email;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
