@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, Long> {
 
-    List<MaturityLevelJpaEntity> findAllByKitVersionId(Long kitVersionId);
+    List<MaturityLevelJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
     @Query("""
             SELECT l as maturityLevel, c as levelCompetence
@@ -23,6 +23,21 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
             ml.kitVersionId = (SELECT l.kitVersionId FROM MaturityLevelJpaEntity AS l WHERE l.id = :id)
         """)
     List<MaturityLevelJpaEntity> findAllInKitVersionWithOneId(@Param(value = "id") Long id);
+
+    @Query("""
+            SELECT
+                a.id as id,
+                a.index as index,
+                a.title as title,
+                COUNT(DISTINCT CASE WHEN qi.maturityLevel.id = a.id THEN qi.questionId ELSE NULL END) as questionCount
+            FROM MaturityLevelJpaEntity a
+            LEFT JOIN KitVersionJpaEntity kv On kv.id = a.kitVersionId
+            LEFT JOIN QuestionImpactJpaEntity qi ON qi.attributeId = :attributeId
+            WHERE kv.kit.id = :kitId
+            GROUP BY a.id
+            ORDER BY a.index
+        """)
+    List<MaturityQuestionCountView> loadAttributeLevels(@Param("kitId") Long kitId, @Param("attributeId") Long attributeId);
 
     @Query("""
         SELECT CASE WHEN EXISTS

@@ -1,6 +1,7 @@
 package org.flickit.assessment.data.jpa.kit.question;
 
 import org.flickit.assessment.data.jpa.kit.question.advice.QuestionAdviceView;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -52,6 +53,14 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE at.subject.id = :subjectId
         """)
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
+
+    @Query("""
+            SELECT COUNT (DISTINCT q.id) FROM QuestionJpaEntity q
+            LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
+            LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id
+            WHERE at.subject.id = :subjectId
+        """)
+    Integer countDistinctBySubjectId(@Param("subjectId") long subjectId);
 
     @Query("""
            SELECT DISTINCT q.id AS  questionId,
@@ -128,6 +137,17 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             ) GROUP BY qn.id order by qn.id
     """)
     List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
+
+    List<QuestionJpaEntity> findAllByQuestionnaireIdOrderByIndexAsc(Long questionnaireId);
+
+
+    @Query("""
+            SELECT q as question
+            FROM QuestionJpaEntity q
+            LEFT JOIN KitVersionJpaEntity kv On kv.id = q.kitVersionId
+            WHERE q.id = :id AND kv.kit.id = :kitId
+        """)
+    Optional<QuestionJpaEntity> findByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
 
     @Query("""
         SELECT

@@ -92,13 +92,13 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteById(long expertGroupId) {
-        repository.delete(expertGroupId);
+    public void deleteById(long expertGroupId, long deletionTime) {
+        repository.delete(expertGroupId, deletionTime);
     }
 
     @Override
     public CountExpertGroupKitsPort.Result countKits(long expertGroupId) {
-        var resultEntity =  repository.countKits(expertGroupId);
+        var resultEntity = repository.countKits(expertGroupId);
         return mapKitsCountToPortResult(resultEntity);
     }
 }
