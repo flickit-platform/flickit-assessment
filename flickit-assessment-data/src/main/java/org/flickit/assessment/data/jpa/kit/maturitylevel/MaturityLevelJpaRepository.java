@@ -38,15 +38,4 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
             ORDER BY a.index
         """)
     List<MaturityQuestionCountView> loadAttributeLevels(@Param("kitId") Long kitId, @Param("attributeId") Long attributeId);
-
-    @Query("""
-        SELECT CASE WHEN EXISTS
-            (SELECT 1
-             FROM MaturityLevelJpaEntity m
-                JOIN KitVersionJpaEntity kv ON m.kitVersionId = kv.id
-                JOIN AssessmentKitJpaEntity k ON kv.kit.id = k.id
-             WHERE m.id = :levelId AND k.id = :kitId)
-        THEN TRUE ELSE FALSE END
-    """)
-    boolean existsByLevelIdAndKitId(@Param("levelId")Long levelId, @Param("kitId")Long kitId);
 }

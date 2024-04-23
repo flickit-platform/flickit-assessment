@@ -88,15 +88,4 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             WHERE qi.attributeId = :attributeId
         """)
     Integer countAttributeImpactfulQuestions(@Param(value = "attributeId") Long attributeId);
-
-    @Query("""
-        SELECT CASE WHEN EXISTS
-            (SELECT 1
-             FROM AttributeJpaEntity a
-                JOIN KitVersionJpaEntity kv ON a.kitVersionId = kv.id
-                JOIN AssessmentKitJpaEntity k ON kv.kit.id = k.id
-             WHERE a.id = :attributeId AND k.id = :kitId)
-        THEN TRUE ELSE FALSE END
-    """)
-    boolean existByAttributeIdAndKitId(Long attributeId, Long kitId);
 }
