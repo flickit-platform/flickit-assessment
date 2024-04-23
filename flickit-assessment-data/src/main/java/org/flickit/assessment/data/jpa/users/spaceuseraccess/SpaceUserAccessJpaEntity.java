@@ -27,11 +27,12 @@ public class SpaceUserAccessJpaEntity {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
-    @Column(name = "created_by", nullable = false)
-    private String createdBy;
 
     @Data
     @NoArgsConstructor

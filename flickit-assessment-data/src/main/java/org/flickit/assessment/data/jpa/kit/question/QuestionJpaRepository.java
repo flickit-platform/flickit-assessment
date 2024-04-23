@@ -136,4 +136,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             ) GROUP BY qn.id order by qn.id
     """)
     List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
+
+    List<QuestionJpaEntity> findAllByQuestionnaireIdOrderByIndexAsc(Long questionnaireId);
 }
