@@ -22,8 +22,7 @@ public class AttributePersistenceJpaAdapter implements
     CreateAttributePort,
     LoadAttributePort,
     CountAttributeImpactfulQuestionsPort,
-    LoadAllAttributesPort,
-    CheckAttributeExistByAttributeIdAndKitIdPort {
+    LoadAllAttributesPort {
 
     private final AttributeJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
@@ -63,10 +62,5 @@ public class AttributePersistenceJpaAdapter implements
         return repository.findAllById(attributeIds).stream()
             .map(AttributeMapper::mapToDomainModel)
             .toList();
-    }
-
-    @Override
-    public boolean checkAttrExistsByAttrIdAndKitId(Long attributeId, Long kitId) {
-        return repository.existByAttributeIdAndKitId(attributeId, kitId);
     }
 }

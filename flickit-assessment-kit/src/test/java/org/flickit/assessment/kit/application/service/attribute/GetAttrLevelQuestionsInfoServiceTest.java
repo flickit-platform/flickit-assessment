@@ -5,7 +5,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.attribute.GetAttrLevelQuestionsInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.attribute.CheckAttributeExistByAttributeIdAndKitIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttrLevelQuestionsInfoPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.CheckMaturityLevelExistByLevelIdAndKitIdPort;
@@ -27,9 +26,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
     @InjectMocks
     private GetAttrLevelQuestionsInfoService service;
-
-    @Mock
-    private CheckAttributeExistByAttributeIdAndKitIdPort checkAttributeExistByAttributeIdAndKitIdPort;
 
     @Mock
     private CheckMaturityLevelExistByLevelIdAndKitIdPort checkMaturityLevelExistByLevelIdAndKitIdPort;
@@ -71,8 +67,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(checkAttributeExistByAttributeIdAndKitIdPort.checkAttrExistsByAttrIdAndKitId(param.getAttributeId(), param.getKitId()))
-            .thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> service.getAttrLevelQuestionsInfo(param));
     }
@@ -89,8 +83,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(checkAttributeExistByAttributeIdAndKitIdPort.checkAttrExistsByAttrIdAndKitId(param.getAttributeId(), param.getKitId()))
-            .thenReturn(true);
         when(checkMaturityLevelExistByLevelIdAndKitIdPort.checkLevelExistByLevelIdAndKitIdPort(param.getMaturityLevelId(), param.getKitId()))
             .thenReturn(false);
 
@@ -109,8 +101,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(checkAttributeExistByAttributeIdAndKitIdPort.checkAttrExistsByAttrIdAndKitId(param.getAttributeId(), param.getKitId()))
-            .thenReturn(true);
         when(checkMaturityLevelExistByLevelIdAndKitIdPort.checkLevelExistByLevelIdAndKitIdPort(param.getMaturityLevelId(), param.getKitId()))
             .thenReturn(true);
 

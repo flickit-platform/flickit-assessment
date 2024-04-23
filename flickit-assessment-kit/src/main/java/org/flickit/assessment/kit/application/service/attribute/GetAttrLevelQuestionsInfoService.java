@@ -6,7 +6,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.attribute.GetAttrLevelQuestionsInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.attribute.CheckAttributeExistByAttributeIdAndKitIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttrLevelQuestionsInfoPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.CheckMaturityLevelExistByLevelIdAndKitIdPort;
@@ -16,14 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.FIND_MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GetAttrLevelQuestionsInfoService implements GetAttrLevelQuestionsInfoUseCase {
 
-    private final CheckAttributeExistByAttributeIdAndKitIdPort checkAttrExistByAttIdAndKitIdPort;
     private final CheckMaturityLevelExistByLevelIdAndKitIdPort checkLevelExistByLevelIdAndKitIdPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
@@ -34,9 +32,6 @@ public class GetAttrLevelQuestionsInfoService implements GetAttrLevelQuestionsIn
         ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-
-        if (!checkAttrExistByAttIdAndKitIdPort.checkAttrExistsByAttrIdAndKitId(param.getAttributeId(), param.getKitId()))
-            throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
         if (!checkLevelExistByLevelIdAndKitIdPort.checkLevelExistByLevelIdAndKitIdPort(param.getMaturityLevelId(), param.getKitId()))
             throw new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND);
