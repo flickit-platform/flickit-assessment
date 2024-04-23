@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.application.service.attribute;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.CheckKitExistByIdPort;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.attribute.GetAttrLevelQuestionsInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
@@ -36,9 +35,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
     private CheckMaturityLevelExistByLevelIdAndKitIdPort checkMaturityLevelExistByLevelIdAndKitIdPort;
 
     @Mock
-    private CheckKitExistByIdPort checkKitExistByIdPort;
-
-    @Mock
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Mock
@@ -46,19 +42,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
     @Mock
     private LoadAttrLevelQuestionsInfoPort loadAttrLevelQuestionsInfoPort;
-
-    @Test
-    void getAttrLevelQuestionsInfo_KitWithGivenKitIdDoesNotExist_ThrowsException() {
-        GetAttrLevelQuestionsInfoUseCase.Param param = new GetAttrLevelQuestionsInfoUseCase.Param(
-            1L,
-            1L,
-            1L,
-            UUID.randomUUID());
-
-        when(checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId())).thenReturn(false);
-
-        assertThrows(ResourceNotFoundException.class, () -> service.getAttrLevelQuestionsInfo(param));
-    }
 
     @Test
     void getAttrLevelQuestionsInfo_CurrentUserIsNotMemberOfKitExpertGroup_ThrowsException() {
@@ -70,7 +53,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId())).thenReturn(true);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(false);
 
@@ -87,7 +69,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId())).thenReturn(true);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(checkAttributeExistByAttributeIdAndKitIdPort.checkAttrExistsByAttrIdAndKitId(param.getAttributeId(), param.getKitId()))
@@ -106,7 +87,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId())).thenReturn(true);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(checkAttributeExistByAttributeIdAndKitIdPort.checkAttrExistsByAttrIdAndKitId(param.getAttributeId(), param.getKitId()))
@@ -127,7 +107,6 @@ class GetAttrLevelQuestionsInfoServiceTest {
 
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId())).thenReturn(true);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(checkAttributeExistByAttributeIdAndKitIdPort.checkAttrExistsByAttrIdAndKitId(param.getAttributeId(), param.getKitId()))

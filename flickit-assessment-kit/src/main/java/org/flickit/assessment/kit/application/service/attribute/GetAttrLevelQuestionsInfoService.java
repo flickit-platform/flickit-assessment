@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.application.service.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.CheckKitExistByIdPort;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.attribute.GetAttrLevelQuestionsInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
@@ -26,16 +25,12 @@ public class GetAttrLevelQuestionsInfoService implements GetAttrLevelQuestionsIn
 
     private final CheckAttributeExistByAttributeIdAndKitIdPort checkAttrExistByAttIdAndKitIdPort;
     private final CheckMaturityLevelExistByLevelIdAndKitIdPort checkLevelExistByLevelIdAndKitIdPort;
-    private final CheckKitExistByIdPort checkKitExistByIdPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final LoadAttrLevelQuestionsInfoPort loadAttrLevelQuestionsInfoPort;
 
     @Override
     public Result getAttrLevelQuestionsInfo(Param param) {
-        if (!checkKitExistByIdPort.checkKitExistByIdPort(param.getKitId()))
-            throw new ResourceNotFoundException(KIT_ID_NOT_FOUND);
-
         ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
