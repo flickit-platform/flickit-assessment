@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateSpaceServiceTest {
@@ -27,11 +27,13 @@ class CreateSpaceServiceTest {
     @Test
     @DisplayName("inserting new space with valid parameters should not throws any exception")
     void testCreateSpace_validParams_successful() {
+        long id = 0L;
         String title = RandomStringUtils.randomAlphabetic(10);
         UUID currentUserId = UUID.randomUUID();
         CreateSpaceUseCase.Param param = new CreateSpaceUseCase.Param(title, currentUserId);
 
-        doNothing().when(createSpacePort).persist(any());
+        when(createSpacePort.persist(any())).thenReturn(id);
         assertDoesNotThrow(()-> service.createSpace(param));
+        verify(createSpacePort).persist(any());
     }
 }
