@@ -17,23 +17,59 @@ public class AssessmentKitMother {
     public static final long EXPERT_GROUP_ID = 1L;
     private static long id = 134L;
 
-public static AssessmentKit simpleKit() {
-    return new AssessmentKit(
-        id++,
-        CODE + id,
-        TITLE + id,
-        SUMMARY,
-        ABOUT,
-        LocalDateTime.now(),
-        LocalDateTime.now(),
-        Boolean.TRUE,
-        Boolean.FALSE,
-        EXPERT_GROUP_ID,
-        null,
-        null,
-        null,
-        id++);
-}
+    public static AssessmentKit simpleKit() {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            Boolean.FALSE,
+            EXPERT_GROUP_ID,
+            null,
+            null,
+            null,
+            id++);
+    }
+
+    public static AssessmentKit privateKit() {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            Boolean.TRUE,
+            EXPERT_GROUP_ID,
+            null,
+            null,
+            null,
+            id++);
+    }
+
+    public static AssessmentKit notPublishedKit() {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.FALSE,
+            Boolean.FALSE,
+            EXPERT_GROUP_ID,
+            null,
+            null,
+            null,
+            id++);
+    }
 
     public static AssessmentKit completeKit(List<Subject> subjects, List<MaturityLevel> maturityLevels, List<Questionnaire> questionnaires) {
         return new AssessmentKit(
@@ -46,6 +82,24 @@ public static AssessmentKit simpleKit() {
             LocalDateTime.now(),
             Boolean.TRUE,
             Boolean.FALSE,
+            EXPERT_GROUP_ID,
+            subjects,
+            maturityLevels,
+            questionnaires,
+            id++);
+    }
+
+    public static AssessmentKit completePrivateKit(List<Subject> subjects, List<MaturityLevel> maturityLevels, List<Questionnaire> questionnaires) {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            Boolean.TRUE,
             EXPERT_GROUP_ID,
             subjects,
             maturityLevels,
