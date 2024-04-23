@@ -14,6 +14,7 @@ import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
+import org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.kittagrelation.KitTagRelationMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
@@ -57,9 +58,9 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public ExpertGroup loadKitExpertGroup(Long kitId) {
-        ExpertGroupJpaEntity entity = expertGroupRepository.findByKitId(kitId)
+        return expertGroupRepository.findByKitId(kitId)
+            .map(ExpertGroupMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-        return new ExpertGroup(entity.getId(), entity.getTitle(), entity.getOwnerId());
     }
 
     @Override

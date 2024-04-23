@@ -11,5 +11,8 @@ public class ExpertGroup {
 
     private final long id;
     private final String title;
+    private final String bio;
+    private final String about;
+    private final String picture;
     private final UUID ownerId;
 }
