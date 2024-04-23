@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
-import org.flickit.assessment.kit.application.port.in.attribute.GetAttrLevelQuestionsInfoUseCase;
+import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeLevelQuestionsDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttrLevelQuestionsInfoPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -17,14 +17,14 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetAttrLevelQuestionsInfoService implements GetAttrLevelQuestionsInfoUseCase {
+public class GetKitKitAttributeLevelQuestionsDetailService implements GetKitAttributeLevelQuestionsDetailUseCase {
 
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final LoadAttrLevelQuestionsInfoPort loadAttrLevelQuestionsInfoPort;
 
     @Override
-    public Result getAttrLevelQuestionsInfo(Param param) {
+    public Result getKitAttributeLevelQuestionsDetail(Param param) {
         ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);

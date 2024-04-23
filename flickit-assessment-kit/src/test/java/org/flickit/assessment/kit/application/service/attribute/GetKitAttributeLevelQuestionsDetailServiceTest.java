@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.attribute;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
-import org.flickit.assessment.kit.application.port.in.attribute.GetAttrLevelQuestionsInfoUseCase;
+import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeLevelQuestionsDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttrLevelQuestionsInfoPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class GetAttrLevelQuestionsInfoServiceTest {
+class GetKitAttributeLevelQuestionsDetailServiceTest {
 
     @InjectMocks
-    private GetAttrLevelQuestionsInfoService service;
+    private GetKitKitAttributeLevelQuestionsDetailService service;
 
     @Mock
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
@@ -36,8 +36,8 @@ class GetAttrLevelQuestionsInfoServiceTest {
     private LoadAttrLevelQuestionsInfoPort loadAttrLevelQuestionsInfoPort;
 
     @Test
-    void getAttrLevelQuestionsInfo_CurrentUserIsNotMemberOfKitExpertGroup_ThrowsException() {
-        GetAttrLevelQuestionsInfoUseCase.Param param = new GetAttrLevelQuestionsInfoUseCase.Param(
+    void testGetKitAttributeLevelQuestionsDetail_CurrentUserIsNotMemberOfKitExpertGroup_ThrowsException() {
+        GetKitAttributeLevelQuestionsDetailUseCase.Param param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
             1L,
             1L,
             1L,
@@ -48,12 +48,12 @@ class GetAttrLevelQuestionsInfoServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getAttrLevelQuestionsInfo(param));
+        assertThrows(AccessDeniedException.class, () -> service.getKitAttributeLevelQuestionsDetail(param));
     }
 
     @Test
-    void getAttrLevelQuestionsInfo_AttributeWithGivenAttributeIdAndKitIdDoesNotExist_ThrowsException() {
-        GetAttrLevelQuestionsInfoUseCase.Param param = new GetAttrLevelQuestionsInfoUseCase.Param(
+    void testGetKitAttributeLevelQuestionsDetail_AttributeWithGivenAttributeIdAndKitIdDoesNotExist_ThrowsException() {
+        GetKitAttributeLevelQuestionsDetailUseCase.Param param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
             1L,
             1L,
             1L,
@@ -64,12 +64,12 @@ class GetAttrLevelQuestionsInfoServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
-        assertThrows(ResourceNotFoundException.class, () -> service.getAttrLevelQuestionsInfo(param));
+        assertThrows(ResourceNotFoundException.class, () -> service.getKitAttributeLevelQuestionsDetail(param));
     }
 
     @Test
-    void getAttrLevelQuestionsInfo_MaturityLevelWithGivenMaturityLevelIdAndKitIdDoesNotExist_ThrowsException() {
-        GetAttrLevelQuestionsInfoUseCase.Param param = new GetAttrLevelQuestionsInfoUseCase.Param(
+    void testGetKitAttributeLevelQuestionsDetail_MaturityLevelWithGivenMaturityLevelIdAndKitIdDoesNotExist_ThrowsException() {
+        GetKitAttributeLevelQuestionsDetailUseCase.Param param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
             1L,
             1L,
             1L,
@@ -80,12 +80,12 @@ class GetAttrLevelQuestionsInfoServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
-        assertThrows(ResourceNotFoundException.class, () -> service.getAttrLevelQuestionsInfo(param));
+        assertThrows(ResourceNotFoundException.class, () -> service.getKitAttributeLevelQuestionsDetail(param));
     }
 
     @Test
-    void getAttrLevelQuestionsInfo_ValidInput_ValidResult() {
-        GetAttrLevelQuestionsInfoUseCase.Param param = new GetAttrLevelQuestionsInfoUseCase.Param(
+    void testGetKitAttributeLevelQuestionsDetail_ValidInput_ValidResult() {
+        GetKitAttributeLevelQuestionsDetailUseCase.Param param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
             1L,
             1L,
             1L,
@@ -117,21 +117,21 @@ class GetAttrLevelQuestionsInfoServiceTest {
         when(loadAttrLevelQuestionsInfoPort.loadAttrLevelQuestionsInfo(param.getAttributeId(), param.getMaturityLevelId()))
             .thenReturn(result);
 
-        GetAttrLevelQuestionsInfoUseCase.Result attrLevelQuestionsInfo = service.getAttrLevelQuestionsInfo(param);
+        GetKitAttributeLevelQuestionsDetailUseCase.Result attrLevelQuestionsInfo = service.getKitAttributeLevelQuestionsDetail(param);
 
         assertNotNull(attrLevelQuestionsInfo);
         assertEquals(result.id(), attrLevelQuestionsInfo.id());
         assertEquals(result.title(), attrLevelQuestionsInfo.title());
         assertEquals(result.index(), attrLevelQuestionsInfo.index());
         assertEquals(result.questionsCount(), attrLevelQuestionsInfo.questionsCount());
-        GetAttrLevelQuestionsInfoUseCase.Result.Question actualQuestion = attrLevelQuestionsInfo.questions().get(0);
+        GetKitAttributeLevelQuestionsDetailUseCase.Result.Question actualQuestion = attrLevelQuestionsInfo.questions().get(0);
         assertNotNull(actualQuestion);
         assertEquals(question.title(), actualQuestion.title());
         assertEquals(question.index(), actualQuestion.index());
         assertTrue(actualQuestion.mayNotBeApplicable());
         assertEquals(question.weight(), actualQuestion.weight());
         assertEquals(question.questionnaire(), actualQuestion.questionnaire());
-        GetAttrLevelQuestionsInfoUseCase.Result.Question.AnswerOption actualAnswerOption = actualQuestion.answerOptions().get(0);
+        GetKitAttributeLevelQuestionsDetailUseCase.Result.Question.AnswerOption actualAnswerOption = actualQuestion.answerOptions().get(0);
         assertNotNull(actualAnswerOption);
         assertEquals(answerOption.title(), actualAnswerOption.title());
         assertEquals(answerOption.index(), actualAnswerOption.index());
