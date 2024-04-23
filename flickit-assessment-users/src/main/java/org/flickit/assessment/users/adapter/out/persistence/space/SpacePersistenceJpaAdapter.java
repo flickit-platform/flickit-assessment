@@ -3,7 +3,9 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class SpacePersistenceJpaAdapter implements CreateSpacePort {
 
