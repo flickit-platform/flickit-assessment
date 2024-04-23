@@ -26,7 +26,7 @@ public class UserPersistenceJpaAdapter implements
 
     @Override
     public UUID loadUserIdByEmail(String email) {
-        return repository.findUserIdByEmail(email)
+        return repository.findUserIdByEmail(email.toLowerCase())
             .orElseThrow(() -> new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));
     }
 }
