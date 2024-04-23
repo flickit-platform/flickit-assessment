@@ -37,7 +37,7 @@ public interface GetKitQuestionDetailUseCase {
         }
     }
 
-    record Result(List<Option> options, List<Impact> attributeImpacts) {
+    record Result(String hint, List<Option> options, List<Impact> attributeImpacts) {
     }
 
     record Option(Integer index, String title) {

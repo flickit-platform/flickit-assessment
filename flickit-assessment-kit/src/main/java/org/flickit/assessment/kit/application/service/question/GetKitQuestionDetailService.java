@@ -52,8 +52,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
         return new Result(options, attributeImpacts);
     }
 
-    private Option toOption(AnswerOption answerOption) {
-        return new Option(answerOption.getIndex(), answerOption.getTitle());
+        return new Result(question.getHint(), options, attributeImpacts);
     }
 
     private List<Impact> loadAttributeImpacts(Param param, List<AnswerOption> answerOptions) {

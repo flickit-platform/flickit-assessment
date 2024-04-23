@@ -5,6 +5,7 @@ import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDet
 
 import java.util.List;
 
-public record GetKitQuestionDetailResponseDto(List<Option> options,
+public record GetKitQuestionDetailResponseDto(String hint,
+                                              List<Option> options,
                                               List<Impact> attributeImpacts) {
 }
