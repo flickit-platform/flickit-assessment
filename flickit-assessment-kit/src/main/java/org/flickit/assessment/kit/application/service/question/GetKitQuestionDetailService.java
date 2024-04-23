@@ -37,7 +37,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        Question question = loadQuestionPort.load(param.getQuestionId());
+        Question question = loadQuestionPort.load(param.getQuestionId(), param.getKitId());
 
         var maturityLevelsMap = loadMaturityLevelsPort.loadByKitId(param.getKitId()).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));

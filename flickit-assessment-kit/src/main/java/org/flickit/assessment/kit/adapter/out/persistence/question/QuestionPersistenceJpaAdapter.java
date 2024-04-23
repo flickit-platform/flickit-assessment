@@ -57,8 +57,8 @@ public class QuestionPersistenceJpaAdapter implements
 
 
     @Override
-    public Question load(long id) {
-        var questionEntity = repository.findById(id)
+    public Question load(long id, long kitId) {
+        var questionEntity = repository.findByIdAndKitId(id, kitId)
             .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
         Question question = QuestionMapper.mapToDomainModel(questionEntity);
 
