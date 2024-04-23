@@ -12,8 +12,9 @@ public class SpacePersistenceJpaAdapter implements CreateSpacePort {
     private final SpaceJpaRepository repository;
 
     @Override
-    public void persist(Param param) {
-        var entity = SpaceMapper.mapCreateParamToJpaEntity(param);
-        repository.save(entity);
+    public long persist(Param param) {
+        var unsavedEntity = SpaceMapper.mapCreateParamToJpaEntity(param);
+        var savedEntity = repository.save(unsavedEntity);
+        return savedEntity.getId();
     }
 }

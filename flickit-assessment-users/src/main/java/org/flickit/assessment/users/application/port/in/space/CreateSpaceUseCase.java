@@ -14,7 +14,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 
 public interface CreateSpaceUseCase {
 
-    void create(String title, UUID currentUserId);
+    Result createSpace(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -33,5 +33,8 @@ public interface CreateSpaceUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
+    }
+
+    record Result(Long id) {
     }
 }

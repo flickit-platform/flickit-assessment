@@ -17,11 +17,12 @@ public class CreateSpaceService implements CreateSpaceUseCase {
     private final CreateSpacePort createSpacePort;
 
     @Override
-    public void create(String title, UUID currentUserId) {
-        createSpacePort.persist(toParam(title, LocalDateTime.now(), currentUserId));
+    public Result createSpace(Param param) {
+        long id = createSpacePort.persist(toParam(param.getTitle(), LocalDateTime.now(), param.getCurrentUserId()));
+        return new Result(id);
     }
 
-    CreateSpacePort.Param toParam(String title, LocalDateTime creationTime, UUID currentUserId){
+    CreateSpacePort.Param toParam(String title, LocalDateTime creationTime, UUID currentUserId) {
         return new CreateSpacePort.Param(
             generateSlugCode(title),
             title,
