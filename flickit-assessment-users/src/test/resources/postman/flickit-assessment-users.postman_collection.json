@@ -315,6 +315,44 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Add Member to Space",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"email@email.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/6/members",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces",
+						"6",
+						"members"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
