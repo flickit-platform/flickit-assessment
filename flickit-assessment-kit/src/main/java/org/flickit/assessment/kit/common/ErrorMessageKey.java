@@ -91,6 +91,8 @@ public class ErrorMessageKey {
     public static final String GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_NULL = "get-kit-attribute-detail.attributeId.notNull";
     public static final String GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND = "get-kit-attribute-detail.attributeId.notFound";
 
+    public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
