@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.kituseraccess.KitUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kituseraccess.KitUserAccessJpaRepository;
 import org.flickit.assessment.kit.application.domain.KitUser;
+import org.flickit.assessment.kit.application.port.out.assessmentkitaccess.CheckKitAccessPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.LoadKitUserAccessPort;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class KitUserAccessPersistenceJpaAdapter implements
     GrantUserAccessToKitPort,
-    LoadKitUserAccessPort {
+    LoadKitUserAccessPort,
+    CheckKitAccessPort {
 
     private final KitUserAccessJpaRepository repository;
 
@@ -38,5 +40,11 @@ public class KitUserAccessPersistenceJpaAdapter implements
     public Optional<KitUser> loadByKitIdAndUserId(Long kitId, UUID userId) {
         return repository.findById(new KitUserAccessJpaEntity.KitUserAccessKey(kitId, userId))
             .map(KitUserAccessMapper::mapToDomainModel);
+    }
+
+    @Override
+    public boolean checkHasAccess(long kitId, UUID userId) {
+        return repository.findById(new KitUserAccessJpaEntity.KitUserAccessKey(kitId, userId))
+            .isPresent();
     }
 }
