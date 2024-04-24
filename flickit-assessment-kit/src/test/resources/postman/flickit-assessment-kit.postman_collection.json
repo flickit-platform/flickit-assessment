@@ -140,26 +140,6 @@
 			"response": []
 		},
 		{
-			"name": "Get User By Email",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/users/emails/example@gmail.com",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"users",
-						"emails",
-						"example@gmail.com"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Get Kit Minimal Info",
 			"request": {
 				"method": "GET",
@@ -442,6 +422,62 @@
 						"details",
 						"attributes",
 						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Kit Questionnaire Detail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/381/details/questionnaires/2914",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"381",
+						"details",
+						"questionnaires",
+						"2914"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Kit Question Detail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/381/details/questions/2914",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"381",
+						"details",
+						"questions",
+						"2914"
 					]
 				}
 			},

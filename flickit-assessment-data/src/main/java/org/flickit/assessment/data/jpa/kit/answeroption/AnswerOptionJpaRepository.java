@@ -25,5 +25,4 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
     List<AnswerOptionJpaEntity> findByQuestionId(Long questionId);
-
 }
