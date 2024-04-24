@@ -3,9 +3,12 @@ package org.flickit.assessment.users.application.port.in.space;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -15,6 +18,8 @@ public interface GetSpaceListUseCase {
 
     PaginatedResponse<SpaceListItem> getSpaceList(Param param);
 
+    @Value
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
         @Min(value = 1, message = GET_SPACE_LIST_SIZE_MIN)
@@ -36,6 +41,7 @@ public interface GetSpaceListUseCase {
 
     }
 
-    record SpaceListItem() {
+    record SpaceListItem(long id, String code, String title, boolean isOwner,
+                         LocalDateTime lastModificationTime, int membersCount, int assessmentsCount) {
     }
 }
