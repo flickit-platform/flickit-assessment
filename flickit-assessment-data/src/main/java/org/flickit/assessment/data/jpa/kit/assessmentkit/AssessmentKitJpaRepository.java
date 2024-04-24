@@ -75,10 +75,10 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                 FROM AssessmentKitJpaEntity k
                 LEFT JOIN ExpertGroupJpaEntity g
                     ON k.expertGroupId = g.id
-                JOIN ExpertGroupAccessJpaEntity ega
-                    ON k.expertGroupId = ega.expertGroupId
+                JOIN KitUserAccessJpaEntity kua
+                    ON k.id = kua.kitId
             WHERE k.published = TRUE AND k.isPrivate = TRUE
-            AND ega.userId = :userId
+            AND kua.userId = :userId
             ORDER BY k.title
         """)
     Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(UUID userId, PageRequest of);
