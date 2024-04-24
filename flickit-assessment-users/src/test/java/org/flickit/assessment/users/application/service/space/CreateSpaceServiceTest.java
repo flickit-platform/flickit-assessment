@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.space;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,8 @@ class CreateSpaceServiceTest {
     CreateSpaceService service;
     @Mock
     CreateSpacePort createSpacePort;
+    @Mock
+    AddSpaceMemberPort addSpaceMemberPort;
 
     @Test
     @DisplayName("inserting new space with valid parameters should not throws any exception")
@@ -33,7 +36,9 @@ class CreateSpaceServiceTest {
         CreateSpaceUseCase.Param param = new CreateSpaceUseCase.Param(title, currentUserId);
 
         when(createSpacePort.persist(any())).thenReturn(id);
+        doNothing().when(addSpaceMemberPort).persist(any());
         assertDoesNotThrow(()-> service.createSpace(param));
         verify(createSpacePort).persist(any());
+        verify(addSpaceMemberPort).persist(any());
     }
 }
