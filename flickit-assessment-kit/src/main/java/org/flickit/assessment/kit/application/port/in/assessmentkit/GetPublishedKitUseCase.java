@@ -34,7 +34,6 @@ public interface GetPublishedKitUseCase {
     }
 
     record Result(Long id,
-                  String code,
                   String title,
                   String summary,
                   String about,

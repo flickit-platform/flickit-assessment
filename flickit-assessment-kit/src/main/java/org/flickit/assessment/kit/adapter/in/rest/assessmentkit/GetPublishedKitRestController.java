@@ -34,7 +34,6 @@ public class GetPublishedKitRestController {
     private GetPublishedKitResponseDto toResponse(Result result) {
         return new GetPublishedKitResponseDto(
             result.id(),
-            result.code(),
             result.title(),
             result.summary(),
             result.about(),

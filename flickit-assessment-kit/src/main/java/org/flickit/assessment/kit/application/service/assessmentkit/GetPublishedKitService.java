@@ -53,7 +53,9 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             .map(this::toQuestionnaire)
             .toList();
 
-        var maturityLevels = kit.getMaturityLevels().stream().map(this::toMaturityLevel).toList();
+        var maturityLevels = kit.getMaturityLevels().stream()
+            .map(this::toMaturityLevel)
+            .toList();
 
         var kitTags = loadKitTagsListPort.load(param.getKitId()).stream()
             .map(this::toKitTag)
@@ -63,7 +65,6 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
         return new Result(
             kit.getId(),
-            kit.getCode(),
             kit.getTitle(),
             kit.getSummary(),
             kit.getAbout(),
@@ -93,20 +94,20 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
         );
     }
 
-    private Attribute toAttribute(org.flickit.assessment.kit.application.domain.Attribute a) {
-        return new Attribute(a.getId(), a.getTitle(), a.getDescription());
+    private Attribute toAttribute(org.flickit.assessment.kit.application.domain.Attribute attribute) {
+        return new Attribute(attribute.getId(), attribute.getTitle(), attribute.getDescription());
     }
 
-    private Questionnaire toQuestionnaire(org.flickit.assessment.kit.application.domain.Questionnaire q) {
-        return new Questionnaire(q.getId(), q.getTitle(), q.getDescription());
+    private Questionnaire toQuestionnaire(org.flickit.assessment.kit.application.domain.Questionnaire questionnaire) {
+        return new Questionnaire(questionnaire.getId(), questionnaire.getTitle(), questionnaire.getDescription());
     }
 
-    private MaturityLevel toMaturityLevel(org.flickit.assessment.kit.application.domain.MaturityLevel m) {
-        return new MaturityLevel(m.getId(), m.getTitle(), m.getValue(), m.getIndex());
+    private MaturityLevel toMaturityLevel(org.flickit.assessment.kit.application.domain.MaturityLevel level) {
+        return new MaturityLevel(level.getId(), level.getTitle(), level.getValue(), level.getIndex());
     }
 
-    private KitTag toKitTag(org.flickit.assessment.kit.application.domain.KitTag t) {
-        return new KitTag(t.getId(), t.getTitle());
+    private KitTag toKitTag(org.flickit.assessment.kit.application.domain.KitTag tag) {
+        return new KitTag(tag.getId(), tag.getTitle());
     }
 
     private ExpertGroup toExpertGroup(org.flickit.assessment.kit.application.domain.ExpertGroup expertGroup) {

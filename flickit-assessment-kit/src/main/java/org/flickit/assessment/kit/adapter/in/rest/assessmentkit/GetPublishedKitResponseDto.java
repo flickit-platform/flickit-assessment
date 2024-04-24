@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record GetPublishedKitResponseDto(Long id,
-                                         String code,
                                          String title,
                                          String summary,
                                          String about,
