@@ -4,11 +4,14 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitFullInfoPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitaccess.CheckKitAccessPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.kit.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,13 +37,22 @@ class GetPublishedKitServiceTest {
     private GetPublishedKitService service;
 
     @Mock
-    private LoadAssessmentKitFullInfoPort loadAssessmentKitFullInfoPort;
+    private LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Mock
     private CheckKitAccessPort checkKitAccessPort;
 
     @Mock
     private CountKitStatsPort countKitStatsPort;
+
+    @Mock
+    private LoadSubjectsPort loadSubjectsPort;
+
+    @Mock
+    private LoadQuestionnairesPort loadQuestionnairesPort;
+
+    @Mock
+    private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
     private LoadKitTagsListPort loadKitTagsListPort;
@@ -55,33 +67,56 @@ class GetPublishedKitServiceTest {
     void testGetPublishedKit_WhenKitDoesNotExist_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
 
-        when(loadAssessmentKitFullInfoPort.load(param.getKitId()))
+        when(loadAssessmentKitPort.load(param.getKitId()))
             .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getPublishedKit(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
+        verifyNoInteractions(checkKitAccessPort,
+            countKitStatsPort,
+            loadSubjectsPort,
+            loadQuestionnairesPort,
+            loadMaturityLevelsPort,
+            loadKitTagsListPort,
+            loadKitExpertGroupPort,
+            createFileDownloadLinkPort);
     }
 
     @Test
     void testGetPublishedKit_WhenKitIsNotPublished_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
-        when(loadAssessmentKitFullInfoPort.load(param.getKitId()))
+        when(loadAssessmentKitPort.load(param.getKitId()))
             .thenReturn(AssessmentKitMother.notPublishedKit());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getPublishedKit(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
+        verifyNoInteractions(checkKitAccessPort,
+            countKitStatsPort,
+            loadSubjectsPort,
+            loadQuestionnairesPort,
+            loadMaturityLevelsPort,
+            loadKitTagsListPort,
+            loadKitExpertGroupPort,
+            createFileDownloadLinkPort);
     }
 
     @Test
     void testGetPublishedKit_WhenKitIsPrivateAndUserHasNotAccess_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
-        when(loadAssessmentKitFullInfoPort.load(param.getKitId()))
+        when(loadAssessmentKitPort.load(param.getKitId()))
             .thenReturn(AssessmentKitMother.privateKit());
 
         when(checkKitAccessPort.checkHasAccess(param.getKitId(), param.getCurrentUserId()))
             .thenReturn(false);
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getPublishedKit(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        verifyNoInteractions(countKitStatsPort,
+            loadSubjectsPort,
+            loadQuestionnairesPort,
+            loadMaturityLevelsPort,
+            loadKitTagsListPort,
+            loadKitExpertGroupPort,
+            createFileDownloadLinkPort);
     }
 
     @Test
@@ -89,7 +124,7 @@ class GetPublishedKitServiceTest {
         var subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
         var questionnaire = QuestionnaireMother.questionnaireWithTitle("questionnaire");
         var maturityLevel = MaturityLevelMother.levelOne();
-        var kit = AssessmentKitMother.completePrivateKit(List.of(subject), List.of(maturityLevel), List.of(questionnaire));
+        var kit = AssessmentKitMother.privateKit();
         var param = new GetPublishedKitUseCase.Param(kit.getId(), UUID.randomUUID());
 
         var counts = new CountKitStatsPort.Result(1, 1, 115,
@@ -98,9 +133,12 @@ class GetPublishedKitServiceTest {
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var expertGroupPictureUrl = "https://expertGroupAvatarUrl";
 
-        when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitAccessPort.checkHasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
+        when(loadSubjectsPort.loadByKitId(param.getKitId())).thenReturn(List.of(subject));
+        when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
+        when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagsListPort.load(param.getKitId())).thenReturn(List.of(tag));
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(expertGroupPictureUrl);
@@ -118,16 +156,16 @@ class GetPublishedKitServiceTest {
 
         assertEquals(counts.likes(), result.likes());
         assertEquals(counts.assessmentCounts(), result.assessmentsCount());
-        assertEquals(kit.getSubjects().size(), result.subjectsCount());
+        assertEquals(1, result.subjectsCount());
         assertEquals(counts.questionnairesCount(), result.questionnairesCount());
 
-        assertEquals(kit.getSubjects().size(), result.subjects().size());
+        assertEquals(1, result.subjects().size());
         assertEquals(subject.getId(), result.subjects().get(0).id());
 
-        assertEquals(kit.getQuestionnaires().size(), result.questionnaires().size());
+        assertEquals(1, result.questionnaires().size());
         assertEquals(questionnaire.getId(), result.questionnaires().get(0).id());
 
-        assertEquals(kit.getMaturityLevels().size(), result.maturityLevels().size());
+        assertEquals(1, result.maturityLevels().size());
         assertEquals(maturityLevel.getId(), result.maturityLevels().get(0).id());
 
         assertEquals(1, result.tags().size());
@@ -142,7 +180,7 @@ class GetPublishedKitServiceTest {
         var subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
         var questionnaire = QuestionnaireMother.questionnaireWithTitle("questionnaire");
         var maturityLevel = MaturityLevelMother.levelOne();
-        var kit = AssessmentKitMother.completeKit(List.of(subject), List.of(maturityLevel), List.of(questionnaire));
+        var kit = AssessmentKitMother.simpleKit();
         var param = new GetPublishedKitUseCase.Param(kit.getId(), UUID.randomUUID());
 
         var counts = new CountKitStatsPort.Result(1, 1, 115,
@@ -151,8 +189,11 @@ class GetPublishedKitServiceTest {
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var expertGroupPictureUrl = "https://expertGroupAvatarUrl";
 
-        when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
+        when(loadSubjectsPort.loadByKitId(param.getKitId())).thenReturn(List.of(subject));
+        when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
+        when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagsListPort.load(param.getKitId())).thenReturn(List.of(tag));
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(expertGroupPictureUrl);
@@ -170,16 +211,16 @@ class GetPublishedKitServiceTest {
 
         assertEquals(counts.likes(), result.likes());
         assertEquals(counts.assessmentCounts(), result.assessmentsCount());
-        assertEquals(kit.getSubjects().size(), result.subjectsCount());
+        assertEquals(1, result.subjectsCount());
         assertEquals(counts.questionnairesCount(), result.questionnairesCount());
 
-        assertEquals(kit.getSubjects().size(), result.subjects().size());
+        assertEquals(1, result.subjects().size());
         assertEquals(subject.getId(), result.subjects().get(0).id());
 
-        assertEquals(kit.getQuestionnaires().size(), result.questionnaires().size());
+        assertEquals(1, result.questionnaires().size());
         assertEquals(questionnaire.getId(), result.questionnaires().get(0).id());
 
-        assertEquals(kit.getMaturityLevels().size(), result.maturityLevels().size());
+        assertEquals(1, result.maturityLevels().size());
         assertEquals(maturityLevel.getId(), result.maturityLevels().get(0).id());
 
         assertEquals(1, result.tags().size());

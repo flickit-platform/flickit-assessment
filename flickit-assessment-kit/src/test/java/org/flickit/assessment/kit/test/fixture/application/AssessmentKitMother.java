@@ -89,24 +89,6 @@ public class AssessmentKitMother {
             id++);
     }
 
-    public static AssessmentKit completePrivateKit(List<Subject> subjects, List<MaturityLevel> maturityLevels, List<Questionnaire> questionnaires) {
-        return new AssessmentKit(
-            id++,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            subjects,
-            maturityLevels,
-            questionnaires,
-            id++);
-    }
-
     public static AssessmentKit kitWithMaturityLevels(List<MaturityLevel> maturityLevels) {
         return new AssessmentKit(
             id++,
