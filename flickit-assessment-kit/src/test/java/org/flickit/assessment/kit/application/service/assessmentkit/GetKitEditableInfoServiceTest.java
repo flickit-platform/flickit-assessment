@@ -70,7 +70,7 @@ class GetKitEditableInfoServiceTest {
 
         AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
         List<KitTag> tags = List.of(KitTagMother.createKitTag("security"));
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
+        ExpertGroup expertGroup = new ExpertGroup(1L, null, null, null, null, currentUserId);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
