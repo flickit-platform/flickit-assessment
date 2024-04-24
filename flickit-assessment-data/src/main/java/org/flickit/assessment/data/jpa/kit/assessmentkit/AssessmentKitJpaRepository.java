@@ -40,19 +40,13 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
 
     @Query("""
             SELECT
-                COUNT(DISTINCT questionnaire.id) AS questionnaireCount,
-                COUNT(DISTINCT att.id) AS attributeCount,
-                COUNT(DISTINCT q.id) AS questionCount,
-                COUNT(DISTINCT ml.id) AS maturityLevelCount,
-                COUNT(DISTINCT l.userId) AS likeCount,
-                COUNT(DISTINCT a.id) AS assessmentCount
+                (SELECT COUNT(DISTINCT id) FROM QuestionnaireJpaEntity WHERE kitVersionId = k.kitVersionId) AS questionnaireCount,
+                (SELECT COUNT(DISTINCT id) FROM AttributeJpaEntity WHERE kitVersionId = k.kitVersionId) AS attributeCount,
+                (SELECT COUNT(DISTINCT id) FROM QuestionJpaEntity WHERE kitVersionId = k.kitVersionId) AS questionCount,
+                (SELECT COUNT(DISTINCT id) FROM MaturityLevelJpaEntity WHERE kitVersionId = k.kitVersionId) AS maturityLevelCount,
+                (SELECT COUNT(DISTINCT userId) FROM KitLikeJpaEntity WHERE kitId = k.id) AS likeCount,
+                (SELECT COUNT(DISTINCT id) FROM AssessmentJpaEntity WHERE assessmentKitId = k.id) AS assessmentCount
             FROM AssessmentKitJpaEntity k
-            LEFT JOIN QuestionnaireJpaEntity questionnaire ON k.kitVersionId = questionnaire.kitVersionId
-            LEFT JOIN AttributeJpaEntity att ON k.kitVersionId = att.kitVersionId
-            LEFT JOIN QuestionJpaEntity q ON k.kitVersionId = q.kitVersionId
-            LEFT JOIN MaturityLevelJpaEntity ml ON k.kitVersionId = ml.kitVersionId
-            LEFT JOIN KitLikeJpaEntity l ON k.id = l.kitId
-            LEFT JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
             WHERE k.id = :kitId
         """)
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
