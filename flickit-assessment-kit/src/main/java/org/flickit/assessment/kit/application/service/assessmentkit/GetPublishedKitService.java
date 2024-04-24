@@ -6,11 +6,14 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitFullInfoPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkitaccess.CheckKitAccessPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,16 +29,19 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
 
-    private final LoadAssessmentKitFullInfoPort loadAssessmentKitFullInfoPort;
+    private final LoadAssessmentKitPort loadAssessmentKitPort;
     private final CheckKitAccessPort checkKitAccessPort;
     private final CountKitStatsPort countKitStatsPort;
+    private final LoadSubjectsPort loadSubjectsPort;
+    private final LoadQuestionnairesPort loadQuestionnairesPort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadKitTagsListPort loadKitTagsListPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public Result getPublishedKit(Param param) {
-        AssessmentKit kit = loadAssessmentKitFullInfoPort.load(param.getKitId());
+        AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
         if (!kit.isPublished()) {
             throw new ResourceNotFoundException(KIT_ID_NOT_FOUND);
         }
@@ -45,15 +51,15 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
         var stats = countKitStatsPort.countKitStats(param.getKitId());
 
-        var subjects = kit.getSubjects().stream()
+        var subjects = loadSubjectsPort.loadByKitId(param.getKitId()).stream()
             .map(this::toSubject)
             .toList();
 
-        var questionnaires = kit.getQuestionnaires().stream()
+        var questionnaires = loadQuestionnairesPort.loadByKitId(param.getKitId()).stream()
             .map(this::toQuestionnaire)
             .toList();
 
-        var maturityLevels = kit.getMaturityLevels().stream()
+        var maturityLevels = loadMaturityLevelsPort.loadByKitId(param.getKitId()).stream()
             .map(this::toMaturityLevel)
             .toList();
 
