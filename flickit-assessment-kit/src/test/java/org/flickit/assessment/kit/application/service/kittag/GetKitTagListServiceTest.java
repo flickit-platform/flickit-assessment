@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import java.util.Collections;
 import java.util.List;
 
+import static org.flickit.assessment.kit.test.fixture.application.KitTagMother.createKitTag;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 class GetKitTagListServiceTest {
 
     @InjectMocks
-    private GetKitTagListService getKitTagListService;
+    private GetKitTagListService service;
 
     @Mock
     private LoadKitTagListPort loadKitTagListPort;
@@ -41,7 +42,7 @@ class GetKitTagListServiceTest {
             0);
         when(loadKitTagListPort.loadAll(page, size)).thenReturn(paginatedResponse);
 
-        PaginatedResponse<KitTag> result = getKitTagListService.getKitTagList(new GetKitTagListUseCase.Param(page, size));
+        PaginatedResponse<KitTag> result = service.getKitTagList(new GetKitTagListUseCase.Param(page, size));
         assertNotNull(result);
         assertTrue(result.getItems().isEmpty());
     }
@@ -62,7 +63,7 @@ class GetKitTagListServiceTest {
             0);
         when(loadKitTagListPort.loadAll(page, size)).thenReturn(paginatedResponse);
 
-        PaginatedResponse<KitTag> result = getKitTagListService.getKitTagList(new GetKitTagListUseCase.Param(page, size));
+        PaginatedResponse<KitTag> result = service.getKitTagList(new GetKitTagListUseCase.Param(page, size));
         assertNotNull(result);
         assertEquals(kitTags.size(), result.getItems().size());
     }
