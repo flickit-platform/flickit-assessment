@@ -36,7 +36,6 @@ public class GetKitAttributeLevelQuestionsDetailRestController {
                                                                      Long attributeId,
                                                                      Long maturityLevelId,
                                                                      UUID currentUserId) {
-
         return new GetKitAttributeLevelQuestionsDetailUseCase.Param(kitId,
             attributeId,
             maturityLevelId,

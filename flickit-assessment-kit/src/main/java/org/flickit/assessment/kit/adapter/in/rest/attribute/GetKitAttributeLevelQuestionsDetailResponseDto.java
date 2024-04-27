@@ -6,6 +6,5 @@ import java.util.List;
 
 public record GetKitAttributeLevelQuestionsDetailResponseDto(
     int questionsCount,
-    List<GetKitAttributeLevelQuestionsDetailUseCase.Result.Question> questions
-) {
+    List<GetKitAttributeLevelQuestionsDetailUseCase.Result.Question> questions) {
 }
