@@ -17,8 +17,8 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
                 s.title as title,
                 s.ownerId as ownerId,
                 s.lastModificationTime as lastModificationTime,
-                COUNT(DISTINCT fa.id) as assessmentsCount,
-                COUNT(DISTINCT sua.userId) as membersCount
+                COUNT(DISTINCT sua.userId) as membersCount,
+                COUNT(DISTINCT fa.id) as assessmentsCount
             FROM SpaceJpaEntity s
             LEFT JOIN AssessmentJpaEntity fa on s.id = fa.spaceId
             LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId

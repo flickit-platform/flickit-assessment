@@ -46,7 +46,6 @@ public class GetSpaceListService implements GetSpaceListUseCase {
                 item.lastModificationTime(),
                 item.membersCount(),
                 item.assessmentsCount()
-            ))
-            .toList();
+            )).toList();
     }
 }

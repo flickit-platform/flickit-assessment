@@ -51,5 +51,4 @@ public class SpaceUserAccessJpaEntity {
     public static class Fields {
         public static final String LAST_SEEN = "lastSeen";
     }
-
 }

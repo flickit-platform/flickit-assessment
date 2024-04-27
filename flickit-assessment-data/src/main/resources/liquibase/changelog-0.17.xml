@@ -353,7 +353,9 @@
 
     <changeSet id="0.17-58" author="Maziyar Gerami">
         <addColumn tableName="fau_space_user_access">
-            <column name="last_seen" type="timestamp" valueComputed="creation_time"/>
+            <column name="last_seen" type="timestamp" valueComputed="creation_time">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
     </changeSet>
 
