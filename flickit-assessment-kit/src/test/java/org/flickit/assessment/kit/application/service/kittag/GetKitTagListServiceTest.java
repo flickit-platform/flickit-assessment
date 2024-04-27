@@ -39,7 +39,7 @@ class GetKitTagListServiceTest {
             KitTagJpaEntity.Fields.CODE,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
-        when(loadKitTagListPort.load(page, size)).thenReturn(paginatedResponse);
+        when(loadKitTagListPort.loadAll(page, size)).thenReturn(paginatedResponse);
 
         PaginatedResponse<KitTag> result = getKitTagListService.getKitTagList(new GetKitTagListUseCase.Param(page, size));
         assertNotNull(result);
@@ -61,7 +61,7 @@ class GetKitTagListServiceTest {
             KitTagJpaEntity.Fields.CODE,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
-        when(loadKitTagListPort.load(page, size)).thenReturn(paginatedResponse);
+        when(loadKitTagListPort.loadAll(page, size)).thenReturn(paginatedResponse);
 
         PaginatedResponse<KitTag> result = getKitTagListService.getKitTagList(new GetKitTagListUseCase.Param(page, size));
         assertNotNull(result);

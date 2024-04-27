@@ -17,6 +17,6 @@ public class GetKitTagListService implements GetKitTagListUseCase {
 
     @Override
     public PaginatedResponse<KitTag> getKitTagList(Param param) {
-        return loadKitTagListPort.load(param.getPage(), param.getSize());
+        return loadKitTagListPort.loadAll(param.getPage(), param.getSize());
     }
 }
