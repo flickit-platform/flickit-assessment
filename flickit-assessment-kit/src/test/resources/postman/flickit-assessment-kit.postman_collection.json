@@ -519,14 +519,13 @@
           "method": "GET",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/{{api_path}}/assessment-kit/tags?page=0&size=20",
+            "raw": "{{base_url}}/{{api_path}}/assessment-kit-tags?page=0&size=20",
             "host": [
               "{{base_url}}"
             ],
             "path": [
               "{{api_path}}",
-              "assessment-kit",
-              "tags"
+              "assessment-kit-tags"
             ],
             "query": [
               {

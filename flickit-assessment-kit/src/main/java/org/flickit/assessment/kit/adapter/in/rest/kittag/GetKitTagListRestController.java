@@ -16,7 +16,7 @@ public class GetKitTagListRestController {
 
     private final GetKitTagListUseCase useCase;
 
-    @GetMapping("/assessment-kit/tags")
+    @GetMapping("/assessment-kit-tags")
     public ResponseEntity<PaginatedResponse<KitTag>> getKitTagList(@RequestParam(defaultValue = "0") int page,
                                                                    @RequestParam(defaultValue = "20") int size) {
         PaginatedResponse<KitTag> kitTagList = useCase.getKitTagList(toParam(page, size));
