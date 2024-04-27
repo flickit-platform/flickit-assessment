@@ -49,9 +49,35 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
     Optional<SubjectJpaEntity> findByIdAndKitVersionId(@Param(value = "id") long id, @Param(value = "kitVersionId") long kitVersionId);
 
     @Query("""
+            SELECT s as subject
+            FROM SubjectJpaEntity s
+            LEFT JOIN KitVersionJpaEntity kv On kv.id = s.kitVersionId
+            WHERE s.id = :id AND kv.kit.id = :kitId
+        """)
+    Optional<SubjectJpaEntity> findByIdAndKitId(@Param("kitId") long kitId, @Param("id") long id);
+
+    @Query("""
             SELECT s.refNum
             FROM SubjectJpaEntity s
             WHERE s.id = :subjectId
         """)
     UUID findRefNumById(@Param(value = "subjectId") Long subjectId);
+
+    @Query("""
+            SELECT s.id AS id, s.title AS title, sq.questionnaireId AS questionnaireId
+            FROM SubjectJpaEntity s
+            JOIN SubjectQuestionnaireJpaEntity sq
+                ON s.id = sq.subjectId
+            WHERE sq.questionnaireId IN :questionnaireIds
+        """)
+    List<SubjectWithQuestionnaireIdView> findAllWithQuestionnaireIdByKitVersionId(@Param(value = "questionnaireIds") List<Long> questionnaireIds);
+
+    @Query("""
+            SELECT s
+            FROM SubjectJpaEntity s
+            JOIN SubjectQuestionnaireJpaEntity sq ON s.id = sq.subjectId
+            WHERE sq.questionnaireId = :questionnaireId
+            ORDER BY s.index
+    """)
+    List<SubjectJpaEntity> findAllByQuestionnaireId(long questionnaireId);
 }
