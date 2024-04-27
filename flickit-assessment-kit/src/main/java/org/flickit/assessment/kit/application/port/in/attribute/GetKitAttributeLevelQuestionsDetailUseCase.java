@@ -40,18 +40,19 @@ public interface GetKitAttributeLevelQuestionsDetailUseCase {
         }
     }
 
-    record Result(Long id, String title, int index, int questionsCount, List<Question> questions) {
+    record Result(int questionsCount, List<Question> questions) {
 
         public record Question(
             int index,
             String title,
             boolean mayNotBeApplicable,
+            boolean advisable,
             int weight,
             String questionnaire,
-            List<AnswerOption> answerOptions
-        ) {
+            List<AnswerOption> answerOptions) {
 
-            public record AnswerOption(int index, String title, double value) {}
+            public record AnswerOption(int index, String title, double value) {
+            }
         }
     }
 }

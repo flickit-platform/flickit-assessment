@@ -5,9 +5,6 @@ import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeL
 import java.util.List;
 
 public record GetKitAttributeLevelQuestionsDetailResponseDto(
-    Long id,
-    String title,
-    int index,
     int questionsCount,
     List<GetKitAttributeLevelQuestionsDetailUseCase.Result.Question> questions
 ) {

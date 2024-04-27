@@ -44,9 +44,7 @@ public class GetKitAttributeLevelQuestionsDetailRestController {
     }
 
     private GetKitAttributeLevelQuestionsDetailResponseDto toResponseDto(Result attrLevelQuestionsInfo) {
-        return new GetKitAttributeLevelQuestionsDetailResponseDto(attrLevelQuestionsInfo.id(),
-            attrLevelQuestionsInfo.title(),
-            attrLevelQuestionsInfo.index(),
+        return new GetKitAttributeLevelQuestionsDetailResponseDto(
             attrLevelQuestionsInfo.questionsCount(),
             attrLevelQuestionsInfo.questions());
     }
