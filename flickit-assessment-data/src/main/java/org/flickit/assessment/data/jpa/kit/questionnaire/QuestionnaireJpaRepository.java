@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.questionnaire;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -59,14 +58,4 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
             WHERE qn.id = :questionnaireId AND k.id = :kitId
         """)
     Optional<QuestionnaireJpaEntity> findQuestionnaireByIdAndKitId(@Param("questionnaireId") Long questionnaireId, @Param("kitId") Long kitId);
-
-
-    @Query("""
-        SELECT
-            qn.id AS id,
-            qn.title AS title
-        FROM QuestionnaireJpaEntity qn
-        WHERE qn.id IN :ids
-    """)
-    List<QuestionnaireTitleView> findAllTitlesById(@NotNull Iterable<Long> ids);
 }
