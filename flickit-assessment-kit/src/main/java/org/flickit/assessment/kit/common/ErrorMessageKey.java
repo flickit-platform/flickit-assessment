@@ -96,6 +96,11 @@ public class ErrorMessageKey {
     public static final String GET_KIT_QUESTION_DETAIL_KIT_ID_NOT_NULL = "get-kit-question-detail.kitId.notNull";
     public static final String GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_NULL = "get-kit-question-detail.questionId.notNull";
 
+    public static final String GET_EXPERT_GROUP_KIT_LIST_EXPERT_GROUP_ID_NOT_NULL = "get-expert-group-kit-list.expertGroupId.notNull";
+    public static final String GET_EXPERT_GROUP_KIT_LIST_PAGE_MIN = "get-expert-group-kit-list.page.min";
+    public static final String GET_EXPERT_GROUP_KIT_LIST_SIZE_MIN = "get-expert-group-kit-list.size.min";
+    public static final String GET_EXPERT_GROUP_KIT_LIST_SIZE_MAX = "get-expert-group-kit-list.size.max";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
