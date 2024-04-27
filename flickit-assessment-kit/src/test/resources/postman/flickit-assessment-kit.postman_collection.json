@@ -482,6 +482,36 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Kit Attribute Level Questions Detail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/348/details/attributes/1654/maturity-levels/1929",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"348",
+						"details",
+						"attributes",
+						"1654",
+						"maturity-levels",
+						"1929"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
