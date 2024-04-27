@@ -5,11 +5,11 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceMemberAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceExistencePort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceMemberAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.SaveSpaceMemberInviteePort;
-import org.flickit.assessment.users.application.port.out.user.LoadUserIdByEmailPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.SendInviteMailPort;
+import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +28,7 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
 
     private final CheckSpaceExistencePort checkSpaceExistencePort;
     private final CheckSpaceMemberAccessPort checkSpaceMemberAccessPort;
-    private final LoadUserIdByEmailPort loadUserIdByEmailPort;
+    private final LoadUserPort loadUserPort;
     private final SaveSpaceMemberInviteePort saveSpaceMemberInviteePort;
     private final SendInviteMailPort sendInviteMailPort;
 
@@ -41,7 +41,7 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
         if (!checkSpaceMemberAccessPort.checkIsMember(currentUserId))
             throw new AccessDeniedException(INVITE_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
 
-        if (loadUserIdByEmailPort.loadByEmail(param.getEmail()) != null)
+        if (loadUserPort.loadUserIdByEmail(param.getEmail()) != null)
             throw new ResourceAlreadyExistsException(INVITE_SPACE_MEMBER_INVITEE_DUPLICATE);
 
         var creationTime = LocalDateTime.now();

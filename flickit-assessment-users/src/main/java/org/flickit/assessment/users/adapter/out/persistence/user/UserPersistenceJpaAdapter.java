@@ -2,12 +2,9 @@ package org.flickit.assessment.users.adapter.out.persistence.user;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
-import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.users.application.port.out.user.LoadUserIdByEmailPort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
