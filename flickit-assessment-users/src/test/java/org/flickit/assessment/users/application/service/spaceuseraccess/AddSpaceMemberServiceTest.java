@@ -7,7 +7,6 @@ import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpace
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
-import org.flickit.assessment.users.application.service.spaceuseraccess.AddSpaceMemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -48,7 +48,7 @@ class AddSpaceMemberServiceTest {
         var param = new AddSpaceMemberUseCase.Param(spaceId, email, currentUserId);
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(userId);
+        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(userId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, userId)).thenReturn(false);
         doNothing().when(addSpaceMemberPort).persist(isA(AddSpaceMemberPort.Param.class));
 
@@ -86,7 +86,7 @@ class AddSpaceMemberServiceTest {
         var param = new AddSpaceMemberUseCase.Param(spaceId, email, currentUserId);
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadUserPort.loadUserIdByEmail(email)).thenThrow(new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));
+        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.addMember(param));
         assertEquals(USER_BY_EMAIL_NOT_FOUND, throwable.getMessage());
@@ -106,7 +106,7 @@ class AddSpaceMemberServiceTest {
         var param = new AddSpaceMemberUseCase.Param(spaceId, email, currentUserId);
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(userId);
+        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(userId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, userId)).thenReturn(true);
 
         var throwable = assertThrows(ResourceAlreadyExistsException.class, () -> service.addMember(param));

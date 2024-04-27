@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -65,9 +66,10 @@ class InviteSpaceMemberServiceTest {
         UUID userId = UUID.randomUUID();
         var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(userId);
-
-        assertThrows(ResourceAlreadyExistsException.class, () -> service.inviteMember(param));
+        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(inviteeUserId));
+        when(checkSpaceAccessPort.checkIsMember(spaceId, inviteeUserId)).thenReturn(true);
+        var throwable = assertThrows(ResourceAlreadyExistsException.class, () -> service.inviteMember(param));
+        assertEquals(INVITE_SPACE_MEMBER_SPACE_USER_DUPLICATE, throwable.getMessage());
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadUserPort).loadUserIdByEmail(email);
@@ -83,7 +85,7 @@ class InviteSpaceMemberServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var usecaseParam = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(null);
+        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.empty());
         doNothing().when(saveSpaceMemberInviteePort).persist(isA(SaveSpaceMemberInviteePort.Param.class));
         doNothing().when(SendInviteMailPort).sendInviteMail(email);
 

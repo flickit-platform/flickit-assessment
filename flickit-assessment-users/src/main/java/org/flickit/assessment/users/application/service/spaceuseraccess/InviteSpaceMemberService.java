@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -36,8 +37,11 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
         if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (loadUserPort.loadUserIdByEmail(param.getEmail()) != null)
-            throw new ResourceAlreadyExistsException(INVITE_SPACE_MEMBER_INVITEE_DUPLICATE);
+        Optional<UUID> inviteeUserId = loadUserPort.loadUserIdByEmail(param.getEmail());
+        if (inviteeUserId.isPresent()) {
+            boolean inviteeHasAccess = checkSpaceAccessPort.checkIsMember(spaceId, inviteeUserId.get());
+            if (inviteeHasAccess)
+                throw new ResourceAlreadyExistsException(INVITE_SPACE_MEMBER_SPACE_USER_DUPLICATE);
 
         var creationTime = LocalDateTime.now();
         var expirationDate = creationTime.plusDays(EXPIRY_DURATION.toDays());
