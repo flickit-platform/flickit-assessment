@@ -2,14 +2,15 @@ package org.flickit.assessment.kit.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeLevelQuestionsDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAttrLevelQuestionsInfoPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
+import org.flickit.assessment.kit.application.port.out.question.LoadAttributeLevelQuestionsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -21,7 +22,7 @@ public class GetKitKitAttributeLevelQuestionsDetailService implements GetKitAttr
 
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
-    private final LoadAttrLevelQuestionsInfoPort loadAttrLevelQuestionsInfoPort;
+    private final LoadAttributeLevelQuestionsPort loadAttributeLevelQuestionsPort;
 
     @Override
     public Result getKitAttributeLevelQuestionsDetail(Param param) {
@@ -29,26 +30,47 @@ public class GetKitKitAttributeLevelQuestionsDetailService implements GetKitAttr
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        LoadAttrLevelQuestionsInfoPort.Result attrLevelQuestionsInfo =
-            loadAttrLevelQuestionsInfoPort.loadAttrLevelQuestionsInfo(param.getAttributeId(), param.getMaturityLevelId());
+        var result = loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(param.getKitId(), param.getAttributeId(), param.getMaturityLevelId());
 
-        List<Result.Question> questions = attrLevelQuestionsInfo.questions().stream()
-            .map(e -> {
-                var answerOptions = e.answerOption().stream()
-                    .map(x -> new Result.Question.AnswerOption(x.index(), x.title(), x.value()))
-                    .toList();
-                return new Result.Question(e.index(),
-                    e.title(),
-                    e.mayNotBeApplicable(),
-                    e.weight(),
-                    e.questionnaire(),
-                    answerOptions);
-            }).toList();
+        List<Result.Question> questions = result.stream()
+            .map(e -> mapToResultQuestion(e.question(), e.questionnaire()))
+            .sorted(Comparator.comparing(Result.Question::questionnaire)
+                .thenComparing(Result.Question::index))
+            .toList();
 
-        return new Result(attrLevelQuestionsInfo.id(),
-            attrLevelQuestionsInfo.title(),
-            attrLevelQuestionsInfo.index(),
-            attrLevelQuestionsInfo.questionsCount(),
-            questions);
+        return new Result(questions.size(), questions);
+    }
+
+    private Result.Question mapToResultQuestion(Question question, Questionnaire questionnaire) {
+        var impact = question.getImpacts().get(0);
+        List<Result.Question.AnswerOption> options = mapToAnswerOptions(question, impact);
+        return new Result.Question(
+            question.getIndex(),
+            question.getTitle(),
+            question.getMayNotBeApplicable(),
+            question.getAdvisable(),
+            impact.getWeight(),
+            questionnaire.getTitle(),
+            options
+        );
+    }
+
+    private List<Result.Question.AnswerOption> mapToAnswerOptions(Question question, QuestionImpact impact) {
+        return question.getOptions().stream()
+            .map(option -> mapToAnswerOption(option, impact))
+            .toList();
+    }
+
+    private Result.Question.AnswerOption mapToAnswerOption(AnswerOption option, QuestionImpact impact) {
+        double optionImpactValue = impact.getOptionImpacts().stream()
+            .filter(i -> i.getOptionId() == option.getId())
+            .map(AnswerOptionImpact::getValue)
+            .findFirst()
+            .orElseThrow();
+        return new Result.Question.AnswerOption(
+            option.getIndex(),
+            option.getTitle(),
+            optionImpactValue
+        );
     }
 }

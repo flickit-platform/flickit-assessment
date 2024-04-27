@@ -2,12 +2,14 @@ package org.flickit.assessment.kit.application.service.attribute;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.AnswerOptionImpact;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeLevelQuestionsDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAttrLevelQuestionsInfoPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
+import org.flickit.assessment.kit.application.port.out.question.LoadAttributeLevelQuestionsPort;
+import org.flickit.assessment.kit.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionImpactMother.createAnswerOptionImpact;
+import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -33,7 +40,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
 
     @Mock
-    private LoadAttrLevelQuestionsInfoPort loadAttrLevelQuestionsInfoPort;
+    private LoadAttributeLevelQuestionsPort loadAttributeLevelQuestionsPort;
 
     @Test
     void testGetKitAttributeLevelQuestionsDetail_CurrentUserIsNotMemberOfKitExpertGroup_ThrowsException() {
@@ -48,93 +55,121 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getKitAttributeLevelQuestionsDetail(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getKitAttributeLevelQuestionsDetail(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
     void testGetKitAttributeLevelQuestionsDetail_AttributeWithGivenAttributeIdAndKitIdDoesNotExist_ThrowsException() {
-        GetKitAttributeLevelQuestionsDetailUseCase.Param param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
-            1L,
-            1L,
-            1L,
-            UUID.randomUUID());
+        long kitId = 123L;
+        long attributeId = 223L;
+        long maturityLevel = 333L;
+        UUID currentUserId = UUID.randomUUID();
 
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
+        when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitId, attributeId, maturityLevel))
+            .thenThrow(new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.getKitAttributeLevelQuestionsDetail(param));
+        var param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
+            kitId,
+            attributeId,
+            maturityLevel,
+            currentUserId);
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getKitAttributeLevelQuestionsDetail(param));
+        assertEquals(ATTRIBUTE_ID_NOT_FOUND, throwable.getMessage());
     }
 
     @Test
     void testGetKitAttributeLevelQuestionsDetail_MaturityLevelWithGivenMaturityLevelIdAndKitIdDoesNotExist_ThrowsException() {
-        GetKitAttributeLevelQuestionsDetailUseCase.Param param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
-            1L,
-            1L,
-            1L,
-            UUID.randomUUID());
+        long kitId = 123L;
+        long attributeId = 223L;
+        long maturityLevel = 333L;
+        UUID currentUserId = UUID.randomUUID();
 
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
+        when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitId, attributeId, maturityLevel))
+            .thenThrow(new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.getKitAttributeLevelQuestionsDetail(param));
+        var param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
+            kitId,
+            attributeId,
+            maturityLevel,
+            currentUserId);
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getKitAttributeLevelQuestionsDetail(param));
+        assertEquals(MATURITY_LEVEL_ID_NOT_FOUND, throwable.getMessage());
     }
 
     @Test
     void testGetKitAttributeLevelQuestionsDetail_ValidInput_ValidResult() {
-        GetKitAttributeLevelQuestionsDetailUseCase.Param param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
-            1L,
-            1L,
-            1L,
-            UUID.randomUUID());
+        long kitId = 123L;
+        var expertGroup = ExpertGroupMother.createExpertGroup();
+        var attr1 = AttributeMother.attributeWithTitle("attr1");
+        var attr2 = AttributeMother.attributeWithTitle("attr2");
+        var maturityLevel2 = MaturityLevelMother.levelTwo();
+        var maturityLevel3 = MaturityLevelMother.levelThree();
+        var question1 = QuestionMother.createQuestionWithOptions();
+        var question2 = QuestionMother.createQuestionWithOptions();
+        var question3 = QuestionMother.createQuestionWithOptions();
 
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
+        var impact1 = createQuestionImpact(attr1.getId(), maturityLevel2.getId(), 1, question1.getId());
+        var impact2 = createQuestionImpact(attr1.getId(), maturityLevel2.getId(), 1, question2.getId());
+        var impact3 = createQuestionImpact(attr2.getId(), maturityLevel3.getId(), 3, question3.getId());
+
+        impact1.setOptionImpacts(buildAnswerOptionImpacts(question1));
+        impact2.setOptionImpacts(buildAnswerOptionImpacts(question2));
+        impact3.setOptionImpacts(buildAnswerOptionImpacts(question3));
+
+        question1.setImpacts(List.of(impact1));
+        question2.setImpacts(List.of(impact2));
+        question3.setImpacts(List.of(impact3));
+
+        var param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
+            kitId,
+            attr1.getId(),
+            maturityLevel2.getId(),
+            UUID.randomUUID());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
-        var answerOption = new LoadAttrLevelQuestionsInfoPort.Result.Question.AnswerOption(
-            1,
-            "answerOptionTitle",
-            0.1);
-        var question = new LoadAttrLevelQuestionsInfoPort.Result.Question(
-            1,
-            "questionTitle",
-            true,
-            1,
-            "questionnaireTitle",
-            List.of(answerOption));
-        LoadAttrLevelQuestionsInfoPort.Result result = new LoadAttrLevelQuestionsInfoPort.Result(
-            1L,
-            "title1",
-            1,
-            1,
-            List.of(question));
+        var portResult = List.of(new LoadAttributeLevelQuestionsPort.Result(question1, QuestionnaireMother.questionnaireWithTitle("title")),
+            new LoadAttributeLevelQuestionsPort.Result(question2, QuestionnaireMother.questionnaireWithTitle("title")));
 
-        when(loadAttrLevelQuestionsInfoPort.loadAttrLevelQuestionsInfo(param.getAttributeId(), param.getMaturityLevelId()))
-            .thenReturn(result);
+        when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitId, attr1.getId(), maturityLevel2.getId()))
+            .thenReturn(portResult);
 
-        GetKitAttributeLevelQuestionsDetailUseCase.Result attrLevelQuestionsInfo = service.getKitAttributeLevelQuestionsDetail(param);
+        var result = service.getKitAttributeLevelQuestionsDetail(param);
 
-        assertNotNull(attrLevelQuestionsInfo);
-        assertEquals(result.id(), attrLevelQuestionsInfo.id());
-        assertEquals(result.title(), attrLevelQuestionsInfo.title());
-        assertEquals(result.index(), attrLevelQuestionsInfo.index());
-        assertEquals(result.questionsCount(), attrLevelQuestionsInfo.questionsCount());
-        GetKitAttributeLevelQuestionsDetailUseCase.Result.Question actualQuestion = attrLevelQuestionsInfo.questions().get(0);
-        assertNotNull(actualQuestion);
-        assertEquals(question.title(), actualQuestion.title());
-        assertEquals(question.index(), actualQuestion.index());
-        assertTrue(actualQuestion.mayNotBeApplicable());
-        assertEquals(question.weight(), actualQuestion.weight());
-        assertEquals(question.questionnaire(), actualQuestion.questionnaire());
-        GetKitAttributeLevelQuestionsDetailUseCase.Result.Question.AnswerOption actualAnswerOption = actualQuestion.answerOptions().get(0);
-        assertNotNull(actualAnswerOption);
-        assertEquals(answerOption.title(), actualAnswerOption.title());
-        assertEquals(answerOption.index(), actualAnswerOption.index());
-        assertEquals(answerOption.value(), actualAnswerOption.value());
+        assertNotNull(result);
+        assertEquals(2, result.questionsCount());
+        var resultQuestion1 = result.questions().get(0);
+        assertNotNull(resultQuestion1);
+        assertEquals(question1.getTitle(), resultQuestion1.title());
+        assertEquals(question1.getIndex(), resultQuestion1.index());
+        assertTrue(resultQuestion1.mayNotBeApplicable());
+        assertTrue(resultQuestion1.advisable());
+        assertEquals(impact1.getWeight(), resultQuestion1.weight());
+        assertEquals("title", resultQuestion1.questionnaire());
+        var question1AnswerOption = resultQuestion1.answerOptions().get(0);
+        assertNotNull(question1AnswerOption);
+        assertEquals(question1.getOptions().size(), resultQuestion1.answerOptions().size());
+        assertEquals(question1.getOptions().get(0).getTitle(), question1AnswerOption.title());
+        assertEquals(question1.getOptions().get(0).getIndex(), question1AnswerOption.index());
+        assertEquals(impact1.getOptionImpacts().get(0).getValue(), question1AnswerOption.value());
+    }
+
+    private static List<AnswerOptionImpact> buildAnswerOptionImpacts(Question question) {
+        return List.of(
+            createAnswerOptionImpact(question.getOptions().get(0).getId(), 0),
+            createAnswerOptionImpact(question.getOptions().get(1).getId(), 0.5),
+            createAnswerOptionImpact(question.getOptions().get(2).getId(), 1)
+        );
     }
 }

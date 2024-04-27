@@ -1,7 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.question;
 
 import org.flickit.assessment.data.jpa.kit.question.advice.QuestionAdviceView;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -150,19 +149,21 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     Optional<QuestionJpaEntity> findByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
 
     @Query("""
-        SELECT
-            q.id AS id,
-            q.index AS index,
-            q.title AS title,
-            q.mayNotBeApplicable AS mayNotBeApplicable,
-            qi.weight AS weight,
-            q.questionnaireId AS questionnaireId
-        FROM QuestionJpaEntity q
-            JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
-            JOIN AttributeJpaEntity a ON qi.attributeId = a.id
-            JOIN MaturityLevelJpaEntity m ON qi.maturityLevel.id = m.id
-        WHERE a.id = :attributeId AND m.id = :maturityLevelId
-    """)
-    List<AttrLevelQuestionView> findByAttributeIdAndMaturityLevelId(@Param("attributeId") Long attributeId,
-                                                                @Param("maturityLevelId") Long maturityLevelId);
+            SELECT
+                qr as questionnaire,
+                qsn as question,
+                qi as questionImpact,
+                ov as optionImpact,
+                ao as answerOption
+            FROM QuestionJpaEntity qsn
+            LEFT JOIN AnswerOptionJpaEntity ao on qsn.id = ao.questionId
+            LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id
+            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId
+            LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id
+            WHERE qi.attributeId = :attributeId
+                AND qi.maturityLevel.id = :maturityLevelId
+            ORDER BY qr.title asc, qsn.index asc
+        """)
+    List<AttributeLevelImpactfulQuestionsView> findByAttributeIdAndMaturityLevelId(@Param("attributeId") long attributeId,
+                                                                                   @Param("maturityLevelId") long maturityLevelId);
 }
