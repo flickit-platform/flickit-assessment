@@ -18,7 +18,7 @@ public interface GetKitTagListUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<GetKitUserListUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @Min(value = 0, message = GET_KIT_TAG_LIST_PAGE_MIN)
         int page;
