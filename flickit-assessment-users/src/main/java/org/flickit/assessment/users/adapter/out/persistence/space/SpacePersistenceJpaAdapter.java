@@ -2,8 +2,8 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
+import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,7 +29,7 @@ public class SpacePersistenceJpaAdapter implements LoadSpaceListPort {
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            SpaceUserAccessJpaEntity.Fields.LAST_SEEN,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );

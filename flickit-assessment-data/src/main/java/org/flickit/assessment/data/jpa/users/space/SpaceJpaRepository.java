@@ -26,7 +26,9 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
                 SELECT 1 FROM SpaceUserAccessJpaEntity sua
                 WHERE sua.spaceId = s.id AND sua.userId = :userId
             )
-            GROUP BY s.id
+            GROUP BY s.id,
+                     sua.lastSeen
+            ORDER BY sua.lastSeen DESC
         """)
     Page<SpaceWithDetailsView> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
 }
