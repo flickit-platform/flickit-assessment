@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.SaveSpaceMemberInviteePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.SendInviteMailPort;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_SPACE_MEMBER_SPACE_USER_DUPLICATE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,6 +34,9 @@ class InviteSpaceMemberServiceTest {
 
     @Mock
     LoadUserPort loadUserPort;
+
+    @Mock
+    AddSpaceMemberPort addSpaceMemberPort;
 
     @Mock
     SaveSpaceMemberInviteePort saveSpaceMemberInviteePort;
@@ -58,12 +63,12 @@ class InviteSpaceMemberServiceTest {
     }
 
     @Test
-    @DisplayName("Inviting member already-member to a space should cause AlreadyExistException")
-    void inviteMember_inviteeIsAlreadyMember_AlreadyExistException() {
+    @DisplayName("Inviting space member to a space should cause ResourceAlreadyExistException")
+    void inviteMember_inviteeIsMember_ResourceAlreadyExistException() {
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
+        UUID inviteeUserId = UUID.randomUUID();
         var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(inviteeUserId));
@@ -78,7 +83,27 @@ class InviteSpaceMemberServiceTest {
     }
 
     @Test
-    @DisplayName("Inviting non-member to a valid space should cause successful insertion")
+    @DisplayName("Inviting non-member flickit user to a space should cause successful insertion in SpaceUserAccess")
+    void inviteMember_inviteeIsFlickitUser_AddAsSpaceMember() {
+        long spaceId = 0;
+        String email = "admin@asta.org";
+        UUID currentUserId = UUID.randomUUID();
+        UUID inviteeUserId = UUID.randomUUID();
+        var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
+        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
+        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(inviteeUserId));
+        when(checkSpaceAccessPort.checkIsMember(spaceId, inviteeUserId)).thenReturn(false);
+        doNothing().when(addSpaceMemberPort).persist(isA(AddSpaceMemberPort.Param.class));
+        assertDoesNotThrow(() -> service.inviteMember(param));
+
+        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
+        verify(loadUserPort).loadUserIdByEmail(email);
+        verifyNoInteractions(saveSpaceMemberInviteePort);
+        verifyNoInteractions(SendInviteMailPort);
+    }
+
+    @Test
+    @DisplayName("Inviting non-user to a valid space should cause successful insertion")
     void inviteMember_validParameters_successful() {
         long spaceId = 0;
         String email = "admin@asta.org";
