@@ -15,6 +15,8 @@ public class ErrorMessageKey {
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
     public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
     public static final String QUESTION_ID_NOT_FOUND = "question.id.notFound";
+    public static final String ATTRIBUTE_ID_NOT_FOUND = "attribute.id.notFound";
+    public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -95,6 +97,10 @@ public class ErrorMessageKey {
 
     public static final String GET_KIT_QUESTION_DETAIL_KIT_ID_NOT_NULL = "get-kit-question-detail.kitId.notNull";
     public static final String GET_KIT_QUESTION_DETAIL_QUESTION_ID_NOT_NULL = "get-kit-question-detail.questionId.notNull";
+
+    public static final String GET_ATTRIBUTE_LEVEL_QUESTIONS_KIT_ID_NOT_NULL = "get-attribute-level-questions.kitId.notNull";
+    public static final String GET_ATTRIBUTE_LEVEL_QUESTIONS_ATTRIBUTE_ID_NOT_NULL = "get-attribute-level-questions.attributeId.notNull";
+    public static final String GET_ATTRIBUTE_LEVEL_QUESTIONS_MATURITY_LEVEL_ID_NOT_NULL = "get-attribute-level-questions.maturityLevel.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
