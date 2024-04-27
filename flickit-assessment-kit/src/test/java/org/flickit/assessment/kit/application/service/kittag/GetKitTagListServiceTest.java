@@ -51,8 +51,7 @@ class GetKitTagListServiceTest {
         int page = 0;
         int size = 10;
 
-        List<KitTag> kitTags = List.of(new KitTag(1, "tagCode1", "tagTitle1"),
-            new KitTag(2, "tagCode2", "tagTitle2"));
+        List<KitTag> kitTags = List.of(createKitTag("tag1"), createKitTag("tag2"), createKitTag("tag3"));
 
         PaginatedResponse<KitTag> paginatedResponse = new PaginatedResponse<>(
             kitTags,
