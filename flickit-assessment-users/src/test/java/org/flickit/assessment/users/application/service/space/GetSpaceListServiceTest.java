@@ -3,9 +3,7 @@ package org.flickit.assessment.users.application.service.space;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
-import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
-import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +12,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Result;
+import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,7 +47,7 @@ class GetSpaceListServiceTest {
             portToUseCaseResult(space1, currentUserId),
             portToUseCaseResult(space2, currentUserId));
 
-        PaginatedResponse<LoadSpaceListPort.Result> paginatedResponse = new PaginatedResponse<>(
+        PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
             spacePortList,
             page,
             size,
@@ -54,12 +55,12 @@ class GetSpaceListServiceTest {
             Sort.Direction.DESC.name().toLowerCase(),
             spaceListItems.size());
 
-        when(loadSpaceListPort.loadSpaceList(any(LoadSpaceListPort.Param.class))).thenReturn(paginatedResponse);
+        when(loadSpaceListPort.loadSpaceList(any(Param.class))).thenReturn(paginatedResponse);
 
         GetSpaceListUseCase.Param param = new GetSpaceListUseCase.Param(size, page, currentUserId);
         var result = service.getSpaceList(param);
 
-        ArgumentCaptor<LoadSpaceListPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadSpaceListPort.Param.class);
+        ArgumentCaptor<Param> loadPortParam = ArgumentCaptor.forClass(Param.class);
         verify(loadSpaceListPort).loadSpaceList(loadPortParam.capture());
 
         assertEquals(page, loadPortParam.getValue().page());
@@ -70,11 +71,45 @@ class GetSpaceListServiceTest {
         assertEquals(spaceListItems, result.getItems());
     }
 
+    @Test
+    void testGetSpaceList_ValidInputs_emptyResults() {
+        int page = 0;
+        int size = 10;
+        UUID currentUserId = UUID.randomUUID();
+
+        List<Result> spaceListItems = Collections.emptyList();
+
+        List<GetSpaceListUseCase.SpaceListItem> SpaceListItemsFinal = Collections.emptyList();
+
+        PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
+            spaceListItems,
+            page,
+            size,
+            UserJpaEntity.Fields.NAME,
+            Sort.Direction.ASC.name().toLowerCase(),
+            0);
+        when(loadSpaceListPort.loadSpaceList(any(Param.class)))
+            .thenReturn(paginatedResponse);
+
+        var param = new GetSpaceListUseCase.Param(size, page, currentUserId);
+        var result = service.getSpaceList(param);
+
+        ArgumentCaptor<LoadSpaceListPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadSpaceListPort.Param.class);
+        verify(loadSpaceListPort).loadSpaceList(loadPortParam.capture());
+
+        assertEquals(page, loadPortParam.getValue().page());
+        assertEquals(size, loadPortParam.getValue().size());
+        assertNotNull(paginatedResponse);
+        assertNotNull(result.getItems());
+        assertEquals(0, result.getItems().size());
+        assertEquals(SpaceListItemsFinal, result.getItems());
+    }
+
     private static long spaceId = 123;
 
-    private static LoadSpaceListPort.Result createSpace(UUID ownerId) {
+    private static Result createSpace(UUID ownerId) {
         long id = spaceId++;
-        return new LoadSpaceListPort.Result(id,
+        return new Result(id,
             "title" + id,
             "Title" + id,
             ownerId,
@@ -83,7 +118,7 @@ class GetSpaceListServiceTest {
             2);
     }
 
-    private static GetSpaceListUseCase.SpaceListItem portToUseCaseResult(LoadSpaceListPort.Result portResult, UUID currentUserId) {
+    private static GetSpaceListUseCase.SpaceListItem portToUseCaseResult(org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Result portResult, UUID currentUserId) {
         return new GetSpaceListUseCase.SpaceListItem(
             portResult.id(),
             portResult.code(),
