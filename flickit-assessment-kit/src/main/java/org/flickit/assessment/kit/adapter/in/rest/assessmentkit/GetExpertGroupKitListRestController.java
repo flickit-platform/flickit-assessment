@@ -24,7 +24,7 @@ public class GetExpertGroupKitListRestController {
 
     @GetMapping("/expert-groups/{expertGroupId}/assessment-kits")
     public ResponseEntity<PaginatedResponse<Result>> getExpertGroupKitList(
-        @PathVariable(value = "expertGroupId") Long expertGroupId, // validated in the use-case param
+        @PathVariable(value = "expertGroupId") Long expertGroupId,
         @RequestParam(defaultValue = "50") int size,
         @RequestParam(defaultValue = "0") int page
     ) {
