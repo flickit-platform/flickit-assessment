@@ -23,14 +23,22 @@ public class GetExpertGroupKitListService implements GetExpertGroupKitListUseCas
     public PaginatedResponse<Result> getExpertGroupKitList(Param param) {
         PaginatedResponse<AssessmentKit> kitPaginatedResponse;
         if (checkExpertGroupAccessPort.checkIsMember(param.getExpertGroupId(), param.getCurrentUserId())) {
-            kitPaginatedResponse = loadExpertGroupAllKitListPort.loadAllKitsByKitIdAndUserId(param.getExpertGroupId(), param.getCurrentUserId(), param.getPage(), param.getSize());
+            kitPaginatedResponse = loadExpertGroupAllKitListPort.loadAllKitsByKitIdAndUserId(param.getExpertGroupId(),
+                param.getCurrentUserId(),
+                param.getPage(),
+                param.getSize());
         } else {
-            kitPaginatedResponse = loadExpertGroupPublishedKitListPort.loadPublishedKitsByKitIdAndUserId(param.getExpertGroupId(), param.getCurrentUserId(), param.getPage(), param.getSize());
+            kitPaginatedResponse = loadExpertGroupPublishedKitListPort.loadPublishedKitsByKitIdAndUserId(param.getExpertGroupId(),
+                param.getCurrentUserId(),
+                param.getPage(),
+                param.getSize());
         }
+        var items = kitPaginatedResponse.getItems().stream()
+            .map(this::toResult)
+            .toList();
+
         return new PaginatedResponse<>(
-            kitPaginatedResponse.getItems().stream()
-                .map(this::toResult)
-                .toList(),
+            items,
             kitPaginatedResponse.getPage(),
             kitPaginatedResponse.getSize(),
             kitPaginatedResponse.getSort(),
