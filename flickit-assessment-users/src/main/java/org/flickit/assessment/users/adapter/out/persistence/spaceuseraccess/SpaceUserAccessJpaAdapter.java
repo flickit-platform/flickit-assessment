@@ -20,7 +20,7 @@ public class SpaceUserAccessJpaAdapter implements
     @Override
     public void persist(Param param) {
         SpaceUserAccessJpaEntity unsavedEntity = new SpaceUserAccessJpaEntity(param.spaceId(), param.invitee(),
-            param.inviter(), param.creationTime());
+            param.inviter(), param.creationTime(), param.creationTime());
         repository.save(unsavedEntity);
     }
 
