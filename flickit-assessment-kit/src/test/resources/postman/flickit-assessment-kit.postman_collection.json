@@ -512,7 +512,35 @@
 				}
 			},
 			"response": []
-		}
+		},
+      {
+        "name": "Get Kit Tags",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/{{api_path}}/assessment-kit-tags?page=0&size=20",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "{{api_path}}",
+              "assessment-kit-tags"
+            ],
+            "query": [
+              {
+                "key": "page",
+                "value": "0"
+              },
+              {
+                "key": "size",
+                "value": "20"
+              }
+            ]
+          }
+        },
+        "response": []
+      }
 	],
 	"event": [
 		{

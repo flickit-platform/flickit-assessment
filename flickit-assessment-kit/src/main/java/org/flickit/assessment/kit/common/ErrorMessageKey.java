@@ -38,6 +38,10 @@ public class ErrorMessageKey {
     public static final String GET_KIT_USER_LIST_SIZE_MIN = "get-kit-user-list.size.min";
     public static final String GET_KIT_USER_LIST_SIZE_MAX = "get-kit-user-list.size.max";
 
+    public static final String GET_KIT_TAG_LIST_PAGE_MIN = "get-kit-tag-list.page.min";
+    public static final String GET_KIT_TAG_LIST_SIZE_MIN = "get-kit-tag-list.size.min";
+    public static final String GET_KIT_TAG_LIST_SIZE_MAX = "get-kit-tag-list.size.max";
+
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_NULL = "get-kit-minimal-info.kitId.notNull";
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_FOUND = "get-kit-minimal-info.kitId.notFound";
 
