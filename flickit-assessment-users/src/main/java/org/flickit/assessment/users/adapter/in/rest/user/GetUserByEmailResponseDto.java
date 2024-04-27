@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.in.rest.user;
+package org.flickit.assessment.users.adapter.in.rest.user;
 
 import java.util.UUID;
 
