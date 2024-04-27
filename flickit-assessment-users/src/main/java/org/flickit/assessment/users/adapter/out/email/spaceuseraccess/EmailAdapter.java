@@ -6,7 +6,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.config.AppSpecProperties;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.SendInviteMailPort;
+import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -21,7 +21,7 @@ import static org.flickit.assessment.users.common.MessageKey.*;
 @Slf4j
 @Component("spaceUserAccessEmailAdapter")
 @RequiredArgsConstructor
-public class EmailAdapter implements SendInviteMailPort {
+public class EmailAdapter implements SendFlickitInviteMailPort {
 
     private final JavaMailSender mailSender;
     private final AppSpecProperties appSpecProperties;

@@ -6,8 +6,8 @@ import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.SaveSpaceMemberInviteePort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.SendInviteMailPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
+import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +30,8 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
     private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final LoadUserPort loadUserPort;
     private final AddSpaceMemberPort addSpaceMemberPort;
-    private final SaveSpaceMemberInviteePort saveSpaceMemberInviteePort;
-    private final SendInviteMailPort sendInviteMailPort;
+    private final InviteSpaceMemberPort inviteSpaceMemberPort;
+    private final SendFlickitInviteMailPort sendFlickitInviteMailPort;
 
     @Override
     public void inviteMember(Param param) {
@@ -52,13 +52,14 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
         } else {
             var creationTime = LocalDateTime.now();
             var expirationDate = creationTime.plusDays(EXPIRY_DURATION.toDays());
-            saveSpaceMemberInviteePort.persist(toParam(param.getSpaceId(), param.getEmail(), currentUserId, creationTime, expirationDate));
-            sendInviteMailPort.sendInviteMail(param.getEmail());
+            inviteSpaceMemberPort.invite(toParam(param.getSpaceId(), param.getEmail(), currentUserId, creationTime, expirationDate));
+
+            sendFlickitInviteMailPort.sendInviteMail(param.getEmail());
         }
     }
 
-    private SaveSpaceMemberInviteePort.Param toParam(Long spaceId, String email, UUID createdBy,
-                                                     LocalDateTime creationTime, LocalDateTime expirationDate) {
-        return new SaveSpaceMemberInviteePort.Param(spaceId, email, createdBy, creationTime, expirationDate);
+    private InviteSpaceMemberPort.Param toParam(Long spaceId, String email, UUID createdBy,
+                                                LocalDateTime creationTime, LocalDateTime expirationDate) {
+        return new InviteSpaceMemberPort.Param(spaceId, email, createdBy, creationTime, expirationDate);
     }
 }
