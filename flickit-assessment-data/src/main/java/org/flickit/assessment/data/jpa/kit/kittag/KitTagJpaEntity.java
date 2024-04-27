@@ -29,6 +29,6 @@ public class KitTagJpaEntity {
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
-        public static final String NAME = "code";
+        public static final String CODE = "code";
     }
 }

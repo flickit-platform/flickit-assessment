@@ -41,7 +41,7 @@ public class KitTagPersistenceJpaAdapter implements LoadKitTagsLisByKitIdtPort, 
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            KitTagJpaEntity.Fields.NAME,
+            KitTagJpaEntity.Fields.CODE,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
