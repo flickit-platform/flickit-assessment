@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 @Service
@@ -39,7 +40,7 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
             throw new ValidationException(INVITE_SPACE_MEMBER_SPACE_ID_NOT_FOUND);
 
         if (!checkSpaceMemberAccessPort.checkIsMember(currentUserId))
-            throw new AccessDeniedException(INVITE_SPACE_MEMBER_INVITER_ACCESS_NOT_FOUND);
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (loadUserPort.loadUserIdByEmail(param.getEmail()) != null)
             throw new ResourceAlreadyExistsException(INVITE_SPACE_MEMBER_INVITEE_DUPLICATE);

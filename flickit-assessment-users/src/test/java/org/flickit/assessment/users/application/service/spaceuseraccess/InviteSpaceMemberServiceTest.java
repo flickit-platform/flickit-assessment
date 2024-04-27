@@ -18,8 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,10 +31,13 @@ class InviteSpaceMemberServiceTest {
     private CheckSpaceExistencePort checkSpaceExistencePort;
     @Mock
     private CheckSpaceMemberAccessPort checkSpaceMemberAccessPort;
+
     @Mock
     LoadUserPort loadUserPort;
+
     @Mock
     SaveSpaceMemberInviteePort saveSpaceMemberInviteePort;
+
     @Mock
     SendInviteMailPort SendInviteMailPort;
 
@@ -66,7 +69,8 @@ class InviteSpaceMemberServiceTest {
         when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
         when(checkSpaceMemberAccessPort.checkIsMember(currentUserId)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verify(checkSpaceExistencePort).existsById(spaceId);
         verify(checkSpaceMemberAccessPort).checkIsMember(currentUserId);
