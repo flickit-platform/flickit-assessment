@@ -15,12 +15,9 @@ public class SpaceInviteePersistenceJpaEntity implements
     @Override
     public void invite(InviteSpaceMemberPort.Param param) {
         var entity = SpaceInviteeMapper.mapCreateParamToJpaEntity(param);
-        boolean isExist = repository.existsBySpaceIdAndEmail(param.spaceId(), param.email());
-        if (isExist)
-            repository.update(param.spaceId(), param.email(), param.creationTime(),
-                param.expirationDate(), param.createdBy());
-        else
+        if (!repository.existsBySpaceIdAndEmail(param.spaceId(), param.email()))
             repository.save(entity);
-
+        else
+            repository.update(entity.getId(), param.creationTime(), param.expirationDate(), param.createdBy());
     }
 }

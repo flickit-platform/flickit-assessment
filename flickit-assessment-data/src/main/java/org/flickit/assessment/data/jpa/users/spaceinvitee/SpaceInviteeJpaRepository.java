@@ -9,18 +9,18 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface SpaceInviteeJpaRepository extends JpaRepository<SpaceInviteeJpaEntity, UUID> {
-    boolean existsBySpaceIdAndEmail(long l, String s);
+
+    boolean existsBySpaceIdAndEmail(@Param("spaceId") long spaceId, @Param("email") String email);
 
     @Modifying
     @Query("""
-        UPDATE SpaceInviteeJpaEntity s SET
-        s.creationTime = :creationTime,
-        s.expirationDate = :expirationDate,
-        s.createdBy = :createdBy
-        where spaceId = :spaceId AND email = :email
+            UPDATE SpaceInviteeJpaEntity s SET
+                s.creationTime = :creationTime,
+                s.expirationDate = :expirationDate,
+                s.createdBy = :createdBy
+            where id = :id
         """)
-    void update(@Param("spaceId") long spaceId,
-                @Param("email") String email,
+    void update(@Param("id") UUID id,
                 @Param("creationTime") LocalDateTime creationTime,
                 @Param("expirationDate") LocalDateTime expirationDate,
                 @Param("createdBy") UUID createdBy);
