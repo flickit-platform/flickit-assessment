@@ -484,7 +484,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Attribute Level Questions Info",
+			"name": "Get Kit Attribute Level Questions Detail",
 			"request": {
 				"method": "GET",
 				"header": [
