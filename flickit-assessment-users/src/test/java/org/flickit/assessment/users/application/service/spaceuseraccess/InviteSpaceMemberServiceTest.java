@@ -2,9 +2,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceExistencePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceMemberAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.SaveSpaceMemberInviteePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.SendInviteMailPort;
@@ -27,8 +25,7 @@ class InviteSpaceMemberServiceTest {
 
     @InjectMocks
     InviteSpaceMemberService service;
-    @Mock
-    private CheckSpaceExistencePort checkSpaceExistencePort;
+
     @Mock
     private CheckSpaceMemberAccessPort checkSpaceMemberAccessPort;
 
@@ -42,37 +39,17 @@ class InviteSpaceMemberServiceTest {
     SendInviteMailPort SendInviteMailPort;
 
     @Test
-    @DisplayName("Inviting member to an invalid space should cause a ValidationException")
-    void inviteMember_spaceNotFound_validationException() {
-        long spaceId = 0;
-        String email = "admin@asta.org";
-        UUID currentUserId = UUID.randomUUID();
-        var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
-        when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(false);
-
-        assertThrows(ValidationException.class, () -> service.inviteMember(param));
-
-        verify(checkSpaceExistencePort).existsById(spaceId);
-        verifyNoInteractions(checkSpaceMemberAccessPort);
-        verifyNoInteractions(loadUserPort);
-        verifyNoInteractions(saveSpaceMemberInviteePort);
-        verifyNoInteractions(SendInviteMailPort);
-    }
-
-    @Test
     @DisplayName("Inviting member to a space by a non-member should cause AccessDeniedException")
     void inviteMember_inviterIsNotMember_AccessDeniedException() {
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
         var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
-        when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
         when(checkSpaceMemberAccessPort.checkIsMember(currentUserId)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(checkSpaceExistencePort).existsById(spaceId);
         verify(checkSpaceMemberAccessPort).checkIsMember(currentUserId);
         verifyNoInteractions(loadUserPort);
         verifyNoInteractions(saveSpaceMemberInviteePort);
@@ -87,13 +64,11 @@ class InviteSpaceMemberServiceTest {
         UUID currentUserId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
         var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
-        when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
         when(checkSpaceMemberAccessPort.checkIsMember(currentUserId)).thenReturn(true);
         when(loadUserPort.loadUserIdByEmail(email)).thenReturn(userId);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> service.inviteMember(param));
 
-        verify(checkSpaceExistencePort).existsById(spaceId);
         verify(checkSpaceMemberAccessPort).checkIsMember(currentUserId);
         verify(loadUserPort).loadUserIdByEmail(email);
         verifyNoInteractions(saveSpaceMemberInviteePort);
@@ -107,7 +82,6 @@ class InviteSpaceMemberServiceTest {
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
         var usecaseParam = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
-        when(checkSpaceExistencePort.existsById(spaceId)).thenReturn(true);
         when(checkSpaceMemberAccessPort.checkIsMember(currentUserId)).thenReturn(true);
         when(loadUserPort.loadUserIdByEmail(email)).thenReturn(null);
         doNothing().when(saveSpaceMemberInviteePort).persist(isA(SaveSpaceMemberInviteePort.Param.class));
@@ -115,8 +89,6 @@ class InviteSpaceMemberServiceTest {
 
         assertDoesNotThrow(() -> service.inviteMember(usecaseParam));
 
-        verify(checkSpaceExistencePort).existsById(spaceId);
-        verify(checkSpaceExistencePort).existsById(spaceId);
         verify(checkSpaceMemberAccessPort).checkIsMember(currentUserId);
         verify(loadUserPort).loadUserIdByEmail(email);
         verify(saveSpaceMemberInviteePort).persist(any(SaveSpaceMemberInviteePort.Param.class));
