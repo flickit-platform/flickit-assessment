@@ -47,7 +47,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     UpdateKitLastMajorModificationTimePort,
     CountKitStatsPort,
     UpdateKitInfoPort,
-    LoadAssessmentKitPort {
+    LoadAssessmentKitPort,
+    SearchKitOptionsPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -175,5 +176,24 @@ public class AssessmentKitPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         return AssessmentKitMapper.mapToDomainModel(kitEntity);
+    }
+
+    @Override
+    public PaginatedResponse<AssessmentKit> searchKitOptions(SearchKitOptionsPort.Param param) {
+        String queryTerm = param.queryTerm() == null ? "": param.queryTerm();
+        Page<AssessmentKitJpaEntity> kitEntityPage = repository.findAllByTitleAndUserId(queryTerm,
+            param.currentUserId(),
+            PageRequest.of(param.page(), param.size()));
+
+        List<AssessmentKit> kits = kitEntityPage.getContent().stream()
+            .map(AssessmentKitMapper::mapToDomainModel)
+            .toList();
+
+        return new PaginatedResponse<>(kits,
+            kitEntityPage.getNumber(),
+            kitEntityPage.getSize(),
+            AssessmentKitJpaEntity.Fields.NAME,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) kitEntityPage.getTotalElements());
     }
 }
