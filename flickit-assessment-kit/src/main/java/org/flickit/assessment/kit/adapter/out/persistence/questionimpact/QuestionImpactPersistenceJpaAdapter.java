@@ -41,5 +41,4 @@ public class QuestionImpactPersistenceJpaAdapter implements
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
-
 }
