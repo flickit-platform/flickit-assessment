@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
@@ -56,4 +58,28 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.id = :kitId
         """)
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
+
+    @Query("""
+            SELECT k
+            FROM AssessmentKitJpaEntity k
+            WHERE k.expertGroupId = :expertGroupId AND
+                (k.isPrivate = FALSE OR
+                (k.isPrivate AND k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId = :userId)))
+            ORDER BY k.published desc, k.lastModificationTime desc
+        """)
+    Page<AssessmentKitJpaEntity> findAllByExpertGroupIdAndUserAccessOrderByPublishedDescModificationTime(Long expertGroupId,
+                                                                                                         UUID userId,
+                                                                                                         PageRequest pageable);
+
+    @Query("""
+            SELECT k
+            FROM AssessmentKitJpaEntity k
+            WHERE k.published = TRUE AND k.expertGroupId = :expertGroupId AND
+                (k.isPrivate = FALSE OR
+                (k.isPrivate AND k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId = :userId)))
+            ORDER BY k.lastModificationTime desc
+        """)
+    Page<AssessmentKitJpaEntity> findAllPublishedByExpertGroupIdAndUserAccessOrderByModificationTime(Long expertGroupId,
+                                                                                                     UUID userId,
+                                                                                                     PageRequest pageable);
 }

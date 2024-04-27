@@ -32,13 +32,14 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentKitPersistenceJpaAdapter implements
+public class AssessmentAllKitPersistenceJpaAdapter implements
     LoadKitExpertGroupPort,
     LoadKitUsersPort,
     DeleteKitUserAccessPort,
@@ -47,7 +48,9 @@ public class AssessmentKitPersistenceJpaAdapter implements
     UpdateKitLastMajorModificationTimePort,
     CountKitStatsPort,
     UpdateKitInfoPort,
-    LoadAssessmentKitPort {
+    LoadAssessmentKitPort,
+    LoadExpertGroupAllKitListPort,
+    LoadExpertGroupPublishedKitListPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -175,5 +178,37 @@ public class AssessmentKitPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         return AssessmentKitMapper.mapToDomainModel(kitEntity);
+    }
+
+    @Override
+    public PaginatedResponse<AssessmentKit> loadAllKitsByKitIdAndUserId(Long expertGroupId, UUID userId, int page, int size) {
+        var pageResult = repository.findAllByExpertGroupIdAndUserAccessOrderByPublishedDescModificationTime(expertGroupId,
+            userId,
+            PageRequest.of(page, size));
+        var items = pageResult.getContent().stream().map(AssessmentKitMapper::mapToDomainModel).toList();
+
+        return new PaginatedResponse<>(items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            AssessmentKitJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            Sort.Direction.DESC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
+    }
+
+    @Override
+    public PaginatedResponse<AssessmentKit> loadPublishedKitsByKitIdAndUserId(Long expertGroupId, UUID userId, int page, int size) {
+        var pageResult = repository.findAllPublishedByExpertGroupIdAndUserAccessOrderByModificationTime(expertGroupId,
+            userId,
+            PageRequest.of(page, size));
+        var items = pageResult.getContent().stream().map(AssessmentKitMapper::mapToDomainModel).toList();
+
+        return new PaginatedResponse<>(items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            AssessmentKitJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            Sort.Direction.DESC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
     }
 }
