@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceMemberAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.SaveSpaceMemberInviteePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.SendInviteMailPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
@@ -25,7 +25,7 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
-    private final CheckSpaceMemberAccessPort checkSpaceMemberAccessPort;
+    private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final LoadUserPort loadUserPort;
     private final SaveSpaceMemberInviteePort saveSpaceMemberInviteePort;
     private final SendInviteMailPort sendInviteMailPort;
@@ -33,7 +33,7 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
     @Override
     public void inviteMember(Param param) {
         var currentUserId = param.getCurrentUserId();
-        if (!checkSpaceMemberAccessPort.checkIsMember(currentUserId))
+        if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (loadUserPort.loadUserIdByEmail(param.getEmail()) != null)
