@@ -18,9 +18,10 @@ public interface SpaceInviteeJpaRepository extends JpaRepository<SpaceInviteeJpa
                 s.creationTime = :creationTime,
                 s.expirationDate = :expirationDate,
                 s.createdBy = :createdBy
-            where id = :id
+            WHERE s.spaceId = :spaceId AND s.email = :email
         """)
-    void update(@Param("id") UUID id,
+    void update(@Param("spaceId") long spaceId,
+                @Param("email") String email,
                 @Param("creationTime") LocalDateTime creationTime,
                 @Param("expirationDate") LocalDateTime expirationDate,
                 @Param("createdBy") UUID createdBy);
