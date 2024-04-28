@@ -34,6 +34,9 @@ public class SpaceUserAccessJpaEntity {
     private LocalDateTime creationTime;
 
 
+    @Column(name= "last_seen")
+    private LocalDateTime lastSeen;
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
