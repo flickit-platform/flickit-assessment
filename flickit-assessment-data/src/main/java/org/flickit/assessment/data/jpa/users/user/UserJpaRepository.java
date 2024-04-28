@@ -9,12 +9,17 @@ import java.util.UUID;
 
 public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
 
-    Optional<UserJpaEntity> findByEmailIgnoreCase(String email);
-
     @Query("""
-        SELECT u.email AS email
-        FROM UserJpaEntity u
-        WHERE u.id = :userId
+            SELECT u.email AS email
+            FROM UserJpaEntity u
+            WHERE u.id = :userId
         """)
     String findEmailByUserId(@Param(value = "userId") UUID userId);
+
+    @Query("""
+            SELECT u.id AS userId
+            FROM UserJpaEntity u
+            WHERE u.email = :email
+        """)
+    Optional<UUID> findUserIdByEmail(@Param(value = "email") String email);
 }

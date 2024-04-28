@@ -26,6 +26,10 @@ public class MaturityLevelMother {
         return idToMaturityLevel.get(id);
     }
 
+    public static List<MaturityLevel> allLevels() {
+        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive());
+    }
+
     public static MaturityLevel levelOne() {
         return new MaturityLevel(
             LEVEL_ONE_ID,

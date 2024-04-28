@@ -7,8 +7,11 @@ import lombok.NoArgsConstructor;
 public class ErrorMessageKey {
 
     public static final String FILE_STORAGE_FILE_NOT_FOUND = "file-storage.file.notFound";
-
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
+    public static final String USER_BY_EMAIL_NOT_FOUND = "user-by-email.notFound";
+    public static final String SPACE_ID_NOT_FOUND = "space.id.notFound";
+
+    public static final String GET_USER_BY_EMAIL_EMAIL_NOT_NULL = "get-user-by-email.email.notNull";
 
     public static final String GET_EXPERT_GROUP_LIST_PAGE_MIN = "get-expert-group-list.page.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MIN = "get-expert-group-list.size.min";
@@ -57,4 +60,12 @@ public class ErrorMessageKey {
     public static final String DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_NULL = "delete-expert-group-member.userId.notNull";
     public static final String DELETE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group-member.expert-group-id.notNull";
     public static final String DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND = "delete-expert-group-member.userId.notFound";
+
+    public static final String ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL = "add-space-member.spaceId.notUll";
+    public static final String ADD_SPACE_MEMBER_EMAIL_NOT_NULL = "add-space-member.email.notNull";
+    public static final String ADD_SPACE_MEMBER_SPACE_USER_DUPLICATE = "add-space-member.spaceId.userId.duplicate";
+
+    public static final String INVITE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "invite-space-member.spaceId.notUll";
+    public static final String INVITE_SPACE_MEMBER_EMAIL_NOT_NULL = "invite-space-member.email.notNull";
+    public static final String INVITE_SPACE_MEMBER_SPACE_USER_DUPLICATE = "invite-space-member.spaceId.userId.duplicate";
 }
