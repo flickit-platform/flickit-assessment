@@ -38,5 +38,4 @@ public class AnswerOptionPersistenceJpaAdapter implements
     public Long persist(CreateAnswerOptionPort.Param param) {
         return repository.save(AnswerOptionMapper.mapToJpaEntity(param)).getId();
     }
-
 }

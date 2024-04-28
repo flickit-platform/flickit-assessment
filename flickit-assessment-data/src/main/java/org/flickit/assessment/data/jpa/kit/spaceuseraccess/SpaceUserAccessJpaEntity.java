@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "account_useraccess")
+@Table(name = "fau_space_user_access")
 @Getter
 @Setter
 @NoArgsConstructor

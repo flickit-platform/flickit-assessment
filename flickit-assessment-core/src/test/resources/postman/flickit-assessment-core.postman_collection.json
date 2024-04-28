@@ -455,6 +455,32 @@
 			"response": []
 		},
 		{
+			"name": "Get Assessment Questionnaire List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/481dcdbe-0c36-4bcd-b6f3-b9b1068263ac/questionnaires",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"481dcdbe-0c36-4bcd-b6f3-b9b1068263ac",
+						"questionnaires"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Assessment Progress",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
