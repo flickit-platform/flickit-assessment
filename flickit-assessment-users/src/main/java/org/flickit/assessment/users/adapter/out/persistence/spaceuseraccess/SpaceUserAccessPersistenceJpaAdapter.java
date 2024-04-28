@@ -9,6 +9,7 @@ import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpac
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
@@ -25,7 +26,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     @Override
     public void persist(Param param) {
         SpaceUserAccessJpaEntity unsavedEntity = new SpaceUserAccessJpaEntity(param.spaceId(), param.invitee(),
-            param.inviter(), param.creationTime());
+            param.inviter(), param.creationTime(), LocalDateTime.now());
         repository.save(unsavedEntity);
     }
 

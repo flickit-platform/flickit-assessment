@@ -1,9 +1,11 @@
 package org.flickit.assessment.data.jpa.users.space;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,4 +31,14 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
         """)
     Optional<SpaceWithDetailsView> findById(@Param("spaceId") long id,
                                             @Param("userId") UUID userId);
+
+    @Modifying
+    @Query("""
+            UPDATE SpaceUserAccessJpaEntity s SET
+                s.lastSeen = :currentTime
+            WHERE s.spaceId = :spaceId AND s.userId = :userId
+        """)
+    void updateLastSeen(@Param("spaceId") long spaceId,
+                        @Param("currentTime") LocalDateTime currentTime,
+                        @Param("userId") UUID userId);
 }
