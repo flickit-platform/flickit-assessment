@@ -33,7 +33,7 @@ public interface GetSpaceUseCase {
         }
     }
 
-    record Result (long id, String code, String title, boolean isOwner,
-                   LocalDateTime lastModificationTime, int membersCount, int assessmentsCount){
+    record Result(long id, String code, String title, boolean isOwner,
+                  LocalDateTime lastModificationTime, int membersCount, int assessmentsCount) {
     }
 }
