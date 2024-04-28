@@ -10,5 +10,5 @@ public interface KitLikeJpaRepository extends JpaRepository<KitLikeJpaEntity, Ki
 
     void deleteByKitIdAndUserId(Long kitId, UUID userId);
 
-    Integer countAllByKitId(Long kitId);
+    int countByKitId(Long kitId);
 }

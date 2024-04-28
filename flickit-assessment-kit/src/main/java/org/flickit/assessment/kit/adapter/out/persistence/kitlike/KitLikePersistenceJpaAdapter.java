@@ -37,6 +37,6 @@ public class KitLikePersistenceJpaAdapter implements
 
     @Override
     public int countByKitId(long kitId) {
-        return repository.countAllByKitId(kitId);
+        return repository.countByKitId(kitId);
     }
 }
