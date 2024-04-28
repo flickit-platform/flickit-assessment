@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class LoadSpaceListRestController {
+public class GetSpaceListRestController {
 
     private final GetSpaceListUseCase useCase;
     private final UserContext userContext;
