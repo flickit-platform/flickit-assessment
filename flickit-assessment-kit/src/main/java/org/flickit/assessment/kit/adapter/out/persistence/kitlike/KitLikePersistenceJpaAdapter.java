@@ -22,7 +22,7 @@ public class KitLikePersistenceJpaAdapter implements
 
     @Override
     public boolean exist(Long kitId, UUID userId) {
-        return repository.findByKitIdAndUserId(kitId, userId).isPresent();
+        return repository.existsByKitIdAndUserId(kitId, userId);
     }
 
     @Override
