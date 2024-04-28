@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
-import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +54,7 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
             var expirationDate = creationTime.plusDays(EXPIRY_DURATION.toDays());
             inviteSpaceMemberPort.invite(toParam(param.getSpaceId(), param.getEmail(), currentUserId, creationTime, expirationDate));
 
-            sendFlickitInviteMailPort.sendInviteMail(param.getEmail());
+            sendFlickitInviteMailPort.inviteToFlickit(param.getEmail());
         }
     }
 
