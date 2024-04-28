@@ -4,14 +4,12 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.ToggleKitLikeUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
 import org.flickit.assessment.kit.application.port.out.kitlike.CountKitLikePort;
 import org.flickit.assessment.kit.application.port.out.kitlike.CreateKitLikePort;
 import org.flickit.assessment.kit.application.port.out.kitlike.DeleteKitLikePort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,10 +34,7 @@ class ToggleKitLikeServiceTest {
     private LoadAssessmentKitPort loadKitPort;
 
     @Mock
-    private LoadKitExpertGroupPort loadKitExpertGroupPort;
-
-    @Mock
-    private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
+    private CheckKitUserAccessPort checkKitUserAccessPort;
 
     @Mock
     private CheckKitLikeExistencePort checkKitLikeExistencePort;
@@ -63,22 +58,20 @@ class ToggleKitLikeServiceTest {
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.toggleKitLike(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
 
-        verifyNoInteractions(loadKitExpertGroupPort,
-            checkExpertGroupAccessPort,
+        verifyNoInteractions(
+            checkKitUserAccessPort,
             checkKitLikeExistencePort,
             createKitLikePort,
             deleteKitLikePort);
     }
 
     @Test
-    void testToggleKitLike_WhenKitIsPrivateAndUserIsNotMember_ThrowsException() {
+    void testToggleKitLike_WhenKitIsPrivateAndUserIsDoesNotHaveAccess_ThrowsException() {
         var privateKit = AssessmentKitMother.privateKit();
-        var expectedExpertGroup = ExpertGroupMother.createExpertGroup();
         ToggleKitLikeUseCase.Param param = new ToggleKitLikeUseCase.Param(privateKit.getId(), UUID.randomUUID());
 
         when(loadKitPort.load(param.getKitId())).thenReturn(privateKit);
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expectedExpertGroup);
-        when(checkExpertGroupAccessPort.checkIsMember(expectedExpertGroup.getId(), param.getCurrentUserId())).thenReturn(false);
+        when(checkKitUserAccessPort.hasAccess(privateKit.getId(), param.getCurrentUserId())).thenReturn(false);
 
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.toggleKitLike(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
@@ -91,12 +84,10 @@ class ToggleKitLikeServiceTest {
     @Test
     void testToggleKitLike_WhenKitLikeDoesNotExist_AddLike() {
         var privateKit = AssessmentKitMother.privateKit();
-        var expectedExpertGroup = ExpertGroupMother.createExpertGroup();
         ToggleKitLikeUseCase.Param param = new ToggleKitLikeUseCase.Param(privateKit.getId(), UUID.randomUUID());
 
         when(loadKitPort.load(param.getKitId())).thenReturn(privateKit);
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expectedExpertGroup);
-        when(checkExpertGroupAccessPort.checkIsMember(expectedExpertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(checkKitUserAccessPort.hasAccess(privateKit.getId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
         doNothing().when(createKitLikePort).create(param.getKitId(), param.getCurrentUserId());
         when(countKitLikePort.countByKitId(param.getKitId())).thenReturn(1);
@@ -109,13 +100,10 @@ class ToggleKitLikeServiceTest {
 
     @Test
     void testToggleKitLike_WhenKitLikeExist_DeleteLike() {
-        var privateKit = AssessmentKitMother.privateKit();
-        var expectedExpertGroup = ExpertGroupMother.createExpertGroup();
-        ToggleKitLikeUseCase.Param param = new ToggleKitLikeUseCase.Param(privateKit.getId(), UUID.randomUUID());
+        var kit = AssessmentKitMother.simpleKit();
+        ToggleKitLikeUseCase.Param param = new ToggleKitLikeUseCase.Param(kit.getId(), UUID.randomUUID());
 
-        when(loadKitPort.load(param.getKitId())).thenReturn(privateKit);
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expectedExpertGroup);
-        when(checkExpertGroupAccessPort.checkIsMember(expectedExpertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         doNothing().when(deleteKitLikePort).delete(param.getKitId(), param.getCurrentUserId());
         when(countKitLikePort.countByKitId(param.getKitId())).thenReturn(0);
