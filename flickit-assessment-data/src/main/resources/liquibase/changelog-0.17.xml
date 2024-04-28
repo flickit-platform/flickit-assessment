@@ -221,8 +221,10 @@
     </changeSet>
 
     <changeSet id="0.17-40" author="Maziyar Gerami">
-        <addColumn tableName="fau_space">
-            <column name="last_seen" type="timestamp"/>
+        <addColumn tableName="fau_space_user_access">
+            <column name="last_seen" type="timestamp" valueComputed="creation_time">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
     </changeSet>
 
