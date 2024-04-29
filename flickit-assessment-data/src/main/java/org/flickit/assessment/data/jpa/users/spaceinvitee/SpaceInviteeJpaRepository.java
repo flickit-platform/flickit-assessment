@@ -26,7 +26,8 @@ public interface SpaceInviteeJpaRepository extends JpaRepository<SpaceInviteeJpa
                 @Param("creationTime") LocalDateTime creationTime,
                 @Param("expirationDate") LocalDateTime expirationDate,
                 @Param("createdBy") UUID createdBy);
-    void deleteByEmail(String email);
 
-    List<SpaceInviteeJpaEntity> findByEmail(String email);
+    void deleteByEmail(@Param("email") String email);
+
+    List<SpaceInviteeJpaEntity> findByEmail(@Param("email") String email);
 }
