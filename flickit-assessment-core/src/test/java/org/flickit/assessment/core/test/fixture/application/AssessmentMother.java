@@ -48,11 +48,11 @@ public class AssessmentMother {
         return new AssessmentListItem(
             UUID.randomUUID(),
             "my-assessment-" + counter,
-            kitId,
-            spaceId,
+            new AssessmentListItem.Kit(kitId, "kitTitle"+kitId, 2),
+            new AssessmentListItem.Space(spaceId, "spaceTitle"),
             AssessmentColor.BLUE,
             LocalDateTime.now(),
-            1L,
+            new AssessmentListItem.MaturityLevel(counter, "levelTitle"+counter, 1, 2),
             Boolean.TRUE,
             Boolean.TRUE
         );

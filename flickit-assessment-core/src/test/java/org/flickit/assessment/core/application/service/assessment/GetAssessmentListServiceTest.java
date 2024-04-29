@@ -1,9 +1,12 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListItemsBySpacePort;
+import org.flickit.assessment.core.application.port.out.space.CheckSpaceAccessPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpaceIdsByUserIdPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -17,9 +20,10 @@ import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +34,57 @@ class GetAssessmentListServiceTest {
 
     @Mock
     private LoadAssessmentListItemsBySpacePort loadAssessmentPort;
+
+    @Mock
+    private CheckSpaceAccessPort checkSpaceAccessPort;
+
+    @Mock
+    private LoadSpaceIdsByUserIdPort loadSpaceIdsByUserIdPort;
+
+    @Test
+    void testGetAssessmentList_WhenSpaceIdsIsNull_ThenUserSpaceIdsLoaded() {
+        UUID currentUserId = UUID.randomUUID();
+        GetAssessmentListUseCase.Param param = new GetAssessmentListUseCase.Param(
+            null,
+            null,
+            currentUserId,
+            1,
+            10);
+
+        service.getAssessmentList(param);
+
+        then(loadSpaceIdsByUserIdPort).should().loadSpaceIdsByUserId(currentUserId);
+    }
+
+    @Test
+    void testGetAssessmentList_WhenSpaceIdsIsEmpty_ThenUserSpaceIdsLoaded() {
+        UUID currentUserId = UUID.randomUUID();
+        GetAssessmentListUseCase.Param param = new GetAssessmentListUseCase.Param(
+            new ArrayList<>(),
+            null,
+            currentUserId,
+            1,
+            10);
+
+        service.getAssessmentList(param);
+
+        then(loadSpaceIdsByUserIdPort).should().loadSpaceIdsByUserId(currentUserId);
+    }
+
+
+    @Test
+    void testGetAssessmentList_UserIsNotSpaceMember_ThrowException() {
+        GetAssessmentListUseCase.Param param = new GetAssessmentListUseCase.Param(
+            List.of(1L),
+            null,
+            UUID.randomUUID(),
+            1,
+            10);
+
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceIds().get(0), param.getCurrentUserId())).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class, () -> service.getAssessmentList(param));
+    }
 
     @Test
     void testGetAssessmentList_ResultsFoundForSingleSpace_ItemsReturned() {
@@ -46,9 +101,12 @@ class GetAssessmentListServiceTest {
             "lastModificationTime",
             "DESC",
             2);
+
+        UUID currentUserId = UUID.randomUUID();
+        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, null, 0, 10)).thenReturn(paginatedResponse);
 
-        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceIds, null, 10, 0));
+        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceIds, null, currentUserId, 10, 0));
         assertEquals(paginatedResponse, result);
     }
 
@@ -63,9 +121,12 @@ class GetAssessmentListServiceTest {
             "lastModificationTime",
             "DESC",
             2);
+
+        UUID currentUserId = UUID.randomUUID();
+        when(checkSpaceAccessPort.checkIsMember(spaceIds.get(0), currentUserId)).thenReturn(true);
         when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, null, 0, 10)).thenReturn(paginatedResponse);
 
-        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceIds, null, 10, 0));
+        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceIds, null, currentUserId, 10, 0));
         assertEquals(paginatedResponse, result);
     }
 
@@ -75,7 +136,7 @@ class GetAssessmentListServiceTest {
         var assessment1 = AssessmentMother.assessmentListItem(1L, kitId);
         var assessment2 = AssessmentMother.assessmentListItem(2L, kitId);
 
-        var spaceIds = List.of(assessment1.spaceId(), assessment2.spaceId());
+        var spaceIds = List.of(assessment1.space().id(), assessment2.space().id());
         var paginatedRes = new PaginatedResponse<>(
             List.of(assessment1, assessment2),
             0,
@@ -88,7 +149,7 @@ class GetAssessmentListServiceTest {
         when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, null, 0, 20))
             .thenReturn(paginatedRes);
 
-        var param = new GetAssessmentListUseCase.Param(spaceIds, null, 20, 0);
+        var param = new GetAssessmentListUseCase.Param(spaceIds, null, UUID.randomUUID(), 20, 0);
         var assessments = service.getAssessmentList(param);
 
         ArgumentCaptor<List<Long>> spaceIdsArgument = ArgumentCaptor.forClass(List.class);
@@ -133,9 +194,11 @@ class GetAssessmentListServiceTest {
             2
         );
 
+        UUID currentUserId = UUID.randomUUID();
+        when(checkSpaceAccessPort.checkIsMember(spaceIds.get(0), currentUserId)).thenReturn(true);
         when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, kitId, 0, 20)).thenReturn(paginatedRes);
 
-        var param = new GetAssessmentListUseCase.Param(spaceIds, kitId, 20, 0);
+        var param = new GetAssessmentListUseCase.Param(spaceIds, kitId, currentUserId, 20, 0);
         var assessments = service.getAssessmentList(param);
 
         assertEquals(2, assessments.getItems().size());
