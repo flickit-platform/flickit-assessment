@@ -28,9 +28,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteSpaceServiceTest {
+
     @InjectMocks
     DeleteSpaceService service;
-
     @Mock
     LoadSpaceOwnerPort loadSpaceOwnerPort;
     @Mock

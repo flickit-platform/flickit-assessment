@@ -21,7 +21,7 @@ class DeleteSpaceUseCaseParamTest {
     }
 
     @Test
-    void testDeleteExpertGroupParam_currentUserIdIsNull_ErrorMessage() {
+    void testDeleteSpaceParam_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteSpaceUseCase.Param(123L, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

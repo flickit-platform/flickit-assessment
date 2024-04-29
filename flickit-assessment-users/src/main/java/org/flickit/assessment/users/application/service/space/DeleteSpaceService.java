@@ -43,8 +43,8 @@ public class DeleteSpaceService implements DeleteSpaceUseCase {
     }
 
     private void validateCurrentUser(Long spaceId, UUID currentUserId) {
-        UUID expertGroupOwnerId = loadSpaceOwnerPort.loadOwnerId(spaceId);
-        if (!Objects.equals(expertGroupOwnerId, currentUserId))
+        UUID spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(spaceId);
+        if (!Objects.equals(spaceOwnerId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }
