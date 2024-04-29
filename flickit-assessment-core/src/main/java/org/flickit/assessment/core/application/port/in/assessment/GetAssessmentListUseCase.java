@@ -44,16 +44,20 @@ public interface GetAssessmentListUseCase {
         }
     }
 
-    record AssessmentListItem(
-        UUID id,
-        String title,
-        Long assessmentKitId,
-        Long spaceId,
-        AssessmentColor color,
-        LocalDateTime lastModificationTime,
-        Long maturityLevelId,
-        boolean isCalculateValid,
-        boolean isConfidenceValid
-    ) {
+    record AssessmentListItem(UUID id,
+                              String title,
+                              Kit kit,
+                              Space space,
+                              AssessmentColor color,
+                              LocalDateTime lastModificationTime,
+                              MaturityLevel maturityLevel,
+                              boolean isCalculateValid,
+                              boolean isConfidenceValid) {
+
+        public record Kit(long id, String title, int maturityLevelsCount) {}
+
+        public record Space(long id, String title) {}
+
+        public record MaturityLevel(long id, String title, int value, int index) {}
     }
 }
