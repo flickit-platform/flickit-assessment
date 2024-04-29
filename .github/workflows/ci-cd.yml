@@ -66,9 +66,6 @@ jobs:
           java-version: 17
           distribution: adopt
 
-      - name: Run Tests
-        run: mvn test
-
       - name: Extract Maven project version
         run: echo version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) >> $GITHUB_OUTPUT
         id: project
@@ -78,6 +75,9 @@ jobs:
           RELEASE_VERSION: ${{ steps.project.outputs.version }}
         run: |
           echo $RELEASE_VERSION
+
+      - name: Run Tests
+        run: mvn test
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
