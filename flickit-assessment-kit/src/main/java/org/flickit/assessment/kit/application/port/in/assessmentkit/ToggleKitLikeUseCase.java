@@ -31,6 +31,6 @@ public interface ToggleKitLikeUseCase {
         }
     }
 
-    record Result(int likes) {
+    record Result(int count, boolean liked) {
     }
 }

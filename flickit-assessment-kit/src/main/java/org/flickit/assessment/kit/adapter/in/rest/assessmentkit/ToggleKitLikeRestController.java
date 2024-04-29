@@ -30,6 +30,6 @@ public class ToggleKitLikeRestController {
     }
 
     private ToggleKitLikeResponseDto toResponse(ToggleKitLikeUseCase.Result result) {
-        return new ToggleKitLikeResponseDto(result.likes());
+        return new ToggleKitLikeResponseDto(result.count(), result.liked());
     }
 }

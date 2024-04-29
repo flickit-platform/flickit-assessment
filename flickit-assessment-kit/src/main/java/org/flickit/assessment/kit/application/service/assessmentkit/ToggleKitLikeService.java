@@ -32,12 +32,14 @@ public class ToggleKitLikeService implements ToggleKitLikeUseCase {
         if (kit.isPrivate() && !checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (!checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId()))
+        boolean liked = false;
+        if (!checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())) {
             createKitLikePort.create(param.getKitId(), param.getCurrentUserId());
-        else
+            liked = true;
+        } else
             deleteKitLikePort.delete(param.getKitId(), param.getCurrentUserId());
 
-        int likes = countKitLikePort.countByKitId(param.getKitId());
-        return new Result(likes);
+        int likesCount = countKitLikePort.countByKitId(param.getKitId());
+        return new Result(likesCount, liked);
     }
 }

@@ -20,8 +20,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -93,7 +92,8 @@ class ToggleKitLikeServiceTest {
         when(countKitLikePort.countByKitId(param.getKitId())).thenReturn(1);
 
         ToggleKitLikeUseCase.Result result = service.toggleKitLike(param);
-        assertEquals(1, result.likes());
+        assertEquals(1, result.count());
+        assertTrue(result.liked());
 
         verifyNoInteractions(deleteKitLikePort);
     }
@@ -109,7 +109,8 @@ class ToggleKitLikeServiceTest {
         when(countKitLikePort.countByKitId(param.getKitId())).thenReturn(0);
 
         ToggleKitLikeUseCase.Result result = service.toggleKitLike(param);
-        assertEquals(0, result.likes());
+        assertEquals(0, result.count());
+        assertFalse(result.liked());
 
         verifyNoInteractions(createKitLikePort);
     }
