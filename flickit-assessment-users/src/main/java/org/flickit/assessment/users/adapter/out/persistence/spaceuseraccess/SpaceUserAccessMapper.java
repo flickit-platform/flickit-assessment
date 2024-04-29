@@ -7,8 +7,8 @@ import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateS
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SpaceUserAccessMapper {
-    
+
     public static SpaceUserAccessJpaEntity paramsToEntity(CreateSpaceUserAccessPort.Param param) {
-        return new SpaceUserAccessJpaEntity(param.spaceId(), param.userid(), param.creationTime(), param.createdBy());
+        return new SpaceUserAccessJpaEntity(param.spaceId(), param.userid(), param.createdBy(), param.creationTime());
     }
 }
