@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.DeleteSpaceMemberUseCase.Param;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteSpaceMemberServiceTest {
@@ -24,6 +25,8 @@ class DeleteSpaceMemberServiceTest {
 
     @Mock
     LoadSpaceOwnerPort loadSpaceOwnerPort;
+    @Mock
+    DeleteSpaceMemberPort deleteSpaceMemberPort;
 
     @Test
     @DisplayName("Deleting a member from space, should be done by owner")
@@ -36,5 +39,23 @@ class DeleteSpaceMemberServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(UUID.randomUUID());
 
         assertThrows(AccessDeniedException.class, ()-> service.deleteMember(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
+        verifyNoInteractions(deleteSpaceMemberPort);
+    }
+
+    @Test
+    @DisplayName("Deleting a member from space, with valid parameters sould be successfull")
+    void testDeleteSpaceMember_validParameters_successful(){
+        long spaceId = 0L;
+        var userId = UUID.randomUUID();
+        var currentUserId = UUID.randomUUID();
+        Param param = new Param(spaceId, userId, currentUserId);
+
+        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
+        doNothing().when(deleteSpaceMemberPort).delete(spaceId, userId);
+
+        assertDoesNotThrow(() -> service.deleteMember(param));
+        verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
+        verify(deleteSpaceMemberPort).delete(spaceId, userId);
     }
 }

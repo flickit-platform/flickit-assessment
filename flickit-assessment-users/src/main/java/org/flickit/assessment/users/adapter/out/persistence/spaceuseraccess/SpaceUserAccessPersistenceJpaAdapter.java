@@ -8,6 +8,7 @@ import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaR
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -19,7 +20,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 public class SpaceUserAccessPersistenceJpaAdapter implements
     AddSpaceMemberPort,
     CheckSpaceAccessPort,
-    LoadSpaceOwnerPort {
+    LoadSpaceOwnerPort,
+    DeleteSpaceMemberPort {
 
     private final SpaceUserAccessJpaRepository repository;
     private final SpaceJpaRepository spaceRepository;
@@ -43,5 +45,10 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     public UUID loadOwnerId(long id) {
         return repository.loadOwnerIdById(id)
             .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
+    }
+
+    @Override
+    public void delete(long id, UUID userId) {
+        repository.deleteBySpaceIdAndUserId(id, userId);
     }
 }

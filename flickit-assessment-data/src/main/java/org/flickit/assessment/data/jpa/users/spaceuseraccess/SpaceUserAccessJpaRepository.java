@@ -12,4 +12,6 @@ public interface SpaceUserAccessJpaRepository extends JpaRepository<SpaceUserAcc
     Optional<UUID> loadOwnerIdById(Long id);
 
     boolean existsByUserIdAndSpaceId(UUID userId, Long spaceId);
+
+    void deleteBySpaceIdAndUserId(long id, UUID userId);
 }

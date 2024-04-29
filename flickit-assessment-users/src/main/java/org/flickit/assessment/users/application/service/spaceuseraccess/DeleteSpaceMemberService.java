@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.DeleteSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +19,12 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class DeleteSpaceMemberService implements DeleteSpaceMemberUseCase {
 
     private final LoadSpaceOwnerPort loadSpaceOwnerPort;
+    private final DeleteSpaceMemberPort deleteSpaceMemberPort;
 
     @Override
     public void deleteMember(Param param) {
         validateCurrentUser(param.getSpaceId(), param.getCurrentUserId());
+        deleteSpaceMemberPort.delete(param.getSpaceId(), param.getUserId());
     }
 
     private void validateCurrentUser(Long spaceId, UUID currentUserId) {
