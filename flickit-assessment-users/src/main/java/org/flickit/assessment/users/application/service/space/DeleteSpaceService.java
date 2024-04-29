@@ -3,8 +3,10 @@ package org.flickit.assessment.users.application.service.space;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.DeleteSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistsPort;
+import org.flickit.assessment.users.application.port.out.space.CountSpaceAssessmentPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +15,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_ASSESSMENT_EXIST;
+import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 
 @Service
 @Transactional
@@ -22,13 +25,17 @@ public class DeleteSpaceService implements DeleteSpaceUseCase {
 
     private final LoadSpaceOwnerPort loadSpaceOwnerPort;
     private final CheckSpaceExistsPort checkSpaceExistsPort;
+    private final CountSpaceAssessmentPort countSpaceAssessmentPort;
 
     @Override
     public void deleteSpace(Param param) {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
 
         if(!checkSpaceExistsPort.existsById(param.getId()))
-            throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
+            throw new ResourceNotFoundException(SPACE_ID_NOT_FOUND);
+
+        if (countSpaceAssessmentPort.countAssessments(param.getId()) > 0)
+            throw new ValidationException(DELETE_SPACE_ASSESSMENT_EXIST);
     }
 
     private void validateCurrentUser(Long spaceId, UUID currentUserId) {

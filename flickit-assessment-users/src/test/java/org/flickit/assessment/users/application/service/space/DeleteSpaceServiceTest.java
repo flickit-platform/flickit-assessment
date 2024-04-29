@@ -3,8 +3,10 @@ package org.flickit.assessment.users.application.service.space;
 import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.DeleteSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistsPort;
+import org.flickit.assessment.users.application.port.out.space.CountSpaceAssessmentPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_ASSESSMENT_EXIST;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,15 +32,12 @@ class DeleteSpaceServiceTest {
     LoadSpaceOwnerPort loadSpaceOwnerPort;
     @Mock
     CheckSpaceExistsPort checkSpaceExistsPort;
-
-//    @Mock
+    @Mock
+    CountSpaceAssessmentPort countSpaceAssessmentPort;
+    //@Mock
 //    DeleteSpacePort deleteSpacePort;
 //
 
-    //
-//    @Mock
-//    CheckSpaceExistsPort checkSpaceExistsPort;
-//
 //    @Mock
 //    CountSpaceAssessmentPort countSpaceAssessmentPort;
     @Test
@@ -74,10 +74,25 @@ class DeleteSpaceServiceTest {
         DeleteSpaceUseCase.Param param = new DeleteSpaceUseCase.Param(spaceId, currentUserId);
 
         when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
-        when(checkSpaceExistsPort.existsById(spaceId)).thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
+        when(checkSpaceExistsPort.existsById(spaceId)).thenReturn(false);
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.deleteSpace(param));
         Assertions.assertThat(throwable).hasMessage(SPACE_ID_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Deleting a space should be accomplished on a space with no assessments.")
+    void testDeleteSpase_assessmentsCountIsNotZero_resourceNotFound() {
+        long spaceId = 0L;
+        UUID currentUserId = UUID.randomUUID();
+        DeleteSpaceUseCase.Param param = new DeleteSpaceUseCase.Param(spaceId, currentUserId);
+
+        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
+        when(checkSpaceExistsPort.existsById(spaceId)).thenReturn(true);
+        when(countSpaceAssessmentPort.countAssessments(spaceId)).thenReturn(1);
+
+        var throwable = assertThrows(ValidationException.class, () -> service.deleteSpace(param));
+        Assertions.assertThat(throwable).hasMessage(DELETE_SPACE_ASSESSMENT_EXIST);
     }
 
 }
