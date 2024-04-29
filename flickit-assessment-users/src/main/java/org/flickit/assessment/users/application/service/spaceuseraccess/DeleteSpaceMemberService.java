@@ -36,7 +36,6 @@ public class DeleteSpaceMemberService implements DeleteSpaceMemberUseCase {
 
     private void validateCurrentUser(Long spaceId, UUID currentUserId) {
         UUID spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(spaceId);
-
         if (!Objects.equals(spaceOwnerId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
