@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class AcceptSpaceInvitationRestController {
+public class AcceptSpaceInvitationsRestController {
 
     private final AcceptSpaceInvitationsUseCase useCase;
 
@@ -21,7 +21,7 @@ public class AcceptSpaceInvitationRestController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    private AcceptSpaceInvitationsUseCase.Param toParam(AcceptSpaceInvitationRequestDto requestDto) {
+    private AcceptSpaceInvitationsUseCase.Param toParam(AcceptSpaceInvitationsRequestDto requestDto) {
         return new AcceptSpaceInvitationsUseCase.Param(requestDto.userId(), requestDto.email());
     }
 }
