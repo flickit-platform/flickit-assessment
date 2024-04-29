@@ -2,6 +2,8 @@ package org.flickit.assessment.core.application.port.in.questionnaire;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -10,6 +12,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(MockitoExtension.class)
 class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
 
     @Test
@@ -28,9 +31,10 @@ class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
     @Test
     void testGetAssessmentQuestionnaireQuestionList_NullQuestionnaireId_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
+        var assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentQuestionnaireQuestionListUseCase.Param(
-                UUID.randomUUID(),
+                assessmentId,
                 null,
                 20,
                 0,
@@ -41,9 +45,10 @@ class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
     @Test
     void testGetAssessmentQuestionnaireQuestionList_PageSizeIsLessThanMin_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
+        var assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentQuestionnaireQuestionListUseCase.Param(
-                UUID.randomUUID(),
+                assessmentId,
                 1L,
                 0,
                 0,
@@ -54,9 +59,10 @@ class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
     @Test
     void testGetAssessmentQuestionnaireQuestionList_PageSizeIsGreaterThanMax_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
+        var assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentQuestionnaireQuestionListUseCase.Param(
-                UUID.randomUUID(),
+                assessmentId,
                 1L,
                 101,
                 0,
@@ -67,9 +73,10 @@ class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
     @Test
     void testGetAssessmentQuestionnaireQuestionList_PageNumberIsLessThanMin_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
+        var assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentQuestionnaireQuestionListUseCase.Param(
-                UUID.randomUUID(),
+                assessmentId,
                 1L,
                 20,
                 -1,
@@ -79,9 +86,10 @@ class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
 
     @Test
     void testGetAssessmentQuestionnaireQuestionList_NullCurrentUserId_ErrorMessage() {
+        var assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentQuestionnaireQuestionListUseCase.Param(
-                UUID.randomUUID(),
+                assessmentId,
                 1L,
                 20,
                 0,

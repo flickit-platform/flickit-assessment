@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 
 import java.util.List;
 import java.util.UUID;
@@ -49,13 +50,13 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
     }
 
     record Result(Long id,
-                  Integer index,
                   String title,
+                  Integer index,
                   String hint,
-                  List<OptionListItem> optionListItems,
-                  Answer answer,
-                  ConfidenceLevel confidenceLevel,
                   Boolean mayNotBeApplicable,
+                  List<OptionListItem> optionListItems,
+                  AnswerOption answer,
+                  ConfidenceLevel confidenceLevel,
                   Boolean isNotApplicable) {
     }
 
@@ -64,12 +65,8 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
                           Integer index) {
     }
 
-    record Answer(Long id,
-                  String caption,
-                  Integer index) {
-    }
-
-    record ConfidenceLevel(Long id,
-                           String title) {
+    record AnswerOption(Long id,
+                        String caption,
+                        Integer index) {
     }
 }
