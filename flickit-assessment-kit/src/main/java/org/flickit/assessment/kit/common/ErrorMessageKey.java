@@ -106,6 +106,8 @@ public class ErrorMessageKey {
     public static final String GET_ATTRIBUTE_LEVEL_QUESTIONS_ATTRIBUTE_ID_NOT_NULL = "get-attribute-level-questions.attributeId.notNull";
     public static final String GET_ATTRIBUTE_LEVEL_QUESTIONS_MATURITY_LEVEL_ID_NOT_NULL = "get-attribute-level-questions.maturityLevel.notNull";
 
+    public static final String TOGGLE_KIT_LIKE_KIT_ID_NOT_NULL = "toggle-kit-like.kitId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
