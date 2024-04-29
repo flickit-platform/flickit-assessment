@@ -6,8 +6,10 @@ import java.util.UUID;
 
 public interface CreateSpaceUserAccessPort {
 
-    void createAccess(List<Param> param);
+    void persist(Param param);
 
-    record Param(long spaceId, UUID userid, LocalDateTime creationTime, UUID createdBy){
+    void persistAll(List<Param> param);
+
+    record Param(long spaceId, UUID userId, UUID createdBy, LocalDateTime creationTime) {
     }
 }

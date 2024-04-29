@@ -61,12 +61,12 @@ class AcceptSpaceInvitationsServiceTest {
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);
-        doNothing().when(createSpaceUserAccessPort).createAccess(any());
+        doNothing().when(createSpaceUserAccessPort).persistAll(any());
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
         verify(loadSpaceUserInvitationsPort).loadInvitations(email);
-        verify(createSpaceUserAccessPort).createAccess(any());
+        verify(createSpaceUserAccessPort).persistAll(any());
         verify(deleteSpaceUserInvitationsPort).delete(email);
     }
 

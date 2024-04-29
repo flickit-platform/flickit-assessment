@@ -9,6 +9,6 @@ import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateS
 public class SpaceUserAccessMapper {
 
     public static SpaceUserAccessJpaEntity paramsToEntity(CreateSpaceUserAccessPort.Param param) {
-        return new SpaceUserAccessJpaEntity(param.spaceId(), param.userid(), param.createdBy(), param.creationTime());
+        return new SpaceUserAccessJpaEntity(param.spaceId(), param.userId(), param.createdBy(), param.creationTime());
     }
 }

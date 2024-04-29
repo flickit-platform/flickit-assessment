@@ -40,14 +40,14 @@ public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseC
         }
 
         if (!validInvitations.isEmpty())
-            createSpaceUserAccessPort.createAccess(validInvitations);
+            createSpaceUserAccessPort.persistAll(validInvitations);
     }
 
     private CreateSpaceUserAccessPort.Param toUserAccessPortParam(LoadSpaceUserInvitationsPort.Invitation invitation, UUID userId) {
         return new CreateSpaceUserAccessPort.Param(
             invitation.spaceId(),
             userId,
-            LocalDateTime.now(),
-            invitation.createdBy());
+            invitation.createdBy(),
+            LocalDateTime.now());
     }
 }

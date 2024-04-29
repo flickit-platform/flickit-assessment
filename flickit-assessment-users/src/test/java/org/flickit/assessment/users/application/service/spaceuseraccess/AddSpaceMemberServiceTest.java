@@ -4,8 +4,8 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class AddSpaceMemberServiceTest {
     private CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    private AddSpaceMemberPort addSpaceMemberPort;
+    private CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Test
     @DisplayName("Adding a valid member to a valid space should cause a successful addition")
@@ -50,13 +50,13 @@ class AddSpaceMemberServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(userId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, userId)).thenReturn(false);
-        doNothing().when(addSpaceMemberPort).persist(isA(AddSpaceMemberPort.Param.class));
+        doNothing().when(createSpaceUserAccessPort).persist(isA(CreateSpaceUserAccessPort.Param.class));
 
         assertDoesNotThrow(() -> service.addMember(param));
 
         verify(checkSpaceAccessPort, times(2)).checkIsMember(anyLong(), any(UUID.class));
         verify(loadUserPort).loadUserIdByEmail(email);
-        verify(addSpaceMemberPort).persist(any(AddSpaceMemberPort.Param.class));
+        verify(createSpaceUserAccessPort).persist(any(CreateSpaceUserAccessPort.Param.class));
     }
 
     @Test
@@ -74,7 +74,7 @@ class AddSpaceMemberServiceTest {
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verifyNoInteractions(loadUserPort);
-        verifyNoInteractions(addSpaceMemberPort);
+        verifyNoInteractions(createSpaceUserAccessPort);
     }
 
     @Test
@@ -93,7 +93,7 @@ class AddSpaceMemberServiceTest {
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadUserPort).loadUserIdByEmail(email);
-        verifyNoInteractions(addSpaceMemberPort);
+        verifyNoInteractions(createSpaceUserAccessPort);
     }
 
     @Test
@@ -114,6 +114,6 @@ class AddSpaceMemberServiceTest {
 
         verify(checkSpaceAccessPort, times(2)).checkIsMember(anyLong(), any(UUID.class));
         verify(loadUserPort).loadUserIdByEmail(email);
-        verifyNoInteractions(addSpaceMemberPort);
+        verifyNoInteractions(createSpaceUserAccessPort);
     }
 }
