@@ -3,6 +3,7 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
+import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistsPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,9 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 
 @Component
 @RequiredArgsConstructor
-public class SpacePersistenceJpaAdapter implements LoadSpaceOwnerPort {
+public class SpacePersistenceJpaAdapter implements
+    LoadSpaceOwnerPort,
+    CheckSpaceExistsPort {
 
     private final SpaceJpaRepository repository;
 
@@ -20,5 +23,10 @@ public class SpacePersistenceJpaAdapter implements LoadSpaceOwnerPort {
     public UUID loadOwnerId(long id) {
         return repository.loadOwnerIdById(id)
             .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
+    }
+
+    @Override
+    public boolean existsById(long id) {
+        return repository.existsById(id);
     }
 }
