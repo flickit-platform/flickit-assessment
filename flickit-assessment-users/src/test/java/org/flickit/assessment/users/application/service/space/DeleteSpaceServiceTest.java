@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.DeleteSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistsPort;
 import org.flickit.assessment.users.application.port.out.space.CountSpaceAssessmentPort;
+import org.flickit.assessment.users.application.port.out.space.DeleteSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_A
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,12 +37,9 @@ class DeleteSpaceServiceTest {
     CheckSpaceExistsPort checkSpaceExistsPort;
     @Mock
     CountSpaceAssessmentPort countSpaceAssessmentPort;
-    //@Mock
-//    DeleteSpacePort deleteSpacePort;
-//
+    @Mock
+    DeleteSpacePort deleteSpacePort;
 
-//    @Mock
-//    CountSpaceAssessmentPort countSpaceAssessmentPort;
     @Test
     @DisplayName("Deleting a space that the owner is null causes ResourceNotFoundException")
     void testDeleteSpase_ownerIsNull_resourceNotFound() {
@@ -95,4 +95,18 @@ class DeleteSpaceServiceTest {
         Assertions.assertThat(throwable).hasMessage(DELETE_SPACE_ASSESSMENT_EXIST);
     }
 
+    @Test
+    @DisplayName("Deleting a space with valid parameters should cause a successful delete.")
+    void testDeleteSpase_validParameters_successful() {
+        long spaceId = 0L;
+        UUID currentUserId = UUID.randomUUID();
+        DeleteSpaceUseCase.Param param = new DeleteSpaceUseCase.Param(spaceId, currentUserId);
+
+        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
+        when(checkSpaceExistsPort.existsById(spaceId)).thenReturn(true);
+        when(countSpaceAssessmentPort.countAssessments(spaceId)).thenReturn(0);
+        doNothing().when(deleteSpacePort).deleteById(anyLong(), anyLong());
+
+        assertDoesNotThrow(() -> service.deleteSpace(param));
+    }
 }

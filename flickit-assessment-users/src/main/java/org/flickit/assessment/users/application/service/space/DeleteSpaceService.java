@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.DeleteSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistsPort;
 import org.flickit.assessment.users.application.port.out.space.CountSpaceAssessmentPort;
+import org.flickit.assessment.users.application.port.out.space.DeleteSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ public class DeleteSpaceService implements DeleteSpaceUseCase {
     private final LoadSpaceOwnerPort loadSpaceOwnerPort;
     private final CheckSpaceExistsPort checkSpaceExistsPort;
     private final CountSpaceAssessmentPort countSpaceAssessmentPort;
+    private final DeleteSpacePort deleteSpacePort;
 
     @Override
     public void deleteSpace(Param param) {
@@ -36,6 +38,8 @@ public class DeleteSpaceService implements DeleteSpaceUseCase {
 
         if (countSpaceAssessmentPort.countAssessments(param.getId()) > 0)
             throw new ValidationException(DELETE_SPACE_ASSESSMENT_EXIST);
+
+        deleteSpacePort.deleteById(param.getId(), System.currentTimeMillis());
     }
 
     private void validateCurrentUser(Long spaceId, UUID currentUserId) {

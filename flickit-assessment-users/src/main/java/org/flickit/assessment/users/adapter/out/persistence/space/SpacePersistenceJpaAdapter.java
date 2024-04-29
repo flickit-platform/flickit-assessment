@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistsPort;
 import org.flickit.assessment.users.application.port.out.space.CountSpaceAssessmentPort;
+import org.flickit.assessment.users.application.port.out.space.DeleteSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 public class SpacePersistenceJpaAdapter implements
     LoadSpaceOwnerPort,
     CheckSpaceExistsPort,
-    CountSpaceAssessmentPort {
+    CountSpaceAssessmentPort,
+    DeleteSpacePort {
 
     private final SpaceJpaRepository repository;
 
@@ -29,11 +31,16 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public boolean existsById(long id) {
-        return repository.existsById(id);
+        return repository.existsByIdAndDeletedFalse(id);
     }
 
     @Override
     public int countAssessments(long spaceId) {
         return repository.countAssessments(spaceId);
+    }
+
+    @Override
+    public void deleteById(long spaceId, long deletionTime) {
+        repository.delete(spaceId, deletionTime);
     }
 }
