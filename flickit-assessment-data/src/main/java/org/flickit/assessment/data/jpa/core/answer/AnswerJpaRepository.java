@@ -50,4 +50,14 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         GROUP BY a.questionnaireId
         """)
     List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(@Param(value = "assessmentResultId") UUID assessmentResultId, @Param(value = "questionnaireIds") List<Long> questionnaireIds);
+
+    @Query("""
+            SELECT a
+            FROM QuestionJpaEntity q
+            JOIN AnswerJpaEntity a
+                ON q.refNum = a.questionRefNum AND a.assessmentResult.id = :assessmentResultId
+            WHERE q.questionnaireId = :questionnaireId
+            ORDER BY q.index
+        """)
+    Page<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIndexAsc(UUID assessmentResultId, Long questionnaireId, Pageable pageable);
 }

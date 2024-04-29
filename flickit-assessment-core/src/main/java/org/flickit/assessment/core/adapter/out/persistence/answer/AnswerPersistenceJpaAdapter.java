@@ -14,6 +14,7 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.FirstUnansweredQuestionView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -34,11 +35,13 @@ public class AnswerPersistenceJpaAdapter implements
     GetQuestionnairesProgressPort,
     CountAnswersByQuestionIdsPort,
     LoadAnswerPort,
-    UpdateAnswerPort {
+    UpdateAnswerPort,
+    LoadAssessmentQuestionnaireAnswerListPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final QuestionJpaRepository questionRepository;
+    private final QuestionnaireJpaRepository questionnaireRepository;
 
     @Override
     public UUID persist(CreateAnswerPort.Param param) {
@@ -105,5 +108,19 @@ public class AnswerPersistenceJpaAdapter implements
     @Override
     public void update(UpdateAnswerPort.Param param) {
         repository.update(param.answerId(), param.answerOptionId(), param.confidenceLevelId(), param.isNotApplicable(), param.currentUserId());
+    }
+
+    @Override
+    public List<Answer> loadByAssessmentIdAndQuestionnaireId(UUID assessmentId, Long questionnaireId, int size, int page) {
+        if (!questionnaireRepository.checkQuestionnaireAndAssessmentBelongsSameKit(assessmentId, questionnaireId)) {
+            throw new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND);
+        }
+        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
+
+        return repository.findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIndexAsc(assessmentResult.getId(), questionnaireId, PageRequest.of(page, size))
+            .getContent().stream()
+            .map(AnswerMapper::mapToDomainModel)
+            .toList();
     }
 }
