@@ -15,8 +15,7 @@ public class AcceptSpaceInvitationsRestController {
     private final AcceptSpaceInvitationsUseCase useCase;
 
     @PutMapping("/spaces/new-users")
-    public ResponseEntity<Void> inviteExpertGroupMember(
-        @RequestBody AcceptSpaceInvitationRequestDto requestDto) {
+    public ResponseEntity<Void> acceptSpaceInvitations(@RequestBody AcceptSpaceInvitationsRequestDto requestDto) {
         useCase.acceptInvitations(toParam(requestDto));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
