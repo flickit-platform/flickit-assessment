@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaRepository;
+import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 @RequiredArgsConstructor
 public class SpaceUserAccessPersistenceJpaAdapter implements
     AddSpaceMemberPort,
-    CheckSpaceAccessPort {
+    CheckSpaceAccessPort,
+    LoadSpaceOwnerPort {
 
     private final SpaceUserAccessJpaRepository repository;
     private final SpaceJpaRepository spaceRepository;
@@ -35,5 +37,11 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
             throw new ResourceNotFoundException(SPACE_ID_NOT_FOUND);
 
         return repository.existsByUserIdAndSpaceId(userId, spaceId);
+    }
+
+    @Override
+    public UUID loadOwnerId(long id) {
+        return repository.loadOwnerIdById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
     }
 }

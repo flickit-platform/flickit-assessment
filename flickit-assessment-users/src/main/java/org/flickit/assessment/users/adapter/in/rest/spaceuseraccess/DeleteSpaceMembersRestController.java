@@ -18,7 +18,7 @@ public class DeleteSpaceMembersRestController {
     private final DeleteSpaceMemberUseCase useCase;
     private final UserContext userContext;
 
-    @DeleteMapping("/expert-groups/{id}/members/{userId}")
+    @DeleteMapping("/space/{id}/members/{userId}")
     public ResponseEntity<Void> deleteSpaceMembers(
         @PathVariable("id") long id,
         @PathVariable("userId") UUID userId) {
