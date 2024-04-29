@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.application.port.in.space;
+package org.flickit.assessment.users.application.port.in.spaceaccess;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
