@@ -68,4 +68,8 @@ public class ErrorMessageKey {
     public static final String INVITE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "invite-space-member.spaceId.notUll";
     public static final String INVITE_SPACE_MEMBER_EMAIL_NOT_NULL = "invite-space-member.email.notNull";
     public static final String INVITE_SPACE_MEMBER_SPACE_USER_DUPLICATE = "invite-space-member.spaceId.userId.duplicate";
+
+    public static final String DELETE_SPACE_ASSESSMENT_EXIST = "delete-space.kits.exist";
+    public static final String DELETE_SPACE_SPACE_ID_NOT_NULL = "delete-space.space-id.notNull";
+
 }
