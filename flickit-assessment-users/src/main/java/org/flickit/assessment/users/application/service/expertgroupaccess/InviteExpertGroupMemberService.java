@@ -49,7 +49,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         var email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
 
         inviteExpertGroupMemberPort.invite(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
-        sendExpertGroupInviteMailPort.sendInvite(email, param.getExpertGroupId(), inviteToken);
+        sendExpertGroupInviteMailPort.inviteToExpertGroup(email, param.getExpertGroupId(), inviteToken);
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
