@@ -1,7 +1,6 @@
 package org.flickit.assessment.users.application.port.in.spaceuseraccess;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.users.application.port.in.spaceaccess.DeleteSpaceMemberUseCase;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
