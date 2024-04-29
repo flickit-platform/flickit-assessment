@@ -482,7 +482,91 @@
 				}
 			},
 			"response": []
-        },
+		},
+		{
+			"name": "Get Kit Attribute Level Questions Detail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/348/details/attributes/1654/maturity-levels/1929",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"348",
+						"details",
+						"attributes",
+						"1654",
+						"maturity-levels",
+						"1929"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Kit Tags",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kit-tags?page=0&size=20",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kit-tags"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "20"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Toggle Kit Like",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/386/likes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"386",
+						"likes"
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "Get Kit List",
 			"request": {

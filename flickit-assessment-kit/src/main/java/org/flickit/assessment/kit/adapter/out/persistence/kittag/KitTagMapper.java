@@ -10,5 +10,6 @@ public class KitTagMapper {
 
     public static KitTag toDomainModel(KitTagJpaEntity entity) {
         return new KitTag(entity.getId(), entity.getCode(), entity.getTitle());
+
     }
 }

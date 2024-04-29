@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_SPACE_USER_DUPLICATE;
+import static org.flickit.assessment.users.common.ErrorMessageKey.USER_BY_EMAIL_NOT_FOUND;
 
 @Service
 @Transactional
@@ -34,7 +36,8 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
         if (!inviterHasAccess)
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        UUID userId = loadUserPort.loadUserIdByEmail(param.getEmail());
+        UUID userId = loadUserPort.loadUserIdByEmail(param.getEmail())
+            .orElseThrow(() -> new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));
 
         boolean inviteeHasAccess = checkSpaceAccessPort.checkIsMember(spaceId, userId);
         if (inviteeHasAccess)
