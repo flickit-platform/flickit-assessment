@@ -7,7 +7,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.*;
+import static org.flickit.assessment.users.common.ErrorMessageKey.ACCEPT_SPACE_INVITATIONS_USER_ID_NOT_NULL;
 
 public interface AcceptSpaceInvitationsUseCase {
 
@@ -20,12 +20,8 @@ public interface AcceptSpaceInvitationsUseCase {
         @NotNull(message = ACCEPT_SPACE_INVITATIONS_USER_ID_NOT_NULL)
         UUID userId;
 
-        @NotNull(message = ACCEPT_SPACE_INVITATIONS_EMAIL_NOT_NULL)
-        String email;
-
-        public Param(UUID userId, String email) {
+        public Param(UUID userId) {
             this.userId = userId;
-            this.email = email;
             this.validateSelf();
         }
     }

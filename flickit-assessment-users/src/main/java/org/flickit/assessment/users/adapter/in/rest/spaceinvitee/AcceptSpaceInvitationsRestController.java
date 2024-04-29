@@ -21,6 +21,6 @@ public class AcceptSpaceInvitationsRestController {
     }
 
     private AcceptSpaceInvitationsUseCase.Param toParam(AcceptSpaceInvitationsRequestDto requestDto) {
-        return new AcceptSpaceInvitationsUseCase.Param(requestDto.userId(), requestDto.email());
+        return new AcceptSpaceInvitationsUseCase.Param(requestDto.userId());
     }
 }
