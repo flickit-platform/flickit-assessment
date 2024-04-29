@@ -33,4 +33,9 @@ public class QuestionMother {
         return new Question(id++, "question" + id, null, null, Boolean.FALSE, null);
     }
 
+    public static Question withOptions() {
+        Question question = new Question(id++, "question" + id, null, null, Boolean.FALSE, null);
+        question.setOptions(List.of(AnswerOptionMother.optionOne(), AnswerOptionMother.optionTwo()));
+        return question;
+    }
 }
