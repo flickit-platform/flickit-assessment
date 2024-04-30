@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface SpaceInviteeJpaRepository extends JpaRepository<SpaceInviteeJpaEntity, UUID> {
@@ -25,4 +26,8 @@ public interface SpaceInviteeJpaRepository extends JpaRepository<SpaceInviteeJpa
                 @Param("creationTime") LocalDateTime creationTime,
                 @Param("expirationDate") LocalDateTime expirationDate,
                 @Param("createdBy") UUID createdBy);
+
+    void deleteByEmail(@Param("email") String email);
+
+    List<SpaceInviteeJpaEntity> findByEmail(@Param("email") String email);
 }

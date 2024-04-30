@@ -35,7 +35,6 @@ public class SpaceUserAccessJpaEntity {
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
-
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
