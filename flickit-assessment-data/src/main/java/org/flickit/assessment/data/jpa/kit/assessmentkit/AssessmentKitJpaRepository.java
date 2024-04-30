@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,8 +14,10 @@ import java.util.UUID;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
-    @Query("SELECT u FROM UserJpaEntity u " +
-        "WHERE u.id IN (SELECT ku.id.userId FROM KitUserAccessJpaEntity ku WHERE ku.id.kitId = :kitId)")
+    @Query("""
+            SELECT u FROM UserJpaEntity u
+            WHERE u.id IN (SELECT ku.id.userId FROM KitUserAccessJpaEntity ku WHERE ku.id.kitId = :kitId)
+        """)
     Page<UserJpaEntity> findAllKitUsers(Long kitId, Pageable pageable);
 
     @Modifying
@@ -29,7 +30,7 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                                          @Param("lastMajorModificationTime") LocalDateTime lastMajorModificationTime);
 
     @Query("""
-        SELECT k.lastMajorModificationTime FROM AssessmentKitJpaEntity k
+            SELECT k.lastMajorModificationTime FROM AssessmentKitJpaEntity k
             WHERE k.id = :kitId
         """)
     LocalDateTime loadLastMajorModificationTime(@Param("kitId") Long kitId);
@@ -62,9 +63,8 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
 
     @Query("""
             SELECT k AS kit, g AS expertGroup
-                FROM AssessmentKitJpaEntity k
-                LEFT JOIN ExpertGroupJpaEntity g
-                    ON k.expertGroupId = g.id
+            FROM AssessmentKitJpaEntity k
+            LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE AND k.isPrivate = FALSE
             ORDER BY k.title
         """)
@@ -72,16 +72,14 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
 
     @Query("""
             SELECT k AS kit, g AS expertGroup
-                FROM AssessmentKitJpaEntity k
-                LEFT JOIN ExpertGroupJpaEntity g
-                    ON k.expertGroupId = g.id
-                JOIN KitUserAccessJpaEntity kua
-                    ON k.id = kua.kitId
+            FROM AssessmentKitJpaEntity k
+            LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId
             WHERE k.published = TRUE AND k.isPrivate = TRUE
-            AND kua.userId = :userId
+                AND kua.userId = :userId
             ORDER BY k.title
         """)
-    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(UUID userId, PageRequest of);
+    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId") UUID userId, Pageable pageable);
 
     @Query("""
             SELECT
