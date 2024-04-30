@@ -6,11 +6,10 @@ import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.port.out.attribute.CountAttributeImpactfulQuestionsPort;
-import org.flickit.assessment.kit.application.port.out.attribute.CreateAttributePort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributePort;
-import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
+import org.flickit.assessment.kit.application.port.out.attribute.*;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
@@ -22,7 +21,8 @@ public class AttributePersistenceJpaAdapter implements
     UpdateAttributePort,
     CreateAttributePort,
     LoadAttributePort,
-    CountAttributeImpactfulQuestionsPort {
+    CountAttributeImpactfulQuestionsPort,
+    LoadAllAttributesPort {
 
     private final AttributeJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
@@ -55,5 +55,12 @@ public class AttributePersistenceJpaAdapter implements
     @Override
     public int countQuestions(long attributeId) {
         return repository.countAttributeImpactfulQuestions(attributeId);
+    }
+
+    @Override
+    public List<Attribute> loadAllByIds(List<Long> attributeIds) {
+        return repository.findAllById(attributeIds).stream()
+            .map(AttributeMapper::mapToDomainModel)
+            .toList();
     }
 }

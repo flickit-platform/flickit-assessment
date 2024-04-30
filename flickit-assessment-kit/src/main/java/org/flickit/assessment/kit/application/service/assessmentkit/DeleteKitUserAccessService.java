@@ -8,8 +8,8 @@ import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.User;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.DeleteKitUserAccessUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.kituseraccess.LoadKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_
 public class DeleteKitUserAccessService implements DeleteKitUserAccessUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
-    private final LoadKitUserAccessPort loadKitUserAccessPort;
+    private final CheckKitUserAccessPort checkKitUserAccessPort;
     private final DeleteKitUserAccessPort deleteKitUserAccessPort;
     private final LoadUserPort loadUserPort;
 
@@ -50,8 +50,7 @@ public class DeleteKitUserAccessService implements DeleteKitUserAccessUseCase {
     private void checkAccessExistence(Param param) {
         User user = loadUserPort.loadById(param.getUserId()).orElseThrow(
             () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_USER_NOT_FOUND));
-        loadKitUserAccessPort.loadByKitIdAndUserId(param.getKitId(), user.getId()).orElseThrow(
-            () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND)
-        );
+        if (!checkKitUserAccessPort.hasAccess(param.getKitId(), user.getId()))
+            throw new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND);
     }
 }

@@ -14,6 +14,7 @@ import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
+import org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.kittagrelation.KitTagRelationMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
@@ -48,6 +50,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     CountKitStatsPort,
     UpdateKitInfoPort,
     LoadAssessmentKitPort,
+    LoadPublishedKitListPort,
+    CountKitListStatsPort,
     DeleteAssessmentKitPort,
     CountKitAssessmentsPort {
 
@@ -61,7 +65,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     public ExpertGroup loadKitExpertGroup(Long kitId) {
         ExpertGroupJpaEntity entity = expertGroupRepository.findByKitId(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-        return new ExpertGroup(entity.getId(), entity.getTitle(), entity.getOwnerId());
+        return ExpertGroupMapper.toDomainModel(entity);
     }
 
     @Override
@@ -177,6 +181,54 @@ public class AssessmentKitPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         return AssessmentKitMapper.mapToDomainModel(kitEntity);
+    }
+
+    @Override
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(int page, int size) {
+        var pageResult = repository.findAllPublishedAndNotPrivateOrderByTitle(PageRequest.of(page, size));
+        var items = pageResult.getContent().stream()
+            .map(v -> new LoadPublishedKitListPort.Result(
+                AssessmentKitMapper.mapToDomainModel(v.getKit()),
+                ExpertGroupMapper.toDomainModel(v.getExpertGroup())
+            ))
+            .toList();
+
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            AssessmentKitJpaEntity.Fields.TITLE,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
+    }
+
+    @Override
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPrivateKits(UUID userId, int page, int size) {
+        var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId, PageRequest.of(page, size));
+        var items = pageResult.getContent().stream()
+            .map(v -> new LoadPublishedKitListPort.Result(
+                AssessmentKitMapper.mapToDomainModel(v.getKit()),
+                ExpertGroupMapper.toDomainModel(v.getExpertGroup())))
+            .toList();
+
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            AssessmentKitJpaEntity.Fields.TITLE,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
+    }
+
+    @Override
+    public List<CountKitListStatsPort.Result> countKitsStats(List<Long> kitIds) {
+        List<CountKitStatsView> kitsStats = repository.countKitStats(kitIds);
+        return kitsStats.stream().map(x -> new CountKitListStatsPort.Result(x.getId(),
+                x.getLikeCount(),
+                x.getAssessmentCount()))
+            .toList();
     }
 
     @Override
