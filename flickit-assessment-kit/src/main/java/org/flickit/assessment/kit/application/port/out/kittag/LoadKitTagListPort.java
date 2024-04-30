@@ -10,4 +10,9 @@ public interface LoadKitTagListPort {
     List<KitTag> loadByKitId(long kitId);
 
     PaginatedResponse<KitTag> loadAll(int page, int size);
+
+    List<Result> loadByKitIds(List<Long> kitIds);
+
+    record Result(long kitId, List<KitTag> kitTags) {
+    }
 }

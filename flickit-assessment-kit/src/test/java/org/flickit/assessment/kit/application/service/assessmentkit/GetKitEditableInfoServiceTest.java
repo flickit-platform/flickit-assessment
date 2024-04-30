@@ -68,8 +68,6 @@ class GetKitEditableInfoServiceTest {
 
         AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
         List<KitTag> tags = List.of(new KitTag(1L, "tagCode1", "Tag1"));
-        ExpertGroup expertGroup = new ExpertGroup(1L, null, currentUserId);
-        List<KitTag> tags = List.of(new KitTag(1L, "tagCode1", "Tag1"));
         ExpertGroup expertGroup = new ExpertGroup(1L, null, null, currentUserId);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);

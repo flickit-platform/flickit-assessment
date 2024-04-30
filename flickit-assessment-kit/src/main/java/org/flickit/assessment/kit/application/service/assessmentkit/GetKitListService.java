@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUs
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitListStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadPublishedKitListPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadPublishedKitListPort.Result;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitListTagsListPort;
+import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,24 +25,25 @@ public class GetKitListService implements GetKitListUseCase {
 
     private final LoadPublishedKitListPort loadPublishedKitListPort;
     private final CountKitListStatsPort countKitStatsPort;
-    private final LoadKitListTagsListPort loadKitTagsListPort;
+    private final LoadKitTagListPort loadKitTagListPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public PaginatedResponse<KitListItem> getKitList(Param param) {
-        PaginatedResponse<Result> kitsPage;
-        if (Boolean.FALSE.equals(param.getIsPrivate())) {
+        PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
+        if (Boolean.FALSE.equals(param.getIsPrivate()))
             kitsPage = loadPublishedKitListPort.loadPublicKits(param.getPage(), param.getSize());
-        } else {
+         else
             kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), param.getPage(), param.getSize());
-        }
-        var ids = kitsPage.getItems().stream().map((Result t) -> t.kit().getId()).toList();
+
+        var ids = kitsPage.getItems().stream()
+            .map((Result t) -> t.kit().getId()).toList();
 
         var idToStatsMap = countKitStatsPort.countKitsStats(ids).stream()
             .collect(Collectors.toMap(CountKitListStatsPort.Result::id, Function.identity()));
 
-        var idToKitTagsMap = loadKitTagsListPort.loadByKitIds(ids).stream()
-            .collect(Collectors.groupingBy(LoadKitListTagsListPort.Result::kitId));
+        var idToKitTagsMap = loadKitTagListPort.loadByKitIds(ids).stream()
+            .collect(Collectors.groupingBy(LoadKitTagListPort.Result::kitId));
 
         var items = kitsPage.getItems().stream().map(k -> new KitListItem(
             k.kit().getId(),

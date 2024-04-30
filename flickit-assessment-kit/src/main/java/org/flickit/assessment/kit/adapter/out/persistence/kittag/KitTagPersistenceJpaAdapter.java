@@ -6,14 +6,11 @@ import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kittag.KitTagWithKitIdView;
 import org.flickit.assessment.kit.application.domain.KitTag;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitListTagsListPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitListTagsListPort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,8 +21,7 @@ import static org.flickit.assessment.kit.adapter.out.persistence.kittag.KitTagMa
 @Component
 @RequiredArgsConstructor
 public class KitTagPersistenceJpaAdapter implements
-    LoadKitTagListPort,
-    LoadKitListTagsListPort {
+    LoadKitTagListPort {
 
     private final KitTagJpaRepository repository;
 
@@ -59,7 +55,7 @@ public class KitTagPersistenceJpaAdapter implements
     public List<Result> loadByKitIds(List<Long> kitIds) {
         return repository.findAllByKitIdIn(kitIds).stream()
             .collect(Collectors.groupingBy(KitTagWithKitIdView::getKitId)).entrySet().stream()
-            .map(entry -> new LoadKitListTagsListPort.Result(
+            .map(entry -> new LoadKitTagListPort.Result(
                 entry.getKey(),
                 entry.getValue().stream()
                     .map((KitTagWithKitIdView v) -> toDomainModel(v.getKitTag()))

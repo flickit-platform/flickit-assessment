@@ -5,7 +5,7 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitListStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadPublishedKitListPort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitListTagsListPort;
+import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
@@ -37,7 +37,7 @@ class GetKitListServiceTest {
     private CountKitListStatsPort countKitStatsPort;
 
     @Mock
-    private LoadKitListTagsListPort loadKitTagsListPort;
+    private LoadKitTagListPort loadKitTagListPort;
 
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
@@ -53,7 +53,7 @@ class GetKitListServiceTest {
         var kitIds = List.of(kitId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var expertGroupPictureUrl = "https://picureLink";
-        var expectedKitsPage = new PaginatedResponse(
+        var expectedKitsPage = new PaginatedResponse<>(
             List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
             0,
             10,
@@ -67,8 +67,8 @@ class GetKitListServiceTest {
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
-        when(loadKitTagsListPort.loadByKitIds(kitIds)).thenReturn(
-            List.of(new LoadKitListTagsListPort.Result(kitId, List.of(sampleTag))));
+        when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
+            List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
             .thenReturn(expertGroupPictureUrl);
 
@@ -106,7 +106,7 @@ class GetKitListServiceTest {
         var kitIds = List.of(kitId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var expertGroupPictureUrl = "https://picureLink";
-        var expectedKitsPage = new PaginatedResponse(
+        var expectedKitsPage = new PaginatedResponse<>(
             List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
             0,
             10,
@@ -120,8 +120,8 @@ class GetKitListServiceTest {
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
-        when(loadKitTagsListPort.loadByKitIds(kitIds)).thenReturn(
-            List.of(new LoadKitListTagsListPort.Result(kitId, List.of(sampleTag))));
+        when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
+            List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
             .thenReturn(expertGroupPictureUrl);
 
@@ -167,7 +167,7 @@ class GetKitListServiceTest {
         when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(List.of())).thenReturn(List.of());
-        when(loadKitTagsListPort.loadByKitIds(List.of())).thenReturn(List.of());
+        when(loadKitTagListPort.loadByKitIds(List.of())).thenReturn(List.of());
 
         var kitList = service.getKitList(param);
 
