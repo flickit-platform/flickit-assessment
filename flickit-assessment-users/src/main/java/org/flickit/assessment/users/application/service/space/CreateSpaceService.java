@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
@@ -8,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static org.flickit.assessment.users.application.domain.Space.generateSlugCode;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class CreateSpaceService implements CreateSpaceUseCase {
     CreateSpacePort.Param toCreateParam(String title, UUID currentUserId) {
         LocalDateTime creationTime = LocalDateTime.now();
         return new CreateSpacePort.Param(
-            generateSlugCode(title),
+            RandomStringUtils.randomAlphabetic(10),
             title,
             currentUserId,
             creationTime,
