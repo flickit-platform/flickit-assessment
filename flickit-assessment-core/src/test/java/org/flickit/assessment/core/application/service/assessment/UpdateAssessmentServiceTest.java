@@ -1,9 +1,11 @@
 package org.flickit.assessment.core.application.service.assessment;
 
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.port.in.assessment.UpdateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
+import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,12 +32,16 @@ class UpdateAssessmentServiceTest {
     @Mock
     private CheckAssessmentExistencePort checkAssessmentExistencePort;
 
+    @Mock
+    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+
     @Test
     void testUpdateAssessment_ValidParam_UpdatedAndReturnsId() {
         UUID id = UUID.randomUUID();
         UUID lastModifiedBy = UUID.randomUUID();
 
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(id, lastModifiedBy)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
@@ -70,6 +76,7 @@ class UpdateAssessmentServiceTest {
             lastModifiedBy
         );
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(id, lastModifiedBy)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         service.updateAssessment(param);
@@ -100,6 +107,25 @@ class UpdateAssessmentServiceTest {
 
         assertEquals(param.getId(), portIdParam.getValue());
         verify(updateAssessmentPort, never()).update(any());
+    }
+
+    @Test
+    void testUpdateAssessment_WhenNoUserAssessmentAccess_ThenThrowAccessDeniedException() {
+        UUID id = UUID.randomUUID();
+        UUID lastModifiedBy = UUID.randomUUID();
+
+        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(id, lastModifiedBy)).thenReturn(false);
+
+
+        UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
+            id,
+            "new title",
+            AssessmentColor.EMERALD.getId(),
+            lastModifiedBy
+        );
+
+        assertThrows(AccessDeniedException.class, () -> service.updateAssessment(param));
     }
 
 }
