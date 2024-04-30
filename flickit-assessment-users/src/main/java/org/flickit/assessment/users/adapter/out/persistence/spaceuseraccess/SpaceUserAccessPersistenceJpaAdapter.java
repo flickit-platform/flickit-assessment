@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaRepository;
+import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.springframework.stereotype.Component;
@@ -24,17 +25,17 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     private final SpaceJpaRepository spaceRepository;
 
     @Override
-    public void persist(CreateSpaceUserAccessPort.Param param) {
-        SpaceUserAccessJpaEntity unsavedEntity = new SpaceUserAccessJpaEntity(param.spaceId(), param.userId(),
-            param.createdBy(), param.creationTime());
+    public void persist(SpaceUserAccess access) {
+        SpaceUserAccessJpaEntity unsavedEntity = new SpaceUserAccessJpaEntity(access.getSpaceId(), access.getUserId(),
+            access.getCreatedBy(), access.getCreationTime());
         repository.save(unsavedEntity);
     }
 
     @Override
-    public void persistAll(List<CreateSpaceUserAccessPort.Param> param) {
+    public void persistAll(List<SpaceUserAccess> param) {
         List<SpaceUserAccessJpaEntity> entities = param
             .stream()
-            .map(SpaceUserAccessMapper::paramsToEntity).toList();
+            .map(SpaceUserAccessMapper::mapToJpaEntity).toList();
 
         repository.saveAll(entities);
     }

@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
+import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
@@ -93,7 +94,7 @@ class InviteSpaceMemberServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(inviteeUserId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, inviteeUserId)).thenReturn(false);
-        doNothing().when(createSpaceUserAccessPort).persist(isA(CreateSpaceUserAccessPort.Param.class));
+        doNothing().when(createSpaceUserAccessPort).persist(isA(SpaceUserAccess.class));
         assertDoesNotThrow(() -> service.inviteMember(param));
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);

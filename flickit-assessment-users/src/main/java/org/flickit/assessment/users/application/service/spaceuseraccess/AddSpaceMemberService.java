@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
@@ -43,10 +44,7 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
         if (inviteeHasAccess)
             throw new ResourceAlreadyExistsException(ADD_SPACE_MEMBER_SPACE_USER_DUPLICATE);
 
-        createSpaceUserAccessPort.persist(toParam(spaceId, userId, currentUserId, LocalDateTime.now()));
-    }
-
-    CreateSpaceUserAccessPort.Param toParam(long spaceId, UUID userId, UUID currentUserId, LocalDateTime inviteTime) {
-        return new CreateSpaceUserAccessPort.Param(spaceId, userId, currentUserId, inviteTime);
+        var access = new SpaceUserAccess(spaceId, userId, currentUserId, LocalDateTime.now());
+        createSpaceUserAccessPort.persist(access);
     }
 }

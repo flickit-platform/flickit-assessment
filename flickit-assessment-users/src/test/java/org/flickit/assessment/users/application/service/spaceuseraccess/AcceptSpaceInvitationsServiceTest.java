@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -42,7 +43,7 @@ class AcceptSpaceInvitationsServiceTest {
         AcceptSpaceInvitationsUseCase.Param param = new AcceptSpaceInvitationsUseCase.Param(userId);
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(null);
+        when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(List.of());
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
