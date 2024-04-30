@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.service.spaceuseraccess;
 
+import org.flickit.assessment.users.application.domain.SpaceInvitation;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
@@ -57,7 +58,7 @@ class AcceptSpaceInvitationsServiceTest {
         long spaceId = 0L;
         String email = "test@example.com";
         AcceptSpaceInvitationsUseCase.Param param = new AcceptSpaceInvitationsUseCase.Param(userId);
-        var portResult = Stream.of(new LoadSpaceUserInvitationsPort.Invitation(spaceId, LocalDateTime.now().plusDays(1), userId)).toList();
+        var portResult = Stream.of(new SpaceInvitation(email, spaceId, userId, LocalDateTime.now(), LocalDateTime.now().plusDays(1))).toList();
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);
@@ -67,7 +68,7 @@ class AcceptSpaceInvitationsServiceTest {
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
         verify(loadSpaceUserInvitationsPort).loadInvitations(email);
         verify(createSpaceUserAccessPort).persistAll(any());
-        verify(deleteSpaceUserInvitationsPort).delete(email);
+        verify(deleteSpaceUserInvitationsPort).deleteAll(email);
     }
 
     @Test
@@ -77,16 +78,16 @@ class AcceptSpaceInvitationsServiceTest {
         long spaceId = 0L;
         String email = "test@example.com";
         AcceptSpaceInvitationsUseCase.Param param = new AcceptSpaceInvitationsUseCase.Param(userId);
-        var portResult = Stream.of(new LoadSpaceUserInvitationsPort.Invitation(spaceId, LocalDateTime.now().minusDays(1), userId)).toList();
+        var portResult = Stream.of(new SpaceInvitation(email, spaceId, userId, LocalDateTime.now(), LocalDateTime.now().minusDays(1))).toList();
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);
-        doNothing().when(deleteSpaceUserInvitationsPort).delete(email);
+        doNothing().when(deleteSpaceUserInvitationsPort).deleteAll(email);
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
         verify(loadSpaceUserInvitationsPort).loadInvitations(email);
         verifyNoInteractions(createSpaceUserAccessPort);
-        verify(deleteSpaceUserInvitationsPort).delete(email);
+        verify(deleteSpaceUserInvitationsPort).deleteAll(email);
     }
 }

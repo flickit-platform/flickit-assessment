@@ -1,8 +1,8 @@
 package org.flickit.assessment.users.adapter.out.persistence.spaceinvitee;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
+import org.flickit.assessment.users.application.domain.SpaceInvitation;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
@@ -20,21 +20,17 @@ public class SpaceInviteePersistenceJpaAdapter implements
     private final SpaceInviteeJpaRepository repository;
 
     @Override
-    public void delete(String email) {
+    public void deleteAll(String email) {
         repository.deleteByEmail(email);
     }
 
     @Override
-    public List<Invitation> loadInvitations(String email) {
-        var invitee = repository.findByEmail(email);
-        return invitee
+    public List<SpaceInvitation> loadInvitations(String email) {
+        var invitations = repository.findByEmail(email.toLowerCase());
+        return invitations
             .stream()
-            .map(SpaceInviteePersistenceJpaAdapter::mapInviteeEntityToPortResult)
+            .map(SpaceInviteeMapper::mapToDomain)
             .toList();
-    }
-
-    private static Invitation mapInviteeEntityToPortResult(SpaceInviteeJpaEntity entity) {
-        return new Invitation(entity.getSpaceId(), entity.getExpirationDate(), entity.getCreatedBy());
     }
 
     @Override
