@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.GetSpaceMembersUseCase.Param;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
@@ -12,13 +13,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetSpaceMembersServiceTest {
@@ -44,11 +47,10 @@ class GetSpaceMembersServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
 
-        var result = service.getSpaceMembers(param);
-        assertEquals(0, result.getItems().size(), "Items list should be empty");
-        assertEquals(0, result.getTotal(), "'page' should be 0");
-        assertEquals(0, result.getTotal(), "'size' should be 0");
-        assertEquals(0, result.getTotal(), "'total' should be 0");
+        assertThrows(AccessDeniedException.class, () -> service.getSpaceMembers(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        verify(checkSpaceAccessPort).checkIsMember(spaceId,currentUserId);
+        verifyNoInteractions(loadSpaceMembersPort);
+        verifyNoInteractions(createFileDownloadLinkPort);
     }
 
     @Test
@@ -78,5 +80,9 @@ class GetSpaceMembersServiceTest {
         assertEquals(page, result.getPage(), "'page' should be 0");
         assertEquals(size, result.getSize(), "'size' should be 10");
         assertEquals(2, result.getTotal(), "'total' should be 2");
+
+        verify(checkSpaceAccessPort).checkIsMember(spaceId,currentUserId);
+        verify(loadSpaceMembersPort).loadSpaceMembers(spaceId, page, size);
+        verify(createFileDownloadLinkPort, times(2)).createDownloadLink(any(String.class), any(Duration.class));
     }
 }

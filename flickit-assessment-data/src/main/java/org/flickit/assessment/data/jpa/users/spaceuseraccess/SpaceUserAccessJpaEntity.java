@@ -44,7 +44,6 @@ public class SpaceUserAccessJpaEntity {
         private UUID userId;
     }
 
-    //TODO: Convert 'creationTime' to 'lastSeen'
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
         public static final String CREATION_TIME = "creationTime";

@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.GetSpaceMembersUseCase;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
@@ -11,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
+
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,7 +30,7 @@ public class GetSpaceMembersService implements GetSpaceMembersUseCase {
     @Override
     public PaginatedResponse<Member> getSpaceMembers(Param param) {
         if (!checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId()))
-            return new PaginatedResponse<>(List.of(), 0, 0, null, null, 0);
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var portResult = loadSpaceMembersPort.loadSpaceMembers(param.getId(), param.getPage(), param.getSize());
         var members = mapToMembers(portResult.getItems());
