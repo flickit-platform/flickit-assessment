@@ -22,7 +22,7 @@ class GetSpaceMembersUseCaseParamTest {
         int page = 0;
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetSpaceMembersUseCase.Param(null, currentUserId, size, page));
-        assertThat(throwable).hasMessage("id: " + GET_SPACE_MEMBERS_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("id: " + GET_SPACE_MEMBERS_SPACE_ID_NOT_NULL);
     }
 
     @Test

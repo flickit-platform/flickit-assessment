@@ -21,7 +21,7 @@ public interface GetSpaceMembersUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_SPACE_MEMBERS_ID_NOT_NULL)
+        @NotNull(message = GET_SPACE_MEMBERS_SPACE_ID_NOT_NULL)
         Long id;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

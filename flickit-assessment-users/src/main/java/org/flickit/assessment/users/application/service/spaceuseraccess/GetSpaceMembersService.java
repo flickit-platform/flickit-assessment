@@ -26,7 +26,6 @@ public class GetSpaceMembersService implements GetSpaceMembersUseCase {
     private final LoadSpaceMembersPort loadSpaceMembersPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
-
     @Override
     public PaginatedResponse<Member> getSpaceMembers(Param param) {
         if (!checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId()))

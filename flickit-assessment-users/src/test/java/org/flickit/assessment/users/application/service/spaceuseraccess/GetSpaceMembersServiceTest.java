@@ -31,8 +31,10 @@ class GetSpaceMembersServiceTest {
 
     @Mock
     CheckSpaceAccessPort checkSpaceAccessPort;
+
     @Mock
     LoadSpaceMembersPort loadSpaceMembersPort;
+
     @Mock
     CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
