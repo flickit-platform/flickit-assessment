@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4945b763-7cc1-423c-98b5-07b114bcd13d",
+		"_postman_id": "db1f88b6-d7d9-4e31-9f56-505f7e06f470",
 		"name": "flickit-assessment-users",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "11099181"
@@ -433,6 +433,42 @@
 						"space",
 						"{{id}}",
 						"members"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accept Space Invitations",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"431e6979-6407-42ab-97ca-e9fd5bc2a9c2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces-accept-invitations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces-accept-invitations"
 					]
 				}
 			},
