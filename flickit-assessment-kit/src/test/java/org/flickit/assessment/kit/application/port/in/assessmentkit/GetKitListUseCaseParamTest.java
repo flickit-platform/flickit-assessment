@@ -24,7 +24,7 @@ class GetKitListUseCaseParamTest {
     void testGetAssessmentKitList_PageIsLessThanMin_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetKitListUseCase.Param( true,-1, 10, currentUserId));
+            () -> new GetKitListUseCase.Param( true, -1, 10, currentUserId));
         assertThat(throwable).hasMessage("page: " + GET_KIT_LIST_PAGE_MIN);
     }
 

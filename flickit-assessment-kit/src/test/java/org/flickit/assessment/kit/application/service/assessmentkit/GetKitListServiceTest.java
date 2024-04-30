@@ -44,10 +44,7 @@ class GetKitListServiceTest {
 
     @Test
     void testGetKitList_GettingPublicKitsValidParams_ValidResult() {
-        var param = new Param(Boolean.FALSE,
-            0,
-            10,
-            UUID.randomUUID());
+        var param = new Param(Boolean.FALSE, 0, 10, UUID.randomUUID());
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
@@ -97,10 +94,7 @@ class GetKitListServiceTest {
 
     @Test
     void testGetKitList_GettingPrivateKitsValidParams_ValidResult() {
-        var param = new Param(Boolean.TRUE,
-            0,
-            10,
-            UUID.randomUUID());
+        var param = new Param(Boolean.TRUE, 0, 10, UUID.randomUUID());
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
@@ -150,13 +144,9 @@ class GetKitListServiceTest {
 
     @Test
     void testGetKitList_GettingPrivateKitsValidParams_EmptyResult() {
-        var param = new Param(Boolean.TRUE,
-            0,
-            10,
-            UUID.randomUUID());
+        var param = new Param(Boolean.TRUE, 0, 10, UUID.randomUUID());
 
-        var expectedKitsPage = new PaginatedResponse(
-            List.of(),
+        var expectedKitsPage = new PaginatedResponse<LoadPublishedKitListPort.Result>(List.of(),
             0,
             10,
             AssessmentKitJpaEntity.Fields.TITLE,

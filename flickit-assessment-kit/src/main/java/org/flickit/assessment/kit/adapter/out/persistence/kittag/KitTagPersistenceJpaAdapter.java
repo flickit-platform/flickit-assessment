@@ -52,7 +52,7 @@ public class KitTagPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Result> loadByKitIds(List<Long> kitIds) {
+    public List<LoadKitTagListPort.Result> loadByKitIds(List<Long> kitIds) {
         return repository.findAllByKitIdIn(kitIds).stream()
             .collect(Collectors.groupingBy(KitTagWithKitIdView::getKitId)).entrySet().stream()
             .map(entry -> new LoadKitTagListPort.Result(

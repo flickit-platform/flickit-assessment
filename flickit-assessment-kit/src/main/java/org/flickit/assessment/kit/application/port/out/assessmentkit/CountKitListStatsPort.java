@@ -6,10 +6,6 @@ public interface CountKitListStatsPort {
 
     List<Result> countKitsStats(List<Long> kitIds);
 
-    record Result(
-        long id,
-        int likes,
-        int assessmentsCount
-    ) {
+    record Result(long id, int likes, int assessmentsCount) {
     }
 }

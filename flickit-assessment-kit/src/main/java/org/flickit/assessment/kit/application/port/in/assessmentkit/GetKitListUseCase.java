@@ -53,14 +53,12 @@ public interface GetKitListUseCase {
         int likes,
         int assessmentsCount,
         ExpertGroup expertGroup,
-        List<KitTag> tags
-    ) {
+        List<KitTag> tags) {
 
         public record ExpertGroup(
             long id,
             String title,
-            String picture
-        ) {
+            String picture) {
         }
     }
 }
