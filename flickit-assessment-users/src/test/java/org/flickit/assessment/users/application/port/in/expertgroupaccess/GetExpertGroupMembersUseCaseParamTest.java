@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetExpertGroupMembersUseCaseParamTest {
 
     @Test
-    void testGetExpertGroupMembers_spaceIdIsNull_ErrorMessage() {
+    void testGetExpertGroupMembers_expertGroupIdIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         int size = 10;
         int page = 0;
@@ -28,65 +28,65 @@ class GetExpertGroupMembersUseCaseParamTest {
 
     @Test
     void testGetExpertGroupMembers_currentUserIdIsNull_ErrorMessage() {
-        long spaceId = 0L;
+        long expertGroupId = 0L;
         int size = 10;
         int page = 0;
         String status = "ACTIVE";
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetExpertGroupMembersUseCase.Param(spaceId, status, null, size, page));
+            () -> new GetExpertGroupMembersUseCase.Param(expertGroupId, status, null, size, page));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
     void testGetExpertGroupMembers_sizeMin_ErrorMessage() {
-        long spaceId = 0L;
+        long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         int size = -1;
         int page = 0;
         String status = "ACTIVE";
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetExpertGroupMembersUseCase.Param(spaceId,status, currentUserId, size, page));
+            () -> new GetExpertGroupMembersUseCase.Param(expertGroupId,status, currentUserId, size, page));
         assertThat(throwable).hasMessage("size: " + GET_EXPERT_GROUP_MEMBERS_SIZE_MIN);
     }
 
     @Test
     void testGetExpertGroupMembers_sizeMax_ErrorMessage() {
-        long spaceId = 0L;
+        long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         int size = 101;
         int page = 0;
         String status = "ACTIVE";
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetExpertGroupMembersUseCase.Param(spaceId, status, currentUserId, size, page));
+            () -> new GetExpertGroupMembersUseCase.Param(expertGroupId, status, currentUserId, size, page));
         assertThat(throwable).hasMessage("size: " + GET_EXPERT_GROUP_MEMBERS_SIZE_MAX);
     }
 
     @Test
     void testGetExpertGroupMembers_pageMin_ErrorMessage() {
-        long spaceId = 0L;
+        long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         int size = 10;
         int page = -1;
         String status = "ACTIVE";
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetExpertGroupMembersUseCase.Param(spaceId, status,  currentUserId, size, page));
+            () -> new GetExpertGroupMembersUseCase.Param(expertGroupId, status,  currentUserId, size, page));
         assertThat(throwable).hasMessage("page: " + GET_EXPERT_GROUP_MEMBERS_PAGE_MIN);
     }
 
     @Test
     void testGetExpertGroupMembers_statusInvalid_ErrorMessage() {
-        long spaceId = 0L;
+        long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         int size = 10;
         int page = 1;
         String status = "SOMETHING";
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetExpertGroupMembersUseCase.Param(spaceId, status,  currentUserId, size, page));
+            () -> new GetExpertGroupMembersUseCase.Param(expertGroupId, status,  currentUserId, size, page));
         assertThat(throwable).hasMessage("status: " + GET_EXPERT_GROUP_MEMBERS_STATUS_INVALID);
     }
 

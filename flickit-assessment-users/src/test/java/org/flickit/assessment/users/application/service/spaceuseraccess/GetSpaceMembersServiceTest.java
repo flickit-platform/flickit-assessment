@@ -38,7 +38,7 @@ class GetSpaceMembersServiceTest {
 
     @Test
     @DisplayName("Only members can see the Space members")
-    void testGetSpaceMember_spaceAccessNotFound_emptyResponse() {
+    void testGetSpaceMember_spaceAccessNotFound_accessDeniedException() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         int size = 10;
@@ -54,7 +54,7 @@ class GetSpaceMembersServiceTest {
     }
 
     @Test
-    @DisplayName("Only members can see the Space members")
+    @DisplayName("Get Space Member service, for valid input should produce list of members")
     void testGetSpaceMember_validParameters_validMembers() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
