@@ -38,6 +38,7 @@ public class ErrorMessageKey {
     public static final String ADD_EVIDENCE_DESC_SIZE_MAX = "add-evidence.desc.size.max";
     public static final String ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL = "add-evidence.assessmentId.notNull";
     public static final String ADD_EVIDENCE_QUESTION_ID_NOT_NULL = "add-evidence.questionId.notNull";
+    public static final String ADD_EVIDENCE_QUESTION_ID_NOT_FOUND = "add-evidence.questionId.notFound";
     public static final String ADD_EVIDENCE_TYPE_INVALID = "add-evidence.type.invalid";
 
     public static final String UPDATE_ASSESSMENT_ID_NOT_NULL = "update-assessment.id.notNull";

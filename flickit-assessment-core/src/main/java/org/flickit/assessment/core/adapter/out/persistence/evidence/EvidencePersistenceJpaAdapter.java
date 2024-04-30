@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.evidence.GetAttributeEvidenceListUseCase.AttributeEvidenceListItem;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.*;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -13,9 +14,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ADD_EVIDENCE_QUESTION_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -29,12 +32,18 @@ public class EvidencePersistenceJpaAdapter implements
 
     private final EvidenceJpaRepository repository;
     private final QuestionJpaRepository questionRepository;
+    private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
     public UUID persist(CreateEvidencePort.Param param) {
-        UUID questionRefNum = questionRepository.findRefNumById(param.questionId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND)); // TODO: This query must be deleted after question id deletion
-        var unsavedEntity = EvidenceMapper.mapCreateParamToJpaEntity(param, questionRefNum);
+        var assessmentKitVersionId = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND))
+            .getKitVersionId();
+        var question = questionRepository.findById(param.questionId())
+            .orElseThrow(() -> new ResourceNotFoundException(ADD_EVIDENCE_QUESTION_ID_NOT_FOUND)); // TODO: This query must be changed after question id deletion
+        if (!Objects.equals(assessmentKitVersionId, question.getKitVersionId()))
+            throw new ResourceNotFoundException(ADD_EVIDENCE_QUESTION_ID_NOT_FOUND);
+        var unsavedEntity = EvidenceMapper.mapCreateParamToJpaEntity(param, question.getRefNum());
         EvidenceJpaEntity entity = repository.save(unsavedEntity);
         return entity.getId();
     }
