@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
@@ -56,4 +58,14 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.id = :kitId
         """)
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
+
+    @Query("""
+        SELECT k
+        FROM AssessmentKitJpaEntity k
+            LEFT JOIN KitUserAccessJpaEntity ku ON k.id = ku.kitId
+        WHERE k.published = TRUE
+            AND ((k.isPrivate = FALSE AND (ku.userId IS NULL OR ku.userId = :userId))
+            OR (k.isPrivate = TRUE AND (ku.userId = :userId  OR (k.createdBy = :userId AND ku.userId IS NULL))))
+    """)
+    List<AssessmentKitJpaEntity> findAllByUserId(UUID userId);
 }

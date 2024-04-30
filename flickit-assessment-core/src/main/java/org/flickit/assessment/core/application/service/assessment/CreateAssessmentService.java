@@ -1,13 +1,17 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAccessibleKitsByUserIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.springframework.stereotype.Service;
@@ -17,9 +21,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.Assessment.generateSlugCode;
 import static org.flickit.assessment.core.application.domain.AssessmentColor.getValidId;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_KIT_NOT_ALLOWED;
 
 @Service
 @Transactional
@@ -32,9 +38,21 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadAssessmentKitVersionIdPort loadKitVersionIdPort;
+    private final CheckSpaceAccessPort checkSpaceAccessPort;
+    private final LoadAccessibleKitsByUserIdPort loadAccessibleKitsByUserIdPort;
+
 
     @Override
     public Result createAssessment(Param param) {
+        if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCreatedBy()))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        List<Long> kitIds = loadAccessibleKitsByUserIdPort.loadAccessibleKitsByUserId(param.getCreatedBy()).stream()
+            .map(AssessmentKit::getId)
+            .toList();
+        if (!kitIds.contains(param.getAssessmentKitId()))
+            throw new AccessDeniedException(CREATE_ASSESSMENT_KIT_NOT_ALLOWED);
+
         CreateAssessmentPort.Param portParam = toParam(param);
         UUID id = createAssessmentPort.persist(portParam);
         createAssessmentResult(id, loadKitVersionIdPort.loadVersionId(param.getAssessmentKitId()));
