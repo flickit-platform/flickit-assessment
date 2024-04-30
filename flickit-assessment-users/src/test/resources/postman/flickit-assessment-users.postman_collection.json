@@ -436,13 +436,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces-accept-invitations",
+					"raw": "{{base_url}}/{{api_path}}/spaces/new-users",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"spaces-accept-invitations"
+						"spaces",
+						"new-users"
 					]
 				}
 			},
