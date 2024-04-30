@@ -73,5 +73,4 @@ public class ErrorMessageKey {
     public static final String GET_SPACE_MEMBERS_SIZE_MIN = "get-space-members.size.min";
     public static final String GET_SPACE_MEMBERS_SIZE_MAX = "get-space-members.size.max";
     public static final String GET_SPACE_MEMBERS_PAGE_MIN = "get-space-members.page.min";
-    public static final String GET_SPACE_MEMBERS_SPACE_NOT_FOUND = "get-space-members.expertGroup.notFound";
 }
