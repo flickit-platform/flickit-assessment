@@ -19,7 +19,8 @@ public interface SpaceUserAccessJpaRepository extends JpaRepository<SpaceUserAcc
                    u.picture as picture,
                    u.linkedin as linkedin
             FROM SpaceUserAccessJpaEntity s
-            LEFT JOIN UserJpaEntity u on s.userId = u.id
+            LEFT JOIN UserJpaEntity u
+                on s.userId = u.id
             WHERE s.spaceId = :spaceId
         """)
     Page<SpaceMembersView> findMembers(long spaceId, Pageable pageable);

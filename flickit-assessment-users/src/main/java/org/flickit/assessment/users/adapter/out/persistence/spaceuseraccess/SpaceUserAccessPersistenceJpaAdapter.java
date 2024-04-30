@@ -3,7 +3,6 @@ package org.flickit.assessment.users.adapter.out.persistence.spaceuseraccess;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceMembersView;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
@@ -58,7 +57,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
             items ,
             pageResult.getNumber(),
             pageResult.getSize(),
-            ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            SpaceUserAccessJpaEntity.Fields.CREATION_TIME,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
