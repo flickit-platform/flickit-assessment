@@ -5,7 +5,7 @@ import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.InviteSpaceMemberUseCase;
 
 import java.util.UUID;
 
