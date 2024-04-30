@@ -68,4 +68,10 @@ public class ErrorMessageKey {
     public static final String INVITE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "invite-space-member.spaceId.notUll";
     public static final String INVITE_SPACE_MEMBER_EMAIL_NOT_NULL = "invite-space-member.email.notNull";
     public static final String INVITE_SPACE_MEMBER_SPACE_USER_DUPLICATE = "invite-space-member.spaceId.userId.duplicate";
+
+    public static final String GET_SPACE_MEMBERS_ID_NOT_NULL = "get-space-members.id.notNull";
+    public static final String GET_SPACE_MEMBERS_SIZE_MIN = "get-space-members.size.min";
+    public static final String GET_SPACE_MEMBERS_SIZE_MAX = "get-space-members.size.max";
+    public static final String GET_SPACE_MEMBERS_PAGE_MIN = "get-space-members.page.min";
+    public static final String GET_SPACE_MEMBERS_SPACE_NOT_FOUND = "get-space-members.expertGroup.notFound";
 }

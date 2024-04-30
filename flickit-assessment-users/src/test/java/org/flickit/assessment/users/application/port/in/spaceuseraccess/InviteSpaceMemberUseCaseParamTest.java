@@ -3,7 +3,6 @@ package org.flickit.assessment.users.application.port.in.spaceuseraccess;
 import java.util.UUID;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.users.application.port.in.spaceuseraccess.InviteSpaceMemberUseCase;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
