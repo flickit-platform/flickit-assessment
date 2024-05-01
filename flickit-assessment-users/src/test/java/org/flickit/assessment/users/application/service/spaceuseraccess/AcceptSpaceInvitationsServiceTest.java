@@ -1,7 +1,7 @@
 package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import org.flickit.assessment.users.application.domain.SpaceInvitation;
-import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadSpaceUserInvitationsPort;
+import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
@@ -29,7 +29,7 @@ class AcceptSpaceInvitationsServiceTest {
     @Mock
     private LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     @Mock
-    private LoadSpaceUserInvitationsPort loadSpaceUserInvitationsPort;
+    private GetSpaceUserInvitationsPort getSpaceUserInvitationsPort;
     @Mock
     private CreateSpaceUserAccessPort createSpaceUserAccessPort;
     @Mock
@@ -43,11 +43,11 @@ class AcceptSpaceInvitationsServiceTest {
         AcceptSpaceInvitationsUseCase.Param param = new AcceptSpaceInvitationsUseCase.Param(userId);
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(List.of());
+        when(getSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(List.of());
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
-        verify(loadSpaceUserInvitationsPort).loadInvitations(email);
+        verify(getSpaceUserInvitationsPort).loadInvitations(email);
         verifyNoInteractions(deleteSpaceUserInvitationsPort);
         verifyNoInteractions(createSpaceUserAccessPort);
     }
@@ -62,12 +62,12 @@ class AcceptSpaceInvitationsServiceTest {
         var portResult = Stream.of(new SpaceInvitation(email, spaceId, userId, LocalDateTime.now(), LocalDateTime.now().plusDays(1))).toList();
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);
+        when(getSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);
         doNothing().when(createSpaceUserAccessPort).persistAll(any());
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
-        verify(loadSpaceUserInvitationsPort).loadInvitations(email);
+        verify(getSpaceUserInvitationsPort).loadInvitations(email);
         verify(createSpaceUserAccessPort).persistAll(any());
         verify(deleteSpaceUserInvitationsPort).deleteAll(email);
     }
@@ -82,12 +82,12 @@ class AcceptSpaceInvitationsServiceTest {
         var portResult = Stream.of(new SpaceInvitation(email, spaceId, userId, LocalDateTime.now(), LocalDateTime.now().minusDays(1))).toList();
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);
+        when(getSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);
         doNothing().when(deleteSpaceUserInvitationsPort).deleteAll(email);
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
-        verify(loadSpaceUserInvitationsPort).loadInvitations(email);
+        verify(getSpaceUserInvitationsPort).loadInvitations(email);
         verifyNoInteractions(createSpaceUserAccessPort);
         verify(deleteSpaceUserInvitationsPort).deleteAll(email);
     }

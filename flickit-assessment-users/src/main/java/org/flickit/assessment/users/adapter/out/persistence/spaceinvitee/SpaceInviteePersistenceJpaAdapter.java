@@ -3,7 +3,7 @@ package org.flickit.assessment.users.adapter.out.persistence.spaceinvitee;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
 import org.flickit.assessment.users.application.domain.SpaceInvitation;
-import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadSpaceUserInvitationsPort;
+import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class SpaceInviteePersistenceJpaAdapter implements
-    LoadSpaceUserInvitationsPort,
+        GetSpaceUserInvitationsPort,
     DeleteSpaceUserInvitationsPort,
     InviteSpaceMemberPort {
 

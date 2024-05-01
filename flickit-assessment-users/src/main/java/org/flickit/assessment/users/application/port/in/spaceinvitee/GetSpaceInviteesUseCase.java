@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.application.port.in.spaceuseraccess;
+package org.flickit.assessment.users.application.port.in.spaceinvitee;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
