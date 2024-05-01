@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitTag;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.springframework.stereotype.Service;
