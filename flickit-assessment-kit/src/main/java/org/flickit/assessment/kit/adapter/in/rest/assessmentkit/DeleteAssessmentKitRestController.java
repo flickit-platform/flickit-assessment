@@ -22,7 +22,7 @@ public class DeleteAssessmentKitRestController {
     public ResponseEntity<Void> deleteAssessmentKit(@PathVariable("kitId") Long kitId) {
         UUID currentUserId = userContext.getUser().id();
         useCase.delete(toParam(kitId, currentUserId));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private DeleteAssessmentKitUseCase.Param toParam(Long kitId, UUID currentUserId) {
