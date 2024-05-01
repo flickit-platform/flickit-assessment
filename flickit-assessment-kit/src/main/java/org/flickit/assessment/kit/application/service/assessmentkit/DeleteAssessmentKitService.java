@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.DeleteAssessmentKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitAssessmentsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.DeleteAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
