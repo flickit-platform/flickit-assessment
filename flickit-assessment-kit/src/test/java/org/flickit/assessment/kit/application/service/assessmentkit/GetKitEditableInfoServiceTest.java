@@ -9,7 +9,7 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditab
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
+import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +36,7 @@ class GetKitEditableInfoServiceTest {
     private LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Mock
-    private LoadKitTagsListPort loadKitTagsListPort;
+    private LoadKitTagListPort loadKitTagListPort;
 
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
@@ -49,7 +49,7 @@ class GetKitEditableInfoServiceTest {
         long kitId = 123L;
         UUID currentUserId = UUID.randomUUID();
         GetKitEditableInfoUseCase.Param param = new GetKitEditableInfoUseCase.Param(kitId, currentUserId);
-        ExpertGroup expertGroup = new ExpertGroup(1L, null, null);
+        ExpertGroup expertGroup = new ExpertGroup(1L, null, null, null);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
@@ -67,13 +67,13 @@ class GetKitEditableInfoServiceTest {
         GetKitEditableInfoUseCase.Param param = new GetKitEditableInfoUseCase.Param(kitId, currentUserId);
 
         AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
-        List<KitTag> tags = List.of(new KitTag(1L, "Tag1"));
-        ExpertGroup expertGroup = new ExpertGroup(1L, null, currentUserId);
+        List<KitTag> tags = List.of(new KitTag(1L, "tagCode1", "Tag1"));
+        ExpertGroup expertGroup = new ExpertGroup(1L, null, null, currentUserId);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
         when(loadAssessmentKitPort.load(kitId)).thenReturn(assessmentKit);
-        when(loadKitTagsListPort.load(kitId)).thenReturn(tags);
+        when(loadKitTagListPort.loadByKitId(kitId)).thenReturn(tags);
 
         GetKitEditableInfoUseCase.KitEditableInfo kitEditableInfo = service.getKitEditableInfo(param);
 
@@ -93,7 +93,7 @@ class GetKitEditableInfoServiceTest {
         long kitId = 123L;
         UUID currentUserId = UUID.randomUUID();
         GetKitEditableInfoUseCase.Param param = new GetKitEditableInfoUseCase.Param(kitId, currentUserId);
-        ExpertGroup expertGroup = new ExpertGroup(1L, null, null);
+        ExpertGroup expertGroup = new ExpertGroup(1L, null, null, null);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(false);
