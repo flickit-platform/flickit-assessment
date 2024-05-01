@@ -20,7 +20,7 @@ public class GetSpaceMembersRestController {
     private final GetSpaceMembersUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/space/{id}/members")
+    @GetMapping("/spaces/{id}/members")
     public ResponseEntity<PaginatedResponse<GetSpaceMembersUseCase.Member>> getSpaceMembers(
         @PathVariable("id") long id,
         @RequestParam(defaultValue = "10") int size,
