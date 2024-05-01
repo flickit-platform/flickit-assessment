@@ -12,6 +12,7 @@ import static java.util.Comparator.comparingInt;
 public class MaturityLevel {
 
     private final long id;
+    private final String title;
     private final int index;
     private final int value;
     private final List<LevelCompetence> levelCompetences;

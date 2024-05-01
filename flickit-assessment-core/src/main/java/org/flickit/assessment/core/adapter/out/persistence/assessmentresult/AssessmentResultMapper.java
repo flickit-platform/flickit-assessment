@@ -36,7 +36,7 @@ public class AssessmentResultMapper {
             entity.getKitVersionId(),
             new ArrayList<>(),
             entity.getMaturityLevelId() == null ? null :
-                new MaturityLevel(entity.getMaturityLevelId(), 1, 0, new ArrayList<>()),
+                new MaturityLevel(entity.getMaturityLevelId(),"weak", 1, 0, new ArrayList<>()),
             entity.getConfidenceValue(),
             entity.getIsCalculateValid(),
             entity.getIsConfidenceValid(),
