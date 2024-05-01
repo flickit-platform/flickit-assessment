@@ -2,7 +2,7 @@ package org.flickit.assessment.users.adapter.in.rest.spaceinvitee;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceUserInvitationsPort;
+import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceInviteesUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.util.UUID;
 public class GetSpaceInviteesRestController {
 
     private final UserContext userContext;
-    private final GetSpaceUserInvitationsPort.GetSpaceInviteesUseCase useCase;
+    private final GetSpaceInviteesUseCase useCase;
 
     @GetMapping("/spaces/{id}/invitees")
     public ResponseEntity<Void> getSpaceInvitees(
@@ -27,7 +27,7 @@ public class GetSpaceInviteesRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private GetSpaceUserInvitationsPort.GetSpaceInviteesUseCase.Param toParam(Long id, UUID currentUserId, int size, int page) {
-        return new GetSpaceUserInvitationsPort.GetSpaceInviteesUseCase.Param(id, currentUserId, size, page);
+    private GetSpaceInviteesUseCase.Param toParam(Long id, UUID currentUserId, int size, int page) {
+        return new GetSpaceInviteesUseCase.Param(id, currentUserId, size, page);
     }
 }

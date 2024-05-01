@@ -21,7 +21,7 @@ class GetSpaceInviteesUseCaseParamTest {
         int size = 10;
         int page = 0;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetSpaceUserInvitationsPort.GetSpaceInviteesUseCase.Param(null, currentUserId, size, page));
+                () -> new GetSpaceInviteesUseCase.Param(null, currentUserId, size, page));
         assertThat(throwable).hasMessage("id: " + GET_SPACE_INVITEES_SPACE_ID_NOT_NULL);
     }
 
@@ -31,7 +31,7 @@ class GetSpaceInviteesUseCaseParamTest {
         int size = 10;
         int page = 0;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetSpaceUserInvitationsPort.GetSpaceInviteesUseCase.Param(spaceId, null, size, page));
+                () -> new GetSpaceInviteesUseCase.Param(spaceId, null, size, page));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
@@ -42,7 +42,7 @@ class GetSpaceInviteesUseCaseParamTest {
         int size = -1;
         int page = 0;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetSpaceUserInvitationsPort.GetSpaceInviteesUseCase.Param(spaceId, currentUserId, size, page));
+                () -> new GetSpaceInviteesUseCase.Param(spaceId, currentUserId, size, page));
         assertThat(throwable).hasMessage("size: " + GET_SPACE_INVITEES_SIZE_MIN);
     }
 
@@ -53,7 +53,7 @@ class GetSpaceInviteesUseCaseParamTest {
         int size = 101;
         int page = 0;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetSpaceUserInvitationsPort.GetSpaceInviteesUseCase.Param(spaceId, currentUserId, size, page));
+                () -> new GetSpaceInviteesUseCase.Param(spaceId, currentUserId, size, page));
         assertThat(throwable).hasMessage("size: " + GET_SPACE_INVITEES_SIZE_MAX);
     }
 
@@ -64,7 +64,7 @@ class GetSpaceInviteesUseCaseParamTest {
         int size = 10;
         int page = -1;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetSpaceUserInvitationsPort.GetSpaceInviteesUseCase.Param(spaceId, currentUserId, size, page));
+                () -> new GetSpaceInviteesUseCase.Param(spaceId, currentUserId, size, page));
         assertThat(throwable).hasMessage("page: " + GET_SPACE_INVITEES_PAGE_MIN);
     }
 
