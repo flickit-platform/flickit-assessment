@@ -29,7 +29,7 @@ public interface CreateSpaceUseCase {
         UUID currentUserId;
 
         public Param(String title, UUID currentUserId) {
-            this.title = title != null ? title.strip() : null;
+            this.title = title;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

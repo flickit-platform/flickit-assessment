@@ -6,7 +6,6 @@ import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,20 +20,14 @@ public class CreateSpaceRestController {
     private final UserContext userContext;
 
     @PostMapping("/spaces")
-    public ResponseEntity<CreateSpaceResponseDto> createSpace(
-        @RequestBody CreateSpaceRequestDto request) {
+    public ResponseEntity<CreateSpaceResponseDto> createSpace(@RequestBody CreateSpaceRequestDto request) {
         UUID currentUserId = userContext.getUser().id();
-        CreateSpaceResponseDto response =
-            toResponseDto(useCase.createSpace(toParam(request, currentUserId)));
-
+        var response = toResponseDto(useCase.createSpace(toParam(request, currentUserId)));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     private Param toParam(CreateSpaceRequestDto request, UUID currentUserId) {
-        return new Param(
-            request.title(),
-            currentUserId
-        );
+        return new Param(request.title(), currentUserId);
     }
 
     private CreateSpaceResponseDto toResponseDto(CreateSpaceUseCase.Result result) {
