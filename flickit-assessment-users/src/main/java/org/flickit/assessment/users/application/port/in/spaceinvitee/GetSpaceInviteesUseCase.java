@@ -48,7 +48,7 @@ public interface GetSpaceInviteesUseCase {
         UUID id,
         String email,
         LocalDateTime expirationDate,
-        LocalDateTime creationTile,
+        LocalDateTime creationTime,
         UUID createdBy) {
     }
 }

@@ -1,5 +1,7 @@
 package org.flickit.assessment.data.jpa.users.spaceinvitee;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +32,6 @@ public interface SpaceInviteeJpaRepository extends JpaRepository<SpaceInviteeJpa
     void deleteByEmail(@Param("email") String email);
 
     List<SpaceInviteeJpaEntity> findByEmail(@Param("email") String email);
+
+    Page<SpaceInviteeJpaEntity> findBySpaceId(long spaceId, Pageable pageable);
 }
