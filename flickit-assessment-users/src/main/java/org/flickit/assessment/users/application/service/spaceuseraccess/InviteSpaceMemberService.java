@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
-import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.InviteSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
