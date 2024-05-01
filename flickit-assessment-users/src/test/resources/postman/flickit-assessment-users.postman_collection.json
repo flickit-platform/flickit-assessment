@@ -413,6 +413,32 @@
 			"response": []
 		},
 		{
+			"name": "Get Space Members",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/space/{{id}}/members",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"space",
+						"{{id}}",
+						"members"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Accept Space Invitations",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
@@ -449,7 +475,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Space Members",
+			"name": "Get Space Invitees",
 			"request": {
 				"method": "GET",
 				"header": [
