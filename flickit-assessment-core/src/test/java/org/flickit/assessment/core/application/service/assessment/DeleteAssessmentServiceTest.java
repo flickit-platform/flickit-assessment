@@ -1,8 +1,10 @@
 package org.flickit.assessment.core.application.service.assessment;
 
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessment.DeleteAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
+import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessment.DeleteAssessmentPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,11 +35,16 @@ class DeleteAssessmentServiceTest {
     @Mock
     private CheckAssessmentExistencePort checkAssessmentExistencePort;
 
+    @Mock
+    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+
     @Test
     void testDeleteAssessment_ValidAssessmentId_DeleteSuccessfully() {
-        UUID id = UUID.randomUUID();
-        DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(id);
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(assessmentId, currentUserId);
+        when(checkAssessmentExistencePort.existsById(assessmentId)).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
         doNothing().when(deleteAssessmentPort).deleteById(any(), any());
 
         service.deleteAssessment(param);
@@ -46,7 +53,7 @@ class DeleteAssessmentServiceTest {
         ArgumentCaptor<Long> portDeletionTimeParam = ArgumentCaptor.forClass(Long.class);
         verify(deleteAssessmentPort).deleteById(portIdParam.capture(), portDeletionTimeParam.capture());
 
-        assertEquals(id, portIdParam.getValue());
+        assertEquals(assessmentId, portIdParam.getValue());
         assertThat(portDeletionTimeParam.getValue(), not(equalTo(NOT_DELETED_DELETION_TIME)));
         long now = System.currentTimeMillis();
         assertThat(portDeletionTimeParam.getValue(), lessThanOrEqualTo(now));
@@ -56,17 +63,29 @@ class DeleteAssessmentServiceTest {
 
     @Test
     void testDeleteAssessment_InvalidAssessmentId_ThrowsException() {
-        UUID id = UUID.randomUUID();
-        DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(id);
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(false);
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(assessmentId, currentUserId);
+        when(checkAssessmentExistencePort.existsById(assessmentId)).thenReturn(false);
 
         assertThrows(ResourceNotFoundException.class, () -> service.deleteAssessment(param));
 
         ArgumentCaptor<UUID> portIdParam = ArgumentCaptor.forClass(UUID.class);
         verify(checkAssessmentExistencePort).existsById(portIdParam.capture());
 
-        assertEquals(id, portIdParam.getValue());
+        assertEquals(assessmentId, portIdParam.getValue());
         verify(checkAssessmentExistencePort, times(1)).existsById(any());
         verify(deleteAssessmentPort, never()).deleteById(any(), any());
+    }
+
+    @Test
+    void testDeleteAssessment_WhenCurrentUserIdIsNull_ThenThrowsException() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(assessmentId, currentUserId);
+        when(checkAssessmentExistencePort.existsById(assessmentId)).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class, () -> service.deleteAssessment(param));
     }
 }
