@@ -1,13 +1,8 @@
 package org.flickit.assessment.users.application.port.out.space;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
+import org.flickit.assessment.users.application.domain.Space;
 
 public interface CreateSpacePort {
 
-    long persist(Param param);
-
-    record Param(String code, String title, UUID ownerId, LocalDateTime creationTime,
-                 LocalDateTime lastModificationTime, UUID createdBy, UUID lastModifiedBy) {
-    }
+    long persist(Space space);
 }
