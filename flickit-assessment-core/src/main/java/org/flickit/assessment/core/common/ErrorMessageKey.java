@@ -108,7 +108,7 @@ public class ErrorMessageKey {
 
     public static final String COUNT_ASSESSMENTS_KIT_ID_AND_SPACE_ID_NOT_NULL = "count-assessments.assessment.kit.id.and.space.id.notNull";
 
-    public static final String DELETE_EVIDENCE_EVIDENCE_NOT_FOUND = "delete-evidence.id.notFound";
+    public static final String EVIDENCE_ID_NOT_FOUND = "evidence.id.notFound";
     public static final String DELETE_EVIDENCE_EVIDENCE_ID_NOT_NULL = "delete-evidence.id.notNull";
 
     public static final String CALCULATE_CONFIDENCE_ASSESSMENT_ID_NOT_NULL = "calculate-confidence.assessment.id.notNull";
