@@ -17,6 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_HAS_ASSESSMENT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -36,14 +39,15 @@ class DeleteAssessmentKitServiceTest {
     public CountKitAssessmentsPort countKitAssessmentsPort;
 
     @Test
-    void testDeleteAssessmentKit_WhenCurrentUserIsNotKitOwner_ThenThrowException() {
+    void testDeleteAssessmentKit_WhenCurrentUserIsNotKitExpertGroupOwner_ThenThrowException() {
         UUID currentUserId = UUID.randomUUID();
         DeleteAssessmentKitUseCase.Param param = new DeleteAssessmentKitUseCase.Param(1L, currentUserId);
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
 
-        assertThrows(AccessDeniedException.class, () -> deleteAssessmentKitService.delete(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> deleteAssessmentKitService.delete(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
@@ -55,7 +59,8 @@ class DeleteAssessmentKitServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(countKitAssessmentsPort.count(param.getKitId())).thenReturn(5L);
 
-        assertThrows(ValidationException.class, () -> deleteAssessmentKitService.delete(param));
+        var throwable = assertThrows(ValidationException.class, () -> deleteAssessmentKitService.delete(param));
+        assertEquals(DELETE_KIT_HAS_ASSESSMENT, throwable.getMessage());
     }
 
     @Test

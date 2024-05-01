@@ -19,7 +19,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_HAS_A
 @RequiredArgsConstructor
 public class DeleteAssessmentKitService implements DeleteAssessmentKitUseCase {
 
-    public final DeleteAssessmentKitPort port;
+    public final DeleteAssessmentKitPort deleteAssessmentKitPort;
     public final LoadKitExpertGroupPort loadKitExpertGroupPort;
     public final CountKitAssessmentsPort countKitAssessmentsPort;
 
@@ -32,6 +32,6 @@ public class DeleteAssessmentKitService implements DeleteAssessmentKitUseCase {
         if (countKitAssessmentsPort.count(param.getKitId()) != 0)
             throw new ValidationException(DELETE_KIT_HAS_ASSESSMENT);
 
-        port.delete(param.getKitId());
+        deleteAssessmentKitPort.delete(param.getKitId());
     }
 }
