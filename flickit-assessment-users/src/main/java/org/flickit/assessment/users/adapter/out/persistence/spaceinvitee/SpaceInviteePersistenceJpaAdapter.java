@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -51,7 +52,7 @@ public class SpaceInviteePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<Invitee> loadInvitees(long spaceId, int page, int size) {
-        var pageResult = repository.findBySpaceId(spaceId,
+        var pageResult = repository.findBySpaceId(spaceId, LocalDateTime.now(),
             PageRequest.of(page, size, Sort.Direction.DESC, SpaceInviteeJpaEntity.Fields.CREATION_TIME));
 
         var items = pageResult
