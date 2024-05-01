@@ -3,8 +3,6 @@ package org.flickit.assessment.users.application.port.in.space;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -13,11 +11,10 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class CreateSpaceUseCaseParamsTest {
 
     @Test
-    void testCreateSpaceParam_titleIsNull_ErrorMessage() {
+    void testCreateSpaceParam_TitleIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateSpaceUseCase.Param(null, currentUserId));
@@ -25,7 +22,7 @@ class CreateSpaceUseCaseParamsTest {
     }
 
     @Test
-    void testCreateSpaceParam_titleIsShort_ErrorMessage() {
+    void testCreateSpaceParam_TitleLengthIsLessThanMin_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         String title = RandomStringUtils.random(2, true, true);
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -34,7 +31,7 @@ class CreateSpaceUseCaseParamsTest {
     }
 
     @Test
-    void testCreateSpaceParam_titleIsLong_ErrorMessage() {
+    void testCreateSpaceParam_TitleLengthIsMoreThanMax_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         String title = RandomStringUtils.random(101, true, true);
         var throwable = assertThrows(ConstraintViolationException.class,

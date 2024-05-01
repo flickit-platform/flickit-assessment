@@ -39,7 +39,9 @@ class CreateSpaceServiceTest {
 
         when(createSpacePort.persist(any())).thenReturn(id);
         doNothing().when(createSpaceUserAccessPort).persist(any());
+
         assertDoesNotThrow(() -> service.createSpace(param));
+
         verify(createSpacePort).persist(any());
         verify(createSpaceUserAccessPort).persist(any());
     }

@@ -31,7 +31,7 @@ public class CreateSpaceService implements CreateSpaceUseCase {
         LocalDateTime creationTime = LocalDateTime.now();
         return new Space(null,
             RandomStringUtils.randomAlphabetic(10),
-            title,
+            title.strip(),
             currentUserId,
             creationTime,
             creationTime,
