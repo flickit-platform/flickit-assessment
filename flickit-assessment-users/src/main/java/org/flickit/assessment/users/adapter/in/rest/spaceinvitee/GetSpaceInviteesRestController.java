@@ -19,7 +19,6 @@ public class GetSpaceInviteesRestController {
     @GetMapping("/spaces/{id}/invitees")
     public ResponseEntity<Void> getSpaceInvitees(
         @PathVariable("id") long id,
-        @RequestParam(value = "status", required = false) String status,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page) {
         UUID currentUserId = userContext.getUser().id();
