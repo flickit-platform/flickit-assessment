@@ -1,10 +1,12 @@
 package org.flickit.assessment.core.application.service.assessment;
 
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.QualityAttributeValue;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateAssessmentUseCase;
+import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
@@ -21,14 +23,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight;
 import static org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight;
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValues;
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndSubjectWithQAs;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -59,6 +61,9 @@ class CalculateAssessmentServiceTest {
     @Mock
     private CreateQualityAttributeValuePort createAttributeValuePort;
 
+    @Mock
+    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+
     @Test
     void testCalculateMaturityLevel_ValidInput_ValidResults() {
         LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
@@ -82,10 +87,12 @@ class CalculateAssessmentServiceTest {
 
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
+        UUID currentUserId = UUID.randomUUID();
 
-        CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId());
+        CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
 
         when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(true);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(kitLastMajorModificationTime);
 
         CalculateAssessmentUseCase.Result result = service.calculateMaturityLevel(param);
@@ -123,10 +130,12 @@ class CalculateAssessmentServiceTest {
 
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
+        UUID currentUserId = UUID.randomUUID();
 
-        CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId());
+        CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
 
         when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(true);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
         when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
@@ -139,5 +148,36 @@ class CalculateAssessmentServiceTest {
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
         assertEquals(4, result.maturityLevel().getValue());
+    }
+
+    @Test
+    void testCalculateMaturityLevel_WhenCurrenUserHasNoAccessToAssessment_ThenThrowsAccessDeniedException() {
+        List<QualityAttributeValue> s1AttributeValues = List.of(
+            toBeCalcAsLevelFourWithWeight(2),
+            toBeCalcAsLevelFourWithWeight(2),
+            toBeCalcAsLevelThreeWithWeight(3),
+            toBeCalcAsLevelThreeWithWeight(3)
+        );
+
+        List<QualityAttributeValue> s2AttributeValues = List.of(
+            toBeCalcAsLevelFourWithWeight(4),
+            toBeCalcAsLevelThreeWithWeight(1)
+        );
+
+        List<SubjectValue> subjectValues = List.of(
+            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(QualityAttributeValue::getQualityAttribute).toList()),
+            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(QualityAttributeValue::getQualityAttribute).toList())
+        );
+
+        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
+        assessmentResult.setLastCalculationTime(LocalDateTime.now());
+        UUID currentUserId = UUID.randomUUID();
+
+        CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
+
+        when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class, () -> service.calculateMaturityLevel(param));
     }
 }

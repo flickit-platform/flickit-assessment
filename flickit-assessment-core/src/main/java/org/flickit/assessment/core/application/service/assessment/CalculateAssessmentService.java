@@ -1,8 +1,10 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateAssessmentUseCase;
+import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
@@ -17,6 +19,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -29,10 +33,13 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
     private final LoadSubjectsPort loadSubjectsPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createAttributeValuePort;
+    private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
 
     @Override
     public Result calculateMaturityLevel(Param param) {
         AssessmentResult assessmentResult = loadCalculateInfoPort.load(param.getAssessmentId());
+        if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (isAssessmentResultReinitializationRequired(assessmentResult))
             reinitializeAssessmentResult(assessmentResult);
