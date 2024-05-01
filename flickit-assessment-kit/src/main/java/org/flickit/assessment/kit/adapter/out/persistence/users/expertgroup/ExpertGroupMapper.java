@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.persistence.expertgroup;
+package org.flickit.assessment.kit.adapter.out.persistence.users.expertgroup;
 
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
