@@ -1,7 +1,10 @@
 package org.flickit.assessment.core.application.service.evidence;
 
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.EvidenceType;
 import org.flickit.assessment.core.application.port.in.evidence.UpdateEvidenceUseCase;
+import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.evidence.UpdateEvidencePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,9 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_EVIDENCE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.EvidenceMother.simpleEvidence;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,18 +32,23 @@ class UpdateEvidenceServiceTest {
     @Mock
     private UpdateEvidencePort updateEvidencePort;
 
+    @Mock
+    private LoadEvidencePort loadEvidencePort;
+
     @Test
     void testUpdateEvidence_ValidParam_UpdatedAndReturnsId() {
         var savedEvidence = simpleEvidence();
-        String code = EvidenceType.values()[savedEvidence.getType()].getCode();
+        var code = EvidenceType.values()[savedEvidence.getType()].getCode();
         var param = new UpdateEvidenceUseCase.Param(
             savedEvidence.getId(),
             "new " + savedEvidence.getDescription(),
             code,
-            savedEvidence.getLastModifiedById()
+            savedEvidence.getCreatedById()
         );
 
         var updateResult = new UpdateEvidencePort.Result(savedEvidence.getId());
+
+        when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(savedEvidence);
         when(updateEvidencePort.update(any())).thenReturn(updateResult);
 
         UpdateEvidenceUseCase.Result result = service.updateEvidence(param);
@@ -50,5 +61,39 @@ class UpdateEvidenceServiceTest {
         assertEquals(param.getId(), updateParamArgumentCaptor.getValue().id());
         assertEquals(param.getDescription(), updateParamArgumentCaptor.getValue().description());
         assertNotEquals(savedEvidence.getLastModificationTime(), updateParamArgumentCaptor.getValue().lastModificationTime());
+    }
+
+    @Test
+    void testUpdateEvidence_InvalidUser_ThrowsException() {
+        var savedEvidence = simpleEvidence();
+        var code = EvidenceType.values()[savedEvidence.getType()].getCode();
+        var param = new UpdateEvidenceUseCase.Param(
+            savedEvidence.getId(),
+            "new " + savedEvidence.getDescription(),
+            code,
+            UUID.randomUUID()
+        );
+
+        when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(savedEvidence);
+
+        var exception = assertThrows(AccessDeniedException.class, () -> service.updateEvidence(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+    }
+
+    @Test
+    void testUpdateEvidence_InvalidEvidenceId_ThrowsException() {
+        var code = EvidenceType.values()[0].getCode();
+        var param = new UpdateEvidenceUseCase.Param(
+            UUID.randomUUID(),
+            "new Desc",
+            code,
+            UUID.randomUUID()
+        );
+
+        when(loadEvidencePort.loadNotDeletedEvidence(param.getId()))
+            .thenThrow(new ResourceNotFoundException(UPDATE_EVIDENCE_ID_NOT_FOUND));
+
+        var exception = assertThrows(ResourceNotFoundException.class, () -> service.updateEvidence(param));
+        assertEquals(UPDATE_EVIDENCE_ID_NOT_FOUND, exception.getMessage());
     }
 }
