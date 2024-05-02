@@ -27,6 +27,6 @@ public class GetAssessmentProgressRestController {
     }
 
     private GetAssessmentProgressResponseDto toResponse(GetAssessmentProgressUseCase.Result result) {
-        return new GetAssessmentProgressResponseDto(result.id(), result.allAnswersCount());
+        return new GetAssessmentProgressResponseDto(result.id(), result.answersCount(), result.questionsCount());
     }
 }

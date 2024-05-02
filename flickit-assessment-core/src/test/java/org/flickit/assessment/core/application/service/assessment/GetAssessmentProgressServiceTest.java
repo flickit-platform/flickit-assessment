@@ -36,7 +36,7 @@ class GetAssessmentProgressServiceTest {
         Param param = new Param(assessmentId);
 
         when(getAssessmentProgressPort.getAssessmentProgressById(assessmentId))
-            .thenReturn(new GetAssessmentProgressPort.Result(assessmentId, 5));
+            .thenReturn(new GetAssessmentProgressPort.Result(assessmentId, 5, 10));
 
         var result = service.getAssessmentProgress(param);
 
@@ -47,7 +47,8 @@ class GetAssessmentProgressServiceTest {
         verify(getAssessmentProgressPort, times(1)).getAssessmentProgressById(any());
 
         assertEquals(assessmentId, result.id());
-        assertEquals(5, result.allAnswersCount());
+        assertEquals(5, result.answersCount());
+        assertEquals(10, result.questionsCount());
     }
 
     @Test

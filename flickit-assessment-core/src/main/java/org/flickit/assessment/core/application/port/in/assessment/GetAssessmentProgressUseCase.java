@@ -26,7 +26,7 @@ public interface GetAssessmentProgressUseCase {
         }
     }
 
-    record Result(UUID id, Integer allAnswersCount) {
+    record Result(UUID id, int answersCount, int questionsCount) {
     }
 
 }

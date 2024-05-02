@@ -16,6 +16,6 @@ public class GetAssessmentProgressService implements GetAssessmentProgressUseCas
     @Override
     public Result getAssessmentProgress(Param param) {
         var result = getAssessmentProgressPort.getAssessmentProgressById(param.getAssessmentId());
-        return new Result(result.id(), result.allAnswersCount());
+        return new Result(result.id(), result.answersCount(), result.questionsCount());
     }
 }

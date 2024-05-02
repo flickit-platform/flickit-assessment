@@ -11,6 +11,6 @@ public interface GetAssessmentProgressPort {
      */
     Result getAssessmentProgressById(UUID assessmentId);
 
-    record Result(UUID id, int allAnswersCount) {
+    record Result(UUID id, int answersCount, int questionsCount) {
     }
 }

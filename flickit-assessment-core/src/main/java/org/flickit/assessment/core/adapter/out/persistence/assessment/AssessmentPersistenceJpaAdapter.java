@@ -11,6 +11,7 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -42,6 +43,7 @@ public class AssessmentPersistenceJpaAdapter implements
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
     private final AnswerJpaRepository answerRepository;
+    private final QuestionJpaRepository questionRepository;
 
     @Override
     public UUID persist(CreateAssessmentPort.Param param) {
@@ -84,7 +86,8 @@ public class AssessmentPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
 
         int answersCount = answerRepository.getCountByAssessmentResultId(assessmentResult.getId());
-        return new GetAssessmentProgressPort.Result(assessmentId, answersCount);
+        int questionsCount = questionRepository.countByAssessmentId(assessmentId);
+        return new GetAssessmentProgressPort.Result(assessmentId, answersCount, questionsCount);
     }
 
     @Override
