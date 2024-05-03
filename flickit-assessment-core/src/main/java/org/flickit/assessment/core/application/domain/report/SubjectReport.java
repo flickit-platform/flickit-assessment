@@ -1,25 +1,28 @@
 package org.flickit.assessment.core.application.domain.report;
 
-import org.flickit.assessment.core.application.domain.MaturityScore;
-
 import java.util.List;
-import java.util.Set;
 
 public record SubjectReport(SubjectReportItem subject,
-                            List<TopAttribute> topStrengths,
-                            List<TopAttribute> topWeaknesses,
+                            List<MaturityLevel> maturityLevels,
                             List<AttributeReportItem> attributes) {
 
     public record SubjectReportItem(Long id,
-                                    Long maturityLevelId,
+                                    String title,
+                                    MaturityLevel maturityLevel,
                                     Double confidenceValue,
                                     boolean isCalculateValid,
-                                    boolean isConfidenceValid) {
-    }
+                                    boolean isConfidenceValid) {}
 
     public record AttributeReportItem(Long id,
-                                      Long maturityLevelId,
-                                      Set<MaturityScore> maturityScores,
+                                      int index,
+                                      String title,
+                                      String description,
+                                      MaturityLevel maturityLevel,
+                                      List<MaturityScore> maturityScores,
                                       Double confidenceValue) {
+
+        public record MaturityScore(MaturityLevel maturityLevel, Double score) {}
     }
+
+    public record MaturityLevel(long id, String title, int index, int value) {}
 }
