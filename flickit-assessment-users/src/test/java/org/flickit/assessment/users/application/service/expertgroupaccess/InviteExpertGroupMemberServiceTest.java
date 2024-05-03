@@ -52,10 +52,10 @@ class InviteExpertGroupMemberServiceTest {
         String email = "test@example.com";
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupMemberPort.getMemberStatus(expertGroupId, userId)).thenReturn(Optional.empty());
         doNothing().when(inviteExpertGroupMemberPort).invite(isA(InviteExpertGroupMemberPort.Param.class));
-        doNothing().when(sendExpertGroupInviteMailPort).sendInvite(anyString(), anyLong(), any(UUID.class));
+        doNothing().when(sendExpertGroupInviteMailPort).inviteToExpertGroup(anyString(), anyLong(), any(UUID.class));
 
         service.inviteMember(param);
 
@@ -71,7 +71,7 @@ class InviteExpertGroupMemberServiceTest {
         UUID currentUserId = UUID.randomUUID();
         InviteExpertGroupMemberUseCase.Param param = new InviteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
 
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupMemberPort.getMemberStatus(expertGroupId, userId)).thenReturn(Optional.of(ExpertGroupAccessStatus.ACTIVE.ordinal()));
 
         var throwable = assertThrows(ResourceAlreadyExistsException.class, () -> service.inviteMember(param));
@@ -85,7 +85,7 @@ class InviteExpertGroupMemberServiceTest {
         UUID currentUserId = UUID.randomUUID();
         InviteExpertGroupMemberUseCase.Param param = new InviteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
 
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.empty());
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenThrow (new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.inviteMember(param));
         assertThat(throwable).hasMessage(EXPERT_GROUP_ID_NOT_FOUND);
@@ -98,7 +98,7 @@ class InviteExpertGroupMemberServiceTest {
         UUID currentUserId = UUID.randomUUID();
         InviteExpertGroupMemberUseCase.Param param = new InviteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
 
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(UUID.randomUUID()));
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
         assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);

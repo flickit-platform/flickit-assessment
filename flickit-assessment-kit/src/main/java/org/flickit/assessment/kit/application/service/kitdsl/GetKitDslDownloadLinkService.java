@@ -3,11 +3,12 @@ package org.flickit.assessment.kit.application.service.kitdsl;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDownloadLinkUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
+import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +31,8 @@ public class GetKitDslDownloadLinkService implements GetKitDownloadLinkUseCase {
 
     @Override
     public String getKitDslDownloadLink(Param param) {
-        var expertGroupId = loadKitExpertGroupPort.loadKitExpertGroupId(param.getKitId());
-
-        if (!checkExpertGroupAccessPort.checkIsMember(expertGroupId, param.getCurrentUserId()))
+        ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
+        if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         String filePath = loadDslFilePathPort.loadDslFilePath(param.getKitId())

@@ -1,5 +1,7 @@
 package org.flickit.assessment.users.application.service.expertgroup;
 
+import org.flickit.assessment.common.config.FileProperties;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
@@ -8,10 +10,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.unit.DataSize;
 
 import java.util.Random;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PICTURE_SIZE_MAX;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -20,8 +26,13 @@ class CreateExpertGroupServiceTest {
 
     @InjectMocks
     private CreateExpertGroupService service;
+
+    @Mock
+    private FileProperties fileProperties;
+
     @Mock
     private CreateExpertGroupPort createExpertGroupPort;
+
     @Mock
     private CreateExpertGroupAccessPort createExpertGroupAccessPort;
 
@@ -63,5 +74,22 @@ class CreateExpertGroupServiceTest {
         assertNotNull(exception);
 
         verify(createExpertGroupPort, times(1)).persist(any(CreateExpertGroupPort.Param.class));
+    }
+
+    @Test
+    void testCreateExpertGroup_invalidPictureFileSize_throwException() {
+        MockMultipartFile picture = new MockMultipartFile("pic", "pic.png", "text/plain", "some file".getBytes());
+
+        Param param = new Param("Expert Group Name",
+            "Expert Group Bio",
+            "Expert Group About",
+            picture,
+            "http://www.example.com",
+            UUID.randomUUID());
+
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofBytes(1));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.createExpertGroup(param));
+        assertThat(throwable).hasMessage(UPLOAD_FILE_PICTURE_SIZE_MAX);
     }
 }

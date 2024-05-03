@@ -3,7 +3,6 @@ package org.flickit.assessment.users.application.service.expertgroupaccess;
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.InviteExpertGroupMemberUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -21,7 +20,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_DUPLICATE;
 
 @Service
@@ -51,12 +49,11 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         var email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
 
         inviteExpertGroupMemberPort.invite(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
-        sendExpertGroupInviteMailPort.sendInvite(email, param.getExpertGroupId(), inviteToken);
+        sendExpertGroupInviteMailPort.inviteToExpertGroup(email, param.getExpertGroupId(), inviteToken);
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
-        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
-            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
+        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId);
         if (!Objects.equals(expertGroupOwnerId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }

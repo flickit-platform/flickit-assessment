@@ -54,6 +54,14 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 
     @Query("""
+            SELECT COUNT (DISTINCT q.id) FROM QuestionJpaEntity q
+            LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
+            LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id
+            WHERE at.subject.id = :subjectId
+        """)
+    Integer countDistinctBySubjectId(@Param("subjectId") long subjectId);
+
+    @Query("""
            SELECT DISTINCT q.id AS  questionId,
                 anso.index AS answeredOptionIndex,
                 qanso.id AS optionId,
@@ -107,4 +115,55 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.id = :questionId
         """)
     Optional<UUID> findRefNumById(@Param("questionId") Long questionId);
+
+    @Query("""
+            SELECT
+                MIN(q.index) as index,
+                qn.id as questionnaireId
+            FROM QuestionJpaEntity q JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id
+            JOIN KitVersionJpaEntity kv ON qn.kitVersionId = kv.id
+            JOIN AssessmentResultJpaEntity ar ON ar.kitVersionId = kv.id
+            WHERE ar.id = :assessmentResultId AND q.id NOT IN (
+                SELECT
+                    fq.id
+                FROM QuestionJpaEntity fq JOIN QuestionnaireJpaEntity qsn ON fq.questionnaireId = qsn.id
+                JOIN AnswerJpaEntity ans ON  ans.questionRefNum = fq.refNum
+                WHERE ans.assessmentResult.id = :assessmentResultId and (ans.answerOptionId IS NOT NULL OR ans.isNotApplicable = TRUE))
+            AND qn.id IN (
+                SELECT fqn.id
+                FROM QuestionnaireJpaEntity fqn JOIN AnswerJpaEntity fans ON fans.questionnaireId = fqn.id
+                WHERE fans.assessmentResult.id = :assessmentResultId
+            ) GROUP BY qn.id order by qn.id
+    """)
+    List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
+
+    List<QuestionJpaEntity> findAllByQuestionnaireIdOrderByIndexAsc(Long questionnaireId);
+
+
+    @Query("""
+            SELECT q as question
+            FROM QuestionJpaEntity q
+            LEFT JOIN KitVersionJpaEntity kv On kv.id = q.kitVersionId
+            WHERE q.id = :id AND kv.kit.id = :kitId
+        """)
+    Optional<QuestionJpaEntity> findByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
+
+    @Query("""
+            SELECT
+                qr as questionnaire,
+                qsn as question,
+                qi as questionImpact,
+                ov as optionImpact,
+                ao as answerOption
+            FROM QuestionJpaEntity qsn
+            LEFT JOIN AnswerOptionJpaEntity ao on qsn.id = ao.questionId
+            LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id
+            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId
+            LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id
+            WHERE qi.attributeId = :attributeId
+                AND qi.maturityLevel.id = :maturityLevelId
+            ORDER BY qr.title asc, qsn.index asc
+        """)
+    List<AttributeLevelImpactfulQuestionsView> findByAttributeIdAndMaturityLevelId(@Param("attributeId") long attributeId,
+                                                                                   @Param("maturityLevelId") long maturityLevelId);
 }

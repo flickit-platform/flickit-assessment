@@ -7,7 +7,7 @@ import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitByDslUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitInfoPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitFullInfoPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLastMajorModificationTimePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
@@ -24,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,7 +43,7 @@ class UpdateKitByDslServiceTest {
     @InjectMocks
     private UpdateKitByDslService service;
     @Mock
-    private LoadAssessmentKitInfoPort loadAssessmentKitInfoPort;
+    private LoadAssessmentKitFullInfoPort loadAssessmentKitFullInfoPort;
     @Mock
     private LoadDslJsonPathPort loadDslJsonPathPort;
     @Mock
@@ -69,9 +68,9 @@ class UpdateKitByDslServiceTest {
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
-        Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
+        UUID currentUserId = UUID.randomUUID();
 
-        when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
+        when(loadAssessmentKitFullInfoPort.load(kitId)).thenReturn(savedKit);
         when(loadDslJsonPathPort.loadJsonPath(kitDslId)).thenReturn(jsonPath);
         when(loadKitDSLJsonFilePort.loadDslJson(jsonPath)).thenReturn(dslContent);
         when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(currentUserId);
@@ -79,7 +78,7 @@ class UpdateKitByDslServiceTest {
         when(persister.persist(any(AssessmentKit.class), any(AssessmentKitDslModel.class), any(UUID.class)))
             .thenReturn(new UpdateKitPersisterResult(false));
 
-        var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId.get());
+        var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId);
         service.update(param);
     }
 
@@ -90,9 +89,9 @@ class UpdateKitByDslServiceTest {
         Long kitDslId = 12L;
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
-        Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
+        UUID currentUserId = UUID.randomUUID();
 
-        when(loadAssessmentKitInfoPort.load(savedKit.getId())).thenReturn(savedKit);
+        when(loadAssessmentKitFullInfoPort.load(savedKit.getId())).thenReturn(savedKit);
         when(loadDslJsonPathPort.loadJsonPath(kitDslId)).thenReturn(jsonPath);
         when(loadKitDSLJsonFilePort.loadDslJson(jsonPath)).thenReturn(dslContent);
         when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(currentUserId);
@@ -101,7 +100,7 @@ class UpdateKitByDslServiceTest {
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(savedKit.getId()), any(LocalDateTime.class));
         doNothing().when(updateKitDslPort).update(anyLong(), anyLong(), any(), any());
 
-        var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), kitDslId, currentUserId.get());
+        var param = new UpdateKitByDslUseCase.Param(savedKit.getId(), kitDslId, currentUserId);
         service.update(param);
     }
 
@@ -113,9 +112,9 @@ class UpdateKitByDslServiceTest {
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
-        Optional<UUID> currentUserId = Optional.of(UUID.randomUUID());
+        UUID currentUserId = UUID.randomUUID();
 
-        when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
+        when(loadAssessmentKitFullInfoPort.load(kitId)).thenReturn(savedKit);
         when(loadDslJsonPathPort.loadJsonPath(kitDslId)).thenReturn(jsonPath);
         when(loadKitDSLJsonFilePort.loadDslJson(jsonPath)).thenReturn(dslContent);
         when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(currentUserId);
@@ -124,7 +123,7 @@ class UpdateKitByDslServiceTest {
         notification.add(new InvalidAdditionError(SUBJECT, Set.of("Team")));
         when(validator.validate(any(AssessmentKit.class), any(AssessmentKitDslModel.class))).thenReturn(notification);
 
-        var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId.get());
+        var param = new UpdateKitByDslUseCase.Param(kitId, kitDslId, currentUserId);
 
         var throwable = assertThrows(ValidationsException.class,
             () -> service.update(param));
@@ -148,10 +147,10 @@ class UpdateKitByDslServiceTest {
         String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
-        Optional<UUID> ownerId = Optional.of(UUID.randomUUID());
+        UUID ownerId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
 
-        when(loadAssessmentKitInfoPort.load(kitId)).thenReturn(savedKit);
+        when(loadAssessmentKitFullInfoPort.load(kitId)).thenReturn(savedKit);
         when(loadDslJsonPathPort.loadJsonPath(kitDslId)).thenReturn(jsonPath);
         when(loadKitDSLJsonFilePort.loadDslJson(jsonPath)).thenReturn(dslContent);
         when(loadExpertGroupOwnerPort.loadOwnerId(savedKit.getExpertGroupId())).thenReturn(ownerId);

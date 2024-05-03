@@ -64,6 +64,6 @@ public class ExpertGroupAccessJpaEntity {
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
-        public static final String CREATION_TIME = "creationTime";
+        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -75,4 +76,27 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
     List<AttributeJpaEntity> findAllByKitVersionIdAndRefNumIn(Long kitVersionId, List<UUID> refNums);
 
     List<AttributeJpaEntity> findByIdIn(@Param(value = "ids") List<Long> ids);
+
+    @Query("""
+            SELECT a as attribute
+            FROM AttributeJpaEntity a
+            LEFT JOIN KitVersionJpaEntity kv On kv.id = a.kitVersionId
+            WHERE a.id = :id AND kv.kit.id = :kitId
+        """)
+    Optional<AttributeJpaEntity> findByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
+
+    @Query("""
+            SELECT COUNT(DISTINCT q.id) FROM QuestionJpaEntity q
+            JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id
+            WHERE qi.attributeId = :attributeId
+        """)
+    Integer countAttributeImpactfulQuestions(@Param(value = "attributeId") Long attributeId);
+
+    @Query("""
+              SELECT COUNT(a) > 0
+              FROM AttributeJpaEntity a
+              LEFT JOIN KitVersionJpaEntity kv ON a.kitVersionId = kv.id
+              WHERE  a.id = :id AND kv.kit.id = :kitId
+        """)
+    boolean existsByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
 }
