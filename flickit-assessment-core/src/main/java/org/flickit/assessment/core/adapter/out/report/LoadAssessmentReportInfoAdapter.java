@@ -68,7 +68,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_EXPERT_GROUP_NOT_FOUND));
 
         long kitVersionId = assessmentResultEntity.getKitVersionId();
-        List<MaturityLevelJpaEntity> maturityLevelEntities = maturityLevelJpaRepository.findAllByKitVersionId(kitVersionId);
+        List<MaturityLevelJpaEntity> maturityLevelEntities = maturityLevelJpaRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
 
         Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities = maturityLevelEntities.stream()
             .collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
