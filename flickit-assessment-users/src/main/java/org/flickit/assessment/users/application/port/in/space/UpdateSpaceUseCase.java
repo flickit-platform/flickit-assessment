@@ -11,6 +11,7 @@ import org.flickit.assessment.users.common.ErrorMessageKey;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_SPACE_SPACE_ID_NOT_NULL;
 
 public interface UpdateSpaceUseCase {
 
@@ -20,6 +21,9 @@ public interface UpdateSpaceUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
+        @NotNull(message = UPDATE_SPACE_SPACE_ID_NOT_NULL)
+        Long id;
+
         @NotBlank(message = ErrorMessageKey.UPDATE_SPACE_TITLE_NOT_BLANK)
         @Size(min = 3, message = ErrorMessageKey.UPDATE_SPACE_TITLE_SIZE_MIN)
         @Size(max = 100, message = ErrorMessageKey.UPDATE_SPACE_TITLE_SIZE_MAX)
@@ -28,7 +32,8 @@ public interface UpdateSpaceUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(String title, UUID currentUserId) {
+        public Param(long id, String title, UUID currentUserId) {
+            this.id = id;
             this.title = title.strip();
             this.currentUserId = currentUserId;
             this.validateSelf();

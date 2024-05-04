@@ -6,6 +6,7 @@ import org.flickit.assessment.users.application.port.in.space.UpdateSpaceUseCase
 import org.flickit.assessment.users.application.port.in.space.UpdateSpaceUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,16 +22,18 @@ public class UpdateSpaceRestController {
 
     @PostMapping("/spaces")
     public ResponseEntity<UpdateSpaceResponseDto> updateSpace(
+        @PathVariable long id,
         @RequestBody UpdateSpaceRequestDto request) {
         UUID currentUserId = userContext.getUser().id();
         UpdateSpaceResponseDto response =
-            toResponseDto(useCase.updateSpace(toParam(request, currentUserId)));
+            toResponseDto(useCase.updateSpace(toParam(id, request, currentUserId)));
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    private Param toParam(UpdateSpaceRequestDto request, UUID currentUserId) {
+    private Param toParam(long id, UpdateSpaceRequestDto request, UUID currentUserId) {
         return new Param(
+            id,
             request.title(),
             currentUserId
         );
