@@ -80,4 +80,8 @@ public class ErrorMessageKey {
     public static final String CREATE_SPACE_TITLE_NOT_BLANK = "create-space.title.notBlank";
     public static final String CREATE_SPACE_TITLE_SIZE_MIN = "create-space.title.size.min";
     public static final String CREATE_SPACE_TITLE_SIZE_MAX = "create-space.title.size.max";
+
+    public static final String UPDATE_SPACE_TITLE_NOT_BLANK = "update-space.title.notBlank";
+    public static final String UPDATE_SPACE_TITLE_SIZE_MIN = "update-space.title.size.min";
+    public static final String UPDATE_SPACE_TITLE_SIZE_MAX = "update-space.title.size.max";
 }
