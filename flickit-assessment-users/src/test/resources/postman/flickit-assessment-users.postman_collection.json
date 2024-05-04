@@ -424,7 +424,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/space/{{id}}/members",
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members",
 					"host": [
 						"{{base_url}}"
 					],
@@ -475,9 +475,12 @@
 			"response": []
 		},
 		{
-			"name": "Get Space Invitees",
+			"name": "Create Space",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
@@ -485,26 +488,23 @@
 						"type": "text"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\" : \"title\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/invitees?page=0&size=3",
+					"raw": "{{base_url}}/{{api_path}}/spaces",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"spaces",
-						"{{id}}",
-						"invitees"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "0"
-						},
-						{
-							"key": "size",
-							"value": "3"
-						}
+						"spaces"
 					]
 				}
 			},

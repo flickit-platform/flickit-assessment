@@ -14,12 +14,11 @@ import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
-import org.flickit.assessment.kit.adapter.out.persistence.expertgroup.ExpertGroupMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.kittagrelation.KitTagRelationMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.users.expertgroup.ExpertGroupMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
@@ -41,7 +40,6 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 @Component
 @RequiredArgsConstructor
 public class AssessmentKitPersistenceJpaAdapter implements
-    LoadKitExpertGroupPort,
     LoadKitUsersPort,
     DeleteKitUserAccessPort,
     LoadKitMinimalInfoPort,
@@ -51,20 +49,15 @@ public class AssessmentKitPersistenceJpaAdapter implements
     UpdateKitInfoPort,
     LoadAssessmentKitPort,
     LoadPublishedKitListPort,
-    CountKitListStatsPort {
+    CountKitListStatsPort,
+    DeleteAssessmentKitPort,
+    CountKitAssessmentsPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
     private final ExpertGroupJpaRepository expertGroupRepository;
     private final KitVersionJpaRepository kitVersionRepository;
     private final KitTagRelationJpaRepository kitTagRelationRepository;
-
-    @Override
-    public ExpertGroup loadKitExpertGroup(Long kitId) {
-        ExpertGroupJpaEntity entity = expertGroupRepository.findByKitId(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-        return ExpertGroupMapper.toDomainModel(entity);
-    }
 
     @Override
     public PaginatedResponse<GetKitUserListUseCase.UserListItem> loadKitUsers(LoadKitUsersPort.Param param) {
@@ -227,5 +220,15 @@ public class AssessmentKitPersistenceJpaAdapter implements
                 x.getLikeCount(),
                 x.getAssessmentCount()))
             .toList();
+    }
+
+    @Override
+    public void delete(Long kitId) {
+        repository.deleteById(kitId);
+    }
+
+    @Override
+    public long count(Long kitId) {
+        return repository.countAllKitAssessments(kitId);
     }
 }
