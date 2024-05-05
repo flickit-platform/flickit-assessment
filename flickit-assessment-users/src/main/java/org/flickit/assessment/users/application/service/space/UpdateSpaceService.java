@@ -18,11 +18,11 @@ public class UpdateSpaceService implements UpdateSpaceUseCase {
     private final LoadSpacePort loadSpacePort;
 
     @Override
-    public Result updateSpace(Param param) {
+    public void updateSpace(Param param) {
         Space space = loadSpacePort.loadSpace(param.getId());
         if (!param.getCurrentUserId().equals(space.getOwnerId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        return null;
+
     }
 }

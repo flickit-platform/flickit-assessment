@@ -15,7 +15,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_SPACE_S
 
 public interface UpdateSpaceUseCase {
 
-    Result updateSpace(Param param);
+    void updateSpace(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
