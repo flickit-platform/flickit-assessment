@@ -1,8 +1,11 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.error.ErrorMessageKey;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase;
+import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
     private final LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
+    private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
     private final UpdateCalculatedConfidencePort updateCalculatedConfidenceLevelResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
     private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
@@ -32,6 +36,8 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
     @Override
     public Result calculate(Param param) {
+        if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+            throw new AccessDeniedException(ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED);
         AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(param.getAssessmentId());
 
         if (isAssessmentResultReinitializationRequired(assessmentResult))
