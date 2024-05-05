@@ -29,9 +29,7 @@ public class UpdateSpaceRestController {
 
     private Param toParam(long id, UpdateSpaceRequestDto request, UUID currentUserId) {
         return new Param(
-                id,
-                request.title(),
-                currentUserId
+                id, request.title(), currentUserId
         );
     }
 }

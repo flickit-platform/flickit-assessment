@@ -18,8 +18,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,6 +60,27 @@ class UpdateSpaceServiceTest {
         when(loadSpacePort.loadSpace(spaceId)).thenReturn(space);
         var throwable = assertThrows(AccessDeniedException.class, ()-> service.updateSpace(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verify(loadSpacePort).loadSpace(anyLong());
+        verifyNoInteractions(updateSpacePort);
     }
 
+    @Test
+    @DisplayName("Updatin s dpsce with valid parametrs should be successful")
+    void testUpdateSpace_validParameters_successful(){
+        long spaceId = 0L;
+        String title = "Test";
+        UUID currentUserId = UUID.randomUUID();
+        UpdateSpaceUseCase.Param param = new UpdateSpaceUseCase.Param(spaceId, title, currentUserId);
+        Space space = new Space(spaceId, "title", "Title", currentUserId,
+                LocalDateTime.now(),LocalDateTime.now(), UUID.randomUUID(), currentUserId);
+
+        when(loadSpacePort.loadSpace(spaceId)).thenReturn(space);
+        doNothing().when(updateSpacePort).updateSpace(any(UpdateSpacePort.Param.class));
+
+        assertDoesNotThrow(()-> service.updateSpace(param));
+
+        verify(loadSpacePort).loadSpace(anyLong());
+        verify(updateSpacePort).updateSpace(any(UpdateSpacePort.Param.class));
+    }
 }
