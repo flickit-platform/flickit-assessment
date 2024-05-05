@@ -296,4 +296,12 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
+    <changeSet id="0.18-45" author="Maziyar Gerami">
+        <addColumn tableName="fau_space_user_access">
+            <column name="last_seen" type="${datetime_with_time_zone_type}" valueComputed="creation_time">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
