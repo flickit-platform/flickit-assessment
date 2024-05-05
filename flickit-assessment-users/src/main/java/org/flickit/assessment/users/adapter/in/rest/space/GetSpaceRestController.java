@@ -18,7 +18,7 @@ public class GetSpaceRestController {
     private final GetSpaceUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/space/{id}")
+    @GetMapping("/spaces/{id}")
     public ResponseEntity<GetSpaceResponseDto> getSpace(@PathVariable("id") Long id) {
         var currentUserId = userContext.getUser().id();
         var space = useCase.getSpace(toParam(id, currentUserId));
@@ -31,11 +31,11 @@ public class GetSpaceRestController {
 
     private GetSpaceResponseDto toResponse(GetSpaceUseCase.Result result) {
         return new GetSpaceResponseDto(
-            result.id(),
-            result.code(),
-            result.title(),
+            result.space().getId(),
+            result.space().getCode(),
+            result.space().getTitle(),
             result.isOwner(),
-            result.lastModificationTime(),
+            result.space().getLastModificationTime(),
             result.membersCount(),
             result.assessmentsCount()
         );

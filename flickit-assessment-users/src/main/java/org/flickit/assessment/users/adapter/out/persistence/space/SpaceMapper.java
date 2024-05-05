@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.data.jpa.users.space.SpaceWithDetailsView;
 import org.flickit.assessment.users.application.domain.Space;
+import org.flickit.assessment.users.application.port.out.LoadSpacePort;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SpaceMapper {
@@ -21,12 +22,15 @@ public class SpaceMapper {
             space.getLastModifiedBy());
         }
 
-    static Space mapToDomainModel(SpaceWithDetailsView entity) {
-        return new Space(entity.getId(),
+    static LoadSpacePort.Result mapToPortResult(SpaceWithDetailsView entity) {
+        return new LoadSpacePort.Result(entity.getId(),
             entity.getCode(),
             entity.getTitle(),
             entity.getOwnerId(),
+            null,
             entity.getLastModificationTime(),
+            null,
+            null,
             entity.getMembersCount(),
             entity.getAssessmentsCount());
     }

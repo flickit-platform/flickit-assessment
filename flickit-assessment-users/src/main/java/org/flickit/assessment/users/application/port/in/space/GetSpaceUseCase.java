@@ -4,9 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupUseCase;
+import org.flickit.assessment.users.application.domain.Space;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -18,7 +17,7 @@ public interface GetSpaceUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<GetExpertGroupUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_SPACE_SPACE_ID_NOT_NULL)
         Long id;
@@ -33,7 +32,6 @@ public interface GetSpaceUseCase {
         }
     }
 
-    record Result(long id, String code, String title, boolean isOwner,
-                  LocalDateTime lastModificationTime, int membersCount, int assessmentsCount) {
+    record Result(Space space, boolean isOwner, int membersCount, int assessmentsCount) {
     }
 }
