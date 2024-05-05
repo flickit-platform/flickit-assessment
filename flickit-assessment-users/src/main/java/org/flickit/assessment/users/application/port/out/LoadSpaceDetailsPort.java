@@ -7,8 +7,7 @@ public interface LoadSpaceDetailsPort {
 
     Result loadSpace(long id, UUID currentUserId);
 
-    record Result (long id, String code, String title, UUID ownerId, LocalDateTime creationTime,
-                   LocalDateTime lastModificationTime, UUID createdBy, UUID lastModifiedBy,
+    record Result (long id, String code, String title, UUID ownerId, LocalDateTime lastModificationTime,
                    int membersCount, int assessmentsCount){
     }
 }

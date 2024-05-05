@@ -27,10 +27,7 @@ public class SpaceMapper {
             entity.getCode(),
             entity.getTitle(),
             entity.getOwnerId(),
-            null,
             entity.getLastModificationTime(),
-            null,
-            null,
             entity.getMembersCount(),
             entity.getAssessmentsCount());
     }

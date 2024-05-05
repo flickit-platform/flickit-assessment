@@ -23,7 +23,7 @@ public class GetSpaceService implements GetSpaceUseCase {
         LoadSpaceDetailsPort.Result result = loadSpaceDetailsPort.loadSpace(param.getId(), param.getCurrentUserId());
         updateSpaceLastSeenPort.updateLastSeen(param.getId(), LocalDateTime.now(), param.getCurrentUserId());
         Space space = new Space (result.id(), result.code(), result.title(), result.ownerId(),
-            result.creationTime(), result.lastModificationTime(), result.createdBy(), result.lastModifiedBy());
+            null, result.lastModificationTime(), null, null);
         boolean isOwner = param.getCurrentUserId().equals(result.ownerId());
 
         return new Result(space, isOwner, result.membersCount(), result.assessmentsCount());
