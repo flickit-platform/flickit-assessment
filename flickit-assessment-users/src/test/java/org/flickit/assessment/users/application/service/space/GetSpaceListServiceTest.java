@@ -51,7 +51,7 @@ class GetSpaceListServiceTest {
             spacePortList,
             page,
             size,
-            SpaceUserAccessJpaEntity.Fields.LAST_SEEN,
+            SpaceUserAccessJpaEntity.Fields.CREATION_TIME,
             Sort.Direction.DESC.name().toLowerCase(),
             spaceListItems.size());
 

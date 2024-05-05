@@ -20,7 +20,7 @@ public class SpaceMapper {
             space.getLastModificationTime(),
             space.getCreatedBy(),
             space.getLastModifiedBy());
-        }
+    }
 
     public static LoadSpaceListPort.Result mapToPortResult(SpaceWithDetailsView entity) {
         return new LoadSpaceListPort.Result(
