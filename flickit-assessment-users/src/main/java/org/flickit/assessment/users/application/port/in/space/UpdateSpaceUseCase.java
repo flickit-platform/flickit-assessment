@@ -32,7 +32,7 @@ public interface UpdateSpaceUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(long id, String title, UUID currentUserId) {
+        public Param(Long id, String title, UUID currentUserId) {
             this.id = id;
             this.title = title.strip();
             this.currentUserId = currentUserId;

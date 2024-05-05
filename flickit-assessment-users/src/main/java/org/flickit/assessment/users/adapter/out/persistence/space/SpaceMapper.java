@@ -19,4 +19,17 @@ public class SpaceMapper {
             space.getCreatedBy(),
             space.getLastModifiedBy());
     }
+
+    public static Space mapJpaToDomain(SpaceJpaEntity entity){
+        return new Space(
+            entity.getId(),
+            entity.getCode(),
+            entity.getTitle(),
+            entity.getOwnerId(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime(),
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy()
+        );
+    }
 }
