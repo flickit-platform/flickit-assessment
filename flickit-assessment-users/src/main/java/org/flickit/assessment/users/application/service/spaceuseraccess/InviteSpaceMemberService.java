@@ -3,10 +3,11 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
-import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
+import org.flickit.assessment.users.application.domain.SpaceUserAccess;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.InviteSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
 
     private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final LoadUserPort loadUserPort;
-    private final AddSpaceMemberPort addSpaceMemberPort;
+    private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
     private final InviteSpaceMemberPort inviteSpaceMemberPort;
     private final SendFlickitInviteMailPort sendFlickitInviteMailPort;
 
@@ -47,8 +48,8 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
             if (inviteeHasAccess)
                 throw new ResourceAlreadyExistsException(INVITE_SPACE_MEMBER_SPACE_USER_DUPLICATE);
 
-            addSpaceMemberPort.persist(new AddSpaceMemberPort.Param(
-                spaceId, inviteeUserId.get(), currentUserId, LocalDateTime.now()));
+            var access = new SpaceUserAccess(spaceId, inviteeUserId.get(), currentUserId, LocalDateTime.now());
+            createSpaceUserAccessPort.persist(access);
         } else {
             var creationTime = LocalDateTime.now();
             var expirationDate = creationTime.plusDays(EXPIRY_DURATION.toDays());

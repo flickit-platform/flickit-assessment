@@ -32,6 +32,11 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public void updateLastSeen(long spaceId, LocalDateTime currentTime, UUID currentUserId) {
-        repository.updateLastSeen(spaceId, currentTime, currentUserId);
+        repository.updateLastSeen(spaceId, currentTime, currentUserId);}
+
+    public long persist(Space space) {
+        var unsavedEntity = SpaceMapper.mapToJpaEntity(space);
+        var savedEntity = repository.save(unsavedEntity);
+        return savedEntity.getId();
     }
 }

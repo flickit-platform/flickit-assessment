@@ -42,6 +42,11 @@ public class ErrorMessageKey {
     public static final String GET_KIT_TAG_LIST_SIZE_MIN = "get-kit-tag-list.size.min";
     public static final String GET_KIT_TAG_LIST_SIZE_MAX = "get-kit-tag-list.size.max";
 
+    public static final String GET_KIT_LIST_IS_PRIVATE_NOT_NULL = "get-kit-list.isPrivate.notNull";
+    public static final String GET_KIT_LIST_PAGE_MIN = "get-kit-list.page.min";
+    public static final String GET_KIT_LIST_SIZE_MIN = "get-kit-list.size.min";
+    public static final String GET_KIT_LIST_SIZE_MAX = "get-kit-list.size.max";
+
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_NULL = "get-kit-minimal-info.kitId.notNull";
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_FOUND = "get-kit-minimal-info.kitId.notFound";
 
@@ -50,6 +55,9 @@ public class ErrorMessageKey {
     public static final String DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND = "delete-kit-user-access.kit-user.notFound";
     public static final String DELETE_KIT_USER_ACCESS_KIT_ID_NOT_FOUND = "delete-kit-user-access.kitId.notFound";
     public static final String DELETE_KIT_USER_ACCESS_USER_NOT_FOUND = "delete-kit-user-access.user.notFound";
+
+    public static final String DELETE_KIT_KIT_ID_NOT_NULL = "delete-kit.kitId.notNull";
+    public static final String DELETE_KIT_HAS_ASSESSMENT = "delete-kit.hasAssessment";
 
     public static final String UPLOAD_KIT_DSL_KIT_NOT_NULL = "upload-kit.dsl-file.notNull";
     public static final String UPLOAD_KIT_DSL_EXPERT_GROUP_ID_NOT_NULL = "upload-kit.expert-group-id.notNull";
@@ -105,6 +113,8 @@ public class ErrorMessageKey {
     public static final String GET_ATTRIBUTE_LEVEL_QUESTIONS_KIT_ID_NOT_NULL = "get-attribute-level-questions.kitId.notNull";
     public static final String GET_ATTRIBUTE_LEVEL_QUESTIONS_ATTRIBUTE_ID_NOT_NULL = "get-attribute-level-questions.attributeId.notNull";
     public static final String GET_ATTRIBUTE_LEVEL_QUESTIONS_MATURITY_LEVEL_ID_NOT_NULL = "get-attribute-level-questions.maturityLevel.notNull";
+
+    public static final String TOGGLE_KIT_LIKE_KIT_ID_NOT_NULL = "toggle-kit-like.kitId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);

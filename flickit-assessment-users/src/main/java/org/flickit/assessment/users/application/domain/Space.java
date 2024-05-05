@@ -10,11 +10,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class Space {
 
-    private final long id;
+    private final Long id;
     private final String code;
     private final String title;
     private final UUID ownerId;
+    private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
-    private final int membersCount;
-    private final int assessmentsCount;
+    private final UUID createdBy;
+    private final UUID lastModifiedBy;
 }
