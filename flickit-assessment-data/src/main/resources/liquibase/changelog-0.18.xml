@@ -296,7 +296,7 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="0.18-55" author="Maziyar Gerami">
+    <changeSet id="0.18-45" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group_user_access">
             <column name="last_seen" type="timestamp" valueComputed="creation_time">
                 <constraints nullable="false"/>
