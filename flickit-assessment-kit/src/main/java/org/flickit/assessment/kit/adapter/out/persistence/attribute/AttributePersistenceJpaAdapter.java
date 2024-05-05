@@ -6,17 +6,12 @@ import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.port.out.attribute.CountAttributeImpactfulQuestionsPort;
-import org.flickit.assessment.kit.application.port.out.attribute.CreateAttributePort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributePort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
-import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
+import org.flickit.assessment.kit.application.port.out.attribute.*;
 import org.springframework.stereotype.Component;
 
-import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
 import java.util.List;
 
+import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND;
 

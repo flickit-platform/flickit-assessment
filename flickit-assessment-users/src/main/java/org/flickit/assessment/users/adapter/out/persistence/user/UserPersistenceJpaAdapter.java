@@ -7,9 +7,10 @@ import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUse
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.USER_BY_EMAIL_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.USER_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -21,13 +22,13 @@ public class UserPersistenceJpaAdapter implements
 
     @Override
     public String loadEmail(UUID userId) {
-        return repository.findEmailByUserId(userId);
+        return repository.findEmailByUserId(userId)
+            .orElseThrow(() -> new ResourceNotFoundException(USER_ID_NOT_FOUND));
     }
 
     @Override
-    public UUID loadUserIdByEmail(String email) {
-        return repository.findUserIdByEmail(email.toLowerCase())
-            .orElseThrow(() -> new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));
+    public Optional<UUID> loadUserIdByEmail(String email) {
+        return repository.findUserIdByEmail(email.toLowerCase());
     }
 }
 
