@@ -57,7 +57,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<Member> loadSpaceMembers(long spaceId, int page, int size) {
         var pageResult = repository.findMembers(spaceId,
-            PageRequest.of(page, size, Sort.Direction.DESC, SpaceUserAccessJpaEntity.Fields.CREATION_TIME));
+            PageRequest.of(page, size, Sort.Direction.DESC, SpaceUserAccessJpaEntity.Fields.LAST_SEEN));
 
         var items = pageResult.getContent()
             .stream()
@@ -68,7 +68,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
             items ,
             pageResult.getNumber(),
             pageResult.getSize(),
-            SpaceUserAccessJpaEntity.Fields.CREATION_TIME,
+            SpaceUserAccessJpaEntity.Fields.LAST_SEEN,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
