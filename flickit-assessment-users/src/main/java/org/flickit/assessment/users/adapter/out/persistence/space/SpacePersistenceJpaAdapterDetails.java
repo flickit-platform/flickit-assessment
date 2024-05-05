@@ -3,7 +3,7 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.Space;
-import org.flickit.assessment.users.application.port.out.LoadSpacePort;
+import org.flickit.assessment.users.application.port.out.LoadSpaceDetailsPort;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.UpdateSpaceLastSeenPort;
@@ -18,8 +18,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 
 @Component
 @RequiredArgsConstructor
-public class SpacePersistenceJpaAdapter implements
-    LoadSpacePort,
+public class SpacePersistenceJpaAdapterDetails implements
+    LoadSpaceDetailsPort,
     UpdateSpaceLastSeenPort,
     CreateSpacePort {
 

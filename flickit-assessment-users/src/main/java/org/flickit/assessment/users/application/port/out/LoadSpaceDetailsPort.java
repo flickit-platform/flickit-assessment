@@ -3,7 +3,7 @@ package org.flickit.assessment.users.application.port.out;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public interface LoadSpacePort {
+public interface LoadSpaceDetailsPort {
 
     Result loadSpace(long id, UUID currentUserId);
 
