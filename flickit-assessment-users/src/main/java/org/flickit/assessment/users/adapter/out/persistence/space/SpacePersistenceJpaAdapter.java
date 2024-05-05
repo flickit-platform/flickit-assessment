@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
+import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,7 +14,9 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class SpacePersistenceJpaAdapter implements LoadSpaceListPort {
+public class SpacePersistenceJpaAdapter implements
+    LoadSpaceListPort,
+    CreateSpacePort {
 
     private final SpaceJpaRepository repository;
 
@@ -33,5 +36,11 @@ public class SpacePersistenceJpaAdapter implements LoadSpaceListPort {
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+
+        @Override
+    public long persist(Space space) {
+        var unsavedEntity = SpaceMapper.mapToJpaEntity(space);
+        var savedEntity = repository.save(unsavedEntity);
+        return savedEntity.getId();
     }
 }

@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDownloadLinkUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;

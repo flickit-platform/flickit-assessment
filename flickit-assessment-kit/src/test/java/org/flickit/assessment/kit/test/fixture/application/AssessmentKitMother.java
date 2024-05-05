@@ -124,4 +124,22 @@ public static AssessmentKit simpleKit() {
             questionnaires,
             id++);
     }
+
+    public static AssessmentKit privateKit() {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            Boolean.TRUE,
+            EXPERT_GROUP_ID,
+            null,
+            null,
+            null,
+            id++);
+    }
 }
