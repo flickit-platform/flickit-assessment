@@ -2,21 +2,20 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.AssessmentColor;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReport;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.AttributeReportItem;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.SubjectReportItem;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.SubjectReportItem.SubjectMaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReport.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentReport.AssessmentReportItem.AssessmentKitItem;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.AssessmentReportItem.AssessmentMaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReport.AssessmentReportItem.AssessmentKitItem.ExpertGroup;
+import org.flickit.assessment.core.application.domain.report.AssessmentReport.AttributeReportItem;
+import org.flickit.assessment.core.application.domain.report.AssessmentReport.SubjectReportItem;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
-
+import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
@@ -62,7 +60,7 @@ class ReportAssessmentServiceTest {
             new AttributeReportItem(3L, "attrTitle3", 3));
         ExpertGroup expertGroup = new ExpertGroup(1L, "expertGroupTitle1");
         AssessmentKitItem kit = new AssessmentKitItem(1L, "kitTitle", "kitSummary", 3, expertGroup);
-        AssessmentMaturityLevel assessmentMaturityLevel = new AssessmentMaturityLevel(1L, "good", 1, 2);
+        MaturityLevel assessmentMaturityLevel = MaturityLevelMother.levelThree();
         LocalDateTime lastModificationTime = LocalDateTime.now();
         AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
             "assessmentTitle",
@@ -74,13 +72,9 @@ class ReportAssessmentServiceTest {
             AssessmentColor.BLUE,
             lastModificationTime);
 
-        List<MaturityLevel> maturityLevels = List.of(new MaturityLevel(1L, 1, 1, null),
-            new MaturityLevel(2L, 2, 1, null),
-            new MaturityLevel(3L, 3, 2, null),
-            new MaturityLevel(4L, 4, 1, null),
-            new MaturityLevel(5L, 5, 2, null));
-        SubjectMaturityLevel softwareLevel = new SubjectMaturityLevel(1L, "good");
-        SubjectMaturityLevel teamLevel = new SubjectMaturityLevel(2L, "weak");
+        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
+        MaturityLevel softwareLevel = MaturityLevelMother.levelFour();
+        MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
         List<SubjectReportItem> subjects = List.of(new SubjectReportItem(1L, "software", 1, "subjectDesc1", softwareLevel),
             new SubjectReportItem(2L, "team", 2, "subjectDesc2", teamLevel));
         AssessmentReport assessmentReport = new AssessmentReport(assessment, attributes, maturityLevels, subjects);
@@ -101,10 +95,10 @@ class ReportAssessmentServiceTest {
         assertEquals(assessmentReport.assessment().isConfidenceValid(), result.assessment().isConfidenceValid());
         assertEquals(assessmentReport.assessment().lastModificationTime(), result.assessment().lastModificationTime());
         assertEquals(assessmentReport.assessment().color(), result.assessment().color());
-        assertEquals(assessmentReport.assessment().maturityLevel().id(), result.assessment().maturityLevel().id());
-        assertEquals(assessmentReport.assessment().maturityLevel().index(), result.assessment().maturityLevel().index());
-        assertEquals(assessmentReport.assessment().maturityLevel().title(), result.assessment().maturityLevel().title());
-        assertEquals(assessmentReport.assessment().maturityLevel().value(), result.assessment().maturityLevel().value());
+        assertEquals(assessmentReport.assessment().maturityLevel().getId(), result.assessment().maturityLevel().getId());
+        assertEquals(assessmentReport.assessment().maturityLevel().getIndex(), result.assessment().maturityLevel().getIndex());
+        assertEquals(assessmentReport.assessment().maturityLevel().getTitle(), result.assessment().maturityLevel().getTitle());
+        assertEquals(assessmentReport.assessment().maturityLevel().getValue(), result.assessment().maturityLevel().getValue());
         assertEquals(assessmentReport.assessment().assessmentKit().id(), result.assessment().assessmentKit().id());
         assertEquals(assessmentReport.assessment().assessmentKit().title(), result.assessment().assessmentKit().title());
         assertEquals(assessmentReport.assessment().assessmentKit().summary(), result.assessment().assessmentKit().summary());

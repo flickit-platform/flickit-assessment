@@ -15,7 +15,7 @@ public record AssessmentReport(AssessmentReportItem assessment,
     public record AssessmentReportItem(UUID id,
                                        String title,
                                        AssessmentKitItem assessmentKit,
-                                       AssessmentMaturityLevel maturityLevel,
+                                       MaturityLevel maturityLevel,
                                        Double confidenceValue,
                                        boolean isCalculateValid,
                                        boolean isConfidenceValid,
@@ -26,32 +26,23 @@ public record AssessmentReport(AssessmentReportItem assessment,
             String title,
             String summary,
             Integer maturityLevelCount,
-            ExpertGroup expertGroup
-        ) {
-            public record ExpertGroup(Long id, String title) {}
+            ExpertGroup expertGroup) {
+            public record ExpertGroup(Long id, String title) {
+            }
         }
-
-        public record AssessmentMaturityLevel(
-            Long id,
-            String title,
-            Integer value,
-            Integer index
-        ) {}
     }
 
     public record AttributeReportItem(
         Long id,
         String title,
-        int maturityLevelIndex
-    ) {}
+        int maturityLevelIndex) {
+    }
 
     public record SubjectReportItem(
         Long id,
         String title,
         Integer index,
         String description,
-        SubjectMaturityLevel maturityLevel
-    ) {
-        public record SubjectMaturityLevel(Long id, String title) {}
+        MaturityLevel maturityLevel) {
     }
 }
