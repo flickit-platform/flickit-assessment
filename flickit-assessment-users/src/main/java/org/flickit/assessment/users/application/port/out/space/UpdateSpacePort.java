@@ -5,5 +5,8 @@ import java.util.UUID;
 
 public interface UpdateSpacePort {
 
-    void updateSpace(long id, LocalDateTime currentTime, UUID updatedBy);
+    void updateSpace(Param param);
+
+    record Param(long id, String title, LocalDateTime lastModificationTime, UUID lastModifiedBy){
+    }
 }

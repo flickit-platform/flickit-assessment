@@ -6,6 +6,7 @@ import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
+import org.flickit.assessment.users.application.port.out.space.UpdateSpacePort;
 import org.springframework.stereotype.Component;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
@@ -14,7 +15,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 @RequiredArgsConstructor
 public class SpacePersistenceJpaAdapter implements
     CreateSpacePort,
-    LoadSpacePort {
+    LoadSpacePort,
+    UpdateSpacePort {
 
     private final SpaceJpaRepository repository;
 
@@ -30,5 +32,11 @@ public class SpacePersistenceJpaAdapter implements
         var entity = repository.findById(id)
             .orElseThrow(()-> new  ResourceNotFoundException(SPACE_ID_NOT_FOUND));
         return SpaceMapper.mapJpaToDomain(entity);
+    }
+
+    @Override
+    public void updateSpace(Param param) {
+        repository.update(param.id(), param.title(),
+                param.lastModificationTime(), param.lastModifiedBy());
     }
 }
