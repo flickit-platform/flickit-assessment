@@ -4,7 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport;
+import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
+import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,10 +35,10 @@ public interface ReportAssessmentUseCase {
     }
 
     record Result(
-        AssessmentReport.AssessmentReportItem assessment,
+        AssessmentReportItem assessment,
         List<TopAttribute> topStrengths,
         List<TopAttribute> topWeaknesses,
-        List<AssessmentReport.SubjectReportItem> subjects) {
+        List<AssessmentSubjectReportItem> subjects) {
 
         public record TopAttribute(Long id, String title) {}
     }

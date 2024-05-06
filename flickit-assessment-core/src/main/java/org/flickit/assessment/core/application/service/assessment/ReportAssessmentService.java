@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
@@ -43,16 +42,16 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
 
         var assessmentReport = loadReportInfoPort.load(param.getAssessmentId());
         var midLevelMaturity = middleLevel(assessmentReport.maturityLevels());
-        List<AssessmentReport.AttributeReportItem> attributes = assessmentReport.attributes();
+        List<LoadAssessmentReportInfoPort.Result.AttributeReportItem> attributes = assessmentReport.attributes();
         List<Result.TopAttribute> topStrengths = attributes.stream()
-            .sorted(Comparator.comparing(AssessmentReport.AttributeReportItem::maturityLevelIndex, Comparator.reverseOrder()))
+            .sorted(Comparator.comparing(LoadAssessmentReportInfoPort.Result.AttributeReportItem::maturityLevelIndex, Comparator.reverseOrder()))
             .filter(e -> midLevelMaturity.getIndex() <= e.maturityLevelIndex())
             .limit(3)
             .map(e -> new Result.TopAttribute(e.id(), e.title()))
             .toList();
 
         List<Result.TopAttribute> topWeaknesses = attributes.stream()
-            .sorted(Comparator.comparing(AssessmentReport.AttributeReportItem::maturityLevelIndex))
+            .sorted(Comparator.comparing(LoadAssessmentReportInfoPort.Result.AttributeReportItem::maturityLevelIndex))
             .filter(e -> e.maturityLevelIndex() <= midLevelMaturity.getIndex())
             .limit(3)
             .map(e -> new Result.TopAttribute(e.id(), e.title()))

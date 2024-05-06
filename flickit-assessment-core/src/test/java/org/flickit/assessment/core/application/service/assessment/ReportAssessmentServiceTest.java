@@ -4,12 +4,8 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.AssessmentReportItem;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.AssessmentReportItem.AssessmentKitItem;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.AssessmentReportItem.AssessmentKitItem.ExpertGroup;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.AttributeReportItem;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.SubjectReportItem;
+import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
+import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
@@ -55,11 +51,11 @@ class ReportAssessmentServiceTest {
 
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
-        List<AttributeReportItem> attributes = List.of(new AttributeReportItem(1L, "attrTitle1", 1),
-            new AttributeReportItem(2L, "attrTitle2", 2),
-            new AttributeReportItem(3L, "attrTitle3", 3));
-        ExpertGroup expertGroup = new ExpertGroup(1L, "expertGroupTitle1");
-        AssessmentKitItem kit = new AssessmentKitItem(1L, "kitTitle", "kitSummary", 3, expertGroup);
+        var attributes = List.of(new LoadAssessmentReportInfoPort.Result.AttributeReportItem(1L, "attrTitle1", 1),
+            new LoadAssessmentReportInfoPort.Result.AttributeReportItem(2L, "attrTitle2", 2),
+            new LoadAssessmentReportInfoPort.Result.AttributeReportItem(3L, "attrTitle3", 3));
+        var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1");
+        var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", 3, expertGroup);
         MaturityLevel assessmentMaturityLevel = MaturityLevelMother.levelThree();
         LocalDateTime lastModificationTime = LocalDateTime.now();
         AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
@@ -75,9 +71,9 @@ class ReportAssessmentServiceTest {
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
         MaturityLevel softwareLevel = MaturityLevelMother.levelFour();
         MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
-        List<SubjectReportItem> subjects = List.of(new SubjectReportItem(1L, "software", 1, "subjectDesc1", softwareLevel),
-            new SubjectReportItem(2L, "team", 2, "subjectDesc2", teamLevel));
-        AssessmentReport assessmentReport = new AssessmentReport(assessment, attributes, maturityLevels, subjects);
+        List<AssessmentSubjectReportItem> subjects = List.of(new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", softwareLevel),
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", teamLevel));
+        var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, attributes, maturityLevels, subjects);
 
         when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);

@@ -2,8 +2,11 @@ package org.flickit.assessment.core.application.port.out.assessmentresult;
 
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
+import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
+import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface LoadAssessmentReportInfoPort {
@@ -16,5 +19,17 @@ public interface LoadAssessmentReportInfoPort {
      * @throws ResourceNotFoundException  If the assessment result is not found.
      * @throws CalculateNotValidException If the assessment result is not valid.
      */
-    AssessmentReport load(UUID assessmentId);
+    Result load(UUID assessmentId);
+
+    record Result(AssessmentReportItem assessment,
+                  List<AttributeReportItem> attributes,
+                  List<MaturityLevel> maturityLevels,
+                  List<AssessmentSubjectReportItem> subjects) {
+
+        public record AttributeReportItem(
+            Long id,
+            String title,
+            int maturityLevelIndex) {
+        }
+    }
 }

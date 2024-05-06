@@ -6,11 +6,8 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.AssessmentReportItem.AssessmentKitItem;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.AssessmentReportItem.AssessmentKitItem.ExpertGroup;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.AttributeReportItem;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport.SubjectReportItem;
+import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
+import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
@@ -56,7 +53,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final AttributeJpaRepository attributeJpaRepository;
 
     @Override
-    public AssessmentReport load(UUID assessmentId) {
+    public Result load(UUID assessmentId) {
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
@@ -73,7 +70,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities = maturityLevelEntities.stream()
             .collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
 
-        AssessmentReport.AssessmentReportItem assessmentReportItem = new AssessmentReport.AssessmentReportItem(assessmentId,
+        AssessmentReportItem assessmentReportItem = new AssessmentReportItem(assessmentId,
             assessment.getTitle(),
             buildAssessmentKitItem(expertGroupEntity, assessmentKitEntity, maturityLevelEntities),
             MaturityLevelMapper.mapToDomainModel(idToMaturityLevelEntities.get(assessmentResultEntity.getMaturityLevelId()), null),
@@ -84,31 +81,31 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessment.getLastModificationTime());
 
         UUID assessmentResultId = assessmentResultEntity.getId();
-        List<AttributeReportItem> attributes = buildAttributeReportItems(assessmentResultId, idToMaturityLevelEntities);
+        List<Result.AttributeReportItem> attributes = buildAttributeReportItems(assessmentResultId, idToMaturityLevelEntities);
         List<MaturityLevel> maturityLevels = maturityLevelEntities.stream()
             .map(e -> new MaturityLevel(e.getId(), e.getTitle(), e.getIndex(), e.getValue(), null))
             .toList();
-        List<SubjectReportItem> subjects = buildSubjectReportItems(assessmentResultId, idToMaturityLevelEntities);
+        List<AssessmentSubjectReportItem> subjects = buildSubjectReportItems(assessmentResultId, idToMaturityLevelEntities);
 
-        return new AssessmentReport(assessmentReportItem, attributes, maturityLevels, subjects);
+        return new Result(assessmentReportItem, attributes, maturityLevels, subjects);
     }
 
-    private static AssessmentKitItem buildAssessmentKitItem(ExpertGroupJpaEntity expertGroupEntity,
-                                                            AssessmentKitJpaEntity assessmentKitEntity,
-                                                            List<MaturityLevelJpaEntity> maturityLevelJpaEntities) {
-        ExpertGroup expertGroup =
-            new AssessmentReport.AssessmentReportItem.AssessmentKitItem.ExpertGroup(expertGroupEntity.getId(),
+    private static AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(ExpertGroupJpaEntity expertGroupEntity,
+                                                                                 AssessmentKitJpaEntity assessmentKitEntity,
+                                                                                 List<MaturityLevelJpaEntity> maturityLevelJpaEntities) {
+        AssessmentReportItem.AssessmentKitItem.ExpertGroup expertGroup =
+            new AssessmentReportItem.AssessmentKitItem.ExpertGroup(expertGroupEntity.getId(),
                 expertGroupEntity.getTitle());
 
-        return new AssessmentKitItem(assessmentKitEntity.getId(),
+        return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
             assessmentKitEntity.getTitle(),
             assessmentKitEntity.getSummary(),
             maturityLevelJpaEntities.size(),
             expertGroup);
     }
 
-    private List<AttributeReportItem> buildAttributeReportItems(UUID assessmentResultId,
-                                                                Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities) {
+    private List<Result.AttributeReportItem> buildAttributeReportItems(UUID assessmentResultId,
+                                                                       Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities) {
         List<QualityAttributeValueJpaEntity> attributeValueEntities = qualityAttributeValueJpaRepository.findByAssessmentResultId(assessmentResultId);
         Set<UUID> attrRefNums = attributeValueEntities.stream()
             .map(QualityAttributeValueJpaEntity::getAttributeRefNum)
@@ -120,13 +117,13 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .map(e -> {
                 Long maturityLevelId = attributeRefNumToMaturityLevelId.get(e.getRefNum());
                 Integer index = idToMaturityLevelEntities.get(maturityLevelId).getIndex();
-                return new AssessmentReport.AttributeReportItem(e.getId(), e.getTitle(), index);
+                return new Result.AttributeReportItem(e.getId(), e.getTitle(), index);
             })
             .toList();
     }
 
-    private List<SubjectReportItem> buildSubjectReportItems(UUID assessmentResultId,
-                                                            Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities) {
+    private List<AssessmentSubjectReportItem> buildSubjectReportItems(UUID assessmentResultId,
+                                                                      Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities) {
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
         Set<UUID> refNums = subjectValueEntities.stream()
             .map(SubjectValueJpaEntity::getSubjectRefNum)
@@ -142,7 +139,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                 Long maturityLevelId = subjectRefNumToMaturityLevelId.get(e.getRefNum());
                 MaturityLevelJpaEntity maturityLevelEntity = idToMaturityLevelEntities.get(maturityLevelId);
                 MaturityLevel subjectMaturityLevel = MaturityLevelMapper.mapToDomainModel(maturityLevelEntity, null);
-                return new AssessmentReport.SubjectReportItem(e.getId(),
+                return new AssessmentSubjectReportItem(e.getId(),
                     e.getTitle(),
                     e.getIndex(),
                     e.getDescription(),
