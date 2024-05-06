@@ -40,6 +40,7 @@ public interface ReportAssessmentUseCase {
         List<TopAttribute> topWeaknesses,
         List<AssessmentSubjectReportItem> subjects) {
 
-        public record TopAttribute(Long id, String title) {}
+        public record TopAttribute(Long id, String title) {
+        }
     }
 }
