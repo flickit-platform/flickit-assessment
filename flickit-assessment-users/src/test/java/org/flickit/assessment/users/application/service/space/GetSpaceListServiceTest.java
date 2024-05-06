@@ -36,7 +36,7 @@ class GetSpaceListServiceTest {
     private LoadSpaceListPort loadSpaceListPort;
 
     @Test
-    void testGetSpaceList_validInputs_validResults(){
+    void testGetSpaceListParam_validInputs_validResults(){
         int size = 10;
         int page = 0;
         UUID currentUserId = UUID.randomUUID();
@@ -72,7 +72,7 @@ class GetSpaceListServiceTest {
     }
 
     @Test
-    void testGetSpaceList_ValidInputs_emptyResults() {
+    void testGetSpaceListParam_ValidInputs_emptyResults() {
         int page = 0;
         int size = 10;
         UUID currentUserId = UUID.randomUUID();
