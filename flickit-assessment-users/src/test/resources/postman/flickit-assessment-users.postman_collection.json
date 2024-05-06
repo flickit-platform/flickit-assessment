@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "db1f88b6-d7d9-4e31-9f56-505f7e06f470",
+		"_postman_id": "ac22d6c7-c166-4030-a3f4-87a2db333c7d",
 		"name": "flickit-assessment-users",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "11099181"
@@ -239,6 +239,31 @@
 			"response": []
 		},
 		{
+			"name": "Get Space",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/space/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"space",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Delete Expert Group",
 			"request": {
 				"method": "DELETE",
@@ -424,7 +449,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members",
+					"raw": "{{base_url}}/{{api_path}}/space/{{id}}/members",
 					"host": [
 						"{{base_url}}"
 					],
