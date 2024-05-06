@@ -26,4 +26,6 @@ public interface SpaceUserAccessJpaRepository extends JpaRepository<SpaceUserAcc
             WHERE s.spaceId = :spaceId
         """)
     Page<SpaceMembersView> findMembers(long spaceId, Pageable pageable);
+
+    void deleteBySpaceIdAndUserId(long spaceId, UUID userId);
 }

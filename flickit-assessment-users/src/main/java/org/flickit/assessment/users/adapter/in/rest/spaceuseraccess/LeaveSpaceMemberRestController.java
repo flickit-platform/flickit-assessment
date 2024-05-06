@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class LeaveSpaceMembersRestController {
+public class LeaveSpaceMemberRestController {
 
     private final LeaveSpaceMemberUseCase useCase;
     private final UserContext userContext;

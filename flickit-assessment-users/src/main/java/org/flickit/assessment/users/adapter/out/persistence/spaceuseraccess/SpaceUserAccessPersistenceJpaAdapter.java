@@ -10,10 +10,10 @@ import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaR
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.LoadSpaceMembersPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.LoadSpaceMembersPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,7 +26,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 public class SpaceUserAccessPersistenceJpaAdapter implements
     CreateSpaceUserAccessPort,
     CheckSpaceAccessPort,
-    LoadSpaceMembersPort {
+    LoadSpaceMembersPort,
+    DeleteSpaceUserAccessPort {
 
     private final SpaceUserAccessJpaRepository repository;
     private final SpaceJpaRepository spaceRepository;
@@ -83,5 +84,10 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
             view.getBio(),
             view.getPicture(),
             view.getLinkedin());
+    }
+
+    @Override
+    public void deleteAccess(long spaceId, UUID userId) {
+        repository.deleteBySpaceIdAndUserId(spaceId, userId);
     }
 }
