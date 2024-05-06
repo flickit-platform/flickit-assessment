@@ -239,6 +239,31 @@
 			"response": []
 		},
 		{
+			"name": "Get Space",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"space",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Delete Expert Group",
 			"request": {
 				"method": "DELETE",
@@ -424,7 +449,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members",
+					"raw": "{{base_url}}/{{api_path}}/space/{{id}}/members",
 					"host": [
 						"{{base_url}}"
 					],
