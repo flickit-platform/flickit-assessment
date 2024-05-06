@@ -3,11 +3,10 @@ package org.flickit.assessment.core.adapter.out.report;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.report.SubjectReport;
-import org.flickit.assessment.core.application.domain.report.SubjectReport.SubjectReportItem;
-import org.flickit.assessment.core.application.domain.report.SubjectReport.AttributeReportItem;
-import org.flickit.assessment.core.application.domain.report.SubjectReport.MaturityLevel;
-import org.flickit.assessment.core.application.domain.report.SubjectReport.AttributeReportItem.MaturityScore;
+import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
+import org.flickit.assessment.core.application.domain.report.SubjectAttributeReportItem;
+import org.flickit.assessment.core.application.domain.report.SubjectReportItem;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
@@ -16,7 +15,6 @@ import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMatu
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
@@ -30,7 +28,8 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND;
 
 @Slf4j
 @Component
@@ -44,9 +43,8 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
     private final QualityAttributeValueJpaRepository attributeValueRepository;
     private final AttributeMaturityScoreJpaRepository attributeMaturityScoreRepository;
 
-
     @Override
-    public SubjectReport load(UUID assessmentId, Long subjectId) {
+    public Result load(UUID assessmentId, Long subjectId) {
         var assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND));
 
@@ -54,54 +52,50 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             .orElseThrow(() -> new ResourceNotFoundException(""));
 
         long kitVersionId = assessmentResultEntity.getKitVersionId();
-        List<MaturityLevelJpaEntity> maturityLevelEntities = maturityLevelJpaRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
-        Map<Long, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevelEntities = maturityLevelEntities.stream()
-            .collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
 
-        List<MaturityLevel> maturityLevels = maturityLevelEntities.stream()
-            .map(this::buildMaturityLevel)
+        var maturityLevels = maturityLevelJpaRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+            .map(e -> MaturityLevelMapper.mapToDomainModel(e, null))
             .toList();
 
-        return new SubjectReport(
-            buildSubject(subjectEntity, assessmentResultEntity, maturityLevelIdToMaturityLevelEntities),
-            maturityLevels,
-            buildAttributes(subjectEntity, assessmentResultEntity, maturityLevelIdToMaturityLevelEntities));
+        Map<Long, MaturityLevel> idToMaturityLevelMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevel::getId, Function.identity()));
 
+        return new Result(
+            buildSubject(subjectEntity, assessmentResultEntity, idToMaturityLevelMap),
+            maturityLevels,
+            buildAttributes(subjectEntity, assessmentResultEntity, idToMaturityLevelMap));
     }
 
     private SubjectReportItem buildSubject(SubjectJpaEntity subjectEntity,
-                                                 AssessmentResultJpaEntity assessmentResultEntity,
-                                                 Map<Long, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevelEntities) {
-
+                                           AssessmentResultJpaEntity assessmentResultEntity,
+                                           Map<Long, MaturityLevel> idToMaturityLevelMap) {
         var svEntity = subjectValueRepo.findBySubjectRefNumAndAssessmentResult_Id(subjectEntity.getRefNum(),
                 assessmentResultEntity.getId())
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
 
-        MaturityLevelJpaEntity subjectMaturityLevelEntity =
-            findMaturityLevelById(maturityLevelIdToMaturityLevelEntities, svEntity.getMaturityLevelId());
+        var subjectMaturityLevel = idToMaturityLevelMap.get(svEntity.getMaturityLevelId());
 
         return new SubjectReportItem(subjectEntity.getId(),
             subjectEntity.getTitle(),
-            buildMaturityLevel(subjectMaturityLevelEntity),
+            subjectMaturityLevel,
             svEntity.getConfidenceValue(),
             assessmentResultEntity.getIsCalculateValid(),
             assessmentResultEntity.getIsConfidenceValid()
         );
     }
 
-    private List<AttributeReportItem> buildAttributes(SubjectJpaEntity subjectEntity,
-                                                      AssessmentResultJpaEntity assessmentResultEntity,
-                                                      Map<Long, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevelEntities) {
-        List<QualityAttributeValueJpaEntity> attrValueEntities =
-            attributeValueRepository.findByAssessmentResultIdAndSubjectId(assessmentResultEntity.getId(), subjectEntity.getId());
-        Map<UUID, QualityAttributeValueJpaEntity> attrRefNumToAttValueEntity = attrValueEntities.stream()
+    private List<SubjectAttributeReportItem> buildAttributes(SubjectJpaEntity subjectEntity,
+                                                             AssessmentResultJpaEntity assessmentResultEntity,
+                                                             Map<Long, MaturityLevel> idToMaturityLevelMap) {
+        var attrValueEntities = attributeValueRepository.findByAssessmentResultIdAndSubjectId(
+            assessmentResultEntity.getId(), subjectEntity.getId());
+        var attrRefNumToAttValueEntity = attrValueEntities.stream()
             .collect(toMap(QualityAttributeValueJpaEntity::getAttributeRefNum, Function.identity()));
         List<UUID> attrValueIds = attrValueEntities.stream()
             .map(QualityAttributeValueJpaEntity::getId)
             .toList();
 
-
-        List<AttributeMaturityScoreJpaEntity> attrMaturityScoreEntities =
+        var attrMaturityScoreEntities =
             attributeMaturityScoreRepository.findByAttributeValueIdIn(attrValueIds);
         Map<UUID, List<AttributeMaturityScoreJpaEntity>> attrValueIdToAttrMaturityScoreEntities =
             attrMaturityScoreEntities.stream()
@@ -110,46 +104,25 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
         return subjectEntity.getAttributes().stream()
             .map(e -> {
                 QualityAttributeValueJpaEntity attrValueEntity = attrRefNumToAttValueEntity.get(e.getRefNum());
-                MaturityLevelJpaEntity maturityLevelEntity =
-                    findMaturityLevelById(maturityLevelIdToMaturityLevelEntities, attrValueEntity.getMaturityLevelId());
+                MaturityLevel maturityLevelEntity = idToMaturityLevelMap.get(attrValueEntity.getMaturityLevelId());
 
-                return new AttributeReportItem(e.getId(),
+                return new SubjectAttributeReportItem(e.getId(),
                     e.getIndex(),
                     e.getTitle(),
                     e.getDescription(),
-                    buildMaturityLevel(maturityLevelEntity),
-                    buildAttrMaturityScores(maturityLevelIdToMaturityLevelEntities,
-                        attrValueIdToAttrMaturityScoreEntities,
-                        attrValueEntity),
+                    maturityLevelEntity,
+                    buildAttrMaturityScores(idToMaturityLevelMap, attrValueIdToAttrMaturityScoreEntities.get(attrValueEntity.getId())),
                     attrValueEntity.getConfidenceValue());
             }).toList();
     }
 
-    private List<MaturityScore> buildAttrMaturityScores(Map<Long, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevelEntities,
-                                                        Map<UUID, List<AttributeMaturityScoreJpaEntity>> attrValueIdToAttrMaturityScoreEntities,
-                                                        QualityAttributeValueJpaEntity attrValueEntity) {
-
-            return attrValueIdToAttrMaturityScoreEntities.get(attrValueEntity.getId()).stream()
-                .sorted(Comparator.comparing(AttributeMaturityScoreJpaEntity::getMaturityLevelId))
-                .map(e -> {
-                    MaturityLevelJpaEntity levelEntity =
-                        findMaturityLevelById(maturityLevelIdToMaturityLevelEntities, e.getMaturityLevelId());
-                    return new MaturityScore(buildMaturityLevel(levelEntity), e.getScore());
-                }).toList();
-    }
-
-    private MaturityLevel buildMaturityLevel(MaturityLevelJpaEntity maturityLevelEntity) {
-        return new SubjectReport.MaturityLevel(maturityLevelEntity.getId(),
-            maturityLevelEntity.getTitle(),
-            maturityLevelEntity.getIndex(),
-            maturityLevelEntity.getValue());
-    }
-
-    private MaturityLevelJpaEntity findMaturityLevelById(Map<Long, MaturityLevelJpaEntity> maturityLevels, long id) {
-        if (!maturityLevels.containsKey(id)) {
-            log.error("No maturityLevel found with id={}", id);
-            throw new ResourceNotFoundException(REPORT_SUBJECT_MATURITY_LEVEL_NOT_FOUND);
-        }
-        return maturityLevels.get(id);
+    private List<SubjectAttributeReportItem.MaturityScore> buildAttrMaturityScores(Map<Long, MaturityLevel> idToMaturityLevelMap,
+                                                                                   List<AttributeMaturityScoreJpaEntity> attrMaturityScoreEntities) {
+        return attrMaturityScoreEntities.stream()
+            .sorted(Comparator.comparing(AttributeMaturityScoreJpaEntity::getMaturityLevelId))
+            .map(e -> {
+                MaturityLevel level = idToMaturityLevelMap.get(e.getMaturityLevelId());
+                return new SubjectAttributeReportItem.MaturityScore(level, e.getScore());
+            }).toList();
     }
 }

@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
+import org.flickit.assessment.core.application.domain.report.TopAttributeResolver;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
@@ -12,7 +14,6 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -41,21 +42,11 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessmentReport = loadReportInfoPort.load(param.getAssessmentId());
+        List<AttributeReportItem> attributes = assessmentReport.attributes();
         var midLevelMaturity = middleLevel(assessmentReport.maturityLevels());
-        List<LoadAssessmentReportInfoPort.Result.AttributeReportItem> attributes = assessmentReport.attributes();
-        List<Result.TopAttribute> topStrengths = attributes.stream()
-            .sorted(Comparator.comparing(LoadAssessmentReportInfoPort.Result.AttributeReportItem::maturityLevelIndex, Comparator.reverseOrder()))
-            .filter(e -> midLevelMaturity.getIndex() <= e.maturityLevelIndex())
-            .limit(3)
-            .map(e -> new Result.TopAttribute(e.id(), e.title()))
-            .toList();
-
-        List<Result.TopAttribute> topWeaknesses = attributes.stream()
-            .sorted(Comparator.comparing(LoadAssessmentReportInfoPort.Result.AttributeReportItem::maturityLevelIndex))
-            .filter(e -> e.maturityLevelIndex() <= midLevelMaturity.getIndex())
-            .limit(3)
-            .map(e -> new Result.TopAttribute(e.id(), e.title()))
-            .toList();
+        TopAttributeResolver topAttributeResolver = new TopAttributeResolver(attributes, midLevelMaturity);
+        var topStrengths = topAttributeResolver.getTopStrengths();
+        var topWeaknesses = topAttributeResolver.getTopWeaknesses();
 
         log.debug("AssessmentReport returned for assessmentId=[{}].", param.getAssessmentId());
 

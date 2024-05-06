@@ -6,6 +6,7 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
+import org.flickit.assessment.core.application.domain.report.TopAttribute;
 
 import java.util.List;
 import java.util.UUID;
@@ -39,8 +40,5 @@ public interface ReportAssessmentUseCase {
         List<TopAttribute> topStrengths,
         List<TopAttribute> topWeaknesses,
         List<AssessmentSubjectReportItem> subjects) {
-
-        public record TopAttribute(Long id, String title) {
-        }
     }
 }
