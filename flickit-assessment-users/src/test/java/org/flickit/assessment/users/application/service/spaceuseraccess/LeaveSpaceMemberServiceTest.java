@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.LeaveSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceUserAccessPort;
 import org.junit.jupiter.api.DisplayName;
@@ -29,8 +30,11 @@ class LeaveSpaceMemberServiceTest {
     @Mock
     DeleteSpaceUserAccessPort deleteSpaceUserAccessPort;
 
+    @Mock
+    LoadSpaceOwnerPort loadSpaceOwnerPort;
+
     @Test
-    @DisplayName("If there space is not exists or user does not access to space, service should throw AccessDeniedException")
+    @DisplayName("If space is not exists or user does not access to space, service should throw AccessDeniedException")
     void testLeaveSpaceMember_userDoesNotAccess_accessDeniedError(){
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -42,6 +46,23 @@ class LeaveSpaceMemberServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
+        verifyNoInteractions(deleteSpaceUserAccessPort, loadSpaceOwnerPort);
+    }
+
+    @Test
+    @DisplayName("If there are valid inputs, but the userId is owner, it should throw AccessDenied")
+    void testLeaveSpaceMember_userIdIsOwner_success(){
+        long spaceId = 0L;
+        UUID currentUserId = UUID.randomUUID();
+        LeaveSpaceMemberUseCase.Param param = new LeaveSpaceMemberUseCase.Param(spaceId, currentUserId);
+
+        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
+        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
+
+        assertThrows(AccessDeniedException.class, ()-> service.leaveMember(param));
+
+        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
+        verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
         verifyNoInteractions(deleteSpaceUserAccessPort);
     }
 
@@ -57,6 +78,7 @@ class LeaveSpaceMemberServiceTest {
         assertDoesNotThrow(()-> service.leaveMember(param));
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
+        verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
         verify(deleteSpaceUserAccessPort).deleteAccess(param.getId(), param.getCurrentUserId());
     }
 }
