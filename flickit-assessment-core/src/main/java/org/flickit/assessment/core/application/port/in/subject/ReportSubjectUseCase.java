@@ -26,16 +26,16 @@ public interface ReportSubjectUseCase {
         @NotNull(message = REPORT_SUBJECT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID currentUserId;
-
         @NotNull(message = REPORT_SUBJECT_ID_NOT_NULL)
         Long subjectId;
 
-        public Param(UUID assessmentId, UUID currentUserId, Long subjectId) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(UUID assessmentId, Long subjectId, UUID currentUserId) {
             this.assessmentId = assessmentId;
-            this.currentUserId = currentUserId;
             this.subjectId = subjectId;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

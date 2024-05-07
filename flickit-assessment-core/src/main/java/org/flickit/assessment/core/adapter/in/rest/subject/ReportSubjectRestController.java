@@ -22,12 +22,12 @@ public class ReportSubjectRestController {
     public ResponseEntity<ReportSubjectUseCase.Result> reportSubject(@PathVariable("assessmentId") UUID assessmentId,
                                                                      @PathVariable("subjectId") Long subjectId) {
         UUID currentUserId = userContext.getUser().id();
-        var param = toParam(assessmentId, currentUserId, subjectId);
+        var param = toParam(assessmentId, subjectId, currentUserId);
         var result = useCase.reportSubject(param);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private ReportSubjectUseCase.Param toParam(UUID assessmentId, UUID currentUserId, Long subjectId) {
-        return new ReportSubjectUseCase.Param(assessmentId, currentUserId, subjectId);
+    private ReportSubjectUseCase.Param toParam(UUID assessmentId, Long subjectId, UUID currentUserId) {
+        return new ReportSubjectUseCase.Param(assessmentId, subjectId, currentUserId);
     }
 }

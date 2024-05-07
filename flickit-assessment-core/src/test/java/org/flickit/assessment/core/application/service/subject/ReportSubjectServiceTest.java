@@ -43,7 +43,7 @@ class ReportSubjectServiceTest {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         long subjectId = 1;
-        ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(assessmentId, currentUserId, subjectId);
+        ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(assessmentId, subjectId, currentUserId);
 
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(false);
 
@@ -56,7 +56,7 @@ class ReportSubjectServiceTest {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         long subjectId = 1;
-        ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(assessmentId, currentUserId, subjectId);
+        ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(assessmentId, subjectId, currentUserId);
 
         MaturityLevel maturityLevel1 = MaturityLevelMother.levelTwo();
         MaturityLevel maturityLevel2 = MaturityLevelMother.levelFive();
