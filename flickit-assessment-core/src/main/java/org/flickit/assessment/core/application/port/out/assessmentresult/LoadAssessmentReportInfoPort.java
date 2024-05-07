@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
+import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,11 +26,5 @@ public interface LoadAssessmentReportInfoPort {
                   List<AttributeReportItem> attributes,
                   List<MaturityLevel> maturityLevels,
                   List<AssessmentSubjectReportItem> subjects) {
-
-        public record AttributeReportItem(
-            Long id,
-            String title,
-            int maturityLevelIndex) {
-        }
     }
 }

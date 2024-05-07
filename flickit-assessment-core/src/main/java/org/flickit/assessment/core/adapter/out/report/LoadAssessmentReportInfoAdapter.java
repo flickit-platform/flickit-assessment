@@ -8,6 +8,7 @@ import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
+import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
@@ -81,7 +82,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessment.getLastModificationTime());
 
         UUID assessmentResultId = assessmentResultEntity.getId();
-        List<Result.AttributeReportItem> attributes = buildAttributeReportItems(assessmentResultId, idToMaturityLevelEntities);
+        List<AttributeReportItem> attributes = buildAttributeReportItems(assessmentResultId, idToMaturityLevelEntities);
         List<MaturityLevel> maturityLevels = maturityLevelEntities.stream()
             .map(e -> new MaturityLevel(e.getId(), e.getTitle(), e.getIndex(), e.getValue(), null))
             .toList();
@@ -104,8 +105,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             expertGroup);
     }
 
-    private List<Result.AttributeReportItem> buildAttributeReportItems(UUID assessmentResultId,
-                                                                       Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities) {
+    private List<AttributeReportItem> buildAttributeReportItems(UUID assessmentResultId,
+                                                                Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities) {
         List<QualityAttributeValueJpaEntity> attributeValueEntities = qualityAttributeValueJpaRepository.findByAssessmentResultId(assessmentResultId);
         Set<UUID> attrRefNums = attributeValueEntities.stream()
             .map(QualityAttributeValueJpaEntity::getAttributeRefNum)
@@ -116,8 +117,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         return attributeEntities.stream()
             .map(e -> {
                 Long maturityLevelId = attributeRefNumToMaturityLevelId.get(e.getRefNum());
-                Integer index = idToMaturityLevelEntities.get(maturityLevelId).getIndex();
-                return new Result.AttributeReportItem(e.getId(), e.getTitle(), index);
+                Integer maturityLevelIndex = idToMaturityLevelEntities.get(maturityLevelId).getIndex();
+                return new AttributeReportItem(e.getId(), e.getTitle(), e.getIndex(), maturityLevelIndex);
             })
             .toList();
     }
