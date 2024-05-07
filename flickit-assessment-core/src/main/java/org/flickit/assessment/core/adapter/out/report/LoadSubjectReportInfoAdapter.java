@@ -28,8 +28,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Slf4j
 @Component
@@ -48,10 +47,10 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
         var assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        SubjectJpaEntity subjectEntity = subjectRepository.findById(subjectId)
-            .orElseThrow(() -> new ResourceNotFoundException(""));
-
         long kitVersionId = assessmentResultEntity.getKitVersionId();
+
+        SubjectJpaEntity subjectEntity = subjectRepository.findByIdAndKitVersionId(subjectId, kitVersionId)
+            .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ID_NOT_FOUND));
 
         var maturityLevels = maturityLevelJpaRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(e -> MaturityLevelMapper.mapToDomainModel(e, null))
