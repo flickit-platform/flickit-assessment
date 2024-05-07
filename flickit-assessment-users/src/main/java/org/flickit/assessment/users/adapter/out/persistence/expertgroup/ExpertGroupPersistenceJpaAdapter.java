@@ -64,7 +64,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            ExpertGroupAccessJpaEntity.Fields.LAST_SEEN,
+            ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
