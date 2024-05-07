@@ -19,25 +19,15 @@ public class ReportSubjectRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/report/subjects/{subjectId}")
-    public ResponseEntity<SubjectReportResponseDto> reportSubject(
-        @PathVariable("assessmentId") UUID assessmentId,
-        @PathVariable("subjectId") Long subjectId) {
+    public ResponseEntity<ReportSubjectUseCase.Result> reportSubject(@PathVariable("assessmentId") UUID assessmentId,
+                                                                     @PathVariable("subjectId") Long subjectId) {
         UUID currentUserId = userContext.getUser().id();
         var param = toParam(assessmentId, currentUserId, subjectId);
         var result = useCase.reportSubject(param);
-        var response = toResponse(result);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     private ReportSubjectUseCase.Param toParam(UUID assessmentId, UUID currentUserId, Long subjectId) {
         return new ReportSubjectUseCase.Param(assessmentId, currentUserId, subjectId);
-    }
-
-    private SubjectReportResponseDto toResponse(ReportSubjectUseCase.Result result) {
-        return new SubjectReportResponseDto(result.subject(),
-            result.topStrengths(),
-            result.topWeaknesses(),
-            result.attributes(),
-            result.maturityLevelsCount());
     }
 }
