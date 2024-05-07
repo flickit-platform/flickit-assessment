@@ -68,4 +68,13 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
     void confirmInvitation(@Param(value = "expertGroupId") long expertGroupId,
                            @Param(value = "userId") UUID userId,
                            @Param(value = "modificationTime") LocalDateTime modificationTime);
+
+    @Modifying
+    @Query("""
+        UPDATE ExpertGroupAccessJpaEntity a
+        SET
+            a.lastSeen = :currentTime
+        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
+        """)
+    void updateLastSeen(long expertGroupId, UUID userId, LocalDateTime currentTime);
 }
