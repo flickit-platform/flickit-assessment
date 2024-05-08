@@ -18,7 +18,7 @@ public class GetUserProfileRestController {
     private final GetUserProfileUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/users/profile")
+    @GetMapping("/user-profile")
     public ResponseEntity<GetUserProfileResponseDto> getUserProfile() {
         UUID currentUserId = userContext.getUser().id();
         User userProfile = useCase.getUserProfile(new GetUserProfileUseCase.Param(currentUserId));
