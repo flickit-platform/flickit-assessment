@@ -19,14 +19,16 @@ import static org.flickit.assessment.users.application.service.constant.ExpertGr
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExpertGroupMapper {
 
-    public static LoadExpertGroupListPort.Result mapToPortResult(ExpertGroupWithDetailsView entity, List<GetExpertGroupListUseCase.Member> members) {
+    public static LoadExpertGroupListPort.Result mapToPortResult(ExpertGroupWithDetailsView entity,
+                                                                 List<GetExpertGroupListUseCase.Member> members,
+                                                                 int membersCount) {
         return new LoadExpertGroupListPort.Result(
             entity.getId(),
             entity.getTitle(),
             entity.getBio(),
             entity.getPicture(),
             entity.getPublishedKitsCount(),
-            entity.getMembersCount(),
+            membersCount,
             members,
             entity.getOwnerId());
     }
