@@ -298,7 +298,7 @@
 
     <changeSet id="0.18-45" author="Maziyar Gerami">
         <addColumn tableName="fau_expert_group_user_access">
-            <column name="last_seen" type="timestamp" valueComputed="creation_time">
+            <column name="last_seen" type="timestamp" valueComputed="last_modification_time">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
