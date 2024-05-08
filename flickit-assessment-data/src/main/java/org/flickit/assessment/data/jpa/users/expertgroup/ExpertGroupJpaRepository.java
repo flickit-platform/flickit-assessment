@@ -31,16 +31,11 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 e.picture as picture,
                 e.bio as bio,
                 e.ownerId as ownerId,
-                COUNT(DISTINCT CASE WHEN ak.published = true THEN ak.id ELSE NULL END) as publishedKitsCount,
-                COUNT(DISTINCT ac.userId) as membersCount
+                COUNT(DISTINCT CASE WHEN ak.published = true THEN ak.id ELSE NULL END) as publishedKitsCount
             FROM ExpertGroupJpaEntity e
             LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId
             LEFT JOIN ExpertGroupAccessJpaEntity ac on e.id = ac.expertGroupId
-            WHERE EXISTS (
-                SELECT 1 FROM ExpertGroupAccessJpaEntity ac
-                WHERE ac.expertGroupId = e.id AND ac.userId = :userId
-                    AND ac.status = 1 AND e.deleted=false
-            )
+            WHERE ac.userId = :userId
             GROUP BY
                 e.id,
                 e.title,
@@ -51,6 +46,15 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             ORDER BY ac.lastModificationTime DESC
         """)
     Page<ExpertGroupWithDetailsView> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
+
+    @Query("""
+            SELECT a.expertGroupId as id,
+                   COUNT(DISTINCT userId) as membersCount
+            FROM ExpertGroupAccessJpaEntity a
+            WHERE a.expertGroupId IN :expertGroupIdList AND a.status = 1
+            GROUP BY a.expertGroupId
+        """)
+    List<ExpertGroupMembersCountView> expertGroupMembersCount(List<Long> expertGroupIdList);
 
     @Query("""
         SELECT

@@ -17,6 +17,4 @@ public interface ExpertGroupWithDetailsView {
     Integer getPublishedKitsCount();
 
     UUID getOwnerId();
-
-    Integer getMembersCount();
 }
