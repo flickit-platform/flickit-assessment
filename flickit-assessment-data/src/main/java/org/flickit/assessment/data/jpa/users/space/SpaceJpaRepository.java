@@ -8,6 +8,10 @@ import java.util.UUID;
 
 public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> {
 
-    @Query("SELECT e.ownerId FROM SpaceJpaEntity as e where e.id = :id") // TODO: Add this after adding deleted field : and deleted=false
+    @Query("""
+            SELECT e.ownerId
+            FROM SpaceJpaEntity as e
+            WHERE e.id = :id
+    """) // TODO: Add this after adding deleted field : and deleted=false
     Optional<UUID> loadOwnerIdById(long id);
 }
