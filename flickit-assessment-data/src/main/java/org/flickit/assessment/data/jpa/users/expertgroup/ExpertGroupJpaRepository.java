@@ -48,12 +48,14 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     Page<ExpertGroupWithDetailsView> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
 
     @Query("""
-        SELECT COUNT(DISTINCT userId) as membersCount
+        SELECT a.expertGroupId as id,
+        COUNT(DISTINCT userId) as membersCount
         FROM ExpertGroupAccessJpaEntity a
-        WHERE a.expertGroupId = :expertGroupId AND a.status = 1
+        WHERE a.expertGroupId IN :expertGroupIdList AND a.status = 1
+        GROUP BY a.expertGroupId
         """
     )
-    int expertGroupMembersCount(long expertGroupId);
+    List<ExpertGroupMembersCountView> expertGroupMembersCount(List<Long> expertGroupIdList);
 
     @Query("""
         SELECT

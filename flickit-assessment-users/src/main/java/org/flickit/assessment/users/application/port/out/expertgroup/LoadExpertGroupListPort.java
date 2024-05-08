@@ -16,4 +16,7 @@ public interface LoadExpertGroupListPort {
     record Result(Long id, String title, String bio, String picture, Integer publishedKitsCount,
                   Integer membersCount, List<Member> members, UUID ownerId) {
     }
+
+    record ExpertGroupMembersCount(Long id, int membersCount){
+    }
 }

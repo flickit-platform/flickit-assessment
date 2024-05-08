@@ -18,9 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToDomainModel;
-import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapToPortResult;
-import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.mapKitsCountToPortResult;
+import static org.flickit.assessment.users.adapter.out.persistence.expertgroup.ExpertGroupMapper.*;
 import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND;
 
@@ -58,7 +56,14 @@ public class ExpertGroupPersistenceJpaAdapter implements
 
         List<LoadExpertGroupListPort.Result> items = pageResult.getContent().stream()
             .map(e -> resultWithMembers(e, param.sizeOfMembers()))
-            //.map(e-> resultWithMembersCount(e.id()))
+            .toList();
+
+        List<Long> expertGroupIdList = pageResult.getContent().stream()
+            .map(ExpertGroupWithDetailsView::getId)
+            .toList();
+
+        var expertGroupMembersCount = repository.expertGroupMembersCount(expertGroupIdList).stream()
+            .map(e -> mapToMembersCount(e))
             .toList();
 
         return new PaginatedResponse<>(
@@ -72,13 +77,13 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersCount) {
-        int allMembersCount = repository.expertGroupMembersCount(item.getId());
         var members = repository.findMembersByExpertGroupId(item.getId(),
                 PageRequest.of(0, membersCount, Sort.Direction.ASC, UserJpaEntity.Fields.NAME))
             .stream()
             .map(GetExpertGroupListUseCase.Member::new)
             .toList();
-        return mapToPortResult(item, members, allMembersCount);
+
+        return mapToPortResult(item, members);
     }
 
     @Override

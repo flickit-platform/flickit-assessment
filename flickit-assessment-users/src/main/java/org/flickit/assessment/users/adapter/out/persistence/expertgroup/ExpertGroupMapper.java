@@ -3,6 +3,7 @@ package org.flickit.assessment.users.adapter.out.persistence.expertgroup;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersCountView;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.users.expertgroup.KitsCountView;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
@@ -19,18 +20,23 @@ import static org.flickit.assessment.users.application.service.constant.ExpertGr
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExpertGroupMapper {
 
-    public static LoadExpertGroupListPort.Result mapToPortResult(ExpertGroupWithDetailsView entity,
-                                                                 List<GetExpertGroupListUseCase.Member> members,
-                                                                 int membersCount) {
+    public static LoadExpertGroupListPort.Result mapToPortResult(ExpertGroupWithDetailsView entity, List<GetExpertGroupListUseCase.Member> members) {
         return new LoadExpertGroupListPort.Result(
             entity.getId(),
             entity.getTitle(),
             entity.getBio(),
             entity.getPicture(),
             entity.getPublishedKitsCount(),
-            membersCount,
+            entity.getMembersCount(),
             members,
             entity.getOwnerId());
+    }
+
+    public static LoadExpertGroupListPort.ExpertGroupMembersCount mapToMembersCount(ExpertGroupMembersCountView entity) {
+        return new LoadExpertGroupListPort.ExpertGroupMembersCount(
+            entity.getId(),
+            entity.getMembersCount()
+        );
     }
 
     public static ExpertGroup mapToDomainModel(ExpertGroupJpaEntity entity) {
