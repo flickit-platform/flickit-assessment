@@ -9,14 +9,12 @@ import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaE
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaRepository;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.LoadSpaceMembersPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.LoadSpaceMembersPort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
