@@ -71,10 +71,11 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
 
     @Modifying
     @Query("""
-        UPDATE ExpertGroupAccessJpaEntity a
-        SET
-            a.lastSeen = :currentTime
-        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
+            UPDATE ExpertGroupAccessJpaEntity a
+            SET a.lastSeen = :currentTime
+            WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
         """)
-    void updateLastSeen(long expertGroupId, UUID userId, LocalDateTime currentTime);
+    void updateLastSeen(@Param("expertGroupId") long expertGroupId,
+                        @Param("userId") UUID userId,
+                        @Param("currentTime") LocalDateTime currentTime);
 }
