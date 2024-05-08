@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.users.application.domain.User;
 
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 
 public interface GetUserProfileUseCase {
 
-    Result getUserProfile(Param param);
+    User getUserProfile(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -25,13 +26,4 @@ public interface GetUserProfileUseCase {
             validateSelf();
         }
     }
-
-    record Result(
-        UUID id,
-        String email,
-        String displayName,
-        String bio,
-        String linkedin,
-        String picture
-    ) {}
 }
