@@ -23,8 +23,12 @@ public class GetUserProfileService implements GetUserProfileUseCase {
     @Override
     public User getUserProfile(Param param) {
         User user = port.loadUserProfile(param.getCurrentUserId());
-        String pictureLink = createFileDownloadLinkPort.createDownloadLink(user.getPicture(), EXPIRY_DURATION);
-        user.setPicture(pictureLink);
+
+        String pictureLink = user.getPicture();
+        if (pictureLink != null && !pictureLink.trim().isBlank()) {
+            pictureLink =createFileDownloadLinkPort.createDownloadLink(pictureLink, EXPIRY_DURATION);
+            user.setPicture(pictureLink);
+        }
         return user;
     }
 }
