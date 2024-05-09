@@ -49,7 +49,7 @@ class UpdateExpertGroupServiceTest {
     }
 
     @Test
-    @DisplayName("If the expert group not exists, service should throw ResourceNotFound")
+    @DisplayName("If the expert group does not exist, service should throw ResourceNotFound")
     void testUpdateExpertGroup_expertGroupNotExists_ResourceNotFoundException(){
         var expertGroupId = 1L;
         var currentUserId = UUID.randomUUID();
