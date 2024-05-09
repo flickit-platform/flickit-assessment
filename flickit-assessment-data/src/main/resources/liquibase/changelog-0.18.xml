@@ -304,4 +304,7 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.18-46" author="Ali Sedaghat">
+        <modifyDataType tableName="fac_evidence" columnName="description" newDataType="varchar(200)"/>
+    </changeSet>
 </databaseChangeLog>
