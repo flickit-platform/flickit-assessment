@@ -108,14 +108,14 @@ class UpdateExpertGroupUseCaseParamTest {
     }
 
     @Test
-    void testUpdateExpertGroup_websiteIsNull_ErrorMessage() {
+    void testUpdateExpertGroup_websiteIsNull_Successful() {
         UUID currentUserId = UUID.randomUUID();
         assertDoesNotThrow(() -> new UpdateExpertGroupUseCase.Param(0L, "title", "bio", "about",
                 null , currentUserId));
     }
 
     @Test
-    void testUpdateExpertGroup_websiteIsLessThanMin_ErrorMessage() {
+    void testUpdateExpertGroup_websiteIsNotUrl_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateExpertGroupUseCase.Param(0L, "title", "bio", "about",
