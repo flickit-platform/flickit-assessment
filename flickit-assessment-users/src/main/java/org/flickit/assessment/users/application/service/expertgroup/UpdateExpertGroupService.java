@@ -41,8 +41,8 @@ public class UpdateExpertGroupService implements UpdateExpertGroupUseCase {
             param.getId(),
             generateSlugCode(param.getTitle()),
             param.getTitle(),
-            param.getAbout(),
             param.getBio(),
+            param.getAbout(),
             param.getWebsite(),
             currentTime,
             param.getCurrentUserId());

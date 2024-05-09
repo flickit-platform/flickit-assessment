@@ -114,8 +114,8 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     void update(@Param("id") long id,
                 @Param("code") String code,
                 @Param("title") String title,
-                @Param("about") String about,
                 @Param("bio") String bio,
+                @Param("about") String about,
                 @Param("website") String website,
                 @Param("lastModificationTime") LocalDateTime localDateTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
