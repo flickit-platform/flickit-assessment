@@ -36,7 +36,6 @@ class UpdateExpertGroupServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(UUID.randomUUID());
 
         assertThrows(AccessDeniedException.class, ()-> service.updateExpertGroup(param));
-
     }
 
 }
