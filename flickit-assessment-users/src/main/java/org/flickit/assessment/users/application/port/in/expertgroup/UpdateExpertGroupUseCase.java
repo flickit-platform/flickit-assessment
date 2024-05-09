@@ -16,7 +16,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 public interface UpdateExpertGroupUseCase {
 
-    Result updateExpertGroup(Param param);
+    void updateExpertGroup(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -57,8 +57,5 @@ public interface UpdateExpertGroupUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
-    }
-
-    record Result(Long id) {
     }
 }

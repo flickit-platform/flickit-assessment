@@ -4,13 +4,16 @@ import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.UpdateExpertGroupPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.users.application.domain.ExpertGroup.generateSlugCode;
 
 @Service
 @Transactional
@@ -18,17 +21,30 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class UpdateExpertGroupService implements UpdateExpertGroupUseCase {
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final UpdateExpertGroupPort updateExpertGroupPort;
 
 
     @Override
-    public Result updateExpertGroup(Param param) {
+    public void updateExpertGroup(Param param) {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
-        return null;
+        updateExpertGroupPort.update(toParam(param, LocalDateTime.now()));
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
         UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId);
         if (!Objects.equals(expertGroupOwnerId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+    }
+
+    private UpdateExpertGroupPort.Param toParam(Param param, LocalDateTime currentTime) {
+        return new UpdateExpertGroupPort.Param(
+            param.getId(),
+            generateSlugCode(param.getTitle()),
+            param.getTitle(),
+            param.getAbout(),
+            param.getBio(),
+            param.getWebsite(),
+            currentTime,
+            param.getCurrentUserId());
     }
 }
