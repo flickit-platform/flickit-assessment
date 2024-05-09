@@ -22,6 +22,7 @@ public class UpdateExpertGroupService implements UpdateExpertGroupUseCase {
 
     @Override
     public Result updateExpertGroup(Param param) {
+        validateCurrentUser(param.getId(), param.getCurrentUserId());
         return null;
     }
 
