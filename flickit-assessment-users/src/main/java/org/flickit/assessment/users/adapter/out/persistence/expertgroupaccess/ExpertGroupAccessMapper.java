@@ -24,6 +24,7 @@ public class ExpertGroupAccessMapper {
             param.userId(),
             param.userId(),
             creationTime,
+            creationTime,
             creationTime
         );
     }
@@ -39,6 +40,7 @@ public class ExpertGroupAccessMapper {
             param.status().ordinal(),
             param.createdBy(),
             param.createdBy(),
+            creationTime,
             creationTime,
             creationTime
         );
