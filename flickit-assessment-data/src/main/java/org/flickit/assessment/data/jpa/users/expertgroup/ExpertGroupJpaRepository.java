@@ -104,8 +104,8 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         UPDATE ExpertGroupJpaEntity e
         SET e.code = :code,
             e.title = :title,
-            e.about = :about,
             e.bio = :bio,
+            e.about = :about,
             e.website = :website,
             e.lastModificationTime = :lastModificationTime,
             e.lastModifiedBy = :lastModifiedBy
