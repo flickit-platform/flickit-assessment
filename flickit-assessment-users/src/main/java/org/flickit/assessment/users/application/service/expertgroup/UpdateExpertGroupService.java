@@ -1,6 +1,6 @@
 package org.flickit.assessment.users.application.service.expertgroup;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -17,12 +17,11 @@ import static org.flickit.assessment.users.application.domain.ExpertGroup.genera
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UpdateExpertGroupService implements UpdateExpertGroupUseCase {
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final UpdateExpertGroupPort updateExpertGroupPort;
-
 
     @Override
     public void updateExpertGroup(Param param) {
