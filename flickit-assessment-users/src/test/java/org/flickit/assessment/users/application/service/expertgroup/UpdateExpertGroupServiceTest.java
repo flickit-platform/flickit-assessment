@@ -34,7 +34,7 @@ class UpdateExpertGroupServiceTest {
 
     @Test
     @DisplayName("If the currentUser is not owner, service should throw AccessDenied")
-    void testUpdateExpertGroup_invalidParameters_AccessDeniedException(){
+    void testUpdateExpertGroup_currentUserIsNotOwner_AccessDeniedException(){
         var expertGroupId = 1L;
         var currentUserId = UUID.randomUUID();
         UpdateExpertGroupUseCase.Param param = new UpdateExpertGroupUseCase.Param(expertGroupId, "title", "bio",
