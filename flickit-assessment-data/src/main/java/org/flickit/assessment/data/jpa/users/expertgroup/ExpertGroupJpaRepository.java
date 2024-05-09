@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -93,4 +94,25 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") long id);
+
+    @Modifying
+    @Query("""
+        UPDATE ExpertGroupJpaEntity e
+        SET e.code = :code,
+            e.title = :title,
+            e.about = :about,
+            e.bio = :bio,
+            e.website = :website,
+            e.lastModificationTime = :lastModificationTime,
+            e.lastModifiedBy = :lastModifiedBy
+        WHERE e.id = :id
+        """)
+    void update(@Param("id") long id,
+                @Param("code") String code,
+                @Param("title") String title,
+                @Param("about") String about,
+                @Param("bio") String bio,
+                @Param("website") String website,
+                @Param("lastModificationTime") LocalDateTime localDateTime,
+                @Param("lastModifiedBy") UUID lastModifiedBy);
 }
