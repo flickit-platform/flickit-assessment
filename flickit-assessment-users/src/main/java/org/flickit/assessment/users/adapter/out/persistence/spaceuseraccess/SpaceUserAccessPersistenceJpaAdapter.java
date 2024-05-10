@@ -8,7 +8,6 @@ import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceMembersView;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaRepository;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
@@ -28,7 +27,6 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     CreateSpaceUserAccessPort,
     CheckSpaceAccessPort,
     LoadSpaceMembersPort,
-    LoadSpaceOwnerPort,
     DeleteSpaceMemberPort {
 
     private final SpaceUserAccessJpaRepository repository;
@@ -86,12 +84,6 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
             view.getBio(),
             view.getPicture(),
             view.getLinkedin());
-    }
-
-    @Override
-    public UUID loadOwnerId(long id) {
-        return spaceRepository.loadOwnerIdById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
     }
 
     @Override
