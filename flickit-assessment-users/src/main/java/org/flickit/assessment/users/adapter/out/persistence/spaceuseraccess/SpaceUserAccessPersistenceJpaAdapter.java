@@ -96,6 +96,6 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
 
     @Override
     public void delete(long id, UUID userId) {
-        repository.deleteBySpaceIdAndUserId(id, userId);
+        repository.deleteByUserIdAndSpaceId(userId, id);
     }
 }

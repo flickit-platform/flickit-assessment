@@ -13,7 +13,7 @@ public interface SpaceUserAccessJpaRepository extends JpaRepository<SpaceUserAcc
 
     boolean existsByUserIdAndSpaceId(UUID userId, Long spaceId);
 
-    void deleteBySpaceIdAndUserId(long id, UUID userId);
+    void deleteByUserIdAndSpaceId(UUID userId, long spaceId);
 
     @Query("""
             SELECT u.id as id,
