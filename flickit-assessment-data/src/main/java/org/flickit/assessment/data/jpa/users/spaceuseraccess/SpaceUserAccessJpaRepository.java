@@ -6,14 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface SpaceUserAccessJpaRepository extends JpaRepository<SpaceUserAccessJpaEntity, Long> {
-
-    @Query("SELECT s.ownerId FROM SpaceJpaEntity as s where s.id = :id") //TODO: add this:  and deleted=false
-    Optional<UUID> loadOwnerIdById(Long id);
 
     boolean existsByUserIdAndSpaceId(UUID userId, Long spaceId);
 

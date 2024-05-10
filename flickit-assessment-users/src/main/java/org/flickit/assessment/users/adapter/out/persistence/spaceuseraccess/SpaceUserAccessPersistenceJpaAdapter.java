@@ -69,7 +69,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
             .toList();
 
         return new PaginatedResponse<>(
-            items ,
+            items,
             pageResult.getNumber(),
             pageResult.getSize(),
             SpaceUserAccessJpaEntity.Fields.CREATION_TIME,
@@ -90,7 +90,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
 
     @Override
     public UUID loadOwnerId(long id) {
-        return repository.loadOwnerIdById(id)
+        return spaceRepository.loadOwnerIdById(id)
             .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
     }
 
