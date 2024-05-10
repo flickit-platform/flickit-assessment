@@ -522,7 +522,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members",
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members/{{userId}}",
 					"host": [
 						"{{base_url}}"
 					],
@@ -530,7 +530,8 @@
 						"{{api_path}}",
 						"spaces",
 						"{{id}}",
-						"members"
+						"members",
+						"{{userId}}"
 					]
 				}
 			},
