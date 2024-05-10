@@ -522,14 +522,15 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/space/{{id}}",
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"space",
-						"{{id}}"
+						"spaces",
+						"{{id}}",
+						"members"
 					]
 				}
 			},
