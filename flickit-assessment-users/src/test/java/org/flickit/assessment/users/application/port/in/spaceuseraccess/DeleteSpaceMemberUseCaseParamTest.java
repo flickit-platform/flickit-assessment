@@ -23,10 +23,10 @@ class DeleteSpaceMemberUseCaseParamTest {
 
     @Test
     void testDeleteSpaceMember_userIdIsNull_ErrorMessage() {
-        long expertGroupId = 0L;
+        long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new DeleteSpaceMemberUseCase.Param(expertGroupId, null, currentUserId));
+            () -> new DeleteSpaceMemberUseCase.Param(spaceId, null, currentUserId));
         assertThat(throwable).hasMessage("userId: " + DELETE_SPACE_MEMBER_USER_ID_NOT_NULL);
     }
 
