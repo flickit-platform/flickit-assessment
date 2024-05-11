@@ -25,6 +25,7 @@ public class DeleteEvidenceService implements DeleteEvidenceUseCase {
         var evidence = loadEvidencePort.loadNotDeletedEvidence(param.getId());
         if (!Objects.equals(evidence.getCreatedById(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         deleteEvidencePort.deleteById(param.getId());
     }
 }

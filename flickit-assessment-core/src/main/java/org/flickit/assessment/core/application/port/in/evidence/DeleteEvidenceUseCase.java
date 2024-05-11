@@ -30,5 +30,4 @@ public interface DeleteEvidenceUseCase {
             this.validateSelf();
         }
     }
-
 }
