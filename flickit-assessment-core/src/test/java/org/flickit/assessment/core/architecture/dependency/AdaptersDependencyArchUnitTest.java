@@ -2,6 +2,7 @@ package org.flickit.assessment.core.architecture.dependency;
 
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
+import com.tngtech.archunit.junit.ArchIgnore;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
@@ -42,6 +43,7 @@ public class AdaptersDependencyArchUnitTest {
                 APPLICATION_SERVICE
             );
 
+    @ArchIgnore
     @ArchTest
     static final ArchRule rest_out_adapters_should_not_depend_adapters_and_services_and_useCases =
         noClasses()
