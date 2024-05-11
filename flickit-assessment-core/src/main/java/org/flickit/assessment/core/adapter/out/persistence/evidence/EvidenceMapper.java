@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.evidence;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.domain.EvidenceType;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
@@ -37,6 +38,21 @@ public class EvidenceMapper {
             entity.getType() != null ? EvidenceType.values()[entity.getType()].getTitle() : null,
             entity.getLastModificationTime(),
             new GetEvidenceListUseCase.User(user.getId(), user.getDisplayName())
+        );
+    }
+
+    public static Evidence mapToDomainModel(EvidenceJpaEntity entity) {
+        return new Evidence(
+            entity.getId(),
+            entity.getDescription(),
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy(),
+            entity.getAssessmentId(),
+            entity.getQuestionId(),
+            entity.getType(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime(),
+            entity.isDeleted()
         );
     }
 }

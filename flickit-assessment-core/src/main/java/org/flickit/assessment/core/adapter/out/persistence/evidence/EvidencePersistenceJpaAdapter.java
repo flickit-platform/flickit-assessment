@@ -3,6 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.evidence;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.port.in.evidence.GetAttributeEvidenceListUseCase.AttributeEvidenceListItem;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.*;
@@ -22,8 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.evidence.EvidenceMapper.toEvidenceListItem;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ADD_EVIDENCE_QUESTION_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -33,7 +33,8 @@ public class EvidencePersistenceJpaAdapter implements
     UpdateEvidencePort,
     DeleteEvidencePort,
     CheckEvidenceExistencePort,
-    LoadAttributeEvidencesPort {
+    LoadAttributeEvidencesPort,
+    LoadEvidencePort {
 
     private final EvidenceJpaRepository repository;
     private final QuestionJpaRepository questionRepository;
@@ -115,5 +116,12 @@ public class EvidencePersistenceJpaAdapter implements
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public Evidence loadNotDeletedEvidence(UUID id) {
+        return repository.findByIdAndDeletedFalse(id)
+            .map(EvidenceMapper::mapToDomainModel)
+            .orElseThrow(() -> new ResourceNotFoundException(UPDATE_EVIDENCE_ID_NOT_FOUND));
     }
 }
