@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_EVIDENCE_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.EvidenceMother.simpleEvidence;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -91,9 +91,9 @@ class UpdateEvidenceServiceTest {
         );
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId()))
-            .thenThrow(new ResourceNotFoundException(UPDATE_EVIDENCE_ID_NOT_FOUND));
+            .thenThrow(new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
 
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.updateEvidence(param));
-        assertEquals(UPDATE_EVIDENCE_ID_NOT_FOUND, exception.getMessage());
+        assertEquals(EVIDENCE_ID_NOT_FOUND, exception.getMessage());
     }
 }

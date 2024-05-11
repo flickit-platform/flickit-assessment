@@ -39,8 +39,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     void delete(@Param(value = "id") UUID id);
 
-    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
-
     @Query(value = """
             SELECT evd.description
             FROM QuestionJpaEntity q
