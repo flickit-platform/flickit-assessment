@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

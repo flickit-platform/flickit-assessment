@@ -76,4 +76,8 @@ public class ErrorMessageKey {
     public static final String GET_SPACE_MEMBERS_SIZE_MIN = "get-space-members.size.min";
     public static final String GET_SPACE_MEMBERS_SIZE_MAX = "get-space-members.size.max";
     public static final String GET_SPACE_MEMBERS_PAGE_MIN = "get-space-members.page.min";
+
+    public static final String CREATE_SPACE_TITLE_NOT_BLANK = "create-space.title.notBlank";
+    public static final String CREATE_SPACE_TITLE_SIZE_MIN = "create-space.title.size.min";
+    public static final String CREATE_SPACE_TITLE_SIZE_MAX = "create-space.title.size.max";
 }
