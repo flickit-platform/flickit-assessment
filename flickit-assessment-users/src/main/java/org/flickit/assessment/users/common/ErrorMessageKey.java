@@ -85,4 +85,5 @@ public class ErrorMessageKey {
     public static final String UPDATE_USER_DISPLAY_NAME_NOT_BLANK = "update-user.displayName.notBank";
     public static final String UPDATE_USER_BIO_SIZE_MAX = "update-user.bio.size.max";
     public static final String UPDATE_USER_LINKEDIN_NOT_VALID = "update-user.linkedin.notValid";
+    public static final String UPDATE_USER_ID_NOT_FOUND = "update-user.userId.notFound";
 }
