@@ -1,8 +1,6 @@
 package org.flickit.assessment.core.adapter.out.calculate;
 
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
-import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
-import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -15,6 +13,10 @@ import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValue
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
+import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
@@ -33,7 +35,6 @@ import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.core.test.fixture.adapter.dto.AnswerOptionDtoMother.answerOptionDto;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeJapEntityMother.createAttributeEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
@@ -44,7 +45,6 @@ import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJ
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -65,7 +65,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private QuestionJpaRepository questionRepository;
     @Mock
-    private AnswerOptionRestAdapter answerOptionRestAdapter;
+    private AnswerOptionJpaRepository answerOptionRepository;
+    @Mock
+    private AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     @Mock
     private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
@@ -271,10 +273,15 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
         List<AnswerJpaEntity> answerEntities = new ArrayList<>(List.of(answerQ1, answerQ2, answerQ4, answerQ5, answerQ6, answerQ9, answerQ10));
 
-        var answerOptionDto1 = answerOptionDto(1L, question1.getId(), questionIdToImpactsMap.get(question1.getId()));
-        var answerOptionDto2 = answerOptionDto(2L, question2.getId(), questionIdToImpactsMap.get(question2.getId()));
-        var answerOptionDto3 = answerOptionDto(5L, question5.getId(), questionIdToImpactsMap.get(question5.getId()));
-        List<AnswerOptionDto> answerOptionDtos = new ArrayList<>(List.of(answerOptionDto1, answerOptionDto2, answerOptionDto3));
+        var answerOptionEntity1 = new AnswerOptionJpaEntity(1L, null, null, null, null, question1.getId(), null, null, null, null);
+        var answerOptionEntity2 = new AnswerOptionJpaEntity(2L, null, null, null, null, question2.getId(), null, null, null, null);
+        var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, null, question5.getId(), null, null, null, null);
+        List<AnswerOptionJpaEntity> answerOptionEntities = new ArrayList<>(List.of(answerOptionEntity1, answerOptionEntity2, answerOptionEntity3));
+
+        var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, 1L, impact11, 1, null, null, null, null);
+        var answerImpact21 = new AnswerOptionImpactJpaEntity(2L, 2L, impact21, 1, null, null, null, null);
+        var answerImpact31 = new AnswerOptionImpactJpaEntity(3L, 5L, impact31, 1, null, null, null, null);
+        List<AnswerOptionImpactJpaEntity> answerOptionImpactEntities = new ArrayList<>(List.of(answerImpact11, answerImpact21, answerImpact31));
 
         return new Context(
             assessmentResultEntity,
@@ -284,7 +291,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
             questions,
             questionIdToImpactsMap,
             answerEntities,
-            answerOptionDtos);
+            answerOptionEntities,
+            answerOptionImpactEntities
+        );
     }
 
     private void doMocks(Context context) {
@@ -292,7 +301,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(Optional.of(context.assessmentResultEntity()));
         when(subjectValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.subjectValues());
-        when(qualityAttrValueRepo.findByAssessmentResultId(eq(context.assessmentResultEntity().getId())))
+        when(qualityAttrValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.qualityAttributeValues());
         when(subjectRepository.loadByKitVersionIdWithAttributes(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(context.subjects);
@@ -300,8 +309,10 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(questionJoinImpactView(context.questionEntities, context.questionIdToImpactsMap));
         when(answerRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.answerEntities());
-        when(answerOptionRestAdapter.loadAnswerOptionByIds(any()))
-            .thenReturn(context.answerOptionDtos());
+        when(answerOptionRepository.findAllById(any()))
+            .thenReturn(context.answerOptionEntities());
+        when(answerOptionImpactRepository.findAllByOptionIdIn(any()))
+            .thenReturn(context.answerOptionImpactEntities);
     }
 
     private List<QuestionJoinQuestionImpactView> questionJoinImpactView(List<QuestionJpaEntity> questionEntities, Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap) {
@@ -335,7 +346,8 @@ class AssessmentCalculateInfoLoadAdapterTest {
         List<QuestionJpaEntity> questionEntities,
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap,
         List<AnswerJpaEntity> answerEntities,
-        List<AnswerOptionDto> answerOptionDtos
+        List<AnswerOptionJpaEntity> answerOptionEntities,
+        List<AnswerOptionImpactJpaEntity> answerOptionImpactEntities
     ) {
     }
 }
