@@ -2,8 +2,6 @@ package org.flickit.assessment.core.application.port.in.evidence;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -12,7 +10,6 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.DELETE_EVIDENCE_EVIDENCE_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class DeleteEvidenceUseCaseParamTest {
 
     @Test
@@ -24,7 +21,7 @@ class DeleteEvidenceUseCaseParamTest {
     }
 
     @Test
-    void testDeleteEvidence_CurrentUserIdNull_ErrorMessage() {
+    void testDeleteEvidence_CurrentUserIdIsNull_ErrorMessage() {
         var id = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteEvidenceUseCase.Param(id, null));
