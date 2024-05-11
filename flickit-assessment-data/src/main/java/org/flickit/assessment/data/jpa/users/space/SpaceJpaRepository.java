@@ -18,7 +18,8 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
                 s.ownerId as ownerId,
                 s.lastModificationTime as lastModificationTime,
                 COUNT(DISTINCT sua.userId) as membersCount,
-                COUNT(DISTINCT fa.id) as assessmentsCount
+                COUNT(DISTINCT fa.id) as assessmentsCount,
+                MAX(sua.lastSeen) as lastSeen
             FROM SpaceJpaEntity s
             LEFT JOIN AssessmentJpaEntity fa on s.id = fa.spaceId
             LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId
@@ -26,9 +27,8 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
                 SELECT 1 FROM SpaceUserAccessJpaEntity sua
                 WHERE sua.spaceId = s.id AND sua.userId = :userId
             )
-            GROUP BY s.id,
-                     sua.lastSeen
-            ORDER BY sua.lastSeen DESC
+            GROUP BY s.id
+            ORDER BY lastSeen DESC
         """)
     Page<SpaceWithDetailsView> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
 }
