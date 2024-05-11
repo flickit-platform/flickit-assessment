@@ -4,9 +4,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.domain.EvidenceType;
+import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
+import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 
 import java.util.UUID;
 
@@ -29,14 +31,28 @@ public class EvidenceMapper {
         );
     }
 
-    public static EvidenceListItem toEvidenceListItem(EvidenceJpaEntity entity) {
+    public static EvidenceListItem toEvidenceListItem(EvidenceJpaEntity entity, UserJpaEntity user) {
         return new EvidenceListItem(
             entity.getId(),
             entity.getDescription(),
-            entity.getCreatedBy(),
-            entity.getAssessmentId(),
             entity.getType() != null ? EvidenceType.values()[entity.getType()].getTitle() : null,
-            entity.getLastModificationTime()
+            entity.getLastModificationTime(),
+            new GetEvidenceListUseCase.User(user.getId(), user.getDisplayName())
+        );
+    }
+
+    public static Evidence mapToDomainModel(EvidenceJpaEntity entity) {
+        return new Evidence(
+            entity.getId(),
+            entity.getDescription(),
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy(),
+            entity.getAssessmentId(),
+            entity.getQuestionId(),
+            entity.getType(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime(),
+            entity.isDeleted()
         );
     }
 

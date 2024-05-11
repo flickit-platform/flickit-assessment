@@ -25,23 +25,23 @@ public interface UpdateEvidenceUseCase {
 
         @NotBlank(message = UPDATE_EVIDENCE_DESC_NOT_BLANK)
         @Size(min = 3, message = UPDATE_EVIDENCE_DESC_MIN_SIZE)
-        @Size(max = 1000, message = UPDATE_EVIDENCE_DESC_MAX_SIZE)
+        @Size(max = 200, message = UPDATE_EVIDENCE_DESC_MAX_SIZE)
         String description;
 
         @EnumValue(enumClass = EvidenceType.class, message = UPDATE_EVIDENCE_TYPE_INVALID)
         String type;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID lastModifiedById;
+        UUID currentUserId;
 
         public Param(UUID id,
                      String description,
                      String type,
-                     UUID lastModifiedById) {
+                     UUID currentUserId) {
             this.id = id;
             this.description = description;
             this.type = type;
-            this.lastModifiedById = lastModifiedById;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
