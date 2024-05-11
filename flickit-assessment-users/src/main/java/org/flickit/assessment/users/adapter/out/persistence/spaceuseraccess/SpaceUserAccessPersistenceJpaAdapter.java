@@ -13,7 +13,6 @@ import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateS
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.LoadSpaceMembersPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.LoadSpaceMembersPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -81,6 +80,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
             view.getEmail(),
             view.getDisplayName(),
             view.getBio(),
+            view.getOwnerId(),
             view.getPicture(),
             view.getLinkedin());
     }
