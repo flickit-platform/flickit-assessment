@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.evidence.EvidenceMapper.toEvidenceListItem;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -34,7 +32,6 @@ public class EvidencePersistenceJpaAdapter implements
     LoadEvidencesPort,
     UpdateEvidencePort,
     DeleteEvidencePort,
-    CheckEvidenceExistencePort,
     LoadAttributeEvidencesPort,
     LoadEvidencePort {
 
@@ -119,6 +116,6 @@ public class EvidencePersistenceJpaAdapter implements
     public Evidence loadNotDeletedEvidence(UUID id) {
         return repository.findByIdAndDeletedFalse(id)
             .map(EvidenceMapper::mapToDomainModel)
-            .orElseThrow(() -> new ResourceNotFoundException(UPDATE_EVIDENCE_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
     }
 }

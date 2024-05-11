@@ -55,19 +55,4 @@ public class EvidenceMapper {
             entity.isDeleted()
         );
     }
-
-    public static Evidence mapToDomainModel(EvidenceJpaEntity entity) {
-        return new Evidence(
-            entity.getId(),
-            entity.getDescription(),
-            entity.getCreatedBy(),
-            entity.getLastModifiedBy(),
-            entity.getAssessmentId(),
-            entity.getQuestionId(),
-            entity.getType(),
-            entity.getCreationTime(),
-            entity.getLastModificationTime(),
-            entity.isDeleted()
-        );
-    }
 }
