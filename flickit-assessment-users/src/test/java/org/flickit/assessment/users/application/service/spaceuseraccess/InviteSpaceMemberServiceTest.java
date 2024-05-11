@@ -2,10 +2,11 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
-import org.flickit.assessment.users.application.port.in.spaceaccess.InviteSpaceMemberUseCase;
+import org.flickit.assessment.users.application.domain.SpaceUserAccess;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.InviteSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +37,7 @@ class InviteSpaceMemberServiceTest {
     LoadUserPort loadUserPort;
 
     @Mock
-    AddSpaceMemberPort addSpaceMemberPort;
+    CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Mock
     InviteSpaceMemberPort inviteSpaceMemberPort;
@@ -93,7 +94,7 @@ class InviteSpaceMemberServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(inviteeUserId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, inviteeUserId)).thenReturn(false);
-        doNothing().when(addSpaceMemberPort).persist(isA(AddSpaceMemberPort.Param.class));
+        doNothing().when(createSpaceUserAccessPort).persist(isA(SpaceUserAccess.class));
         assertDoesNotThrow(() -> service.inviteMember(param));
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);

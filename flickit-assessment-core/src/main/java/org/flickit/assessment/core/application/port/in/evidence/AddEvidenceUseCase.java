@@ -26,7 +26,7 @@ public interface AddEvidenceUseCase {
 
         @NotBlank(message = ADD_EVIDENCE_DESC_NOT_BLANK)
         @Size(min = 3, message = ADD_EVIDENCE_DESC_SIZE_MIN)
-        @Size(max = 1000, message = ADD_EVIDENCE_DESC_SIZE_MAX)
+        @Size(max = 200, message = ADD_EVIDENCE_DESC_SIZE_MAX)
         String description;
 
         @NotNull(message = ADD_EVIDENCE_ASSESSMENT_ID_NOT_NULL)

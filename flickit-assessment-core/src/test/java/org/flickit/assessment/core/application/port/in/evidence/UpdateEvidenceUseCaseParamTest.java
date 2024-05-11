@@ -14,7 +14,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class UpdateEvidenceUseCaseParamTest {
 
     @Test
@@ -68,7 +67,7 @@ class UpdateEvidenceUseCaseParamTest {
     @Test
     void testUpdateEvidenceParam_DescriptionSizeIsGreaterThanMax_ErrorMessage() {
         var id = UUID.randomUUID();
-        var desc = randomAlphabetic(1001);
+        var desc = randomAlphabetic(201);
         UUID lastModifiedById = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateEvidenceUseCase.Param(id, desc, "POSITIVE", lastModifiedById));
@@ -79,7 +78,7 @@ class UpdateEvidenceUseCaseParamTest {
     void testUpdateEvidenceParam_DescriptionSizeIsEqualToMax_Success() {
         assertDoesNotThrow(() -> new UpdateEvidenceUseCase.Param(
             UUID.randomUUID(),
-            randomAlphabetic(1000),
+            randomAlphabetic(200),
             "NEGATIVE",
             UUID.randomUUID()
         ));

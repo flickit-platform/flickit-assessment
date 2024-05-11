@@ -53,6 +53,9 @@ public class ExpertGroupAccessJpaEntity {
     @Column(name =  "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 
+    @Column(name= "last_seen")
+    private LocalDateTime lastSeen;
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

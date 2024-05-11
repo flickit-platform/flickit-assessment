@@ -16,9 +16,9 @@ import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.kittagrelation.KitTagRelationMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.users.expertgroup.ExpertGroupMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
@@ -39,7 +40,6 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 @Component
 @RequiredArgsConstructor
 public class AssessmentKitPersistenceJpaAdapter implements
-    LoadKitExpertGroupPort,
     LoadKitUsersPort,
     DeleteKitUserAccessPort,
     LoadKitMinimalInfoPort,
@@ -47,20 +47,17 @@ public class AssessmentKitPersistenceJpaAdapter implements
     UpdateKitLastMajorModificationTimePort,
     CountKitStatsPort,
     UpdateKitInfoPort,
-    LoadAssessmentKitPort {
+    LoadAssessmentKitPort,
+    LoadPublishedKitListPort,
+    CountKitListStatsPort,
+    DeleteAssessmentKitPort,
+    CountKitAssessmentsPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
     private final ExpertGroupJpaRepository expertGroupRepository;
     private final KitVersionJpaRepository kitVersionRepository;
     private final KitTagRelationJpaRepository kitTagRelationRepository;
-
-    @Override
-    public ExpertGroup loadKitExpertGroup(Long kitId) {
-        ExpertGroupJpaEntity entity = expertGroupRepository.findByKitId(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-        return new ExpertGroup(entity.getId(), entity.getTitle(), entity.getOwnerId());
-    }
 
     @Override
     public PaginatedResponse<GetKitUserListUseCase.UserListItem> loadKitUsers(LoadKitUsersPort.Param param) {
@@ -175,5 +172,63 @@ public class AssessmentKitPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         return AssessmentKitMapper.mapToDomainModel(kitEntity);
+    }
+
+    @Override
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(int page, int size) {
+        var pageResult = repository.findAllPublishedAndNotPrivateOrderByTitle(PageRequest.of(page, size));
+        var items = pageResult.getContent().stream()
+            .map(v -> new LoadPublishedKitListPort.Result(
+                AssessmentKitMapper.mapToDomainModel(v.getKit()),
+                ExpertGroupMapper.toDomainModel(v.getExpertGroup())
+            ))
+            .toList();
+
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            AssessmentKitJpaEntity.Fields.TITLE,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
+    }
+
+    @Override
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPrivateKits(UUID userId, int page, int size) {
+        var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId, PageRequest.of(page, size));
+        var items = pageResult.getContent().stream()
+            .map(v -> new LoadPublishedKitListPort.Result(
+                AssessmentKitMapper.mapToDomainModel(v.getKit()),
+                ExpertGroupMapper.toDomainModel(v.getExpertGroup())))
+            .toList();
+
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            AssessmentKitJpaEntity.Fields.TITLE,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
+    }
+
+    @Override
+    public List<CountKitListStatsPort.Result> countKitsStats(List<Long> kitIds) {
+        List<CountKitStatsView> kitsStats = repository.countKitStats(kitIds);
+        return kitsStats.stream().map(x -> new CountKitListStatsPort.Result(x.getId(),
+                x.getLikeCount(),
+                x.getAssessmentCount()))
+            .toList();
+    }
+
+    @Override
+    public void delete(Long kitId) {
+        repository.deleteById(kitId);
+    }
+
+    @Override
+    public long count(Long kitId) {
+        return repository.countAllKitAssessments(kitId);
     }
 }

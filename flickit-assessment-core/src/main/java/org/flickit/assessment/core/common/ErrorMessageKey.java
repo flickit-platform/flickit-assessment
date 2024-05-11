@@ -69,14 +69,15 @@ public class ErrorMessageKey {
 
     public static final String GET_EVIDENCE_LIST_QUESTION_ID_NOT_NULL = "get-evidence-list.questionId.notNull";
     public static final String GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL = "get-evidence-list.assessmentId.notNull";
-    public static final String GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND = "get-evidence-list.assessmentId.notFound";
     public static final String GET_EVIDENCE_LIST_SIZE_MIN = "get-evidence-list.size.min";
     public static final String GET_EVIDENCE_LIST_SIZE_MAX = "get-evidence-list.size.max";
     public static final String GET_EVIDENCE_LIST_PAGE_MIN = "get-evidence-list.page.min";
 
+    public static final String REPORT_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND = "report-assessment-assessment.id.notFound";
     public static final String REPORT_ASSESSMENT_ID_NOT_NULL = "report-assessment.assessment.id.notNull";
     public static final String REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "report-assessment.assessmentResult.notFound";
-    public static final String REPORT_ASSESSMENT_MATURITY_LEVEL_NOT_FOUND = "report-assessment.maturityLevelId.notFound";
+    public static final String REPORT_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND = "report-assessment.assessmentKit.notFound";
+    public static final String REPORT_ASSESSMENT_EXPERT_GROUP_NOT_FOUND = "report-assessment.expertGroup.notFound";
 
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-assessment-progress.assessment.id.notNull";
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-progress.assessmentResult.notFound";
@@ -86,9 +87,9 @@ public class ErrorMessageKey {
 
     public static final String REPORT_SUBJECT_ASSESSMENT_ID_NOT_NULL = "report-subject.assessment.id.notNull";
     public static final String REPORT_SUBJECT_ID_NOT_NULL = "report-subject.subject.id.notNull";
+    public static final String REPORT_SUBJECT_ID_NOT_FOUND = "report-subject.subject.id.notFound";
     public static final String REPORT_SUBJECT_ASSESSMENT_RESULT_NOT_FOUND = "report-subject.assessmentResult.notFound";
     public static final String REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND = "report-subject.subjectValue.notFound";
-    public static final String REPORT_SUBJECT_MATURITY_LEVEL_NOT_FOUND = "report-subject.maturityLevelId.notFound";
 
     public static final String UPDATE_EVIDENCE_ID_NOT_NULL = "update-evidence.id.notNull";
     public static final String UPDATE_EVIDENCE_DESC_NOT_BLANK = "update-evidence.description.notBlank";
