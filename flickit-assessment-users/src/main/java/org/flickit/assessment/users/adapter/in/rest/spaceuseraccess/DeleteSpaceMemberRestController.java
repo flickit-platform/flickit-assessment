@@ -20,7 +20,7 @@ public class DeleteSpaceMemberRestController {
 
     @DeleteMapping("/spaces/{spaceId}/members/{userId}")
     public ResponseEntity<Void> deleteMember(@PathVariable("spaceId") long spaceId,
-                                                   @PathVariable("userId") UUID userId) {
+                                             @PathVariable("userId") UUID userId) {
         var currentUserId = userContext.getUser().id();
         useCase.deleteMember(toParam(spaceId, userId, currentUserId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
