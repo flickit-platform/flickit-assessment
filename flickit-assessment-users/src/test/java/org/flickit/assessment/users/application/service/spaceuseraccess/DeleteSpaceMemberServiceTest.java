@@ -28,8 +28,10 @@ class DeleteSpaceMemberServiceTest {
 
     @Mock
     LoadSpaceOwnerPort loadSpaceOwnerPort;
+
     @Mock
     CheckSpaceAccessPort checkSpaceAccessPort;
+
     @Mock
     DeleteSpaceMemberPort deleteSpaceMemberPort;
 
@@ -50,7 +52,7 @@ class DeleteSpaceMemberServiceTest {
     }
 
     @Test
-    @DisplayName("Deleting a member from space, should be done on a member")
+    @DisplayName("Deleting a member from space, user is not a member to delete")
     void testDeleteSpaceMember_invalidUserId_resourceNotFound(){
         long spaceId = 0L;
         var userId = UUID.randomUUID();
@@ -67,7 +69,7 @@ class DeleteSpaceMemberServiceTest {
     }
 
     @Test
-    @DisplayName("Deleting a member from space, with valid parameters sould be successfull")
+    @DisplayName("Deleting a member from space, with valid parameters should be successful")
     void testDeleteSpaceMember_validParameters_successful(){
         long spaceId = 0L;
         var userId = UUID.randomUUID();

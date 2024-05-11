@@ -53,7 +53,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
         if (!spaceRepository.existsById(spaceId))
             throw new ResourceNotFoundException(SPACE_ID_NOT_FOUND);
 
-        return repository.existsByUserIdAndSpaceId(userId, spaceId);
+        return repository.existsBySpaceIdAndUserId(spaceId, userId);
     }
 
     @Override
@@ -88,6 +88,6 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
 
     @Override
     public void delete(long spaceId, UUID userId) {
-        repository.deleteByUserIdAndSpaceId(userId, spaceId);
+        repository.deleteBySpaceIdAndUserId(spaceId, userId);
     }
 }

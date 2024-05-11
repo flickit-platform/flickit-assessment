@@ -13,15 +13,14 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class DeleteSpaceMembersRestController {
+public class DeleteSpaceMemberRestController {
 
     private final DeleteSpaceMemberUseCase useCase;
     private final UserContext userContext;
 
     @DeleteMapping("/spaces/{spaceId}/members/{userId}")
-    public ResponseEntity<Void> deleteSpaceMembers(
-        @PathVariable("spaceId") long spaceId,
-        @PathVariable("userId") UUID userId) {
+    public ResponseEntity<Void> deleteMember(@PathVariable("spaceId") long spaceId,
+                                             @PathVariable("userId") UUID userId) {
         var currentUserId = userContext.getUser().id();
         useCase.deleteMember(toParam(spaceId, userId, currentUserId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
