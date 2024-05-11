@@ -22,7 +22,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.evidence.EvidenceMapper.toEvidenceListItem;
-import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ADD_EVIDENCE_QUESTION_ID_NOT_FOUND;
 
@@ -47,7 +46,7 @@ public class EvidencePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND))
             .getKitVersionId();
         var question = questionRepository.findById(param.questionId())
-            .orElseThrow(() -> new ResourceNotFoundException(ADD_EVIDENCE_QUESTION_ID_NOT_FOUND)); // TODO: This query must be changed after question id deletion
+            .orElseThrow(() -> new ResourceNotFoundException(ADD_EVIDENCE_QUESTION_ID_NOT_FOUND));
         if (!Objects.equals(assessmentKitVersionId, question.getKitVersionId()))
             throw new ResourceNotFoundException(ADD_EVIDENCE_QUESTION_ID_NOT_FOUND);
         var unsavedEntity = EvidenceMapper.mapCreateParamToJpaEntity(param, question.getRefNum());
