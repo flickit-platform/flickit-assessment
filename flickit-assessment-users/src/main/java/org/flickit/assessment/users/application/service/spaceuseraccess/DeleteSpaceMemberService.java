@@ -27,16 +27,17 @@ public class DeleteSpaceMemberService implements DeleteSpaceMemberUseCase {
 
     @Override
     public void deleteMember(Param param) {
-        validateCurrentUser(param.getSpaceId(), param.getCurrentUserId());
+        validateCurrentUser(param.getSpaceId(), param.getUserId(), param.getCurrentUserId());
         var access = checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getUserId());
         if (!access)
             throw new ResourceNotFoundException(DELETE_SPACE_MEMBER_USER_ID_NOT_FOUND);
         deleteSpaceMemberPort.delete(param.getSpaceId(), param.getUserId());
     }
 
-    private void validateCurrentUser(Long spaceId, UUID currentUserId) {
+    private void validateCurrentUser(Long spaceId, UUID userId, UUID currentUserId) {
         UUID spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(spaceId);
-        if (!Objects.equals(spaceOwnerId, currentUserId))
+        if (!Objects.equals(spaceOwnerId, currentUserId)
+            || Objects.equals(spaceOwnerId, userId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }

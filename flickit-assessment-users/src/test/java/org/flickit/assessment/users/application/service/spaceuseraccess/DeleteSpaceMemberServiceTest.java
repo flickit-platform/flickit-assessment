@@ -52,6 +52,21 @@ class DeleteSpaceMemberServiceTest {
     }
 
     @Test
+    @DisplayName("Owner might not remove himself/herself from the space")
+    void testDeleteSpaceMember_ownerDelete_accessDenied(){
+        long spaceId = 0L;
+        var currentUserId = UUID.randomUUID();
+        Param param = new Param(spaceId, currentUserId, currentUserId);
+
+        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
+
+        assertThrows(AccessDeniedException.class, ()-> service.deleteMember(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
+        verifyNoInteractions(checkSpaceAccessPort);
+        verifyNoInteractions(deleteSpaceMemberPort);
+    }
+
+    @Test
     @DisplayName("Deleting a member from space, user is not a member to delete")
     void testDeleteSpaceMember_invalidUserId_resourceNotFound(){
         long spaceId = 0L;
