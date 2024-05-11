@@ -9,12 +9,17 @@ import org.flickit.assessment.core.application.port.out.evidence.*;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
+import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
+import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import static org.flickit.assessment.core.adapter.out.persistence.evidence.EvidenceMapper.toEvidenceListItem;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND;
 
 @Component
@@ -29,6 +34,7 @@ public class EvidencePersistenceJpaAdapter implements
 
     private final EvidenceJpaRepository repository;
     private final QuestionJpaRepository questionRepository;
+    private final UserJpaRepository userRepository;
 
     @Override
     public UUID persist(CreateEvidencePort.Param param) {
@@ -42,10 +48,14 @@ public class EvidencePersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size) {
         var pageResult = repository.findByQuestionIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(
-            questionId, assessmentId, PageRequest.of(page, size)
-        );
+            questionId, assessmentId, PageRequest.of(page, size));
+        var userIds = pageResult.getContent().stream()
+            .map(EvidenceJpaEntity::getCreatedBy)
+            .toList();
+        var userIdToUserMap = userRepository.findAllById(userIds).stream()
+            .collect(Collectors.toMap(UserJpaEntity::getId, Function.identity()));
         var items = pageResult.getContent().stream()
-            .map(EvidenceMapper::toEvidenceListItem)
+            .map(e -> toEvidenceListItem(e, userIdToUserMap.get(e.getCreatedBy())))
             .toList();
         return new PaginatedResponse<>(
             items,

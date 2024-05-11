@@ -68,7 +68,6 @@ public class ErrorMessageKey {
 
     public static final String GET_EVIDENCE_LIST_QUESTION_ID_NOT_NULL = "get-evidence-list.questionId.notNull";
     public static final String GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL = "get-evidence-list.assessmentId.notNull";
-    public static final String GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND = "get-evidence-list.assessmentId.notFound";
     public static final String GET_EVIDENCE_LIST_SIZE_MIN = "get-evidence-list.size.min";
     public static final String GET_EVIDENCE_LIST_SIZE_MAX = "get-evidence-list.size.max";
     public static final String GET_EVIDENCE_LIST_PAGE_MIN = "get-evidence-list.page.min";
