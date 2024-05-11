@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface DeleteSpaceMemberPort {
 
-    void delete(long id, UUID userId);
+    void delete(long spaceId, UUID userId);
 }
