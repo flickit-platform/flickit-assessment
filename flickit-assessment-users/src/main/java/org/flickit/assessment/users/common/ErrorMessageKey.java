@@ -81,6 +81,7 @@ public class ErrorMessageKey {
     public static final String CREATE_SPACE_TITLE_SIZE_MIN = "create-space.title.size.min";
     public static final String CREATE_SPACE_TITLE_SIZE_MAX = "create-space.title.size.max";
 
+    public static final String CREATE_USER_ID_NOT_NULL = "create-user.userId.notNull";
     public static final String CREATE_USER_EMAIL_NOT_VALID = "create-user.email.notValid";
     public static final String CREATE_USER_DISPLAY_NAME_NOT_BLANK = "create-user.displayName.notBlank";
 }

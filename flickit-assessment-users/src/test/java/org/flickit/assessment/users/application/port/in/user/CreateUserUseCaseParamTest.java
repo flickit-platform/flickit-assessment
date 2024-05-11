@@ -7,8 +7,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.CREATE_USER_DISPLAY_NAME_NOT_BLANK;
-import static org.flickit.assessment.users.common.ErrorMessageKey.CREATE_USER_EMAIL_NOT_VALID;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CreateUserUseCaseParamTest {
@@ -17,7 +16,7 @@ class CreateUserUseCaseParamTest {
     void testCreateUser_UserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateUserUseCase.Param(null, "admin@flickit.org", "Flickit Admin"));
-        assertThat(throwable).hasMessage("userId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("userId: " + CREATE_USER_ID_NOT_NULL);
     }
 
     @Test
