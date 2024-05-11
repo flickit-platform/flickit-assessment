@@ -32,16 +32,16 @@ public interface UpdateEvidenceUseCase {
         String type;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID lastModifiedById;
+        UUID currentUserId;
 
         public Param(UUID id,
                      String description,
                      String type,
-                     UUID lastModifiedById) {
+                     UUID currentUserId) {
             this.id = id;
             this.description = description;
             this.type = type;
-            this.lastModifiedById = lastModifiedById;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
