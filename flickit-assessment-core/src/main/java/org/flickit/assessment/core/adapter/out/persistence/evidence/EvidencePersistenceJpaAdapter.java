@@ -23,10 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.evidence.EvidenceMapper.toEvidenceListItem;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ADD_EVIDENCE_QUESTION_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_EVIDENCE_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
