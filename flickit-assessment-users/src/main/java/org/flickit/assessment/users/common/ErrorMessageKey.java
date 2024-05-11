@@ -80,4 +80,9 @@ public class ErrorMessageKey {
     public static final String CREATE_SPACE_TITLE_NOT_BLANK = "create-space.title.notBlank";
     public static final String CREATE_SPACE_TITLE_SIZE_MIN = "create-space.title.size.min";
     public static final String CREATE_SPACE_TITLE_SIZE_MAX = "create-space.title.size.max";
+
+    public static final String UPDATE_USER_ID_NOT_NULL = "update-user.userId.notNull";
+    public static final String UPDATE_USER_DISPLAY_NAME_NOT_BLANK = "update-user.displayName.notBank";
+    public static final String UPDATE_USER_BIO_SIZE_MAX = "update-user.bio.size.max";
+    public static final String UPDATE_USER_LINKEDIN_NOT_VALID = "update-user.linkedin.notValid";
 }
