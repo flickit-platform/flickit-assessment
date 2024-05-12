@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.users.userassessmentrole;
+package org.flickit.assessment.data.jpa.core.assessmentuserrole;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,14 +7,14 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
-@IdClass(UserAssessmentRoleJpaEntity.EntityId.class)
-@Table(name = "fau_user_assessment_role")
+@IdClass(AssessmentUserRoleJpaEntity.EntityId.class)
+@Table(name = "fac_assessment_user_role")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class UserAssessmentRoleJpaEntity {
+public class AssessmentUserRoleJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
