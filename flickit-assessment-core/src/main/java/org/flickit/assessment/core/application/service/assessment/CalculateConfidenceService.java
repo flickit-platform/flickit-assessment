@@ -38,6 +38,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
     public Result calculate(Param param) {
         if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             throw new AccessDeniedException(ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED);
+
         AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(param.getAssessmentId());
 
         if (isAssessmentResultReinitializationRequired(assessmentResult))
