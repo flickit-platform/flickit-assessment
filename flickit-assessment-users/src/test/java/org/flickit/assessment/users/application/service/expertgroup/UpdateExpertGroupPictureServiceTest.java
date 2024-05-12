@@ -101,22 +101,22 @@ class UpdateExpertGroupPictureServiceTest {
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, picture, currentUserId);
         ExpertGroup expertGroup = new ExpertGroup(expertGroupId, "title", "bio",
-            "about", "picture", "website", currentUserId);
-        String filePath = "picturePath";
+            "about", "picturePath", "website", currentUserId);
+        String picturePath = "picturePath";
 
-        doNothing().when(deleteExpertGroupPicturePort).deletePicture(expertGroupId);
+        doNothing().when(deleteExpertGroupPicturePort).deletePicture(picturePath);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
-        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(filePath);
-        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, filePath);
+        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(picturePath);
+        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
 
         assertDoesNotThrow(() -> service.update(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verify(deleteExpertGroupPicturePort).deletePicture(expertGroupId);
+        verify(deleteExpertGroupPicturePort).deletePicture(picturePath);
         verify(uploadExpertGroupPicturePort).uploadPicture(picture);
-        verify(updateExpertGroupPicturePort).updatePicture(expertGroupId, filePath);
+        verify(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
         verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
     }
 
