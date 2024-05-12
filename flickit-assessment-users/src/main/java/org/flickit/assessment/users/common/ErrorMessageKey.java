@@ -81,5 +81,5 @@ public class ErrorMessageKey {
     public static final String CREATE_SPACE_TITLE_SIZE_MIN = "create-space.title.size.min";
     public static final String CREATE_SPACE_TITLE_SIZE_MAX = "create-space.title.size.max";
 
-    public static final String GET_SPACE_SPACE_ID_NOT_NULL = "get-space.spaceId.notUll";
+    public static final String GET_SPACE_SPACE_ID_NOT_NULL = "get-space.spaceId.notNull";
 }
