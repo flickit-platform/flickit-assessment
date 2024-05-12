@@ -2,8 +2,10 @@ package org.flickit.assessment.core.adapter.in.rest.evidence;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
+import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +21,7 @@ import java.util.UUID;
 public class GetEvidenceListRestController {
 
     private final GetEvidenceListUseCase useCase;
+    private final UserContext userContext;
 
     @GetMapping("/evidences")
     public ResponseEntity<PaginatedResponse<EvidenceListItem>> getEvidenceList(
@@ -28,11 +31,12 @@ public class GetEvidenceListRestController {
         UUID assessmentId,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page) {
-        PaginatedResponse<EvidenceListItem> result = useCase.getEvidenceList(toParam(questionId, assessmentId, size, page));
+        var currentUserId = userContext.getUser().id();
+        var result = useCase.getEvidenceList(toParam(questionId, assessmentId, size, page, currentUserId));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private GetEvidenceListUseCase.Param toParam(Long questionId, UUID assessmentId, int size, int page) {
-        return new GetEvidenceListUseCase.Param(questionId, assessmentId, size, page);
+    private Param toParam(Long questionId, UUID assessmentId, int size, int page, UUID currentUserId) {
+        return new Param(questionId, assessmentId, size, page, currentUserId);
     }
 }
