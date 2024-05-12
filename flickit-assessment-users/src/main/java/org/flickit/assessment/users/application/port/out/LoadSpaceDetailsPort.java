@@ -1,13 +1,13 @@
 package org.flickit.assessment.users.application.port.out;
 
-import java.time.LocalDateTime;
+import org.flickit.assessment.users.application.domain.Space;
+
 import java.util.UUID;
 
 public interface LoadSpaceDetailsPort {
 
     Result loadSpace(long id, UUID currentUserId);
 
-    record Result (long id, String code, String title, UUID ownerId, LocalDateTime lastModificationTime,
-                   int membersCount, int assessmentsCount){
+    record Result(Space space, int membersCount, int assessmentsCount) {
     }
 }

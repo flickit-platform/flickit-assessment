@@ -20,11 +20,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
 
     @Query("""
             SELECT
-                s.id as id,
-                s.code as code,
-                s.title as title,
-                s.ownerId as ownerId,
-                s.lastModificationTime as lastModificationTime,
+                s as space,
                 COUNT(DISTINCT sua.userId) as membersCount,
                 COUNT(DISTINCT fa.id) as assessmentsCount
             FROM SpaceJpaEntity s
@@ -36,8 +32,8 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             )
             GROUP BY s.id
         """)
-    Optional<SpaceWithDetailsView> findById(@Param("spaceId") long id,
-                                            @Param("userId") UUID userId);
+    Optional<SpaceWithCounters> loadSpaceDetails(@Param("spaceId") long id,
+                                                 @Param("userId") UUID userId);
 
     @Modifying
     @Query("""
@@ -46,6 +42,6 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             WHERE s.spaceId = :spaceId AND s.userId = :userId
         """)
     void updateLastSeen(@Param("spaceId") long spaceId,
-                        @Param("currentTime") LocalDateTime currentTime,
-                        @Param("userId") UUID userId);
+                        @Param("userId") UUID userId,
+                        @Param("currentTime") LocalDateTime currentTime);
 }

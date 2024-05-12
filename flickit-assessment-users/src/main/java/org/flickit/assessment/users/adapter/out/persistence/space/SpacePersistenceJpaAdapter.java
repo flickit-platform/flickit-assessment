@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.adapter.out.persistence.space.SpaceMapper.mapToPortResult;
+import static org.flickit.assessment.users.adapter.out.persistence.space.SpaceMapper.mapToDomain;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 
 @Component
@@ -43,7 +43,10 @@ public class SpacePersistenceJpaAdapter implements
     public LoadSpaceDetailsPort.Result loadSpace(long id, UUID currentUserId) {
         var entity = repository.findById(id, currentUserId)
             .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
-        return mapToPortResult(entity);
+        return new LoadSpaceDetailsPort.Result(
+            mapToDomain(entity.getSpace()),
+            entity.getMembersCount(),
+            entity.getAssessmentsCount());
     }
 
     @Override
