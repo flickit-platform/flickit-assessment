@@ -2,14 +2,14 @@ package org.flickit.assessment.core.application.service.evidence;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
+import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
 @Transactional(readOnly = true)
@@ -17,12 +17,12 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_EVIDENCE_LI
 public class GetEvidenceListService implements GetEvidenceListUseCase {
 
     private final LoadEvidencesPort loadEvidencesPort;
-    private final CheckAssessmentExistencePort checkAssessmentExistencePort;
+    private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
 
     @Override
     public PaginatedResponse<EvidenceListItem> getEvidenceList(GetEvidenceListUseCase.Param param) {
-        if (!checkAssessmentExistencePort.existsById(param.getAssessmentId()))
-            throw new ResourceNotFoundException(GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND);
+        if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         return loadEvidencesPort.loadNotDeletedEvidences(
             param.getQuestionId(),
             param.getAssessmentId(),

@@ -12,6 +12,13 @@ import java.util.UUID;
 public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> {
 
     @Query("""
+            SELECT s.ownerId
+            FROM SpaceJpaEntity as s
+            WHERE s.id = :id
+        """) //TODO: add this:  and deleted=false
+    Optional<UUID> loadOwnerIdById(@Param("id") long id);
+
+    @Query("""
             SELECT
                 s.id as id,
                 s.code as code,

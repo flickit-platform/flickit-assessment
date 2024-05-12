@@ -297,11 +297,14 @@
     </changeSet>
 
     <changeSet id="0.18-45" author="Maziyar Gerami">
-        <addColumn tableName="fau_space_user_access">
-            <column name="last_seen" type="${datetime_with_time_zone_type}" valueComputed="creation_time">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="last_seen" type="timestamp" valueComputed="last_modification_time">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.18-46" author="Ali Sedaghat">
+        <modifyDataType tableName="fac_evidence" columnName="description" newDataType="varchar(200)"/>
+    </changeSet>
 </databaseChangeLog>
