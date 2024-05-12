@@ -23,9 +23,9 @@ public class UpdateExpertGroupPictureService implements UpdateExpertGroupPicture
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadExpertGroupPort loadExpertGroupPort;
-    private final DeleteExpertGroupPicturePort deleteExpertGroupPicturePort;
-    private final UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
+    private final UpdateExpertGroupPictureFilePort updateExpertGroupPictureFilePort;
     private final UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
+    private final UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
 
@@ -33,13 +33,15 @@ public class UpdateExpertGroupPictureService implements UpdateExpertGroupPicture
     public Result update(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
         var oldPicture = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
-        if (oldPicture != null )
-            deleteExpertGroupPicturePort.deletePicture(oldPicture);
+        String picture;
+        if (oldPicture != null && !oldPicture.isBlank())
+            picture = updateExpertGroupPictureFilePort.updatePicture(param.getPicture(), oldPicture);
+        else {
+            picture = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
+            updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), picture);
+        }
 
-        var newPicture = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
-
-        updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), newPicture);
-        var pictureLink = createFileDownloadLinkPort.createDownloadLink(newPicture, EXPIRY_DURATION);
+        var pictureLink = createFileDownloadLinkPort.createDownloadLink(picture, EXPIRY_DURATION);
         return new Result(pictureLink);
     }
 

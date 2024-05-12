@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.config.MinioConfigProperties;
-import org.flickit.assessment.users.application.port.out.expertgroup.DeleteExpertGroupPicturePort;
+import org.flickit.assessment.users.application.port.out.expertgroup.UpdateExpertGroupPictureFilePort;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.FILE_STORAGE_F
 public class MinioAdapter implements
     UploadExpertGroupPicturePort,
     CreateFileDownloadLinkPort,
-    DeleteExpertGroupPicturePort {
+    UpdateExpertGroupPictureFilePort {
 
     public static final String SLASH = "/";
     public static final String DOT = ".";
@@ -66,7 +66,7 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
-        if(filePath == null || filePath.isBlank())
+        if (filePath == null || filePath.isBlank())
             return null;
 
         String bucketName = filePath.substring(0, filePath.indexOf(SLASH));
@@ -100,9 +100,14 @@ public class MinioAdapter implements
         }
     }
 
+    @SneakyThrows
     @Override
-    public void deletePicture(String path) {
+    public String updatePicture(MultipartFile pictureFile, String path) {
         String bucketName = properties.getBucketNames().getAvatar();
-        RemoveObjectArgs.builder().bucket(bucketName).object(path).build();
+        String objectName = path.replaceFirst("^" + bucketName + "/", "");
+
+        writeFile(bucketName, objectName, pictureFile.getInputStream(), pictureFile.getContentType());
+        return bucketName + SLASH + objectName;
+
     }
 }

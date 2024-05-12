@@ -112,7 +112,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updatePicture(long expertGroupId, String path) {
-        repository.updatePicture(expertGroupId, path);
+    public void updatePicture(long expertGroupId, String picture) {
+        repository.updatePicture(expertGroupId, picture);
     }
 }

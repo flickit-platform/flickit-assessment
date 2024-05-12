@@ -34,19 +34,19 @@ class UpdateExpertGroupPictureServiceTest {
     LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Mock
-    DeleteExpertGroupPicturePort deleteExpertGroupPicturePort;
+    UpdateExpertGroupPictureFilePort updateExpertGroupPictureFilePort;
 
     @Mock
     UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
-
-    @Mock
-    UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
 
     @Mock
     LoadExpertGroupPort loadExpertGroupPort;
 
     @Mock
     CreateFileDownloadLinkPort createFileDownloadLinkPort;
+
+    @Mock
+    UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
 
 
     @Test
@@ -64,9 +64,9 @@ class UpdateExpertGroupPictureServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> service.update(param), EXPERT_GROUP_ID_NOT_FOUND);
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(loadExpertGroupPort,
-            deleteExpertGroupPicturePort,
-            uploadExpertGroupPicturePort,
             updateExpertGroupPicturePort,
+            updateExpertGroupPictureFilePort,
+            uploadExpertGroupPicturePort,
             createFileDownloadLinkPort);
     }
 
@@ -84,16 +84,16 @@ class UpdateExpertGroupPictureServiceTest {
 
         assertThrows(AccessDeniedException.class, () -> service.update(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(deleteExpertGroupPicturePort);
+        verifyNoInteractions(updateExpertGroupPictureFilePort);
         verifyNoInteractions(loadExpertGroupPort,
-            deleteExpertGroupPicturePort,
-            uploadExpertGroupPicturePort,
+            updateExpertGroupPictureFilePort,
             updateExpertGroupPicturePort,
+            uploadExpertGroupPicturePort,
             createFileDownloadLinkPort);
     }
 
     @Test
-    @DisplayName("If the expert group already has a picture, it should be removed")
+    @DisplayName("If the expert group already has a picture, it should be updated")
     void testUpdateExpertGroupPicture_alreadyHavePicture_shouldDelete() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
@@ -104,25 +104,22 @@ class UpdateExpertGroupPictureServiceTest {
             "about", "picturePath", "website", currentUserId);
         String picturePath = "picturePath";
 
-        doNothing().when(deleteExpertGroupPicturePort).deletePicture(picturePath);
+        when(updateExpertGroupPictureFilePort.updatePicture(picture, picturePath)).thenReturn(picturePath);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
-        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(picturePath);
-        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
 
         assertDoesNotThrow(() -> service.update(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verify(deleteExpertGroupPicturePort).deletePicture(picturePath);
-        verify(uploadExpertGroupPicturePort).uploadPicture(picture);
-        verify(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
+        verify(updateExpertGroupPictureFilePort).updatePicture(picture, picturePath);
         verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
+        verifyNoInteractions(uploadExpertGroupPicturePort, updateExpertGroupPicturePort);
     }
 
     @Test
-    @DisplayName("If the expert group already does not have a picture, it should be removed")
-    void testUpdateExpertGroupPicture_doesNotHavePicture_shouldDelete() throws IOException {
+    @DisplayName("If the expert group does not have a picture, it should be uploaded")
+    void testUpdateExpertGroupPicture_pictureIsNull_shouldDelete() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/png", getResourceAsStream("/images/image1.png"));
@@ -140,9 +137,35 @@ class UpdateExpertGroupPictureServiceTest {
         assertDoesNotThrow(() -> service.update(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(deleteExpertGroupPicturePort);
+        verifyNoInteractions(updateExpertGroupPictureFilePort);
         verify(uploadExpertGroupPicturePort).uploadPicture(picture);
-        verify(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
         verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
+        verify(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
+    }
+
+    @Test
+    @DisplayName("If the expert group does not have a picture, it should be uploaded")
+    void testUpdateExpertGroupPicture_pictureIsBlank_shouldDelete() throws IOException {
+        long expertGroupId = 0L;
+        MockMultipartFile picture = new MockMultipartFile("images", "image1",
+            "image/png", getResourceAsStream("/images/image1.png"));
+        UUID currentUserId = UUID.randomUUID();
+        Param param = new Param(expertGroupId, picture, currentUserId);
+        ExpertGroup expertGroup = new ExpertGroup(expertGroupId, "title", "bio",
+            "about", "", "website", currentUserId);
+        String picturePath = "picturePath";
+
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
+        when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
+        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(picturePath);
+        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
+
+        assertDoesNotThrow(() -> service.update(param));
+
+        verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
+        verifyNoInteractions(updateExpertGroupPictureFilePort);
+        verify(uploadExpertGroupPicturePort).uploadPicture(picture);
+        verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
+        verify(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
     }
 }
