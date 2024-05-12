@@ -50,7 +50,7 @@ public class PermissionConstants {
 
     static Set<AssessmentPermission> getManagerPermission() {
         Set<AssessmentPermission> permissions = new HashSet<>(Set.of(
-            CALCULATE_ASSESSMENT,
+            CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
             UPDATE_ASSESSMENT));
         permissions.addAll(getAssessorPermission());

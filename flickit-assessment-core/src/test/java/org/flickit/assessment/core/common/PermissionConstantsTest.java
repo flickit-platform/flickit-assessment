@@ -2,6 +2,8 @@ package org.flickit.assessment.core.common;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.flickit.assessment.core.common.PermissionConstants.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -23,5 +25,10 @@ class PermissionConstantsTest {
     @Test
     void testPermissionConstants_AssessorPermissionsShouldBeSubsetOfManager() {
         assertTrue(getManagerPermission().containsAll(getAssessorPermission()));
+    }
+
+    @Test
+    void testPermissionConstants_ManagerShouldHaveAllPermissions() {
+        assertTrue(getManagerPermission().containsAll(List.of(AssessmentPermission.values())));
     }
 }
