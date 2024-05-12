@@ -2,11 +2,10 @@ package org.flickit.assessment.users.application.service.expertgroup;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase.Param;
-import org.flickit.assessment.users.application.port.out.expertgroup.DeleteExpertGroupPicturePort;
-import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.users.application.port.out.expertgroup.UpdateExpertGroupPicturePort;
-import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
+import org.flickit.assessment.users.application.port.out.expertgroup.*;
+import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,6 +42,12 @@ class UpdateExpertGroupPictureServiceTest {
     @Mock
     UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
 
+    @Mock
+    LoadExpertGroupPort loadExpertGroupPort;
+
+    @Mock
+    CreateFileDownloadLinkPort createFileDownloadLinkPort;
+
 
     @Test
     @DisplayName("Updating an expert group should be done on an existing expert group")
@@ -58,13 +63,15 @@ class UpdateExpertGroupPictureServiceTest {
 
         assertThrows(ResourceNotFoundException.class, () -> service.update(param), EXPERT_GROUP_ID_NOT_FOUND);
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(deleteExpertGroupPicturePort,
+        verifyNoInteractions(loadExpertGroupPort,
+            deleteExpertGroupPicturePort,
             uploadExpertGroupPicturePort,
-            updateExpertGroupPicturePort);
+            updateExpertGroupPicturePort,
+            createFileDownloadLinkPort);
     }
 
     @Test
-    @DisplayName("Updating expert group picture should be done by the owner of the expert group")
+    @DisplayName("Updating an expert group picture should be done by the owner of the expert group.")
     void testUpdateExpertGroupPicture_currentUserNotOwner_accessDenied() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
@@ -78,30 +85,64 @@ class UpdateExpertGroupPictureServiceTest {
         assertThrows(AccessDeniedException.class, () -> service.update(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(deleteExpertGroupPicturePort);
-        verifyNoInteractions(uploadExpertGroupPicturePort, updateExpertGroupPicturePort);
+        verifyNoInteractions(loadExpertGroupPort,
+            deleteExpertGroupPicturePort,
+            uploadExpertGroupPicturePort,
+            updateExpertGroupPicturePort,
+            createFileDownloadLinkPort);
     }
 
     @Test
-    @DisplayName("If the expert group already have a picture, it should be removed")
+    @DisplayName("If the expert group already has a picture, it should be removed")
     void testUpdateExpertGroupPicture_alreadyHavePicture_shouldDelete() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/png", getResourceAsStream("/images/image1.png"));
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, picture, currentUserId);
-        String picturePath = "picturePath";
+        ExpertGroup expertGroup = new ExpertGroup(expertGroupId, "title", "bio",
+            "about", "picture", "website", currentUserId);
+        String filePath = "picturePath";
 
         doNothing().when(deleteExpertGroupPicturePort).deletePicture(expertGroupId);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
-        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(picturePath);
-        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
+        when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
+        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(filePath);
+        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, filePath);
 
         assertDoesNotThrow(() -> service.update(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verify(deleteExpertGroupPicturePort).deletePicture(expertGroupId);
         verify(uploadExpertGroupPicturePort).uploadPicture(picture);
+        verify(updateExpertGroupPicturePort).updatePicture(expertGroupId, filePath);
+        verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
+    }
+
+    @Test
+    @DisplayName("If the expert group already does not have a picture, it should be removed")
+    void testUpdateExpertGroupPicture_doesNotHavePicture_shouldDelete() throws IOException {
+        long expertGroupId = 0L;
+        MockMultipartFile picture = new MockMultipartFile("images", "image1",
+            "image/png", getResourceAsStream("/images/image1.png"));
+        UUID currentUserId = UUID.randomUUID();
+        Param param = new Param(expertGroupId, picture, currentUserId);
+        ExpertGroup expertGroup = new ExpertGroup(expertGroupId, "title", "bio",
+            "about", null, "website", currentUserId);
+        String picturePath = "picturePath";
+
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
+        when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
+        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(picturePath);
+        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
+
+        assertDoesNotThrow(() -> service.update(param));
+
+        verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
+        verifyNoInteractions(deleteExpertGroupPicturePort);
+        verify(uploadExpertGroupPicturePort).uploadPicture(picture);
         verify(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
+        verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
     }
 }

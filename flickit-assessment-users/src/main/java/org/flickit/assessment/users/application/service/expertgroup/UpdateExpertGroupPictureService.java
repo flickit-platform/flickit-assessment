@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
+import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -17,19 +19,27 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class UpdateExpertGroupPictureService implements UpdateExpertGroupPictureUseCase {
 
+    private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
+
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final DeleteExpertGroupPicturePort deleteExpertGroupPicturePort;
     private final UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
     private final UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
+    private final LoadExpertGroupPort loadExpertGroupPort;
+    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
 
     @Override
-    public void update(Param param) {
+    public Result update(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
-        deleteExpertGroupPicturePort.deletePicture(param.getExpertGroupId());
+        if (loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture() != null )
+            deleteExpertGroupPicturePort.deletePicture(param.getExpertGroupId());
+
         var path = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
 
         updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), path);
+        var pictureLink = createFileDownloadLinkPort.createDownloadLink(path, EXPIRY_DURATION);
+        return new Result(pictureLink);
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
