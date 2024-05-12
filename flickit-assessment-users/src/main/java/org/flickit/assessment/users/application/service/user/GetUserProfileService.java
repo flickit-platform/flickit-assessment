@@ -24,9 +24,8 @@ public class GetUserProfileService implements GetUserProfileUseCase {
     public User getUserProfile(Param param) {
         User user = port.loadUserProfile(param.getCurrentUserId());
 
-        String pictureLink = user.getPicture();
-        if (pictureLink != null && !pictureLink.trim().isBlank()) {
-            pictureLink =createFileDownloadLinkPort.createDownloadLink(pictureLink, EXPIRY_DURATION);
+        if (user.getPicture() != null && !user.getPicture().trim().isBlank()) {
+            String pictureLink = createFileDownloadLinkPort.createDownloadLink(user.getPicture(), EXPIRY_DURATION);
             user.setPicture(pictureLink);
         }
         return user;

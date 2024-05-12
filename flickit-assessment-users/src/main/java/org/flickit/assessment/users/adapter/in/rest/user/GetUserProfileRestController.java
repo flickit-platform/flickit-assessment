@@ -30,7 +30,7 @@ public class GetUserProfileRestController {
             userProfile.getEmail(),
             userProfile.getDisplayName(),
             userProfile.getBio(),
-            userProfile.getBio(),
+            userProfile.getLinkedin(),
             userProfile.getPicture());
     }
 }
