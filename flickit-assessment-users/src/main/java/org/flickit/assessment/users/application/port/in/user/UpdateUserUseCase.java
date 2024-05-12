@@ -30,7 +30,7 @@ public interface UpdateUserUseCase {
         @Size(max = 400, message = UPDATE_USER_BIO_SIZE_MAX)
         String bio;
 
-        @Pattern(regexp = "(?:https?://)?(?:www\\.)?linkedin\\.com/in/[\\w-]+\n", message = UPDATE_USER_LINKEDIN_NOT_VALID)
+        @Pattern(regexp = "(?:https?://)?(?:www\\.)?linkedin\\.com/in/[\\w-]+", message = UPDATE_USER_LINKEDIN_NOT_VALID)
         String linkedin;
 
         public Param(UUID currentUserId, String displayName, String bio, String linkedin) {
