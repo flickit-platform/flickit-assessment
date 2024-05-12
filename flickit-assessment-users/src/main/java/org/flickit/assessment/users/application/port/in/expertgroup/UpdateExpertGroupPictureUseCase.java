@@ -13,7 +13,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 public interface UpdateExpertGroupPictureUseCase {
 
-    void update(Param param);
+    Result update(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
