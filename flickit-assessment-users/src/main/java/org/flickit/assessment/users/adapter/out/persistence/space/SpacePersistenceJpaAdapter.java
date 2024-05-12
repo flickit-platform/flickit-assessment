@@ -34,14 +34,14 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
-    public UUID loadOwnerId(long id) {
-        return repository.loadOwnerIdById(id)
+    public UUID loadOwnerId(long spaceId) {
+        return repository.loadOwnerIdById(spaceId)
             .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
     }
 
     @Override
-    public LoadSpaceDetailsPort.Result loadSpace(long id, UUID currentUserId) {
-        var entity = repository.findById(id, currentUserId)
+    public LoadSpaceDetailsPort.Result loadSpace(long spaceId) {
+        var entity = repository.loadSpaceDetails(spaceId)
             .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
         return new LoadSpaceDetailsPort.Result(
             mapToDomain(entity.getSpace()),
@@ -51,5 +51,6 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public void updateLastSeen(long spaceId, UUID userId, LocalDateTime currentTime) {
-        repository.updateLastSeen(spaceId, currentTime, userId);}
+        repository.updateLastSeen(spaceId, userId, currentTime);
+    }
 }
