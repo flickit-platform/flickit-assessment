@@ -19,8 +19,8 @@ public interface UpdateExpertGroupPictureUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_EXPERT_GROUP_PICTURE_ID_NOT_NULL)
-        Long id;
+        @NotNull(message = UPDATE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL)
+        Long expertGroupId;
 
         @NotNull(message = UPDATE_EXPERT_GROUP_PICTURE_PICTURE_NOT_NULL)
         MultipartFile picture;
@@ -28,8 +28,8 @@ public interface UpdateExpertGroupPictureUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param (Long id, MultipartFile picture, UUID currentUserId){
-            this.id = id;
+        public Param (Long expertGroupId, MultipartFile picture, UUID currentUserId){
+            this.expertGroupId = expertGroupId;
             this.picture = picture;
             this.currentUserId = currentUserId;
             this.validateSelf();

@@ -22,11 +22,11 @@ class UpdateExpertGroupPictureUseCaseParamTest {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateExpertGroupPictureUseCase.Param(null, picture , currentUserId));
-        assertThat(throwable).hasMessage("id: " + UPDATE_EXPERT_GROUP_PICTURE_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("expertGroupId: " + UPDATE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateExpertGroupPictureParam_pictureIsNull_ErrorMessage() throws IOException {
+    void testUpdateExpertGroupPictureParam_pictureIsNull_ErrorMessage() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
