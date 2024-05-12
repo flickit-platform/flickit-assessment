@@ -86,7 +86,7 @@ public class AssessmentPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
 
         int answersCount = answerRepository.getCountByAssessmentResultId(assessmentResult.getId());
-        int questionsCount = questionRepository.countByAssessmentId(assessmentId);
+        int questionsCount = questionRepository.countByKitVersionId(assessmentResult.getKitVersionId());
         return new GetAssessmentProgressPort.Result(assessmentId, answersCount, questionsCount);
     }
 

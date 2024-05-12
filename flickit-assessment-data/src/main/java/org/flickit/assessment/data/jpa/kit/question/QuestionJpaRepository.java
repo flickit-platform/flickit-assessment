@@ -168,13 +168,9 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                                                                                    @Param("maturityLevelId") long maturityLevelId);
 
     @Query("""
-        SELECT COUNT(q)
-        FROM AssessmentJpaEntity a
-            JOIN AssessmentKitJpaEntity k ON a.assessmentKitId = k.id
-            JOIN KitVersionJpaEntity kv ON k.id = kv.kit.id
-            JOIN QuestionnaireJpaEntity qr ON kv.id = qr.kitVersionId
-            JOIN QuestionJpaEntity q ON qr.id = q.questionnaireId
-        WHERE a.id = :assessmentId
-    """)
-    int countByAssessmentId(@Param("assessmentId") UUID assessmentId);
+            SELECT COUNT(q)
+            FROM QuestionJpaEntity q
+            WHERE q.kitVersionId = :kitVersionId
+        """)
+    int countByKitVersionId(@Param("kitVersionId") long kitVersionId);
 }
