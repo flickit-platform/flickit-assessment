@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.userassessmentrole;
+package org.flickit.assessment.core.application.port.in.assessmentuserrole;
 
 import java.util.List;
 

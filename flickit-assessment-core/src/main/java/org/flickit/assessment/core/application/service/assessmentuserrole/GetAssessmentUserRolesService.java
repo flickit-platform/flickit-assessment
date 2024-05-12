@@ -1,6 +1,6 @@
-package org.flickit.assessment.core.application.service.userassessmentrole;
+package org.flickit.assessment.core.application.service.assessmentuserrole;
 
-import org.flickit.assessment.core.application.port.in.userassessmentrole.GetAssessmentUserRolesUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentuserrole.GetAssessmentUserRolesUseCase;
 import org.flickit.assessment.core.common.AssessmentUserRole;
 import org.springframework.stereotype.Service;
 

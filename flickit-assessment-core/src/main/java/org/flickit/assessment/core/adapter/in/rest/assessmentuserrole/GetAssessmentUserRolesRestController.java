@@ -1,8 +1,8 @@
-package org.flickit.assessment.core.adapter.in.rest.userassessmentrole;
+package org.flickit.assessment.core.adapter.in.rest.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.application.port.in.userassessmentrole.GetAssessmentUserRolesUseCase;
-import org.flickit.assessment.core.application.port.in.userassessmentrole.GetAssessmentUserRolesUseCase.AssessmentUserRoleItem;
+import org.flickit.assessment.core.application.port.in.assessmentuserrole.GetAssessmentUserRolesUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentuserrole.GetAssessmentUserRolesUseCase.AssessmentUserRoleItem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
