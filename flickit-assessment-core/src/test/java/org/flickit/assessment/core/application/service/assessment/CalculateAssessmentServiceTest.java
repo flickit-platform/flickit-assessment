@@ -152,7 +152,7 @@ class CalculateAssessmentServiceTest {
     }
 
     @Test
-    void testCalculateMaturityLevel_WhenCurrentUserHasNoAccessToAssessment_ThenThrowsAccessDeniedException() {
+    void testCalculateMaturityLevel_CurrentUserDoesNotHaveAccessToAssessment_ThrowsAccessDeniedException() {
         var param = new CalculateAssessmentUseCase.Param(UUID.randomUUID(), UUID.randomUUID());
 
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(false);

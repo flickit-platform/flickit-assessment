@@ -75,7 +75,7 @@ class GetAssessmentProgressServiceTest {
     }
 
     @Test
-    void testGetAssessmentProgress_WhenCurrentUserDoesntHaveAssessmentAccess_ThenThrowsAccessDeniedException() {
+    void testGetAssessmentProgress_CurrentUserDoesNotHaveAccessToAssessment_ThrowsAccessDeniedException() {
         var assessment = AssessmentMother.assessment();
         UUID assessmentId = assessment.getId();
         UUID currentUserId = UUID.randomUUID();
