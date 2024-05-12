@@ -35,10 +35,10 @@ public class UpdateExpertGroupPictureService implements UpdateExpertGroupPicture
         if (loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture() != null )
             deleteExpertGroupPicturePort.deletePicture(param.getExpertGroupId());
 
-        var path = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
+        var picturePath = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
 
-        updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), path);
-        var pictureLink = createFileDownloadLinkPort.createDownloadLink(path, EXPIRY_DURATION);
+        updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), picturePath);
+        var pictureLink = createFileDownloadLinkPort.createDownloadLink(picturePath, EXPIRY_DURATION);
         return new Result(pictureLink);
     }
 
