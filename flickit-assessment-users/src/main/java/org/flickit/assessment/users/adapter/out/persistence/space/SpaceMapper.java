@@ -22,6 +22,18 @@ public class SpaceMapper {
             space.getLastModifiedBy());
     }
 
+    public static Space mapToDomain(SpaceJpaEntity entity) {
+        return new Space(
+            entity.getId(),
+            entity.getCode(),
+            entity.getTitle(),
+            entity.getOwnerId(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime(),
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy());
+    }
+
     public static LoadSpaceListPort.Result mapToPortResult(SpaceWithDetailsView entity) {
         return new LoadSpaceListPort.Result(
             entity.getId(),
