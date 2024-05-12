@@ -9,7 +9,6 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 public interface CreateUserUseCase {
@@ -20,7 +19,7 @@ public interface CreateUserUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<GetUserProfileUseCase.Param> {
 
-        @NotNull(message = CREATE_USER_ID_NOT_NULL)
+        @NotNull(message = CREATE_USER_USER_ID_NOT_NULL)
         UUID userId;
 
         @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = CREATE_USER_EMAIL_NOT_VALID)

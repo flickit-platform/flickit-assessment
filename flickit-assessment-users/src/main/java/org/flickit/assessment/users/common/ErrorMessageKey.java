@@ -85,7 +85,7 @@ public class ErrorMessageKey {
     public static final String DELETE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "delete-space-member.spaceId.notNull";
     public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_FOUND = "delete-space-member.userId.notFound";
 
-    public static final String CREATE_USER_ID_NOT_NULL = "create-user.userId.notNull";
+    public static final String CREATE_USER_USER_ID_NOT_NULL = "create-user.userId.notNull";
     public static final String CREATE_USER_EMAIL_NOT_VALID = "create-user.email.notValid";
     public static final String CREATE_USER_DISPLAY_NAME_NOT_BLANK = "create-user.displayName.notBlank";
 }
