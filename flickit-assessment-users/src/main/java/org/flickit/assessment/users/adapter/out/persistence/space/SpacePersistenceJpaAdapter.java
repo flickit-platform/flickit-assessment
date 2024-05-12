@@ -1,8 +1,8 @@
 package org.flickit.assessment.users.adapter.out.persistence.space;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.users.application.domain.Space;
@@ -11,18 +11,16 @@ import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.UpdateSpaceLastSeenPort;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.adapter.out.persistence.space.SpaceMapper.mapToDomain;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -36,7 +34,7 @@ public class SpacePersistenceJpaAdapter implements
     private final SpaceJpaRepository repository;
 
     @Override
-    public PaginatedResponse<Result> loadSpaceList(Param param) {
+    public PaginatedResponse<LoadSpaceListPort.Result> loadSpaceList(Param param) {
         var pageResult = repository.findByUserId(param.currentUserId(), PageRequest.of(param.page(), param.size()));
 
         List<LoadSpaceListPort.Result> items = pageResult.getContent().stream()
