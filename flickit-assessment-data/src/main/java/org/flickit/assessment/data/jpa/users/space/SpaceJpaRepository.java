@@ -22,18 +22,14 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             SELECT
                 s as space,
                 COUNT(DISTINCT sua.userId) as membersCount,
-                COUNT(DISTINCT fa.id) as assessmentsCount
+                COUNT(DISTINCT a.id) as assessmentsCount
             FROM SpaceJpaEntity s
-            LEFT JOIN AssessmentJpaEntity fa on s.id = fa.spaceId
+            LEFT JOIN AssessmentJpaEntity a on s.id = a.spaceId
             LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId
-            WHERE EXISTS (
-                SELECT 1 FROM SpaceUserAccessJpaEntity sua
-                WHERE sua.spaceId = s.id AND sua.userId = :userId AND s.id = :spaceId AND fa.deleted = FALSE
-            )
+            WHERE s.id = :spaceId AND a.deleted = FALSE
             GROUP BY s.id
         """)
-    Optional<SpaceWithCounters> loadSpaceDetails(@Param("spaceId") long id,
-                                                 @Param("userId") UUID userId);
+    Optional<SpaceWithCounters> loadSpaceDetails(@Param("spaceId") long id);
 
     @Modifying
     @Query("""

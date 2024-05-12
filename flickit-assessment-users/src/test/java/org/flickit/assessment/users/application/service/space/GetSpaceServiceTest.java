@@ -1,9 +1,13 @@
 package org.flickit.assessment.users.application.service.space;
 
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.LoadSpaceDetailsPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.UpdateSpaceLastSeenPort;
+import org.flickit.assessment.users.test.fixture.application.SpaceMother;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +32,11 @@ class GetSpaceServiceTest {
     GetSpaceService service;
 
     @Mock
+    CheckSpaceAccessPort checkSpaceAccessPort;
+
+    @Mock
     LoadSpaceDetailsPort loadSpaceDetailsPort;
+
     @Mock
     UpdateSpaceLastSeenPort updateSpaceLastSeenPort;
 
@@ -36,16 +45,18 @@ class GetSpaceServiceTest {
     void testLoadSpaceService_isOwner_successFullWithIsOwnerTrue() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
-        GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(spaceId, currentUserId);
-        LoadSpaceDetailsPort.Result portResult = new LoadSpaceDetailsPort.Result(spaceId, "code", "title",
-            currentUserId, LocalDateTime.now(), 1, 1);
+        Space space = SpaceMother.createSpace(currentUserId);
+        GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(space.getId(), currentUserId);
+        LoadSpaceDetailsPort.Result portResult = new LoadSpaceDetailsPort.Result(space, 1, 1);
 
-        when(loadSpaceDetailsPort.loadSpace(spaceId, currentUserId)).thenReturn(portResult);
+        when(checkSpaceAccessPort.checkIsMember(space.getId(), currentUserId)).thenReturn(true);
+        when(loadSpaceDetailsPort.loadSpace(space.getId())).thenReturn(portResult);
         doNothing().when(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
 
         var result = service.getSpace(param);
+
         assertTrue(result.editable(), "'editable' should be true");
-        verify(loadSpaceDetailsPort).loadSpace(anyLong(), any(UUID.class));
+        verify(loadSpaceDetailsPort).loadSpace(space.getId());
         verify(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
     }
 
@@ -54,16 +65,16 @@ class GetSpaceServiceTest {
     void testLoadSpaceService_isNotOwner_successFullWithIsOwnerFalse() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
-        GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(spaceId, currentUserId);
-        LoadSpaceDetailsPort.Result portResult = new LoadSpaceDetailsPort.Result(spaceId, "code", "title",
-            UUID.randomUUID(), LocalDateTime.now(), 1, 1);
+        GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(space.getId(), currentUserId);
+        LoadSpaceDetailsPort.Result portResult = new LoadSpaceDetailsPort.Result(space, 1, 1);
 
-        when(loadSpaceDetailsPort.loadSpace(spaceId, currentUserId)).thenReturn(portResult);
+        when(checkSpaceAccessPort.checkIsMember(space.getId(), currentUserId)).thenReturn(true);
+        when(loadSpaceDetailsPort.loadSpace(space.getId())).thenReturn(portResult);
         doNothing().when(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
 
         var result = service.getSpace(param);
         assertFalse(result.editable(), "'editable' should be false");
-        verify(loadSpaceDetailsPort).loadSpace(anyLong(), any(UUID.class));
+        verify(loadSpaceDetailsPort).loadSpace(anyLong());
         verify(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
     }
 
@@ -74,12 +85,27 @@ class GetSpaceServiceTest {
         UUID currentUserId = UUID.randomUUID();
         GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(spaceId, currentUserId);
 
-        when(loadSpaceDetailsPort.loadSpace(spaceId, currentUserId))
+        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
+        when(loadSpaceDetailsPort.loadSpace(spaceId))
             .thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
 
         assertThrows(ResourceNotFoundException.class, () -> service.getSpace(param));
-        verify(loadSpaceDetailsPort).loadSpace(anyLong(), any(UUID.class));
+        verify(loadSpaceDetailsPort).loadSpace(anyLong());
         verifyNoInteractions(updateSpaceLastSeenPort);
     }
 
+    @Test
+    @DisplayName("Only members can see the Space")
+    void testGetSpace_spaceAccessNotFound_accessDeniedException() {
+        long spaceId = 0L;
+        UUID currentUserId = UUID.randomUUID();
+        GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(spaceId, currentUserId);
+
+        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getSpace(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
+    }
 }
