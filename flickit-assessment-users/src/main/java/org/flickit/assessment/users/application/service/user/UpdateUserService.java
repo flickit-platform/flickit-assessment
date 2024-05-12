@@ -20,7 +20,7 @@ public class UpdateUserService implements UpdateUserUseCase {
     }
 
     private UpdateUserPort.Param toParam(Param param) {
-        return new UpdateUserPort.Param(param.getUserId(),
+        return new UpdateUserPort.Param(param.getCurrentUserId(),
             param.getDisplayName(),
             param.getBio(),
             param.getLinkedin());

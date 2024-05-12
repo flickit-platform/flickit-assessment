@@ -8,8 +8,8 @@ import org.flickit.assessment.users.application.domain.User;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_USER_BIO_SIZE_MAX;
-import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_USER_ID_NOT_NULL;
 import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_USER_DISPLAY_NAME_NOT_BLANK;
 import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_USER_LINKEDIN_NOT_VALID;
 
@@ -21,8 +21,8 @@ public interface UpdateUserUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_USER_ID_NOT_NULL)
-        UUID userId;
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
 
         @NotBlank(message = UPDATE_USER_DISPLAY_NAME_NOT_BLANK)
         String displayName;
@@ -33,8 +33,8 @@ public interface UpdateUserUseCase {
         @Pattern(regexp = "(?:https?://)?(?:www\\.)?linkedin\\.com/in/[\\w-]+\n", message = UPDATE_USER_LINKEDIN_NOT_VALID)
         String linkedin;
 
-        public Param(UUID userId, String displayName, String bio, String linkedin) {
-            this.userId = userId;
+        public Param(UUID currentUserId, String displayName, String bio, String linkedin) {
+            this.currentUserId = currentUserId;
             this.displayName = displayName;
             this.bio = bio;
             this.linkedin = linkedin;
