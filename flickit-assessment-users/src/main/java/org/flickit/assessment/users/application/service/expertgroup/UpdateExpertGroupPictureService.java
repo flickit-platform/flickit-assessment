@@ -32,14 +32,14 @@ public class UpdateExpertGroupPictureService implements UpdateExpertGroupPicture
     @Override
     public Result update(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
-        var oldPicturePath = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
-        if (oldPicturePath != null )
-            deleteExpertGroupPicturePort.deletePicture(oldPicturePath);
+        var oldPicture = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
+        if (oldPicture != null )
+            deleteExpertGroupPicturePort.deletePicture(oldPicture);
 
-        var newPicturePath = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
+        var newPicture = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
 
-        updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), newPicturePath);
-        var pictureLink = createFileDownloadLinkPort.createDownloadLink(newPicturePath, EXPIRY_DURATION);
+        updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), newPicture);
+        var pictureLink = createFileDownloadLinkPort.createDownloadLink(newPicture, EXPIRY_DURATION);
         return new Result(pictureLink);
     }
 
