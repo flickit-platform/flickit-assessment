@@ -32,7 +32,6 @@ public class EvidencePersistenceJpaAdapter implements
     LoadEvidencesPort,
     UpdateEvidencePort,
     DeleteEvidencePort,
-    CheckEvidenceExistencePort,
     LoadAttributeEvidencesPort,
     LoadEvidencePort {
 
@@ -95,11 +94,6 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean existsById(UUID id) {
-        return repository.existsByIdAndDeletedFalse(id);
-    }
-
-    @Override
     public PaginatedResponse<AttributeEvidenceListItem> loadAttributeEvidences(UUID assessmentId, Long attributeId,
                                                                                Integer type, int page, int size) {
         var pageResult = repository.findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(
@@ -122,6 +116,6 @@ public class EvidencePersistenceJpaAdapter implements
     public Evidence loadNotDeletedEvidence(UUID id) {
         return repository.findByIdAndDeletedFalse(id)
             .map(EvidenceMapper::mapToDomainModel)
-            .orElseThrow(() -> new ResourceNotFoundException(UPDATE_EVIDENCE_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
     }
 }
