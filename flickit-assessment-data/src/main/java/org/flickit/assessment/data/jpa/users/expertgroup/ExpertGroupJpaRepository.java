@@ -97,4 +97,14 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") long id);
+
+    @Modifying
+    @Query("""
+            UPDATE ExpertGroupJpaEntity e
+            SET e.picture = :picture
+            WHERE e.id = :id
+          """
+    )
+    void updatePicture(@Param("id") long expertGroupId,
+                       @Param("picture") String picture);
 }
