@@ -6,7 +6,7 @@
 
     <changeSet id="0.19-01" author="Mahdi Rezazadeh">
         <createTable tableName="fac_assessment_user_role">
-            <column name="assessment_id" type="bigint">
+            <column name="assessment_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="uuid">

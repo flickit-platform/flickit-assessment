@@ -19,7 +19,7 @@ public class AssessmentUserRoleJpaEntity {
     @Id
     @EqualsAndHashCode.Include
     @Column(name = "assessment_id", nullable = false)
-    private Long assessmentId;
+    private UUID assessmentId;
 
     @Id
     @EqualsAndHashCode.Include
@@ -34,7 +34,7 @@ public class AssessmentUserRoleJpaEntity {
     @AllArgsConstructor
     public static class EntityId implements Serializable {
 
-        private Long assessmentId;
+        private UUID assessmentId;
         private UUID userId;
     }
 }
