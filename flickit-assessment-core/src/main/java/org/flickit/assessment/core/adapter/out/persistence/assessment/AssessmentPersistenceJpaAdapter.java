@@ -81,7 +81,7 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public GetAssessmentProgressPort.Result getAssessmentProgressById(UUID assessmentId) {
+    public GetAssessmentProgressPort.Result getProgress(UUID assessmentId) {
         var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
 

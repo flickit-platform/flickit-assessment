@@ -43,16 +43,16 @@ class GetAssessmentProgressServiceTest {
         Param param = new Param(assessmentId, currentUserId);
 
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
-        when(getAssessmentProgressPort.getAssessmentProgressById(assessmentId))
+        when(getAssessmentProgressPort.getProgress(assessmentId))
             .thenReturn(new GetAssessmentProgressPort.Result(assessmentId, 5, 10));
 
         var result = service.getAssessmentProgress(param);
 
         ArgumentCaptor<UUID> answerPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
-        verify(getAssessmentProgressPort).getAssessmentProgressById(answerPortAssessmentId.capture());
+        verify(getAssessmentProgressPort).getProgress(answerPortAssessmentId.capture());
 
         assertEquals(assessmentId, answerPortAssessmentId.getValue());
-        verify(getAssessmentProgressPort, times(1)).getAssessmentProgressById(any());
+        verify(getAssessmentProgressPort, times(1)).getProgress(any());
 
         assertEquals(assessmentId, result.id());
         assertEquals(5, result.answersCount());
@@ -67,8 +67,8 @@ class GetAssessmentProgressServiceTest {
         Param param = new Param(assessmentId, currentUserId);
 
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
-        when(getAssessmentProgressPort.getAssessmentProgressById(assessmentId))
-            .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
+        when(getAssessmentProgressPort.getProgress(assessmentId))
+            .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentProgress(param));
         Assertions.assertThat(throwable).hasMessage(GET_ASSESSMENT_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND);

@@ -23,7 +23,7 @@ public class GetAssessmentProgressService implements GetAssessmentProgressUseCas
         if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var result = getAssessmentProgressPort.getAssessmentProgressById(param.getAssessmentId());
+        var result = getAssessmentProgressPort.getProgress(param.getAssessmentId());
         return new Result(result.id(), result.answersCount(), result.questionsCount());
     }
 }
