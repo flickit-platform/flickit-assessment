@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_USER_ID_NOT_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.USER_ID_NOT_FOUND;
 
 @Component
@@ -49,7 +48,7 @@ public class UserPersistenceJpaAdapter implements
     @Override
     public User updateUser(Param param) {
         UserJpaEntity userEntity = repository.findById(param.userId())
-            .orElseThrow(() -> new ResourceNotFoundException(UPDATE_USER_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(USER_ID_NOT_FOUND));
         userEntity.setDisplayName(param.displayName());
         userEntity.setBio(param.bio());
         userEntity.setLinkedin(param.linkedin());
