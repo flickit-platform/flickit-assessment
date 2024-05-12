@@ -1,9 +1,6 @@
 package org.flickit.assessment.users.adapter.out.minio;
 
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
-import io.minio.StatObjectArgs;
+import io.minio.*;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import jakarta.annotation.Nullable;
@@ -11,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.config.MinioConfigProperties;
+import org.flickit.assessment.users.application.port.out.expertgroup.DeleteExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Component;
@@ -28,7 +26,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.FILE_STORAGE_F
 @AllArgsConstructor
 public class MinioAdapter implements
     UploadExpertGroupPicturePort,
-    CreateFileDownloadLinkPort {
+    CreateFileDownloadLinkPort,
+    DeleteExpertGroupPicturePort {
 
     public static final String SLASH = "/";
     public static final String DOT = ".";
@@ -99,5 +98,11 @@ public class MinioAdapter implements
         } catch (ErrorResponseException e) {
             throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
         }
+    }
+
+    @Override
+    public void deletePicture(String path) {
+        String bucketName = properties.getBucketNames().getAvatar();
+        RemoveObjectArgs.builder().bucket(bucketName).object(path).build();
     }
 }
