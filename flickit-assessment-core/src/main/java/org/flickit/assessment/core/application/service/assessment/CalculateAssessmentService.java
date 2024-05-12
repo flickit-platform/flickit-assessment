@@ -37,10 +37,10 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
     @Override
     public Result calculateMaturityLevel(Param param) {
-        AssessmentResult assessmentResult = loadCalculateInfoPort.load(param.getAssessmentId());
         if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
+        AssessmentResult assessmentResult = loadCalculateInfoPort.load(param.getAssessmentId());
         if (isAssessmentResultReinitializationRequired(assessmentResult))
             reinitializeAssessmentResult(assessmentResult);
 

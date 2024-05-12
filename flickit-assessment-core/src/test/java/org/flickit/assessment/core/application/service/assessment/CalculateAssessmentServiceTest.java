@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight;
 import static org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight;
@@ -151,33 +152,13 @@ class CalculateAssessmentServiceTest {
     }
 
     @Test
-    void testCalculateMaturityLevel_WhenCurrenUserHasNoAccessToAssessment_ThenThrowsAccessDeniedException() {
-        List<QualityAttributeValue> s1AttributeValues = List.of(
-            toBeCalcAsLevelFourWithWeight(2),
-            toBeCalcAsLevelFourWithWeight(2),
-            toBeCalcAsLevelThreeWithWeight(3),
-            toBeCalcAsLevelThreeWithWeight(3)
-        );
+    void testCalculateMaturityLevel_WhenCurrentUserHasNoAccessToAssessment_ThenThrowsAccessDeniedException() {
+        var param = new CalculateAssessmentUseCase.Param(UUID.randomUUID(), UUID.randomUUID());
 
-        List<QualityAttributeValue> s2AttributeValues = List.of(
-            toBeCalcAsLevelFourWithWeight(4),
-            toBeCalcAsLevelThreeWithWeight(1)
-        );
-
-        List<SubjectValue> subjectValues = List.of(
-            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(QualityAttributeValue::getQualityAttribute).toList()),
-            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(QualityAttributeValue::getQualityAttribute).toList())
-        );
-
-        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
-        assessmentResult.setLastCalculationTime(LocalDateTime.now());
-        UUID currentUserId = UUID.randomUUID();
-
-        CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
-
-        when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(false);
+        verifyNoInteractions(loadCalculateInfoPort);
 
-        assertThrows(AccessDeniedException.class, () -> service.calculateMaturityLevel(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.calculateMaturityLevel(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }
