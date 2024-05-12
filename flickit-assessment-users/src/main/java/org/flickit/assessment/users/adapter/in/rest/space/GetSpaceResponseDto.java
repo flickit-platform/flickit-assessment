@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public record GetSpaceResponseDto(long id,
                                   String code,
                                   String title,
-                                  boolean isOwner,
+                                  boolean editable,
                                   LocalDateTime lastModificationTime,
                                   int membersCount,
                                   int assessmentsCount) {

@@ -21,11 +21,11 @@ public class GetSpaceService implements GetSpaceUseCase {
     @Override
     public Result getSpace(Param param) {
         LoadSpaceDetailsPort.Result result = loadSpaceDetailsPort.loadSpace(param.getId(), param.getCurrentUserId());
-        updateSpaceLastSeenPort.updateLastSeen(param.getId(), LocalDateTime.now(), param.getCurrentUserId());
+        updateSpaceLastSeenPort.updateLastSeen(param.getId(), param.getCurrentUserId(), LocalDateTime.now());
         Space space = new Space (result.id(), result.code(), result.title(), result.ownerId(),
             null, result.lastModificationTime(), null, null);
-        boolean isOwner = param.getCurrentUserId().equals(result.ownerId());
+        boolean editable = param.getCurrentUserId().equals(result.ownerId());
 
-        return new Result(space, isOwner, result.membersCount(), result.assessmentsCount());
+        return new Result(space, editable, result.membersCount(), result.assessmentsCount());
     }
 }

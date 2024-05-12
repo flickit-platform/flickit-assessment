@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetExpertGroupUseCaseParamTest {
 
     @Test
-    void testExpertGroupUseCaseParam_idIsNull_ErrorMessage() {
+    void testGetExpertGroupUseCaseParam_idIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetExpertGroupUseCase.Param(null, currentUserId));
@@ -21,7 +21,7 @@ class GetExpertGroupUseCaseParamTest {
     }
 
     @Test
-    void testExpertGroupUseCaseParam_currentUserIdIsNull_ErrorMessage() {
+    void testGetExpertGroupUseCaseParam_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetExpertGroupUseCase.Param(123L, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

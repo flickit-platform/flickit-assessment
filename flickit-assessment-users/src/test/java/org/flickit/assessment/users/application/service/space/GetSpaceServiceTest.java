@@ -32,7 +32,7 @@ class GetSpaceServiceTest {
     UpdateSpaceLastSeenPort updateSpaceLastSeenPort;
 
     @Test
-    @DisplayName("When the current user is owner, 'GetSpaceService'  should set the 'isOwner' field as true")
+    @DisplayName("When the current user is owner, 'GetSpaceService'  should set the 'editable' field as true")
     void testLoadSpaceService_isOwner_successFullWithIsOwnerTrue() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -41,16 +41,16 @@ class GetSpaceServiceTest {
             currentUserId, LocalDateTime.now(), 1, 1);
 
         when(loadSpaceDetailsPort.loadSpace(spaceId, currentUserId)).thenReturn(portResult);
-        doNothing().when(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(LocalDateTime.class), any(UUID.class));
+        doNothing().when(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
 
         var result = service.getSpace(param);
-        assertTrue(result.isOwner(), "'isOwner' should be true");
+        assertTrue(result.editable(), "'editable' should be true");
         verify(loadSpaceDetailsPort).loadSpace(anyLong(), any(UUID.class));
-        verify(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(LocalDateTime.class), any(UUID.class));
+        verify(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
     }
 
     @Test
-    @DisplayName("When the current user is not owner, 'GetSpaceService' should set the 'isOwner' field as false")
+    @DisplayName("When the current user is not owner, 'GetSpaceService' should set the 'editable' field as false")
     void testLoadSpaceService_isNotOwner_successFullWithIsOwnerFalse() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -59,12 +59,12 @@ class GetSpaceServiceTest {
             UUID.randomUUID(), LocalDateTime.now(), 1, 1);
 
         when(loadSpaceDetailsPort.loadSpace(spaceId, currentUserId)).thenReturn(portResult);
-        doNothing().when(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(LocalDateTime.class), any(UUID.class));
+        doNothing().when(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
 
         var result = service.getSpace(param);
-        assertFalse(result.isOwner(), "'isOwner' should be false");
+        assertFalse(result.editable(), "'editable' should be false");
         verify(loadSpaceDetailsPort).loadSpace(anyLong(), any(UUID.class));
-        verify(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(LocalDateTime.class), any(UUID.class));
+        verify(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
     }
 
     @Test

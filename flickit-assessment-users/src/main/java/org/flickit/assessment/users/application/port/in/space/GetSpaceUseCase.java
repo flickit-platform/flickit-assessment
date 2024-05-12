@@ -32,6 +32,6 @@ public interface GetSpaceUseCase {
         }
     }
 
-    record Result(Space space, boolean isOwner, int membersCount, int assessmentsCount) {
+    record Result(Space space, boolean editable, int membersCount, int assessmentsCount) {
     }
 }

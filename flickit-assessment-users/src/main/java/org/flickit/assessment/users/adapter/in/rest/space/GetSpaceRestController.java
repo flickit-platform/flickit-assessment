@@ -34,7 +34,7 @@ public class GetSpaceRestController {
             result.space().getId(),
             result.space().getCode(),
             result.space().getTitle(),
-            result.isOwner(),
+            result.editable(),
             result.space().getLastModificationTime(),
             result.membersCount(),
             result.assessmentsCount()
