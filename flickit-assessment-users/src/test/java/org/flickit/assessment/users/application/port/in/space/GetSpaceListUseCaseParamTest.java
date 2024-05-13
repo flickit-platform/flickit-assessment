@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetSpaceListUseCaseParamTest {
 
     @Test
-    void testGetSpaceListParam_sizeIsLessThanMin_ErrorMessage() {
+    void testGetSpaceList_sizeIsLessThanMin_ErrorMessage() {
         int page = new Random().nextInt(100);
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -23,7 +23,7 @@ class GetSpaceListUseCaseParamTest {
     }
 
     @Test
-    void testGetSpaceListParam_sizeIsMoreThenMax_ErrorMessage() {
+    void testGetSpaceList_sizeIsMoreThenMax_ErrorMessage() {
         int page = new Random().nextInt(100);
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -32,7 +32,7 @@ class GetSpaceListUseCaseParamTest {
     }
 
     @Test
-    void testGetSpaceListParam_pageIsLessThanZero_ErrorMessage() {
+    void testGetSpaceList_pageIsLessThanZero_ErrorMessage() {
         int size = new Random().nextInt(100);
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -41,7 +41,7 @@ class GetSpaceListUseCaseParamTest {
     }
 
     @Test
-    void testGetSpaceListParam_currentUserIsNull_ErrorMessage() {
+    void testGetSpaceList_currentUserIsNull_ErrorMessage() {
         int size = new Random().nextInt(100);
         int page = new Random().nextInt(100);
         var throwable = assertThrows(ConstraintViolationException.class,

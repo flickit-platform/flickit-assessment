@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GetSpaceUseCaseParamTest {
 
     @Test
-    void testGetSpaceUseCaseParam_idIsNull_ErrorMessage() {
+    void testGetSpace_idIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetSpaceUseCase.Param(null, currentUserId));
@@ -21,7 +21,7 @@ class GetSpaceUseCaseParamTest {
     }
 
     @Test
-    void testGetSpaceUseCaseParam_currentUserIdIsNull_ErrorMessage() {
+    void testGetSpace_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetSpaceUseCase.Param(123L, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
