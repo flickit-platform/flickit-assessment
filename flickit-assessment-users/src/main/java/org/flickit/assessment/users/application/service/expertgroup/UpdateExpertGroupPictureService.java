@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.service.expertgroup;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -13,6 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_EXPERT_GROUP_PICTURE_PICTURE_NOT_NULL;
 
 @Service
 @Transactional
@@ -30,6 +32,9 @@ public class UpdateExpertGroupPictureService implements UpdateExpertGroupPicture
 
     @Override
     public Result update(Param param) {
+        if ((Objects.requireNonNull(param.getPicture().getOriginalFilename())).isEmpty())
+            throw new ValidationException(UPDATE_EXPERT_GROUP_PICTURE_PICTURE_NOT_NULL);
+
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
         var picture = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
 
