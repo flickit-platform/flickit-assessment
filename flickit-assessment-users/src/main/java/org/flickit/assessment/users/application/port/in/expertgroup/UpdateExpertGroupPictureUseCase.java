@@ -28,14 +28,14 @@ public interface UpdateExpertGroupPictureUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param (Long expertGroupId, MultipartFile picture, UUID currentUserId){
+        public Param(Long expertGroupId, MultipartFile picture, UUID currentUserId) {
             this.expertGroupId = expertGroupId;
-            this.picture = picture;
+            this.picture = picture == null || picture.isEmpty() ? null : picture;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
 
-    record Result(String pictureLink){
+    record Result(String pictureLink) {
     }
 }
