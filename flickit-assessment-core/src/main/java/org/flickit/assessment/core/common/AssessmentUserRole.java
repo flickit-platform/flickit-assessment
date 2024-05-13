@@ -3,7 +3,6 @@ package org.flickit.assessment.core.common;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 
 import java.util.stream.Stream;
 
@@ -33,7 +32,7 @@ public enum AssessmentUserRole {
     }
 
     public static boolean isValidId(int id) {
-        return id >= 0 && id < AssessmentColor.values().length;
+        return id >= 0 && id < AssessmentUserRole.values().length;
     }
 
     public boolean hasAccess(AssessmentPermission permission) {
