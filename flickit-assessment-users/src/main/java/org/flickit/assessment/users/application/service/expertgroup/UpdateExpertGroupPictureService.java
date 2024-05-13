@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.service.expertgroup;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase;
@@ -28,14 +29,12 @@ public class UpdateExpertGroupPictureService implements UpdateExpertGroupPicture
     private final UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
-
     @Override
     public Result update(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
-        var oldPicture = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
-        String picture;
-        if (oldPicture != null && !oldPicture.isBlank())
-            picture = updateExpertGroupPictureFilePort.updatePicture(param.getPicture(), oldPicture);
+        var picture = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
+        if (StringUtils.isNotEmpty(picture))
+            updateExpertGroupPictureFilePort.updatePicture(param.getPicture(), picture);
         else {
             picture = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
             updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), picture);
