@@ -2,8 +2,6 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.data.jpa.users.space.SpaceWithDetailsView;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.users.application.domain.Space;
 
@@ -32,16 +30,5 @@ public class SpaceMapper {
             entity.getLastModificationTime(),
             entity.getCreatedBy(),
             entity.getLastModifiedBy());
-    }
-
-    public static LoadSpaceListPort.Result mapToPortResult(SpaceWithDetailsView entity) {
-        return new LoadSpaceListPort.Result(
-            entity.getId(),
-            entity.getTitle(),
-            entity.getTitle(),
-            entity.getOwnerId(),
-            entity.getLastModificationTime(),
-            entity.getMembersCount(),
-            entity.getAssessmentsCount());
     }
 }

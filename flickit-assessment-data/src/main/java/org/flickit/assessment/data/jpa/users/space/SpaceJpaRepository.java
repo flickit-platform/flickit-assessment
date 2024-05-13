@@ -10,10 +10,6 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import java.util.UUID;
 
 public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> {
 
@@ -49,11 +45,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
 
     @Query("""
             SELECT
-                s.id as id,
-                s.code as code,
-                s.title as title,
-                s.ownerId as ownerId,
-                s.lastModificationTime as lastModificationTime,
+                s as space,
                 COUNT(DISTINCT sua.userId) as membersCount,
                 COUNT(DISTINCT fa.id) as assessmentsCount,
                 MAX(sua.lastSeen) as lastSeen
@@ -67,5 +59,5 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             GROUP BY s.id
             ORDER BY lastSeen DESC
         """)
-    Page<SpaceWithDetailsView> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
+    Page<SpaceWithCounters> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
 }

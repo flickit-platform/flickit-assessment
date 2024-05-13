@@ -5,6 +5,9 @@ import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaE
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Param;
+import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Result;
+import org.flickit.assessment.users.test.fixture.application.SpaceMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -12,16 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Result;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Param;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,16 +35,15 @@ class GetSpaceListServiceTest {
     private LoadSpaceListPort loadSpaceListPort;
 
     @Test
-    void testGetSpaceListParam_validInputs_validResults(){
+    void testGetSpaceListParam_validInputs_validResults() {
         int size = 10;
         int page = 0;
         UUID currentUserId = UUID.randomUUID();
-        var space1 = createSpace(currentUserId);
-        var space2 = createSpace(currentUserId);
-        var spacePortList = List.of(space1, space2);
-        List<GetSpaceListUseCase.SpaceListItem> spaceListItems = List.of(
-            portToUseCaseResult(space1, currentUserId),
-            portToUseCaseResult(space2, currentUserId));
+        var space1 = SpaceMother.createSpace(currentUserId);
+        var space2 = SpaceMother.createSpace(UUID.randomUUID());
+        var spacePortList = List.of(
+            new LoadSpaceListPort.Result(space1, 2, 5),
+            new Result(space2, 4, 3));
 
         PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
             spacePortList,
@@ -53,7 +51,7 @@ class GetSpaceListServiceTest {
             size,
             SpaceUserAccessJpaEntity.Fields.LAST_SEEN,
             Sort.Direction.DESC.name().toLowerCase(),
-            spaceListItems.size());
+            spacePortList.size());
 
         when(loadSpaceListPort.loadSpaceList(any(Param.class))).thenReturn(paginatedResponse);
 
@@ -67,8 +65,20 @@ class GetSpaceListServiceTest {
         assertEquals(size, loadPortParam.getValue().size());
         assertNotNull(paginatedResponse);
         assertNotNull(result.getItems());
-        assertNotEquals(0, result.getItems().size());
-        assertEquals(spaceListItems, result.getItems());
+        assertEquals(2, result.getItems().size());
+        assertEquals(spacePortList.get(0).space().getId(), result.getItems().get(0).id());
+        assertEquals(spacePortList.get(0).space().getTitle(), result.getItems().get(0).title());
+        assertTrue(result.getItems().get(0).isOwner());
+        assertEquals(spacePortList.get(0).space().getLastModificationTime(), result.getItems().get(0).lastModificationTime());
+        assertEquals(spacePortList.get(0).assessmentsCount(), result.getItems().get(0).assessmentsCount());
+        assertEquals(spacePortList.get(0).membersCount(), result.getItems().get(0).membersCount());
+
+        assertEquals(spacePortList.get(1).space().getId(), result.getItems().get(1).id());
+        assertEquals(spacePortList.get(1).space().getTitle(), result.getItems().get(1).title());
+        assertFalse(result.getItems().get(1).isOwner());
+        assertEquals(spacePortList.get(1).space().getLastModificationTime(), result.getItems().get(1).lastModificationTime());
+        assertEquals(spacePortList.get(1).assessmentsCount(), result.getItems().get(1).assessmentsCount());
+        assertEquals(spacePortList.get(1).membersCount(), result.getItems().get(1).membersCount());
     }
 
     @Test
@@ -77,12 +87,8 @@ class GetSpaceListServiceTest {
         int size = 10;
         UUID currentUserId = UUID.randomUUID();
 
-        List<Result> spaceListItems = Collections.emptyList();
-
-        List<GetSpaceListUseCase.SpaceListItem> SpaceListItemsFinal = Collections.emptyList();
-
         PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
-            spaceListItems,
+            Collections.emptyList(),
             page,
             size,
             UserJpaEntity.Fields.NAME,
@@ -102,31 +108,5 @@ class GetSpaceListServiceTest {
         assertNotNull(paginatedResponse);
         assertNotNull(result.getItems());
         assertEquals(0, result.getItems().size());
-        assertEquals(SpaceListItemsFinal, result.getItems());
-    }
-
-    private static long spaceId = 123;
-
-    private static Result createSpace(UUID ownerId) {
-        long id = spaceId++;
-        return new Result(id,
-            "title" + id,
-            "Title" + id,
-            ownerId,
-            LocalDateTime.now(),
-            1,
-            2);
-    }
-
-    private static GetSpaceListUseCase.SpaceListItem portToUseCaseResult(org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Result portResult, UUID currentUserId) {
-        return new GetSpaceListUseCase.SpaceListItem(
-            portResult.id(),
-            portResult.code(),
-            portResult.title(),
-            portResult.ownerId().equals(currentUserId),
-            portResult.lastModificationTime(),
-            portResult.membersCount(),
-            portResult.assessmentsCount()
-        );
     }
 }

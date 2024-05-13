@@ -38,7 +38,10 @@ public class SpacePersistenceJpaAdapter implements
         var pageResult = repository.findByUserId(param.currentUserId(), PageRequest.of(param.page(), param.size()));
 
         List<LoadSpaceListPort.Result> items = pageResult.getContent().stream()
-            .map(SpaceMapper::mapToPortResult)
+            .map(entity -> new LoadSpaceListPort.Result(
+                mapToDomain(entity.getSpace()),
+                entity.getMembersCount(),
+                entity.getAssessmentsCount()))
             .toList();
 
         return new PaginatedResponse<>(

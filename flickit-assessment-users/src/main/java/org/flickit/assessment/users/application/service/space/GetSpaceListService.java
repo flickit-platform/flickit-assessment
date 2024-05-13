@@ -39,11 +39,10 @@ public class GetSpaceListService implements GetSpaceListUseCase {
     private List<GetSpaceListUseCase.SpaceListItem> mapToSpaceListItems(List<LoadSpaceListPort.Result> items, UUID currentUserId) {
         return items.stream()
             .map(item -> new GetSpaceListUseCase.SpaceListItem(
-                item.id(),
-                item.code(),
-                item.title(),
-                item.ownerId().equals(currentUserId),
-                item.lastModificationTime(),
+                item.space().getId(),
+                item.space().getTitle(),
+                item.space().getOwnerId().equals(currentUserId),
+                item.space().getLastModificationTime(),
                 item.membersCount(),
                 item.assessmentsCount()
             )).toList();
