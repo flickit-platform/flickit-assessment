@@ -108,6 +108,5 @@ public class MinioAdapter implements
 
         writeFile(bucketName, objectName, pictureFile.getInputStream(), pictureFile.getContentType());
         return bucketName + SLASH + objectName;
-
     }
 }
