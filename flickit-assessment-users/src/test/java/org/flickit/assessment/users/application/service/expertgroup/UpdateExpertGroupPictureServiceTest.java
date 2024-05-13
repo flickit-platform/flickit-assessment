@@ -50,8 +50,8 @@ class UpdateExpertGroupPictureServiceTest {
 
 
     @Test
-    @DisplayName("Updating an expert group should be done on an existing expert group")
-    void testUpdateExpertGroupPicture_expertGroupInvalid_resourceNotFound() throws IOException {
+    @DisplayName("An existing expert group should undergo updating.")
+    void testUpdateExpertGroupPicture_expertGroupNotExist_resourceNotFound() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/png", new ByteArrayInputStream("Some content".getBytes()));
@@ -72,7 +72,7 @@ class UpdateExpertGroupPictureServiceTest {
 
     @Test
     @DisplayName("Updating an expert group picture should be done by the owner of the expert group.")
-    void testUpdateExpertGroupPicture_currentUserNotOwner_accessDenied() throws IOException {
+    void testUpdateExpertGroupPicture_currentUserIsNotOwner_accessDenied() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/png", new ByteArrayInputStream("Some content".getBytes()));
@@ -94,7 +94,7 @@ class UpdateExpertGroupPictureServiceTest {
 
     @Test
     @DisplayName("If the expert group already has a picture, it should be updated")
-    void testUpdateExpertGroupPicture_alreadyHavePicture_shouldDelete() throws IOException {
+    void testUpdateExpertGroupPicture_alreadyHasPicture_fileUpdate() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/png", new ByteArrayInputStream("Some content".getBytes()));
@@ -118,8 +118,8 @@ class UpdateExpertGroupPictureServiceTest {
     }
 
     @Test
-    @DisplayName("If the expert group does not have a picture, it should be uploaded")
-    void testUpdateExpertGroupPicture_pictureIsNull_shouldDelete() throws IOException {
+    @DisplayName("If the expert group does not have a picture (null), it should be uploaded.")
+    void testUpdateExpertGroupPicture_doesNotHavePicture_pictureUpload() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/png", new ByteArrayInputStream("Some content".getBytes()));
@@ -144,8 +144,8 @@ class UpdateExpertGroupPictureServiceTest {
     }
 
     @Test
-    @DisplayName("If the expert group does not have a picture, it should be uploaded")
-    void testUpdateExpertGroupPicture_pictureIsBlank_shouldDelete() throws IOException {
+    @DisplayName("If the expert group does not have a picture (blank), it should be uploaded")
+    void testUpdateExpertGroupPicture_pictureIsBlank_uploadPicture() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/png", new ByteArrayInputStream("Some content".getBytes()));

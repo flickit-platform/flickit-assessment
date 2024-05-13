@@ -4,10 +4,10 @@ import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-import static io.jsonwebtoken.lang.Classes.getResourceAsStream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
@@ -18,7 +18,7 @@ class UpdateExpertGroupPictureUseCaseParamTest {
     @Test
     void testUpdateExpertGroupPictureParam_idIsNull_ErrorMessage() throws IOException {
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/png", getResourceAsStream("/images/image1.png"));
+            "image/png", new ByteArrayInputStream("Some content".getBytes()));
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateExpertGroupPictureUseCase.Param(null, picture , currentUserId));
@@ -38,7 +38,7 @@ class UpdateExpertGroupPictureUseCaseParamTest {
     void testUpdateExpertGroupPictureParam_currentUserIdIsNull_ErrorMessage() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/png", getResourceAsStream("/images/image1.png"));
+            "image/png", new ByteArrayInputStream("Some content".getBytes()));
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateExpertGroupPictureUseCase.Param(expertGroupId, picture , null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
