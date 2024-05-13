@@ -5,12 +5,10 @@ import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaE
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Param;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Result;
 import org.flickit.assessment.users.test.fixture.application.SpaceMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,8 +19,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,16 +49,11 @@ class GetSpaceListServiceTest {
             Sort.Direction.DESC.name().toLowerCase(),
             spacePortList.size());
 
-        when(loadSpaceListPort.loadSpaceList(any(Param.class))).thenReturn(paginatedResponse);
+        when(loadSpaceListPort.loadSpaceList(currentUserId, page, size)).thenReturn(paginatedResponse);
 
         GetSpaceListUseCase.Param param = new GetSpaceListUseCase.Param(size, page, currentUserId);
         var result = service.getSpaceList(param);
 
-        ArgumentCaptor<Param> loadPortParam = ArgumentCaptor.forClass(Param.class);
-        verify(loadSpaceListPort).loadSpaceList(loadPortParam.capture());
-
-        assertEquals(page, loadPortParam.getValue().page());
-        assertEquals(size, loadPortParam.getValue().size());
         assertNotNull(paginatedResponse);
         assertNotNull(result.getItems());
         assertEquals(2, result.getItems().size());
@@ -94,17 +85,11 @@ class GetSpaceListServiceTest {
             UserJpaEntity.Fields.NAME,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
-        when(loadSpaceListPort.loadSpaceList(any(Param.class)))
-            .thenReturn(paginatedResponse);
+        when(loadSpaceListPort.loadSpaceList(currentUserId, page, size)).thenReturn(paginatedResponse);
 
         var param = new GetSpaceListUseCase.Param(size, page, currentUserId);
         var result = service.getSpaceList(param);
 
-        ArgumentCaptor<LoadSpaceListPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadSpaceListPort.Param.class);
-        verify(loadSpaceListPort).loadSpaceList(loadPortParam.capture());
-
-        assertEquals(page, loadPortParam.getValue().page());
-        assertEquals(size, loadPortParam.getValue().size());
         assertNotNull(paginatedResponse);
         assertNotNull(result.getItems());
         assertEquals(0, result.getItems().size());

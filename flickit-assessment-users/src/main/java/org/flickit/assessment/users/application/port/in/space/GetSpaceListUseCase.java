@@ -38,7 +38,6 @@ public interface GetSpaceListUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
-
     }
 
     record SpaceListItem(long id, String title, boolean isOwner, LocalDateTime lastModificationTime,

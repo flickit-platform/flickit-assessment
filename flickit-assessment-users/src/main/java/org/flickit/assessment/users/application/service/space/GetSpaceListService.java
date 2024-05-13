@@ -19,8 +19,7 @@ public class GetSpaceListService implements GetSpaceListUseCase {
 
     @Override
     public PaginatedResponse<SpaceListItem> getSpaceList(Param param) {
-        var loadPortResult = loadSpaceListPort.loadSpaceList(
-            toParam(param.getSize(), param.getPage(), param.getCurrentUserId()));
+        var loadPortResult = loadSpaceListPort.loadSpaceList(param.getCurrentUserId(), param.getPage(), param.getSize());
 
         return new PaginatedResponse<>(
             mapToSpaceListItems(loadPortResult.getItems(), param.getCurrentUserId()),
@@ -30,10 +29,6 @@ public class GetSpaceListService implements GetSpaceListUseCase {
             loadPortResult.getOrder(),
             loadPortResult.getTotal()
         );
-    }
-
-    private LoadSpaceListPort.Param toParam(int size, int page, UUID currentUserId) {
-        return new LoadSpaceListPort.Param(size, page, currentUserId);
     }
 
     private List<GetSpaceListUseCase.SpaceListItem> mapToSpaceListItems(List<LoadSpaceListPort.Result> items, UUID currentUserId) {
