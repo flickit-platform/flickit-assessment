@@ -2,7 +2,6 @@ package org.flickit.assessment.users.adapter.in.rest.expertgroup;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpertGroupUseCase;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase.Param;
 import org.springframework.http.HttpStatus;
