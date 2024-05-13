@@ -2,13 +2,11 @@ package org.flickit.assessment.users.application.service.expertgroup;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase;
+import org.flickit.assessment.users.application.port.in.expertgroup.RemoveExpertGroupPictureUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
-import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -17,30 +15,22 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UpdateExpertGroupPictureService implements UpdateExpertGroupPictureUseCase {
-
-    private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
+public class RemoveExpertGroupPictureService implements RemoveExpertGroupPictureUseCase {
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadExpertGroupPort loadExpertGroupPort;
-    private final UpdateExpertGroupPictureFilePort updateExpertGroupPictureFilePort;
+    private final DeleteExpertGroupPictureFilePort deleteExpertGroupPictureFilePort;
     private final UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
-    private final UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
-    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
-    public Result update(Param param) {
+    public void remove(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
         var picture = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
 
-        if (picture == null || picture.isBlank()) {
-            picture = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
-            updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), picture);
-        } else
-            updateExpertGroupPictureFilePort.updatePicture(param.getPicture(), picture);
-
-        var pictureLink = createFileDownloadLinkPort.createDownloadLink(picture, EXPIRY_DURATION);
-        return new Result(pictureLink);
+        if (picture !=null && !picture.isBlank()) {
+            updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), null);
+            deleteExpertGroupPictureFilePort.deletePicture(picture);
+        }
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {

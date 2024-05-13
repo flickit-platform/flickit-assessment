@@ -87,6 +87,5 @@ public class ErrorMessageKey {
 
     public static final String GET_SPACE_SPACE_ID_NOT_NULL = "get-space.spaceId.notNull";
 
-    public static final String UPDATE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "update-expert-group-picture.expertGroupId.notNull";
-    public static final String UPDATE_EXPERT_GROUP_PICTURE_PICTURE_NOT_NULL = "update-expert-group-picture.picture.notNull";
+    public static final String REMOVE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "remove-expert-group-picture.expertGroupId.notNull";
 }
