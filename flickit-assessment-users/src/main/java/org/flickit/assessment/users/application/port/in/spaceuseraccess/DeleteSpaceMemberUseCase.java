@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.assessment;
+package org.flickit.assessment.users.application.port.in.spaceuseraccess;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -8,30 +8,30 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
-public interface GetAssessmentProgressUseCase {
+public interface DeleteSpaceMemberUseCase {
 
-    Result getAssessmentProgress(Param param);
+    void deleteMember(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL)
-        UUID assessmentId;
+        @NotNull(message = DELETE_SPACE_MEMBER_SPACE_ID_NOT_NULL)
+        Long spaceId;
+
+        @NotNull(message = DELETE_SPACE_MEMBER_USER_ID_NOT_NULL)
+        UUID userId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(UUID assessmentId, UUID currentUserId) {
-            this.assessmentId = assessmentId;
+        public Param(Long spaceId, UUID userId, UUID currentUserId) {
+            this.spaceId = spaceId;
+            this.userId = userId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
-
-    record Result(UUID id, int answersCount, int questionsCount) {
-    }
-
 }
