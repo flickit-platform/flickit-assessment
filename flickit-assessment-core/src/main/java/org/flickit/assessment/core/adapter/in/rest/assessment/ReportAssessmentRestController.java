@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.adapter.in.rest.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.application.domain.report.AssessmentReport;
+import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +16,17 @@ import java.util.UUID;
 public class ReportAssessmentRestController {
 
     private final ReportAssessmentUseCase useCase;
+    private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/report")
-    public ResponseEntity<AssessmentReport> reportAssessment(@PathVariable("assessmentId") UUID assessmentId) {
-        var param = toParam(assessmentId);
-        var result = useCase.reportAssessment(param);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    public ResponseEntity<ReportAssessmentUseCase.Result> reportAssessment(@PathVariable("assessmentId") UUID assessmentId) {
+        UUID currentUserId = userContext.getUser().id();
+        var param = toParam(assessmentId, currentUserId);
+        var response = useCase.reportAssessment(param);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private ReportAssessmentUseCase.Param toParam(UUID assessmentId) {
-        return new ReportAssessmentUseCase.Param(assessmentId);
+    private ReportAssessmentUseCase.Param toParam(UUID assessmentId, UUID currentUserId) {
+        return new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
     }
 }
