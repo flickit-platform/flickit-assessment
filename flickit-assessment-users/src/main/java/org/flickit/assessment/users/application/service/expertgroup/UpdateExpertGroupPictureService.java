@@ -32,12 +32,12 @@ public class UpdateExpertGroupPictureService implements UpdateExpertGroupPicture
     public Result update(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
         var picture = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
-        if (picture != null && !picture.isBlank())
-            updateExpertGroupPictureFilePort.updatePicture(param.getPicture(), picture);
-        else {
+
+        if (picture == null || picture.isBlank()) {
             picture = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
             updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), picture);
-        }
+        } else
+            updateExpertGroupPictureFilePort.updatePicture(param.getPicture(), picture);
 
         var pictureLink = createFileDownloadLinkPort.createDownloadLink(picture, EXPIRY_DURATION);
         return new Result(pictureLink);
