@@ -52,7 +52,8 @@ public class PermissionConstants {
         Set<AssessmentPermission> permissions = new HashSet<>(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
-            UPDATE_ASSESSMENT));
+            UPDATE_ASSESSMENT,
+            GRANT_USER_ASSESSMENT_ROLE));
         permissions.addAll(getAssessorPermission());
         return permissions;
     }
