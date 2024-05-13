@@ -21,7 +21,7 @@ public class GetSpaceListRestController {
 
     @GetMapping("/spaces")
     public ResponseEntity<PaginatedResponse<GetSpaceListUseCase.SpaceListItem>> getSpaceList(
-        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page) {
 
         var currentUserId = userContext.getUser().id();
