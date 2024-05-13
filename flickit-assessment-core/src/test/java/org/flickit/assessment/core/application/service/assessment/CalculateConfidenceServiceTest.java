@@ -1,9 +1,12 @@
 package org.flickit.assessment.core.application.service.assessment;
 
+import org.flickit.assessment.common.error.ErrorMessageKey;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase.Param;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase.Result;
+import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
@@ -21,12 +24,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight;
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndSubjectWithQAs;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -35,6 +38,9 @@ class CalculateConfidenceServiceTest {
 
     @InjectMocks
     private CalculateConfidenceService service;
+
+    @Mock
+    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
 
     @Mock
     private LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
@@ -58,7 +64,32 @@ class CalculateConfidenceServiceTest {
     private CreateQualityAttributeValuePort createAttributeValuePort;
 
     @Test
+    void testCalculateConfidenceLevel_UserHasNotAccess_ThrowsException() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+
+        Param param = new Param(assessmentId, currentUserId);
+
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(false);
+
+        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.calculate(param));
+
+        assertEquals(ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+
+        verifyNoInteractions(loadConfidenceLevelCalculateInfoPort,
+            updateCalculatedConfidenceLevelResultPort,
+            updateAssessmentPort,
+            loadKitLastMajorModificationTimePort,
+            loadSubjectsPort,
+            createSubjectValuePort,
+            createAttributeValuePort
+        );
+    }
+
+    @Test
     void testCalculateConfidenceLevel_ValidInput_ValidResults() {
+        UUID currentUserId = UUID.randomUUID();
+
         List<QualityAttributeValue> s1AttributeValues = List.of(
             toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()),
             toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_SURE.getId()),
@@ -80,8 +111,9 @@ class CalculateConfidenceServiceTest {
 
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
 
-        Param param = new Param(assessmentResult.getAssessment().getId());
+        Param param = new Param(assessmentResult.getAssessment().getId(), currentUserId);
 
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(true);
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
 
@@ -101,6 +133,8 @@ class CalculateConfidenceServiceTest {
 
     @Test
     void testCalculateMaturityLevel_KitChanged_CreatesNewAttributeAnSubjectValuesAndCalculates() {
+        UUID currentUserId = UUID.randomUUID();
+
         List<QualityAttributeValue> s1AttributeValues = List.of(
             toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()),
             toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_SURE.getId()),
@@ -127,8 +161,9 @@ class CalculateConfidenceServiceTest {
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
 
-        CalculateConfidenceUseCase.Param param = new CalculateConfidenceUseCase.Param(assessmentResult.getAssessment().getId());
+        CalculateConfidenceUseCase.Param param = new CalculateConfidenceUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
 
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(true);
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);

@@ -35,7 +35,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     @Override
     public void persist(SpaceUserAccess access) {
         SpaceUserAccessJpaEntity unsavedEntity = new SpaceUserAccessJpaEntity(access.getSpaceId(), access.getUserId(),
-            access.getCreatedBy(), access.getCreationTime());
+            access.getCreatedBy(), access.getCreationTime(), access.getCreationTime());
         repository.save(unsavedEntity);
     }
 
