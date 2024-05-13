@@ -14,10 +14,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-import static io.jsonwebtoken.lang.Classes.getResourceAsStream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -54,7 +54,7 @@ class UpdateExpertGroupPictureServiceTest {
     void testUpdateExpertGroupPicture_expertGroupInvalid_resourceNotFound() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/png", getResourceAsStream("/images/image1.png"));
+            "image/png", new ByteArrayInputStream("Some content".getBytes()));
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, picture, currentUserId);
 
@@ -75,7 +75,7 @@ class UpdateExpertGroupPictureServiceTest {
     void testUpdateExpertGroupPicture_currentUserNotOwner_accessDenied() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/png", getResourceAsStream("/images/image1.png"));
+            "image/png", new ByteArrayInputStream("Some content".getBytes()));
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, picture, currentUserId);
 
@@ -97,7 +97,7 @@ class UpdateExpertGroupPictureServiceTest {
     void testUpdateExpertGroupPicture_alreadyHavePicture_shouldDelete() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/png", getResourceAsStream("/images/image1.png"));
+            "image/png", new ByteArrayInputStream("Some content".getBytes()));
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, picture, currentUserId);
         ExpertGroup expertGroup = new ExpertGroup(expertGroupId, "title", "bio",
@@ -122,7 +122,7 @@ class UpdateExpertGroupPictureServiceTest {
     void testUpdateExpertGroupPicture_pictureIsNull_shouldDelete() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/png", getResourceAsStream("/images/image1.png"));
+            "image/png", new ByteArrayInputStream("Some content".getBytes()));
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, picture, currentUserId);
         ExpertGroup expertGroup = new ExpertGroup(expertGroupId, "title", "bio",
@@ -148,7 +148,7 @@ class UpdateExpertGroupPictureServiceTest {
     void testUpdateExpertGroupPicture_pictureIsBlank_shouldDelete() throws IOException {
         long expertGroupId = 0L;
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/png", getResourceAsStream("/images/image1.png"));
+            "image/png", new ByteArrayInputStream("Some content".getBytes()));
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, picture, currentUserId);
         ExpertGroup expertGroup = new ExpertGroup(expertGroupId, "title", "bio",
