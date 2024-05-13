@@ -561,6 +561,45 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Update Expert Group Picture",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "picture",
+							"type": "file",
+							"src": "/home/maziyar/Pictures/index.jpeg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/picture",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"picture"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
