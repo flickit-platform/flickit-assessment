@@ -32,7 +32,7 @@ public class UpdateExpertGroupPictureService implements UpdateExpertGroupPicture
 
     @Override
     public Result update(Param param) {
-        if ((Objects.requireNonNull(param.getPicture().getOriginalFilename())).isEmpty())
+        if (param.getPicture().isEmpty())
             throw new ValidationException(UPDATE_EXPERT_GROUP_PICTURE_PICTURE_NOT_NULL);
 
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
