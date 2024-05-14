@@ -90,4 +90,7 @@ public class ErrorMessageKey {
     public static final String GET_SPACE_LIST_PAGE_MIN = "get-space-list.page.min";
     public static final String GET_SPACE_LIST_SIZE_MIN = "get-space-list.size.min";
     public static final String GET_SPACE_LIST_SIZE_MAX = "get-space-list.size.max";
+
+    public static final String UPDATE_SPACE_LAST_SEEN_SPACE_ID_NOT_NULL = "update-space-lastSeen.spaceId.notNull";
+
 }
