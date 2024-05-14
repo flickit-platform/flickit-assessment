@@ -595,6 +595,32 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Update Space LastSeen",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/update-last-seen",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces",
+						"{{id}}",
+						"update-last-seen"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
