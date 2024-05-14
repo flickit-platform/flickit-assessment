@@ -93,5 +93,5 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_SPACE_LAST_SEEN_SPACE_ID_NOT_NULL = "update-space-lastSeen.spaceId.notNull";
 
-    public static final String REMOVE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "remove-expert-group-picture.expertGroupId.notNull";
+    public static final String DELETE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group-picture.expertGroupId.notNull";
 }

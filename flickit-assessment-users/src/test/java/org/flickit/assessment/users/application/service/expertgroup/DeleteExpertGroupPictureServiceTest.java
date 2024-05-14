@@ -3,7 +3,7 @@ package org.flickit.assessment.users.application.service.expertgroup;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
-import org.flickit.assessment.users.application.port.in.expertgroup.RemoveExpertGroupPictureUseCase.Param;
+import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupPictureUseCase.Param;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,10 +21,10 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-class RemoveExpertGroupPictureServiceTest {
+class DeleteExpertGroupPictureServiceTest {
 
     @InjectMocks
-    RemoveExpertGroupPictureService service;
+    DeleteExpertGroupPictureService service;
 
     @Mock
     LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
@@ -50,7 +50,7 @@ class RemoveExpertGroupPictureServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId))
             .thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.remove(param), EXPERT_GROUP_ID_NOT_FOUND);
+        assertThrows(ResourceNotFoundException.class, () -> service.delete(param), EXPERT_GROUP_ID_NOT_FOUND);
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(loadExpertGroupPort,
             updateExpertGroupPicturePort,
@@ -67,7 +67,7 @@ class RemoveExpertGroupPictureServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId))
             .thenReturn(UUID.randomUUID());
 
-        assertThrows(AccessDeniedException.class, () -> service.remove(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        assertThrows(AccessDeniedException.class, () -> service.delete(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(deleteExpertGroupPictureFilePort);
         verifyNoInteractions(loadExpertGroupPort,
@@ -76,7 +76,7 @@ class RemoveExpertGroupPictureServiceTest {
     }
 
     @Test
-    @DisplayName("If the expert group already has a picture, it should be deleted")
+    @DisplayName("Deleting an expert group picture should be done on an existing expert group")
     void testDeleteExpertGroupPicture_alreadyHasPicture_fileDelete() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -90,14 +90,14 @@ class RemoveExpertGroupPictureServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
 
-        assertDoesNotThrow(() -> service.remove(param));
+        assertDoesNotThrow(() -> service.delete(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verify(deleteExpertGroupPictureFilePort).deletePicture(picturePath);
     }
 
     @Test
-    @DisplayName("The deleting expert group picture won't take any action if there is no picture (null).")
+    @DisplayName("Deleting an expert group picture won't take any action if there is no picture (null).")
     void testRemoveExpertGroupPicture_doesNotHavePicture_doNothing() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -108,7 +108,7 @@ class RemoveExpertGroupPictureServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
 
-        assertDoesNotThrow(() -> service.remove(param));
+        assertDoesNotThrow(() -> service.delete(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(deleteExpertGroupPictureFilePort,
@@ -116,7 +116,7 @@ class RemoveExpertGroupPictureServiceTest {
     }
 
     @Test
-    @DisplayName("The deleting expert group picture won't take any action if there is no picture (blank).")
+    @DisplayName("Deleting an expert group picture won't take any action if there is no picture (blank).")
     void testRemoveExpertGroupPicture_pictureIsBlank_doNothing() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -128,7 +128,7 @@ class RemoveExpertGroupPictureServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
 
-        assertDoesNotThrow(() -> service.remove(param));
+        assertDoesNotThrow(() -> service.delete(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(deleteExpertGroupPictureFilePort,

@@ -10,22 +10,22 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class RemoveExpertGroupPictureUseCaseParamTest {
+class DeleteExpertGroupPictureUseCaseParamTest {
 
     @Test
     void testRemoveExpertGroupPictureParam_idIsNull_ErrorMessage() {
 
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new RemoveExpertGroupPictureUseCase.Param(null, currentUserId));
-        assertThat(throwable).hasMessage("expertGroupId: " + REMOVE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL);
+            () -> new DeleteExpertGroupPictureUseCase.Param(null, currentUserId));
+        assertThat(throwable).hasMessage("expertGroupId: " + DELETE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL);
     }
 
     @Test
     void testRemoveExpertGroupPictureParam_currentUserIdIsNull_ErrorMessage() {
         long expertGroupId = 0L;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new RemoveExpertGroupPictureUseCase.Param(expertGroupId, null));
+            () -> new DeleteExpertGroupPictureUseCase.Param(expertGroupId, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 

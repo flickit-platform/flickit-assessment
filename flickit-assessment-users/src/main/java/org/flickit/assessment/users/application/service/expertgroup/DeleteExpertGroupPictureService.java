@@ -2,7 +2,7 @@ package org.flickit.assessment.users.application.service.expertgroup;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.users.application.port.in.expertgroup.RemoveExpertGroupPictureUseCase;
+import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupPictureUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +15,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class RemoveExpertGroupPictureService implements RemoveExpertGroupPictureUseCase {
+public class DeleteExpertGroupPictureService implements DeleteExpertGroupPictureUseCase {
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadExpertGroupPort loadExpertGroupPort;
@@ -23,7 +23,7 @@ public class RemoveExpertGroupPictureService implements RemoveExpertGroupPicture
     private final UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
 
     @Override
-    public void remove(Param param) {
+    public void delete(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
         var picture = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
 
