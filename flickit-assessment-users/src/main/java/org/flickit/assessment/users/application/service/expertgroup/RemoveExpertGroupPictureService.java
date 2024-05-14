@@ -27,7 +27,7 @@ public class RemoveExpertGroupPictureService implements RemoveExpertGroupPicture
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
         var picture = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
 
-        if (picture !=null && !picture.isBlank()) {
+        if (picture != null && !picture.isBlank()) {
             updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), null);
             deleteExpertGroupPictureFilePort.deletePicture(picture);
         }

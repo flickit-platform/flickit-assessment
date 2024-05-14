@@ -106,7 +106,10 @@ public class MinioAdapter implements
         String bucketName = properties.getBucketNames().getAvatar();
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
 
-        minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(objectName).build());
+        minioClient.removeObject(RemoveObjectArgs.builder()
+            .bucket(bucketName)
+            .object(objectName)
+            .build());
         return bucketName + SLASH + objectName;
     }
 }
