@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.application.port.in.space;
+package org.flickit.assessment.users.application.port.in.spaceuseraccess;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ class UpdateSpaceLastSeenUseCaseParamTest {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateSpaceLastSeenUseCase.Param(null, currentUserId));
-        assertThat(throwable).hasMessage("id: " + UPDATE_SPACE_LAST_SEEN_SPACE_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("spaceId: " + UPDATE_SPACE_LAST_SEEN_SPACE_ID_NOT_NULL);
     }
 
     @Test

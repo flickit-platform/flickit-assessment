@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.application.port.in.space;
+package org.flickit.assessment.users.application.port.in.spaceuseraccess;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -19,13 +19,13 @@ public interface UpdateSpaceLastSeenUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = UPDATE_SPACE_LAST_SEEN_SPACE_ID_NOT_NULL)
-        Long id;
+        Long spaceId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long id, UUID currentUserId) {
-            this.id = id;
+        public Param(Long spaceId, UUID currentUserId) {
+            this.spaceId = spaceId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
