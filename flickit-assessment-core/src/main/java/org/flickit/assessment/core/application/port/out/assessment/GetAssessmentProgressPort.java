@@ -9,8 +9,8 @@ public interface GetAssessmentProgressPort {
     /**
      * @throws ResourceNotFoundException if no assessment result found by the given id
      */
-    Result getAssessmentProgressById(UUID assessmentId);
+    Result getProgress(UUID assessmentId);
 
-    record Result(UUID id, int allAnswersCount) {
+    record Result(UUID id, int answersCount, int questionsCount) {
     }
 }
