@@ -3,7 +3,6 @@ package org.flickit.assessment.users.application.port.in.expertgroup;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RemoveExpertGroupPictureUseCaseParamTest {
 
     @Test
-    void testUpdateExpertGroupPictureParam_idIsNull_ErrorMessage() throws IOException {
+    void testRemoveExpertGroupPictureParam_idIsNull_ErrorMessage() {
 
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -23,7 +22,7 @@ class RemoveExpertGroupPictureUseCaseParamTest {
     }
 
     @Test
-    void testUpdateExpertGroupPictureParam_currentUserIdIsNull_ErrorMessage() throws IOException {
+    void testRemoveExpertGroupPictureParam_currentUserIdIsNull_ErrorMessage() {
         long expertGroupId = 0L;
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new RemoveExpertGroupPictureUseCase.Param(expertGroupId, null));

@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -98,8 +97,8 @@ class RemoveExpertGroupPictureServiceTest {
     }
 
     @Test
-    @DisplayName("If the expert group does not have a picture (null), it should not be deleted.")
-    void testDeleteExpertGroupPicture_doesNotHavePicture_doNothing() {
+    @DisplayName("The deleting expert group picture won't take any action if there is no picture (null).")
+    void testRemoveExpertGroupPicture_doesNotHavePicture_doNothing() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, currentUserId);
@@ -117,14 +116,14 @@ class RemoveExpertGroupPictureServiceTest {
     }
 
     @Test
-    @DisplayName("If the expert group does not have a picture (blank), it should be uploaded")
-    void testDeleteExpertGroupPicture_pictureIsBlank_doNothing() {
+    @DisplayName("The deleting expert group picture won't take any action if there is no picture (blank).")
+    void testRemoveExpertGroupPicture_pictureIsBlank_doNothing() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, currentUserId);
 
         ExpertGroup expertGroup = new ExpertGroup(expertGroupId, "title", "bio",
-            "about", null, "website", currentUserId);
+            "about", "", "website", currentUserId);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
