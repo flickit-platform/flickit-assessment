@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DeleteExpertGroupPictureUseCaseParamTest {
 
     @Test
-    void testRemoveExpertGroupPictureParam_idIsNull_ErrorMessage() {
+    void testDeleteExpertGroupPictureParam_idIsNull_ErrorMessage() {
 
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -22,7 +22,7 @@ class DeleteExpertGroupPictureUseCaseParamTest {
     }
 
     @Test
-    void testRemoveExpertGroupPictureParam_currentUserIdIsNull_ErrorMessage() {
+    void testDeleteExpertGroupPictureParam_currentUserIdIsNull_ErrorMessage() {
         long expertGroupId = 0L;
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteExpertGroupPictureUseCase.Param(expertGroupId, null));
