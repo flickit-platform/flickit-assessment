@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.common;
+package org.flickit.assessment.common.permission;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
