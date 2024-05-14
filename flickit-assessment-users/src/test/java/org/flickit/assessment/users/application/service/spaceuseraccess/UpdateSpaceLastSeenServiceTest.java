@@ -34,7 +34,7 @@ class UpdateSpaceLastSeenServiceTest {
 
     @Test
     @DisplayName("When the current user is a member of a valid space, the update LastSeen should function properly.")
-    void testGetSpaceService_isMember_success() {
+    void testUpdateSpaceLastSeenService_isMember_success() {
         UUID currentUserId = UUID.randomUUID();
         Space space = SpaceMother.createSpace(currentUserId);
         UpdateSpaceLastSeenUseCase.Param param = new UpdateSpaceLastSeenUseCase.Param(space.getId(), currentUserId);
@@ -49,8 +49,8 @@ class UpdateSpaceLastSeenServiceTest {
     }
 
     @Test
-    @DisplayName("When the current user is not a member of existing space, the last-seen update cannot be performed.\n")
-    void testGetSpaceService_isNotMember_accessDenied() {
+    @DisplayName("When the current user is not a member of existing space, the last-seen update cannot be performed.")
+    void testUpdateSpaceLastSeenService_isNotMember_accessDenied() {
         UUID ownerId = UUID.randomUUID();
         Space space = SpaceMother.createSpace(ownerId);
         UUID currentUserId = UUID.randomUUID();

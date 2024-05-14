@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateSpaceLastSeenUseCaseParamTest {
 
     @Test
-    void testGetSpace_idIsNull_ErrorMessage() {
+    void tesUpdateSpaceLastSeen_idIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateSpaceLastSeenUseCase.Param(null, currentUserId));
@@ -21,7 +21,7 @@ class UpdateSpaceLastSeenUseCaseParamTest {
     }
 
     @Test
-    void testGetSpace_currentUserIdIsNull_ErrorMessage() {
+    void testUpdateSpaceLastSeen_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateSpaceLastSeenUseCase.Param(123L, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

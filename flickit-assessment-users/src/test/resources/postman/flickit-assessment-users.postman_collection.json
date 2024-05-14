@@ -608,7 +608,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/update-last-seen",
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/seen",
 					"host": [
 						"{{base_url}}"
 					],
@@ -616,7 +616,7 @@
 						"{{api_path}}",
 						"spaces",
 						"{{id}}",
-						"update-last-seen"
+						"seen"
 					]
 				}
 			},
