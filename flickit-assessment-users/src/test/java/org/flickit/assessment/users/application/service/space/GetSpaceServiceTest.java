@@ -6,7 +6,6 @@ import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.LoadSpaceDetailsPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.UpdateSpaceLastSeenPort;
 import org.flickit.assessment.users.test.fixture.application.SpaceMother;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,13 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
