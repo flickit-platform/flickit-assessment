@@ -37,9 +37,6 @@ class GetSpaceServiceTest {
     @Mock
     LoadSpaceDetailsPort loadSpaceDetailsPort;
 
-    @Mock
-    UpdateSpaceLastSeenPort updateSpaceLastSeenPort;
-
     @Test
     @DisplayName("When the current user is owner, 'editable' field in service result must be true")
     void testGetSpaceService_isOwner_successFullWithEditableTrue() {
@@ -50,13 +47,11 @@ class GetSpaceServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(space.getId(), currentUserId)).thenReturn(true);
         when(loadSpaceDetailsPort.loadSpace(space.getId())).thenReturn(portResult);
-        doNothing().when(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
 
         var result = service.getSpace(param);
 
         assertTrue(result.editable(), "'editable' should be true");
         verify(loadSpaceDetailsPort).loadSpace(space.getId());
-        verify(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
     }
 
     @Test
@@ -70,12 +65,10 @@ class GetSpaceServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(space.getId(), currentUserId)).thenReturn(true);
         when(loadSpaceDetailsPort.loadSpace(space.getId())).thenReturn(portResult);
-        doNothing().when(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
 
         var result = service.getSpace(param);
         assertFalse(result.editable(), "'editable' should be false");
         verify(loadSpaceDetailsPort).loadSpace(anyLong());
-        verify(updateSpaceLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
     }
 
     @Test
@@ -91,7 +84,6 @@ class GetSpaceServiceTest {
 
         assertThrows(ResourceNotFoundException.class, () -> service.getSpace(param));
         verify(loadSpaceDetailsPort).loadSpace(anyLong());
-        verifyNoInteractions(updateSpaceLastSeenPort);
     }
 
     @Test
