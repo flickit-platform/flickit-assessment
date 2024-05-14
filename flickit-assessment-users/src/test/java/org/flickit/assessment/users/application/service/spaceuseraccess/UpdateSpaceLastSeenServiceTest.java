@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -29,6 +30,7 @@ class UpdateSpaceLastSeenServiceTest {
 
     @Mock
     CheckSpaceAccessPort checkSpaceAccessPort;
+
     @Mock
     UpdateSpaceLastSeenPort updateSpaceLastSeenPort;
 
@@ -58,7 +60,9 @@ class UpdateSpaceLastSeenServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(space.getId(), currentUserId)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, ()-> service.updateLastSeen(param));
+        var throwable = assertThrows(AccessDeniedException.class, ()-> service.updateLastSeen(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verify(checkSpaceAccessPort).checkIsMember(space.getId(), param.getCurrentUserId());
     }
 }
