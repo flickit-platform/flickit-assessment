@@ -247,7 +247,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
             pageResult.getSize(),
             AssessmentKitJpaEntity.Fields.LAST_MODIFICATION_TIME,
             Sort.Direction.DESC.name().toLowerCase(),
-            (int) pageResult.getTotalElements()
-        );
+            (int) pageResult.getTotalElements());
     }
 }

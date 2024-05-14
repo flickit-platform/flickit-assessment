@@ -23,11 +23,9 @@ public class GetExpertGroupKitListRestController {
     private final UserContext userContext;
 
     @GetMapping("/expert-groups/{expertGroupId}/assessment-kits")
-    public ResponseEntity<PaginatedResponse<Result>> getExpertGroupKitList(
-        @PathVariable(value = "expertGroupId") Long expertGroupId,
-        @RequestParam(defaultValue = "50") int size,
-        @RequestParam(defaultValue = "0") int page
-    ) {
+    public ResponseEntity<PaginatedResponse<Result>> getExpertGroupKitList(@PathVariable(value = "expertGroupId") Long expertGroupId,
+                                                                           @RequestParam(defaultValue = "50") int size,
+                                                                           @RequestParam(defaultValue = "0") int page) {
         UUID currentUserId = userContext.getUser().id();
         var response = useCase.getExpertGroupKitList(toParam(expertGroupId, page, size, currentUserId));
         return new ResponseEntity<>(response, HttpStatus.OK);
