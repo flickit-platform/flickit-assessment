@@ -78,7 +78,7 @@ class RemoveExpertGroupPictureServiceTest {
 
     @Test
     @DisplayName("If the expert group already has a picture, it should be deleted")
-    void testDeleteExpertGroupPicture_alreadyHasPicture_fileDelete() throws IOException {
+    void testDeleteExpertGroupPicture_alreadyHasPicture_fileDelete() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, currentUserId);
@@ -99,7 +99,7 @@ class RemoveExpertGroupPictureServiceTest {
 
     @Test
     @DisplayName("If the expert group does not have a picture (null), it should not be deleted.")
-    void testDeleteExpertGroupPicture_doesNotHavePicture_doNothing() throws IOException {
+    void testDeleteExpertGroupPicture_doesNotHavePicture_doNothing() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, currentUserId);
