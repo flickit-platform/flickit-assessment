@@ -55,7 +55,6 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(
         @Param(value = "assessmentResultId") UUID assessmentResultId,
         @Param(value = "questionnaireIds") List<Long> questionnaireIds);
-    List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(@Param(value = "assessmentResultId") UUID assessmentResultId, @Param(value = "questionnaireIds") List<Long> questionnaireIds);
 
     @Query("""
             SELECT a
