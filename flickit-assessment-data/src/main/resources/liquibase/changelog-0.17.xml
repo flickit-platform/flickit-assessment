@@ -350,4 +350,5 @@
                              columnNames="space_id, email"
                              constraintName="uq_fau_space_invitee_spaceid_email"/>
     </changeSet>
+
 </databaseChangeLog>
