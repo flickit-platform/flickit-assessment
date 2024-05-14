@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class UpdateSpaceLastSeenController {
+public class UpdateSpaceLastSeenRestController {
 
     private final UpdateSpaceLastSeenUseCase useCase;
     private final UserContext userContext;
