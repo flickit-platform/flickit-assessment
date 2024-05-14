@@ -5,7 +5,8 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 
 import java.util.UUID;
 
-public interface LoadExpertGroupPublishedKitListPort {
+public interface LoadExpertGroupKitListPort {
 
-    PaginatedResponse<AssessmentKit> loadPublishedKitsByKitIdAndUserId(Long expertGroupId, UUID userId, int page, int size);
+    PaginatedResponse<AssessmentKit> loadExpertGroupKits(long expertGroupId, UUID userId,
+                                                         boolean includeUnpublishedKits, int page, int size);
 }

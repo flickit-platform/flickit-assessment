@@ -52,8 +52,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     CountKitListStatsPort,
     DeleteAssessmentKitPort,
     CountKitAssessmentsPort,
-    LoadExpertGroupAllKitListPort,
-    LoadExpertGroupPublishedKitListPort {
+    LoadExpertGroupKitListPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -235,25 +234,11 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentKit> loadAllKitsByKitIdAndUserId(Long expertGroupId, UUID userId, int page, int size) {
-        var pageResult = repository.findAllByExpertGroupIdAndUserAccessOrderByPublishedDescModificationTime(expertGroupId,
+    public PaginatedResponse<AssessmentKit> loadExpertGroupKits(long expertGroupId, UUID userId,
+                                                                boolean includeUnpublishedKits, int page, int size) {
+        var pageResult = repository.findExpertGroupKitsOrderByPublishedAndModificationTimeDesc(expertGroupId,
             userId,
-            PageRequest.of(page, size));
-        var items = pageResult.getContent().stream().map(AssessmentKitMapper::mapToDomainModel).toList();
-
-        return new PaginatedResponse<>(items,
-            pageResult.getNumber(),
-            pageResult.getSize(),
-            AssessmentKitJpaEntity.Fields.LAST_MODIFICATION_TIME,
-            Sort.Direction.DESC.name().toLowerCase(),
-            (int) pageResult.getTotalElements()
-        );
-    }
-
-    @Override
-    public PaginatedResponse<AssessmentKit> loadPublishedKitsByKitIdAndUserId(Long expertGroupId, UUID userId, int page, int size) {
-        var pageResult = repository.findAllPublishedByExpertGroupIdAndUserAccessOrderByModificationTime(expertGroupId,
-            userId,
+            includeUnpublishedKits,
             PageRequest.of(page, size));
         var items = pageResult.getContent().stream().map(AssessmentKitMapper::mapToDomainModel).toList();
 

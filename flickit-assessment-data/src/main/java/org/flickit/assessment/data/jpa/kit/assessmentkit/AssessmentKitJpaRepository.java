@@ -99,31 +99,22 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             SELECT COUNT(a)
             FROM AssessmentKitJpaEntity k
             JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
-            where k.id = :kitId
+            WHERE k.id = :kitId
         """)
     long countAllKitAssessments(@Param("kitId") Long kitId);
 
     @Query("""
             SELECT k
             FROM AssessmentKitJpaEntity k
-            WHERE k.expertGroupId = :expertGroupId AND
-                (k.isPrivate = FALSE OR
-                (k.isPrivate AND k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId = :userId)))
+            WHERE k.expertGroupId = :expertGroupId
+                AND (:includeUnpublished = TRUE OR k.published = TRUE)
+                AND (k.isPrivate = FALSE
+                    OR (k.isPrivate AND k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId = :userId)))
             ORDER BY k.published desc, k.lastModificationTime desc
         """)
-    Page<AssessmentKitJpaEntity> findAllByExpertGroupIdAndUserAccessOrderByPublishedDescModificationTime(Long expertGroupId,
-                                                                                                         UUID userId,
-                                                                                                         PageRequest pageable);
-
-    @Query("""
-            SELECT k
-            FROM AssessmentKitJpaEntity k
-            WHERE k.published = TRUE AND k.expertGroupId = :expertGroupId AND
-                (k.isPrivate = FALSE OR
-                (k.isPrivate AND k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId = :userId)))
-            ORDER BY k.lastModificationTime desc
-        """)
-    Page<AssessmentKitJpaEntity> findAllPublishedByExpertGroupIdAndUserAccessOrderByModificationTime(Long expertGroupId,
-                                                                                                     UUID userId,
-                                                                                                     PageRequest pageable);
+    Page<AssessmentKitJpaEntity> findExpertGroupKitsOrderByPublishedAndModificationTimeDesc(
+        @Param("expertGroupId") long expertGroupId,
+        @Param("userId") UUID userId,
+        @Param("includeUnpublished") boolean includeUnpublishedKits,
+        PageRequest pageable);
 }
