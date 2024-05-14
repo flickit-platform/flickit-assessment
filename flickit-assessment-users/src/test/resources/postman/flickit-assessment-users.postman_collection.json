@@ -623,7 +623,7 @@
 			"response": []
 		},
 		{
-			"name": "Delete Expert Group Picture",
+			"name": "Remove Expert Group Picture",
 			"request": {
 				"method": "DELETE",
 				"header": [
