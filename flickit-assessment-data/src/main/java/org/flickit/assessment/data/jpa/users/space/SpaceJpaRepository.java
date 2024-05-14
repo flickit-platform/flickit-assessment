@@ -1,5 +1,7 @@
 package org.flickit.assessment.data.jpa.users.space;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -40,4 +42,22 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
     void updateLastSeen(@Param("spaceId") long spaceId,
                         @Param("userId") UUID userId,
                         @Param("currentTime") LocalDateTime currentTime);
+
+    @Query("""
+            SELECT
+                s as space,
+                COUNT(DISTINCT sua.userId) as membersCount,
+                COUNT(DISTINCT fa.id) as assessmentsCount,
+                MAX(sua.lastSeen) as lastSeen
+            FROM SpaceJpaEntity s
+            LEFT JOIN AssessmentJpaEntity fa on s.id = fa.spaceId
+            LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId
+            WHERE EXISTS (
+                SELECT 1 FROM SpaceUserAccessJpaEntity sua
+                WHERE sua.spaceId = s.id AND sua.userId = :userId
+            )
+            GROUP BY s.id
+            ORDER BY lastSeen DESC
+        """)
+    Page<SpaceWithCounters> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
 }
