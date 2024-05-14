@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-class DeleteExpertGroupPictureServiceTest {
+class RemoveExpertGroupPictureServiceTest {
 
     @InjectMocks
     RemoveExpertGroupPictureService service;
