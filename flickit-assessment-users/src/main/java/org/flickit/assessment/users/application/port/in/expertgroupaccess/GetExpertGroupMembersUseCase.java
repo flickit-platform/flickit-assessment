@@ -45,7 +45,7 @@ public interface GetExpertGroupMembersUseCase {
         @Min(value = 0, message = GET_EXPERT_GROUP_MEMBERS_PAGE_MIN)
         int page;
 
-        public Param(long expertGroupId, @Nullable String status, UUID currentUserId, int size, int page) {
+        public Param(Long expertGroupId, @Nullable String status, UUID currentUserId, int size, int page) {
             this.id = expertGroupId;
             this.status = status;
             this.currentUserId = currentUserId;

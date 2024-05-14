@@ -7,6 +7,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.DELETE_EVIDENCE_EVIDENCE_ID_NOT_NULL;
 
 public interface DeleteEvidenceUseCase {
@@ -20,10 +21,13 @@ public interface DeleteEvidenceUseCase {
         @NotNull(message = DELETE_EVIDENCE_EVIDENCE_ID_NOT_NULL)
         UUID id;
 
-        public Param(UUID id) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(UUID id, UUID currentUserId) {
             this.id = id;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
-
 }

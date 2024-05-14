@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'releases-*'
   pull_request:
     branches:
       - '*'
@@ -65,9 +66,6 @@ jobs:
           java-version: 17
           distribution: adopt
 
-      - name: Run Tests
-        run: mvn test
-
       - name: Extract Maven project version
         run: echo version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) >> $GITHUB_OUTPUT
         id: project
@@ -77,6 +75,9 @@ jobs:
           RELEASE_VERSION: ${{ steps.project.outputs.version }}
         run: |
           echo $RELEASE_VERSION
+
+      - name: Run Tests
+        run: mvn test
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
@@ -191,7 +192,7 @@ jobs:
     needs: [test]
     name: tag and release
     runs-on: ubuntu-latest
-    if: ${{ ((github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, '/refs/heads/releases'))) ||
+    if: ${{ ((github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases-'))) ||
       github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) &&
       !contains( needs.test.outputs.project_version , 'SNAPSHOT') }}
 

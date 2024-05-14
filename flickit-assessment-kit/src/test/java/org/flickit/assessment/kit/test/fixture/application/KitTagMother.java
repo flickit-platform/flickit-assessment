@@ -7,6 +7,6 @@ public class KitTagMother {
     private static long id = 159L;
 
     public static KitTag createKitTag(String title) {
-        return new KitTag(id++, "code" + id,title + id);
+        return new KitTag(id++, "code" + id, title + id);
     }
 }
