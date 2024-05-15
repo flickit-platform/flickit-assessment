@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.config.MinioConfigProperties;
-import org.flickit.assessment.users.application.port.out.expertgroup.DeleteExpertGroupPictureFilePort;
+import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.FILE_STORAGE_F
 public class MinioAdapter implements
     UploadExpertGroupPicturePort,
     CreateFileDownloadLinkPort,
-    DeleteExpertGroupPictureFilePort {
+    DeleteFilePort {
 
     public static final String SLASH = "/";
     public static final String DOT = ".";

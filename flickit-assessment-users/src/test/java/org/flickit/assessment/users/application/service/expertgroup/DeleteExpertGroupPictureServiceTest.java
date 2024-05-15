@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupPictureUseCase.Param;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
+import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,7 @@ class DeleteExpertGroupPictureServiceTest {
     LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Mock
-    DeleteExpertGroupPictureFilePort deleteExpertGroupPictureFilePort;
+    DeleteFilePort deleteFilePort;
 
 
     @Mock
@@ -54,7 +55,7 @@ class DeleteExpertGroupPictureServiceTest {
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(loadExpertGroupPort,
             updateExpertGroupPicturePort,
-            deleteExpertGroupPictureFilePort);
+            deleteFilePort);
     }
 
     @Test
@@ -69,9 +70,9 @@ class DeleteExpertGroupPictureServiceTest {
 
         assertThrows(AccessDeniedException.class, () -> service.delete(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(deleteExpertGroupPictureFilePort);
+        verifyNoInteractions(deleteFilePort);
         verifyNoInteractions(loadExpertGroupPort,
-            deleteExpertGroupPictureFilePort,
+            deleteFilePort,
             updateExpertGroupPicturePort);
     }
 
@@ -85,7 +86,7 @@ class DeleteExpertGroupPictureServiceTest {
             "about", "picturePath", "website", currentUserId);
         String picturePath = "picturePath";
 
-        when(deleteExpertGroupPictureFilePort.deletePicture(picturePath)).thenReturn(picturePath);
+        when(deleteFilePort.deletePicture(picturePath)).thenReturn(picturePath);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
@@ -93,7 +94,7 @@ class DeleteExpertGroupPictureServiceTest {
         assertDoesNotThrow(() -> service.delete(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verify(deleteExpertGroupPictureFilePort).deletePicture(picturePath);
+        verify(deleteFilePort).deletePicture(picturePath);
     }
 
     @Test
@@ -111,7 +112,7 @@ class DeleteExpertGroupPictureServiceTest {
         assertDoesNotThrow(() -> service.delete(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(deleteExpertGroupPictureFilePort,
+        verifyNoInteractions(deleteFilePort,
             updateExpertGroupPicturePort);
     }
 
@@ -131,7 +132,7 @@ class DeleteExpertGroupPictureServiceTest {
         assertDoesNotThrow(() -> service.delete(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(deleteExpertGroupPictureFilePort,
+        verifyNoInteractions(deleteFilePort,
             updateExpertGroupPicturePort);
     }
 }

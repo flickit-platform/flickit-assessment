@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupPictureUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
+import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ public class DeleteExpertGroupPictureService implements DeleteExpertGroupPicture
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadExpertGroupPort loadExpertGroupPort;
-    private final DeleteExpertGroupPictureFilePort deleteExpertGroupPictureFilePort;
+    private final DeleteFilePort deleteFilePort;
     private final UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
 
     @Override
@@ -29,7 +30,7 @@ public class DeleteExpertGroupPictureService implements DeleteExpertGroupPicture
 
         if (picture != null && !picture.isBlank()) {
             updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), null);
-            deleteExpertGroupPictureFilePort.deletePicture(picture);
+            deleteFilePort.deletePicture(picture);
         }
     }
 
