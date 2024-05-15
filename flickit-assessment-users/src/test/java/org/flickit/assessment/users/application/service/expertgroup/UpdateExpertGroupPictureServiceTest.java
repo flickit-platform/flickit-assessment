@@ -6,6 +6,7 @@ import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase.Param;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,19 +35,19 @@ class UpdateExpertGroupPictureServiceTest {
     LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Mock
-    UpdateExpertGroupPictureFilePort updateExpertGroupPictureFilePort;
+    LoadExpertGroupPort loadExpertGroupPort;
+
+    @Mock
+    DeleteFilePort deleteFilePort;
 
     @Mock
     UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
 
     @Mock
-    LoadExpertGroupPort loadExpertGroupPort;
+    UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
 
     @Mock
     CreateFileDownloadLinkPort createFileDownloadLinkPort;
-
-    @Mock
-    UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
 
 
     @Test
@@ -64,9 +65,9 @@ class UpdateExpertGroupPictureServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> service.update(param), EXPERT_GROUP_ID_NOT_FOUND);
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(loadExpertGroupPort,
-            updateExpertGroupPicturePort,
-            updateExpertGroupPictureFilePort,
+            deleteFilePort,
             uploadExpertGroupPicturePort,
+            updateExpertGroupPicturePort,
             createFileDownloadLinkPort);
     }
 
@@ -84,11 +85,10 @@ class UpdateExpertGroupPictureServiceTest {
 
         assertThrows(AccessDeniedException.class, () -> service.update(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(updateExpertGroupPictureFilePort);
         verifyNoInteractions(loadExpertGroupPort,
-            updateExpertGroupPictureFilePort,
-            updateExpertGroupPicturePort,
+            deleteFilePort,
             uploadExpertGroupPicturePort,
+            updateExpertGroupPicturePort,
             createFileDownloadLinkPort);
     }
 
@@ -101,20 +101,24 @@ class UpdateExpertGroupPictureServiceTest {
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(expertGroupId, picture, currentUserId);
         ExpertGroup expertGroup = new ExpertGroup(expertGroupId, "title", "bio",
-            "about", "picturePath", "website", currentUserId);
-        String picturePath = "picturePath";
-
-        when(updateExpertGroupPictureFilePort.updatePicture(picture, picturePath)).thenReturn(picturePath);
+            "about", "oldPicturePath", "website", currentUserId);
+        String newPicturePath = "newPicturePath";
+        String downloadLink = "downloadLink";
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
+        doNothing().when(deleteFilePort).delete(expertGroup.getPicture());
+        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
+        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
+        when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
 
         assertDoesNotThrow(() -> service.update(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verify(updateExpertGroupPictureFilePort).updatePicture(picture, picturePath);
+        verify(loadExpertGroupPort).loadExpertGroup(expertGroupId);
+        verify(deleteFilePort).delete(expertGroup.getPicture());
+        verify(uploadExpertGroupPicturePort).uploadPicture(picture);
         verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
-        verifyNoInteractions(uploadExpertGroupPicturePort, updateExpertGroupPicturePort);
     }
 
     @Test
@@ -127,20 +131,23 @@ class UpdateExpertGroupPictureServiceTest {
         Param param = new Param(expertGroupId, picture, currentUserId);
         ExpertGroup expertGroup = new ExpertGroup(expertGroupId, "title", "bio",
             "about", null, "website", currentUserId);
-        String picturePath = "picturePath";
+        String newPicturePath = "newPicturePath";
+        String downloadLink = "downloadLink";
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
-        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(picturePath);
-        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
+        doNothing().when(deleteFilePort).delete(expertGroup.getPicture());
+        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
+        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
+        when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
 
         assertDoesNotThrow(() -> service.update(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(updateExpertGroupPictureFilePort);
+        verify(loadExpertGroupPort).loadExpertGroup(expertGroupId);
+        verify(deleteFilePort).delete(expertGroup.getPicture());
         verify(uploadExpertGroupPicturePort).uploadPicture(picture);
         verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
-        verify(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
     }
 
     @Test
@@ -153,19 +160,22 @@ class UpdateExpertGroupPictureServiceTest {
         Param param = new Param(expertGroupId, picture, currentUserId);
         ExpertGroup expertGroup = new ExpertGroup(expertGroupId, "title", "bio",
             "about", "", "website", currentUserId);
-        String picturePath = "picturePath";
+        String newPicturePath = "newPicturePath";
+        String downloadLink = "downloadLink";
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
-        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(picturePath);
-        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
+        doNothing().when(deleteFilePort).delete(expertGroup.getPicture());
+        when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
+        doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
+        when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
 
         assertDoesNotThrow(() -> service.update(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(updateExpertGroupPictureFilePort);
+        verify(loadExpertGroupPort).loadExpertGroup(expertGroupId);
+        verify(deleteFilePort).delete(expertGroup.getPicture());
         verify(uploadExpertGroupPicturePort).uploadPicture(picture);
         verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
-        verify(updateExpertGroupPicturePort).updatePicture(expertGroupId, picturePath);
     }
 }
