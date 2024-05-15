@@ -41,7 +41,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
 
     @Mock
-    private LoadQuestionnaireAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
+    private LoadQuestionnaireAnswerListPort loadQuestionnaireAnswerListPort;
 
     @Test
     void testGetAssessmentQuestionnaireQuestionList_InvalidCurrentUser_ThrowsException() {
@@ -52,7 +52,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         var exception = assertThrows(AccessDeniedException.class, () -> service.getAssessmentQuestionnaireQuestionList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verifyNoInteractions(loadQuestionnaireQuestionListPort,
-            loadAssessmentQuestionnaireAnswerListPort);
+            loadQuestionnaireAnswerListPort);
     }
 
     @Test
@@ -72,7 +72,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadAssessmentQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
 
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentQuestionnaireQuestionList(param));
@@ -97,7 +97,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadAssessmentQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(List.of(answer));
 
         PaginatedResponse<Result> result = service.getAssessmentQuestionnaireQuestionList(param);
