@@ -50,23 +50,21 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
     }
 
     record Result(Long id,
-                  String title,
                   Integer index,
+                  String title,
                   String hint,
                   Boolean mayNotBeApplicable,
-                  List<OptionListItem> optionListItems,
-                  AnswerOption answer,
-                  ConfidenceLevel confidenceLevel,
-                  Boolean isNotApplicable) {
+                  List<Option> options,
+                  QuestionAnswer answer) {
     }
 
-    record OptionListItem(Long id,
-                          String caption,
-                          Integer index) {
+    record Option(Long id,
+                  String caption,
+                  Integer index) {
     }
 
-    record AnswerOption(Long id,
-                        String caption,
-                        Integer index) {
+    record QuestionAnswer(Option selectedOption,
+                          ConfidenceLevel confidenceLevel,
+                          Boolean isNotApplicable) {
     }
 }

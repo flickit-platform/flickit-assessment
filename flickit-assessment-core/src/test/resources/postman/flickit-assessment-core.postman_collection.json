@@ -870,7 +870,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/625e6194-b710-4ed4-90e5-d6372ee3cb96/15page=0&size=10",
+					"raw": "{{base_url}}/{{api_path}}/assessments/625e6194-b710-4ed4-90e5-d6372ee3cb96/questionnaires/15?page=0&size=10",
 					"host": [
 						"{{base_url}}"
 					],
@@ -878,6 +878,7 @@
 						"{{api_path}}",
 						"assessments",
 						"625e6194-b710-4ed4-90e5-d6372ee3cb96",
+						"questionnaires",
 						"15"
 					],
 					"query": [

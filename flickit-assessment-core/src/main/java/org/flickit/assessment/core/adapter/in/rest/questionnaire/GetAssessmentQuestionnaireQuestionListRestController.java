@@ -22,7 +22,7 @@ public class GetAssessmentQuestionnaireQuestionListRestController {
     private final GetAssessmentQuestionnaireQuestionListUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("assessments/{assessmentId}/{questionnaireId}")
+    @GetMapping("assessments/{assessmentId}/questionnaires/{questionnaireId}")
     public ResponseEntity<PaginatedResponse<Result>> getAssessmentQuestionnaireList(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("questionnaireId") Long questionnaireId,
