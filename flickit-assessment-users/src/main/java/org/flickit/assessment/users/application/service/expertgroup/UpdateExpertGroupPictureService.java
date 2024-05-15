@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,21 +24,19 @@ public class UpdateExpertGroupPictureService implements UpdateExpertGroupPicture
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadExpertGroupPort loadExpertGroupPort;
-    private final UpdateExpertGroupPictureFilePort updateExpertGroupPictureFilePort;
     private final UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
     private final UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
+    private final DeleteFilePort deleteFilePort;
 
     @Override
     public Result update(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
         var picture = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
+        deleteFilePort.delete(picture);
 
-        if (picture == null || picture.isBlank()) {
-            picture = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
-            updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), picture);
-        } else
-            updateExpertGroupPictureFilePort.updatePicture(param.getPicture(), picture);
+        picture = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
+        updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), picture);
 
         var pictureLink = createFileDownloadLinkPort.createDownloadLink(picture, EXPIRY_DURATION);
         return new Result(pictureLink);
