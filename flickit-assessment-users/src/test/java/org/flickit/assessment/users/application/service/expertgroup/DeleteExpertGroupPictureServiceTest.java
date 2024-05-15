@@ -86,7 +86,7 @@ class DeleteExpertGroupPictureServiceTest {
             "about", "picturePath", "website", currentUserId);
         String picturePath = "picturePath";
 
-        when(deleteFilePort.delete(picturePath)).thenReturn(picturePath);
+        doNothing().when(deleteFilePort).delete(picturePath);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
