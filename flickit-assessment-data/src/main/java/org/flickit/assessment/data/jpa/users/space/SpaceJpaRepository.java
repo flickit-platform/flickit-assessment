@@ -71,9 +71,9 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
 
     @Modifying
     @Query("""
-        UPDATE SpaceJpaEntity e
-        SET e.deleted = true
-        WHERE e.id = :spaceId
+            UPDATE SpaceJpaEntity e
+            SET e.deleted = true
+            WHERE e.id = :spaceId
         """)
     void delete(@Param("spaceId") long spaceId);
 

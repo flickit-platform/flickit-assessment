@@ -95,6 +95,8 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public void deleteById(long spaceId) {
+        if (!repository.existsByIdAndDeletedFalse(spaceId))
+            throw new ResourceNotFoundException(SPACE_ID_NOT_FOUND);
         repository.delete(spaceId);
     }
 }
