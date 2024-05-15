@@ -2,8 +2,6 @@ package org.flickit.assessment.core.application.port.in.evidence;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -14,7 +12,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class AddEvidenceUseCaseParamTest {
 
     @Test
@@ -46,7 +43,7 @@ class AddEvidenceUseCaseParamTest {
     void testAddEvidenceParam_DescriptionSizeIsGreaterThanMax_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         UUID createdById = UUID.randomUUID();
-        var desc = randomAlphabetic(1001);
+        var desc = randomAlphabetic(201);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new AddEvidenceUseCase.Param(desc, assessmentId, 1L, "POSITIVE", createdById));
         assertThat(throwable).hasMessage("description: " + ADD_EVIDENCE_DESC_SIZE_MAX);
@@ -56,7 +53,7 @@ class AddEvidenceUseCaseParamTest {
     void testAddEvidenceParam_DescriptionSizeIsEqualToMax_Success() {
         UUID createdById = UUID.randomUUID();
         assertDoesNotThrow(
-            () -> new AddEvidenceUseCase.Param(randomAlphabetic(1000), UUID.randomUUID(), 1L, "POSITIVE", createdById));
+            () -> new AddEvidenceUseCase.Param(randomAlphabetic(200), UUID.randomUUID(), 1L, "POSITIVE", createdById));
     }
 
     @Test
