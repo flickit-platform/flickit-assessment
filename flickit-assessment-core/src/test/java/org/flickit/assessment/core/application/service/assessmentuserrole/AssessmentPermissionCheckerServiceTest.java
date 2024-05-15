@@ -49,10 +49,7 @@ class AssessmentPermissionCheckerServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpaceId()))
             .thenReturn(userId);
 
-        Set<AssessmentPermission> managerPermissions = new HashSet<>(AssessmentUserRole.MANAGER.getPermissions());
-        managerPermissions.removeAll(AssessmentUserRole.ASSESSOR.getPermissions());
-
-        managerPermissions.forEach(x ->
+        AssessmentUserRole.MANAGER.getPermissions().forEach(x ->
             assertTrue(service.isAuthorized(assessmentId, userId, x))
         );
         verifyNoInteractions(loadUserRoleForAssessmentPort);
@@ -66,10 +63,7 @@ class AssessmentPermissionCheckerServiceTest {
         when(getAssessmentPort.getAssessmentById(assessmentId))
             .thenReturn(Optional.of(assessment));
 
-        Set<AssessmentPermission> managerPermissions = new HashSet<>(AssessmentUserRole.MANAGER.getPermissions());
-        managerPermissions.removeAll(AssessmentUserRole.ASSESSOR.getPermissions());
-
-        managerPermissions.forEach(x ->
+        AssessmentUserRole.MANAGER.getPermissions().forEach(x ->
             assertTrue(service.isAuthorized(assessmentId, userId, x))
         );
         verifyNoInteractions(loadSpaceOwnerPort, loadUserRoleForAssessmentPort);
