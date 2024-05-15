@@ -16,7 +16,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
     @Query("""
             SELECT s.ownerId
             FROM SpaceJpaEntity as s
-            WHERE s.id = :id and s.and deleted=false
+            WHERE s.id = :id AND s.deleted = FALSE
         """)
     Optional<UUID> loadOwnerIdById(@Param("id") long id);
 
