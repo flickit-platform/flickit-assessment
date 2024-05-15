@@ -136,7 +136,6 @@ class UpdateExpertGroupPictureServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
-        doNothing().when(deleteFilePort).delete(expertGroup.getPicture());
         when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
         doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
@@ -145,7 +144,7 @@ class UpdateExpertGroupPictureServiceTest {
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verify(loadExpertGroupPort).loadExpertGroup(expertGroupId);
-        verify(deleteFilePort).delete(expertGroup.getPicture());
+        verifyNoInteractions(deleteFilePort);
         verify(uploadExpertGroupPicturePort).uploadPicture(picture);
         verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
     }
@@ -165,7 +164,7 @@ class UpdateExpertGroupPictureServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
-        doNothing().when(deleteFilePort).delete(expertGroup.getPicture());
+        verifyNoInteractions(deleteFilePort);
         when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
         doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
@@ -174,7 +173,7 @@ class UpdateExpertGroupPictureServiceTest {
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verify(loadExpertGroupPort).loadExpertGroup(expertGroupId);
-        verify(deleteFilePort).delete(expertGroup.getPicture());
+        verifyNoInteractions(deleteFilePort);
         verify(uploadExpertGroupPicturePort).uploadPicture(picture);
         verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
     }
