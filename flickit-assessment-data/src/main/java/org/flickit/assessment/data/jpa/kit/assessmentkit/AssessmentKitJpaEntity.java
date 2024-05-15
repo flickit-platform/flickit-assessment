@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Table(name = "fak_assessment_kit")
 @Getter
@@ -69,4 +71,10 @@ public class AssessmentKitJpaEntity {
 
     @Column(name = "kit_version_id")
     private Long kitVersionId;
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String TITLE = "title";
+        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
+    }
 }
