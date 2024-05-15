@@ -69,7 +69,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public UpdateAssessmentPort.Result update(UpdateAssessmentPort.AllParam param) {
-        if (!repository.existsById(param.id()))
+        if (!repository.existsByIdAndDeletedFalse(param.id()))
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_ID_NOT_FOUND);
 
         repository.update(
@@ -100,7 +100,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public void deleteById(UUID id, Long deletionTime) {
-        if (!repository.existsById(id))
+        if (!repository.existsByIdAndDeletedFalse(id))
             throw new ResourceNotFoundException(DELETE_ASSESSMENT_ID_NOT_FOUND);
 
         repository.delete(id, deletionTime);

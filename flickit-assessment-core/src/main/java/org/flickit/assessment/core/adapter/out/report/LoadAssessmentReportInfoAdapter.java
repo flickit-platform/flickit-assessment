@@ -57,7 +57,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
     @Override
     public Result load(UUID assessmentId) {
-        if (!assessmentRepository.existsById(assessmentId))
+        if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND);
 
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)

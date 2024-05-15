@@ -44,7 +44,7 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public UUID persist(CreateEvidencePort.Param param) {
-        if (!assessmentRepository.existsById(param.assessmentId()))
+        if (!assessmentRepository.existsByIdAndDeletedFalse(param.assessmentId()))
             throw new ResourceNotFoundException(ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND);
 
         var assessmentKitVersionId = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
@@ -61,7 +61,7 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size) {
-        if (!assessmentRepository.existsById(assessmentId))
+        if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL);
 
         var pageResult = repository.findByQuestionIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(
@@ -104,7 +104,7 @@ public class EvidencePersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<AttributeEvidenceListItem> loadAttributeEvidences(UUID assessmentId, Long attributeId,
                                                                                Integer type, int page, int size) {
-        if (!assessmentRepository.existsById(assessmentId))
+        if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND);
 
         var pageResult = repository.findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(
