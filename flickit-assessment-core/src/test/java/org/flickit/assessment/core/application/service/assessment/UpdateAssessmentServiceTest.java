@@ -1,10 +1,8 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.port.in.assessment.UpdateAssessmentUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.junit.jupiter.api.Test;
@@ -19,7 +17,8 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateAssessmentServiceTest {
@@ -31,9 +30,6 @@ class UpdateAssessmentServiceTest {
     private UpdateAssessmentPort updateAssessmentPort;
 
     @Mock
-    private CheckAssessmentExistencePort checkAssessmentExistencePort;
-
-    @Mock
     private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
 
     @Test
@@ -41,7 +37,6 @@ class UpdateAssessmentServiceTest {
         UUID id = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
 
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(id, currentUserId)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
@@ -76,7 +71,6 @@ class UpdateAssessmentServiceTest {
             7,
             currentUserId
         );
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(id, currentUserId)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
@@ -89,33 +83,10 @@ class UpdateAssessmentServiceTest {
     }
 
     @Test
-    void testUpdateAssessment_InvalidAssessmentId_ThrowNotFoundException() {
-        UUID id = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(false);
-
-        UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
-            id,
-            "new title",
-            AssessmentColor.EMERALD.getId(),
-            currentUserId
-        );
-        assertThrows(ResourceNotFoundException.class, () -> service.updateAssessment(param));
-
-        ArgumentCaptor<UUID> portIdParam = ArgumentCaptor.forClass(UUID.class);
-        verify(checkAssessmentExistencePort).existsById(portIdParam.capture());
-
-        assertEquals(param.getId(), portIdParam.getValue());
-        verify(updateAssessmentPort, never()).update(any());
-    }
-
-    @Test
     void testUpdateAssessment_UserHasNoAccessToAssessment_ThrowAccessDeniedException() {
         UUID id = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
 
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(id, currentUserId)).thenReturn(false);
 
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
