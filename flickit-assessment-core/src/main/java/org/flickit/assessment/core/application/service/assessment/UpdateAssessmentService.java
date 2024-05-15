@@ -31,7 +31,7 @@ public class UpdateAssessmentService implements UpdateAssessmentUseCase {
         if (!checkAssessmentExistencePort.existsById(param.getId()))
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_ID_NOT_FOUND);
 
-        if (!checkUserAssessmentAccessPort.hasAccess(param.getId(),param.getLastModifiedBy()))
+        if (!checkUserAssessmentAccessPort.hasAccess(param.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         String code = generateSlugCode(param.getTitle());
@@ -42,7 +42,7 @@ public class UpdateAssessmentService implements UpdateAssessmentUseCase {
             code,
             getValidId(param.getColorId()),
             lastModificationTime,
-            param.getLastModifiedBy());
+            param.getCurrentUserId());
 
         return new Result(updateAssessmentPort.update(updateParam).id());
     }
