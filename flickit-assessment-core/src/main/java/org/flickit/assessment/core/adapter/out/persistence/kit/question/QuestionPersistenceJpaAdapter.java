@@ -48,7 +48,7 @@ public class QuestionPersistenceJpaAdapter implements
         var items = pageResult.getContent().stream()
             .map(q -> {
                 List<AnswerOption> answerOptions = questionIdToAnswerOptionsMap.get(q.getId()).stream()
-                    .map(AnswerOptionMapper::mapToDomainModel)
+                    .map(e -> AnswerOptionMapper.mapToDomainModel(e, null))
                     .toList();
                 Question question = QuestionMapper.mapToDomainModel(q);
                 question.setOptions(answerOptions);
