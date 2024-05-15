@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
-import org.flickit.assessment.core.application.port.out.answer.LoadAssessmentQuestionnaireAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadQuestionnaireAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
 
     private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
-    private final LoadAssessmentQuestionnaireAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
+    private final LoadQuestionnaireAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
 
     @Override
     public PaginatedResponse<Result> getAssessmentQuestionnaireQuestionList(Param param) {

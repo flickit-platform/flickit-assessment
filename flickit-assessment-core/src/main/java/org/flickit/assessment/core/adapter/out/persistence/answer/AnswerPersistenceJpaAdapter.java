@@ -36,7 +36,7 @@ public class AnswerPersistenceJpaAdapter implements
     CountAnswersByQuestionIdsPort,
     LoadAnswerPort,
     UpdateAnswerPort,
-    LoadAssessmentQuestionnaireAnswerListPort {
+    LoadQuestionnaireAnswerListPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -111,7 +111,7 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Answer> loadQuestionnaireAnswers(UUID assessmentId, Long questionnaireId, int size, int page) {
+    public List<Answer> loadQuestionnaireAnswers(UUID assessmentId, long questionnaireId, int size, int page) {
         if (!questionnaireRepository.checkQuestionnaireAndAssessmentBelongsSameKit(assessmentId, questionnaireId)) {
             throw new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND);
         }

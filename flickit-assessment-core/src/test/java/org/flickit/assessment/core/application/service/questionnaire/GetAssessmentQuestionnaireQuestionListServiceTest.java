@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Result;
-import org.flickit.assessment.core.application.port.out.answer.LoadAssessmentQuestionnaireAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadQuestionnaireAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
@@ -41,7 +41,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
 
     @Mock
-    private LoadAssessmentQuestionnaireAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
+    private LoadQuestionnaireAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
 
     @Test
     void testGetAssessmentQuestionnaireQuestionList_InvalidCurrentUser_ThrowsException() {
