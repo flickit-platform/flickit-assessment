@@ -72,7 +72,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadAssessmentQuestionnaireAnswerListPort.loadByAssessmentIdAndQuestionnaireId(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadAssessmentQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
 
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentQuestionnaireQuestionList(param));
@@ -97,7 +97,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadAssessmentQuestionnaireAnswerListPort.loadByAssessmentIdAndQuestionnaireId(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadAssessmentQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(List.of(answer));
 
         PaginatedResponse<Result> result = service.getAssessmentQuestionnaireQuestionList(param);

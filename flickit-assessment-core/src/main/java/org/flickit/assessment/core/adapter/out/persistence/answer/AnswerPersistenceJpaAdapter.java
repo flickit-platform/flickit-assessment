@@ -111,7 +111,7 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Answer> loadByAssessmentIdAndQuestionnaireId(UUID assessmentId, Long questionnaireId, int size, int page) {
+    public List<Answer> loadQuestionnaireAnswers(UUID assessmentId, Long questionnaireId, int size, int page) {
         if (!questionnaireRepository.checkQuestionnaireAndAssessmentBelongsSameKit(assessmentId, questionnaireId)) {
             throw new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND);
         }

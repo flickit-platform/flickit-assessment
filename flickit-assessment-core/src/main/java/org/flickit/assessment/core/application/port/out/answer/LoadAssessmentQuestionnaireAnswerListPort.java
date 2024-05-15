@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface LoadAssessmentQuestionnaireAnswerListPort {
 
-    List<Answer> loadByAssessmentIdAndQuestionnaireId(UUID assessmentId, Long questionnaireId, int size, int page);
+    List<Answer> loadQuestionnaireAnswers(UUID assessmentId, Long questionnaireId, int size, int page);
 }

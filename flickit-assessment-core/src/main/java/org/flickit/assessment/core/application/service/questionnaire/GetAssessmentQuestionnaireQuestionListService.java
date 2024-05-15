@@ -38,7 +38,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             param.getSize(),
             param.getPage());
 
-        Map<Long, Answer> questionIdToAnswerMap = loadAssessmentQuestionnaireAnswerListPort.loadByAssessmentIdAndQuestionnaireId(param.getAssessmentId(), param.getQuestionnaireId(),
+        Map<Long, Answer> questionIdToAnswerMap = loadAssessmentQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(),
                 param.getSize(),
                 param.getPage())
             .stream()
