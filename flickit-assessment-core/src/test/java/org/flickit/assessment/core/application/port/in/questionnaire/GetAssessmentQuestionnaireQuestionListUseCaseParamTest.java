@@ -2,8 +2,6 @@ package org.flickit.assessment.core.application.port.in.questionnaire;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -12,7 +10,6 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
 
     @Test
@@ -20,11 +17,7 @@ class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentQuestionnaireQuestionListUseCase.Param(
-                null,
-                1L,
-                20,
-                0,
-                currentUserId));
+                null, 1L, 20, 0, currentUserId));
         assertThat(throwable).hasMessage("assessmentId: " + GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_NULL);
     }
 
@@ -34,11 +27,7 @@ class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
         var assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentQuestionnaireQuestionListUseCase.Param(
-                assessmentId,
-                null,
-                20,
-                0,
-                currentUserId));
+                assessmentId, null, 20, 0, currentUserId));
         assertThat(throwable).hasMessage("questionnaireId: " + GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_QUESTIONNAIRE_ID_NOT_NULL);
     }
 
@@ -48,11 +37,7 @@ class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
         var assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentQuestionnaireQuestionListUseCase.Param(
-                assessmentId,
-                1L,
-                0,
-                0,
-                currentUserId));
+                assessmentId, 1L, 0, 0, currentUserId));
         assertThat(throwable).hasMessage("size: " + GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_SIZE_MIN);
     }
 
@@ -62,11 +47,7 @@ class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
         var assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentQuestionnaireQuestionListUseCase.Param(
-                assessmentId,
-                1L,
-                101,
-                0,
-                currentUserId));
+                assessmentId, 1L, 101, 0, currentUserId));
         assertThat(throwable).hasMessage("size: " + GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_SIZE_MAX);
     }
 
@@ -76,11 +57,7 @@ class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
         var assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentQuestionnaireQuestionListUseCase.Param(
-                assessmentId,
-                1L,
-                20,
-                -1,
-                currentUserId));
+                assessmentId, 1L, 20, -1, currentUserId));
         assertThat(throwable).hasMessage("page: " + GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_PAGE_MIN);
     }
 
@@ -89,11 +66,7 @@ class GetAssessmentQuestionnaireQuestionListUseCaseParamTest {
         var assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentQuestionnaireQuestionListUseCase.Param(
-                assessmentId,
-                1L,
-                20,
-                0,
-                null));
+                assessmentId, 1L, 20, 0, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }

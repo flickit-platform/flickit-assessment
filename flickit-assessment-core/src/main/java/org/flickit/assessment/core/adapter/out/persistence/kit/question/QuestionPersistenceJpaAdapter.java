@@ -16,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -42,7 +41,7 @@ public class QuestionPersistenceJpaAdapter implements
         List<Long> ids = pageResult.getContent().stream()
             .map(QuestionJpaEntity::getId)
             .toList();
-        Map<Long, List<AnswerOptionJpaEntity>> questionIdToAnswerOptionsMap = answerOptionRepository.findAllByQuestionIdInOrderByQuestionIdIndex(ids).stream()
+        var questionIdToAnswerOptionsMap = answerOptionRepository.findAllByQuestionIdInOrderByQuestionIdIndex(ids).stream()
             .collect(groupingBy(AnswerOptionJpaEntity::getQuestionId));
 
         var items = pageResult.getContent().stream()
