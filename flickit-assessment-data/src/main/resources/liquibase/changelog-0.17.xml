@@ -351,20 +351,4 @@
                              constraintName="uq_fau_space_invitee_spaceid_email"/>
     </changeSet>
 
-    <changeSet id="0.17-58" author="Maziyar Gerami">
-        <addColumn tableName="fau_space">
-            <column name="deleted" type="boolean" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="0.17-59" author="Maziyar Gerami">
-        <addColumn tableName="fau_space">
-            <column name="deletion_time" type="bigint" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
 </databaseChangeLog>
