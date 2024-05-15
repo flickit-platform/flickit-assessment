@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -38,17 +39,17 @@ class UpdateAssessmentServiceTest {
     @Test
     void testUpdateAssessment_ValidParam_UpdatedAndReturnsId() {
         UUID id = UUID.randomUUID();
-        UUID lastModifiedBy = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
 
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
-        when(checkUserAssessmentAccessPort.hasAccess(id, lastModifiedBy)).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(id, currentUserId)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
             "new title",
             AssessmentColor.EMERALD.getId(),
-            lastModifiedBy
+            currentUserId
         );
         UUID resultId = service.updateAssessment(param).id();
         assertEquals(id, resultId);
@@ -59,7 +60,7 @@ class UpdateAssessmentServiceTest {
         assertEquals(param.getId(), updatePortParam.getValue().id());
         assertEquals(param.getTitle(), updatePortParam.getValue().title());
         assertEquals(param.getColorId(), updatePortParam.getValue().colorId());
-        assertEquals(param.getLastModifiedBy(), updatePortParam.getValue().lastModifiedBy());
+        assertEquals(param.getCurrentUserId(), updatePortParam.getValue().lastModifiedBy());
         assertNotNull(updatePortParam.getValue().title());
         assertNotNull(updatePortParam.getValue().colorId());
         assertNotNull(updatePortParam.getValue().lastModificationTime());
@@ -68,15 +69,15 @@ class UpdateAssessmentServiceTest {
     @Test
     void testUpdateAssessment_InvalidColor_UseDefaultColor() {
         UUID id = UUID.randomUUID();
-        UUID lastModifiedBy = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
             "title example",
             7,
-            lastModifiedBy
+            currentUserId
         );
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
-        when(checkUserAssessmentAccessPort.hasAccess(id, lastModifiedBy)).thenReturn(true);
+        when(checkUserAssessmentAccessPort.hasAccess(id, currentUserId)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         service.updateAssessment(param);
@@ -90,7 +91,7 @@ class UpdateAssessmentServiceTest {
     @Test
     void testUpdateAssessment_InvalidAssessmentId_ThrowNotFoundException() {
         UUID id = UUID.randomUUID();
-        UUID lastModifiedBy = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
 
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(false);
 
@@ -98,7 +99,7 @@ class UpdateAssessmentServiceTest {
             id,
             "new title",
             AssessmentColor.EMERALD.getId(),
-            lastModifiedBy
+            currentUserId
         );
         assertThrows(ResourceNotFoundException.class, () -> service.updateAssessment(param));
 
@@ -110,22 +111,21 @@ class UpdateAssessmentServiceTest {
     }
 
     @Test
-    void testUpdateAssessment_WhenNoUserAssessmentAccess_ThenThrowAccessDeniedException() {
+    void testUpdateAssessment_UserHasNoAccessToAssessment_ThrowAccessDeniedException() {
         UUID id = UUID.randomUUID();
-        UUID lastModifiedBy = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
 
         when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
-        when(checkUserAssessmentAccessPort.hasAccess(id, lastModifiedBy)).thenReturn(false);
-
+        when(checkUserAssessmentAccessPort.hasAccess(id, currentUserId)).thenReturn(false);
 
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
             "new title",
             AssessmentColor.EMERALD.getId(),
-            lastModifiedBy
+            currentUserId
         );
 
-        assertThrows(AccessDeniedException.class, () -> service.updateAssessment(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAssessment(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
-
 }
