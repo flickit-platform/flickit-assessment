@@ -1,9 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.port.in.assessment.UpdateAssessmentUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,9 +12,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateAssessmentServiceTest {
@@ -27,15 +27,11 @@ class UpdateAssessmentServiceTest {
     @Mock
     private UpdateAssessmentPort updateAssessmentPort;
 
-    @Mock
-    private CheckAssessmentExistencePort checkAssessmentExistencePort;
-
     @Test
     void testUpdateAssessment_ValidParam_UpdatedAndReturnsId() {
         UUID id = UUID.randomUUID();
         UUID lastModifiedBy = UUID.randomUUID();
 
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
@@ -69,7 +65,6 @@ class UpdateAssessmentServiceTest {
             7,
             lastModifiedBy
         );
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         service.updateAssessment(param);
@@ -79,27 +74,4 @@ class UpdateAssessmentServiceTest {
 
         assertEquals(AssessmentColor.getDefault().getId(), updatePortParam.getValue().colorId());
     }
-
-    @Test
-    void testUpdateAssessment_InvalidAssessmentId_ThrowNotFoundException() {
-        UUID id = UUID.randomUUID();
-        UUID lastModifiedBy = UUID.randomUUID();
-
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(false);
-
-        UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
-            id,
-            "new title",
-            AssessmentColor.EMERALD.getId(),
-            lastModifiedBy
-        );
-        assertThrows(ResourceNotFoundException.class, () -> service.updateAssessment(param));
-
-        ArgumentCaptor<UUID> portIdParam = ArgumentCaptor.forClass(UUID.class);
-        verify(checkAssessmentExistencePort).existsById(portIdParam.capture());
-
-        assertEquals(param.getId(), portIdParam.getValue());
-        verify(updateAssessmentPort, never()).update(any());
-    }
-
 }

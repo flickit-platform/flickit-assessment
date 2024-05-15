@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.evidence.GetAttributeEvidenceListUseCase.AttributeEvidenceListItem;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.*;
+import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -28,10 +29,13 @@ public class EvidencePersistenceJpaAdapter implements
     LoadAttributeEvidencesPort {
 
     private final EvidenceJpaRepository repository;
+    private final AssessmentJpaRepository assessmentRepository;
     private final QuestionJpaRepository questionRepository;
 
     @Override
     public UUID persist(CreateEvidencePort.Param param) {
+        if (!assessmentRepository.existsById(param.assessmentId()))
+            throw new ResourceNotFoundException(ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND);
         UUID questionRefNum = questionRepository.findRefNumById(param.questionId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND)); // TODO: This query must be deleted after question id deletion
         var unsavedEntity = EvidenceMapper.mapCreateParamToJpaEntity(param, questionRefNum);
@@ -41,6 +45,9 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size) {
+        if (!assessmentRepository.existsById(assessmentId))
+            throw new ResourceNotFoundException(GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND);
+
         var pageResult = repository.findByQuestionIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(
             questionId, assessmentId, PageRequest.of(page, size)
         );
@@ -82,6 +89,9 @@ public class EvidencePersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<AttributeEvidenceListItem> loadAttributeEvidences(UUID assessmentId, Long attributeId,
                                                                                Integer type, int page, int size) {
+        if (!assessmentRepository.existsById(assessmentId))
+            throw new ResourceNotFoundException(GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND);
+
         var pageResult = repository.findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(
             assessmentId, attributeId, type, PageRequest.of(page, size));
 
