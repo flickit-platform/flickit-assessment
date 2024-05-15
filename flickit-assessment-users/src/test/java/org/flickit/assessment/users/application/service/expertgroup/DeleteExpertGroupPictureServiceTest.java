@@ -86,7 +86,7 @@ class DeleteExpertGroupPictureServiceTest {
             "about", "picturePath", "website", currentUserId);
         String picturePath = "picturePath";
 
-        when(deleteFilePort.deletePicture(picturePath)).thenReturn(picturePath);
+        when(deleteFilePort.delete(picturePath)).thenReturn(picturePath);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
@@ -94,7 +94,7 @@ class DeleteExpertGroupPictureServiceTest {
         assertDoesNotThrow(() -> service.delete(param));
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verify(deleteFilePort).deletePicture(picturePath);
+        verify(deleteFilePort).delete(picturePath);
     }
 
     @Test

@@ -102,7 +102,7 @@ public class MinioAdapter implements
 
     @SneakyThrows
     @Override
-    public String deletePicture(String path) {
+    public String delete(String path) {
         String bucketName = properties.getBucketNames().getAvatar();
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
 

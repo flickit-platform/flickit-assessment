@@ -30,7 +30,7 @@ public class DeleteExpertGroupPictureService implements DeleteExpertGroupPicture
 
         if (picture != null && !picture.isBlank()) {
             updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), null);
-            deleteFilePort.deletePicture(picture);
+            deleteFilePort.delete(picture);
         }
     }
 
