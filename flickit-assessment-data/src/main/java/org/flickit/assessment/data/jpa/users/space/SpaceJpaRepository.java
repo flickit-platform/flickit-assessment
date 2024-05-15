@@ -10,19 +10,14 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.Optional;
-import java.util.UUID;
 
 public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> {
 
     @Query("""
             SELECT s.ownerId
             FROM SpaceJpaEntity as s
-            WHERE s.id = :id
-        """) //TODO: add this:  and deleted=false
+            WHERE s.id = :id and s.and deleted=false
+        """)
     Optional<UUID> loadOwnerIdById(@Param("id") long id);
 
     @Query("""
@@ -68,20 +63,19 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
 
     @Query("""
             SELECT
-                COUNT(DISTINCT CASE WHEN a.spaceId = :spaceId AND a.deleted=FALSE THEN a.id ELSE NULL END)
+                COUNT(DISTINCT CASE WHEN a.spaceId = :spaceId THEN a.id ELSE NULL END)
             FROM AssessmentJpaEntity a
-            WHERE a.spaceId = :spaceId
+            WHERE a.spaceId = :spaceId AND a.deleted=FALSE
         """)
-    int countAssessments(long spaceId);
+    int countAssessments(@Param("spaceId") long spaceId);
 
     @Modifying
     @Query("""
         UPDATE SpaceJpaEntity e
-        SET e.deleted = true,
-            e.deletionTime = :deletionTime
+        SET e.deleted = true
         WHERE e.id = :spaceId
         """)
-    void delete(long spaceId, long deletionTime);
+    void delete(@Param("spaceId") long spaceId);
 
     boolean existsByIdAndDeletedFalse(long id);
 }
