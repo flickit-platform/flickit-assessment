@@ -3,8 +3,6 @@ package org.flickit.assessment.core.application.port.in.assessment;
 import jakarta.validation.ConstraintViolationException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -15,7 +13,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class UpdateAssessmentUseCaseParamTest {
 
     @Test
@@ -94,7 +91,6 @@ class UpdateAssessmentUseCaseParamTest {
         int colorId = AssessmentColor.BLUE.getId();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateAssessmentUseCase.Param(id, title, colorId, null));
-        assertThat(throwable).hasMessage("lastModifiedBy: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
-
 }
