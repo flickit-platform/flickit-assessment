@@ -28,7 +28,6 @@ public class SpacePersistenceJpaAdapter implements
     LoadSpaceOwnerPort,
     LoadSpaceDetailsPort,
     UpdateSpaceLastSeenPort,
-    CheckSpaceExistsPort,
     CountSpaceAssessmentPort,
     DeleteSpacePort {
 
@@ -81,11 +80,6 @@ public class SpacePersistenceJpaAdapter implements
     @Override
     public void updateLastSeen(long spaceId, UUID userId, LocalDateTime currentTime) {
         repository.updateLastSeen(spaceId, userId, currentTime);
-    }
-
-    @Override
-    public boolean existsById(long id) {
-        return repository.existsByIdAndDeletedFalse(id);
     }
 
     @Override
