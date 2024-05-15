@@ -2,9 +2,7 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessment.UpdateAssessmentUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.springframework.stereotype.Service;

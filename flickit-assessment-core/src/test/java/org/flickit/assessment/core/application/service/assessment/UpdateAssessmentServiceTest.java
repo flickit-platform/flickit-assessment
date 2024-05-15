@@ -1,10 +1,8 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.port.in.assessment.UpdateAssessmentUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.junit.jupiter.api.Test;
@@ -18,8 +16,6 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

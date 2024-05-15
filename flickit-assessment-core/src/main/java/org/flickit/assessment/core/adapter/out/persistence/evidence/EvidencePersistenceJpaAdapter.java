@@ -7,8 +7,8 @@ import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.port.in.evidence.GetAttributeEvidenceListUseCase.AttributeEvidenceListItem;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.*;
-import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -24,7 +24,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.evidence.EvidenceMapper.toEvidenceListItem;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component
@@ -63,7 +62,7 @@ public class EvidencePersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size) {
         if (!assessmentRepository.existsById(assessmentId))
-            throw new ResourceNotFoundException(GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND);
+            throw new ResourceNotFoundException(GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL);
 
         var pageResult = repository.findByQuestionIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(
             questionId, assessmentId, PageRequest.of(page, size));
