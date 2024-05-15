@@ -634,7 +634,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/space/{{id}}",
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}",
 					"host": [
 						"{{base_url}}"
 					],
