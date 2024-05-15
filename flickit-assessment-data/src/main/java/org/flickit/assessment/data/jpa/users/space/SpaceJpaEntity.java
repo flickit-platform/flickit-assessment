@@ -43,9 +43,6 @@ public class SpaceJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @Column(name = "deletion_time", nullable = false)
-    private Long deletionTime;
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 }
