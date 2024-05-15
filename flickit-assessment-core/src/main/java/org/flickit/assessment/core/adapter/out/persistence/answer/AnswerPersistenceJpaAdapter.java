@@ -116,6 +116,7 @@ public class AnswerPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND));
         if (!Objects.equals(answer.getQuestionId(), answerOption.getQuestionId()))
             throw new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND);
+
         repository.update(param.answerId(), param.answerOptionId(), param.confidenceLevelId(), param.isNotApplicable(), param.currentUserId());
     }
 }
