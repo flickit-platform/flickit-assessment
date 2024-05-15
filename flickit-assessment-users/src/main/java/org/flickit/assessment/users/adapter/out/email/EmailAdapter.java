@@ -62,10 +62,14 @@ public class EmailAdapter implements
 
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(to);
-        helper.setFrom(springMailProperties.getUsername());
+        helper.setFrom(getFrom());
         helper.setSubject(subject);
         helper.setText(text, true);
 
         mailSender.send(message);
+    }
+
+    private String getFrom() {
+        return String.format("%s <%s>", appSpecProperties.getEmail().getFromDisplayName(), springMailProperties.getUsername());
     }
 }

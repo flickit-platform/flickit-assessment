@@ -596,6 +596,57 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Delete Assessment Kit",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Expert Group Kit List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/1/assessment-kits",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"1",
+						"assessment-kits"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
