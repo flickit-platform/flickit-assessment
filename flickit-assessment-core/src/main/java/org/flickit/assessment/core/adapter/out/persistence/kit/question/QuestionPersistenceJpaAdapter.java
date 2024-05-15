@@ -50,7 +50,7 @@ public class QuestionPersistenceJpaAdapter implements
                 List<AnswerOption> answerOptions = questionIdToAnswerOptionsMap.get(q.getId()).stream()
                     .map(e -> AnswerOptionMapper.mapToDomainModel(e, null))
                     .toList();
-                Question question = QuestionMapper.mapToDomainModel(q);
+                Question question = QuestionMapper.mapToDomainModel(q, null);
                 question.setOptions(answerOptions);
                 return question;
             })

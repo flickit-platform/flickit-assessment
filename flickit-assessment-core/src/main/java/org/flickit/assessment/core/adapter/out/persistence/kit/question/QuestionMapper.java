@@ -22,14 +22,14 @@ public class QuestionMapper {
         );
     }
 
-    public static Question mapToDomainModel(QuestionJpaEntity entity) {
+    public static Question mapToDomainModel(QuestionJpaEntity entity, List<QuestionImpact> impacts) {
         return new Question(
             entity.getId(),
             entity.getTitle(),
             entity.getIndex(),
             entity.getHint(),
             entity.getMayNotBeApplicable(),
-            null
+            impacts
         );
     }
 }
