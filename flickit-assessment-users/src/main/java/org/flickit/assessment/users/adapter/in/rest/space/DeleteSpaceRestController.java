@@ -16,10 +16,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DeleteSpaceRestController {
 
-    private final UserContext userContext;
     private final DeleteSpaceUseCase useCase;
+    private final UserContext userContext;
 
-    @DeleteMapping("/space/{id}")
+    @DeleteMapping("/spaces/{id}")
     public ResponseEntity<Void> deleteSpace(@PathVariable("id") Long id) {
         var currentUserId = userContext.getUser().id();
         useCase.deleteSpace(toParam(id, currentUserId));

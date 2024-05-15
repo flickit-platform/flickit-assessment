@@ -105,7 +105,7 @@ class DeleteSpaceServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
         when(checkSpaceExistsPort.existsById(spaceId)).thenReturn(true);
         when(countSpaceAssessmentPort.countAssessments(spaceId)).thenReturn(0);
-        doNothing().when(deleteSpacePort).deleteById(anyLong(), anyLong());
+        doNothing().when(deleteSpacePort).deleteById(anyLong());
 
         assertDoesNotThrow(() -> service.deleteSpace(param));
     }

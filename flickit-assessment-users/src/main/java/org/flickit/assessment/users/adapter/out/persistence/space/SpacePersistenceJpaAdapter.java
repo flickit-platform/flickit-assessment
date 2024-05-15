@@ -94,7 +94,7 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteById(long spaceId, long deletionTime) {
-        repository.delete(spaceId, deletionTime);
+    public void deleteById(long spaceId) {
+        repository.delete(spaceId);
     }
 }

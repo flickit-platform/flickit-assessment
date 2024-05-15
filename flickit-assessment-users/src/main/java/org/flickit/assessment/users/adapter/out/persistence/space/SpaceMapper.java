@@ -18,7 +18,6 @@ public class SpaceMapper {
             space.getLastModificationTime(),
             space.getCreatedBy(),
             space.getLastModifiedBy(),
-            null,
             false);
     }
 
