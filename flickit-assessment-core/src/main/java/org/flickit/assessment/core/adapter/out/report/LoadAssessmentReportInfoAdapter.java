@@ -11,6 +11,7 @@ import org.flickit.assessment.core.application.domain.report.AssessmentSubjectRe
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
+import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
@@ -44,6 +45,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @AllArgsConstructor
 public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfoPort {
 
+    private final AssessmentJpaRepository assessmentRepository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
     private final AssessmentKitJpaRepository assessmentKitJpaRepository;
@@ -55,6 +57,9 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
     @Override
     public Result load(UUID assessmentId) {
+        if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
+            throw new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND);
+
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
