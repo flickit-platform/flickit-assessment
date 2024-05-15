@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static org.flickit.assessment.common.permission.AssessmentPermission.*;
+
 @Getter
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -39,12 +41,7 @@ public enum AssessmentUserRole {
     }
 
     public boolean hasAccess(AssessmentPermission permission) {
-        return switch (this) {
-            case VIEWER -> getViewerPermission().contains(permission);
-            case COMMENTER -> getCommenterPermission().contains(permission);
-            case ASSESSOR -> getAssessorPermission().contains(permission);
-            case MANAGER -> getManagerPermission().contains(permission);
-        };
+        return this.getPermissions().contains(permission);
     }
 
     private static class RolePermissionSet {
@@ -88,7 +85,8 @@ public enum AssessmentUserRole {
             MANAGER_PERMISSIONS.addAll(Set.of(
                 CREATE_ASSESSMENT,
                 DELETE_ASSESSMENT,
-                UPDATE_ASSESSMENT
+                UPDATE_ASSESSMENT,
+                GRANT_USER_ASSESSMENT_ROLE
             ));
         }
     }
