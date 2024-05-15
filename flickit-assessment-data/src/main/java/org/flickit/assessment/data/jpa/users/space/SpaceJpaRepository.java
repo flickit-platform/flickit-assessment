@@ -63,7 +63,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
 
     @Query("""
             SELECT
-                COUNT(DISTINCT CASE WHEN a.spaceId = :spaceId THEN a.id ELSE NULL END)
+                COUNT(DISTINCT a.id)
             FROM AssessmentJpaEntity a
             WHERE a.spaceId = :spaceId AND a.deleted=FALSE
         """)
