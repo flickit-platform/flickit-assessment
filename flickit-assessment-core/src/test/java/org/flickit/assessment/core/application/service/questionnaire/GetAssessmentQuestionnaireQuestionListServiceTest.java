@@ -93,10 +93,10 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             "asc",
             1
         );
-        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), null, null, question.getId(), null), question.getId(), 1, Boolean.TRUE);
+        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.TRUE);
 
         PaginatedResponse<Answer> expectedPageResult = new PaginatedResponse<>(
-            List.of(),
+            List.of(answer),
             0,
             10,
             AnswerJpaEntity.Fields.QUESTION_INDEX,

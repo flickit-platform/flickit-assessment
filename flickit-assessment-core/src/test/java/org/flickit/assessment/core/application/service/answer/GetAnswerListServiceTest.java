@@ -1,10 +1,12 @@
 package org.flickit.assessment.core.application.service.answer;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
-import org.flickit.assessment.core.application.port.out.answer.LoadAnswersByQuestionnaireIdPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadQuestionnaireAnswerListPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -29,7 +31,7 @@ class GetAnswerListServiceTest {
     private GetAnswerListService getAnswerListService;
 
     @Mock
-    private LoadAnswersByQuestionnaireIdPort loadAnswersPort;
+    private LoadQuestionnaireAnswerListPort loadQuestionnaireAnswerListPort;
 
     @Test
     void testGetAnswerList() {
@@ -39,26 +41,33 @@ class GetAnswerListServiceTest {
         int page = 0;
         GetAnswerListUseCase.Param param = new GetAnswerListUseCase.Param(assessmentId, questionnaireId, size, page);
 
-        List<AnswerListItem> answerItems = Arrays.asList(
-            new AnswerListItem(UUID.randomUUID(), 1L, 1L, ConfidenceLevel.getDefault(), Boolean.FALSE),
-            new AnswerListItem(UUID.randomUUID(), 1L, 1L, ConfidenceLevel.getDefault(), Boolean.FALSE)
+        var answerItems = Arrays.asList(
+            new Answer(UUID.randomUUID(), new AnswerOption(1L, 0, "option", 1L, null), 1L, ConfidenceLevel.getDefault().getId(), Boolean.FALSE),
+            new Answer(UUID.randomUUID(), new AnswerOption(1L, 0, "option", 1L, null), 1L, ConfidenceLevel.getDefault().getId(), Boolean.FALSE)
         );
-        PaginatedResponse<AnswerListItem> mockResult = new PaginatedResponse<>(answerItems, page, size, null, null, 2);
-        when(loadAnswersPort.loadAnswersByQuestionnaireId(any())).thenReturn(mockResult);
+        PaginatedResponse<Answer> mockResult = new PaginatedResponse<>(answerItems, page, size, null, null, 2);
+        when(loadQuestionnaireAnswerListPort.loadQuestionnaireAnswers(assessmentId, questionnaireId, size, page))
+            .thenReturn(mockResult);
 
         PaginatedResponse<AnswerListItem> result = getAnswerListService.getAnswerList(param);
 
-        ArgumentCaptor<LoadAnswersByQuestionnaireIdPort.Param> loadPortParam = ArgumentCaptor
-            .forClass(LoadAnswersByQuestionnaireIdPort.Param.class);
-        verify(loadAnswersPort).loadAnswersByQuestionnaireId(loadPortParam.capture());
+        ArgumentCaptor<UUID> assessmentIdPortCapture = ArgumentCaptor.forClass(UUID.class);
+        ArgumentCaptor<Long> questionnaireIdPortCapture = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<Integer> sizePortCapture = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Integer> pagePortCapture = ArgumentCaptor.forClass(Integer.class);
+        verify(loadQuestionnaireAnswerListPort).loadQuestionnaireAnswers(assessmentIdPortCapture.capture(),
+            questionnaireIdPortCapture.capture(),
+            sizePortCapture.capture(),
+            pagePortCapture.capture());
 
-        assertEquals(assessmentId, loadPortParam.getValue().assessmentId());
-        assertEquals(questionnaireId, loadPortParam.getValue().questionnaireId());
-        assertEquals(size, loadPortParam.getValue().size());
-        assertEquals(page, loadPortParam.getValue().page());
+        assertEquals(assessmentId, assessmentIdPortCapture.getValue());
+        assertEquals(questionnaireId, questionnaireIdPortCapture.getValue());
+        assertEquals(size, sizePortCapture.getValue());
+        assertEquals(page, pagePortCapture.getValue());
         assertNotNull(result.getItems());
-        assertEquals(answerItems, result.getItems());
-        verify(loadAnswersPort, times(1)).loadAnswersByQuestionnaireId(any());
+        assertEquals(answerItems.size(), result.getItems().size());
+        verify(loadQuestionnaireAnswerListPort, times(1))
+            .loadQuestionnaireAnswers(any(), anyLong(), anyInt(), anyInt());
     }
 
     @Test
@@ -69,23 +78,28 @@ class GetAnswerListServiceTest {
         int page = 0;
         GetAnswerListUseCase.Param param = new GetAnswerListUseCase.Param(assessmentId, questionnaireId, size, page);
 
-        List<AnswerListItem> answerItems = Collections.emptyList();
-        PaginatedResponse<AnswerListItem> mockResult = new PaginatedResponse<>(answerItems, page, 50, null, null, 2);
-        when(loadAnswersPort.loadAnswersByQuestionnaireId(any())).thenReturn(mockResult);
+        List<Answer> answerItems = Collections.emptyList();
+        PaginatedResponse<Answer> mockResult = new PaginatedResponse<>(answerItems, page, 50, null, null, 2);
+        when(loadQuestionnaireAnswerListPort.loadQuestionnaireAnswers(assessmentId, questionnaireId, size, page))
+            .thenReturn(mockResult);
 
         PaginatedResponse<AnswerListItem> result = getAnswerListService.getAnswerList(param);
 
-        ArgumentCaptor<LoadAnswersByQuestionnaireIdPort.Param> loadPortParam = ArgumentCaptor
-            .forClass(LoadAnswersByQuestionnaireIdPort.Param.class);
-        verify(loadAnswersPort).loadAnswersByQuestionnaireId(loadPortParam.capture());
+        ArgumentCaptor<UUID> assessmentIdPortCapture = ArgumentCaptor.forClass(UUID.class);
+        ArgumentCaptor<Long> questionnaireIdPortCapture = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<Integer> sizePortCapture = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Integer> pagePortCapture = ArgumentCaptor.forClass(Integer.class);
+        verify(loadQuestionnaireAnswerListPort).loadQuestionnaireAnswers(assessmentIdPortCapture.capture(),
+            questionnaireIdPortCapture.capture(),
+            sizePortCapture.capture(),
+            pagePortCapture.capture());
 
-        assertEquals(assessmentId, loadPortParam.getValue().assessmentId());
-        assertEquals(questionnaireId, loadPortParam.getValue().questionnaireId());
-        assertEquals(size, loadPortParam.getValue().size());
-        assertEquals(page, loadPortParam.getValue().page());
+        assertEquals(assessmentId, assessmentIdPortCapture.getValue());
+        assertEquals(questionnaireId, questionnaireIdPortCapture.getValue());
+        assertEquals(size, sizePortCapture.getValue());
+        assertEquals(page, pagePortCapture.getValue());
         assertNotNull(result.getItems());
-        assertEquals(answerItems, result.getItems());
-        verify(loadAnswersPort, times(1)).loadAnswersByQuestionnaireId(any());
+        assertEquals(0, result.getItems().size());
+        verify(loadQuestionnaireAnswerListPort, times(1)).loadQuestionnaireAnswers(any(), anyLong(), anyInt(), anyInt());
     }
-
 }

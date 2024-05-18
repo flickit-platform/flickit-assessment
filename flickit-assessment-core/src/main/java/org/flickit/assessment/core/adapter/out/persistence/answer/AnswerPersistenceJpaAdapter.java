@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
-import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.QuestionnaireProgress;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.core.application.port.out.questionnaire.GetQuestionnairesProgressPort;
@@ -31,7 +30,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class AnswerPersistenceJpaAdapter implements
     CreateAnswerPort,
-    LoadAnswersByQuestionnaireIdPort,
     GetQuestionnairesProgressPort,
     CountAnswersByQuestionIdsPort,
     LoadAnswerPort,
@@ -53,28 +51,6 @@ public class AnswerPersistenceJpaAdapter implements
         unsavedEntity.setAssessmentResult(assessmentResult);
         AnswerJpaEntity entity = repository.save(unsavedEntity);
         return entity.getId();
-    }
-
-    @Override
-    public PaginatedResponse<AnswerListItem> loadAnswersByQuestionnaireId(LoadAnswersByQuestionnaireIdPort.Param param) {
-        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ANSWER_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND));
-
-        var pageResult = repository.findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIdAsc(assessmentResult.getId(),
-            param.questionnaireId(),
-            PageRequest.of(param.page(), param.size()));
-
-        var items = pageResult.getContent().stream()
-            .map(AnswerMapper::mapJpaEntityToAnswerItem)
-            .toList();
-        return new PaginatedResponse<>(
-            items,
-            pageResult.getNumber(),
-            pageResult.getSize(),
-            AnswerJpaEntity.Fields.QUESTION_ID,
-            Sort.Direction.ASC.name().toLowerCase(),
-            (int) pageResult.getTotalElements()
-        );
     }
 
     @Override
