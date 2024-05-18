@@ -56,14 +56,19 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
     }
 
     private Result mapToResult(Question question, org.flickit.assessment.core.application.domain.Answer answer) {
-        QuestionAnswer selectedOption = null;
+        QuestionAnswer answerDto = null;
         if (answer != null) {
-            var answerOption = question.getOptions().stream()
-                .filter(x -> Objects.equals(x.getId(), answer.getSelectedOption().getId()))
-                .findAny()
-                .orElse(null);
-            if (answerOption != null)
-                selectedOption = new QuestionAnswer(mapToOption(answerOption), ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()), answer.getIsNotApplicable());
+            Option answerOption;
+            if (Boolean.TRUE.equals(answer.getIsNotApplicable()))
+                answerOption = null;
+            else {
+                answerOption = question.getOptions().stream()
+                    .filter(x -> Objects.equals(x.getId(), answer.getSelectedOption().getId()))
+                    .map(this::mapToOption)
+                    .findAny()
+                    .orElse(null);
+            }
+            answerDto = new QuestionAnswer(answerOption, ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()), answer.getIsNotApplicable());
         }
         return new Result(
             question.getId(),
@@ -74,7 +79,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             question.getOptions().stream()
                 .map(this::mapToOption)
                 .toList(),
-            selectedOption);
+            answerDto);
     }
 
     private Option mapToOption(org.flickit.assessment.core.application.domain.AnswerOption ao) {
