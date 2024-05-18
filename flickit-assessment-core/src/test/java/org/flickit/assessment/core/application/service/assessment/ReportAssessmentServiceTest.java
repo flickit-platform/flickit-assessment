@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
@@ -9,7 +8,6 @@ import org.flickit.assessment.core.application.domain.report.AssessmentSubjectRe
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -38,9 +36,6 @@ class ReportAssessmentServiceTest {
 
     @Mock
     private LoadAssessmentReportInfoPort loadReportInfoPort;
-
-    @Mock
-    private CheckAssessmentExistencePort checkAssessmentExistencePort;
 
     @Mock
     private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
@@ -78,7 +73,6 @@ class ReportAssessmentServiceTest {
             new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", teamLevel));
         var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, attributes, maturityLevels, subjects);
 
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadReportInfoPort.load(assessmentId)).thenReturn(assessmentReport);
@@ -114,23 +108,11 @@ class ReportAssessmentServiceTest {
     }
 
     @Test
-    void testReportAssessment_AssessmentDoesNotExist_ThrowException() {
-        UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
-        ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
-
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(false);
-
-        assertThrows(ResourceNotFoundException.class, () -> service.reportAssessment(param));
-    }
-
-    @Test
     void testReportAssessment_CurrentUserHasNotAccess_ThrowException() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.reportAssessment(param));
