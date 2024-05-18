@@ -111,16 +111,28 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Answer> loadQuestionnaireAnswers(UUID assessmentId, long questionnaireId, int size, int page) {
+    public PaginatedResponse<Answer> loadQuestionnaireAnswers(UUID assessmentId, long questionnaireId, int size, int page) {
         if (!questionnaireRepository.checkQuestionnaireAndAssessmentBelongsSameKit(assessmentId, questionnaireId)) {
             throw new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND);
         }
         var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
 
-        return repository.findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIndexAsc(assessmentResult.getId(), questionnaireId, PageRequest.of(page, size))
+        var pageResult = repository.findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIndexAsc(assessmentResult.getId(),
+            questionnaireId,
+            PageRequest.of(page, size));
+
+        var items = pageResult
             .getContent().stream()
             .map(AnswerMapper::mapToDomainModel)
             .toList();
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            AnswerJpaEntity.Fields.QUESTION_INDEX,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
     }
 }

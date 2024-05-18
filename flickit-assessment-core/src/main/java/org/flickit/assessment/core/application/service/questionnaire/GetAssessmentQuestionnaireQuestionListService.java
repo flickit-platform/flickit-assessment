@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.service.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
@@ -19,7 +18,6 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.application.domain.ConfidenceLevel.valueOfById;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,6 +39,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
         Map<Long, org.flickit.assessment.core.application.domain.Answer> questionIdToAnswerMap = loadAssessmentQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(),
                 param.getSize(),
                 param.getPage())
+            .getItems()
             .stream()
             .collect(toMap(org.flickit.assessment.core.application.domain.Answer::getQuestionId, Function.identity()));
 
@@ -64,9 +63,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                 .findAny()
                 .orElse(null);
             if (answerOption != null)
-                selectedOption = mapToAnswer(answerOption,
-                    valueOfById(answer.getConfidenceLevelId()),
-                    answer.getIsNotApplicable());
+                selectedOption = new QuestionAnswer(mapToOption(answerOption), ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()), answer.getIsNotApplicable());
         }
         return new Result(
             question.getId(),
@@ -82,9 +79,5 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
 
     private Option mapToOption(org.flickit.assessment.core.application.domain.AnswerOption ao) {
         return new Option(ao.getId(), ao.getTitle(), ao.getIndex());
-    }
-
-    private QuestionAnswer mapToAnswer(AnswerOption selectedOption, ConfidenceLevel confidenceLevel, Boolean isNotApplicable) {
-        return new QuestionAnswer(mapToOption(selectedOption), confidenceLevel, isNotApplicable);
     }
 }
