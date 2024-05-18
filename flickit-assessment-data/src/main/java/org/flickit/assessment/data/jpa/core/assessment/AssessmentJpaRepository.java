@@ -35,7 +35,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 a.code = :code,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy
-            "WHERE a.id = :id
+            WHERE a.id = :id
         """)
     void update(@Param(value = "id") UUID id,
                 @Param(value = "title") String title,
@@ -43,7 +43,6 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 @Param(value = "colorId") Integer colorId,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
-
 
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +
