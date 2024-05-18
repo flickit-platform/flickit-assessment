@@ -11,6 +11,7 @@ import org.flickit.assessment.core.application.port.out.questionnaire.GetQuestio
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.FirstUnansweredQuestionView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -44,11 +45,13 @@ public class AnswerPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
         var question = questionRepository.findById(param.questionId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND)); // TODO: This query must be changed after question id deletion
-        var answerOption = answerOptionRepository.findById(param.answerOptionId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND));
+        AnswerOptionJpaEntity answerOption = null;
+        if (param.answerOptionId() != null)
+            answerOption = answerOptionRepository.findById(param.answerOptionId())
+                .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND));
 
         if (!Objects.equals(question.getKitVersionId(), assessmentResult.getKitVersionId()) ||
-            !Objects.equals(question.getId(), answerOption.getQuestionId()) ||
+            (answerOption!=null && !Objects.equals(question.getId(), answerOption.getQuestionId())) ||
             !Objects.equals(question.getQuestionnaireId(), param.questionnaireId()))
             throw new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND);
 
@@ -112,10 +115,14 @@ public class AnswerPersistenceJpaAdapter implements
     public void update(UpdateAnswerPort.Param param) {
         var answer = repository.findById(param.answerId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
-        var answerOption = answerOptionRepository.findById(param.answerOptionId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND));
-        if (!Objects.equals(answer.getQuestionId(), answerOption.getQuestionId()))
-            throw new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND);
+        AnswerOptionJpaEntity answerOption;
+        if (param.answerOptionId() != null) {
+            answerOption = answerOptionRepository.findById(param.answerOptionId())
+                .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND));
+
+            if (!Objects.equals(answer.getQuestionId(), answerOption.getQuestionId()))
+                throw new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND);
+        }
 
         repository.update(param.answerId(), param.answerOptionId(), param.confidenceLevelId(), param.isNotApplicable(), param.currentUserId());
     }
