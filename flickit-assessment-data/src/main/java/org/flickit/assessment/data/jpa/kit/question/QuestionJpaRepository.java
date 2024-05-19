@@ -166,4 +166,11 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
         """)
     List<AttributeLevelImpactfulQuestionsView> findByAttributeIdAndMaturityLevelId(@Param("attributeId") long attributeId,
                                                                                    @Param("maturityLevelId") long maturityLevelId);
+
+    @Query("""
+            SELECT COUNT(q)
+            FROM QuestionJpaEntity q
+            WHERE q.kitVersionId = :kitVersionId
+        """)
+    int countByKitVersionId(@Param("kitVersionId") long kitVersionId);
 }

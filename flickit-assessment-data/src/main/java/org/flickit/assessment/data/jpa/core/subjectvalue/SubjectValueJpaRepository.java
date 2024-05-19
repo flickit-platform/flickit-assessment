@@ -13,7 +13,7 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
 
     List<SubjectValueJpaEntity> findByAssessmentResultId(UUID resultId);
 
-    Optional<SubjectValueJpaEntity> findBySubjectIdAndAssessmentResult_Id(Long subjectId, UUID assessmentResultId);
+    Optional<SubjectValueJpaEntity> findBySubjectRefNumAndAssessmentResult_Id(UUID subjectRefNum, UUID assessmentResultId);
 
     @Modifying
     @Query("update SubjectValueJpaEntity a set a.maturityLevelId = :maturityLevelId where a.id = :id")

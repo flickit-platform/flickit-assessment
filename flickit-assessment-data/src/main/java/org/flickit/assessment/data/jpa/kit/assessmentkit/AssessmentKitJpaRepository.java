@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -93,4 +94,27 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             GROUP BY k.id
         """)
     List<CountKitStatsView> countKitStats(@Param(value = "kitIds") List<Long> kitIds);
+
+    @Query("""
+            SELECT COUNT(a)
+            FROM AssessmentKitJpaEntity k
+            JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
+            WHERE k.id = :kitId
+        """)
+    long countAllKitAssessments(@Param("kitId") Long kitId);
+
+    @Query("""
+            SELECT k
+            FROM AssessmentKitJpaEntity k
+            WHERE k.expertGroupId = :expertGroupId
+                AND (:includeUnpublished = TRUE OR k.published = TRUE)
+                AND (k.isPrivate = FALSE
+                    OR (k.isPrivate AND k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId = :userId)))
+            ORDER BY k.published desc, k.lastModificationTime desc
+        """)
+    Page<AssessmentKitJpaEntity> findExpertGroupKitsOrderByPublishedAndModificationTimeDesc(
+        @Param("expertGroupId") long expertGroupId,
+        @Param("userId") UUID userId,
+        @Param("includeUnpublished") boolean includeUnpublishedKits,
+        PageRequest pageable);
 }
