@@ -3,7 +3,6 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.users.application.domain.Space;
@@ -12,9 +11,6 @@ import org.flickit.assessment.users.application.port.out.space.*;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.UpdateSpaceLastSeenPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
-import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
-import org.flickit.assessment.users.application.port.out.space.UpdateSpacePort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -22,8 +18,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.adapter.out.persistence.space.SpaceMapper.mapToDomain;
-import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
-
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 
 @Component
