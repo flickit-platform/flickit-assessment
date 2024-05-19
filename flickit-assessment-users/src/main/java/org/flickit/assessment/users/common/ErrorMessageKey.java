@@ -93,4 +93,7 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_SPACE_LAST_SEEN_SPACE_ID_NOT_NULL = "update-space-lastSeen.spaceId.notNull";
 
+    public static final String DELETE_SPACE_ASSESSMENT_EXIST = "delete-space.assessments.exist";
+    public static final String DELETE_SPACE_SPACE_ID_NOT_NULL = "delete-space.spaceId.notNull";
+
 }
