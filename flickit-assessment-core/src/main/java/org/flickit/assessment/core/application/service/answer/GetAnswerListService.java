@@ -38,7 +38,7 @@ public class GetAnswerListService implements GetAnswerListUseCase {
     private AnswerListItem toAnswerListItem(Answer x) {
         return new AnswerListItem(x.getId(),
             x.getQuestionId(),
-            x.getSelectedOption().getId(),
+            x.getSelectedOption() != null ? x.getSelectedOption().getId() : null,
             ConfidenceLevel.valueOfById(x.getConfidenceLevelId()),
             x.getIsNotApplicable());
     }
