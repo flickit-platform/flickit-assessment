@@ -1,7 +1,6 @@
-package org.flickit.assessment.core.common;
+package org.flickit.assessment.core.application.domain;
 
 import org.flickit.assessment.common.application.assessment.AssessmentPermission;
-import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
