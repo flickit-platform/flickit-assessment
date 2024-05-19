@@ -5,7 +5,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase;
-import org.flickit.assessment.core.application.port.out.answer.LoadQuestionnaireAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadAnswerListPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetAnswerListService implements GetAnswerListUseCase {
 
-    private final LoadQuestionnaireAnswerListPort loadQuestionnaireAnswerListPort;
+    private final LoadAnswerListPort loadAnswerListPort;
 
     @Override
     public PaginatedResponse<AnswerListItem> getAnswerList(Param param) {
-        PaginatedResponse<Answer> answerPaginatedResponse = loadQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(),
+        var answerPaginatedResponse = loadAnswerListPort.loadByQuestionnaire(param.getAssessmentId(),
             param.getQuestionnaireId(),
             param.getSize(),
             param.getPage());

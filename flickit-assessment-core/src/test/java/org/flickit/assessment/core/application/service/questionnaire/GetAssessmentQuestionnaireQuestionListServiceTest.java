@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Result;
-import org.flickit.assessment.core.application.port.out.answer.LoadQuestionnaireAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
@@ -42,7 +42,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
 
     @Mock
-    private LoadQuestionnaireAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
+    private LoadAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
 
     @Test
     void testGetAssessmentQuestionnaireQuestionList_InvalidCurrentUser_ThrowsException() {
@@ -76,7 +76,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(loadAssessmentQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
 
-        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentQuestionnaireQuestionList(param));
+        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionnaireQuestionList(param));
         assertEquals(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND, exception.getMessage());
     }
 
@@ -107,7 +107,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadAssessmentQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPageResult);
 
         PaginatedResponse<Result> result = service.getAssessmentQuestionnaireQuestionList(param);
@@ -154,7 +154,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadAssessmentQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPageResult);
 
         PaginatedResponse<Result> result = service.getAssessmentQuestionnaireQuestionList(param);

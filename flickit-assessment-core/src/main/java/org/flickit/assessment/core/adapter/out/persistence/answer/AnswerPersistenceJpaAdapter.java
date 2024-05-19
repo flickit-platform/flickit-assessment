@@ -31,7 +31,7 @@ public class AnswerPersistenceJpaAdapter implements
     CountAnswersByQuestionIdsPort,
     LoadAnswerPort,
     UpdateAnswerPort,
-    LoadQuestionnaireAnswerListPort {
+    LoadAnswerListPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -100,12 +100,12 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<Answer> loadQuestionnaireAnswers(UUID assessmentId, long questionnaireId, int size, int page) {
-        if (!questionnaireRepository.checkQuestionnaireAndAssessmentBelongsSameKit(assessmentId, questionnaireId)) {
-            throw new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND);
-        }
+    public PaginatedResponse<Answer> loadByQuestionnaire(UUID assessmentId, long questionnaireId, int size, int page) {
+        if (!questionnaireRepository.checkQuestionnaireAndAssessmentBelongsSameKit(assessmentId, questionnaireId))
+            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
+
         var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
         var pageResult = repository.findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIndexAsc(assessmentResult.getId(),
             questionnaireId,

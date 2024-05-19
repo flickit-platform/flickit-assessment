@@ -3,10 +3,11 @@ package org.flickit.assessment.core.application.service.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
-import org.flickit.assessment.core.application.port.out.answer.LoadQuestionnaireAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
 
     private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
-    private final LoadQuestionnaireAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
+    private final LoadAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
 
     @Override
     public PaginatedResponse<Result> getAssessmentQuestionnaireQuestionList(Param param) {
