@@ -23,14 +23,14 @@ public class GetAssessmentQuestionnaireQuestionListRestController {
     private final UserContext userContext;
 
     @GetMapping("assessments/{assessmentId}/questionnaires/{questionnaireId}")
-    public ResponseEntity<PaginatedResponse<Result>> getAssessmentQuestionnaireList(
+    public ResponseEntity<PaginatedResponse<Result>> getQuestionnaireQuestionList(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("questionnaireId") Long questionnaireId,
         @RequestParam(defaultValue = "50") int size,
         @RequestParam(defaultValue = "0") int page) {
         UUID currentUserId = userContext.getUser().id();
         var param = toParam(assessmentId, questionnaireId, size, page, currentUserId);
-        var result = useCase.getAssessmentQuestionnaireQuestionList(param);
+        var result = useCase.getQuestionnaireQuestionList(param);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

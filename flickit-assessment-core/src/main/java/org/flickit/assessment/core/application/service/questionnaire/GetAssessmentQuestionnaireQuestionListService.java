@@ -30,7 +30,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
     private final LoadAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
 
     @Override
-    public PaginatedResponse<Result> getAssessmentQuestionnaireQuestionList(Param param) {
+    public PaginatedResponse<Result> getQuestionnaireQuestionList(Param param) {
         if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         var pageResult = loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(),

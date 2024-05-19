@@ -17,7 +17,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetAssessmentQuestionnaireQuestionListUseCase {
 
-    PaginatedResponse<Result> getAssessmentQuestionnaireQuestionList(Param param);
+    PaginatedResponse<Result> getQuestionnaireQuestionList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)

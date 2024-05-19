@@ -50,7 +50,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(false);
 
-        var exception = assertThrows(AccessDeniedException.class, () -> service.getAssessmentQuestionnaireQuestionList(param));
+        var exception = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verifyNoInteractions(loadQuestionnaireQuestionListPort,
             loadAssessmentQuestionnaireAnswerListPort);
@@ -73,7 +73,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadAssessmentQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
 
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionnaireQuestionList(param));
@@ -110,7 +110,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPageResult);
 
-        PaginatedResponse<Result> result = service.getAssessmentQuestionnaireQuestionList(param);
+        PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
 
         assertEquals(expectedPaginatedResponse.getSize(), result.getSize());
         assertEquals(expectedPaginatedResponse.getTotal(), result.getTotal());
@@ -157,7 +157,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPageResult);
 
-        PaginatedResponse<Result> result = service.getAssessmentQuestionnaireQuestionList(param);
+        PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
 
         assertEquals(expectedPaginatedResponse.getSize(), result.getSize());
         assertEquals(expectedPaginatedResponse.getTotal(), result.getTotal());
