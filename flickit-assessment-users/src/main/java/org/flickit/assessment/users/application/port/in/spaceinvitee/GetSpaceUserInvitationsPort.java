@@ -1,10 +1,10 @@
 package org.flickit.assessment.users.application.port.in.spaceinvitee;
 
-import org.flickit.assessment.users.application.domain.SpaceInvitation;
+import org.flickit.assessment.users.application.domain.SpaceInvitee;
 
 import java.util.List;
 
 public interface GetSpaceUserInvitationsPort {
 
-    List<SpaceInvitation> loadInvitations(String email);
+    List<SpaceInvitee> loadInvitations(String email);
 }

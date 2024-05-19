@@ -44,11 +44,6 @@ public interface GetSpaceInviteesUseCase {
         }
     }
 
-    record Invitee(
-        UUID id,
-        String email,
-        LocalDateTime expirationDate,
-        LocalDateTime creationTime,
-        UUID createdBy) {
+    record Invitee(UUID id, String email, LocalDateTime expirationDate, LocalDateTime creationTime, UUID createdBy) {
     }
 }

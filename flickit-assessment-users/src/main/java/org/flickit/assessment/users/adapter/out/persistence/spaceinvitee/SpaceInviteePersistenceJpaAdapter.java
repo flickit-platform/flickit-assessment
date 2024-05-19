@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
-import org.flickit.assessment.users.application.domain.SpaceInvitation;
+import org.flickit.assessment.users.application.domain.SpaceInvitee;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceInviteesPort;
@@ -32,7 +32,7 @@ public class SpaceInviteePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<SpaceInvitation> loadInvitations(String email) {
+    public List<SpaceInvitee> loadInvitations(String email) {
         var invitations = repository.findByEmail(email.toLowerCase());
         return invitations
             .stream()
@@ -51,13 +51,13 @@ public class SpaceInviteePersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<Invitee> loadInvitees(long spaceId, int page, int size) {
+    public PaginatedResponse<SpaceInvitee> loadInvitees(long spaceId, int page, int size) {
         var pageResult = repository.findBySpaceId(spaceId, LocalDateTime.now(),
             PageRequest.of(page, size, Sort.Direction.DESC, SpaceInviteeJpaEntity.Fields.CREATION_TIME));
 
         var items = pageResult
             .stream()
-            .map(SpaceInviteeMapper::mapToInvitee)
+            .map(SpaceInviteeMapper::mapToDomain)
             .toList();
 
         return new PaginatedResponse<>(

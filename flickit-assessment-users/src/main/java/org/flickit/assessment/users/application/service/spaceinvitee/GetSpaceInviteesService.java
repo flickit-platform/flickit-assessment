@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.users.application.domain.SpaceInvitee;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceInviteesUseCase;
 import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistsPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceInviteesPort;
@@ -46,13 +47,14 @@ public class GetSpaceInviteesService implements GetSpaceInviteesUseCase {
         );
     }
 
-    private List<Invitee> mapToInvitees(List<LoadSpaceInviteesPort.Invitee> items) {
+    private List<Invitee> mapToInvitees(List<SpaceInvitee> items) {
         return items.stream()
             .map(item -> new GetSpaceInviteesUseCase.Invitee(
-                item.id(),
-                item.email(),
-                item.expirationDate(),
-                item.creationTime(),
-                item.createdBy())).toList();
+                item.getId(),
+                item.getEmail(),
+                item.getExpirationTime(),
+                item.getInviteTime(),
+                item.getInviterId()))
+            .toList();
     }
 }

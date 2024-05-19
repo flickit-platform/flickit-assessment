@@ -8,6 +8,7 @@ import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceInv
 import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistsPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceInviteesPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
+import org.flickit.assessment.users.test.fixture.application.SpaceInviteeMother;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,15 +16,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class GetSpaceInviteesServiceTest {
@@ -79,11 +79,9 @@ class GetSpaceInviteesServiceTest {
         UUID currentUserId = UUID.randomUUID();
         int size = 10;
         int page = 0;
-        var invitee1 = new LoadSpaceInviteesPort.Invitee(UUID.randomUUID(),
-            spaceId, "a1@b.c", LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID());
+        var invitee1 = SpaceInviteeMother.createSpaceInvitee(spaceId, "a1@b.c");
 
-        var invitee2 = new LoadSpaceInviteesPort.Invitee(UUID.randomUUID(),
-            spaceId, "a2@b.c", LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID());
+        var invitee2 = SpaceInviteeMother.createSpaceInvitee(spaceId, "a2@b.c");
 
         var invitees = List.of(invitee1, invitee2);
         var paginatedResponse = new PaginatedResponse<>(invitees, page, size, "SORT", "ORDER", invitees.size());
