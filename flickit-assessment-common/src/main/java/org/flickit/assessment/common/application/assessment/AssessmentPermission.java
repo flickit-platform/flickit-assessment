@@ -1,4 +1,4 @@
-package org.flickit.assessment.common.permission;
+package org.flickit.assessment.common.application.assessment;
 
 public enum AssessmentPermission {
 
