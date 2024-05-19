@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.DELETE_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND;
 
 @Component
@@ -40,9 +39,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteUserAssessmentRole(UUID assessmentId, UUID userId, Integer roleId) {
-        if (!AssessmentUserRole.isValidId(roleId))
-            throw new ResourceNotFoundException(DELETE_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND);
-        repository.deleteByAssessmentIdAndUserIdAndRoleId(assessmentId, userId, roleId);
+    public void deleteUserAssessmentRole(UUID assessmentId, UUID userId) {
+        repository.deleteByAssessmentIdAndUserId(assessmentId, userId);
     }
 }

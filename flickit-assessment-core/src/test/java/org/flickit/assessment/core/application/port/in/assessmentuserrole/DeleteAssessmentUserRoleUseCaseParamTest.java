@@ -17,7 +17,7 @@ class DeleteAssessmentUserRoleUseCaseParamTest {
         UUID userId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new DeleteUserAssessmentRoleUseCase.Param(null, userId, 1, currentUserId));
+            () -> new DeleteUserAssessmentRoleUseCase.Param(null, userId, currentUserId));
         assertThat(throwable).hasMessage("assessmentId: " + DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL);
     }
 
@@ -26,18 +26,8 @@ class DeleteAssessmentUserRoleUseCaseParamTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new DeleteUserAssessmentRoleUseCase.Param(assessmentId, null, 1, currentUserId));
+            () -> new DeleteUserAssessmentRoleUseCase.Param(assessmentId, null, currentUserId));
         assertThat(throwable).hasMessage("userId: " + DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL);
-    }
-
-    @Test
-    void testDeleteAssessmentUserRoleParam_roleIdIsNull_ErrorMessage() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new DeleteUserAssessmentRoleUseCase.Param(assessmentId, userId, null, currentUserId));
-        assertThat(throwable).hasMessage("roleId: " + DELETE_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL);
     }
 
     @Test
@@ -45,7 +35,7 @@ class DeleteAssessmentUserRoleUseCaseParamTest {
         UUID assessmentId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new DeleteUserAssessmentRoleUseCase.Param(assessmentId, userId, 1, null));
+            () -> new DeleteUserAssessmentRoleUseCase.Param(assessmentId, userId,  null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }

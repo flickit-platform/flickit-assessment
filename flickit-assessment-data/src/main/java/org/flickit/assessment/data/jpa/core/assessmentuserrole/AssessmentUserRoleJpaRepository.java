@@ -10,5 +10,5 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
 
     Optional<AssessmentUserRoleJpaEntity> findByAssessmentIdAndUserId(UUID assessmentId, UUID currentUserId);
 
-    void deleteByAssessmentIdAndUserIdAndRoleId(UUID assessmentId, UUID userId, Integer roleId);
+    void deleteByAssessmentIdAndUserId(UUID assessmentId, UUID userId);
 }

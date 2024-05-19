@@ -44,7 +44,6 @@ class DeleteUserAssessmentRoleServiceTest {
         UUID currentUserId = UUID.randomUUID();
         DeleteUserAssessmentRoleUseCase.Param param = new DeleteUserAssessmentRoleUseCase.Param(assessmentId,
             userId,
-            1,
             currentUserId);
 
         when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE))
@@ -64,7 +63,6 @@ class DeleteUserAssessmentRoleServiceTest {
         UUID currentUserId = UUID.randomUUID();
         DeleteUserAssessmentRoleUseCase.Param param = new DeleteUserAssessmentRoleUseCase.Param(assessmentId,
             userId,
-            1,
             currentUserId);
 
         when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE))
@@ -87,7 +85,6 @@ class DeleteUserAssessmentRoleServiceTest {
         UUID currentUserId = UUID.randomUUID();
         DeleteUserAssessmentRoleUseCase.Param param = new DeleteUserAssessmentRoleUseCase.Param(assessmentId,
             userId,
-            1,
             currentUserId);
 
         when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE))
@@ -98,6 +95,6 @@ class DeleteUserAssessmentRoleServiceTest {
         assertDoesNotThrow(()-> service.deleteAssessmentUserRole(param));
 
         verify(assessmentPermissionChecker).isAuthorized(assessmentId, currentUserId, DELETE_USER_ASSESSMENT_ROLE);
-        verify(deleteUserAssessmentRolePort).deleteUserAssessmentRole(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+        verify(deleteUserAssessmentRolePort).deleteUserAssessmentRole(param.getAssessmentId(), param.getUserId());
     }
 }

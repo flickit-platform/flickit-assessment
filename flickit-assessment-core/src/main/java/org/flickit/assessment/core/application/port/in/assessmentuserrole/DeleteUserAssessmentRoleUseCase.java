@@ -24,16 +24,12 @@ public interface DeleteUserAssessmentRoleUseCase {
         @NotNull(message = DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL)
         UUID userId;
 
-        @NotNull(message = DELETE_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL)
-        Integer roleId;
-
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(UUID assessmentId, UUID userId, Integer roleId, UUID currentUserId) {
+        public Param(UUID assessmentId, UUID userId, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.userId = userId;
-            this.roleId = roleId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

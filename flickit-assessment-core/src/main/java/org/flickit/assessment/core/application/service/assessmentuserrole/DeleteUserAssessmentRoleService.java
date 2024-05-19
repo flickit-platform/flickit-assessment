@@ -31,6 +31,6 @@ public class DeleteUserAssessmentRoleService implements DeleteUserAssessmentRole
         if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getUserId()))
             throw new ResourceNotFoundException(DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER);
 
-        deleteUserAssessmentRolePort.deleteUserAssessmentRole(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+        deleteUserAssessmentRolePort.deleteUserAssessmentRole(param.getAssessmentId(), param.getUserId());
     }
 }

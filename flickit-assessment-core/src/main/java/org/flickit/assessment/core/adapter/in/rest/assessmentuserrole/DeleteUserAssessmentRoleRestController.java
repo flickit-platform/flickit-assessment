@@ -26,6 +26,6 @@ public class DeleteUserAssessmentRoleRestController {
     }
 
     private Param toParam(UUID assessmentId, DeleteUserAssessmentRoleRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId, requestDto.userId(), requestDto.roleId(), currentUserId);
+        return new Param(assessmentId, requestDto.userId(), currentUserId);
     }
 }
