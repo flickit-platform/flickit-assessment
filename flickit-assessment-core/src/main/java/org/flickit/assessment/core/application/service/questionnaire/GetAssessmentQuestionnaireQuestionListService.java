@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.service.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
@@ -13,7 +12,6 @@ import org.flickit.assessment.core.application.port.out.question.LoadQuestionnai
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -37,7 +35,9 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             param.getSize(),
             param.getPage());
 
-        Map<Long, org.flickit.assessment.core.application.domain.Answer> questionIdToAnswerMap = loadAssessmentQuestionnaireAnswerListPort.loadQuestionnaireAnswers(param.getAssessmentId(), param.getQuestionnaireId(),
+        var questionIdToAnswerMap = loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(
+                param.getAssessmentId(),
+                param.getQuestionnaireId(),
                 param.getSize(),
                 param.getPage())
             .getItems()
