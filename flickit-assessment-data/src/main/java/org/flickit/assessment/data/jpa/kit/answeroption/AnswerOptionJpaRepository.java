@@ -13,11 +13,11 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     @Modifying
     @Query("""
-        UPDATE AnswerOptionJpaEntity a
-        SET a.title = :title,
-        a.lastModificationTime = :lastModificationTime,
-        a.lastModifiedBy = :lastModifiedBy
-        WHERE a.id = :id
+            UPDATE AnswerOptionJpaEntity a
+            SET a.title = :title,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastModifiedBy = :lastModifiedBy
+            WHERE a.id = :id
         """)
     void update(@Param("id") Long id,
                 @Param("title") String title,
@@ -27,10 +27,10 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
     List<AnswerOptionJpaEntity> findByQuestionId(Long questionId);
 
     @Query("""
-        SELECT a FROM AnswerOptionJpaEntity a
-        JOIN QuestionJpaEntity q ON a.questionId = q.id
-        WHERE a.questionId IN :questionIds
-        ORDER BY q.index, a.index
+            SELECT a FROM AnswerOptionJpaEntity a
+            JOIN QuestionJpaEntity q ON a.questionId = q.id
+            WHERE a.questionId IN :questionIds
+            ORDER BY q.index, a.index
         """)
     List<AnswerOptionJpaEntity> findAllByQuestionIdInOrderByQuestionIdIndex(List<Long> questionIds);
 }
