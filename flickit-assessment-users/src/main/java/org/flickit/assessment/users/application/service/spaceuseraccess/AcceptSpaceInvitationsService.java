@@ -3,9 +3,9 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.users.application.domain.SpaceInvitee;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
-import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
+import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.UUID;
 public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseCase {
 
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
-    private final GetSpaceUserInvitationsPort getSpaceUserInvitationsPort;
+    private final LoadSpaceUserInvitationsPort loadSpaceUserInvitationsPort;
     private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
     private final DeleteSpaceUserInvitationsPort deleteSpaceUserInvitationsPort;
 
@@ -29,7 +29,7 @@ public class AcceptSpaceInvitationsService implements AcceptSpaceInvitationsUseC
     public void acceptInvitations(Param param) {
         var email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
 
-        var invitations = getSpaceUserInvitationsPort.loadInvitations(email);
+        var invitations = loadSpaceUserInvitationsPort.loadInvitations(email);
 
         List<SpaceUserAccess> validInvitations = invitations.stream()
             .filter(SpaceInvitee::isNotExpired)
