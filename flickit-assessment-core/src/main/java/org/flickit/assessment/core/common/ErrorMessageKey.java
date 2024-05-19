@@ -133,4 +133,10 @@ public class ErrorMessageKey {
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "grant-assessment-user-role.roleId.notNull";
     public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER = "grant-assessment-user-role.userId.notMember";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "grant-assessment-user-role.roleId.notFound";
+
+    public static final String DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "delete-assessment-user-role.assessmentId.notNull";
+    public static final String DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "delete-assessment-user-role.userId.notNull";
+    public static final String DELETE_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "delete-assessment-user-role.roleId.notNull";
+    public static final String DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER = "delete-assessment-user-role.userId.notMember";
+    public static final String DELETE_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "delete-assessment-user-role.roleId.notFound";
 }
