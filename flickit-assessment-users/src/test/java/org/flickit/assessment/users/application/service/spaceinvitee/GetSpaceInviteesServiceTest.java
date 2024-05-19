@@ -5,7 +5,6 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceInviteesUseCase;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceInviteesUseCase.Param;
-import org.flickit.assessment.users.application.port.out.space.CheckSpaceExistsPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceInviteesPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.test.fixture.application.SpaceInviteeMother;
@@ -32,9 +31,8 @@ class GetSpaceInviteesServiceTest {
     GetSpaceInviteesService service;
 
     @Mock
-    CheckSpaceExistsPort checkSpaceExistsPort;
-    @Mock
     CheckSpaceAccessPort checkSpaceAccessPort;
+
     @Mock
     LoadSpaceInviteesPort loadSpaceInviteesPort;
 
@@ -47,11 +45,11 @@ class GetSpaceInviteesServiceTest {
         int page = 0;
         Param param = new Param(spaceId, currentUserId, size, page);
 
-        when(checkSpaceExistsPort.existById(spaceId)).thenReturn(false);
+        when(loadSpaceInviteesPort.loadInvitees(spaceId, page, size))
+            .thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.getInvitees(param), SPACE_ID_NOT_FOUND);
-        verify(checkSpaceExistsPort).existById(spaceId);
-        verifyNoInteractions(loadSpaceInviteesPort);
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getInvitees(param));
+        assertEquals(SPACE_ID_NOT_FOUND, throwable.getMessage());
     }
 
     @Test
@@ -63,11 +61,9 @@ class GetSpaceInviteesServiceTest {
         int page = 0;
         Param param = new Param(spaceId, currentUserId, size, page);
 
-        when(checkSpaceExistsPort.existById(spaceId)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.getInvitees(param), COMMON_CURRENT_USER_NOT_ALLOWED);
-        verify(checkSpaceExistsPort).existById(spaceId);
         verify(checkSpaceAccessPort).checkIsMember(spaceId,currentUserId);
         verifyNoInteractions(loadSpaceInviteesPort);
     }
@@ -88,7 +84,6 @@ class GetSpaceInviteesServiceTest {
 
         GetSpaceInviteesUseCase.Param param = new GetSpaceInviteesUseCase.Param(spaceId, currentUserId, size, page);
 
-        when(checkSpaceExistsPort.existById(spaceId)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadSpaceInviteesPort.loadInvitees(spaceId, page, size)).thenReturn(paginatedResponse);
 
@@ -98,7 +93,6 @@ class GetSpaceInviteesServiceTest {
         assertEquals(size, result.getSize(), "'size' should be 10");
         assertEquals(2, result.getTotal(), "'total' should be 2");
 
-        verify(checkSpaceExistsPort).existById(spaceId);
         verify(checkSpaceAccessPort).checkIsMember(spaceId,currentUserId);
         verify(loadSpaceInviteesPort).loadInvitees(spaceId, page, size);
     }

@@ -2,6 +2,8 @@ package org.flickit.assessment.users.adapter.out.persistence.spaceinvitee;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
 import org.flickit.assessment.users.application.domain.SpaceInvitee;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
+
 @Component
 @RequiredArgsConstructor
 public class SpaceInviteePersistenceJpaAdapter implements
@@ -25,6 +29,7 @@ public class SpaceInviteePersistenceJpaAdapter implements
     LoadSpaceInviteesPort {
 
     private final SpaceInviteeJpaRepository repository;
+    private final SpaceJpaRepository spaceRepository;
 
     @Override
     public void deleteAll(String email) {
@@ -52,6 +57,9 @@ public class SpaceInviteePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<SpaceInvitee> loadInvitees(long spaceId, int page, int size) {
+        if (!spaceRepository.existsByIdAndDeletedFalse(spaceId))
+            throw new ResourceNotFoundException(SPACE_ID_NOT_FOUND);
+
         var pageResult = repository.findBySpaceId(spaceId, LocalDateTime.now(),
             PageRequest.of(page, size, Sort.Direction.DESC, SpaceInviteeJpaEntity.Fields.CREATION_TIME));
 
