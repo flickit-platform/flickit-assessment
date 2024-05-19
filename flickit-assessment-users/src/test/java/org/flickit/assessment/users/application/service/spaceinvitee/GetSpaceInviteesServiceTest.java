@@ -45,6 +45,7 @@ class GetSpaceInviteesServiceTest {
         int page = 0;
         Param param = new Param(spaceId, currentUserId, size, page);
 
+        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadSpaceInviteesPort.loadInvitees(spaceId, page, size))
             .thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
 
@@ -63,8 +64,10 @@ class GetSpaceInviteesServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getInvitees(param), COMMON_CURRENT_USER_NOT_ALLOWED);
-        verify(checkSpaceAccessPort).checkIsMember(spaceId,currentUserId);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getInvitees(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verifyNoInteractions(loadSpaceInviteesPort);
     }
 
