@@ -22,7 +22,7 @@ public class DeleteUserAssessmentRoleRestController {
                                                         @RequestBody DeleteUserAssessmentRoleRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.deleteAssessmentUserRole(toParam(assessmentId, requestDto, currentUserId));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private Param toParam(UUID assessmentId, DeleteUserAssessmentRoleRequestDto requestDto, UUID currentUserId) {
