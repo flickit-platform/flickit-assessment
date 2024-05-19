@@ -7,7 +7,10 @@ import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceInv
 import org.flickit.assessment.users.application.port.in.spaceinvitee.GetSpaceInviteesUseCase.Invitee;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
@@ -15,14 +18,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GetSpaceInviteesRestController {
 
-    private final UserContext userContext;
     private final GetSpaceInviteesUseCase useCase;
+    private final UserContext userContext;
 
     @GetMapping("/spaces/{id}/invitees")
-    public ResponseEntity<PaginatedResponse<Invitee>> getSpaceInvitees(
-        @PathVariable("id") long id,
-        @RequestParam(defaultValue = "10") int size,
-        @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<PaginatedResponse<Invitee>> getSpaceInvitees(@PathVariable("id") long id,
+                                                                       @RequestParam(defaultValue = "10") int size,
+                                                                       @RequestParam(defaultValue = "0") int page) {
         UUID currentUserId = userContext.getUser().id();
         var invitees = useCase.getInvitees(toParam(id, currentUserId, size, page));
 
