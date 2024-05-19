@@ -34,9 +34,11 @@ public interface SpaceInviteeJpaRepository extends JpaRepository<SpaceInviteeJpa
     List<SpaceInviteeJpaEntity> findByEmail(@Param("email") String email);
 
     @Query("""
-        SELECT s
-        FROM SpaceInviteeJpaEntity s
-        WHERE s.spaceId = :spaceId AND :currentTime < s.expirationDate
+            SELECT s
+            FROM SpaceInviteeJpaEntity s
+            WHERE s.spaceId = :spaceId AND s.expirationDate > :currentTime
         """)
-    Page<SpaceInviteeJpaEntity> findBySpaceId(long spaceId, LocalDateTime currentTime, Pageable pageable);
+    Page<SpaceInviteeJpaEntity> findBySpaceId(@Param("spaceId") long spaceId,
+                                              @Param("currentTime") LocalDateTime currentTime,
+                                              Pageable pageable);
 }
