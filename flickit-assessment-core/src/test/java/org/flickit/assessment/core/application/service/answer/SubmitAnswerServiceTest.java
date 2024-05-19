@@ -13,7 +13,7 @@ import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.question.CheckQuestionMayNotBeApplicablePort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
 import org.flickit.assessment.core.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
@@ -48,7 +48,7 @@ class SubmitAnswerServiceTest {
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    private CheckQuestionMayNotBeApplicablePort checkQuestionMayNotBeApplicablePort;
+    private LoadQuestionMayNotBeApplicablePort loadQuestionMayNotBeApplicablePort;
 
     @Mock
     private CreateAnswerPort createAnswerPort;
@@ -106,7 +106,7 @@ class SubmitAnswerServiceTest {
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.FALSE);
-        verifyNoInteractions(checkQuestionMayNotBeApplicablePort, updateAnswerPort);
+        verifyNoInteractions(loadQuestionMayNotBeApplicablePort, updateAnswerPort);
     }
 
     @Test
@@ -134,7 +134,7 @@ class SubmitAnswerServiceTest {
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
-        verifyNoInteractions(checkQuestionMayNotBeApplicablePort, invalidateAssessmentResultPort, updateAnswerPort);
+        verifyNoInteractions(loadQuestionMayNotBeApplicablePort, invalidateAssessmentResultPort, updateAnswerPort);
     }
 
     @Test
@@ -148,7 +148,7 @@ class SubmitAnswerServiceTest {
 
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
-        when(checkQuestionMayNotBeApplicablePort.checkQuestionMayNotBeApplicable(param.getQuestionId())).thenReturn(true);
+        when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId())).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.empty());
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
 
@@ -194,7 +194,7 @@ class SubmitAnswerServiceTest {
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.TRUE);
-        verifyNoInteractions(checkQuestionMayNotBeApplicablePort, createAnswerPort);
+        verifyNoInteractions(loadQuestionMayNotBeApplicablePort, createAnswerPort);
     }
 
     @Test
@@ -209,7 +209,7 @@ class SubmitAnswerServiceTest {
 
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
-        when(checkQuestionMayNotBeApplicablePort.checkQuestionMayNotBeApplicable(param.getQuestionId())).thenReturn(true);
+        when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId())).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
         var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), null, ConfidenceLevel.getDefault().getId(), isNotApplicable, currentUserId);
@@ -245,7 +245,7 @@ class SubmitAnswerServiceTest {
         service.submitAnswer(param);
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
-        verifyNoInteractions(checkQuestionMayNotBeApplicablePort,
+        verifyNoInteractions(loadQuestionMayNotBeApplicablePort,
             createAnswerPort,
             updateAnswerPort,
             invalidateAssessmentResultPort);
@@ -281,7 +281,7 @@ class SubmitAnswerServiceTest {
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.TRUE);
-        verifyNoInteractions(checkQuestionMayNotBeApplicablePort, createAnswerPort);
+        verifyNoInteractions(loadQuestionMayNotBeApplicablePort, createAnswerPort);
     }
 
     @Test
@@ -295,7 +295,7 @@ class SubmitAnswerServiceTest {
 
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
-        when(checkQuestionMayNotBeApplicablePort.checkQuestionMayNotBeApplicable(param.getQuestionId())).thenReturn(false);
+        when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId())).thenReturn(false);
 
         ValidationException exception = assertThrows(ValidationException.class, () -> service.submitAnswer(param));
         assertEquals(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE, exception.getMessage());
@@ -316,7 +316,7 @@ class SubmitAnswerServiceTest {
 
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
-        when(checkQuestionMayNotBeApplicablePort.checkQuestionMayNotBeApplicable(param.getQuestionId())).thenReturn(true);
+        when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId())).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
         service.submitAnswer(param);
@@ -352,6 +352,6 @@ class SubmitAnswerServiceTest {
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.TRUE, Boolean.FALSE);
-        verifyNoInteractions(checkQuestionMayNotBeApplicablePort, createAnswerPort);
+        verifyNoInteractions(loadQuestionMayNotBeApplicablePort, createAnswerPort);
     }
 }

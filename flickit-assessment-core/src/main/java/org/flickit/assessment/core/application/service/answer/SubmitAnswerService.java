@@ -13,7 +13,7 @@ import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.question.CheckQuestionMayNotBeApplicablePort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +32,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
     private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
-    private final CheckQuestionMayNotBeApplicablePort checkQuestionMayNotBeApplicablePort;
+    private final LoadQuestionMayNotBeApplicablePort loadQuestionMayNotBeApplicablePort;
     private final CreateAnswerPort createAnswerPort;
     private final LoadAnswerPort loadAnswerPort;
     private final UpdateAnswerPort updateAnswerPort;
@@ -47,7 +47,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
 
         if (Boolean.TRUE.equals(param.getIsNotApplicable())) {
-            var isMayNotBeApplicable = checkQuestionMayNotBeApplicablePort.checkQuestionMayNotBeApplicable(param.getQuestionId());
+            var isMayNotBeApplicable = loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId());
             if (!isMayNotBeApplicable)
                 throw new ValidationException(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE);
         }

@@ -3,7 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.question;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Question;
-import org.flickit.assessment.core.application.port.out.question.CheckQuestionMayNotBeApplicablePort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsBySubjectPort;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_Q
 @RequiredArgsConstructor
 public class QuestionPersistenceJpaAdapter implements
     LoadQuestionsBySubjectPort,
-    CheckQuestionMayNotBeApplicablePort {
+    LoadQuestionMayNotBeApplicablePort {
 
     private final QuestionJpaRepository repository;
 
@@ -28,8 +28,8 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean checkQuestionMayNotBeApplicable(Long questionId) {
-        return repository.findById(questionId)
+    public boolean loadMayNotBeApplicableById(Long id) {
+        return repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND))
             .getMayNotBeApplicable();
     }
