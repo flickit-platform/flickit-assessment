@@ -1,11 +1,11 @@
 package org.flickit.assessment.users.application.service.spaceuseraccess;
 
-import org.flickit.assessment.users.application.domain.SpaceInvitation;
-import org.flickit.assessment.users.application.port.in.spaceinvitee.LoadSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
+import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
+import org.flickit.assessment.users.test.fixture.application.SpaceInviteeMother;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -59,7 +58,7 @@ class AcceptSpaceInvitationsServiceTest {
         long spaceId = 0L;
         String email = "test@example.com";
         AcceptSpaceInvitationsUseCase.Param param = new AcceptSpaceInvitationsUseCase.Param(userId);
-        var portResult = Stream.of(new SpaceInvitation(email, spaceId, userId, LocalDateTime.now(), LocalDateTime.now().plusDays(1))).toList();
+        var portResult = Stream.of(SpaceInviteeMother.notExpiredInvitee(spaceId, email)).toList();
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);
@@ -79,7 +78,7 @@ class AcceptSpaceInvitationsServiceTest {
         long spaceId = 0L;
         String email = "test@example.com";
         AcceptSpaceInvitationsUseCase.Param param = new AcceptSpaceInvitationsUseCase.Param(userId);
-        var portResult = Stream.of(new SpaceInvitation(email, spaceId, userId, LocalDateTime.now(), LocalDateTime.now().minusDays(1))).toList();
+        var portResult = Stream.of(SpaceInviteeMother.expiredInvitee(spaceId, email)).toList();
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(loadSpaceUserInvitationsPort.loadInvitations(email)).thenReturn(portResult);

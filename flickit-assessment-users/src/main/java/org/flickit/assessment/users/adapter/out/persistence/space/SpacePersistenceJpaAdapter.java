@@ -7,9 +7,7 @@ import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.out.LoadSpaceDetailsPort;
-import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
+import org.flickit.assessment.users.application.port.out.space.*;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.UpdateSpaceLastSeenPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,7 +27,9 @@ public class SpacePersistenceJpaAdapter implements
     LoadSpaceListPort,
     LoadSpaceOwnerPort,
     LoadSpaceDetailsPort,
-    UpdateSpaceLastSeenPort {
+    UpdateSpaceLastSeenPort,
+    CountSpaceAssessmentPort,
+    DeleteSpacePort {
 
     private final SpaceJpaRepository repository;
 
@@ -80,5 +80,17 @@ public class SpacePersistenceJpaAdapter implements
     @Override
     public void updateLastSeen(long spaceId, UUID userId, LocalDateTime currentTime) {
         repository.updateLastSeen(spaceId, userId, currentTime);
+    }
+
+    @Override
+    public int countAssessments(long spaceId) {
+        return repository.countAssessments(spaceId);
+    }
+
+    @Override
+    public void deleteById(long spaceId) {
+        if (!repository.existsByIdAndDeletedFalse(spaceId))
+            throw new ResourceNotFoundException(SPACE_ID_NOT_FOUND);
+        repository.delete(spaceId);
     }
 }

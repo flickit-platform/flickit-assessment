@@ -11,4 +11,13 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="0.19-02" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="deleted" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
