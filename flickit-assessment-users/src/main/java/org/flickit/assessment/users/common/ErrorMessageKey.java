@@ -96,4 +96,8 @@ public class ErrorMessageKey {
     public static final String DELETE_SPACE_ASSESSMENT_EXIST = "delete-space.assessments.exist";
     public static final String DELETE_SPACE_SPACE_ID_NOT_NULL = "delete-space.spaceId.notNull";
 
+    public static final String GET_SPACE_INVITEES_SPACE_ID_NOT_NULL = "get-space-invitees.spaceId.notNull";
+    public static final String GET_SPACE_INVITEES_SIZE_MIN = "get-space-invitees.size.min";
+    public static final String GET_SPACE_INVITEES_SIZE_MAX = "get-space-invitees.size.max";
+    public static final String GET_SPACE_INVITEES_PAGE_MIN = "get-space-invitees.page.min";
 }
