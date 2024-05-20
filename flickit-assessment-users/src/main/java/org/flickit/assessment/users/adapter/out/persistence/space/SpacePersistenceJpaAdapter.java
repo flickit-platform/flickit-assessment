@@ -96,7 +96,6 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public void updateSpace(Param param) {
-        repository.update(param.id(), param.title(),
-            param.lastModificationTime(), param.lastModifiedBy());
+        repository.update(param.id(), param.title(), param.lastModificationTime(), param.lastModifiedBy());
     }
 }
