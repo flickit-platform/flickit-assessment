@@ -153,6 +153,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var maturityLevel = MaturityLevelMapper.mapToDomainModel(maturityLevelEntity, null);
         return new AttributeReportItem(attribute.getId(),
             attribute.getTitle(),
+            attribute.getDescription(),
             attribute.getIndex(),
             attributeValue.getConfidenceValue(),
             maturityLevel);
