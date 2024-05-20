@@ -8,12 +8,13 @@ import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
-import org.flickit.assessment.core.application.port.out.answer.LoadAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadQuestionAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -27,7 +28,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
 
     private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
-    private final LoadAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
+    private final LoadQuestionAnswerListPort loadQuestionAnswerListPort;
 
     @Override
     public PaginatedResponse<Result> getQuestionnaireQuestionList(Param param) {
@@ -37,12 +38,11 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             param.getSize(),
             param.getPage());
 
-        var questionIdToAnswerMap = loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(
-                param.getAssessmentId(),
-                param.getQuestionnaireId(),
-                param.getSize(),
-                param.getPage())
-            .getItems()
+        List<Long> questionIds = pageResult.getItems().stream()
+            .map(Question::getId)
+            .toList();
+
+        var questionIdToAnswerMap = loadQuestionAnswerListPort.loadByQuestionIds(param.getAssessmentId(), questionIds)
             .stream()
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
