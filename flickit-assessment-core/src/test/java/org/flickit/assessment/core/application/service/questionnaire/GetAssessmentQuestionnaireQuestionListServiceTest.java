@@ -172,4 +172,50 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(question.getMayNotBeApplicable(), item.mayNotBeApplicable());
         assertNull(item.answer().selectedOption());
     }
+
+    @Test
+    void testGetAssessmentQuestionnaireQuestionList_SelectedOptionIsNullAnswerValidParam_ValidResult() {
+        Param param = new Param(UUID.randomUUID(), 12L, 10, 0, UUID.randomUUID());
+        Question question = QuestionMother.withOptions();
+        PaginatedResponse<Question> expectedPaginatedResponse = new PaginatedResponse<>(
+            List.of(question),
+            0,
+            1,
+            "index",
+            "asc",
+            1
+        );
+        Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 1, Boolean.FALSE);
+
+        PaginatedResponse<Answer> expectedPageResult = new PaginatedResponse<>(
+            List.of(answer),
+            0,
+            10,
+            AnswerJpaEntity.Fields.QUESTION_INDEX,
+            Sort.Direction.ASC.name().toLowerCase(),
+            1
+        );
+
+        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+            .thenReturn(true);
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
+            .thenReturn(expectedPaginatedResponse);
+        when(loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
+            .thenReturn(expectedPageResult);
+
+        PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
+
+        assertEquals(expectedPaginatedResponse.getSize(), result.getSize());
+        assertEquals(expectedPaginatedResponse.getTotal(), result.getTotal());
+        assertEquals(expectedPaginatedResponse.getOrder(), result.getOrder());
+        assertEquals(expectedPaginatedResponse.getPage(), result.getPage());
+        assertEquals(expectedPaginatedResponse.getSort(), result.getSort());
+        Result item = result.getItems().get(0);
+        assertEquals(question.getId(), item.id());
+        assertEquals(question.getTitle(), item.title());
+        assertEquals(question.getIndex(), item.index());
+        assertEquals(question.getHint(), item.hint());
+        assertEquals(question.getMayNotBeApplicable(), item.mayNotBeApplicable());
+        assertNull(item.answer().selectedOption());
+    }
 }

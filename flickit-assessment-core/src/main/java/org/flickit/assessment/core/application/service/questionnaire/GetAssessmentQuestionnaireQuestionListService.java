@@ -61,10 +61,8 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
     private Result mapToResult(Question question, Answer answer) {
         QuestionAnswer answerDto = null;
         if (answer != null) {
-            Option answerOption;
-            if (Boolean.TRUE.equals(answer.getIsNotApplicable()))
-                answerOption = null;
-            else {
+            Option answerOption = null;
+            if (!Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null) {
                 answerOption = question.getOptions().stream()
                     .filter(x -> Objects.equals(x.getId(), answer.getSelectedOption().getId()))
                     .map(this::mapToOption)
