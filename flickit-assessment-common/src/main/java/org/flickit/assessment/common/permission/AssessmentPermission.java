@@ -31,7 +31,8 @@ public enum AssessmentPermission {
     VIEW_SUBJECT_PROGRESS("view-subject-progress"),
     VIEW_SUBJECT_REPORT("view-subject-report"),
     CREATE_ADVICE("create-advice"),
-    GRANT_USER_ASSESSMENT_ROLE("grant-user-assessment-role");
+    GRANT_USER_ASSESSMENT_ROLE("grant-user-assessment-role"),
+    UPDATE_USER_ASSESSMENT_ROLE("update-user-assessment-role");
 
     private final String code;
 }
