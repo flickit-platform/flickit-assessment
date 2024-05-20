@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.adapter.out.persistence.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ASSESSMENT_USER_ROLE_USER_ID_AND_ASSESSMENT_ID_ALREADY_EXIST;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +32,9 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
 
     @Override
     public void grantUserAssessmentRole(UUID assessmentId, UUID userId, Integer roleId) {
+        var userRoleOnAssessment = repository.findByAssessmentIdAndUserId(assessmentId, userId);
+        if (userRoleOnAssessment.isPresent())
+            throw new ResourceAlreadyExistsException(GRANT_ASSESSMENT_USER_ROLE_USER_ID_AND_ASSESSMENT_ID_ALREADY_EXIST);
         if (!AssessmentUserRole.isValidId(roleId))
             throw new ResourceNotFoundException(GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND);
         var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
