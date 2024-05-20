@@ -113,7 +113,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(question.getHint(), item.hint());
         assertEquals(question.getMayNotBeApplicable(), item.mayNotBeApplicable());
         assertEquals(answer.getSelectedOption().getId(), item.answer().selectedOption().id());
-        assertEquals(question.getOptions().get(0).getTitle(), item.answer().selectedOption().caption());
+        assertEquals(question.getOptions().get(0).getTitle(), item.answer().selectedOption().title());
     }
 
     @Test
