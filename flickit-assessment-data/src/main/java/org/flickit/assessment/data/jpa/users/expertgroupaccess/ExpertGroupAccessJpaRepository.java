@@ -30,11 +30,11 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         WHERE e.expertGroupId = :expertGroupId
             AND e.status = :status
             AND g.deleted = FALSE
-            AND ((:status = 0 AND e.inviteExpirationDate > :currentDateTime) OR :status = 1)
+            AND ((:status = 0 AND e.inviteExpirationDate > :now) OR :status = 1)
         """)
     Page<ExpertGroupMembersView> findExpertGroupMembers(@Param(value = "expertGroupId") Long expertGroupId,
                                                         @Param(value = "status") int status,
-                                                        @Param(value = "currentDateTime") LocalDateTime currentDateTime,
+                                                        @Param(value = "now") LocalDateTime now,
                                                         Pageable pageable);
 
     boolean existsByExpertGroupIdAndUserId(@Param(value = "expertGroupId") long expertGroupId,
