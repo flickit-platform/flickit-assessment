@@ -83,7 +83,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             answerDto);
     }
 
-    private Option mapToOption(AnswerOption ao) {
-        return new Option(ao.getId(), ao.getTitle(), ao.getIndex());
+    private Option mapToOption(AnswerOption option) {
+        return new Option(option.getId(), option.getIndex(), option.getTitle());
     }
 }

@@ -58,7 +58,7 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
                   QuestionAnswer answer) {
     }
 
-    record Option(Long id, String title, Integer index) {
+    record Option(Long id, Integer index, String title) {
     }
 
     record QuestionAnswer(Option selectedOption,
