@@ -22,7 +22,7 @@ public record AssessmentReportItem(UUID id,
         String summary,
         Integer maturityLevelCount,
         ExpertGroup expertGroup) {
-        public record ExpertGroup(Long id, String title) {
+        public record ExpertGroup(Long id, String title, String picture) {
         }
     }
 }

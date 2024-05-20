@@ -51,7 +51,7 @@ class ReportAssessmentServiceTest {
             new AttributeReportItem(1L, "attrTitle1", 2, 1),
             new AttributeReportItem(2L, "attrTitle2", 1, 2),
             new AttributeReportItem(3L, "attrTitle3", 3, 3));
-        var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1");
+        var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1", "picture/link");
         var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", 3, expertGroup);
         MaturityLevel assessmentMaturityLevel = MaturityLevelMother.levelThree();
         LocalDateTime creationTime = LocalDateTime.now();

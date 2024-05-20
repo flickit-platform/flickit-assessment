@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.domain.report.AssessmentReportIte
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
@@ -30,6 +31,7 @@ import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +47,8 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @AllArgsConstructor
 public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfoPort {
 
+    private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
+
     private final AssessmentJpaRepository assessmentRepository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
@@ -54,6 +58,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final SubjectJpaRepository subjectJpaRepository;
     private final QualityAttributeValueJpaRepository qualityAttributeValueJpaRepository;
     private final AttributeJpaRepository attributeJpaRepository;
+    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public Result load(UUID assessmentId) {
@@ -97,12 +102,13 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         return new Result(assessmentReportItem, attributes, maturityLevels, subjects);
     }
 
-    private static AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(ExpertGroupJpaEntity expertGroupEntity,
-                                                                                 AssessmentKitJpaEntity assessmentKitEntity,
-                                                                                 List<MaturityLevelJpaEntity> maturityLevelJpaEntities) {
+    private AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(ExpertGroupJpaEntity expertGroupEntity,
+                                                                          AssessmentKitJpaEntity assessmentKitEntity,
+                                                                          List<MaturityLevelJpaEntity> maturityLevelJpaEntities) {
         AssessmentReportItem.AssessmentKitItem.ExpertGroup expertGroup =
             new AssessmentReportItem.AssessmentKitItem.ExpertGroup(expertGroupEntity.getId(),
-                expertGroupEntity.getTitle());
+                expertGroupEntity.getTitle(),
+                createFileDownloadLinkPort.createDownloadLink(expertGroupEntity.getPicture(), EXPIRY_DURATION));
 
         return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
             assessmentKitEntity.getTitle(),
