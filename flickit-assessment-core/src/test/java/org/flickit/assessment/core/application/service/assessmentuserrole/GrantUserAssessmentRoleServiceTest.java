@@ -36,11 +36,8 @@ class GrantUserAssessmentRoleServiceTest {
     private GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Test
-    void testGrantAssessmentUserRole_CurrentUserRoleIsNull_ThrowsException() {
-        Param param = new Param(UUID.randomUUID(),
-            UUID.randomUUID(),
-            1,
-            UUID.randomUUID());
+    void testGrantAssessmentUserRole_CurrentUserIsNotAuthorized_ThrowsException() {
+        Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
 
         when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(false);
@@ -52,27 +49,8 @@ class GrantUserAssessmentRoleServiceTest {
     }
 
     @Test
-    void testGrantAssessmentUserRole_CurrentUserRoleIsNotManager_ThrowsException() {
-        Param param = new Param(UUID.randomUUID(),
-            UUID.randomUUID(),
-            1,
-            UUID.randomUUID());
-
-        when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
-            .thenReturn(false);
-
-        var exception = assertThrows(AccessDeniedException.class, () -> service.grantAssessmentUserRole(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
-
-        verifyNoInteractions(checkUserAssessmentAccessPort, grantUserAssessmentRolePort);
-    }
-
-    @Test
-    void testGrantAssessmentUserRole_UserHasNotAccessToAssessment_ThrowsException() {
-        Param param = new Param(UUID.randomUUID(),
-            UUID.randomUUID(),
-            1,
-            UUID.randomUUID());
+    void testGrantAssessmentUserRole_UserIsNotSpaceMember_ThrowsException() {
+        Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
 
         when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
@@ -88,10 +66,7 @@ class GrantUserAssessmentRoleServiceTest {
 
     @Test
     void testGrantAssessmentUserRole_ValidParam_GrantAccess() {
-        Param param = new Param(UUID.randomUUID(),
-            UUID.randomUUID(),
-            1,
-            UUID.randomUUID());
+        Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
 
         when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
