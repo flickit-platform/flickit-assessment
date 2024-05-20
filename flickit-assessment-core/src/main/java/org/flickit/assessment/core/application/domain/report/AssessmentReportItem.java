@@ -14,6 +14,7 @@ public record AssessmentReportItem(UUID id,
                                    boolean isCalculateValid,
                                    boolean isConfidenceValid,
                                    AssessmentColor color,
+                                   LocalDateTime creationTime,
                                    LocalDateTime lastModificationTime) {
     public record AssessmentKitItem(
         Long id,

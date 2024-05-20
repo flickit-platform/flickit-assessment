@@ -84,6 +84,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentResultEntity.getIsCalculateValid(),
             assessmentResultEntity.getIsConfidenceValid(),
             AssessmentColor.valueOfById(assessment.getColorId()),
+            assessment.getCreationTime(),
             assessment.getLastModificationTime());
 
         UUID assessmentResultId = assessmentResultEntity.getId();
