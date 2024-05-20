@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorMessageKey {
 
-    public static final String FILE_STORAGE_FILE_NOT_FOUND = "file-storage.file.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
     public static final String USER_BY_EMAIL_NOT_FOUND = "user-by-email.notFound";
     public static final String SPACE_ID_NOT_FOUND = "space.id.notFound";
