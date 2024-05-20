@@ -8,8 +8,9 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-public class SpaceInvitation {
+public class SpaceInvitee {
 
+    private final UUID id;
     private final String email;
     private final long spaceId;
     private final UUID inviterId;
