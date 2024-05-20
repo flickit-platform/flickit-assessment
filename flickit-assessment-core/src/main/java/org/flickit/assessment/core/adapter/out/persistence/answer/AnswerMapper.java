@@ -43,7 +43,7 @@ public class AnswerMapper {
 
     public static Answer mapToDomainModel(AnswerJpaEntity answer) {
         var answerOption = answer.getAnswerOptionId() != null ?
-            new AnswerOption(answer.getAnswerOptionId(), answer.getQuestionId(), new ArrayList<>()) : null;
+            new AnswerOption(answer.getAnswerOptionId(), null, null, answer.getQuestionId(), new ArrayList<>()) : null;
         return new Answer(
             answer.getId(),
             answerOption,
