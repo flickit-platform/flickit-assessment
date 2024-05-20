@@ -3,6 +3,8 @@ package org.flickit.assessment.core.application.service.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
@@ -42,7 +44,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                 param.getPage())
             .getItems()
             .stream()
-            .collect(toMap(org.flickit.assessment.core.application.domain.Answer::getQuestionId, Function.identity()));
+            .collect(toMap(Answer::getQuestionId, Function.identity()));
 
         var items = pageResult.getItems().stream()
             .map((Question q) -> mapToResult(q, questionIdToAnswerMap.get(q.getId()))).toList();
@@ -56,7 +58,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             pageResult.getTotal());
     }
 
-    private Result mapToResult(Question question, org.flickit.assessment.core.application.domain.Answer answer) {
+    private Result mapToResult(Question question, Answer answer) {
         QuestionAnswer answerDto = null;
         if (answer != null) {
             Option answerOption;
@@ -83,7 +85,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             answerDto);
     }
 
-    private Option mapToOption(org.flickit.assessment.core.application.domain.AnswerOption ao) {
+    private Option mapToOption(AnswerOption ao) {
         return new Option(ao.getId(), ao.getTitle(), ao.getIndex());
     }
 }
