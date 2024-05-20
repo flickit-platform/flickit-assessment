@@ -31,7 +31,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
-    public void grantUserAssessmentRole(UUID assessmentId, UUID userId, Integer roleId) {
+    public void persist(UUID assessmentId, UUID userId, Integer roleId) {
         var userRoleOnAssessment = repository.findByAssessmentIdAndUserId(assessmentId, userId);
         if (userRoleOnAssessment.isPresent())
             throw new ResourceAlreadyExistsException(GRANT_ASSESSMENT_USER_ROLE_USER_ROLE_DUPLICATE);

@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface GrantUserAssessmentRolePort {
 
-    void grantUserAssessmentRole(UUID assessmentId, UUID userId, Integer roleId);
+    void persist(UUID assessmentId, UUID userId, Integer roleId);
 }

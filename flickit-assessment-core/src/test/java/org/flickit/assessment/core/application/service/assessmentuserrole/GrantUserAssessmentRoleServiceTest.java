@@ -100,11 +100,11 @@ class GrantUserAssessmentRoleServiceTest {
             .thenReturn(true);
 
         doNothing().when(grantUserAssessmentRolePort)
-            .grantUserAssessmentRole(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+            .persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
 
         service.grantAssessmentUserRole(param);
 
         verify(grantUserAssessmentRolePort, times(1))
-            .grantUserAssessmentRole(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+            .persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
     }
 }

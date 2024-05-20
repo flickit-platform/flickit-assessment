@@ -30,6 +30,6 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
         if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getUserId()))
             throw new ResourceNotFoundException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        grantUserAssessmentRolePort.grantUserAssessmentRole(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+        grantUserAssessmentRolePort.persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
     }
 }
