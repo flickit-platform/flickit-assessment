@@ -695,6 +695,32 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Update ExpertGroup LastSeen",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/seen",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"seen"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
