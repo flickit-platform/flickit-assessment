@@ -34,4 +34,18 @@ public enum AssessmentUserRole {
     public int getId() {
         return this.ordinal();
     }
+
+    public static AssessmentUserRole valueOfById(int id) {
+        if (!isValidId(id))
+            return null;
+        return values()[id];
+    }
+
+    public static boolean isValidId(int id) {
+        return id >= 0 && id < AssessmentUserRole.values().length;
+    }
+
+    public boolean hasAccess(AssessmentPermission permission) {
+        return this.getPermissions().contains(permission);
+    }
 }

@@ -1,11 +1,11 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
-import org.flickit.assessment.common.permission.AssessmentPermission;
+import org.flickit.assessment.common.application.assessment.AssessmentPermission;
 import org.flickit.assessment.core.application.domain.Assessment;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
-import org.flickit.assessment.core.common.AssessmentUserRole;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

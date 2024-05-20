@@ -1,13 +1,13 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.assessment.AssessmentPermission;
+import org.flickit.assessment.common.application.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.permission.AssessmentPermission;
-import org.flickit.assessment.common.permission.AssessmentPermissionChecker;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
-import org.flickit.assessment.core.common.AssessmentUserRole;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_NOT_FOUND;
-import static org.flickit.assessment.core.common.AssessmentUserRole.MANAGER;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 
 @Service
 @Transactional(readOnly = true)
