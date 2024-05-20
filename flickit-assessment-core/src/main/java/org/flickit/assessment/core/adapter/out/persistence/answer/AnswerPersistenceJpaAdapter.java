@@ -31,7 +31,8 @@ public class AnswerPersistenceJpaAdapter implements
     CountAnswersByQuestionIdsPort,
     LoadAnswerPort,
     UpdateAnswerPort,
-    LoadAnswerListPort {
+    LoadAnswerListPort,
+    LoadQuestionAnswerListPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -123,5 +124,15 @@ public class AnswerPersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public List<Answer> loadByQuestionIds(UUID assessmentId, List<Long> questionIds) {
+        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
+
+        return repository.findByAssessmentResultIdAndQuestionIdIn(assessmentResult.getId(), questionIds).stream()
+            .map(AnswerMapper::mapToDomainModel)
+            .toList();
     }
 }

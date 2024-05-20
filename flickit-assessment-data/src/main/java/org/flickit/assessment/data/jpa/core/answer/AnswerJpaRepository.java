@@ -15,6 +15,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId);
 
+    List<AnswerJpaEntity> findByAssessmentResultIdAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
+
     List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
     @Query("SELECT COUNT(a) as answerCount FROM AnswerJpaEntity a " +
