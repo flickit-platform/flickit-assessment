@@ -21,7 +21,7 @@ public class UpdateSpaceLastSeenRestController {
     private final UserContext userContext;
 
     @PutMapping("/spaces/{id}/seen")
-    public ResponseEntity<CreateSpaceResponseDto> updateSpaceLastSeen(@PathVariable("id") Long spaceId) {
+    public ResponseEntity<Void> updateSpaceLastSeen(@PathVariable("id") Long spaceId) {
         UUID currentUserId = userContext.getUser().id();
         useCase.updateLastSeen(toParam(spaceId, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
