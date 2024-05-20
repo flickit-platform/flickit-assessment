@@ -35,10 +35,13 @@ public class AssessmentPermissionCheckerService implements AssessmentPermissionC
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_NOT_FOUND));
         if (Objects.equals(userId, assessment.getCreatedBy()))
             return ASSESSMENT_CREATED_BY_ROLE.hasAccess(permission);
+
         var spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(assessment.getSpaceId());
         if (Objects.equals(userId, spaceOwnerId))
             return SPACE_OWNER_ROLE.hasAccess(permission);
+
         var currentUserRole = loadUserRoleForAssessmentPort.load(assessmentId, userId);
+
         if (currentUserRole != null)
             return currentUserRole.hasAccess(permission);
 

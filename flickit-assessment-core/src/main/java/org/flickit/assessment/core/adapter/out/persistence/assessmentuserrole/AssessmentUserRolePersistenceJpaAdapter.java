@@ -37,6 +37,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
             throw new ResourceAlreadyExistsException(GRANT_ASSESSMENT_USER_ROLE_USER_ID_AND_ASSESSMENT_ID_ALREADY_EXIST);
         if (!AssessmentUserRole.isValidId(roleId))
             throw new ResourceNotFoundException(GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND);
+
         var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
         repository.save(entity);
     }
