@@ -19,33 +19,4 @@
             </column>
         </addColumn>
     </changeSet>
-
-    <changeSet id="0.19-03" author="Mahdi Rezazadeh">
-        <createTable tableName="fac_assessment_user_role">
-            <column name="assessment_id" type="uuid">
-                <constraints nullable="false"/>
-            </column>
-            <column name="user_id" type="uuid">
-                <constraints nullable="false"/>
-            </column>
-            <column name="role_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="0.19-04" author="Mahdi Rezazadeh">
-        <addPrimaryKey tableName="fac_assessment_user_role"
-                       columnNames="assessment_id, user_id"/>
-    </changeSet>
-
-    <changeSet id="0.19-05" author="Mahdi Rezazadeh">
-        <addForeignKeyConstraint baseTableName="fac_assessment_user_role"
-                                 baseColumnNames="assessment_id"
-                                 referencedTableName="fac_assessment"
-                                 referencedColumnNames="id"
-                                 constraintName="fk_fac_assessment_user_role_assessment"
-                                 deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
-                                 validate="true"/>
-    </changeSet>
 </databaseChangeLog>
