@@ -1,12 +1,12 @@
 package org.flickit.assessment.core.application.domain;
 
-import org.flickit.assessment.common.application.assessment.AssessmentPermission;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Set;
 
-import static org.flickit.assessment.common.application.assessment.AssessmentPermission.VIEW_ASSESSMENT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +20,14 @@ class AssessmentUserRoleTest {
         assertEquals(3, MANAGER.getId());
 
         assertEquals(4, AssessmentUserRole.values().length);
+    }
+
+    @Test
+    void testAssessmentUserRole_TitleOfRolesShouldNotBeChanged() {
+        assertEquals("Viewer", VIEWER.getTitle());
+        assertEquals("Commenter", COMMENTER.getTitle());
+        assertEquals("Assessor", ASSESSOR.getTitle());
+        assertEquals("Manager", MANAGER.getTitle());
     }
 
     @Test
