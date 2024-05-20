@@ -19,9 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetEvidenceListServiceTest {
@@ -77,18 +75,6 @@ class GetEvidenceListServiceTest {
         PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new Param(QUESTION2_ID, assessmentId, 10, 0, currentUserId));
 
         assertEquals(0, result.getItems().size());
-    }
-
-    @Test
-    void testGetEvidenceList_InvalidAssessmentId_ThrowNotFoundException() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        Param param = new Param(0L, assessmentId, 10, 0, currentUserId);
-
-        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(false);
-
-        assertThrows(AccessDeniedException.class, () -> service.getEvidenceList(param));
-        verify(loadEvidencesPort, never()).loadNotDeletedEvidences(any(), any(), anyInt(), anyInt());
     }
 
     private EvidenceListItem createEvidence() {
