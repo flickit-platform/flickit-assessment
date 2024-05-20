@@ -15,7 +15,6 @@ import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.SubjectRefNumAttributeValueView;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
@@ -23,7 +22,6 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaReposito
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
-import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
@@ -59,7 +57,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final MaturityLevelJpaRepository maturityLevelJpaRepository;
     private final SubjectJpaRepository subjectJpaRepository;
     private final QualityAttributeValueJpaRepository qualityAttributeValueJpaRepository;
-    private final AttributeJpaRepository attributeJpaRepository;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
@@ -95,13 +92,12 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessment.getLastModificationTime());
 
         UUID assessmentResultId = assessmentResultEntity.getId();
-        List<AttributeReportItem> attributes = buildAttributeReportItems(assessmentResultId, idToMaturityLevelEntities);
         List<MaturityLevel> maturityLevels = maturityLevelEntities.stream()
             .map(e -> new MaturityLevel(e.getId(), e.getTitle(), e.getIndex(), e.getValue(), null))
             .toList();
         List<AssessmentSubjectReportItem> subjects = buildSubjectReportItems(assessmentResultId, idToMaturityLevelEntities);
 
-        return new Result(assessmentReportItem, attributes, maturityLevels, subjects);
+        return new Result(assessmentReportItem, maturityLevels, subjects);
     }
 
     private AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(ExpertGroupJpaEntity expertGroupEntity,
@@ -117,24 +113,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentKitEntity.getSummary(),
             maturityLevelJpaEntities.size(),
             expertGroup);
-    }
-
-    private List<AttributeReportItem> buildAttributeReportItems(UUID assessmentResultId,
-                                                                Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities) {
-        List<QualityAttributeValueJpaEntity> attributeValueEntities = qualityAttributeValueJpaRepository.findByAssessmentResultId(assessmentResultId);
-        Set<UUID> attrRefNums = attributeValueEntities.stream()
-            .map(QualityAttributeValueJpaEntity::getAttributeRefNum)
-            .collect(Collectors.toSet());
-        Map<UUID, Long> attributeRefNumToMaturityLevelId = attributeValueEntities.stream()
-            .collect(toMap(QualityAttributeValueJpaEntity::getAttributeRefNum, QualityAttributeValueJpaEntity::getMaturityLevelId));
-        List<AttributeJpaEntity> attributeEntities = attributeJpaRepository.findAllByRefNumIn(attrRefNums);
-        return attributeEntities.stream()
-            .map(e -> {
-                Long maturityLevelId = attributeRefNumToMaturityLevelId.get(e.getRefNum());
-                Integer maturityLevelIndex = idToMaturityLevelEntities.get(maturityLevelId).getIndex();
-                return new AttributeReportItem(e.getId(), e.getTitle(), e.getIndex(), maturityLevelIndex);
-            })
-            .toList();
     }
 
     private List<AssessmentSubjectReportItem> buildSubjectReportItems(UUID assessmentResultId,
