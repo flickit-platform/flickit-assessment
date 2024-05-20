@@ -5,7 +5,6 @@ import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
-import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
@@ -47,10 +46,6 @@ class ReportAssessmentServiceTest {
 
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
-        var attributes = List.of(
-            new AttributeReportItem(1L, "attrTitle1", 2, 1),
-            new AttributeReportItem(2L, "attrTitle2", 1, 2),
-            new AttributeReportItem(3L, "attrTitle3", 3, 3));
         var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1", "picture/link");
         var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", 3, expertGroup);
         MaturityLevel assessmentMaturityLevel = MaturityLevelMother.levelThree();
@@ -73,7 +68,7 @@ class ReportAssessmentServiceTest {
         var subjects = List.of(
             new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", 20.0, softwareLevel, List.of()),
             new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
-        var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, attributes, maturityLevels, subjects);
+        var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, maturityLevels, subjects);
 
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
@@ -100,11 +95,6 @@ class ReportAssessmentServiceTest {
         assertEquals(assessmentReport.assessment().assessmentKit().maturityLevelCount(), result.assessment().assessmentKit().maturityLevelCount());
         assertEquals(assessmentReport.assessment().assessmentKit().expertGroup().id(), result.assessment().assessmentKit().expertGroup().id());
         assertEquals(assessmentReport.assessment().assessmentKit().expertGroup().title(), result.assessment().assessmentKit().expertGroup().title());
-
-        assertNotNull(result.topStrengths());
-        assertEquals(1, result.topStrengths().size());
-        assertNotNull(result.topWeaknesses());
-        assertEquals(2, result.topWeaknesses().size());
 
         assertEquals(assessmentReport.subjects().size(), result.subjects().size());
     }
