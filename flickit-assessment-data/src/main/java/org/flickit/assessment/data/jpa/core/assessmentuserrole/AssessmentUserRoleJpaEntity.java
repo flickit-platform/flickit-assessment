@@ -6,6 +6,8 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @IdClass(AssessmentUserRoleJpaEntity.EntityId.class)
 @Table(name = "fac_assessment_user_role")
@@ -36,5 +38,10 @@ public class AssessmentUserRoleJpaEntity {
 
         private UUID assessmentId;
         private UUID userId;
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String ROLE_ID = "roleId";
     }
 }
