@@ -850,6 +850,24 @@
 			"response": []
 		},
 		{
+			"name": "Get Assessment User Roles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-user-roles",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-user-roles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Assessment Questionnaire Question List",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}

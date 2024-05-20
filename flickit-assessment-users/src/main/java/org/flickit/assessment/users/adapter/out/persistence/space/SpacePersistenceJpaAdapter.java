@@ -6,7 +6,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.users.application.domain.Space;
-import org.flickit.assessment.users.application.port.out.LoadSpaceDetailsPort;
 import org.flickit.assessment.users.application.port.out.space.*;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.UpdateSpaceLastSeenPort;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +28,8 @@ public class SpacePersistenceJpaAdapter implements
     LoadSpaceDetailsPort,
     UpdateSpaceLastSeenPort,
     CountSpaceAssessmentPort,
-    DeleteSpacePort {
+    DeleteSpacePort,
+    UpdateSpacePort {
 
     private final SpaceJpaRepository repository;
 
@@ -92,5 +92,10 @@ public class SpacePersistenceJpaAdapter implements
         if (!repository.existsByIdAndDeletedFalse(spaceId))
             throw new ResourceNotFoundException(SPACE_ID_NOT_FOUND);
         repository.delete(spaceId);
+    }
+
+    @Override
+    public void updateSpace(Param param) {
+        repository.update(param.id(), param.title(), param.lastModificationTime(), param.lastModifiedBy());
     }
 }
