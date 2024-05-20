@@ -82,7 +82,8 @@ public enum AssessmentUserRole {
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
-            UPDATE_ASSESSMENT));
+            UPDATE_ASSESSMENT,
+            GRANT_USER_ASSESSMENT_ROLE));
 
         private final Set<AssessmentPermission> permissions;
     }
