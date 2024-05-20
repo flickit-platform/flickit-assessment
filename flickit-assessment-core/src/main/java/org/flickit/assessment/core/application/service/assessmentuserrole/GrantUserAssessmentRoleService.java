@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.assessment.AssessmentPermissionChecker;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase;
@@ -10,7 +10,7 @@ import org.flickit.assessment.core.application.port.out.assessmentuserrole.Grant
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.flickit.assessment.common.application.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER;
 

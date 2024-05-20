@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
-import org.flickit.assessment.common.application.assessment.AssessmentPermission;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;

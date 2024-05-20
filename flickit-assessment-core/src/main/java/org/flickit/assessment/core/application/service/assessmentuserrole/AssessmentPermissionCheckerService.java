@@ -1,8 +1,8 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.assessment.AssessmentPermission;
-import org.flickit.assessment.common.application.assessment.AssessmentPermissionChecker;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
