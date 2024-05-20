@@ -136,4 +136,10 @@ public class ErrorMessageKey {
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "grant-assessment-user-role.roleId.notNull";
     public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER = "grant-assessment-user-role.userId.notMember";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "grant-assessment-user-role.roleId.notFound";
+
+    public static final String GET_ASSESSMENT_PRIVILEGED_USERS_ASSESSMENT_ID_NOT_NULL = "get-assessment-privileged-users.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_PRIVILEGED_USERS_SIZE_MIN = "get-assessment-privileged-users.size.min";
+    public static final String GET_ASSESSMENT_PRIVILEGED_USERS_SIZE_MAX = "get-assessment-privileged-users.size.max";
+    public static final String GET_ASSESSMENT_PRIVILEGED_USERS_PAGE_MIN = "get-assessment-privileged-users.page.min";
+
 }
