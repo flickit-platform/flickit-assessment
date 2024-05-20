@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 import static org.flickit.assessment.core.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
 
-@Component
+@Component("coreMinioAdapter")
 @AllArgsConstructor
 public class MinioAdapter implements CreateFileDownloadLinkPort {
 
