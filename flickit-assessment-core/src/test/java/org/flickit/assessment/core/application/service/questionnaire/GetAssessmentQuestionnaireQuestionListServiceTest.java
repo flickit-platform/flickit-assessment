@@ -8,17 +8,15 @@ import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Result;
-import org.flickit.assessment.core.application.port.out.answer.LoadAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadQuestionAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
-import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +40,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
 
     @Mock
-    private LoadAnswerListPort loadAssessmentQuestionnaireAnswerListPort;
+    private LoadQuestionAnswerListPort loadQuestionAnswerListPort;
 
     @Test
     void testGetAssessmentQuestionnaireQuestionList_InvalidCurrentUser_ThrowsException() {
@@ -53,15 +51,15 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         var exception = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verifyNoInteractions(loadQuestionnaireQuestionListPort,
-            loadAssessmentQuestionnaireAnswerListPort);
+            loadQuestionAnswerListPort);
     }
 
     @Test
     void testGetAssessmentQuestionnaireQuestionList_InvalidQuestionnaireId_ThrowsException() {
         Param param = new Param(UUID.randomUUID(), 12L, 10, 0, UUID.randomUUID());
-
+        Question question = QuestionMother.withOptions();
         PaginatedResponse<Question> expectedPaginatedResponse = new PaginatedResponse<>(
-            List.of(QuestionMother.withOptions()),
+            List.of(question),
             0,
             1,
             "index",
@@ -73,7 +71,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadQuestionAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
 
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionnaireQuestionList(param));
@@ -94,21 +92,12 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         );
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.FALSE);
 
-        PaginatedResponse<Answer> expectedPageResult = new PaginatedResponse<>(
-            List.of(answer),
-            0,
-            10,
-            AnswerJpaEntity.Fields.QUESTION_INDEX,
-            Sort.Direction.ASC.name().toLowerCase(),
-            1
-        );
-
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
-            .thenReturn(expectedPageResult);
+        when(loadQuestionAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+            .thenReturn(List.of(answer));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
 
@@ -141,21 +130,12 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         );
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.TRUE);
 
-        PaginatedResponse<Answer> expectedPageResult = new PaginatedResponse<>(
-            List.of(answer),
-            0,
-            10,
-            AnswerJpaEntity.Fields.QUESTION_INDEX,
-            Sort.Direction.ASC.name().toLowerCase(),
-            1
-        );
-
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
-            .thenReturn(expectedPageResult);
+        when(loadQuestionAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+            .thenReturn(List.of(answer));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
 
@@ -187,21 +167,12 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         );
         Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 1, Boolean.FALSE);
 
-        PaginatedResponse<Answer> expectedPageResult = new PaginatedResponse<>(
-            List.of(answer),
-            0,
-            10,
-            AnswerJpaEntity.Fields.QUESTION_INDEX,
-            Sort.Direction.ASC.name().toLowerCase(),
-            1
-        );
-
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadAssessmentQuestionnaireAnswerListPort.loadByQuestionnaire(param.getAssessmentId(), param.getQuestionnaireId(), param.getSize(), param.getPage()))
-            .thenReturn(expectedPageResult);
+        when(loadQuestionAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+            .thenReturn(List.of(answer));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
 
