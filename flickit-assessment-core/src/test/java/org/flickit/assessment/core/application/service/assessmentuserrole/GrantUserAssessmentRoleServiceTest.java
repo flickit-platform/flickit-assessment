@@ -16,7 +16,6 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -82,7 +81,7 @@ class GrantUserAssessmentRoleServiceTest {
             .thenReturn(false);
 
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.grantAssessmentUserRole(param));
-        assertEquals(GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER, exception.getMessage());
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
 
         verifyNoInteractions(grantUserAssessmentRolePort);
     }
