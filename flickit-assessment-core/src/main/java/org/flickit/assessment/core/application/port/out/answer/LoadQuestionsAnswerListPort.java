@@ -5,7 +5,7 @@ import org.flickit.assessment.core.application.domain.Answer;
 import java.util.List;
 import java.util.UUID;
 
-public interface LoadQuestionAnswerListPort {
+public interface LoadQuestionsAnswerListPort {
 
     List<Answer> loadByQuestionIds(UUID assessmentId, List<Long> questionIds);
 }

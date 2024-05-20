@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
-import org.flickit.assessment.core.application.port.out.answer.LoadQuestionAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
 
     private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
-    private final LoadQuestionAnswerListPort loadQuestionAnswerListPort;
+    private final LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
 
     @Override
     public PaginatedResponse<Result> getQuestionnaireQuestionList(Param param) {
@@ -42,7 +42,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             .map(Question::getId)
             .toList();
 
-        var questionIdToAnswerMap = loadQuestionAnswerListPort.loadByQuestionIds(param.getAssessmentId(), questionIds)
+        var questionIdToAnswerMap = loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), questionIds)
             .stream()
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 

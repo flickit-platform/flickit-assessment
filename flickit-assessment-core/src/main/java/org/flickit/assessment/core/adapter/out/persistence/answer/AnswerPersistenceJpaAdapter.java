@@ -33,7 +33,7 @@ public class AnswerPersistenceJpaAdapter implements
     LoadAnswerPort,
     UpdateAnswerPort,
     LoadAnswerListPort,
-    LoadQuestionAnswerListPort {
+    LoadQuestionsAnswerListPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
