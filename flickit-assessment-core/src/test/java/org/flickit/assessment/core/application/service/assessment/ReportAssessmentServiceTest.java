@@ -71,8 +71,8 @@ class ReportAssessmentServiceTest {
         MaturityLevel softwareLevel = MaturityLevelMother.levelFour();
         MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
         var subjects = List.of(
-            new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", 20.0, softwareLevel),
-            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel));
+            new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", 20.0, softwareLevel, List.of()),
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
         var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, attributes, maturityLevels, subjects);
 
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);

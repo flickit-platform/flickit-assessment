@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +32,17 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
         """)
     List<QualityAttributeValueJpaEntity> findByAssessmentResultIdAndSubjectId(@Param(value = "assessmentResultId") UUID assessmentResultId,
                                                                               @Param(value = "subjectId") Long subjectId);
+
+    @Query("""
+        SELECT av as attributeValue, att.subject.refNum as subjectRefNum, att as attribute
+        FROM QualityAttributeValueJpaEntity av
+        LEFT JOIN AttributeJpaEntity att ON av.attributeRefNum = att.refNum
+            and av.assessmentResult.kitVersionId = att.kitVersionId
+            and av.assessmentResult.id = :assessmentResultId
+        WHERE att.subject.refNum IN :subjectRefNums
+        """)
+    List<SubjectRefNumAttributeValueView> findByAssessmentResultIdAndSubjectRefNumIn(@Param(value = "assessmentResultId") UUID assessmentResultId,
+                                                                                     @Param(value = "subjectRefNums") Collection<UUID> subjectRefNums);
 
     @Modifying
     @Query("update QualityAttributeValueJpaEntity a set a.maturityLevelId = :maturityLevelId where a.id = :id")
