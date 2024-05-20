@@ -1,13 +1,13 @@
-package org.flickit.assessment.core.common;
+package org.flickit.assessment.core.application.domain;
 
-import org.flickit.assessment.common.permission.AssessmentPermission;
+import org.flickit.assessment.common.application.assessment.AssessmentPermission;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Set;
 
-import static org.flickit.assessment.common.permission.AssessmentPermission.VIEW_ASSESSMENT;
-import static org.flickit.assessment.core.common.AssessmentUserRole.*;
+import static org.flickit.assessment.common.application.assessment.AssessmentPermission.VIEW_ASSESSMENT;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AssessmentUserRoleTest {
