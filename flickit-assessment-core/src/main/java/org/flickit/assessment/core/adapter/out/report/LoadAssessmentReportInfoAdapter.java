@@ -141,12 +141,12 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                     subjectRefNumToSubjectValue.get(e.getRefNum()).getConfidenceValue(),
                     subjectMaturityLevel,
                     subjectRefNumToAttributeValueMap.get(e.getRefNum()).stream()
-                        .map(x -> getAttributeReportItem(idToMaturityLevelEntities, x))
+                        .map(x -> buildAttributeReportItem(idToMaturityLevelEntities, x))
                         .toList());
             }).toList();
     }
 
-    private AttributeReportItem getAttributeReportItem(Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities, SubjectRefNumAttributeValueView attributeValueView) {
+    private AttributeReportItem buildAttributeReportItem(Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities, SubjectRefNumAttributeValueView attributeValueView) {
         var attribute = attributeValueView.getAttribute();
         var attributeValue = attributeValueView.getAttributeValue();
         var maturityLevelEntity = idToMaturityLevelEntities.get(attributeValue.getMaturityLevelId());
