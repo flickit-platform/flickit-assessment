@@ -21,7 +21,6 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
-import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
@@ -148,8 +147,9 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     }
 
     private AttributeReportItem getAttributeReportItem(Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities, SubjectRefNumAttributeValueView attributeValueView) {
-        AttributeJpaEntity attribute = attributeValueView.getAttribute();
-        Integer maturityLevelIndex = idToMaturityLevelEntities.get(attributeValueView.getAttributeValue().getMaturityLevelId()).getIndex();
-        return new AttributeReportItem(attribute.getId(), attribute.getTitle(), attribute.getIndex(), maturityLevelIndex);
+        var attribute = attributeValueView.getAttribute();
+        var maturityLevelEntity = idToMaturityLevelEntities.get(attributeValueView.getAttributeValue().getMaturityLevelId());
+        var maturityLevel = MaturityLevelMapper.mapToDomainModel(maturityLevelEntity, null);
+        return new AttributeReportItem(attribute.getId(), attribute.getTitle(), attribute.getIndex(), maturityLevel);
     }
 }
