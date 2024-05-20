@@ -138,6 +138,9 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         Map<UUID, Long> subjectRefNumToMaturityLevelId = subjectValueEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectRefNum, SubjectValueJpaEntity::getMaturityLevelId));
 
+        Map<UUID, Double> subjectRefNumToConfidenceValue = subjectValueEntities.stream()
+            .collect(Collectors.toMap(SubjectValueJpaEntity::getSubjectRefNum, SubjectValueJpaEntity::getConfidenceValue));
+
         List<SubjectJpaEntity> subjectEntities = subjectJpaRepository.findAllByRefNumIn(refNums);
 
         return subjectEntities.stream()
@@ -149,6 +152,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                     e.getTitle(),
                     e.getIndex(),
                     e.getDescription(),
+                    subjectRefNumToConfidenceValue.get(e.getRefNum()),
                     subjectMaturityLevel);
             }).toList();
     }

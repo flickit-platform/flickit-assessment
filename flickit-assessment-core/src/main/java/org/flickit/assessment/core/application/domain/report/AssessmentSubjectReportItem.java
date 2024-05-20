@@ -7,5 +7,6 @@ public record AssessmentSubjectReportItem(
     String title,
     Integer index,
     String description,
+    Double confidenceValue,
     MaturityLevel maturityLevel) {
 }
