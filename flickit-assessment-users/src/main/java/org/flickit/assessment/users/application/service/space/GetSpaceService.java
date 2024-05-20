@@ -3,7 +3,7 @@ package org.flickit.assessment.users.application.service.space;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceUseCase;
-import org.flickit.assessment.users.application.port.out.LoadSpaceDetailsPort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpaceDetailsPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
