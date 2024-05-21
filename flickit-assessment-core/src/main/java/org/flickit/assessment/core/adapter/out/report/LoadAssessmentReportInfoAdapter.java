@@ -91,12 +91,9 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessment.getLastModificationTime());
 
         UUID assessmentResultId = assessmentResultEntity.getId();
-        List<MaturityLevel> maturityLevels = maturityLevelEntities.stream()
-            .map(e -> new MaturityLevel(e.getId(), e.getTitle(), e.getIndex(), e.getValue(), null))
-            .toList();
         List<AssessmentSubjectReportItem> subjects = buildSubjectReportItems(assessmentResultId, idToMaturityLevelEntities);
 
-        return new Result(assessmentReportItem, maturityLevels, subjects);
+        return new Result(assessmentReportItem, subjects);
     }
 
     private AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(ExpertGroupJpaEntity expertGroupEntity,
