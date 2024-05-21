@@ -4,18 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
-import org.flickit.assessment.core.application.domain.report.TopAttributeResolver;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.application.domain.MaturityLevel.middleLevel;
 
 @Slf4j
 @Service
@@ -35,17 +30,9 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessmentReport = loadReportInfoPort.load(param.getAssessmentId());
-        List<AttributeReportItem> attributes = assessmentReport.attributes();
-        var midLevelMaturity = middleLevel(assessmentReport.maturityLevels());
-        TopAttributeResolver topAttributeResolver = new TopAttributeResolver(attributes, midLevelMaturity);
-        var topStrengths = topAttributeResolver.getTopStrengths();
-        var topWeaknesses = topAttributeResolver.getTopWeaknesses();
 
         log.debug("AssessmentReport returned for assessmentId=[{}].", param.getAssessmentId());
 
-        return new Result(assessmentReport.assessment(),
-            topStrengths,
-            topWeaknesses,
-            assessmentReport.subjects());
+        return new Result(assessmentReport.assessment(), assessmentReport.subjects());
     }
 }
