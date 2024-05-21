@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.assessment;
 
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.assessment.SpaceAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Assessment;
@@ -37,7 +38,8 @@ public class AssessmentPersistenceJpaAdapter implements
     GetAssessmentPort,
     DeleteAssessmentPort,
     CountAssessmentsPort,
-    CheckUserAssessmentAccessPort {
+    CheckUserAssessmentAccessPort,
+    SpaceAccessChecker {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
