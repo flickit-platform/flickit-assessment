@@ -15,8 +15,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
-
+import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
 @Component("coreMinioAdapter")
 @AllArgsConstructor
