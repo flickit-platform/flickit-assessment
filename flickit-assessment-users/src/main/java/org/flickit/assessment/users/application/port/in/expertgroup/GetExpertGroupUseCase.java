@@ -24,6 +24,12 @@ public interface GetExpertGroupUseCase {
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
+
+        public Param(Long id, UUID currentUserId) {
+            this.id = id;
+            this.currentUserId = currentUserId;
+            this.validateSelf();
+        }
     }
 
     record Result(ExpertGroup expertGroup, String pictureLink, boolean editable) {

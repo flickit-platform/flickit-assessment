@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.domain.report;
 
 import lombok.Value;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
-import org.flickit.assessment.core.application.domain.QualityAttributeValue;
 
 import java.util.List;
 
@@ -15,32 +14,32 @@ public class TopAttributeResolver {
 
     private static final int TOP_COUNT = 3;
 
-    List<QualityAttributeValue> attributeValues;
+    List<AttributeReportItem> attributes;
     MaturityLevel midLevelMaturity;
 
     public List<TopAttribute> getTopStrengths() {
-        return attributeValues.stream()
-            .sorted(comparing(x -> x.getMaturityLevel().getIndex(), reverseOrder()))
-            .filter(x -> isHigherThanOrEqualToMiddleLevel(x.getMaturityLevel()))
+        return attributes.stream()
+            .sorted(comparing(AttributeReportItem::index, reverseOrder()))
+            .filter(x -> isHigherThanOrEqualToMiddleLevel(x.maturityLevel().getIndex()))
             .limit(TOP_COUNT)
-            .map(x -> new TopAttribute(x.getQualityAttribute().getId()))
+            .map(x -> new TopAttribute(x.id(), x.title()))
             .toList();
     }
 
-    private boolean isHigherThanOrEqualToMiddleLevel(MaturityLevel maturityLevel) {
-        return maturityLevel.getIndex() >= midLevelMaturity.getIndex();
+    private boolean isHigherThanOrEqualToMiddleLevel(int maturityLevelIndex) {
+        return maturityLevelIndex >= midLevelMaturity.getIndex();
     }
 
     public List<TopAttribute> getTopWeaknesses() {
-        return attributeValues.stream()
-            .sorted(comparingInt(x -> x.getMaturityLevel().getIndex()))
-            .filter(x -> isLowerThanMiddleLevel(x.getMaturityLevel()))
+        return attributes.stream()
+            .sorted(comparingInt(AttributeReportItem::index))
+            .filter(x -> isLowerThanMiddleLevel(x.maturityLevel().getIndex()))
             .limit(TOP_COUNT)
-            .map(x -> new TopAttribute(x.getQualityAttribute().getId()))
+            .map(x -> new TopAttribute(x.id(), x.title()))
             .toList();
     }
 
-    private boolean isLowerThanMiddleLevel(MaturityLevel maturityLevel) {
-        return maturityLevel.getIndex() < midLevelMaturity.getIndex();
+    private boolean isLowerThanMiddleLevel(int maturityLevelIndex) {
+        return maturityLevelIndex < midLevelMaturity.getIndex();
     }
 }

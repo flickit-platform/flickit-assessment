@@ -36,13 +36,13 @@ public interface UpdateAssessmentUseCase {
         Integer colorId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID lastModifiedBy;
+        UUID currentUserId;
 
-        public Param(UUID id, String title, Integer colorId, UUID lastModifiedBy) {
+        public Param(UUID id, String title, Integer colorId, UUID currentUserId) {
             this.id = id;
             this.title = title;
             this.colorId = colorId;
-            this.lastModifiedBy = lastModifiedBy;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

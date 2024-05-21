@@ -36,11 +36,6 @@ public interface ReportAssessmentUseCase {
 
     record Result(
         AssessmentReportItem assessment,
-        List<TopAttribute> topStrengths,
-        List<TopAttribute> topWeaknesses,
         List<AssessmentSubjectReportItem> subjects) {
-
-        public record TopAttribute(Long id, String title) {
-        }
     }
 }
