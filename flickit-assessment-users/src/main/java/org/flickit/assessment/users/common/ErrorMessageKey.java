@@ -100,4 +100,9 @@ public class ErrorMessageKey {
     public static final String GET_SPACE_INVITEES_SIZE_MIN = "get-space-invitees.size.min";
     public static final String GET_SPACE_INVITEES_SIZE_MAX = "get-space-invitees.size.max";
     public static final String GET_SPACE_INVITEES_PAGE_MIN = "get-space-invitees.page.min";
+
+    public static final String UPDATE_SPACE_SPACE_ID_NOT_NULL = "update-space.spaceId.notNull";
+    public static final String UPDATE_SPACE_TITLE_NOT_BLANK = "update-space.title.notBlank";
+    public static final String UPDATE_SPACE_TITLE_SIZE_MIN = "update-space.title.size.min";
+    public static final String UPDATE_SPACE_TITLE_SIZE_MAX = "update-space.title.size.max";
 }

@@ -1,8 +1,8 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.assessment.AssessmentPermission;
-import org.flickit.assessment.common.application.assessment.AssessmentPermissionChecker;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
@@ -35,10 +35,13 @@ public class AssessmentPermissionCheckerService implements AssessmentPermissionC
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_NOT_FOUND));
         if (Objects.equals(userId, assessment.getCreatedBy()))
             return ASSESSMENT_CREATED_BY_ROLE.hasAccess(permission);
+
         var spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(assessment.getSpaceId());
         if (Objects.equals(userId, spaceOwnerId))
             return SPACE_OWNER_ROLE.hasAccess(permission);
+
         var currentUserRole = loadUserRoleForAssessmentPort.load(assessmentId, userId);
+
         if (currentUserRole != null)
             return currentUserRole.hasAccess(permission);
 
