@@ -10,10 +10,6 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.Optional;
-import java.util.UUID;
 
 public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> {
 
