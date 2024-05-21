@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.answer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
@@ -9,7 +10,6 @@ import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCas
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ANSWER_QUESTION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND;
 
@@ -27,16 +28,16 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_A
 @RequiredArgsConstructor
 public class SubmitAnswerService implements SubmitAnswerUseCase {
 
-    private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final CreateAnswerPort createAnswerPort;
     private final LoadAnswerPort loadAnswerPort;
     private final UpdateAnswerPort updateAnswerPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
     public Result submitAnswer(Param param) {
-        if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), ANSWER_QUESTION))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
