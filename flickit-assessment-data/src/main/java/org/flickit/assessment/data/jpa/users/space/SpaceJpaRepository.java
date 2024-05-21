@@ -79,4 +79,17 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
     void delete(@Param("spaceId") long spaceId);
 
     boolean existsByIdAndDeletedFalse(long id);
+
+    @Modifying
+    @Query("""
+            UPDATE SpaceJpaEntity s SET
+                s.lastModificationTime = :lastModificationTime,
+                s.lastModifiedBy = :lastModifiedBy,
+                s.title = :title
+            WHERE s.id = :id
+        """)
+    void update(@Param("id") long id,
+                @Param("title") String title,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                @Param("lastModifiedBy") UUID lastModifiedBy);
 }
