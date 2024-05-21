@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
@@ -58,7 +57,7 @@ class GrantUserAssessmentRoleServiceTest {
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getUserId()))
             .thenReturn(false);
 
-        var exception = assertThrows(ResourceNotFoundException.class, () -> service.grantAssessmentUserRole(param));
+        var exception = assertThrows(AccessDeniedException.class, () -> service.grantAssessmentUserRole(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
 
         verifyNoInteractions(grantUserAssessmentRolePort);
