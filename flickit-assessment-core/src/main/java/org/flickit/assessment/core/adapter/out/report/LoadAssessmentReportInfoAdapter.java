@@ -3,6 +3,7 @@ package org.flickit.assessment.core.adapter.out.report;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.minio.MinioAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
@@ -10,10 +11,8 @@ import org.flickit.assessment.core.application.domain.report.AssessmentReportIte
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
-import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
-import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.SubjectRefNumAttributeValueView;
@@ -56,14 +55,14 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final MaturityLevelJpaRepository maturityLevelJpaRepository;
     private final SubjectJpaRepository subjectJpaRepository;
     private final QualityAttributeValueJpaRepository qualityAttributeValueJpaRepository;
-    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
+    private final MinioAdapter minioAdapter;
 
     @Override
     public Result load(UUID assessmentId) {
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND);
 
-        AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+        var assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
         AssessmentJpaEntity assessment = assessmentResultEntity.getAssessment();
@@ -74,7 +73,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_EXPERT_GROUP_NOT_FOUND));
 
         long kitVersionId = assessmentResultEntity.getKitVersionId();
-        List<MaturityLevelJpaEntity> maturityLevelEntities = maturityLevelJpaRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+        var maturityLevelEntities = maturityLevelJpaRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
 
         Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities = maturityLevelEntities.stream()
             .collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
@@ -105,7 +104,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         AssessmentReportItem.AssessmentKitItem.ExpertGroup expertGroup =
             new AssessmentReportItem.AssessmentKitItem.ExpertGroup(expertGroupEntity.getId(),
                 expertGroupEntity.getTitle(),
-                createFileDownloadLinkPort.createDownloadLink(expertGroupEntity.getPicture(), EXPIRY_DURATION));
+                minioAdapter.createDownloadLink(expertGroupEntity.getPicture(), EXPIRY_DURATION));
 
         return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
             assessmentKitEntity.getTitle(),
@@ -124,7 +123,9 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var subjectRefNumToSubjectValue = subjectValueEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectRefNum, Function.identity()));
 
-        var subjectRefNumToAttributeValueMap = qualityAttributeValueJpaRepository.findByAssessmentResultIdAndSubjectRefNumIn(assessmentResultId, refNums).stream()
+        var subjectRefNumToAttributeValueMap = qualityAttributeValueJpaRepository.findByAssessmentResultIdAndSubjectRefNumIn(
+            assessmentResultId, refNums)
+            .stream()
             .collect(groupingBy(SubjectRefNumAttributeValueView::getSubjectRefNum));
 
         List<SubjectJpaEntity> subjectEntities = subjectJpaRepository.findAllByRefNumIn(refNums);
@@ -146,7 +147,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             }).toList();
     }
 
-    private AttributeReportItem buildAttributeReportItem(Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities, SubjectRefNumAttributeValueView attributeValueView) {
+    private AttributeReportItem buildAttributeReportItem(Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities,
+                                                         SubjectRefNumAttributeValueView attributeValueView) {
         var attribute = attributeValueView.getAttribute();
         var attributeValue = attributeValueView.getAttributeValue();
         var maturityLevelEntity = idToMaturityLevelEntities.get(attributeValue.getMaturityLevelId());

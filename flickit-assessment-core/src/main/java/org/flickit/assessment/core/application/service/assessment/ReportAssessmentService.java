@@ -33,7 +33,6 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
 
         log.debug("AssessmentReport returned for assessmentId=[{}].", param.getAssessmentId());
 
-        return new Result(assessmentReport.assessment(),
-            assessmentReport.subjects());
+        return new Result(assessmentReport.assessment(), assessmentReport.subjects());
     }
 }
