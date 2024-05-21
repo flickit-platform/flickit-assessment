@@ -1,12 +1,12 @@
 package org.flickit.assessment.core.application.service.assessment;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.error.ErrorMessageKey;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase.Param;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase.Result;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_CONFIDENCE;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight;
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndSubjectWithQAs;
@@ -40,7 +41,7 @@ class CalculateConfidenceServiceTest {
     private CalculateConfidenceService service;
 
     @Mock
-    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
     private LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
@@ -70,7 +71,7 @@ class CalculateConfidenceServiceTest {
 
         Param param = new Param(assessmentId, currentUserId);
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_CONFIDENCE)).thenReturn(false);
 
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.calculate(param));
 
@@ -113,7 +114,7 @@ class CalculateConfidenceServiceTest {
 
         Param param = new Param(assessmentResult.getAssessment().getId(), currentUserId);
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_CONFIDENCE)).thenReturn(true);
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
 
@@ -163,7 +164,7 @@ class CalculateConfidenceServiceTest {
 
         CalculateConfidenceUseCase.Param param = new CalculateConfidenceUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_CONFIDENCE)).thenReturn(true);
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
