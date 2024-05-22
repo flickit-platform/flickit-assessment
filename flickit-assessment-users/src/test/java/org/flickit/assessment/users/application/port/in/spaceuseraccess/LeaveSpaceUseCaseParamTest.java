@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class LeaveSpaceUseCaseParamTest {
 
     @Test
-    void testDeleteExpertGroupParam_idIsNull_ErrorMessage() {
+    void testLeaveSpaceParam_idIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(null, currentUserId));
@@ -22,7 +22,7 @@ class LeaveSpaceUseCaseParamTest {
     }
 
     @Test
-    void testDeleteExpertGroupParam_currentUserIdIsNull_ErrorMessage() {
+    void testLeaveSpaceParam_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(123L, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

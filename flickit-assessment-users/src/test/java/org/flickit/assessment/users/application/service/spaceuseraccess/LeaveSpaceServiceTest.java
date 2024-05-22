@@ -51,8 +51,8 @@ class LeaveSpaceServiceTest {
     }
 
     @Test
-    @DisplayName("If there are valid inputs, but the userId is owner, it should throw AccessDenied")
-    void testLeaveSpace_userIdIsOwner_success(){
+    @DisplayName("If there are valid inputs, but the userId is owner, it should throw ValidationException")
+    void testLeaveSpace_userIdIsOwner_ValidationException(){
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         LeaveSpaceUseCase.Param param = new LeaveSpaceUseCase.Param(spaceId, currentUserId);
