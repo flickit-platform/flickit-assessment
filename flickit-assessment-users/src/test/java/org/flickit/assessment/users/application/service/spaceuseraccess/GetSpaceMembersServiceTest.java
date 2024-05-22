@@ -66,10 +66,10 @@ class GetSpaceMembersServiceTest {
         int size = 10;
         int page = 0;
         var member1 = new LoadSpaceMembersPort.Member(userId1,
-            "a@b.c", "name", "bio", userId1, "pictureLink", "linkedin");
+            "a@b.c", "name", "bio", true, "pictureLink", "linkedin");
 
         var member2 = new LoadSpaceMembersPort.Member(userId2,
-            "a1@b.c", "name1", "bio1", UUID.randomUUID(), "pictureLink1", "linkedin1");
+            "a1@b.c", "name1","bio1", false, "pictureLink1", "linkedin1");
 
         var members = List.of(member1, member2);
         var paginatedResponse = new PaginatedResponse<>(members, page, size, "SORT", "ORDER", members.size());

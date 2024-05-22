@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -52,7 +51,7 @@ public class GetSpaceMembersService implements GetSpaceMembersUseCase {
                 item.email(),
                 item.displayName(),
                 item.bio(),
-                Objects.equals(item.ownerId(), item.id()),
+                item.isOwner(),
                 createFileDownloadLinkPort.createDownloadLink(item.picture(), EXPIRY_DURATION),
                 item.linkedin()
             ))

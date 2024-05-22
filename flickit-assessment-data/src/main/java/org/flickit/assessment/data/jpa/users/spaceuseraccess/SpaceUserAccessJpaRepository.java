@@ -21,13 +21,12 @@ public interface SpaceUserAccessJpaRepository extends JpaRepository<SpaceUserAcc
                    u.email as email,
                    u.displayName as displayName,
                    u.bio as bio,
-                   s.ownerId as ownerId,
                    u.picture as picture,
                    u.linkedin as linkedin
-            FROM SpaceUserAccessJpaEntity su
-            LEFT JOIN SpaceJpaEntity s on s.id = su.spaceId
-            LEFT JOIN UserJpaEntity u on su.userId = u.id
-            WHERE s.id = :spaceId
+            FROM SpaceUserAccessJpaEntity s
+            LEFT JOIN UserJpaEntity u
+                on s.userId = u.id
+            WHERE s.spaceId = :spaceId
         """)
     Page<SpaceMembersView> findMembers(@Param("spaceId") long spaceId, Pageable pageable);
 }

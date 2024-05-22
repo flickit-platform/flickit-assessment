@@ -8,7 +8,6 @@ public interface SpaceMembersView {
     String getEmail();
     String getDisplayName();
     String getBio();
-    UUID getOwnerId();
     String getPicture();
     String getLinkedin();
 }
