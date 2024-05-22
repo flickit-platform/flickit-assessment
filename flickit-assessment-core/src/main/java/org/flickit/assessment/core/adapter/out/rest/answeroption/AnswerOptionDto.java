@@ -17,6 +17,6 @@ public record AnswerOptionDto(Long id,
         List<AnswerOptionImpact> impacts = answerOptionImpacts.stream()
             .map(AnswerOptionImpactDto::dtoToDomain)
             .toList();
-        return new AnswerOption(id, questionId, impacts);
+        return new AnswerOption(id, null, null, questionId, impacts);
     }
 }

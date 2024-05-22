@@ -1,6 +1,8 @@
 package org.flickit.assessment.data.jpa.kit.question;
 
 import org.flickit.assessment.data.jpa.kit.question.advice.QuestionAdviceView;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -166,4 +168,13 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
         """)
     List<AttributeLevelImpactfulQuestionsView> findByAttributeIdAndMaturityLevelId(@Param("attributeId") long attributeId,
                                                                                    @Param("maturityLevelId") long maturityLevelId);
+
+    @Query("""
+            SELECT COUNT(q)
+            FROM QuestionJpaEntity q
+            WHERE q.kitVersionId = :kitVersionId
+        """)
+    int countByKitVersionId(@Param("kitVersionId") long kitVersionId);
+
+    Page<QuestionJpaEntity> findAllByQuestionnaireIdOrderByIndex(@Param("questionnaireId") long questionnaireId, Pageable pageable);
 }

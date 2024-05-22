@@ -10,7 +10,7 @@ import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaR
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceUserAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.LoadSpaceMembersPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,6 +26,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 public class SpaceUserAccessPersistenceJpaAdapter implements
     CreateSpaceUserAccessPort,
     CheckSpaceAccessPort,
+    DeleteSpaceMemberPort,
     LoadSpaceMembersPort,
     DeleteSpaceUserAccessPort {
 
@@ -35,7 +36,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     @Override
     public void persist(SpaceUserAccess access) {
         SpaceUserAccessJpaEntity unsavedEntity = new SpaceUserAccessJpaEntity(access.getSpaceId(), access.getUserId(),
-            access.getCreatedBy(), access.getCreationTime());
+            access.getCreatedBy(), access.getCreationTime(), access.getCreationTime());
         repository.save(unsavedEntity);
     }
 
@@ -53,13 +54,13 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
         if (!spaceRepository.existsById(spaceId))
             throw new ResourceNotFoundException(SPACE_ID_NOT_FOUND);
 
-        return repository.existsByUserIdAndSpaceId(userId, spaceId);
+        return repository.existsBySpaceIdAndUserId(spaceId, userId);
     }
 
     @Override
     public PaginatedResponse<Member> loadSpaceMembers(long spaceId, int page, int size) {
         var pageResult = repository.findMembers(spaceId,
-            PageRequest.of(page, size, Sort.Direction.DESC, SpaceUserAccessJpaEntity.Fields.CREATION_TIME));
+            PageRequest.of(page, size, Sort.Direction.DESC, SpaceUserAccessJpaEntity.Fields.LAST_SEEN));
 
         var items = pageResult.getContent()
             .stream()
@@ -67,10 +68,10 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
             .toList();
 
         return new PaginatedResponse<>(
-            items ,
+            items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            SpaceUserAccessJpaEntity.Fields.CREATION_TIME,
+            SpaceUserAccessJpaEntity.Fields.LAST_SEEN,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
@@ -87,7 +88,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteAccess(long spaceId, UUID userId) {
+    public void delete(long spaceId, UUID userId) {
         repository.deleteBySpaceIdAndUserId(spaceId, userId);
     }
 }
