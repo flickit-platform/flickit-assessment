@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpertGroupUseCase;
 
 import java.util.UUID;
 
@@ -17,7 +16,7 @@ public interface LeaveSpaceUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<DeleteExpertGroupUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = LEAVE_SPACE_SPACE_ID_NOT_NULL)
         Long id;

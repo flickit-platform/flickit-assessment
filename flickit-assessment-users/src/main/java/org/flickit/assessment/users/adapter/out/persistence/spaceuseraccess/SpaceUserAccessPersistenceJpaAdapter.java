@@ -27,8 +27,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     CreateSpaceUserAccessPort,
     CheckSpaceAccessPort,
     DeleteSpaceMemberPort,
-    LoadSpaceMembersPort,
-    DeleteSpaceUserAccessPort {
+    LoadSpaceMembersPort {
 
     private final SpaceUserAccessJpaRepository repository;
     private final SpaceJpaRepository spaceRepository;
