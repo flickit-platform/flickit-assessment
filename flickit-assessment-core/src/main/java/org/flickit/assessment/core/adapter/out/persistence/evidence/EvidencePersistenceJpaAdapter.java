@@ -7,6 +7,7 @@ import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.port.in.evidence.GetAttributeEvidenceListUseCase.AttributeEvidenceListItem;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.*;
+import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaRepository;
@@ -32,17 +33,20 @@ public class EvidencePersistenceJpaAdapter implements
     LoadEvidencesPort,
     UpdateEvidencePort,
     DeleteEvidencePort,
-    CheckEvidenceExistencePort,
     LoadAttributeEvidencesPort,
     LoadEvidencePort {
 
     private final EvidenceJpaRepository repository;
+    private final AssessmentJpaRepository assessmentRepository;
     private final QuestionJpaRepository questionRepository;
     private final UserJpaRepository userRepository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
     public UUID persist(CreateEvidencePort.Param param) {
+        if (!assessmentRepository.existsByIdAndDeletedFalse(param.assessmentId()))
+            throw new ResourceNotFoundException(ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND);
+
         var assessmentKitVersionId = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND))
             .getKitVersionId();
@@ -57,6 +61,9 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size) {
+        if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
+            throw new ResourceNotFoundException(GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL);
+
         var pageResult = repository.findByQuestionIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(
             questionId, assessmentId, PageRequest.of(page, size));
         var userIds = pageResult.getContent().stream()
@@ -95,13 +102,11 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean existsById(UUID id) {
-        return repository.existsByIdAndDeletedFalse(id);
-    }
-
-    @Override
     public PaginatedResponse<AttributeEvidenceListItem> loadAttributeEvidences(UUID assessmentId, Long attributeId,
                                                                                Integer type, int page, int size) {
+        if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
+            throw new ResourceNotFoundException(GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND);
+
         var pageResult = repository.findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(
             assessmentId, attributeId, type, PageRequest.of(page, size));
 
@@ -122,6 +127,6 @@ public class EvidencePersistenceJpaAdapter implements
     public Evidence loadNotDeletedEvidence(UUID id) {
         return repository.findByIdAndDeletedFalse(id)
             .map(EvidenceMapper::mapToDomainModel)
-            .orElseThrow(() -> new ResourceNotFoundException(UPDATE_EVIDENCE_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
     }
 }

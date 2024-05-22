@@ -1,15 +1,12 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
-import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -40,9 +37,6 @@ class ReportAssessmentServiceTest {
     private LoadAssessmentReportInfoPort loadReportInfoPort;
 
     @Mock
-    private CheckAssessmentExistencePort checkAssessmentExistencePort;
-
-    @Mock
     private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
 
     @Test
@@ -52,13 +46,10 @@ class ReportAssessmentServiceTest {
 
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
-        var attributes = List.of(
-            new AttributeReportItem(1L, "attrTitle1", 2, 1),
-            new AttributeReportItem(2L, "attrTitle2", 1, 2),
-            new AttributeReportItem(3L, "attrTitle3", 3, 3));
-        var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1");
+        var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1", "picture/link");
         var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", 3, expertGroup);
         MaturityLevel assessmentMaturityLevel = MaturityLevelMother.levelThree();
+        LocalDateTime creationTime = LocalDateTime.now();
         LocalDateTime lastModificationTime = LocalDateTime.now();
         AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
             "assessmentTitle",
@@ -68,17 +59,16 @@ class ReportAssessmentServiceTest {
             true,
             true,
             AssessmentColor.BLUE,
+            creationTime,
             lastModificationTime);
 
-        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
         MaturityLevel softwareLevel = MaturityLevelMother.levelFour();
         MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
         var subjects = List.of(
-            new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", softwareLevel),
-            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", teamLevel));
-        var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, attributes, maturityLevels, subjects);
+            new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", 20.0, softwareLevel, List.of()),
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
+        var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
 
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadReportInfoPort.load(assessmentId)).thenReturn(assessmentReport);
@@ -105,23 +95,7 @@ class ReportAssessmentServiceTest {
         assertEquals(assessmentReport.assessment().assessmentKit().expertGroup().id(), result.assessment().assessmentKit().expertGroup().id());
         assertEquals(assessmentReport.assessment().assessmentKit().expertGroup().title(), result.assessment().assessmentKit().expertGroup().title());
 
-        assertNotNull(result.topStrengths());
-        assertEquals(1, result.topStrengths().size());
-        assertNotNull(result.topWeaknesses());
-        assertEquals(2, result.topWeaknesses().size());
-
         assertEquals(assessmentReport.subjects().size(), result.subjects().size());
-    }
-
-    @Test
-    void testReportAssessment_AssessmentDoesNotExist_ThrowException() {
-        UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
-        ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
-
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(false);
-
-        assertThrows(ResourceNotFoundException.class, () -> service.reportAssessment(param));
     }
 
     @Test
@@ -130,7 +104,6 @@ class ReportAssessmentServiceTest {
         UUID assessmentId = UUID.randomUUID();
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.reportAssessment(param));

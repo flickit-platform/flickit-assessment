@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorMessageKey {
 
-    public static final String FILE_STORAGE_FILE_NOT_FOUND = "file-storage.file.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
     public static final String USER_BY_EMAIL_NOT_FOUND = "user-by-email.notFound";
     public static final String SPACE_ID_NOT_FOUND = "space.id.notFound";
@@ -59,7 +58,7 @@ public class ErrorMessageKey {
     public static final String CONFIRM_EXPERT_GROUP_INVITATION_USER_ID_DUPLICATE = "confirm-expert-group-invitation.userId.duplicate";
 
     public static final String DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_NULL = "delete-expert-group-member.userId.notNull";
-    public static final String DELETE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group-member.expert-group-id.notNull";
+    public static final String DELETE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group-member.expertGroupId.notNull";
     public static final String DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND = "delete-expert-group-member.userId.notFound";
 
     public static final String ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL = "add-space-member.spaceId.notUll";
@@ -80,4 +79,29 @@ public class ErrorMessageKey {
     public static final String CREATE_SPACE_TITLE_NOT_BLANK = "create-space.title.notBlank";
     public static final String CREATE_SPACE_TITLE_SIZE_MIN = "create-space.title.size.min";
     public static final String CREATE_SPACE_TITLE_SIZE_MAX = "create-space.title.size.max";
+
+    public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_NULL = "delete-space-member.userId.notNull";
+    public static final String DELETE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "delete-space-member.spaceId.notNull";
+    public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_FOUND = "delete-space-member.userId.notFound";
+
+    public static final String GET_SPACE_SPACE_ID_NOT_NULL = "get-space.spaceId.notNull";
+
+    public static final String GET_SPACE_LIST_PAGE_MIN = "get-space-list.page.min";
+    public static final String GET_SPACE_LIST_SIZE_MIN = "get-space-list.size.min";
+    public static final String GET_SPACE_LIST_SIZE_MAX = "get-space-list.size.max";
+
+    public static final String UPDATE_SPACE_LAST_SEEN_SPACE_ID_NOT_NULL = "update-space-lastSeen.spaceId.notNull";
+
+    public static final String DELETE_SPACE_ASSESSMENT_EXIST = "delete-space.assessments.exist";
+    public static final String DELETE_SPACE_SPACE_ID_NOT_NULL = "delete-space.spaceId.notNull";
+
+    public static final String GET_SPACE_INVITEES_SPACE_ID_NOT_NULL = "get-space-invitees.spaceId.notNull";
+    public static final String GET_SPACE_INVITEES_SIZE_MIN = "get-space-invitees.size.min";
+    public static final String GET_SPACE_INVITEES_SIZE_MAX = "get-space-invitees.size.max";
+    public static final String GET_SPACE_INVITEES_PAGE_MIN = "get-space-invitees.page.min";
+
+    public static final String UPDATE_SPACE_SPACE_ID_NOT_NULL = "update-space.spaceId.notNull";
+    public static final String UPDATE_SPACE_TITLE_NOT_BLANK = "update-space.title.notBlank";
+    public static final String UPDATE_SPACE_TITLE_SIZE_MIN = "update-space.title.size.min";
+    public static final String UPDATE_SPACE_TITLE_SIZE_MAX = "update-space.title.size.max";
 }
