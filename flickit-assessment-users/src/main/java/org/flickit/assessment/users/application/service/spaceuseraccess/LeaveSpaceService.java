@@ -2,10 +2,11 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.LeaveSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceUserAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +21,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class LeaveSpaceService implements LeaveSpaceUseCase {
 
     private final CheckSpaceAccessPort checkSpaceAccessPort;
-    private final DeleteSpaceUserAccessPort deleteSpaceUserAccessPort;
     private final LoadSpaceOwnerPort loadSpaceOwnerPort;
+    private final DeleteSpaceMemberPort deleteSpaceMemberPort;
 
     @Override
     public void leaveMember(Param param) {
@@ -30,8 +31,8 @@ public class LeaveSpaceService implements LeaveSpaceUseCase {
 
         UUID spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(param.getId());
         if (Objects.equals(spaceOwnerId, param.getCurrentUserId()))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+            throw new ValidationException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        deleteSpaceUserAccessPort.deleteAccess(param.getId(), param.getCurrentUserId());
+        deleteSpaceMemberPort.delete(param.getId(), param.getCurrentUserId());
     }
 }
