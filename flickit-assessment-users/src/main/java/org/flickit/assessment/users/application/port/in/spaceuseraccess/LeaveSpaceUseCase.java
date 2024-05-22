@@ -9,9 +9,9 @@ import org.flickit.assessment.users.application.port.in.expertgroup.DeleteExpert
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.LEAVE_SPACE_MEMBER_SPACE_ID_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.LEAVE_SPACE_SPACE_ID_NOT_NULL;
 
-public interface LeaveSpaceMemberUseCase {
+public interface LeaveSpaceUseCase {
 
     void leaveMember(Param param);
 
@@ -19,7 +19,7 @@ public interface LeaveSpaceMemberUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<DeleteExpertGroupUseCase.Param> {
 
-        @NotNull(message = LEAVE_SPACE_MEMBER_SPACE_ID_NOT_NULL)
+        @NotNull(message = LEAVE_SPACE_SPACE_ID_NOT_NULL)
         Long id;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

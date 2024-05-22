@@ -2,7 +2,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.users.application.port.in.spaceuseraccess.LeaveSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.LeaveSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceUserAccessPort;
@@ -17,7 +17,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class LeaveSpaceMemberService implements LeaveSpaceMemberUseCase {
+public class LeaveSpaceService implements LeaveSpaceUseCase {
 
     private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final DeleteSpaceUserAccessPort deleteSpaceUserAccessPort;

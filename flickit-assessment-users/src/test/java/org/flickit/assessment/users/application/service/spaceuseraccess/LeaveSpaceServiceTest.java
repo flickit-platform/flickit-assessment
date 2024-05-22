@@ -1,7 +1,7 @@
 package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.users.application.port.in.spaceuseraccess.LeaveSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.LeaveSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceUserAccessPort;
@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class LeaveSpaceMemberServiceTest {
+class LeaveSpaceServiceTest {
 
     @InjectMocks
-    LeaveSpaceMemberService service;
+    LeaveSpaceService service;
 
     @Mock
     CheckSpaceAccessPort checkSpaceAccessPort;
@@ -35,10 +35,10 @@ class LeaveSpaceMemberServiceTest {
 
     @Test
     @DisplayName("If space is not exists or user does not access to space, service should throw AccessDeniedException")
-    void testLeaveSpaceMember_userDoesNotAccess_accessDeniedError(){
+    void testLeaveSpace_userDoesNotAccess_accessDeniedError(){
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
-        LeaveSpaceMemberUseCase.Param param = new LeaveSpaceMemberUseCase.Param(spaceId, currentUserId);
+        LeaveSpaceUseCase.Param param = new LeaveSpaceUseCase.Param(spaceId, currentUserId);
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
 
@@ -51,10 +51,10 @@ class LeaveSpaceMemberServiceTest {
 
     @Test
     @DisplayName("If there are valid inputs, but the userId is owner, it should throw AccessDenied")
-    void testLeaveSpaceMember_userIdIsOwner_success(){
+    void testLeaveSpace_userIdIsOwner_success(){
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
-        LeaveSpaceMemberUseCase.Param param = new LeaveSpaceMemberUseCase.Param(spaceId, currentUserId);
+        LeaveSpaceUseCase.Param param = new LeaveSpaceUseCase.Param(spaceId, currentUserId);
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
@@ -68,10 +68,10 @@ class LeaveSpaceMemberServiceTest {
 
     @Test
     @DisplayName("If there are valid inputs, service should remove the access successfully")
-    void testLeaveSpaceMember_validParameters_success(){
+    void testLeaveSpace_validParameters_success(){
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
-        LeaveSpaceMemberUseCase.Param param = new LeaveSpaceMemberUseCase.Param(spaceId, currentUserId);
+        LeaveSpaceUseCase.Param param = new LeaveSpaceUseCase.Param(spaceId, currentUserId);
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
 

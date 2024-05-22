@@ -2,8 +2,8 @@ package org.flickit.assessment.users.adapter.in.rest.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.users.application.port.in.spaceuseraccess.LeaveSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.in.spaceuseraccess.LeaveSpaceMemberUseCase.Param;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.LeaveSpaceUseCase;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.LeaveSpaceUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,13 +12,13 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class LeaveSpaceMemberRestController {
+public class LeaveSpaceRestController {
 
-    private final LeaveSpaceMemberUseCase useCase;
+    private final LeaveSpaceUseCase useCase;
     private final UserContext userContext;
 
     @DeleteMapping("/spaces/{id}/leave")
-    public ResponseEntity<Void> leaveSpaceMembers(
+    public ResponseEntity<Void> leaveSpace(
         @PathVariable("id") long id) {
         var currentUserId = userContext.getUser().id();
         useCase.leaveMember(toParam(id, currentUserId));
