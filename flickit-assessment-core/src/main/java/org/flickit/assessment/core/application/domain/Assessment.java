@@ -20,6 +20,7 @@ public class Assessment {
     private final LocalDateTime lastModificationTime;
     private final long deletionTime;
     private final boolean deleted;
+    private final UUID createdBy;
 
     public static String generateSlugCode(String title) {
         return title

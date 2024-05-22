@@ -37,6 +37,20 @@ public enum AssessmentUserRole {
         return this.ordinal();
     }
 
+    public static AssessmentUserRole valueOfById(int id) {
+        if (!isValidId(id))
+            return null;
+        return values()[id];
+    }
+
+    public static boolean isValidId(int id) {
+        return id >= 0 && id < AssessmentUserRole.values().length;
+    }
+
+    public boolean hasAccess(AssessmentPermission permission) {
+        return this.getPermissions().contains(permission);
+    }
+
     @Getter
     @RequiredArgsConstructor
     enum PermissionGroup {
@@ -68,7 +82,8 @@ public enum AssessmentUserRole {
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
-            UPDATE_ASSESSMENT));
+            UPDATE_ASSESSMENT,
+            GRANT_USER_ASSESSMENT_ROLE));
 
         private final Set<AssessmentPermission> permissions;
     }
