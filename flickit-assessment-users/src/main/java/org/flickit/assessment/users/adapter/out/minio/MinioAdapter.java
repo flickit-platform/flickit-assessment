@@ -3,6 +3,7 @@ package org.flickit.assessment.users.adapter.out.minio;
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
+import io.minio.messages.Item;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -106,9 +107,28 @@ public class MinioAdapter implements
         String bucketName = properties.getBucketNames().getAvatar();
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
 
+        Iterable<Result<Item>> results = minioClient.listObjects(
+            ListObjectsArgs.builder()
+                .bucket(bucketName)
+                .prefix(objectName)
+                .includeVersions(true)
+                .build()
+        );
+
+        String latestVersionId = null;
+
+        for (Result<Item> result : results) {
+            Item item = result.get();
+            if (item.isLatest()) {
+                latestVersionId = item.versionId();
+                break;
+            }
+        }
+
         minioClient.removeObject(RemoveObjectArgs.builder()
             .bucket(bucketName)
             .object(objectName)
+            .versionId(latestVersionId)
             .build());
     }
 }
