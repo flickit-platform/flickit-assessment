@@ -115,15 +115,7 @@ public class MinioAdapter implements
                 .build()
         );
 
-        String latestVersionId = null;
-
-        for (Result<Item> result : results) {
-            Item item = result.get();
-            if (item.isLatest()) {
-                latestVersionId = item.versionId();
-                break;
-            }
-        }
+        String latestVersionId = results.iterator().next().get().versionId();
 
         minioClient.removeObject(RemoveObjectArgs.builder()
             .bucket(bucketName)
