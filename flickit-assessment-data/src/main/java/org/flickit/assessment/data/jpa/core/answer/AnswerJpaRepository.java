@@ -15,9 +15,9 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId);
 
-    List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
+    List<AnswerJpaEntity> findByAssessmentResultIdAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
 
-    Page<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIdAsc(UUID assessmentResultId, Long questionnaireId, Pageable pageable);
+    List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
     @Query("SELECT COUNT(a) as answerCount FROM AnswerJpaEntity a " +
         "WHERE a.assessmentResult.id=:assessmentResultId AND a.questionId IN :questionIds AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)")
@@ -55,4 +55,14 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(
         @Param(value = "assessmentResultId") UUID assessmentResultId,
         @Param(value = "questionnaireIds") List<Long> questionnaireIds);
+
+    @Query("""
+            SELECT a
+            FROM QuestionJpaEntity q
+            JOIN AnswerJpaEntity a
+                ON q.refNum = a.questionRefNum AND a.assessmentResult.id = :assessmentResultId
+            WHERE q.questionnaireId = :questionnaireId
+            ORDER BY q.index
+        """)
+    Page<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIndexAsc(UUID assessmentResultId, Long questionnaireId, Pageable pageable);
 }
