@@ -159,7 +159,6 @@ class CalculateAssessmentServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(false);
         verifyNoInteractions(loadCalculateInfoPort);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.calculateMaturityLevel(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        assertThrows(AccessDeniedException.class, () -> service.calculateMaturityLevel(param), COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }

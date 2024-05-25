@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ADD_EVIDENCE;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -71,6 +72,6 @@ class AddEvidenceServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCreatedById(), ADD_EVIDENCE)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.addEvidence(param));
+        assertThrows(AccessDeniedException.class, () -> service.addEvidence(param), COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }

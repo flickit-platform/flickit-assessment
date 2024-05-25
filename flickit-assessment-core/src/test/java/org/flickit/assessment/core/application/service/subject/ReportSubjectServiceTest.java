@@ -48,8 +48,7 @@ class ReportSubjectServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(false);
 
-        AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.reportSubject(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        assertThrows(AccessDeniedException.class, () -> service.reportSubject(param), COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
     @Test

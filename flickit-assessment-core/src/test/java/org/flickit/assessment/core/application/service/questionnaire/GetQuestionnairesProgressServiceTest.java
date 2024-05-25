@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.questionnaire;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.error.ErrorMessageKey;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.QuestionnaireProgress;
@@ -19,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_QUESTIONNAIRES_PROGRESS;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -71,8 +71,7 @@ class GetQuestionnairesProgressServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_QUESTIONNAIRES_PROGRESS)).thenReturn(false);
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getQuestionnairesProgress(useCaseParam));
-        assertEquals(ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        assertThrows(AccessDeniedException.class, () -> service.getQuestionnairesProgress(useCaseParam), COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verify(assessmentAccessChecker, times(1)).isAuthorized(useCaseParam.getAssessmentId(), useCaseParam.getCurrentUserId(), VIEW_QUESTIONNAIRES_PROGRESS);
         verify(getQuestionnairesProgressPort, never()).getQuestionnairesProgressByAssessmentId(any());

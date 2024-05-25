@@ -64,8 +64,7 @@ class SubmitAnswerServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(false);
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.submitAnswer(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        assertThrows(AccessDeniedException.class, () -> service.submitAnswer(param), COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verifyNoInteractions(loadAssessmentResultPort,
             loadAnswerPort,

@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.subject;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.error.ErrorMessageKey;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.subject.GetSubjectProgressUseCase;
@@ -21,6 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_SUBJECT_PROGRESS;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -87,7 +87,6 @@ class GetSubjectProgressServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_PROGRESS)).thenReturn(false);
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getSubjectProgress(param));
-        assertEquals(ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        assertThrows(AccessDeniedException.class, () -> service.getSubjectProgress(param), COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }

@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.DELETE_ASSESSMENT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -62,6 +63,6 @@ class DeleteAssessmentServiceTest {
         DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(assessmentId, currentUserId);
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, DELETE_ASSESSMENT)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.deleteAssessment(param));
+        assertThrows(AccessDeniedException.class, () -> service.deleteAssessment(param), COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }

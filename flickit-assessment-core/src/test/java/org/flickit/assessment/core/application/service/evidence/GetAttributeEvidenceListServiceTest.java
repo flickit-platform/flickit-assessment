@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_EVIDENCE_LIST;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -69,7 +70,7 @@ class GetAttributeEvidenceListServiceTest {
         Param param = new Param(UUID.randomUUID(), 1L, "POSITIVE",  UUID.randomUUID(), 10, 0);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_EVIDENCE_LIST)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getAttributeEvidenceList(param));
+        assertThrows(AccessDeniedException.class, () -> service.getAttributeEvidenceList(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(loadAttributeEvidencesPort, never()).loadAttributeEvidences(any(), any(), anyInt(), anyInt(), anyInt());
     }
 

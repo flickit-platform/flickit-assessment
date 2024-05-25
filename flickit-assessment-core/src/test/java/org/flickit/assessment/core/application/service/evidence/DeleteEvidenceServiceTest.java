@@ -81,10 +81,7 @@ class DeleteEvidenceServiceTest {
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
 
         DeleteEvidenceUseCase.Param param = new DeleteEvidenceUseCase.Param(evidenceId, currentUserId);
-        var exception = assertThrows(AccessDeniedException.class,
-            () -> service.deleteEvidence(param));
-
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        assertThrows(AccessDeniedException.class, () -> service.deleteEvidence(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(deleteEvidencePort, never()).deleteById(any());
 
         ArgumentCaptor<UUID> idCheckPortArgument = ArgumentCaptor.forClass(UUID.class);
@@ -102,10 +99,7 @@ class DeleteEvidenceServiceTest {
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), currentUserId, DELETE_EVIDENCE)).thenReturn(false);
 
         DeleteEvidenceUseCase.Param param = new DeleteEvidenceUseCase.Param(evidenceId, currentUserId);
-        var exception = assertThrows(AccessDeniedException.class,
-            () -> service.deleteEvidence(param));
-
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        assertThrows(AccessDeniedException.class, () -> service.deleteEvidence(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(deleteEvidencePort, never()).deleteById(any());
 
         ArgumentCaptor<UUID> idCheckPortArgument = ArgumentCaptor.forClass(UUID.class);

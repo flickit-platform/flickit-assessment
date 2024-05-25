@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_SCORE_DETAIL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Param;
@@ -119,8 +118,6 @@ class GetAttributeScoreDetailServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_SCORE_DETAIL)).thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class,
-            () -> service.getAttributeScoreDetail(param));
-        assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
+        assertThrows(AccessDeniedException.class, () -> service.getAttributeScoreDetail(param), COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }

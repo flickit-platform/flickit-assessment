@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -86,7 +87,7 @@ class GetAssessmentServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT)).thenReturn(false);
 
         Param param = new Param(assessmentId, currentUserId);
-        assertThrows(AccessDeniedException.class, () -> service.getAssessment(param));
+        assertThrows(AccessDeniedException.class, () -> service.getAssessment(param), COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
         verify(getAssessmentPort, never()).getAssessmentById(any());

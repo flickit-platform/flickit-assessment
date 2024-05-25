@@ -49,8 +49,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(false);
 
-        var exception = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verifyNoInteractions(loadQuestionnaireQuestionListPort,
             loadQuestionsAnswerListPort);
     }

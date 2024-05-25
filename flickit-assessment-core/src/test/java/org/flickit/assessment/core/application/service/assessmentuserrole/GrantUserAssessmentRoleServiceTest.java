@@ -43,8 +43,7 @@ class GrantUserAssessmentRoleServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(false);
 
-        var exception = assertThrows(AccessDeniedException.class, () -> service.grantAssessmentUserRole(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        assertThrows(AccessDeniedException.class, () -> service.grantAssessmentUserRole(param), COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verifyNoInteractions(spaceAccessChecker, grantUserAssessmentRolePort);
     }
