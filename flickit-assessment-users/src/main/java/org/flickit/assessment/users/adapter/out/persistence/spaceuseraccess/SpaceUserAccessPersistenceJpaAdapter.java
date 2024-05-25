@@ -26,8 +26,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 public class SpaceUserAccessPersistenceJpaAdapter implements
     CreateSpaceUserAccessPort,
     CheckSpaceAccessPort,
-    LoadSpaceMembersPort,
-    DeleteSpaceMemberPort {
+    DeleteSpaceMemberPort,
+    LoadSpaceMembersPort {
 
     private final SpaceUserAccessJpaRepository repository;
     private final SpaceJpaRepository spaceRepository;
