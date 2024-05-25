@@ -1,8 +1,8 @@
 package org.flickit.assessment.core.application.service.evidence;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.evidence.AddEvidenceUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ADD_EVIDENCE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -28,7 +29,7 @@ class AddEvidenceServiceTest {
     private CreateEvidencePort createEvidencePort;
 
     @Mock
-    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
     void testAddEvidence_ValidParam_PersistsAndReturnsId() {
@@ -40,7 +41,7 @@ class AddEvidenceServiceTest {
             UUID.randomUUID()
         );
         UUID expectedId = UUID.randomUUID();
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedById())).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCreatedById(), ADD_EVIDENCE)).thenReturn(true);
         when(createEvidencePort.persist(any(CreateEvidencePort.Param.class))).thenReturn(expectedId);
 
         AddEvidenceUseCase.Result result = service.addEvidence(param);
@@ -68,7 +69,7 @@ class AddEvidenceServiceTest {
             UUID.randomUUID()
         );
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedById())).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCreatedById(), ADD_EVIDENCE)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.addEvidence(param));
     }
