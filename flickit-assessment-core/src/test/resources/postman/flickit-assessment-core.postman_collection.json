@@ -850,41 +850,6 @@
 			"response": []
 		},
 		{
-			"name": "Grant Assessment User Role",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"userId\": \"136960fa-4040-4f3b-ac34-a71a67d29941\",\n    \"roleId\": \"1\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/625e6194-b710-4ed4-90e5-d6372ee3cb96/assessment-user-roles",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessments",
-						"625e6194-b710-4ed4-90e5-d6372ee3cb96",
-						"assessment-user-roles"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Update Assessment User Role",
 			"request": {
 				"method": "PUT",
