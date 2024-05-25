@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.users.common.ErrorMessageKey.LEAVE_SPACE_OWNER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,8 +36,8 @@ class LeaveSpaceServiceTest {
     LoadSpaceOwnerPort loadSpaceOwnerPort;
 
     @Test
-    @DisplayName("If space is not exists or user does not access to space, service should throw AccessDeniedException")
-    void testLeaveSpace_userDoesNotAccess_accessDeniedError(){
+    @DisplayName("If current user is not a member of the space, service should throw AccessDeniedException")
+    void testLeaveSpace_currentUserIsNotSpaceMember_accessDeniedError(){
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         LeaveSpaceUseCase.Param param = new LeaveSpaceUseCase.Param(spaceId, currentUserId);
@@ -51,8 +52,8 @@ class LeaveSpaceServiceTest {
     }
 
     @Test
-    @DisplayName("If there are valid inputs, but the userId is owner, it should throw ValidationException")
-    void testLeaveSpace_userIdIsOwner_ValidationException(){
+    @DisplayName("If current user is the owner of the space, it should throw ValidationException")
+    void testLeaveSpace_currentUserIsSpaceOwner_ValidationException(){
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         LeaveSpaceUseCase.Param param = new LeaveSpaceUseCase.Param(spaceId, currentUserId);
@@ -69,7 +70,7 @@ class LeaveSpaceServiceTest {
     }
 
     @Test
-    @DisplayName("If there are valid inputs, service should remove the access successfully")
+    @DisplayName("If there are valid inputs, current user can leave the space successfully")
     void testLeaveSpace_validParameters_success(){
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();

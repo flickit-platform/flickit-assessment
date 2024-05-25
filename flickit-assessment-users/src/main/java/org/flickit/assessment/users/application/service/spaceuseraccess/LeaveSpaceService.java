@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.users.common.ErrorMessageKey.LEAVE_SPACE_OWNER_NOT_ALLOWED;
 
 @Service
 @Transactional
@@ -31,7 +32,7 @@ public class LeaveSpaceService implements LeaveSpaceUseCase {
 
         UUID spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(param.getId());
         if (Objects.equals(spaceOwnerId, param.getCurrentUserId()))
-            throw new ValidationException(COMMON_CURRENT_USER_NOT_ALLOWED);
+            throw new ValidationException(LEAVE_SPACE_OWNER_NOT_ALLOWED);
 
         deleteSpaceMemberPort.delete(param.getId(), param.getCurrentUserId());
     }
