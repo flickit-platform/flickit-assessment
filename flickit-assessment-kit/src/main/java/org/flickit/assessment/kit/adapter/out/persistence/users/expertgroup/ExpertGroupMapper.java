@@ -12,7 +12,7 @@ public class ExpertGroupMapper {
     public static ExpertGroup mapToDomainModel(ExpertGroupJpaEntity expertGroup) {
         return new ExpertGroup(expertGroup.getId(),
             expertGroup.getTitle(),
-            expertGroup.getBio(),
+            expertGroup.getPicture(),
             expertGroup.getOwnerId());
     }
 }
