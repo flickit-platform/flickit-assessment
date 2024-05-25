@@ -1,4 +1,4 @@
-package org.flickit.assessment.common.permission;
+package org.flickit.assessment.common.application.domain.assessment;
 
 import java.util.UUID;
 
