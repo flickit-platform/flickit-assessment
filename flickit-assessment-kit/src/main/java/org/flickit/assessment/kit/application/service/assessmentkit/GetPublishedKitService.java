@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
@@ -79,8 +79,8 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             kitTags);
     }
 
-    private Subject toSubject(org.flickit.assessment.kit.application.domain.Subject s) {
-        return new Subject(
+    private MinimalSubject toSubject(Subject s) {
+        return new MinimalSubject(
             s.getId(),
             s.getTitle(),
             s.getDescription(),
@@ -90,19 +90,19 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
         );
     }
 
-    private Attribute toAttribute(org.flickit.assessment.kit.application.domain.Attribute attribute) {
-        return new Attribute(attribute.getId(), attribute.getTitle(), attribute.getDescription());
+    private MinimalAttribute toAttribute(Attribute attribute) {
+        return new MinimalAttribute(attribute.getId(), attribute.getTitle(), attribute.getDescription());
     }
 
-    private Questionnaire toQuestionnaire(org.flickit.assessment.kit.application.domain.Questionnaire questionnaire) {
-        return new Questionnaire(questionnaire.getId(), questionnaire.getTitle(), questionnaire.getDescription());
+    private MinimalQuestionnaire toQuestionnaire(Questionnaire questionnaire) {
+        return new MinimalQuestionnaire(questionnaire.getId(), questionnaire.getTitle(), questionnaire.getDescription());
     }
 
-    private MaturityLevel toMaturityLevel(org.flickit.assessment.kit.application.domain.MaturityLevel level) {
-        return new MaturityLevel(level.getId(), level.getTitle(), level.getValue(), level.getIndex());
+    private MinimalMaturityLevel toMaturityLevel(MaturityLevel level) {
+        return new MinimalMaturityLevel(level.getId(), level.getTitle(), level.getValue(), level.getIndex());
     }
 
-    private KitTag toKitTag(org.flickit.assessment.kit.application.domain.KitTag tag) {
-        return new KitTag(tag.getId(), tag.getTitle());
+    private MinimalKitTag toKitTag(KitTag tag) {
+        return new MinimalKitTag(tag.getId(), tag.getTitle());
     }
 }

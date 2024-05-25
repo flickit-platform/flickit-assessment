@@ -17,8 +17,8 @@ public record GetPublishedKitResponseDto(Long id,
                                          Integer assessmentsCount,
                                          Integer subjectsCount,
                                          Integer questionnairesCount,
-                                         List<GetPublishedKitUseCase.Subject> subjects,
-                                         List<GetPublishedKitUseCase.Questionnaire> questionnaires,
-                                         List<GetPublishedKitUseCase.MaturityLevel> maturityLevels,
-                                         List<GetPublishedKitUseCase.KitTag> tags) {
+                                         List<GetPublishedKitUseCase.MinimalSubject> subjects,
+                                         List<GetPublishedKitUseCase.MinimalQuestionnaire> questionnaires,
+                                         List<GetPublishedKitUseCase.MinimalMaturityLevel> maturityLevels,
+                                         List<GetPublishedKitUseCase.MinimalKitTag> tags) {
 }

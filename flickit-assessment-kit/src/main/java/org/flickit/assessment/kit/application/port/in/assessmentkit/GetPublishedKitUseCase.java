@@ -45,38 +45,27 @@ public interface GetPublishedKitUseCase {
                   Integer assessmentsCount,
                   Integer subjectsCount,
                   Integer questionnairesCount,
-                  List<Subject> subjects,
-                  List<Questionnaire> questionnaires,
-                  List<MaturityLevel> maturityLevels,
-                  List<KitTag> tags) {
+                  List<MinimalSubject> subjects,
+                  List<MinimalQuestionnaire> questionnaires,
+                  List<MinimalMaturityLevel> maturityLevels,
+                  List<MinimalKitTag> tags) {
     }
 
     record Like(int count, boolean liked) {
     }
 
-    record Subject(Long id,
-                   String title,
-                   String description,
-                   List<Attribute> attributes) {
+    record MinimalSubject(Long id, String title, String description, List<MinimalAttribute> attributes) {
     }
 
-    record Attribute(Long id,
-                     String title,
-                     String description) {
+    record MinimalAttribute(Long id, String title, String description) {
     }
 
-    record Questionnaire(Long id,
-                         String title,
-                         String description) {
+    record MinimalQuestionnaire(Long id, String title, String description) {
     }
 
-    record MaturityLevel(Long id,
-                         String title,
-                         Integer value,
-                         Integer index) {
+    record MinimalMaturityLevel(Long id, String title, Integer value, Integer index) {
     }
 
-    record KitTag(Long id,
-                  String title) {
+    record MinimalKitTag(Long id, String title) {
     }
 }
