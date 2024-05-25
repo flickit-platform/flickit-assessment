@@ -83,7 +83,8 @@ public enum AssessmentUserRole {
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
             UPDATE_ASSESSMENT,
-            GRANT_USER_ASSESSMENT_ROLE));
+            GRANT_USER_ASSESSMENT_ROLE,
+            GET_ASSESSMENT_PRIVILEGED_USERS));
 
         private final Set<AssessmentPermission> permissions;
     }
