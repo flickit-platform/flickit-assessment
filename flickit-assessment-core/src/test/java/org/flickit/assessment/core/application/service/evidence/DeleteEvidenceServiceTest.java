@@ -79,7 +79,6 @@ class DeleteEvidenceServiceTest {
         UUID evidenceId = evidence.getId();
         UUID currentUserId = UUID.randomUUID();
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
-        when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), currentUserId, DELETE_EVIDENCE)).thenReturn(true);
 
         DeleteEvidenceUseCase.Param param = new DeleteEvidenceUseCase.Param(evidenceId, currentUserId);
         var exception = assertThrows(AccessDeniedException.class,

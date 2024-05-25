@@ -27,10 +27,8 @@ public class DeleteEvidenceService implements DeleteEvidenceUseCase {
     public void deleteEvidence(Param param) {
         var evidence = loadEvidencePort.loadNotDeletedEvidence(param.getId());
 
-        if (!assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), DELETE_EVIDENCE))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-
-        if (!Objects.equals(evidence.getCreatedById(), param.getCurrentUserId()))
+        if (!Objects.equals(evidence.getCreatedById(), param.getCurrentUserId()) ||
+            !assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), DELETE_EVIDENCE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         deleteEvidencePort.deleteById(param.getId());
