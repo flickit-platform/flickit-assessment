@@ -56,7 +56,7 @@ class DeleteUserAssessmentRoleServiceTest {
     }
 
     @Test
-    @DisplayName("Deleting an assessment permission role should be done on a that has access to assessment.")
+    @DisplayName("Deleting an assessment permission role should be done on a user that has already access to assessment.")
     void testDeleteAssessmentUserRole_userHasNotAccess_ResourceNotFound() {
         UUID assessmentId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
