@@ -142,6 +142,14 @@ public class ErrorMessageKey {
     public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ROLE_DUPLICATE = "grant-assessment-user-role.user.role.duplicate";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "grant-assessment-user-role.roleId.notNull";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "grant-assessment-user-role.roleId.notFound";
+    public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER = "grant-assessment-user-role.userId.notMember";
+
+    public static final String UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "update-assessment-user-role.assessmentId.notNull";
+    public static final String UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "update-assessment-user-role.userId.notNull";
+    public static final String UPDATE_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "update-assessment-user-role.roleId.notNull";
+    public static final String UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER = "update-assessment-user-role.userId.notMember";
+    public static final String UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND = "update-assessment-user-role.assessmentId.userId.notFound";
+    public static final String UPDATE_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "update-assessment-user-role.roleId.notFound";
 
     public static final String GET_ASSESSMENT_PRIVILEGED_USERS_ASSESSMENT_ID_NOT_NULL = "get-assessment-privileged-users.assessmentId.notNull";
     public static final String GET_ASSESSMENT_PRIVILEGED_USERS_SIZE_MIN = "get-assessment-privileged-users.size.min";
@@ -149,5 +157,4 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_PRIVILEGED_USERS_PAGE_MIN = "get-assessment-privileged-users.page.min";
 
     public static final String FILE_STORAGE_FILE_NOT_FOUND = "file-storage.file.notFound";
-
 }

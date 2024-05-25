@@ -850,6 +850,41 @@
 			"response": []
 		},
 		{
+			"name": "Update Assessment User Role",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"69f63c1b-6e4c-4cf6-83c6-d8a25fa602ab\",\n    \"roleId\": \"2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/5da1d0ff-0029-4d41-b4fd-85f160f23127/assessment-user-roles",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"5da1d0ff-0029-4d41-b4fd-85f160f23127",
+						"assessment-user-roles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Assessment User Roles",
 			"request": {
 				"method": "GET",

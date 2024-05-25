@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.UPDATE_ASSESSMENT;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.PermissionGroup.*;
 
 @Getter
@@ -84,6 +83,7 @@ public enum AssessmentUserRole {
             DELETE_ASSESSMENT,
             UPDATE_ASSESSMENT,
             GRANT_USER_ASSESSMENT_ROLE,
+            UPDATE_USER_ASSESSMENT_ROLE,
             GET_ASSESSMENT_PRIVILEGED_USERS));
 
         private final Set<AssessmentPermission> permissions;

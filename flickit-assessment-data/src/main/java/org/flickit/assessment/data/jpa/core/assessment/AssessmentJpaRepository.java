@@ -53,6 +53,8 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
+    Optional<AssessmentJpaEntity> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
+
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +
         "a.lastModificationTime = :lastModificationTime " +

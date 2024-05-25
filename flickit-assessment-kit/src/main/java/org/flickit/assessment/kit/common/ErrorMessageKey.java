@@ -119,6 +119,8 @@ public class ErrorMessageKey {
     public static final String GET_EXPERT_GROUP_KIT_LIST_SIZE_MIN = "get-expert-group-kit-list.size.min";
     public static final String GET_EXPERT_GROUP_KIT_LIST_SIZE_MAX = "get-expert-group-kit-list.size.max";
 
+    public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
