@@ -10,6 +10,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetAssessmentPrivilegedUsersUseCase {
@@ -23,6 +24,9 @@ public interface GetAssessmentPrivilegedUsersUseCase {
         @NotNull(message = GET_ASSESSMENT_PRIVILEGED_USERS_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
         @Min(value = 1, message = GET_ASSESSMENT_PRIVILEGED_USERS_SIZE_MIN)
         @Max(value = 100, message = GET_ASSESSMENT_PRIVILEGED_USERS_SIZE_MAX)
         int size;
@@ -30,8 +34,9 @@ public interface GetAssessmentPrivilegedUsersUseCase {
         @Min(value = 0, message = GET_ASSESSMENT_PRIVILEGED_USERS_PAGE_MIN)
         int page;
 
-        public Param(UUID assessmentId, int size, int page) {
+        public Param(UUID assessmentId, UUID currentUserId, int size, int page) {
             this.assessmentId = assessmentId;
+            this.currentUserId = currentUserId;
             this.size = size;
             this.page = page;
             this.validateSelf();
