@@ -16,7 +16,7 @@ public interface DeleteUserAssessmentRoleUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    class Param extends SelfValidating<GrantUserAssessmentRoleUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
