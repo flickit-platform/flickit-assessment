@@ -647,6 +647,31 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Published Kit",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/144",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"144"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
