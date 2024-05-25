@@ -22,4 +22,7 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
             WHERE a.assessmentId = :assessmentId AND a.userId = :userId
         """)
     void update(@Param("assessmentId") UUID assessmentId, @Param("userId") UUID userId, @Param("roleId") int roleId);
+
+    void deleteByAssessmentIdAndUserId(UUID assessmentId, UUID userId);
+
 }

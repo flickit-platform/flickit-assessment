@@ -20,15 +20,16 @@ public class UpdateUserAssessmentRoleRestController {
     private final UpdateUserAssessmentRoleUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessments/{assessmentId}/assessment-user-roles")
+    @PutMapping("/assessments/{assessmentId}/assessment-user-roles/{userId}")
     public ResponseEntity<Void> updateAssessmentUserRole(@PathVariable("assessmentId") UUID assessmentId,
+                                                         @PathVariable("userId") UUID userId,
                                                          @RequestBody UpdateUserAssessmentRoleRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.updateAssessmentUserRole(toParam(assessmentId, requestDto, currentUserId));
+        useCase.updateAssessmentUserRole(toParam(assessmentId, userId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, UpdateUserAssessmentRoleRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId, requestDto.userId(), requestDto.roleId(), currentUserId);
+    private Param toParam(UUID assessmentId, UUID userId, UpdateUserAssessmentRoleRequestDto requestDto, UUID currentUserId) {
+        return new Param(assessmentId, userId, requestDto.roleId(), currentUserId);
     }
 }

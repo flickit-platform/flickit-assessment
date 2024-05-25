@@ -3,6 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.assessmentuserrole;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.DeleteUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.UpdateUserAssessmentRolePort;
@@ -19,7 +20,8 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 public class AssessmentUserRolePersistenceJpaAdapter implements
     LoadUserRoleForAssessmentPort,
     GrantUserAssessmentRolePort,
-    UpdateUserAssessmentRolePort {
+    UpdateUserAssessmentRolePort,
+    DeleteUserAssessmentRolePort {
 
     private final AssessmentUserRoleJpaRepository repository;
 
@@ -49,5 +51,13 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
 
         var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
         repository.update(entity.getAssessmentId(), entity.getUserId(), entity.getRoleId());
+    }
+
+    @Override
+    public void delete(UUID assessmentId, UUID userId) {
+        if (!repository.existsByAssessmentIdAndUserId(assessmentId, userId))
+            throw new ResourceNotFoundException(DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND);
+
+        repository.deleteByAssessmentIdAndUserId(assessmentId, userId);
     }
 }
