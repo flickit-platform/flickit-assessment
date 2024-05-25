@@ -28,10 +28,13 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
         LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
         LEFT JOIN UserJpaEntity u on e.userId = u.id
         WHERE e.expertGroupId = :expertGroupId
-            AND e.status = :status AND g.deleted = FALSE
+            AND e.status = :status
+            AND g.deleted = FALSE
+            AND ((:status = 0 AND e.inviteExpirationDate > :now) OR :status = 1)
         """)
     Page<ExpertGroupMembersView> findExpertGroupMembers(@Param(value = "expertGroupId") Long expertGroupId,
                                                         @Param(value = "status") int status,
+                                                        @Param(value = "now") LocalDateTime now,
                                                         Pageable pageable);
 
     boolean existsByExpertGroupIdAndUserId(@Param(value = "expertGroupId") long expertGroupId,

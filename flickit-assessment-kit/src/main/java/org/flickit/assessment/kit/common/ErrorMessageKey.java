@@ -8,8 +8,6 @@ public class ErrorMessageKey {
 
     public static final String TRANSLATE_KIT_DSL_UNABLE_TO_PARSE_JSON = "translate-kit-dsl.unable.to.parse.json";
 
-    public static final String FILE_STORAGE_FILE_NOT_FOUND = "file-storage.file.notFound";
-
     public static final String FIND_MATURITY_LEVEL_ID_NOT_FOUND = "find-maturity-level.id.notFound";
     public static final String KIT_ID_NOT_FOUND = "kit.id.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";

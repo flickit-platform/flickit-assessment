@@ -19,5 +19,7 @@ public class ErrorMessageKey {
     public static final String UPLOAD_FILE_DSL_SIZE_MAX = "upload-file.dsl-size.max";
     public static final String UPLOAD_FILE_SIZE_MAX = "upload-file.size.max";
 
+    public static final String FILE_STORAGE_FILE_NOT_FOUND = "file-storage.file.notFound";
+
     public static final String COMMON_SPACE_ID_NOT_FOUND = "common.space.notFound";
 }

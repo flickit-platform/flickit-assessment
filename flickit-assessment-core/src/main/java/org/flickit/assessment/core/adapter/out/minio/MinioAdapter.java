@@ -5,7 +5,7 @@ import io.minio.MinioClient;
 import io.minio.StatObjectArgs;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
+import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
-@Component
-@RequiredArgsConstructor
+@Component("coreMinioAdapter")
+@AllArgsConstructor
 public class MinioAdapter implements CreateFileDownloadLinkPort {
 
     public static final String SLASH = "/";
@@ -28,7 +28,7 @@ public class MinioAdapter implements CreateFileDownloadLinkPort {
     @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
-        if(filePath == null || filePath.isBlank())
+        if (filePath == null || filePath.isBlank())
             return null;
 
         String bucketName = filePath.substring(0, filePath.indexOf(SLASH));
