@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.service.assessmentuserrole;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.UpdateUserAssessmentRoleUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.UpdateUserAssessmentRolePort;
@@ -28,8 +28,11 @@ public class UpdateUserAssessmentRoleService implements UpdateUserAssessmentRole
         if (!permissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), UPDATE_USER_ASSESSMENT_ROLE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
+        if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getUserId()))
-            throw new ResourceNotFoundException(UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER);
+            throw new ValidationException(UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER);
 
         updateUserAssessmentRolePort.update(param.getAssessmentId(), param.getUserId(), param.getRoleId());
     }
