@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface UpdateUserAssessmentRolePort {
 
-    void updateUserAssessmentRole(UUID assessmentId, UUID userId, Integer roleId);
+    void update(UUID assessmentId, UUID userId, Integer roleId);
 }

@@ -14,8 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.UPDATE_USER_ASSESSMENT_ROLE;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -101,13 +101,13 @@ class UpdateUserAssessmentRoleServiceTest {
             .thenReturn(true);
 
         doThrow(ResourceNotFoundException.class).when(updateUserAssessmentRolePort)
-            .updateUserAssessmentRole(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+            .update(param.getAssessmentId(), param.getUserId(), param.getRoleId());
 
         assertThrows(ResourceNotFoundException.class, () -> service.updateAssessmentUserRole(param));
 
 
         verify(updateUserAssessmentRolePort, times(1))
-            .updateUserAssessmentRole(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+            .update(param.getAssessmentId(), param.getUserId(), param.getRoleId());
     }
 
     @Test
@@ -124,11 +124,11 @@ class UpdateUserAssessmentRoleServiceTest {
             .thenReturn(true);
 
         doNothing().when(updateUserAssessmentRolePort)
-            .updateUserAssessmentRole(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+            .update(param.getAssessmentId(), param.getUserId(), param.getRoleId());
 
         service.updateAssessmentUserRole(param);
 
         verify(updateUserAssessmentRolePort, times(1))
-            .updateUserAssessmentRole(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+            .update(param.getAssessmentId(), param.getUserId(), param.getRoleId());
     }
 }
