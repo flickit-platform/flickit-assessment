@@ -1,10 +1,10 @@
 package org.flickit.assessment.core.application.service.evidence;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.evidence.GetAttributeEvidenceListUseCase.AttributeEvidenceListItem;
 import org.flickit.assessment.core.application.port.in.evidence.GetAttributeEvidenceListUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadAttributeEvidencesPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_EVIDENCE_LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,32 +32,33 @@ class GetAttributeEvidenceListServiceTest {
     private LoadAttributeEvidencesPort loadAttributeEvidencesPort;
 
     @Mock
-    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
     void testGetAttributeEvidenceList_ResultsFound_ItemReturned() {
+        Param param = new Param(UUID.randomUUID(),
+            1L,
+            "POSITIVE",
+            UUID.randomUUID(),
+            10,
+            0);
         AttributeEvidenceListItem attributeEvidence = createAttributeEvidence();
 
-        when(checkUserAssessmentAccessPort.hasAccess(any(UUID.class), any(UUID.class))).thenReturn(true);
-        when(loadAttributeEvidencesPort.loadAttributeEvidences(any(UUID.class),
-            any(Long.class),
-            anyInt(),
-            anyInt(),
-            anyInt()))
+        when(loadAttributeEvidencesPort.loadAttributeEvidences(param.getAssessmentId(),
+            param.getAttributeId(),
+            param.getPage(),
+            param.getPage(),
+            param.getSize()))
             .thenReturn(new PaginatedResponse<>(List.of(attributeEvidence),
                 0,
                 1,
                 "lastModificationTime",
                 "DESC",
                 1));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_EVIDENCE_LIST)).thenReturn(true);
 
         PaginatedResponse<AttributeEvidenceListItem> result =
-            service.getAttributeEvidenceList(new Param(UUID.randomUUID(),
-                1L,
-                "POSITIVE",
-                UUID.randomUUID(),
-                10,
-                0));
+            service.getAttributeEvidenceList(param);
 
         assertEquals(1, result.getItems().size());
     }
@@ -65,7 +67,7 @@ class GetAttributeEvidenceListServiceTest {
     @Test
     void testGetAttributeEvidenceList_CurrentUserHasNotAccessToAssessment_ThrowNotFoundException() {
         Param param = new Param(UUID.randomUUID(), 1L, "POSITIVE",  UUID.randomUUID(), 10, 0);
-        when(checkUserAssessmentAccessPort.hasAccess(any(UUID.class), any(UUID.class))).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_EVIDENCE_LIST)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.getAttributeEvidenceList(param));
         verify(loadAttributeEvidencesPort, never()).loadAttributeEvidences(any(), any(), anyInt(), anyInt(), anyInt());
