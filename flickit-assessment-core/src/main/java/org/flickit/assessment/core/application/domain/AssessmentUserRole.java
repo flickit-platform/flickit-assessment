@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.UPDATE_ASSESSMENT;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.PermissionGroup.*;
 
 @Getter
@@ -68,7 +67,6 @@ public enum AssessmentUserRole {
             VIEW_ANSWER,
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
-            VIEW_EVIDENCE,
             VIEW_ATTRIBUTE_EVIDENCE_LIST,
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,
