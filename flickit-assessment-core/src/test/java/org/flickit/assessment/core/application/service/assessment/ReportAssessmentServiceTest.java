@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.assessment;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
@@ -7,7 +8,6 @@ import org.flickit.assessment.core.application.domain.report.AssessmentReportIte
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_ASSESSMENT;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -37,7 +38,7 @@ class ReportAssessmentServiceTest {
     private LoadAssessmentReportInfoPort loadReportInfoPort;
 
     @Mock
-    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
     void testReportAssessment_ValidResult() {
@@ -69,7 +70,7 @@ class ReportAssessmentServiceTest {
             new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
         var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
 
-        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadReportInfoPort.load(assessmentId)).thenReturn(assessmentReport);
 
@@ -104,7 +105,7 @@ class ReportAssessmentServiceTest {
         UUID assessmentId = UUID.randomUUID();
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
-        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.reportAssessment(param));
     }
