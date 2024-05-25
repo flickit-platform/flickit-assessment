@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "6406969a-ae57-44c7-abca-c38e1dc15d46",
+		"_postman_id": "60b3ff78-3c18-458f-9708-86db42cfe804",
 		"name": "flickit-assessment-core",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "8794215"
+		"_exporter_id": "6692064"
 	},
 	"item": [
 		{
@@ -13,7 +13,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -45,7 +46,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -82,11 +84,13 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
+						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -127,7 +131,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -151,7 +156,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -175,7 +181,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -198,7 +205,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -236,11 +244,13 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
+						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -272,7 +282,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -306,7 +317,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -345,7 +357,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -374,11 +387,13 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
+						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -419,7 +434,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -445,7 +461,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -474,11 +491,13 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
+						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -507,11 +526,13 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
+						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -538,7 +559,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -575,11 +597,13 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
+						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -606,7 +630,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -653,7 +678,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -677,7 +703,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -700,7 +727,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -734,7 +762,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -785,7 +814,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -848,11 +878,13 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
+						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -888,7 +920,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}"
+						"value": "{{authorization_header}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -939,28 +972,77 @@
 				}
 			},
 			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
 		},
 		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
+			"name": "Update Assessment User Role",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roleId\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/07875b35-51bb-47b3-acc8-c2cc3357dede/assessment-user-roles/ac652dd8-8366-4985-915b-fbe76ec95786",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"07875b35-51bb-47b3-acc8-c2cc3357dede",
+						"assessment-user-roles",
+						"ac652dd8-8366-4985-915b-fbe76ec95786"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Assessment User Role",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"69f63c1b-6e4c-4cf6-83c6-d8a25fa602ab\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/07875b35-51bb-47b3-acc8-c2cc3357dede/assessment-user-roles/ac652dd8-8366-4985-915b-fbe76ec95786",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"07875b35-51bb-47b3-acc8-c2cc3357dede",
+						"assessment-user-roles",
+						"ac652dd8-8366-4985-915b-fbe76ec95786"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
