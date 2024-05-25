@@ -35,24 +35,6 @@ public class AssessmentKitMother {
             id++);
     }
 
-    public static AssessmentKit privateKit() {
-        return new AssessmentKit(
-            id++,
-            CODE + id,
-            TITLE + id,
-            SUMMARY,
-            ABOUT,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            Boolean.TRUE,
-            Boolean.TRUE,
-            EXPERT_GROUP_ID,
-            null,
-            null,
-            null,
-            id++);
-    }
-
     public static AssessmentKit notPublishedKit() {
         return new AssessmentKit(
             id++,
@@ -158,6 +140,24 @@ public class AssessmentKitMother {
             subjects,
             null,
             questionnaires,
+            id++);
+    }
+
+    public static AssessmentKit privateKit() {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            Boolean.TRUE,
+            EXPERT_GROUP_ID,
+            null,
+            null,
+            null,
             id++);
     }
 }

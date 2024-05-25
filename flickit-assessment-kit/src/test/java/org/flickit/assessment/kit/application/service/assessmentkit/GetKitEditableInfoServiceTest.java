@@ -7,9 +7,9 @@ import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitTag;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
+import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.KitTagMother;
@@ -38,7 +38,7 @@ class GetKitEditableInfoServiceTest {
     private LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Mock
-    private LoadKitTagsListPort loadKitTagsListPort;
+    private LoadKitTagListPort loadKitTagListPort;
 
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
@@ -75,7 +75,7 @@ class GetKitEditableInfoServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
         when(loadAssessmentKitPort.load(kitId)).thenReturn(assessmentKit);
-        when(loadKitTagsListPort.load(kitId)).thenReturn(tags);
+        when(loadKitTagListPort.loadByKitId(kitId)).thenReturn(tags);
 
         GetKitEditableInfoUseCase.KitEditableInfo kitEditableInfo = service.getKitEditableInfo(param);
 

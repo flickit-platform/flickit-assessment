@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.junit.jupiter.api.Test;

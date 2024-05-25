@@ -5,9 +5,9 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkitaccess.CheckKitAccessPort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
@@ -40,7 +40,7 @@ class GetPublishedKitServiceTest {
     private LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Mock
-    private CheckKitAccessPort checkKitAccessPort;
+    private CheckKitUserAccessPort checkKitUserAccessPort;
 
     @Mock
     private CountKitStatsPort countKitStatsPort;
@@ -55,7 +55,7 @@ class GetPublishedKitServiceTest {
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
-    private LoadKitTagsListPort loadKitTagsListPort;
+    private LoadKitTagListPort loadKitTagListPort;
 
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
@@ -72,12 +72,12 @@ class GetPublishedKitServiceTest {
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getPublishedKit(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
-        verifyNoInteractions(checkKitAccessPort,
+        verifyNoInteractions(checkKitUserAccessPort,
             countKitStatsPort,
             loadSubjectsPort,
             loadQuestionnairesPort,
             loadMaturityLevelsPort,
-            loadKitTagsListPort,
+            loadKitTagListPort,
             loadKitExpertGroupPort,
             createFileDownloadLinkPort);
     }
@@ -90,12 +90,12 @@ class GetPublishedKitServiceTest {
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getPublishedKit(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
-        verifyNoInteractions(checkKitAccessPort,
+        verifyNoInteractions(checkKitUserAccessPort,
             countKitStatsPort,
             loadSubjectsPort,
             loadQuestionnairesPort,
             loadMaturityLevelsPort,
-            loadKitTagsListPort,
+            loadKitTagListPort,
             loadKitExpertGroupPort,
             createFileDownloadLinkPort);
     }
@@ -106,7 +106,7 @@ class GetPublishedKitServiceTest {
         when(loadAssessmentKitPort.load(param.getKitId()))
             .thenReturn(AssessmentKitMother.privateKit());
 
-        when(checkKitAccessPort.checkHasAccess(param.getKitId(), param.getCurrentUserId()))
+        when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId()))
             .thenReturn(false);
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getPublishedKit(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
@@ -114,7 +114,7 @@ class GetPublishedKitServiceTest {
             loadSubjectsPort,
             loadQuestionnairesPort,
             loadMaturityLevelsPort,
-            loadKitTagsListPort,
+            loadKitTagListPort,
             loadKitExpertGroupPort,
             createFileDownloadLinkPort);
     }
@@ -134,12 +134,12 @@ class GetPublishedKitServiceTest {
         var expertGroupPictureUrl = "https://expertGroupAvatarUrl";
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(checkKitAccessPort.checkHasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
+        when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
         when(loadSubjectsPort.loadByKitId(param.getKitId())).thenReturn(List.of(subject));
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
         when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(List.of(maturityLevel));
-        when(loadKitTagsListPort.load(param.getKitId())).thenReturn(List.of(tag));
+        when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(expertGroupPictureUrl);
 
@@ -194,7 +194,7 @@ class GetPublishedKitServiceTest {
         when(loadSubjectsPort.loadByKitId(param.getKitId())).thenReturn(List.of(subject));
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
         when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(List.of(maturityLevel));
-        when(loadKitTagsListPort.load(param.getKitId())).thenReturn(List.of(tag));
+        when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(expertGroupPictureUrl);
 
@@ -229,6 +229,6 @@ class GetPublishedKitServiceTest {
         assertEquals(expertGroup.getId(), result.expertGroup().id());
         assertEquals(expertGroupPictureUrl, result.expertGroup().picture());
 
-        verifyNoInteractions(checkKitAccessPort);
+        verifyNoInteractions(checkKitUserAccessPort);
     }
 }

@@ -21,8 +21,8 @@ import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 import static org.flickit.assessment.users.adapter.out.minio.MinioConstants.PIC_FILE_NAME;
-import static org.flickit.assessment.users.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
 @Component("usersMinioAdapter")
 @AllArgsConstructor

@@ -7,9 +7,9 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkitaccess.CheckKitAccessPort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagsListPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
@@ -30,12 +30,12 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
     private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
 
     private final LoadAssessmentKitPort loadAssessmentKitPort;
-    private final CheckKitAccessPort checkKitAccessPort;
+    private final CheckKitUserAccessPort checkKitUserAccessPort;
     private final CountKitStatsPort countKitStatsPort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final LoadKitTagsListPort loadKitTagsListPort;
+    private final LoadKitTagListPort loadKitTagListPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
@@ -45,7 +45,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
         if (!kit.isPublished()) {
             throw new ResourceNotFoundException(KIT_ID_NOT_FOUND);
         }
-        if (kit.isPrivate() && !checkKitAccessPort.checkHasAccess(param.getKitId(), param.getCurrentUserId())) {
+        if (kit.isPrivate() && !checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())) {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
 
@@ -63,7 +63,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             .map(this::toMaturityLevel)
             .toList();
 
-        var kitTags = loadKitTagsListPort.load(param.getKitId()).stream()
+        var kitTags = loadKitTagListPort.loadByKitId(param.getKitId()).stream()
             .map(this::toKitTag)
             .toList();
 

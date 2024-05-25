@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.USER_BY_EMAIL_NOT_FOUND;
@@ -30,7 +31,7 @@ class GetUserByEmailServiceTest {
     void testGetUserByEmail_ValidParams_ReturnUserIdSuccessfully() {
         GetUserByEmailUseCase.Param param = new GetUserByEmailUseCase.Param("user@email.com");
         UUID expectedUserId = UUID.randomUUID();
-        when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(expectedUserId);
+        when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.of(expectedUserId));
 
         UUID id = service.getUserByEmail(param);
 

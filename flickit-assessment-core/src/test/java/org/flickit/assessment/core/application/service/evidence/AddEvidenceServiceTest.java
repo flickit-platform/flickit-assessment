@@ -1,9 +1,7 @@
 package org.flickit.assessment.core.application.service.evidence;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.evidence.AddEvidenceUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AddEvidenceServiceTest {
@@ -27,9 +26,6 @@ class AddEvidenceServiceTest {
 
     @Mock
     private CreateEvidencePort createEvidencePort;
-
-    @Mock
-    private CheckAssessmentExistencePort checkAssessmentExistencePort;
 
     @Mock
     private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
@@ -44,7 +40,6 @@ class AddEvidenceServiceTest {
             UUID.randomUUID()
         );
         UUID expectedId = UUID.randomUUID();
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedById())).thenReturn(true);
         when(createEvidencePort.persist(any(CreateEvidencePort.Param.class))).thenReturn(expectedId);
 
@@ -64,25 +59,6 @@ class AddEvidenceServiceTest {
     }
 
     @Test
-    void testAddEvidence_InvalidAssessmentId_ThrowNotFoundException() {
-        AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
-            "desc",
-            UUID.randomUUID(),
-            1L,
-            "POSITIVE",
-            UUID.randomUUID()
-        );
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(false);
-
-        assertThrows(ResourceNotFoundException.class, () -> service.addEvidence(param));
-
-        ArgumentCaptor<UUID> assessmentIdParam = ArgumentCaptor.forClass(UUID.class);
-        verify(checkAssessmentExistencePort).existsById(assessmentIdParam.capture());
-        assertEquals(param.getAssessmentId(), assessmentIdParam.getValue());
-        verify(createEvidencePort, never()).persist(any());
-    }
-
-    @Test
     void testAddEvidence_InvalidCurrentUserId_ThrowDeniedAccessException() {
         AddEvidenceUseCase.Param param = new AddEvidenceUseCase.Param(
             "desc",
@@ -92,7 +68,6 @@ class AddEvidenceServiceTest {
             UUID.randomUUID()
         );
 
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCreatedById())).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.addEvidence(param));
