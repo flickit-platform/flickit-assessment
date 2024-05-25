@@ -147,4 +147,5 @@ public class ErrorMessageKey {
     public static final String DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "delete-assessment-user-role.assessmentId.notNull";
     public static final String DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "delete-assessment-user-role.userId.notNull";
     public static final String DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER = "delete-assessment-user-role.userId.notMember";
+    public static final String DELETE_ASSESSMENT_USER_ROLE_ROLE_NOT_FOUND = "delete-assessment-user-role.role.notFound";
 }
