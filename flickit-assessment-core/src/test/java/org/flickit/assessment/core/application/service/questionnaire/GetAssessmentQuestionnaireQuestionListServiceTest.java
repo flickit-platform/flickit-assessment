@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.questionnaire;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -9,7 +10,6 @@ import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Result;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_QUESTIONNAIRE_QUESTIONS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +35,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     private GetAssessmentQuestionnaireQuestionListService service;
 
     @Mock
-    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
     private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
@@ -45,7 +46,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     @Test
     void testGetAssessmentQuestionnaireQuestionList_InvalidCurrentUser_ThrowsException() {
         Param param = new Param(UUID.randomUUID(), 12L, 10, 0, UUID.randomUUID());
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(false);
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param));
@@ -67,7 +68,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             1
         );
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
@@ -92,7 +93,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         );
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.FALSE);
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
@@ -130,7 +131,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         );
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.TRUE);
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
@@ -167,7 +168,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         );
         Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 1, Boolean.FALSE);
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
