@@ -41,7 +41,7 @@ public class GetPublishedKitRestController {
             result.isPrivate(),
             result.creationTime(),
             result.lastModificationTime(),
-            result.likes(),
+            result.like(),
             result.assessmentsCount(),
             result.subjectsCount(),
             result.questionnairesCount(),

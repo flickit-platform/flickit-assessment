@@ -41,7 +41,7 @@ public interface GetPublishedKitUseCase {
                   Boolean isPrivate,
                   LocalDateTime creationTime,
                   LocalDateTime lastModificationTime,
-                  Integer likes,
+                  Like like,
                   Integer assessmentsCount,
                   Integer subjectsCount,
                   Integer questionnairesCount,
@@ -49,6 +49,9 @@ public interface GetPublishedKitUseCase {
                   List<Questionnaire> questionnaires,
                   List<MaturityLevel> maturityLevels,
                   List<KitTag> tags) {
+    }
+
+    record Like(int count, boolean liked) {
     }
 
     record Subject(Long id,

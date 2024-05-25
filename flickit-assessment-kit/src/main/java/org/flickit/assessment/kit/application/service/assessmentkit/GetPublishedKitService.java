@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -30,16 +31,16 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
     private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadKitTagListPort loadKitTagListPort;
+    private final CheckKitLikeExistencePort checkKitLikeExistencePort;
 
     @Override
     public Result getPublishedKit(Param param) {
         AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
-        if (!kit.isPublished()) {
+        if (!kit.isPublished())
             throw new ResourceNotFoundException(KIT_ID_NOT_FOUND);
-        }
-        if (kit.isPrivate() && !checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())) {
+
+        if (kit.isPrivate() && !checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        }
 
         var stats = countKitStatsPort.countKitStats(param.getKitId());
 
@@ -68,7 +69,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             kit.isPrivate(),
             kit.getCreationTime(),
             kit.getLastModificationTime(),
-            stats.likes(),
+            new Like(stats.likes(), checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())),
             stats.assessmentCounts(),
             subjects.size(),
             stats.questionnairesCount(),

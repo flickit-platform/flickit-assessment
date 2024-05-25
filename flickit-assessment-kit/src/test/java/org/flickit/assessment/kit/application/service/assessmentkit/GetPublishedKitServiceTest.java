@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -22,8 +23,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -53,6 +53,9 @@ class GetPublishedKitServiceTest {
 
     @Mock
     private LoadKitTagListPort loadKitTagListPort;
+
+    @Mock
+    private CheckKitLikeExistencePort checkKitLikeExistencePort;
 
     @Test
     void testGetPublishedKit_WhenKitDoesNotExist_ThrowsException() {
@@ -123,6 +126,7 @@ class GetPublishedKitServiceTest {
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
         when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
+        when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
 
         GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
 
@@ -135,7 +139,8 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.getCreationTime(), result.creationTime());
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
 
-        assertEquals(counts.likes(), result.likes());
+        assertEquals(counts.likes(), result.like().count());
+        assertFalse(result.like().liked());
         assertEquals(counts.assessmentCounts(), result.assessmentsCount());
         assertEquals(1, result.subjectsCount());
         assertEquals(counts.questionnairesCount(), result.questionnairesCount());
@@ -171,6 +176,7 @@ class GetPublishedKitServiceTest {
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
         when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
+        when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
 
         GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
 
@@ -183,7 +189,8 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.getCreationTime(), result.creationTime());
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
 
-        assertEquals(counts.likes(), result.likes());
+        assertEquals(counts.likes(), result.like().count());
+        assertTrue(result.like().liked());
         assertEquals(counts.assessmentCounts(), result.assessmentsCount());
         assertEquals(1, result.subjectsCount());
         assertEquals(counts.questionnairesCount(), result.questionnairesCount());
