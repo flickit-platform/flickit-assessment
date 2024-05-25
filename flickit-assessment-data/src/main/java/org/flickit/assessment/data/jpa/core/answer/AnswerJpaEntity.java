@@ -61,5 +61,6 @@ public class AnswerJpaEntity {
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
         public static final String QUESTION_ID = "questionId";
+        public static final String QUESTION_INDEX = "questionIndex";
     }
 }

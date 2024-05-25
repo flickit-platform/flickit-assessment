@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantU
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +20,7 @@ public class GrantUserAssessmentRoleRestController {
     private final GrantUserAssessmentRoleUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessments/{assessmentId}/assessment-user-roles")
+    @PostMapping("/assessments/{assessmentId}/assessment-user-roles")
     public ResponseEntity<Void> grantAssessmentUserRole(@PathVariable("assessmentId") UUID assessmentId,
                                                         @RequestBody GrantUserAssessmentRoleRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();

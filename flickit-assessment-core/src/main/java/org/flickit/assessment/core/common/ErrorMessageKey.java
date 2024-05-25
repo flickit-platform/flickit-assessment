@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 public class ErrorMessageKey {
     public static final String ASSESSMENT_KIT_ID_NOT_FOUND = "assessment-kit-id.notFound";
     public static final String EVIDENCE_ID_NOT_FOUND = "evidence-id.notFound";
+    public static final String ASSESSMENT_ID_NOT_FOUND = "assessment-id.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -59,7 +60,6 @@ public class ErrorMessageKey {
     public static final String GET_ANSWER_LIST_SIZE_MIN = "get-answer-list.size.min";
     public static final String GET_ANSWER_LIST_SIZE_MAX = "get-answer-list.size.max";
     public static final String GET_ANSWER_LIST_PAGE_MIN = "get-answer-list.page.min";
-    public static final String GET_ANSWER_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND = "get-answer-list.assessmentResultId.notFound";
 
     public static final String GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL = "get-attribute-evidence-list.assessmentId.notNull";
     public static final String GET_ATTRIBUTE_EVIDENCE_LIST_ATTRIBUTE_ID_NOT_NULL = "get-attribute-evidence-list.attributeId.notNull";
@@ -130,11 +130,19 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_QUESTIONNAIRE_LIST_PAGE_MIN = "get-assessment-questionnaire-list.page.min";
     public static final String GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND = "get-assessment-questionnaire-list.assessmentResultId.notFound";
 
+    public static final String GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_NULL = "get-assessment-questionnaire-question-list.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_QUESTIONNAIRE_ID_NOT_NULL = "get-assessment-questionnaire-question-list.questionnaireId.notNull";
+    public static final String GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_SIZE_MIN = "get-assessment-questionnaire-question-list.size.min";
+    public static final String GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_SIZE_MAX = "get-assessment-questionnaire-question-list.size.max";
+    public static final String GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_PAGE_MIN = "get-assessment-questionnaire-question-list.page.min";
+    public static final String GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND = "get-assessment-questionnaire-question-list.assessmentResultId.notFound";
+
     public static final String GRANT_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "grant-assessment-user-role.assessmentId.notNull";
     public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "grant-assessment-user-role.userId.notNull";
+    public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ROLE_DUPLICATE = "grant-assessment-user-role.user.role.duplicate";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "grant-assessment-user-role.roleId.notNull";
-    public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER = "grant-assessment-user-role.userId.notMember";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "grant-assessment-user-role.roleId.notFound";
+    public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER = "grant-assessment-user-role.userId.notMember";
 
     public static final String DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "delete-assessment-user-role.assessmentId.notNull";
     public static final String DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "delete-assessment-user-role.userId.notNull";
