@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase.Param;
@@ -28,7 +28,7 @@ class GrantUserAssessmentRoleServiceTest {
     private GrantUserAssessmentRoleService service;
 
     @Mock
-    private AssessmentPermissionChecker assessmentPermissionChecker;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
     private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
@@ -40,7 +40,7 @@ class GrantUserAssessmentRoleServiceTest {
     void testGrantAssessmentUserRole_CurrentUserIsNotAuthorized_ThrowsException() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
 
-        when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(false);
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.grantAssessmentUserRole(param));
@@ -53,7 +53,7 @@ class GrantUserAssessmentRoleServiceTest {
     void testGrantAssessmentUserRole_CurrentUserIsNotSpaceMember_ThrowsException() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
 
-        when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
 
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(false);
@@ -68,7 +68,7 @@ class GrantUserAssessmentRoleServiceTest {
     void testGrantAssessmentUserRole_UserIsNotSpaceMember_ThrowsException() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
 
-        when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
 
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(true);
@@ -84,7 +84,7 @@ class GrantUserAssessmentRoleServiceTest {
     void testGrantAssessmentUserRole_ValidParam_GrantAccess() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
 
-        when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
 
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(true);

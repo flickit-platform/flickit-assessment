@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase;
@@ -19,13 +19,13 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ASSESSMEN
 @RequiredArgsConstructor
 public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUseCase {
 
-    private final AssessmentPermissionChecker permissionChecker;
     private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
     public void grantAssessmentUserRole(Param param) {
-        if (!permissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
