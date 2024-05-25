@@ -13,8 +13,6 @@ public class ExpertGroupMapper {
         return new ExpertGroup(expertGroup.getId(),
             expertGroup.getTitle(),
             expertGroup.getBio(),
-            expertGroup.getAbout(),
-            expertGroup.getPicture(),
             expertGroup.getOwnerId());
     }
 }
