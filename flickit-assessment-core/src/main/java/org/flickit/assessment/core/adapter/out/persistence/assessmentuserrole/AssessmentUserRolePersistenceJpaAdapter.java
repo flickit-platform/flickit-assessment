@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.DeleteUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.assessmentuserrole.DeleteUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.UpdateUserAssessmentRolePort;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.flickit.assessment.core.common.ErrorMessageKey.DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -57,9 +54,10 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteUserAssessmentRole(UUID assessmentId, UUID userId) {
+    public void delete(UUID assessmentId, UUID userId) {
         if (!repository.existsByAssessmentIdAndUserId(assessmentId, userId))
             throw new ResourceNotFoundException(DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND);
+
         repository.deleteByAssessmentIdAndUserId(assessmentId, userId);
     }
 }

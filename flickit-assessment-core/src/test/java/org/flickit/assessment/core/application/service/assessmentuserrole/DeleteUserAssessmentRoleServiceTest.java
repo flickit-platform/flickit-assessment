@@ -1,11 +1,11 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.DeleteUserAssessmentRoleUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.DeleteUserAssessmentRolePort;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,8 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.DELETE_USER_ASSESSMENT_ROLE;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -95,6 +95,6 @@ class DeleteUserAssessmentRoleServiceTest {
         assertDoesNotThrow(()-> service.deleteAssessmentUserRole(param));
 
         verify(assessmentPermissionChecker).isAuthorized(assessmentId, currentUserId, DELETE_USER_ASSESSMENT_ROLE);
-        verify(deleteUserAssessmentRolePort).deleteUserAssessmentRole(param.getAssessmentId(), param.getUserId());
+        verify(deleteUserAssessmentRolePort).delete(param.getAssessmentId(), param.getUserId());
     }
 }

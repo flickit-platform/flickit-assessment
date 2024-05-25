@@ -10,8 +10,8 @@ import org.flickit.assessment.core.application.port.out.assessmentuserrole.Delet
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.DELETE_USER_ASSESSMENT_ROLE;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER;
 
 @Service
@@ -31,6 +31,6 @@ public class DeleteUserAssessmentRoleService implements DeleteUserAssessmentRole
         if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getUserId()))
             throw new ResourceNotFoundException(DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER);
 
-        deleteUserAssessmentRolePort.deleteUserAssessmentRole(param.getAssessmentId(), param.getUserId());
+        deleteUserAssessmentRolePort.delete(param.getAssessmentId(), param.getUserId());
     }
 }
