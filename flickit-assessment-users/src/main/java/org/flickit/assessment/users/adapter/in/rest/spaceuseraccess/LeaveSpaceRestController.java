@@ -20,7 +20,7 @@ public class LeaveSpaceRestController {
     @DeleteMapping("/spaces/{id}/leave")
     public ResponseEntity<Void> leaveSpace(@PathVariable("id") long id) {
         var currentUserId = userContext.getUser().id();
-        useCase.leaveMember(toParam(id, currentUserId));
+        useCase.leaveSpace(toParam(id, currentUserId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

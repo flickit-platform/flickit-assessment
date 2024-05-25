@@ -43,7 +43,7 @@ class LeaveSpaceServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, ()-> service.leaveMember(param));
+        var throwable = assertThrows(AccessDeniedException.class, ()-> service.leaveSpace(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
@@ -60,7 +60,8 @@ class LeaveSpaceServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
 
-        assertThrows(ValidationException.class, ()-> service.leaveMember(param));
+        var throwable = assertThrows(ValidationException.class, ()-> service.leaveSpace(param));
+        assertEquals(LEAVE_SPACE_OWNER_NOT_ALLOWED, throwable.getMessage());
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
@@ -76,7 +77,7 @@ class LeaveSpaceServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
 
-        assertDoesNotThrow(()-> service.leaveMember(param));
+        assertDoesNotThrow(()-> service.leaveSpace(param));
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadSpaceOwnerPort).loadOwnerId(spaceId);

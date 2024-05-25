@@ -12,7 +12,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.LEAVE_SPACE_SP
 
 public interface LeaveSpaceUseCase {
 
-    void leaveMember(Param param);
+    void leaveSpace(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -24,8 +24,8 @@ public interface LeaveSpaceUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long id, UUID currentUserId) {
-            this.id = id;
+        public Param(Long spaceId, UUID currentUserId) {
+            this.id = spaceId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

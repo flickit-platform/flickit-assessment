@@ -25,7 +25,7 @@ public class LeaveSpaceService implements LeaveSpaceUseCase {
     private final DeleteSpaceMemberPort deleteSpaceMemberPort;
 
     @Override
-    public void leaveMember(Param param) {
+    public void leaveSpace(Param param) {
         if (!checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
