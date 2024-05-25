@@ -48,8 +48,7 @@ public interface GetPublishedKitUseCase {
                   List<Subject> subjects,
                   List<Questionnaire> questionnaires,
                   List<MaturityLevel> maturityLevels,
-                  List<KitTag> tags,
-                  ExpertGroup expertGroup) {
+                  List<KitTag> tags) {
     }
 
     record Subject(Long id,
@@ -72,13 +71,6 @@ public interface GetPublishedKitUseCase {
                          String title,
                          Integer value,
                          Integer index) {
-    }
-
-    record ExpertGroup(Long id,
-                       String title,
-                       String bio,
-                       String about,
-                       String picture) {
     }
 
     record KitTag(Long id,

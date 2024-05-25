@@ -7,17 +7,13 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Duration;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
@@ -27,8 +23,6 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND
 @RequiredArgsConstructor
 public class GetPublishedKitService implements GetPublishedKitUseCase {
 
-    private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
-
     private final LoadAssessmentKitPort loadAssessmentKitPort;
     private final CheckKitUserAccessPort checkKitUserAccessPort;
     private final CountKitStatsPort countKitStatsPort;
@@ -36,8 +30,6 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
     private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadKitTagListPort loadKitTagListPort;
-    private final LoadKitExpertGroupPort loadKitExpertGroupPort;
-    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public Result getPublishedKit(Param param) {
@@ -67,8 +59,6 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             .map(this::toKitTag)
             .toList();
 
-        var expertGroup = toExpertGroup(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()));
-
         return new Result(
             kit.getId(),
             kit.getTitle(),
@@ -85,8 +75,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             subjects,
             questionnaires,
             maturityLevels,
-            kitTags,
-            expertGroup);
+            kitTags);
     }
 
     private Subject toSubject(org.flickit.assessment.kit.application.domain.Subject s) {
@@ -114,13 +103,5 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
     private KitTag toKitTag(org.flickit.assessment.kit.application.domain.KitTag tag) {
         return new KitTag(tag.getId(), tag.getTitle());
-    }
-
-    private ExpertGroup toExpertGroup(org.flickit.assessment.kit.application.domain.ExpertGroup expertGroup) {
-        return new ExpertGroup(expertGroup.getId(),
-            expertGroup.getTitle(),
-            expertGroup.getBio(),
-            expertGroup.getAbout(),
-            createFileDownloadLinkPort.createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION));
     }
 }

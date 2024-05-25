@@ -19,12 +19,10 @@ import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionM
 import org.flickit.assessment.kit.adapter.out.persistence.users.expertgroup.ExpertGroupMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,7 +40,6 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 @Component
 @RequiredArgsConstructor
 public class AssessmentKitPersistenceJpaAdapter implements
-    LoadKitExpertGroupPort,
     LoadKitUsersPort,
     DeleteKitUserAccessPort,
     LoadKitMinimalInfoPort,
@@ -63,12 +60,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final KitVersionJpaRepository kitVersionRepository;
     private final KitTagRelationJpaRepository kitTagRelationRepository;
 
-    @Override
-    public ExpertGroup loadKitExpertGroup(Long kitId) {
-        return expertGroupRepository.findByKitId(kitId)
-            .map(ExpertGroupMapper::mapToDomainModel)
-            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-    }
 
     @Override
     public PaginatedResponse<GetKitUserListUseCase.UserListItem> loadKitUsers(LoadKitUsersPort.Param param) {

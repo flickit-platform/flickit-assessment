@@ -20,6 +20,5 @@ public record GetPublishedKitResponseDto(Long id,
                                          List<GetPublishedKitUseCase.Subject> subjects,
                                          List<GetPublishedKitUseCase.Questionnaire> questionnaires,
                                          List<GetPublishedKitUseCase.MaturityLevel> maturityLevels,
-                                         List<GetPublishedKitUseCase.KitTag> tags,
-                                         GetPublishedKitUseCase.ExpertGroup expertGroup) {
+                                         List<GetPublishedKitUseCase.KitTag> tags) {
 }

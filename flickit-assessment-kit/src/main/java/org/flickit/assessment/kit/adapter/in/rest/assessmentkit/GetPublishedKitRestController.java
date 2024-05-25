@@ -48,8 +48,6 @@ public class GetPublishedKitRestController {
             result.subjects(),
             result.questionnaires(),
             result.maturityLevels(),
-            result.tags(),
-            result.expertGroup()
-        );
+            result.tags());
     }
 }

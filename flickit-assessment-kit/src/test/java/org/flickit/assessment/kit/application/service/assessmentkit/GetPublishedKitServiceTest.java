@@ -5,11 +5,9 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.kit.test.fixture.application.*;
@@ -26,7 +24,6 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -57,12 +54,6 @@ class GetPublishedKitServiceTest {
     @Mock
     private LoadKitTagListPort loadKitTagListPort;
 
-    @Mock
-    private LoadKitExpertGroupPort loadKitExpertGroupPort;
-
-    @Mock
-    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
-
     @Test
     void testGetPublishedKit_WhenKitDoesNotExist_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
@@ -77,9 +68,7 @@ class GetPublishedKitServiceTest {
             loadSubjectsPort,
             loadQuestionnairesPort,
             loadMaturityLevelsPort,
-            loadKitTagListPort,
-            loadKitExpertGroupPort,
-            createFileDownloadLinkPort);
+            loadKitTagListPort);
     }
 
     @Test
@@ -95,9 +84,7 @@ class GetPublishedKitServiceTest {
             loadSubjectsPort,
             loadQuestionnairesPort,
             loadMaturityLevelsPort,
-            loadKitTagListPort,
-            loadKitExpertGroupPort,
-            createFileDownloadLinkPort);
+            loadKitTagListPort);
     }
 
     @Test
@@ -114,9 +101,7 @@ class GetPublishedKitServiceTest {
             loadSubjectsPort,
             loadQuestionnairesPort,
             loadMaturityLevelsPort,
-            loadKitTagListPort,
-            loadKitExpertGroupPort,
-            createFileDownloadLinkPort);
+            loadKitTagListPort);
     }
 
     @Test
@@ -130,8 +115,6 @@ class GetPublishedKitServiceTest {
         var counts = new CountKitStatsPort.Result(1, 1, 115,
             1, 3, 1);
         var tag = KitTagMother.createKitTag("security");
-        var expertGroup = ExpertGroupMother.createExpertGroup();
-        var expertGroupPictureUrl = "https://expertGroupAvatarUrl";
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
@@ -140,8 +123,6 @@ class GetPublishedKitServiceTest {
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
         when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(expertGroupPictureUrl);
 
         GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
 
@@ -170,9 +151,6 @@ class GetPublishedKitServiceTest {
 
         assertEquals(1, result.tags().size());
         assertEquals(tag.getId(), result.tags().get(0).id());
-
-        assertEquals(expertGroup.getId(), result.expertGroup().id());
-        assertEquals(expertGroupPictureUrl, result.expertGroup().picture());
     }
 
     @Test
@@ -186,8 +164,6 @@ class GetPublishedKitServiceTest {
         var counts = new CountKitStatsPort.Result(1, 1, 115,
             1, 3, 1);
         var tag = KitTagMother.createKitTag("security");
-        var expertGroup = ExpertGroupMother.createExpertGroup();
-        var expertGroupPictureUrl = "https://expertGroupAvatarUrl";
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
@@ -195,8 +171,6 @@ class GetPublishedKitServiceTest {
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
         when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(expertGroupPictureUrl);
 
         GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
 
@@ -225,9 +199,6 @@ class GetPublishedKitServiceTest {
 
         assertEquals(1, result.tags().size());
         assertEquals(tag.getId(), result.tags().get(0).id());
-
-        assertEquals(expertGroup.getId(), result.expertGroup().id());
-        assertEquals(expertGroupPictureUrl, result.expertGroup().picture());
 
         verifyNoInteractions(checkKitUserAccessPort);
     }
