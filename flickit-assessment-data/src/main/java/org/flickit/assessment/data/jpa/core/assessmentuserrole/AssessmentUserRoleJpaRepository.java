@@ -20,7 +20,6 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
             UPDATE AssessmentUserRoleJpaEntity a SET
                 a.roleId = :roleId
             WHERE a.assessmentId = :assessmentId AND a.userId = :userId
-        """
-        )
+        """)
     void update(@Param("assessmentId") UUID assessmentId, @Param("userId") UUID userId, @Param("roleId") int roleId);
 }
