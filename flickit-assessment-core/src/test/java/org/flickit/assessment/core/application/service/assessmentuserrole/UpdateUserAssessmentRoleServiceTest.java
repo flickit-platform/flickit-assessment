@@ -1,12 +1,11 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.permission.AssessmentPermissionChecker;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.UpdateUserAssessmentRoleUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.UpdateUserAssessmentRolePort;
-import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.permission.AssessmentPermission.UPDATE_USER_ASSESSMENT_ROLE;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.UPDATE_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -102,7 +101,7 @@ class UpdateUserAssessmentRoleServiceTest {
             .thenReturn(true);
 
         doThrow(ResourceNotFoundException.class).when(updateUserAssessmentRolePort)
-            .updateUserAssessmentRole(param.getAssessmentId(), param.getUserId(),param.getRoleId());
+            .updateUserAssessmentRole(param.getAssessmentId(), param.getUserId(), param.getRoleId());
 
         assertThrows(ResourceNotFoundException.class, () -> service.updateAssessmentUserRole(param));
 

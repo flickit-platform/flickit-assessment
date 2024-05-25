@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -44,6 +45,6 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
         if (!repository.existsByAssessmentIdAndUserId(assessmentId, userId))
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND);
         var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
-        repository.save(entity);
+        repository.update(entity.getAssessmentId(), entity.getUserId(), entity.getRoleId());
     }
 }
