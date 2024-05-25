@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.application.port.in.space;
+package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
@@ -7,23 +7,23 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.GET_SPACE_SPACE_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_PUBLISHED_KIT_KIT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class GetSpaceUseCaseParamTest {
+class GetPublishedKitUseCaseParamTest {
 
     @Test
-    void testGetSpace_idIsNull_ErrorMessage() {
-        UUID currentUserId = UUID.randomUUID();
+    void testGetPublishedKit_kitIdIsNull_ErrorMessage() {
+        var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetSpaceUseCase.Param(null, currentUserId));
-        assertThat(throwable).hasMessage("id: " + GET_SPACE_SPACE_ID_NOT_NULL);
+            () -> new GetPublishedKitUseCase.Param(null, currentUserId));
+        assertThat(throwable).hasMessage("kitId: " + GET_PUBLISHED_KIT_KIT_ID_NOT_NULL);
     }
 
     @Test
-    void testGetSpace_currentUserIdIsNull_ErrorMessage() {
+    void testGetPublishedKit_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetSpaceUseCase.Param(123L, null));
+            () -> new GetPublishedKitUseCase.Param(25L, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }
