@@ -21,7 +21,7 @@ public class DeleteUserAssessmentRoleRestController {
 
     @DeleteMapping("/assessments/{assessmentId}/assessment-user-roles/{userId}")
     public ResponseEntity<Void> deleteAssessmentUserRole(@PathVariable("assessmentId") UUID assessmentId,
-                                                         @PathVariable("assessmentId") UUID userId) {
+                                                         @PathVariable("userId") UUID userId) {
         UUID currentUserId = userContext.getUser().id();
         useCase.deleteAssessmentUserRole(toParam(assessmentId, userId, currentUserId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
