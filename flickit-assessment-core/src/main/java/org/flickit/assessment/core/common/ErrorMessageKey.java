@@ -159,6 +159,4 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_PRIVILEGED_USERS_SIZE_MIN = "get-assessment-privileged-users.size.min";
     public static final String GET_ASSESSMENT_PRIVILEGED_USERS_SIZE_MAX = "get-assessment-privileged-users.size.max";
     public static final String GET_ASSESSMENT_PRIVILEGED_USERS_PAGE_MIN = "get-assessment-privileged-users.page.min";
-
-    public static final String FILE_STORAGE_FILE_NOT_FOUND = "file-storage.file.notFound";
 }
