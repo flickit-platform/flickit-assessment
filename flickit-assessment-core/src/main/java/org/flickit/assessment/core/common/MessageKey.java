@@ -6,12 +6,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MessageKey {
 
-    public static final String VIEWER_DESCRIPTION="The user can only view the assessment results. " +
-        "The User is not able to perform the assessment process (answering questions, editing responses, adding comments, etc.).";
-    public static final String COMMENTER_DESCRIPTION= "The user, in addition to viewing the assessment results and the answers to questions, " +
-        "is able to register comments on the questions and witness them as well.";
-    public static final String ASSESSOR_DESCRIPTION="The user, in addition to the viewer's permissions," +
-        " possesses all the necessary permissions to carry out the assessment process.";
-    public static final String MANAGER_DESCRIPTION="The user not only has access for viewing and assessing" +
-        " but also for managing the access of others to the assessments.";
+    public static final String VIEWER_DESCRIPTION = "Can view the assessment reports.";
+    public static final String COMMENTER_DESCRIPTION = """
+        Can view the assessment reports. Can also comment on the assessment questions.
+        """;
+    public static final String ASSESSOR_DESCRIPTION = """
+        Can view the assessment reports. They can also conduct the assessment process (e.g., answering questions, submitting evidences, etc.)
+        """;
+    public static final String MANAGER_DESCRIPTION = """
+        Can view the assessment reports, conduct the assessment process, and also manage others' access to the assessments.
+        """;
 }

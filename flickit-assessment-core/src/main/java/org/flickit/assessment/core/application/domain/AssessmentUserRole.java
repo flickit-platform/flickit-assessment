@@ -24,8 +24,8 @@ public enum AssessmentUserRole {
     MANAGER("Manager", MANAGER_DESCRIPTION, VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS, MANAGER_PERMISSIONS);
 
     private final String title;
-    private final Set<AssessmentPermission> permissions;
     private final String description;
+    private final Set<AssessmentPermission> permissions;
 
     AssessmentUserRole(String title, String description , PermissionGroup... permissionsGroups) {
         this.title = title;
