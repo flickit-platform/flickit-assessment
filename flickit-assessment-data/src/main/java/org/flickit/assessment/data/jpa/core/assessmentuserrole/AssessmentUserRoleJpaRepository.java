@@ -37,6 +37,6 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
         FROM UserJpaEntity u JOIN AssessmentUserRoleJpaEntity a ON u.id = a.userId
         WHERE a.assessmentId = :assessmentId
     """)
-    Page<AssessmentPrivilegedUserView> findAssessmentPrivilegedUsers(@Param("assessmentId") UUID assessmentId,
-                                                                     Pageable pageable);
+    Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId,
+                                                 Pageable pageable);
 }

@@ -13,25 +13,25 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
-public interface GetAssessmentPrivilegedUsersUseCase {
+public interface GetAssessmentUsersUseCase {
 
-    PaginatedResponse<AssessmentPrivilegedUser> getAssessmentPrivilegedUsers(Param param);
+    PaginatedResponse<AssessmentUser> getAssessmentUsers(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_ASSESSMENT_PRIVILEGED_USERS_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = GET_ASSESSMENT_USERS_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        @Min(value = 1, message = GET_ASSESSMENT_PRIVILEGED_USERS_SIZE_MIN)
-        @Max(value = 100, message = GET_ASSESSMENT_PRIVILEGED_USERS_SIZE_MAX)
+        @Min(value = 1, message = GET_ASSESSMENT_USERS_SIZE_MIN)
+        @Max(value = 100, message = GET_ASSESSMENT_USERS_SIZE_MAX)
         int size;
 
-        @Min(value = 0, message = GET_ASSESSMENT_PRIVILEGED_USERS_PAGE_MIN)
+        @Min(value = 0, message = GET_ASSESSMENT_USERS_PAGE_MIN)
         int page;
 
         public Param(UUID assessmentId, UUID currentUserId, int size, int page) {
@@ -43,7 +43,7 @@ public interface GetAssessmentPrivilegedUsersUseCase {
         }
     }
 
-    record AssessmentPrivilegedUser(
+    record AssessmentUser(
         UUID id,
         String email,
         String displayName,

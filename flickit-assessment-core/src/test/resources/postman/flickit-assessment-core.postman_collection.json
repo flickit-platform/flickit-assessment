@@ -949,7 +949,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Assessment Privileged Users",
+			"name": "Get Assessment Users",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -959,7 +959,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/88c50ea3-9486-4186-9ed4-7ff9bc32b768/privileged-users",
+					"raw": "{{base_url}}/{{api_path}}/assessments/88c50ea3-9486-4186-9ed4-7ff9bc32b768/users",
 					"host": [
 						"{{base_url}}"
 					],
@@ -967,7 +967,7 @@
 						"{{api_path}}",
 						"assessments",
 						"88c50ea3-9486-4186-9ed4-7ff9bc32b768",
-						"privileged-users"
+						"users"
 					]
 				}
 			},

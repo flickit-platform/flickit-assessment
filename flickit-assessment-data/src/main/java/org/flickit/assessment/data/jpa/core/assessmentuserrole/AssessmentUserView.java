@@ -2,7 +2,7 @@ package org.flickit.assessment.data.jpa.core.assessmentuserrole;
 
 import java.util.UUID;
 
-public interface AssessmentPrivilegedUserView {
+public interface AssessmentUserView {
 
     UUID getUserId();
 

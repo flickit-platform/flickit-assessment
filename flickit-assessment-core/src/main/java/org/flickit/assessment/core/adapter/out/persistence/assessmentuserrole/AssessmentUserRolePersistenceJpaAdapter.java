@@ -6,10 +6,10 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.DeleteUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentPrivilegedUsersPort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.UpdateUserAssessmentRolePort;
-import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentPrivilegedUserView;
+import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserView;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaRepository;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     GrantUserAssessmentRolePort,
     UpdateUserAssessmentRolePort,
     DeleteUserAssessmentRolePort,
-    LoadAssessmentPrivilegedUsersPort {
+    LoadAssessmentUsersPort {
 
     private final AssessmentUserRoleJpaRepository repository;
 
@@ -70,23 +70,23 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentPrivilegedUser> loadAssessmentPrivilegedUsers(Param param) {
-        Page<AssessmentPrivilegedUserView> pageResult = repository.findAssessmentPrivilegedUsers(param.assessmentId(),
+    public PaginatedResponse<AssessmentUser> loadAssessmentUsers(Param param) {
+        Page<AssessmentUserView> pageResult = repository.findAssessmentUsers(param.assessmentId(),
             PageRequest.of(param.page(), param.size()));
 
-        List<AssessmentPrivilegedUser> assessmentPrivilegedUsers = pageResult.getContent().stream()
+        List<AssessmentUser> assessmentUsers = pageResult.getContent().stream()
             .map(e -> {
                 AssessmentUserRole assessmentUserRole = AssessmentUserRole.valueOfById(e.getRoleId());
 
-                return new AssessmentPrivilegedUser(e.getUserId(),
+                return new AssessmentUser(e.getUserId(),
                     e.getEmail(),
                     e.getDisplayName(),
                     e.getPicturePath(),
-                    new AssessmentPrivilegedUser.Role(e.getRoleId(), assessmentUserRole.getTitle()));
+                    new AssessmentUser.Role(e.getRoleId(), assessmentUserRole.getTitle()));
             }).toList();
 
         return new PaginatedResponse<>(
-            assessmentPrivilegedUsers,
+            assessmentUsers,
             pageResult.getNumber(),
             pageResult.getSize(),
             AssessmentUserRoleJpaEntity.Fields.ROLE_ID,

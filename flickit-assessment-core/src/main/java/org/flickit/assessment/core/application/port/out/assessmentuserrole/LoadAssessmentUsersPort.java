@@ -4,13 +4,13 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 
 import java.util.UUID;
 
-public interface LoadAssessmentPrivilegedUsersPort {
+public interface LoadAssessmentUsersPort {
 
-    PaginatedResponse<AssessmentPrivilegedUser> loadAssessmentPrivilegedUsers(Param param);
+    PaginatedResponse<AssessmentUser> loadAssessmentUsers(Param param);
 
     record Param(UUID assessmentId, int size, int page) {}
 
-    record AssessmentPrivilegedUser(
+    record AssessmentUser(
         UUID id,
         String email,
         String displayName,
