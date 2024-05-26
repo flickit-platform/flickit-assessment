@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
@@ -12,6 +13,7 @@ import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE;
 
 @Slf4j
 @Service
@@ -29,6 +32,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
     private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final LoadQuestionMayNotBeApplicablePort loadQuestionMayNotBeApplicablePort;
     private final CreateAnswerPort createAnswerPort;
     private final LoadAnswerPort loadAnswerPort;
     private final UpdateAnswerPort updateAnswerPort;
@@ -41,6 +45,12 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
+
+        if (Boolean.TRUE.equals(param.getIsNotApplicable())) {
+            var isMayNotBeApplicable = loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId());
+            if (!isMayNotBeApplicable)
+                throw new ValidationException(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE);
+        }
 
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
