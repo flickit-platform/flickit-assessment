@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 
 import java.util.Arrays;
@@ -11,25 +12,22 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.PermissionGroup.*;
-import static org.flickit.assessment.core.common.MessageKey.*;
 
 @Getter
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AssessmentUserRole {
 
-    VIEWER("Viewer",VIEWER_DESCRIPTION, VIEWER_PERMISSIONS),
-    COMMENTER("Commenter", COMMENTER_DESCRIPTION, VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS),
-    ASSESSOR("Assessor", ASSESSOR_DESCRIPTION, VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS),
-    MANAGER("Manager", MANAGER_DESCRIPTION, VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS, MANAGER_PERMISSIONS);
+    VIEWER("Viewer", VIEWER_PERMISSIONS),
+    COMMENTER("Commenter", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS),
+    ASSESSOR("Assessor", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS),
+    MANAGER("Manager", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS, MANAGER_PERMISSIONS);
 
     private final String title;
-    private final String description;
     private final Set<AssessmentPermission> permissions;
 
-    AssessmentUserRole(String title, String description , PermissionGroup... permissionsGroups) {
+    AssessmentUserRole(String title, PermissionGroup... permissionsGroups) {
         this.title = title;
-        this.description = description;
         this.permissions = Arrays.stream(permissionsGroups)
             .flatMap(x -> x.getPermissions().stream())
             .collect(Collectors.toUnmodifiableSet());
@@ -51,6 +49,10 @@ public enum AssessmentUserRole {
 
     public boolean hasAccess(AssessmentPermission permission) {
         return this.getPermissions().contains(permission);
+    }
+
+    public String getDescription() {
+        return MessageBundle.message("AssessmentUserRole_" + name());
     }
 
     @Getter
