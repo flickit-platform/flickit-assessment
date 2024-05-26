@@ -982,6 +982,77 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Update Assessment User Role",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roleId\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/07875b35-51bb-47b3-acc8-c2cc3357dede/assessment-user-roles/ac652dd8-8366-4985-915b-fbe76ec95786",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"07875b35-51bb-47b3-acc8-c2cc3357dede",
+						"assessment-user-roles",
+						"ac652dd8-8366-4985-915b-fbe76ec95786"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Assessment User Role",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"69f63c1b-6e4c-4cf6-83c6-d8a25fa602ab\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/07875b35-51bb-47b3-acc8-c2cc3357dede/assessment-user-roles/ac652dd8-8366-4985-915b-fbe76ec95786",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"07875b35-51bb-47b3-acc8-c2cc3357dede",
+						"assessment-user-roles",
+						"ac652dd8-8366-4985-915b-fbe76ec95786"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [
