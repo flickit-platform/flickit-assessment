@@ -39,7 +39,7 @@ class UpdateExpertGroupLastSeenServiceTest {
     UpdateExpertGroupLastSeenPort updateExpertGroupLastSeenPort;
 
     @Test
-    @DisplayName("When the current user is a member of a valid expertGroup, the update LastSeen should function properly.")
+    @DisplayName("When the current user is a member of the expertGroup, the update LastSeen should function properly.")
     void testUpdateExpertGroupLastSeenService_isMember_success() {
         UUID currentUserId = UUID.randomUUID();
         ExpertGroupAccess expertGroupAccess = createExpertGroupAccess(7, ExpertGroupAccessStatus.ACTIVE.ordinal());
@@ -56,7 +56,7 @@ class UpdateExpertGroupLastSeenServiceTest {
     }
 
     @Test
-    @DisplayName("When the current user is not a member of existing expertGroup, the last-seen update cannot be performed.")
+    @DisplayName("When the current user is not a member of the expertGroup, the last-seen update cannot be performed.")
     void testUpdateExpertGroupLastSeenService_isNotMember_accessDenied() {
         UUID ownerId = UUID.randomUUID();
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup("Path", ownerId);
