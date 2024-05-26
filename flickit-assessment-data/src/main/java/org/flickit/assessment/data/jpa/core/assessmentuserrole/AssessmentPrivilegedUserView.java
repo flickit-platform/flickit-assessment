@@ -10,11 +10,7 @@ public interface AssessmentPrivilegedUserView {
 
     String getDisplayName();
 
-    String getBio();
-
     String getPicturePath();
-
-    String getLinkedin();
 
     int getRoleId();
 

@@ -47,9 +47,7 @@ public interface GetAssessmentPrivilegedUsersUseCase {
         UUID id,
         String email,
         String displayName,
-        String bio,
         String pictureLink,
-        String linkedin,
         Role role
     ) {
 

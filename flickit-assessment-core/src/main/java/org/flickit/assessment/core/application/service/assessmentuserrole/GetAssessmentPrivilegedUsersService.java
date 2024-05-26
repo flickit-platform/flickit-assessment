@@ -45,9 +45,7 @@ public class GetAssessmentPrivilegedUsersService implements GetAssessmentPrivile
                 return new AssessmentPrivilegedUser(e.id(),
                     e.email(),
                     e.displayName(),
-                    e.bio(),
                     pictureLink,
-                    e.linkedin(),
                     role);
             }).toList();
 

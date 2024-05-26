@@ -81,9 +81,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
                 return new AssessmentPrivilegedUser(e.getUserId(),
                     e.getEmail(),
                     e.getDisplayName(),
-                    e.getBio(),
                     e.getPicturePath(),
-                    e.getLinkedin(),
                     new AssessmentPrivilegedUser.Role(e.getRoleId(), assessmentUserRole.getTitle()));
             }).toList();
 

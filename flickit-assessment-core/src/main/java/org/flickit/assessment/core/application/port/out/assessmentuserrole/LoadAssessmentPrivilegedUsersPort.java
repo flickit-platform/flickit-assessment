@@ -14,9 +14,7 @@ public interface LoadAssessmentPrivilegedUsersPort {
         UUID id,
         String email,
         String displayName,
-        String bio,
         String picturePath,
-        String linkedin,
         Role role
     ) {
 

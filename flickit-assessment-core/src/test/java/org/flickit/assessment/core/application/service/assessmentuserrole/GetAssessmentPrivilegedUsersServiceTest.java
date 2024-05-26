@@ -71,9 +71,7 @@ class GetAssessmentPrivilegedUsersServiceTest {
             new LoadAssessmentPrivilegedUsersPort.AssessmentPrivilegedUser(currentUserId,
             "admin@flickit.org",
             "Flickit Admin",
-            null,
             picturePath,
-            "",
             manager);
 
         PaginatedResponse<LoadAssessmentPrivilegedUsersPort.AssessmentPrivilegedUser> paginatedResponse =
@@ -96,9 +94,7 @@ class GetAssessmentPrivilegedUsersServiceTest {
         assertEquals(expectedPrivilegedUser.id(), actualPrivilegedUser.id());
         assertEquals(expectedPrivilegedUser.email(), actualPrivilegedUser.email());
         assertEquals(expectedPrivilegedUser.displayName(), actualPrivilegedUser.displayName());
-        assertEquals(expectedPrivilegedUser.bio(), actualPrivilegedUser.bio());
         assertNull(actualPrivilegedUser.pictureLink());
-        assertEquals(expectedPrivilegedUser.linkedin(), actualPrivilegedUser.linkedin());
         assertEquals(expectedPrivilegedUser.role().id(), actualPrivilegedUser.role().id());
         assertEquals(expectedPrivilegedUser.role().title(), actualPrivilegedUser.role().title());
     }
@@ -122,9 +118,7 @@ class GetAssessmentPrivilegedUsersServiceTest {
             new LoadAssessmentPrivilegedUsersPort.AssessmentPrivilegedUser(currentUserId,
                 "admin@flickit.org",
                 "Flickit Admin",
-                null,
                 "path/to/picture",
-                "",
                 manager);
 
         PaginatedResponse<LoadAssessmentPrivilegedUsersPort.AssessmentPrivilegedUser> paginatedResponse =
@@ -148,10 +142,8 @@ class GetAssessmentPrivilegedUsersServiceTest {
         assertEquals(expectedPrivilegedUser.id(), actualPrivilegedUser.id());
         assertEquals(expectedPrivilegedUser.email(), actualPrivilegedUser.email());
         assertEquals(expectedPrivilegedUser.displayName(), actualPrivilegedUser.displayName());
-        assertEquals(expectedPrivilegedUser.bio(), actualPrivilegedUser.bio());
         assertNotNull(actualPrivilegedUser.pictureLink());
         assertEquals("cdn.flickit.org/profile.jpg", actualPrivilegedUser.pictureLink());
-        assertEquals(expectedPrivilegedUser.linkedin(), actualPrivilegedUser.linkedin());
         assertEquals(expectedPrivilegedUser.role().id(), actualPrivilegedUser.role().id());
         assertEquals(expectedPrivilegedUser.role().title(), actualPrivilegedUser.role().title());
     }
