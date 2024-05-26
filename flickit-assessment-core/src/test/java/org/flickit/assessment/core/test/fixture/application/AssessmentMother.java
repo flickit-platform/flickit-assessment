@@ -23,7 +23,8 @@ public class AssessmentMother {
             LocalDateTime.now(),
             LocalDateTime.now(),
             0L,
-            false
+            false,
+            UUID.randomUUID()
         );
     }
 
@@ -39,7 +40,8 @@ public class AssessmentMother {
             LocalDateTime.now(),
             LocalDateTime.now(),
             0L,
-            false
+            false,
+            UUID.randomUUID()
         );
     }
 

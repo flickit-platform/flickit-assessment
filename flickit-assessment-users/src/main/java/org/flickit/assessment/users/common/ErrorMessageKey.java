@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorMessageKey {
 
-    public static final String FILE_STORAGE_FILE_NOT_FOUND = "file-storage.file.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
     public static final String USER_BY_EMAIL_NOT_FOUND = "user-by-email.notFound";
     public static final String SPACE_ID_NOT_FOUND = "space.id.notFound";
@@ -107,4 +106,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_SPACE_TITLE_NOT_BLANK = "update-space.title.notBlank";
     public static final String UPDATE_SPACE_TITLE_SIZE_MIN = "update-space.title.size.min";
     public static final String UPDATE_SPACE_TITLE_SIZE_MAX = "update-space.title.size.max";
+
+    public static final String LEAVE_SPACE_SPACE_ID_NOT_NULL = "leave-space.spaceId.notNull";
+    public static final String LEAVE_SPACE_OWNER_NOT_ALLOWED = "leave-space.owner.notAllowed";
 }

@@ -8,8 +8,6 @@ public class ErrorMessageKey {
 
     public static final String TRANSLATE_KIT_DSL_UNABLE_TO_PARSE_JSON = "translate-kit-dsl.unable.to.parse.json";
 
-    public static final String FILE_STORAGE_FILE_NOT_FOUND = "file-storage.file.notFound";
-
     public static final String FIND_MATURITY_LEVEL_ID_NOT_FOUND = "find-maturity-level.id.notFound";
     public static final String KIT_ID_NOT_FOUND = "kit.id.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
@@ -120,6 +118,8 @@ public class ErrorMessageKey {
     public static final String GET_EXPERT_GROUP_KIT_LIST_PAGE_MIN = "get-expert-group-kit-list.page.min";
     public static final String GET_EXPERT_GROUP_KIT_LIST_SIZE_MIN = "get-expert-group-kit-list.size.min";
     public static final String GET_EXPERT_GROUP_KIT_LIST_SIZE_MAX = "get-expert-group-kit-list.size.max";
+
+    public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);

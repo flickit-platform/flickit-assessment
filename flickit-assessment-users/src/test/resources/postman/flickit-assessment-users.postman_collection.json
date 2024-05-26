@@ -243,13 +243,13 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/space/{{id}}",
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"space",
+						"spaces",
 						"{{id}}"
 					]
 				}
@@ -691,6 +691,31 @@
 							"key": "size",
 							"value": "3"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Leave Space",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/leave",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces",
+						"{{id}}",
+						"leave"
 					]
 				}
 			},
