@@ -1,6 +1,8 @@
 package org.flickit.assessment.core.application.port.in.evidence;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -32,16 +34,16 @@ public interface UpdateEvidenceUseCase {
         String type;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID lastModifiedById;
+        UUID currentUserId;
 
         public Param(UUID id,
                      String description,
                      String type,
-                     UUID lastModifiedById) {
+                     UUID currentUserId) {
             this.id = id;
             this.description = description;
             this.type = type;
-            this.lastModifiedById = lastModifiedById;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

@@ -29,7 +29,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     public ExpertGroup loadKitExpertGroup(Long kitId) {
         ExpertGroupJpaEntity entity = repository.findByKitId(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-        return ExpertGroupMapper.toDomainModel(entity);
+        return ExpertGroupMapper.mapToDomainModel(entity);
     }
 
     @Override

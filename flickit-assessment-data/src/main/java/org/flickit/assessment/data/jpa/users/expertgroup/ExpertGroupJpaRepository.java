@@ -36,7 +36,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             FROM ExpertGroupJpaEntity e
             LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId
             LEFT JOIN ExpertGroupAccessJpaEntity ac on e.id = ac.expertGroupId
-            WHERE ac.userId = :userId
+            WHERE ac.userId = :userId AND e.deleted = FALSE
             GROUP BY
                 e.id,
                 e.title,
