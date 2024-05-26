@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.port.in.assessment.CreateAssessme
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.assessment.core.test.fixture.application.QualityAttributeMother;
@@ -45,7 +45,7 @@ class CreateAssessmentServiceTest {
     private CreateSubjectValuePort createSubjectValuePort;
 
     @Mock
-    private CreateQualityAttributeValuePort createQualityAttributeValuePort;
+    private CreateAttributeValuePort createAttributeValuePort;
 
     @Mock
     private LoadAssessmentKitVersionIdPort loadAssessmentKitVersionIdPort;
@@ -139,7 +139,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void testCreateAssessment_ValidCommand_PersistsQualityAttributeValue() {
+    void testCreateAssessment_ValidCommand_PersistsAttributeValue() {
         long assessmentKitId = 1L;
         Long kitVersionId = 123L;
         UUID createdBy = UUID.randomUUID();
@@ -166,7 +166,7 @@ class CreateAssessmentServiceTest {
 
         service.createAssessment(param);
 
-        verify(createQualityAttributeValuePort, times(1)).persistAll(anyList(), any());
+        verify(createAttributeValuePort, times(1)).persistAll(anyList(), any());
     }
 
     @Test

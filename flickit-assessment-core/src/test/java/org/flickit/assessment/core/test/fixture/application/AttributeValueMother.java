@@ -7,13 +7,13 @@ import java.util.UUID;
 
 import static org.flickit.assessment.core.test.fixture.application.MaturityScoreMother.maturityScoresOnAllLevels;
 
-public class QualityAttributeValueMother {
+public class AttributeValueMother {
 
-    public static QualityAttributeValue toBeCalcWithQAAndAnswers(QualityAttribute qualityAttribute, List<Answer> answers) {
-        return new QualityAttributeValue(UUID.randomUUID(), qualityAttribute, answers);
+    public static AttributeValue toBeCalcWithQAAndAnswers(QualityAttribute qualityAttribute, List<Answer> answers) {
+        return new AttributeValue(UUID.randomUUID(), qualityAttribute, answers);
     }
 
-    public static QualityAttributeValue toBeCalcAsLevelThreeWithWeight(int weight) {
+    public static AttributeValue toBeCalcAsLevelThreeWithWeight(int weight) {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel23(),
             QuestionMother.withImpactsOnLevel23(),
@@ -30,12 +30,12 @@ public class QualityAttributeValueMother {
             AnswerMother.fullScoreOnLevels23(),
             AnswerMother.noScoreOnLevel4());
 
-        return new QualityAttributeValue(UUID.randomUUID(),
+        return new AttributeValue(UUID.randomUUID(),
             QualityAttributeMother.withQuestionsAndWeight(questions, weight),
             answers);
     }
 
-    public static QualityAttributeValue toBeCalcAsLevelFourWithWeight(int weight) {
+    public static AttributeValue toBeCalcAsLevelFourWithWeight(int weight) {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel24(),
             QuestionMother.withImpactsOnLevel24(),
@@ -53,13 +53,13 @@ public class QualityAttributeValueMother {
             AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5());
 
 
-        return new QualityAttributeValue(UUID.randomUUID(),
+        return new AttributeValue(UUID.randomUUID(),
             QualityAttributeMother.withQuestionsAndWeight(questions, weight),
             answers);
     }
 
-    public static QualityAttributeValue withAttributeAndMaturityLevel(QualityAttribute attribute, MaturityLevel maturityLevel) {
-        return new QualityAttributeValue(
+    public static AttributeValue withAttributeAndMaturityLevel(QualityAttribute attribute, MaturityLevel maturityLevel) {
+        return new AttributeValue(
             UUID.randomUUID(),
             attribute,
             null,
@@ -68,7 +68,7 @@ public class QualityAttributeValueMother {
             1.0);
     }
 
-    public static QualityAttributeValue toBeCalcAsConfidenceLevelWithWeight(int weight, int confidenceLevelId) {
+    public static AttributeValue toBeCalcAsConfidenceLevelWithWeight(int weight, int confidenceLevelId) {
         Question q1 = QuestionMother.withImpactsOnLevel24();
         Question q2 = QuestionMother.withImpactsOnLevel23();
         Question q3 = QuestionMother.withImpactsOnLevel23();
@@ -84,7 +84,7 @@ public class QualityAttributeValueMother {
             AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q4.getId()),
             AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q5.getId()));
 
-        return new QualityAttributeValue(UUID.randomUUID(),
+        return new AttributeValue(UUID.randomUUID(),
             QualityAttributeMother.withQuestionsAndWeight(questions, weight),
             answers);
     }

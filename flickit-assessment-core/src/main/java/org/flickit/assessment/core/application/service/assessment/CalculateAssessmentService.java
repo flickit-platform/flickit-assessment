@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessm
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
-import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
     private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final CreateSubjectValuePort createSubjectValuePort;
-    private final CreateQualityAttributeValuePort createAttributeValuePort;
+    private final CreateAttributeValuePort createAttributeValuePort;
     private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
 
     @Override
@@ -73,14 +73,14 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
         Map<UUID, SubjectValue> idToSubjectValue = allSubjectValues.stream().collect(Collectors.toMap(SubjectValue::getId, a -> a));
 
-        Map<UUID, List<QualityAttributeValue>> subjectValueIdToAttrValues = createNewAttributeValues(allSubjects,
+        Map<UUID, List<AttributeValue>> subjectValueIdToAttrValues = createNewAttributeValues(allSubjects,
             allSubjectValues, assessmentResult.getId());
 
         subjectValueIdToAttrValues.forEach((svId, newAttValues) -> {
             SubjectValue subjectValue = idToSubjectValue.get(svId);
-            List<QualityAttributeValue> attrValues = new ArrayList<>(subjectValue.getQualityAttributeValues());
+            List<AttributeValue> attrValues = new ArrayList<>(subjectValue.getAttributeValues());
             attrValues.addAll(newAttValues);
-            subjectValue.setQualityAttributeValues(attrValues);
+            subjectValue.setAttributeValues(attrValues);
         });
 
         assessmentResult.setSubjectValues(allSubjectValues);
@@ -99,14 +99,14 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         return createSubjectValuePort.persistAll(newSubjectIds, assessmentResultId);
     }
 
-    private Map<UUID, List<QualityAttributeValue>> createNewAttributeValues(List<Subject> kitSubjects, List<SubjectValue> subjectValues, UUID assessmentResultId) {
+    private Map<UUID, List<AttributeValue>> createNewAttributeValues(List<Subject> kitSubjects, List<SubjectValue> subjectValues, UUID assessmentResultId) {
         List<QualityAttribute> kitAttributes = kitSubjects.stream()
             .flatMap(s -> s.getQualityAttributes().stream())
             .toList();
 
-        List<QualityAttributeValue> attributeValues = subjectValues.stream()
-            .filter(s -> s.getQualityAttributeValues() != null)
-            .flatMap(s -> s.getQualityAttributeValues().stream())
+        List<AttributeValue> attributeValues = subjectValues.stream()
+            .filter(s -> s.getAttributeValues() != null)
+            .flatMap(s -> s.getAttributeValues().stream())
             .toList();
 
         var attributesWithValue = attributeValues.stream()
@@ -124,15 +124,15 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
                 attributeIdToSubjectId.put(attribute.getId(), subject.getId());
         }
 
-        List<QualityAttributeValue> newAttributeValues = createAttributeValuePort.persistAll(newAttributeIds, assessmentResultId);
+        List<AttributeValue> newAttributeValues = createAttributeValuePort.persistAll(newAttributeIds, assessmentResultId);
         Map<Long, SubjectValue> subjectIdToSubjectValue = subjectValues.stream().collect(Collectors.toMap(a -> a.getSubject().getId(), a -> a));
 
-        Map<UUID, List<QualityAttributeValue>> results = new HashMap<>();
+        Map<UUID, List<AttributeValue>> results = new HashMap<>();
         newAttributeValues.forEach(attrValue -> {
             Long subjId = attributeIdToSubjectId.get(attrValue.getQualityAttribute().getId());
             SubjectValue subjectValue = subjectIdToSubjectValue.get(subjId);
             results.compute(subjectValue.getId(), (subjValueId, attrValues) -> {
-                List<QualityAttributeValue> list = attrValues != null ? attrValues : new ArrayList<>();
+                List<AttributeValue> list = attrValues != null ? attrValues : new ArrayList<>();
                 list.add(attrValue);
                 return list;
             });

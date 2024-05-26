@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.port.in.assessment.CreateAssessme
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateAssessmentPort createAssessmentPort;
     private final CreateAssessmentResultPort createAssessmentResultPort;
     private final CreateSubjectValuePort createSubjectValuePort;
-    private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
+    private final CreateAttributeValuePort createAttributeValuePort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadAssessmentKitVersionIdPort loadKitVersionIdPort;
 
@@ -71,6 +71,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             .map(x -> x.getQualityAttributes().stream().map(QualityAttribute::getId).toList())
             .flatMap(List::stream).toList();
         createSubjectValuePort.persistAll(subjectIds, assessmentResultId);
-        createQualityAttributeValuePort.persistAll(qualityAttributeIds, assessmentResultId);
+        createAttributeValuePort.persistAll(qualityAttributeIds, assessmentResultId);
     }
 }

@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.*;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class QualityAttributeValue {
+public class AttributeValue {
 
     private final UUID id;
     private final QualityAttribute qualityAttribute;
@@ -125,7 +125,7 @@ public class QualityAttributeValue {
             .toList();
         return qualityAttribute.getQuestions().stream()
             .filter(q -> validAnswers.stream().anyMatch(a -> a.getQuestionId().equals(q.getId())))
-            .collect(Collectors.toMap(Question::getId, QualityAttributeValue::calculateQuestionWeight));
+            .collect(Collectors.toMap(Question::getId, AttributeValue::calculateQuestionWeight));
     }
 
     private static double calculateQuestionWeight(Question question) {

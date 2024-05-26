@@ -1,0 +1,33 @@
+package org.flickit.assessment.core.adapter.out.persistence.attributevalue;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.flickit.assessment.core.application.domain.QualityAttribute;
+import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+
+import java.util.UUID;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class AttributeValueMapper {
+
+    public static AttributeValueJpaEntity mapToJpaEntity(UUID attributeRefNum) {
+        return new AttributeValueJpaEntity(
+            null,
+            null,
+            attributeRefNum,
+            null,
+            null
+        );
+    }
+
+    public static AttributeValue mapToDomainModel(AttributeValueJpaEntity entity, AttributeJpaEntity attributeEntity) {
+        var attribute = new QualityAttribute(attributeEntity.getId(), attributeEntity.getWeight(), null);
+        return new AttributeValue(
+            entity.getId(),
+            attribute,
+            null
+        );
+    }
+}

@@ -17,8 +17,8 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
@@ -42,7 +42,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final AnswerJpaRepository answerRepo;
-    private final QualityAttributeValueJpaRepository qualityAttrValueRepo;
+    private final AttributeValueJpaRepository qualityAttrValueRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
     private final SubjectJpaRepository subjectRepository;
     private final QuestionJpaRepository questionRepository;
@@ -52,7 +52,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
                    List<AnswerOptionDto> allAnswerOptionsDto,
-                   List<QualityAttributeValueJpaEntity> allAttributeValueEntities,
+                   List<AttributeValueJpaEntity> allAttributeValueEntities,
                    Map<Long, SubjectJpaEntity> subjectIdToEntity,
                    Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> impactfulQuestions) {
     }
@@ -96,7 +96,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             subjectIdToEntity,
             impactfulQuestions);
 
-        Map<Long, QualityAttributeValue> attributeIdToValue = buildAttributeValues(context);
+        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context);
 
         List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValue, subjectIdToEntity, subjectValueEntities);
 
@@ -132,7 +132,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * @param context all previously loaded data
      * @return a map of each attributeId to it's corresponding attributeValue
      */
-    private Map<Long, QualityAttributeValue> buildAttributeValues(Context context) {
+    private Map<Long, AttributeValue> buildAttributeValues(Context context) {
         Map<Long, Integer> qaIdToWeightMap = context.subjectIdToEntity().values().stream()
             .flatMap(x -> x.getAttributes().stream())
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
@@ -141,8 +141,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .flatMap(x -> x.getAttributes().stream())
             .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
 
-        Map<Long, QualityAttributeValue> attrIdToValue = new HashMap<>();
-        for (QualityAttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
+        Map<Long, AttributeValue> attrIdToValue = new HashMap<>();
+        for (AttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
             UUID attributeRefNum = qavEntity.getAttributeRefNum();
             Long attributeId = attributeIdToRefNumMap.get(attributeRefNum);
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
@@ -153,7 +153,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                 impactfulQuestions
             );
 
-            QualityAttributeValue attributeValue = new QualityAttributeValue(qavEntity.getId(), attribute, impactfulAnswers);
+            AttributeValue attributeValue = new AttributeValue(qavEntity.getId(), attribute, impactfulAnswers);
             attrIdToValue.put(attribute.getId(), attributeValue);
         }
         return attrIdToValue;
@@ -210,7 +210,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * @param subjectValueEntities list of subjectValue entities
      * @return list of subjectValues
      */
-    private static List<SubjectValue> buildSubjectValues(Map<Long, QualityAttributeValue> qualityAttrIdToValue,
+    private static List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> qualityAttrIdToValue,
                                                          Map<Long, SubjectJpaEntity> subjectIdToEntity,
                                                          List<SubjectValueJpaEntity> subjectValueEntities) {
         List<SubjectValue> subjectValues = new ArrayList<>();
@@ -220,7 +220,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         for (Map.Entry<Long, SubjectJpaEntity> sEntity : subjectIdToEntity.entrySet()) {
             List<QualityAttribute> attributes = sEntity.getValue().getAttributes().stream()
                 .map(AttributeMapper::mapToDomainModel).toList();
-            List<QualityAttributeValue> qavList = attributes.stream()
+            List<AttributeValue> qavList = attributes.stream()
                 .map(q -> qualityAttrIdToValue.get(q.getId()))
                 .filter(Objects::nonNull)
                 .toList();
