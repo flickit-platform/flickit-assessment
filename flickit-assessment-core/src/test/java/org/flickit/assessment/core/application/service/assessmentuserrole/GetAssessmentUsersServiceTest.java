@@ -38,13 +38,10 @@ class GetAssessmentUsersServiceTest {
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
-    void testGetAssessmentUsers_WhenDoesntHaveGetAssessmentUsersPermission_ThenThrowException() {
+    void testGetAssessmentUsers_WhenDoesNotHaveRequiredPermission_ThenThrowException() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
-        GetAssessmentUsersUseCase.Param param = new GetAssessmentUsersUseCase.Param(assessmentId,
-            currentUserId,
-            10,
-            0);
+        var param = new GetAssessmentUsersUseCase.Param(assessmentId, currentUserId, 10, 0);
 
         when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, GET_ASSESSMENT_USERS)).thenReturn(false);
 
@@ -56,19 +53,14 @@ class GetAssessmentUsersServiceTest {
     void testGetAssessmentUsers_WhenValidInputAndPicturePathIsBlank_ThenValidResult(String picturePath) {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
-        GetAssessmentUsersUseCase.Param useCaseParam = new GetAssessmentUsersUseCase.Param(assessmentId,
-            currentUserId,
-            10,
-            0);
+        var useCaseParam = new GetAssessmentUsersUseCase.Param(assessmentId, currentUserId, 10, 0);
 
         LoadAssessmentUsersPort.Param portParam = new LoadAssessmentUsersPort.Param(assessmentId,
             useCaseParam.getSize(),
             useCaseParam.getPage());
 
-        LoadAssessmentUsersPort.AssessmentUser.Role manager =
-            new LoadAssessmentUsersPort.AssessmentUser.Role(1, "MANAGER");
-        LoadAssessmentUsersPort.AssessmentUser expectedAssessmentUser =
-            new LoadAssessmentUsersPort.AssessmentUser(currentUserId,
+        var manager = new LoadAssessmentUsersPort.AssessmentUser.Role(1, "MANAGER");
+        var expectedAssessmentUser = new LoadAssessmentUsersPort.AssessmentUser(currentUserId,
             "admin@flickit.org",
             "Flickit Admin",
             picturePath,
@@ -76,11 +68,11 @@ class GetAssessmentUsersServiceTest {
 
         PaginatedResponse<LoadAssessmentUsersPort.AssessmentUser> paginatedResponse =
             new PaginatedResponse<>(List.of(expectedAssessmentUser),
-            0,
-            10,
-            "roleId",
-            "asc",
-            10);
+                0,
+                10,
+                "roleId",
+                "asc",
+                10);
 
         when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, GET_ASSESSMENT_USERS)).thenReturn(true);
         when(port.loadAssessmentUsers(portParam)).thenReturn(paginatedResponse);
@@ -89,7 +81,7 @@ class GetAssessmentUsersServiceTest {
 
         assertNotNull(response);
         assertFalse(response.getItems().isEmpty());
-        assertEquals(response.getItems().size(), 1);
+        assertEquals(1, response.getItems().size());
         GetAssessmentUsersUseCase.AssessmentUser actualAssessmentUser = response.getItems().get(0);
         assertEquals(expectedAssessmentUser.id(), actualAssessmentUser.id());
         assertEquals(expectedAssessmentUser.email(), actualAssessmentUser.email());
@@ -103,10 +95,7 @@ class GetAssessmentUsersServiceTest {
     void testGetAssessmentUsers_WhenValidInputAndPicturePathIsNotBlank_ThenValidResult() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
-        GetAssessmentUsersUseCase.Param useCaseParam = new GetAssessmentUsersUseCase.Param(assessmentId,
-            currentUserId,
-            10,
-            0);
+        var useCaseParam = new GetAssessmentUsersUseCase.Param(assessmentId, currentUserId, 10, 0);
 
         LoadAssessmentUsersPort.Param portParam = new LoadAssessmentUsersPort.Param(assessmentId,
             useCaseParam.getSize(),
@@ -137,7 +126,7 @@ class GetAssessmentUsersServiceTest {
 
         assertNotNull(response);
         assertFalse(response.getItems().isEmpty());
-        assertEquals(response.getItems().size(), 1);
+        assertEquals(1, response.getItems().size());
         GetAssessmentUsersUseCase.AssessmentUser actualAssessmentUser = response.getItems().get(0);
         assertEquals(expectedAssessmentUser.id(), actualAssessmentUser.id());
         assertEquals(expectedAssessmentUser.email(), actualAssessmentUser.email());
