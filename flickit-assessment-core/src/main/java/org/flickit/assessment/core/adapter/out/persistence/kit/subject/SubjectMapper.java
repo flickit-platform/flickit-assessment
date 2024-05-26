@@ -15,6 +15,7 @@ public class SubjectMapper {
         return new Subject(
             entity.getId(),
             entity.getTitle(),
+            entity.getWeight(),
             attributes
         );
     }

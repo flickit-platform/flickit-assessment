@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.mutable.MutableDouble;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,6 +41,11 @@ public class SubjectValue {
             .filter(m -> m.getValue() == weightedMeanLevel)
             .findAny()
             .orElseThrow(IllegalStateException::new);
+    }
+
+    public int getWeightedLevel() {
+        Assert.notNull(maturityLevel, () -> "maturityLevel should not be null");
+        return maturityLevel.getValue() * subject.getWeight();
     }
 
     private int calculateWeightedMeanOfAttributeValues() {

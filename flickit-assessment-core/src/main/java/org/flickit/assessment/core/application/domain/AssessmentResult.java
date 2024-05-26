@@ -58,7 +58,7 @@ public class AssessmentResult {
     public MaturityLevel calculate() {
         List<MaturityLevel> maturityLevels = assessment.getAssessmentKit().getMaturityLevels();
         calculateSubjectValuesAndSetMaturityLevel(maturityLevels);
-        int weightedMeanLevel = calculateWeightedMeanOfAttributeValues();
+        int weightedMeanLevel = calculateWeightedMeanOfSubjectValues();
         return maturityLevels.stream()
             .filter(m -> m.getValue() == weightedMeanLevel)
             .findAny()
@@ -72,14 +72,12 @@ public class AssessmentResult {
         });
     }
 
-    private int calculateWeightedMeanOfAttributeValues() {
+    private int calculateWeightedMeanOfSubjectValues() {
         MutableInt weightedSum = new MutableInt();
         MutableInt sum = new MutableInt();
-        subjectValues.stream()
-            .flatMap(x -> x.getQualityAttributeValues().stream())
-            .forEach(x -> {
+        subjectValues.forEach(x -> {
                 weightedSum.add(x.getWeightedLevel());
-                sum.add(x.getQualityAttribute().getWeight());
+                sum.add(x.getSubject().getWeight());
             });
         return (int) Math.round((double) weightedSum.getValue() / sum.getValue());
     }
