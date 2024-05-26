@@ -24,17 +24,15 @@ public class GetAssessmentUsersService implements GetAssessmentUsersUseCase {
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     private final AssessmentPermissionChecker assessmentPermissionChecker;
-    private final LoadAssessmentUsersPort port;
+    private final LoadAssessmentUsersPort loadAssessmentUsersPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public PaginatedResponse<AssessmentUser> getAssessmentUsers(Param param) {
-        if (!assessmentPermissionChecker.isAuthorized(param.getAssessmentId(),
-            param.getCurrentUserId(),
-            GET_ASSESSMENT_USERS))
+        if (!assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GET_ASSESSMENT_USERS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessmentUserPaginatedResponse = port.loadAssessmentUsers(toParam(param));
+        var assessmentUserPaginatedResponse = loadAssessmentUsersPort.loadAssessmentUsers(toParam(param));
         List<AssessmentUser> items = assessmentUserPaginatedResponse.getItems().stream()
             .map(e -> {
                 String pictureLink = null;

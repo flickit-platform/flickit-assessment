@@ -48,9 +48,9 @@ public interface GetAssessmentUsersUseCase {
         String email,
         String displayName,
         String pictureLink,
-        Role role
-    ) {
+        Role role) {
 
-        public record Role(int id, String title) {}
+        public record Role(int id, String title) {
+        }
     }
 }
