@@ -850,41 +850,6 @@
 			"response": []
 		},
 		{
-			"name": "Update Assessment User Role",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"userId\": \"69f63c1b-6e4c-4cf6-83c6-d8a25fa602ab\",\n    \"roleId\": \"2\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/5da1d0ff-0029-4d41-b4fd-85f160f23127/assessment-user-roles",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessments",
-						"5da1d0ff-0029-4d41-b4fd-85f160f23127",
-						"assessment-user-roles"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Get Assessment User Roles",
 			"request": {
 				"method": "GET",
@@ -978,6 +943,31 @@
 						"assessments",
 						"625e6194-b710-4ed4-90e5-d6372ee3cb96",
 						"assessment-user-roles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Assessment Users",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/88c50ea3-9486-4186-9ed4-7ff9bc32b768/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"88c50ea3-9486-4186-9ed4-7ff9bc32b768",
+						"users"
 					]
 				}
 			},
