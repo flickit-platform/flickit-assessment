@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -61,13 +60,16 @@ class GetSpaceMembersServiceTest {
     void testGetSpaceMember_validParameters_validMembers() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
+        UUID userId1 = UUID.randomUUID();
+        UUID userId2 = UUID.randomUUID();
+
         int size = 10;
         int page = 0;
-        var member1 = new LoadSpaceMembersPort.Member(UUID.randomUUID(),
-            "a@b.c", "name", "bio", "pictureLink", "linkedin");
+        var member1 = new LoadSpaceMembersPort.Member(userId1,
+            "a@b.c", "name", "bio", true, "pictureLink", "linkedin");
 
-        var member2 = new LoadSpaceMembersPort.Member(UUID.randomUUID(),
-            "a1@b.c", "name1", "bio1", "pictureLink1", "linkedin1");
+        var member2 = new LoadSpaceMembersPort.Member(userId2,
+            "a1@b.c", "name1","bio1", false, "pictureLink1", "linkedin1");
 
         var members = List.of(member1, member2);
         var paginatedResponse = new PaginatedResponse<>(members, page, size, "SORT", "ORDER", members.size());
@@ -83,6 +85,8 @@ class GetSpaceMembersServiceTest {
         assertEquals(page, result.getPage(), "'page' should be 0");
         assertEquals(size, result.getSize(), "'size' should be 10");
         assertEquals(2, result.getTotal(), "'total' should be 2");
+        assertTrue(result.getItems().get(0).isOwner());
+        assertFalse(result.getItems().get(1).isOwner());
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId,currentUserId);
         verify(loadSpaceMembersPort).loadSpaceMembers(spaceId, page, size);

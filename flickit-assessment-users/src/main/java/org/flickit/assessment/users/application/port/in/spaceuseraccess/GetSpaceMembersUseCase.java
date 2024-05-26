@@ -48,6 +48,7 @@ public interface GetSpaceMembersUseCase {
         String email,
         String displayName,
         String bio,
+        boolean isOwner,
         String pictureLink,
         String linkedin) {
     }
