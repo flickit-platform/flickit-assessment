@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 
 import java.util.Arrays;
@@ -48,6 +49,10 @@ public enum AssessmentUserRole {
 
     public boolean hasAccess(AssessmentPermission permission) {
         return this.getPermissions().contains(permission);
+    }
+
+    public String getDescription() {
+        return MessageBundle.message("AssessmentUserRole_" + name());
     }
 
     @Getter
