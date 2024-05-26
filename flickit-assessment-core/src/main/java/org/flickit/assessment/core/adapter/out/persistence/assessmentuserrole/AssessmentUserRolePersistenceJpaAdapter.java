@@ -1,16 +1,24 @@
 package org.flickit.assessment.core.adapter.out.persistence.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.DeleteUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.UpdateUserAssessmentRolePort;
+import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserView;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -21,7 +29,8 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     LoadUserRoleForAssessmentPort,
     GrantUserAssessmentRolePort,
     UpdateUserAssessmentRolePort,
-    DeleteUserAssessmentRolePort {
+    DeleteUserAssessmentRolePort,
+    LoadAssessmentUsersPort {
 
     private final AssessmentUserRoleJpaRepository repository;
 
@@ -59,5 +68,35 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
             throw new ResourceNotFoundException(DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND);
 
         repository.deleteByAssessmentIdAndUserId(assessmentId, userId);
+    }
+
+    @Override
+    public PaginatedResponse<AssessmentUser> loadAssessmentUsers(Param param) {
+        Page<AssessmentUserView> pageResult = repository.findAssessmentUsers(param.assessmentId(),
+            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, AssessmentUserRoleJpaEntity.Fields.ROLE_ID));
+
+        List<AssessmentUser> assessmentUsers = pageResult.getContent().stream()
+            .map(e -> {
+                AssessmentUserRole assessmentUserRole = AssessmentUserRole.valueOfById(e.getRoleId());
+                if (assessmentUserRole == null)
+                    return null;
+                else {
+                    return new AssessmentUser(e.getUserId(),
+                        e.getEmail(),
+                        e.getDisplayName(),
+                        e.getPicturePath(),
+                        new AssessmentUser.Role(e.getRoleId(), assessmentUserRole.getTitle()));
+                }
+            }) .filter(Objects::nonNull)
+            .toList();
+
+        return new PaginatedResponse<>(
+            assessmentUsers,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            AssessmentUserRoleJpaEntity.Fields.ROLE_ID,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
     }
 }

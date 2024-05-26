@@ -1,6 +1,8 @@
 package org.flickit.assessment.data.jpa.core.assessmentuserrole;
 
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaEntity.EntityId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,4 +27,22 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
 
     void deleteByAssessmentIdAndUserId(UUID assessmentId, UUID userId);
 
+    @Query("""
+            SELECT
+                u.id AS userId,
+                u.email AS email,
+                u.displayName AS displayName,
+                u.picture AS picturePath,
+                a.roleId AS roleId
+            FROM UserJpaEntity u
+            JOIN AssessmentUserRoleJpaEntity a ON u.id = a.userId
+            WHERE a.assessmentId = :assessmentId
+            AND EXISTS (
+                  SELECT 1 FROM SpaceUserAccessJpaEntity sua
+                  LEFT JOIN AssessmentJpaEntity fa on fa.spaceId = sua.spaceId
+                  WHERE fa.id = :assessmentId AND sua.userId  = a.userId
+                )
+        """)
+    Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId,
+                                                 Pageable pageable);
 }
