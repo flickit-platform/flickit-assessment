@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -77,13 +78,17 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
         List<AssessmentUser> assessmentUsers = pageResult.getContent().stream()
             .map(e -> {
                 AssessmentUserRole assessmentUserRole = AssessmentUserRole.valueOfById(e.getRoleId());
-
-                return new AssessmentUser(e.getUserId(),
-                    e.getEmail(),
-                    e.getDisplayName(),
-                    e.getPicturePath(),
-                    new AssessmentUser.Role(e.getRoleId(), assessmentUserRole.getTitle()));
-            }).toList();
+                if (assessmentUserRole == null)
+                    return null;
+                else {
+                    return new AssessmentUser(e.getUserId(),
+                        e.getEmail(),
+                        e.getDisplayName(),
+                        e.getPicturePath(),
+                        new AssessmentUser.Role(e.getRoleId(), assessmentUserRole.getTitle()));
+                }
+            }) .filter(Objects::nonNull)
+            .toList();
 
         return new PaginatedResponse<>(
             assessmentUsers,
