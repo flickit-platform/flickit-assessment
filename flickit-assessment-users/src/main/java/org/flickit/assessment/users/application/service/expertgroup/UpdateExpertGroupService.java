@@ -26,7 +26,7 @@ public class UpdateExpertGroupService implements UpdateExpertGroupUseCase {
     @Override
     public void updateExpertGroup(Param param) {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
-        updateExpertGroupPort.update(toParam(param, LocalDateTime.now()));
+        updateExpertGroupPort.update(toParam(param));
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
@@ -35,7 +35,7 @@ public class UpdateExpertGroupService implements UpdateExpertGroupUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
-    private UpdateExpertGroupPort.Param toParam(Param param, LocalDateTime currentTime) {
+    private UpdateExpertGroupPort.Param toParam(Param param) {
         return new UpdateExpertGroupPort.Param(
             param.getId(),
             generateSlugCode(param.getTitle()),
@@ -43,7 +43,7 @@ public class UpdateExpertGroupService implements UpdateExpertGroupUseCase {
             param.getBio(),
             param.getAbout(),
             param.getWebsite(),
-            currentTime,
+            LocalDateTime.now(),
             param.getCurrentUserId());
     }
 }

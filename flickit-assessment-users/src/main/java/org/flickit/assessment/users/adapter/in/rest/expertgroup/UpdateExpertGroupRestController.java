@@ -18,9 +18,8 @@ public class UpdateExpertGroupRestController {
     private final UserContext userContext;
 
     @PutMapping("/expert-groups/{id}")
-    public ResponseEntity<Void> createExpertGroup(
-        @RequestBody UpdateExpertGroupRequestDto request,
-        @PathVariable("id") Long id) {
+    public ResponseEntity<Void> updateExpertGroup(@RequestBody UpdateExpertGroupRequestDto request,
+                                                  @PathVariable("id") Long id) {
         UUID currentUserId = userContext.getUser().id();
         useCase.updateExpertGroup(toParam(id, request, currentUserId));
 

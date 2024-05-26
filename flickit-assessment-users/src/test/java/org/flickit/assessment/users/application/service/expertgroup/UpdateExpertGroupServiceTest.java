@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.service.expertgroup;
 
+import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupUseCase;
@@ -14,11 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
-
-
 
 @ExtendWith(MockitoExtension.class)
 class UpdateExpertGroupServiceTest {
@@ -42,7 +42,8 @@ class UpdateExpertGroupServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(UUID.randomUUID());
 
-        assertThrows(AccessDeniedException.class, ()-> service.updateExpertGroup(param));
+        Throwable throwable = assertThrows(AccessDeniedException.class, ()-> service.updateExpertGroup(param));
+        Assertions.assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(updateExpertGroupPort);
@@ -58,7 +59,8 @@ class UpdateExpertGroupServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
 
-        assertThrows(ResourceNotFoundException.class, ()-> service.updateExpertGroup(param), EXPERT_GROUP_ID_NOT_FOUND);
+        Throwable throwable = assertThrows(ResourceNotFoundException.class, ()-> service.updateExpertGroup(param));
+        Assertions.assertThat(throwable).hasMessage(EXPERT_GROUP_ID_NOT_FOUND);
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(updateExpertGroupPort);
