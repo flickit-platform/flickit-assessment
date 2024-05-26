@@ -16,8 +16,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -54,8 +53,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -92,8 +90,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -129,8 +126,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -166,8 +162,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -220,8 +215,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -245,8 +239,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -256,7 +249,7 @@
 					],
 					"path": [
 						"{{api_path}}",
-						"space",
+						"spaces",
 						"{{id}}"
 					]
 				}
@@ -270,8 +263,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -295,8 +287,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -321,8 +312,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -371,8 +361,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -409,8 +398,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -444,12 +432,11 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members",
+					"raw": "{{base_url}}/{{api_path}}/space/{{id}}/members",
 					"host": [
 						"{{base_url}}"
 					],
@@ -473,8 +460,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -509,8 +495,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -542,8 +527,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -569,12 +553,11 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces?page=0&size=4",
+					"raw": "{{base_url}}/{{api_path}}/spaces?page=0&size=5",
 					"host": [
 						"{{base_url}}"
 					],
@@ -603,8 +586,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -623,16 +605,24 @@
 			"response": []
 		},
 		{
-			"name": "Delete Space",
+			"name": "Update Space",
 			"request": {
-				"method": "DELETE",
+				"method": "PUT",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"new title\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}",
 					"host": [
@@ -640,8 +630,92 @@
 					],
 					"path": [
 						"{{api_path}}",
+						"spaces",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Space",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/space/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
 						"space",
 						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Space Invitees",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/invitees?page=0&size=3",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces",
+						"{{id}}",
+						"invitees"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Leave Space",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/leave",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces",
+						"{{id}}",
+						"leave"
 					]
 				}
 			},
