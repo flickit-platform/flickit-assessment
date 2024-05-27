@@ -7,6 +7,7 @@ import org.flickit.assessment.core.application.port.in.assessment.CreateAssessme
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.core.application.domain.Assessment.generateSlugCode;
 import static org.flickit.assessment.core.application.domain.AssessmentColor.getValidId;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 
 @Service
@@ -32,12 +34,14 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadAssessmentKitVersionIdPort loadKitVersionIdPort;
+    private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Override
     public Result createAssessment(Param param) {
         CreateAssessmentPort.Param portParam = toParam(param);
         UUID id = createAssessmentPort.persist(portParam);
         createAssessmentResult(id, loadKitVersionIdPort.loadVersionId(param.getAssessmentKitId()));
+        grantUserAssessmentRolePort.persist(id, param.getCreatedBy(), MANAGER.getId());
         return new Result(id);
     }
 
