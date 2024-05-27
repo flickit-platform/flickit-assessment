@@ -20,6 +20,7 @@ env:
   IMAGE_NAME: flickit-platform-dev/flickit-assessment
   JIB_OPT: -Djib.httpTimeout=240000 -Dmaven.test.skip=true
   JIB_CMD: clean install jib:build
+  GITHUB_SHA7: ${GITHUB_SHA:0:7}
 
 jobs:
   build:
@@ -173,9 +174,7 @@ jobs:
           distribution: adopt
 
       - name: Build and push image
-        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ VERSION }}" ${{ env.JIB_CMD }}
-        env:
-          VERSION: ${GITHUB_SHA:0:7}
+        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.GITHUB_SHA7 }}" ${{ env.JIB_CMD }}
 
 #  darkube-deploy-latest:
 #    needs: [build-and-push-latest-image]
