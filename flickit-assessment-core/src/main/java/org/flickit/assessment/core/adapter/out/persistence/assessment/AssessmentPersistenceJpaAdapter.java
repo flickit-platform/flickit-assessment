@@ -66,8 +66,8 @@ public class AssessmentPersistenceJpaAdapter implements
     public PaginatedResponse<AssessmentListItem> loadNotDeletedAssessments(List<Long> spaceIds, Long kitId, int page, int size) {
         var pageResult = repository.findBySpaceIdAndDeletedFalseOrderByLastModificationTimeDesc(spaceIds, kitId, PageRequest.of(page, size));
 
-        Map<UUID, Long> assessmentIdToMaturityLevelId = pageResult.getContent().stream()
-            .collect(Collectors.toMap(e -> e.getAssessment().getId(), AssessmentListItemView::getMaturityLevelId));
+        Map<UUID, Long> assessmentIdToMaturityLevelId = new HashMap<>();
+        pageResult.getContent().forEach(e -> assessmentIdToMaturityLevelId.put(e.getAssessment().getId(), e.getMaturityLevelId()));
 
         List<AssessmentJpaEntity> assessmentEntities = pageResult.getContent().stream()
             .map(AssessmentListItemView::getAssessment)
@@ -109,12 +109,14 @@ public class AssessmentPersistenceJpaAdapter implements
                 AssessmentListItem.Kit kit = new AssessmentListItem.Kit(kitEntity.getId(), kitEntity.getTitle(), kitLevelEntities.size());
                 SpaceJpaEntity spaceEntity = spaceIdToSpaceEntity.get(e.getAssessment().getSpaceId());
                 AssessmentListItem.Space space = new AssessmentListItem.Space(spaceEntity.getId(), spaceEntity.getTitle());
-                Long maturityLevelId = assessmentIdToMaturityLevelId.get(e.getAssessment().getId());
-                MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(maturityLevelId);
-                AssessmentListItem.MaturityLevel maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
-                    maturityLevelEntity.getTitle(),
-                    maturityLevelEntity.getValue(),
-                    maturityLevelEntity.getIndex());
+                AssessmentListItem.MaturityLevel  maturityLevel= null;
+                if (e.getIsCalculateValid()) {
+                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(e.getMaturityLevelId());
+                    maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
+                        maturityLevelEntity.getTitle(),
+                        maturityLevelEntity.getValue(),
+                        maturityLevelEntity.getIndex());
+                }
 
                 return new AssessmentListItem(e.getAssessment().getId(),
                     e.getAssessment().getTitle(),
