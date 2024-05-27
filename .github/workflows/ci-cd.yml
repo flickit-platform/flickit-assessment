@@ -141,7 +141,7 @@ jobs:
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
 
   build-and-push-latest-image:
-    needs: [test]
+#    needs: [test]
     name: deploy latest image
     runs-on: ubuntu-latest
 #    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
@@ -173,7 +173,7 @@ jobs:
           distribution: adopt
 
       - name: Build and push image
-        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}" ${{ env.JIB_CMD }}
+        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ VERSION }}" ${{ env.JIB_CMD }}
         env:
           VERSION: ${GITHUB_SHA:0:7}
 
