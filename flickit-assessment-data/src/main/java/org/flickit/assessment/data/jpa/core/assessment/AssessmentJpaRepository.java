@@ -28,20 +28,21 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     Page<AssessmentListItemView> findBySpaceIdAndDeletedFalseOrderByLastModificationTimeDesc(List<Long> spaceIds, Long kitId, Pageable pageable);
 
     @Modifying
-    @Query("UPDATE AssessmentJpaEntity a SET " +
-        "a.title = :title, " +
-        "a.colorId = :colorId, " +
-        "a.code = :code, " +
-        "a.lastModificationTime = :lastModificationTime, " +
-        "a.lastModifiedBy = :lastModifiedBy " +
-        "WHERE a.id = :id")
+    @Query("""
+            UPDATE AssessmentJpaEntity a SET
+                a.title = :title,
+                a.colorId = :colorId,
+                a.code = :code,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastModifiedBy = :lastModifiedBy
+            WHERE a.id = :id
+        """)
     void update(@Param(value = "id") UUID id,
                 @Param(value = "title") String title,
                 @Param(value = "code") String code,
                 @Param(value = "colorId") Integer colorId,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
-
 
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +
@@ -51,6 +52,8 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     void delete(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
+
+    Optional<AssessmentJpaEntity> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +

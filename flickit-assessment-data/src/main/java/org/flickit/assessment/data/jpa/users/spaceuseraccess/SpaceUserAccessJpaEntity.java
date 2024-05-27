@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @IdClass(SpaceUserAccessJpaEntity.EntityId.class)
 @Table(name = "fau_space_user_access")
@@ -33,6 +35,9 @@ public class SpaceUserAccessJpaEntity {
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
+    @Column(name = "last_seen", nullable = false)
+    private LocalDateTime lastSeen;
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -40,6 +45,11 @@ public class SpaceUserAccessJpaEntity {
 
         private Long spaceId;
         private UUID userId;
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String LAST_SEEN = "lastSeen";
     }
 
 }
