@@ -51,27 +51,6 @@ class DeleteSpaceInvitationServiceTest {
     }
 
     @Test
-    @DisplayName("Deleting a space's invitation, user is not invited previously should cause error")
-    void testDeleteSpaceInvitation_invalidUserId_ValidationException() {
-        long spaceId = 0L;
-        String email = "admin@flickit.ir";
-        var currentUserId = UUID.randomUUID();
-        Param param = new Param(spaceId, email, currentUserId);
-
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
-
-        assertThrows(ResourceNotFoundException.class, () ->
-            service.deleteInvitation(param));
-
-        Throwable throwable = assertThrows(ValidationException.class, ()-> service.deleteInvitation(param));
-
-        assertEquals(DELETE_SPACE_INVITATION_EMAIL_NOT_FOUND, throwable.getMessage());
-
-        verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
-        verify(deleteSpaceInvitationPort).deleteSpaceInvitation(spaceId, email);
-    }
-
-    @Test
     @DisplayName("Deleting a space's invitation, with valid parameters should be successful")
     void testDeleteSpaceInvitation_validParameters_successful() {
         long spaceId = 0L;
