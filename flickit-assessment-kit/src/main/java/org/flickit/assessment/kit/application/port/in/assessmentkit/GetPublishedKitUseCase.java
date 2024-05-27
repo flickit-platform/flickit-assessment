@@ -45,6 +45,7 @@ public interface GetPublishedKitUseCase {
                   Integer assessmentsCount,
                   Integer subjectsCount,
                   Integer questionnairesCount,
+                  long expertGroupId,
                   List<MinimalSubject> subjects,
                   List<MinimalQuestionnaire> questionnaires,
                   List<MinimalMaturityLevel> maturityLevels,
