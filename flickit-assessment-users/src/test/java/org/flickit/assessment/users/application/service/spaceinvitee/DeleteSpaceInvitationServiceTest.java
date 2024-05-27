@@ -1,8 +1,6 @@
 package org.flickit.assessment.users.application.service.spaceinvitee;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.DeleteSpaceInvitationUseCase.Param;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceInvitationPort;
@@ -16,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_INVITATION_EMAIL_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
