@@ -45,6 +45,7 @@ public class GetPublishedKitRestController {
             result.assessmentsCount(),
             result.subjectsCount(),
             result.questionnairesCount(),
+            result.expertGroupId(),
             result.subjects(),
             result.questionnaires(),
             result.maturityLevels(),
