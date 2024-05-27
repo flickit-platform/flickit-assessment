@@ -33,4 +33,19 @@
                                  deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>
+
+    <changeSet id="0.20-04" author="Mahdi Rezazadeh">
+        <sql>
+            INSERT INTO fac_assessment_user_role (assessment_id, user_id, role_id)
+            SELECT a.id         AS assessment_id,
+                   a.created_by AS user_id,
+                   3            AS role_id
+            FROM fac_assessment a
+                     INNER JOIN
+                 fau_space_user_access sua
+                 ON
+                     a.space_id = sua.space_id
+            WHERE sua.user_id = a.created_by;
+        </sql>
+    </changeSet>
 </databaseChangeLog>
