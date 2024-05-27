@@ -2,6 +2,8 @@ package org.flickit.assessment.core.adapter.in.rest.exception;
 
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -15,6 +17,7 @@ import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INP
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_LIST_SPACE_IDS_NOT_NULL;
 
 @RestControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class MissingServletRequestParameterExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override

@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.users.common.ErrorMessageKey.ACCEPT_SPACE_INVITATIONS_USER_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class AcceptSpaceInvitationsParamTest {
+class AcceptSpaceInvitationsUseCaseParamTest {
 
     @Test
     void testAcceptSpaceInvitations_userIdIsNull_ErrorMessage() {

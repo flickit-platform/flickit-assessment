@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.application.domain.AnswerOption;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Question;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsBySubjectPort;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
@@ -19,11 +21,14 @@ import java.util.List;
 
 import static java.util.stream.Collectors.groupingBy;
 
+import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND;
+
 @Component("coreQuestionPersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class QuestionPersistenceJpaAdapter implements
     LoadQuestionsBySubjectPort,
-    LoadQuestionnaireQuestionListPort {
+    LoadQuestionnaireQuestionListPort,
+    LoadQuestionMayNotBeApplicablePort {
 
     private final QuestionJpaRepository repository;
     private final AnswerOptionJpaRepository answerOptionRepository;
@@ -63,5 +68,12 @@ public class QuestionPersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public boolean loadMayNotBeApplicableById(Long id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND))
+            .getMayNotBeApplicable();
     }
 }
