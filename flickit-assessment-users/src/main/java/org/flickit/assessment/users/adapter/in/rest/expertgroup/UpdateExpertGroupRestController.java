@@ -2,11 +2,14 @@ package org.flickit.assessment.users.adapter.in.rest.expertgroup;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupUseCase.Param;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupUseCase;
+import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
@@ -18,8 +21,8 @@ public class UpdateExpertGroupRestController {
     private final UserContext userContext;
 
     @PutMapping("/expert-groups/{id}")
-    public ResponseEntity<Void> updateExpertGroup(@RequestBody UpdateExpertGroupRequestDto request,
-                                                  @PathVariable("id") Long id) {
+    public ResponseEntity<Void> updateExpertGroup(@PathVariable("id") Long id,
+                                                  @RequestBody UpdateExpertGroupRequestDto request) {
         UUID currentUserId = userContext.getUser().id();
         useCase.updateExpertGroup(toParam(id, request, currentUserId));
 
@@ -33,7 +36,6 @@ public class UpdateExpertGroupRestController {
             request.bio(),
             request.about(),
             request.website(),
-            currentUserId
-        );
+            currentUserId);
     }
 }
