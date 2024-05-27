@@ -41,4 +41,6 @@ public interface SpaceInviteeJpaRepository extends JpaRepository<SpaceInviteeJpa
     Page<SpaceInviteeJpaEntity> findBySpaceId(@Param("spaceId") long spaceId,
                                               @Param("currentTime") LocalDateTime currentTime,
                                               Pageable pageable);
+
+    void deleteBySpaceIdAndEmail(@Param("spaceId") long spaceId,@Param("email") String email);
 }

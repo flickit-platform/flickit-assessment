@@ -3,10 +3,12 @@ package org.flickit.assessment.users.adapter.out.persistence.spaceinvitee;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
 import org.flickit.assessment.users.application.domain.SpaceInvitee;
+import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceInvitationPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceInviteesPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceUserInvitationsPort;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +28,8 @@ public class SpaceInviteePersistenceJpaAdapter implements
     LoadSpaceUserInvitationsPort,
     DeleteSpaceUserInvitationsPort,
     InviteSpaceMemberPort,
-    LoadSpaceInviteesPort {
+    LoadSpaceInviteesPort,
+    DeleteSpaceInvitationPort {
 
     private final SpaceInviteeJpaRepository repository;
     private final SpaceJpaRepository spaceRepository;
@@ -76,5 +79,13 @@ public class SpaceInviteePersistenceJpaAdapter implements
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public void deleteSpaceInvitation(long spaceId, String email) {
+        if(!repository.existsBySpaceIdAndEmail(spaceId, email))
+            throw new ValidationException(DELETE_SPACE_INVITATION_EMAIL_NOT_FOUND);
+
+        repository.deleteBySpaceIdAndEmail(spaceId, email);
     }
 }
