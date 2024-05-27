@@ -42,7 +42,7 @@ class GetAssessmentListServiceTest {
     private LoadSpaceIdsByUserIdPort loadSpaceIdsByUserIdPort;
 
     @Test
-    void testGetAssessmentList_WhenSpaceIdsIsNull_ThenUserSpaceIdsLoaded() {
+    void testGetAssessmentList_WhenSpaceIdIsNull_ThenUserSpaceIdsLoaded() {
         UUID currentUserId = UUID.randomUUID();
         GetAssessmentListUseCase.Param param = new GetAssessmentListUseCase.Param(
             null,
@@ -55,33 +55,17 @@ class GetAssessmentListServiceTest {
 
         then(loadSpaceIdsByUserIdPort).should().loadSpaceIdsByUserId(currentUserId);
     }
-
-    @Test
-    void testGetAssessmentList_WhenSpaceIdsIsEmpty_ThenUserSpaceIdsLoaded() {
-        UUID currentUserId = UUID.randomUUID();
-        GetAssessmentListUseCase.Param param = new GetAssessmentListUseCase.Param(
-            new ArrayList<>(),
-            null,
-            currentUserId,
-            1,
-            10);
-
-        service.getAssessmentList(param);
-
-        then(loadSpaceIdsByUserIdPort).should().loadSpaceIdsByUserId(currentUserId);
-    }
-
 
     @Test
     void testGetAssessmentList_UserIsNotSpaceMember_ThrowException() {
         GetAssessmentListUseCase.Param param = new GetAssessmentListUseCase.Param(
-            List.of(1L),
+            1L,
             null,
             UUID.randomUUID(),
             1,
             10);
 
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceIds().get(0), param.getCurrentUserId())).thenReturn(false);
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.getAssessmentList(param));
     }
@@ -106,7 +90,7 @@ class GetAssessmentListServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, null, 0, 10)).thenReturn(paginatedResponse);
 
-        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceIds, null, currentUserId, 10, 0));
+        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceId, null, currentUserId, 10, 0));
         assertEquals(paginatedResponse, result);
     }
 
@@ -126,7 +110,7 @@ class GetAssessmentListServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceIds.get(0), currentUserId)).thenReturn(true);
         when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, null, 0, 10)).thenReturn(paginatedResponse);
 
-        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceIds, null, currentUserId, 10, 0));
+        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(new GetAssessmentListUseCase.Param(spaceIds.get(0), null, currentUserId, 10, 0));
         assertEquals(paginatedResponse, result);
     }
 
@@ -146,10 +130,14 @@ class GetAssessmentListServiceTest {
             2
         );
 
+        UUID currentUserId = UUID.randomUUID();
+
+        when(loadSpaceIdsByUserIdPort.loadSpaceIdsByUserId(currentUserId)).thenReturn(spaceIds);
         when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, null, 0, 20))
             .thenReturn(paginatedRes);
 
-        var param = new GetAssessmentListUseCase.Param(spaceIds, null, UUID.randomUUID(), 20, 0);
+
+        var param = new GetAssessmentListUseCase.Param(null, null, currentUserId, 20, 0);
         var assessments = service.getAssessmentList(param);
 
         ArgumentCaptor<List<Long>> spaceIdsArgument = ArgumentCaptor.forClass(List.class);
@@ -195,10 +183,10 @@ class GetAssessmentListServiceTest {
         );
 
         UUID currentUserId = UUID.randomUUID();
-        when(checkSpaceAccessPort.checkIsMember(spaceIds.get(0), currentUserId)).thenReturn(true);
+        when(loadSpaceIdsByUserIdPort.loadSpaceIdsByUserId(currentUserId)).thenReturn(spaceIds);
         when(loadAssessmentPort.loadNotDeletedAssessments(spaceIds, kitId, 0, 20)).thenReturn(paginatedRes);
 
-        var param = new GetAssessmentListUseCase.Param(spaceIds, kitId, currentUserId, 20, 0);
+        var param = new GetAssessmentListUseCase.Param(null, kitId, currentUserId, 20, 0);
         var assessments = service.getAssessmentList(param);
 
         assertEquals(2, assessments.getItems().size());

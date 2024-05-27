@@ -24,7 +24,7 @@ public interface GetAssessmentListUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        List<Long> spaceIds;
+        Long spaceId;
 
         Long kitId;
 
@@ -38,8 +38,8 @@ public interface GetAssessmentListUseCase {
         @Min(value = 0, message = GET_ASSESSMENT_LIST_PAGE_MIN)
         int page;
 
-        public Param(List<Long> spaceIds, Long kitId, UUID currentUserId, int size, int page) {
-            this.spaceIds = spaceIds;
+        public Param(Long spaceId, Long kitId, UUID currentUserId, int size, int page) {
+            this.spaceId = spaceId;
             this.kitId = kitId;
             this.currentUserId = currentUserId;
             this.size = size;

@@ -26,13 +26,16 @@ public class GetAssessmentListService implements GetAssessmentListUseCase {
 
     @Override
     public PaginatedResponse<AssessmentListItem> getAssessmentList(GetAssessmentListUseCase.Param param) {
-        List<Long> spaceIds = param.getSpaceIds();
         UUID currentUserId = param.getCurrentUserId();
 
-        if (spaceIds == null || spaceIds.isEmpty())
+        List<Long> spaceIds;
+        Long spaceId = param.getSpaceId();
+        if (spaceId != null) {
+            if (!checkSpaceAccessPort.checkIsMember(spaceId, currentUserId))
+                throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+            spaceIds = List.of(spaceId);
+        } else
             spaceIds = loadSpaceIdsByUserIdPort.loadSpaceIdsByUserId(currentUserId);
-        else if (spaceIds.size() == 1 && !checkSpaceAccessPort.checkIsMember(spaceIds.get(0), currentUserId))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         return loadAssessmentsBySpace.loadNotDeletedAssessments(
             spaceIds,

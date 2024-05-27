@@ -19,16 +19,15 @@ class GetAssessmentListUseCaseParamTest {
     @Test
     void testGetAssessmentList_CurrentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetAssessmentListUseCase.Param(List.of(1L), 10L, null, 1,0));
+            () -> new GetAssessmentListUseCase.Param(1L, 10L, null, 1,0));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
     void testGetAssessmentList_PageSizeIsLessThanMin_ErrorMessage() {
-        List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentListUseCase.Param(
-                spaceIds,
+                1L,
                 null,
                 UUID.randomUUID(),
                 0,
@@ -39,10 +38,9 @@ class GetAssessmentListUseCaseParamTest {
 
     @Test
     void testGetAssessmentList_PageSizeIsGreaterThanMax_ErrorMessage() {
-        List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentListUseCase.Param(
-                spaceIds,
+                1L,
                 null,
                 UUID.randomUUID(),
                 101,
@@ -53,10 +51,9 @@ class GetAssessmentListUseCaseParamTest {
 
     @Test
     void testGetAssessmentList_PageNumberIsLessThanMin_ErrorMessage() {
-        List<Long> spaceIds = List.of(1L, 2L);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentListUseCase.Param(
-                spaceIds,
+                1L,
                 null,
                 UUID.randomUUID(),
                 20,

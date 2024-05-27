@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,18 +22,18 @@ public class GetAssessmentListRestController {
 
     @GetMapping("/assessments")
     public ResponseEntity<PaginatedResponse<AssessmentListItem>> getAssessmentList(
-        @RequestParam(value = "spaceIds", required = false)
-        List<Long> spaceIds,
+        @RequestParam(value = "spaceId", required = false)
+        Long spaceId,
         @RequestParam(value = "kitId", required = false) Long kitId,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page) {
 
         UUID currentUserId = userContext.getUser().id();
-        PaginatedResponse<AssessmentListItem> result = useCase.getAssessmentList(toParam(spaceIds, kitId, currentUserId, size, page));
+        PaginatedResponse<AssessmentListItem> result = useCase.getAssessmentList(toParam(spaceId, kitId, currentUserId, size, page));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private GetAssessmentListUseCase.Param toParam(List<Long> spaceIds, Long kitId, UUID currentUserId, int size, int page) {
-        return new GetAssessmentListUseCase.Param(spaceIds, kitId, currentUserId, size, page);
+    private GetAssessmentListUseCase.Param toParam(Long spaceId, Long kitId, UUID currentUserId, int size, int page) {
+        return new GetAssessmentListUseCase.Param(spaceId, kitId, currentUserId, size, page);
     }
 }
