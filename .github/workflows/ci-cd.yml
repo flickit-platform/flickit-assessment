@@ -144,8 +144,8 @@ jobs:
     needs: [test]
     name: deploy latest image
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+#    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+#      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
 
     permissions:
       contents: write
@@ -175,18 +175,18 @@ jobs:
       - name: Build and push image
         run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${GITHUB_SHA:0:7}" ${{ env.JIB_CMD }}
 
-  darkube-deploy-latest:
-    needs: [build-and-push-latest-image]
-    name: darkube deploy latest
-    container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Run script
-        run: darkube deploy --ref main --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "${GITHUB_SHA:0:7}" --job-id "$GITHUB_RUN_ID" --stateless-app true
-        env:
-          DARKUBE_DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_STAGING }}
-          DARKUBE_APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}
+#  darkube-deploy-latest:
+#    needs: [build-and-push-latest-image]
+#    name: darkube deploy latest
+#    container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Run script
+#        run: darkube deploy --ref main --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "${GITHUB_SHA:0:7}" --job-id "$GITHUB_RUN_ID" --stateless-app true
+#        env:
+#          DARKUBE_DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_STAGING }}
+#          DARKUBE_APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}
 
   tag-and-release:
     needs: [test]
