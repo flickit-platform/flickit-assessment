@@ -1,10 +1,10 @@
 package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 
-import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
-import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
 
 import java.time.LocalDateTime;
@@ -24,6 +24,7 @@ public class ExpertGroupAccessMapper {
             param.userId(),
             param.userId(),
             creationTime,
+            creationTime,
             creationTime
         );
     }
@@ -39,6 +40,7 @@ public class ExpertGroupAccessMapper {
             param.status().ordinal(),
             param.createdBy(),
             param.createdBy(),
+            creationTime,
             creationTime,
             creationTime
         );

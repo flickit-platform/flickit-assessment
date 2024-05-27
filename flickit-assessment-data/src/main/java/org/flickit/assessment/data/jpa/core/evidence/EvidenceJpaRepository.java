@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
@@ -38,8 +39,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     void delete(@Param(value = "id") UUID id);
 
-    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
-
     @Query(value = """
             SELECT evd.description
             FROM QuestionJpaEntity q
@@ -57,4 +56,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                                                                                        @Param(value = "attributeId") Long attributeId,
                                                                                        @Param(value = "type") Integer type,
                                                                                        Pageable pageable);
+
+    Optional<EvidenceJpaEntity> findByIdAndDeletedFalse(UUID id);
 }

@@ -3,9 +3,10 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.spaceuseraccess.AddSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,11 +37,11 @@ class AddSpaceMemberServiceTest {
     private CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    private AddSpaceMemberPort addSpaceMemberPort;
+    private CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Test
     @DisplayName("Adding a valid member to a valid space should cause a successful addition")
-    void addSpaceMember_validParameters_successful() {
+    void testAddSpaceMember_validParameters_successful() {
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
@@ -50,18 +51,18 @@ class AddSpaceMemberServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(userId));
         when(checkSpaceAccessPort.checkIsMember(spaceId, userId)).thenReturn(false);
-        doNothing().when(addSpaceMemberPort).persist(isA(AddSpaceMemberPort.Param.class));
+        doNothing().when(createSpaceUserAccessPort).persist(isA(SpaceUserAccess.class));
 
         assertDoesNotThrow(() -> service.addMember(param));
 
         verify(checkSpaceAccessPort, times(2)).checkIsMember(anyLong(), any(UUID.class));
         verify(loadUserPort).loadUserIdByEmail(email);
-        verify(addSpaceMemberPort).persist(any(AddSpaceMemberPort.Param.class));
+        verify(createSpaceUserAccessPort).persist(any(SpaceUserAccess.class));
     }
 
     @Test
     @DisplayName("Adding a member to a valid space should be done by a member; otherwise causes AccessDeniedException")
-    void addSpaceMember_inviterIsNotSpaceMember_AccessDeniedExceptionException() {
+    void testAddSpaceMember_inviterIsNotSpaceMember_AccessDeniedExceptionException() {
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
@@ -74,12 +75,12 @@ class AddSpaceMemberServiceTest {
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verifyNoInteractions(loadUserPort);
-        verifyNoInteractions(addSpaceMemberPort);
+        verifyNoInteractions(createSpaceUserAccessPort);
     }
 
     @Test
     @DisplayName("Adding a non-flickit user to a space should cause ResourceNotFoundException")
-    void addSpaceMember_inviteeIsNotFlickitUser_ResourceNotFoundException() {
+    void testAddSpaceMember_inviteeIsNotFlickitUser_ResourceNotFoundException() {
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
@@ -93,12 +94,12 @@ class AddSpaceMemberServiceTest {
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadUserPort).loadUserIdByEmail(email);
-        verifyNoInteractions(addSpaceMemberPort);
+        verifyNoInteractions(createSpaceUserAccessPort);
     }
 
     @Test
     @DisplayName("Adding an already-member user to a space should cause ResourceAlreadyExistsException")
-    void addSpaceMember_inviteeIsMember_ResourceAlreadyExistsException() {
+    void testAddSpaceMember_inviteeIsMember_ResourceAlreadyExistsException() {
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
@@ -114,6 +115,6 @@ class AddSpaceMemberServiceTest {
 
         verify(checkSpaceAccessPort, times(2)).checkIsMember(anyLong(), any(UUID.class));
         verify(loadUserPort).loadUserIdByEmail(email);
-        verifyNoInteractions(addSpaceMemberPort);
+        verifyNoInteractions(createSpaceUserAccessPort);
     }
 }

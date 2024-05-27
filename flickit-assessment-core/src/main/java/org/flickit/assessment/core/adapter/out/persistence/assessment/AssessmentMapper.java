@@ -44,7 +44,8 @@ public class AssessmentMapper {
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getDeletionTime(),
-            entity.isDeleted()
+            entity.isDeleted(),
+            entity.getCreatedBy()
         );
     }
 }
