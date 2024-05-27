@@ -173,7 +173,9 @@ jobs:
           distribution: adopt
 
       - name: Build and push image
-        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${GITHUB_SHA:0:7}" ${{ env.JIB_CMD }}
+        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}" ${{ env.JIB_CMD }}
+        env:
+          VERSION: ${GITHUB_SHA:0:7}
 
 #  darkube-deploy-latest:
 #    needs: [build-and-push-latest-image]
