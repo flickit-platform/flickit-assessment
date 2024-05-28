@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_INVITATION_SPACE_ID_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_INVITATION_EMAIL_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_INVITATION_INVITE_ID_NOT_NULL;
 
 public interface DeleteSpaceInvitationUseCase {
 
@@ -22,15 +22,15 @@ public interface DeleteSpaceInvitationUseCase {
         @NotNull(message = DELETE_SPACE_INVITATION_SPACE_ID_NOT_NULL)
         Long spaceId;
 
-        @NotNull(message = DELETE_SPACE_INVITATION_EMAIL_NOT_NULL)
-        String email;
+        @NotNull(message = DELETE_SPACE_INVITATION_INVITE_ID_NOT_NULL)
+        UUID inviteId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long spaceId, String email, UUID currentUserId) {
+        public Param(Long spaceId, UUID inviteId, UUID currentUserId) {
             this.spaceId = spaceId;
-            this.email = email;
+            this.inviteId = inviteId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

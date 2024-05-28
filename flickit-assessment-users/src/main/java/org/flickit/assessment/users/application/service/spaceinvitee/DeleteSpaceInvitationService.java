@@ -24,7 +24,7 @@ public class DeleteSpaceInvitationService implements DeleteSpaceInvitationUseCas
         if (!loadSpaceOwnerPort.loadOwnerId(param.getSpaceId()).equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        deleteSpaceUserInvitationsPort.deleteSpaceInvitation(param.getSpaceId(), param.getEmail());
+        deleteSpaceUserInvitationsPort.deleteSpaceInvitation(param.getInviteId());
 
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
@@ -82,10 +83,10 @@ public class SpaceInviteePersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteSpaceInvitation(long spaceId, String email) {
-        if(!repository.existsBySpaceIdAndEmail(spaceId, email))
-            throw new ValidationException(DELETE_SPACE_INVITATION_EMAIL_NOT_FOUND);
+    public void deleteSpaceInvitation(UUID inviteId) {
+        if(!repository.existsById(inviteId))
+            throw new ValidationException(DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND);
 
-        repository.deleteBySpaceIdAndEmail(spaceId, email);
+        repository.deleteById(inviteId);
     }
 }

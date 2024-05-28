@@ -110,7 +110,7 @@ public class ErrorMessageKey {
     public static final String LEAVE_SPACE_SPACE_ID_NOT_NULL = "leave-space.spaceId.notNull";
     public static final String LEAVE_SPACE_OWNER_NOT_ALLOWED = "leave-space.owner.notAllowed";
 
-    public static final String DELETE_SPACE_INVITATION_EMAIL_NOT_NULL = "delete-space-invitation.email.notNull";
+    public static final String DELETE_SPACE_INVITATION_INVITE_ID_NOT_NULL = "delete-space-invitation.inviteId.notNull";
     public static final String DELETE_SPACE_INVITATION_SPACE_ID_NOT_NULL = "delete-space-invitation.spaceId.notNull";
-    public static final String DELETE_SPACE_INVITATION_EMAIL_NOT_FOUND = "delete-space-invitation.email.notFound";
+    public static final String DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND = "delete-space-invitation.inviteId.notFound";
 }

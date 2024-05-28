@@ -1,6 +1,8 @@
 package org.flickit.assessment.users.application.port.out.spaceinvitee;
 
+import java.util.UUID;
+
 public interface DeleteSpaceInvitationPort {
 
-    void deleteSpaceInvitation(long spaceId, String email);
+    void deleteSpaceInvitation(UUID inviteId);
 }
