@@ -4,6 +4,8 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.DeleteSpaceInvitationUseCase.Param;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceInvitationPort;
+import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceInvitationPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +26,13 @@ class DeleteSpaceInvitationServiceTest {
     DeleteSpaceInvitationService service;
 
     @Mock
-    LoadSpaceOwnerPort loadSpaceOwnerPort;
+    CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    DeleteSpaceInvitationPort deleteSpaceInvitationPort;
+    LoadSpaceInvitationPort loadSpaceInvitee;
+
+    @Mock
+    LoadSpaceInvitationPort deleteSpaceInvitationPort;
 
     @Test
     @DisplayName("Deleting a space's invitation, should be done by owner")
@@ -37,7 +42,7 @@ class DeleteSpaceInvitationServiceTest {
         var currentUserId = UUID.randomUUID();
         Param param = new Param(spaceId, email, currentUserId);
 
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(UUID.randomUUID());
+        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
 
         Throwable throwable = assertThrows(AccessDeniedException.class,
             () -> service.deleteInvitation(param), COMMON_CURRENT_USER_NOT_ALLOWED);

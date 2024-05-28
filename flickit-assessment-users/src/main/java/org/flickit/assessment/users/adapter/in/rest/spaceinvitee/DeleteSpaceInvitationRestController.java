@@ -19,15 +19,14 @@ public class DeleteSpaceInvitationRestController {
     private final DeleteSpaceInvitationUseCase useCase;
     private final UserContext userContext;
 
-    @DeleteMapping("/spaces/{spaceId}/invite/{inviteId}")
-    public ResponseEntity<Void> deleteSpaceInvitation(@PathVariable("spaceId") long spaceId,
-                                                      @PathVariable("inviteId") UUID inviteId) {
+    @DeleteMapping("/spaces-invitations/{inviteId}")
+    public ResponseEntity<Void> deleteSpaceInvitation(@PathVariable("inviteId") UUID inviteId) {
         var currentUserId = userContext.getUser().id();
-        useCase.deleteInvitation(toParam(spaceId, inviteId, currentUserId));
+        useCase.deleteInvitation(toParam(inviteId, currentUserId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    private DeleteSpaceInvitationUseCase.Param toParam(long spaceId, UUID inviteId, UUID currentUserId) {
-        return new DeleteSpaceInvitationUseCase.Param(spaceId, inviteId, currentUserId);
+    private DeleteSpaceInvitationUseCase.Param toParam(UUID inviteId, UUID currentUserId) {
+        return new DeleteSpaceInvitationUseCase.Param(inviteId, currentUserId);
     }
 }

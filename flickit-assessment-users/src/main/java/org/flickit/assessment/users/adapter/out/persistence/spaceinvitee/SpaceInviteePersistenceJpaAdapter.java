@@ -8,10 +8,7 @@ import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
 import org.flickit.assessment.users.application.domain.SpaceInvitee;
-import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceInvitationPort;
-import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
-import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceInviteesPort;
-import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceUserInvitationsPort;
+import org.flickit.assessment.users.application.port.out.spaceinvitee.*;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -30,6 +27,7 @@ public class SpaceInviteePersistenceJpaAdapter implements
     DeleteSpaceUserInvitationsPort,
     InviteSpaceMemberPort,
     LoadSpaceInviteesPort,
+    LoadSpaceInvitationPort,
     DeleteSpaceInvitationPort {
 
     private final SpaceInviteeJpaRepository repository;
@@ -83,8 +81,16 @@ public class SpaceInviteePersistenceJpaAdapter implements
     }
 
     @Override
+    public SpaceInvitee loadSpaceInvitation(UUID id) {
+        SpaceInviteeJpaEntity entity = repository.findById(id)
+            .orElseThrow(() -> new ValidationException(DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND));
+
+        return SpaceInviteeMapper.mapToDomain(entity);
+    }
+
+    @Override
     public void deleteSpaceInvitation(UUID inviteId) {
-        if(!repository.existsById(inviteId))
+        if (!repository.existsById(inviteId))
             throw new ValidationException(DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND);
 
         repository.deleteById(inviteId);

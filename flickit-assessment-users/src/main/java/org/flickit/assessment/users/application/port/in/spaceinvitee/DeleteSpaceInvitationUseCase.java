@@ -8,7 +8,6 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_INVITATION_SPACE_ID_NOT_NULL;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_INVITATION_INVITE_ID_NOT_NULL;
 
 public interface DeleteSpaceInvitationUseCase {
@@ -19,17 +18,13 @@ public interface DeleteSpaceInvitationUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = DELETE_SPACE_INVITATION_SPACE_ID_NOT_NULL)
-        Long spaceId;
-
         @NotNull(message = DELETE_SPACE_INVITATION_INVITE_ID_NOT_NULL)
         UUID inviteId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long spaceId, UUID inviteId, UUID currentUserId) {
-            this.spaceId = spaceId;
+        public Param(UUID inviteId, UUID currentUserId) {
             this.inviteId = inviteId;
             this.currentUserId = currentUserId;
             this.validateSelf();
