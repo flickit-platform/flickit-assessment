@@ -5,7 +5,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.assessmentkit.CheckKitAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -31,9 +30,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public Long loadVersionId(long kitId) {
-        AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
+        return repository.loadKitVersionId(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_KIT_ID_NOT_FOUND));
-        return kitEntity.getKitVersionId();
     }
 
     @Override
