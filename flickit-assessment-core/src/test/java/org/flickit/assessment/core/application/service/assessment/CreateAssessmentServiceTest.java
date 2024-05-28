@@ -92,7 +92,6 @@ class CreateAssessmentServiceTest {
         assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
         assertEquals(param.getColorId(), createPortParam.getValue().colorId());
         assertNotNull(createPortParam.getValue().creationTime());
-        assertNotNull(createPortParam.getValue().lastModificationTime());
     }
 
     @Test

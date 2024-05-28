@@ -32,15 +32,14 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSME
 @RequiredArgsConstructor
 public class CreateAssessmentService implements CreateAssessmentUseCase {
 
+    private final CheckSpaceAccessPort checkSpaceAccessPort;
+    private final CheckKitAccessPort checkKitAccessPort;
     private final CreateAssessmentPort createAssessmentPort;
+    private final LoadAssessmentKitVersionIdPort loadKitVersionIdPort;
     private final CreateAssessmentResultPort createAssessmentResultPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
     private final LoadSubjectsPort loadSubjectsPort;
-    private final LoadAssessmentKitVersionIdPort loadKitVersionIdPort;
-    private final CheckSpaceAccessPort checkSpaceAccessPort;
-    private final CheckKitAccessPort checkKitAccessPort;
-
 
     @Override
     public Result createAssessment(Param param) {
@@ -50,8 +49,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         if (checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId()).isEmpty())
             throw new ValidationException(CREATE_ASSESSMENT_KIT_NOT_ALLOWED);
 
-        CreateAssessmentPort.Param portParam = toParam(param);
-        UUID id = createAssessmentPort.persist(portParam);
+        UUID id = createAssessmentPort.persist(toParam(param));
         createAssessmentResult(id, loadKitVersionIdPort.loadVersionId(param.getKitId()));
         return new Result(id);
     }
@@ -59,7 +57,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private CreateAssessmentPort.Param toParam(Param param) {
         String code = generateSlugCode(param.getTitle());
         LocalDateTime creationTime = LocalDateTime.now();
-        LocalDateTime lastModificationTime = LocalDateTime.now();
         return new CreateAssessmentPort.Param(
             code,
             param.getTitle(),
@@ -67,11 +64,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             getValidId(param.getColorId()),
             param.getSpaceId(),
             creationTime,
-            lastModificationTime,
             NOT_DELETED_DELETION_TIME,
             false,
-            param.getCurrentUserId()
-        );
+            param.getCurrentUserId());
     }
 
     private void createAssessmentResult(UUID assessmentId, Long kitVersionId) {
@@ -82,10 +77,10 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         List<Subject> subjects = loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId);
         List<Long> subjectIds = subjects.stream().map(Subject::getId).toList();
-        List<Long> qualityAttributeIds = subjects.stream()
+        List<Long> attributeIds = subjects.stream()
             .map(x -> x.getQualityAttributes().stream().map(QualityAttribute::getId).toList())
             .flatMap(List::stream).toList();
         createSubjectValuePort.persistAll(subjectIds, assessmentResultId);
-        createQualityAttributeValuePort.persistAll(qualityAttributeIds, assessmentResultId);
+        createQualityAttributeValuePort.persistAll(attributeIds, assessmentResultId);
     }
 }
