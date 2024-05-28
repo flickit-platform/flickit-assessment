@@ -218,7 +218,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void testCreateAssessment_WhenUserDoesntAccessToSpace_ThenThrowsException() {
+    void testCreateAssessment_WhenUserDoesNotHaveAccessToSpace_ThenThrowsException() {
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(
             1L,
