@@ -2,12 +2,12 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.AssessmentKit;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
-import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAccessibleKitsByUserIdPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.CheckKitAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
@@ -39,23 +39,20 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadAssessmentKitVersionIdPort loadKitVersionIdPort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
-    private final LoadAccessibleKitsByUserIdPort loadAccessibleKitsByUserIdPort;
+    private final CheckKitAccessPort checkKitAccessPort;
 
 
     @Override
     public Result createAssessment(Param param) {
-        if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCreatedBy()))
+        if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        List<Long> kitIds = loadAccessibleKitsByUserIdPort.loadAccessibleKitsByUserId(param.getCreatedBy()).stream()
-            .map(AssessmentKit::getId)
-            .toList();
-        if (!kitIds.contains(param.getAssessmentKitId()))
-            throw new AccessDeniedException(CREATE_ASSESSMENT_KIT_NOT_ALLOWED);
+        if (checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId()).isEmpty())
+            throw new ValidationException(CREATE_ASSESSMENT_KIT_NOT_ALLOWED);
 
         CreateAssessmentPort.Param portParam = toParam(param);
         UUID id = createAssessmentPort.persist(portParam);
-        createAssessmentResult(id, loadKitVersionIdPort.loadVersionId(param.getAssessmentKitId()));
+        createAssessmentResult(id, loadKitVersionIdPort.loadVersionId(param.getKitId()));
         return new Result(id);
     }
 
@@ -66,14 +63,14 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         return new CreateAssessmentPort.Param(
             code,
             param.getTitle(),
-            param.getAssessmentKitId(),
+            param.getKitId(),
             getValidId(param.getColorId()),
             param.getSpaceId(),
             creationTime,
             lastModificationTime,
             NOT_DELETED_DELETION_TIME,
             false,
-            param.getCreatedBy()
+            param.getCurrentUserId()
         );
     }
 

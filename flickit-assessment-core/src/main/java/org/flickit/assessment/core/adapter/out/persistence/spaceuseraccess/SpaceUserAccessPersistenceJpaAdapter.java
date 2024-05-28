@@ -15,6 +15,6 @@ public class SpaceUserAccessPersistenceJpaAdapter implements CheckSpaceAccessPor
 
     @Override
     public boolean checkIsMember(long spaceId, UUID userId) {
-        return repository.existsByUserIdAndSpaceId(userId, spaceId);
+        return repository.existsBySpaceIdAndUserId(spaceId, userId);
     }
 }

@@ -2,21 +2,20 @@ package org.flickit.assessment.core.application.service.assessment;
 
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
-import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
-import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAccessibleKitsByUserIdPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.CheckKitAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.core.test.fixture.application.QualityAttributeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,8 +25,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_KIT_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -59,23 +61,22 @@ class CreateAssessmentServiceTest {
     private CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    private LoadAccessibleKitsByUserIdPort loadAccessibleKitsByUserIdPort;
+    private CheckKitAccessPort checkKitAccessPort;
 
     @Test
     void testCreateAssessment_ValidParam_PersistsAndReturnsId() {
-        UUID createdBy = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
             1,
-            createdBy
+            currentUserId
         );
         UUID expectedId = UUID.randomUUID();
-        AssessmentKit assessmentKit = AssessmentKitMother.kitWithId(param.getAssessmentKitId());
 
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), createdBy)).thenReturn(true);
-        when(loadAccessibleKitsByUserIdPort.loadAccessibleKitsByUserId(param.getCreatedBy())).thenReturn(List.of(assessmentKit));
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
+        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
@@ -88,7 +89,7 @@ class CreateAssessmentServiceTest {
 
         assertEquals("title-example", createPortParam.getValue().code());
         assertEquals(param.getTitle(), createPortParam.getValue().title());
-        assertEquals(param.getAssessmentKitId(), createPortParam.getValue().assessmentKitId());
+        assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
         assertEquals(param.getColorId(), createPortParam.getValue().colorId());
         assertNotNull(createPortParam.getValue().creationTime());
         assertNotNull(createPortParam.getValue().lastModificationTime());
@@ -105,10 +106,9 @@ class CreateAssessmentServiceTest {
             createdBy
         );
         UUID assessmentId = UUID.randomUUID();
-        AssessmentKit assessmentKit = AssessmentKitMother.kitWithId(param.getAssessmentKitId());
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), createdBy)).thenReturn(true);
-        when(loadAccessibleKitsByUserIdPort.loadAccessibleKitsByUserId(param.getCreatedBy())).thenReturn(List.of(assessmentKit));
+        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(assessmentId);
         UUID expectedResultId = UUID.randomUUID();
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(expectedResultId);
@@ -150,10 +150,8 @@ class CreateAssessmentServiceTest {
             new Subject(3L, "subject3", List.of(qa5))
         );
 
-        AssessmentKit assessmentKit = AssessmentKitMother.kitWithId(param.getAssessmentKitId());
-
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), createdBy)).thenReturn(true);
-        when(loadAccessibleKitsByUserIdPort.loadAccessibleKitsByUserId(param.getCreatedBy())).thenReturn(List.of(assessmentKit));
+        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitVersionIdPort.loadVersionId(assessmentKitId)).thenReturn(kitVersionId);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId)).thenReturn(expectedSubjects);
 
@@ -166,13 +164,13 @@ class CreateAssessmentServiceTest {
     void testCreateAssessment_ValidCommand_PersistsQualityAttributeValue() {
         long assessmentKitId = 1L;
         Long kitVersionId = 123L;
-        UUID createdBy = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             assessmentKitId,
             1,
-            createdBy
+            currentUserId
         );
         QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
         QualityAttribute qa2 = QualityAttributeMother.simpleAttribute();
@@ -186,10 +184,8 @@ class CreateAssessmentServiceTest {
             new Subject(3L, "subject3", List.of(qa5))
         );
 
-        AssessmentKit assessmentKit = AssessmentKitMother.kitWithId(param.getAssessmentKitId());
-
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), createdBy)).thenReturn(true);
-        when(loadAccessibleKitsByUserIdPort.loadAccessibleKitsByUserId(param.getCreatedBy())).thenReturn(List.of(assessmentKit));
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
+        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitVersionIdPort.loadVersionId(assessmentKitId)).thenReturn(kitVersionId);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId)).thenReturn(expectedSubjects);
 
@@ -200,19 +196,18 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_InvalidColor_UseDefaultColor() {
-        UUID createdBy = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
             7,
-            createdBy
+            currentUserId
         );
         List<Subject> expectedResponse = List.of();
-        AssessmentKit assessmentKit = AssessmentKitMother.kitWithId(param.getAssessmentKitId());
 
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), createdBy)).thenReturn(true);
-        when(loadAccessibleKitsByUserIdPort.loadAccessibleKitsByUserId(param.getCreatedBy())).thenReturn(List.of(assessmentKit));
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
+        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
 
         service.createAssessment(param);
@@ -225,37 +220,36 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_WhenUserDoesntAccessToSpace_ThenThrowsException() {
-        UUID createdBy = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
             1,
-            createdBy
+            currentUserId
         );
 
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), createdBy)).thenReturn(false);
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.createAssessment(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.createAssessment(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
-    void testCreateAssessment_WhenUserDoesntAccessToKit_ThenThrowsException() {
-        UUID createdBy = UUID.randomUUID();
+    void testCreateAssessment_WhenUserDoesNotHaveAccessToKit_ThenThrowsException() {
+        UUID currentUserId = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
             1,
-            createdBy
+            currentUserId
         );
 
-        AssessmentKit assessmentKit = AssessmentKitMother.kitWithId(2);
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
+        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.empty());
 
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), createdBy)).thenReturn(true);
-        when(loadAccessibleKitsByUserIdPort.loadAccessibleKitsByUserId(param.getCreatedBy())).thenReturn(List.of(assessmentKit));
-
-        assertThrows(AccessDeniedException.class, () -> service.createAssessment(param));
+        var throwable = assertThrows(ValidationException.class, () -> service.createAssessment(param));
+        assertEquals(CREATE_ASSESSMENT_KIT_NOT_ALLOWED, throwable.getMessage());
     }
-
 }
