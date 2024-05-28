@@ -1,8 +1,8 @@
 package org.flickit.assessment.users.application.service.spaceinvitee;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.users.application.domain.SpaceInvitee;
 import org.flickit.assessment.users.application.port.in.spaceinvitee.DeleteSpaceInvitationUseCase.Param;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceInvitationPort;
 import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceInvitationPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -29,41 +30,48 @@ class DeleteSpaceInvitationServiceTest {
     CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    LoadSpaceInvitationPort loadSpaceInvitee;
+    LoadSpaceInvitationPort loadSpaceInvitationPort;
 
     @Mock
-    LoadSpaceInvitationPort deleteSpaceInvitationPort;
+    DeleteSpaceInvitationPort deleteSpaceInvitationPort;
 
     @Test
     @DisplayName("Deleting a space's invitation, should be done by owner")
     void testDeleteSpaceInvitation_invalidOwner_userNotAllowed() {
-        long spaceId = 0L;
+        UUID inviteId = UUID.randomUUID();
         String email = "admin@flickit.ir";
+        long spaceId = 0L;
         var currentUserId = UUID.randomUUID();
-        Param param = new Param(spaceId, email, currentUserId);
-
+        Param param = new Param(inviteId, currentUserId);
+        SpaceInvitee spaceInvitee = new SpaceInvitee(inviteId, email, spaceId, UUID.randomUUID(), LocalDateTime.now(), LocalDateTime.MAX);
+        when(loadSpaceInvitationPort.loadSpaceInvitation(inviteId)).thenReturn(spaceInvitee);
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
 
         Throwable throwable = assertThrows(AccessDeniedException.class,
             () -> service.deleteInvitation(param), COMMON_CURRENT_USER_NOT_ALLOWED);
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
-        verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
+        verify(loadSpaceInvitationPort).loadSpaceInvitation(inviteId);
+        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verifyNoInteractions(deleteSpaceInvitationPort);
     }
 
     @Test
     @DisplayName("Deleting a space's invitation, with valid parameters should be successful")
     void testDeleteSpaceInvitation_validParameters_successful() {
-        long spaceId = 0L;
+        UUID inviteId = UUID.randomUUID();
         String email = "admin@flickit.ir";
+        long spaceId = 0L;
         var currentUserId = UUID.randomUUID();
-        Param param = new Param(spaceId, email, currentUserId);
+        Param param = new Param(inviteId, currentUserId);
+        SpaceInvitee spaceInvitee = new SpaceInvitee(inviteId, email, spaceId, UUID.randomUUID(), LocalDateTime.now(), LocalDateTime.MAX);
+        when(loadSpaceInvitationPort.loadSpaceInvitation(inviteId)).thenReturn(spaceInvitee);
+        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
 
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
+        assertDoesNotThrow(() -> service.deleteInvitation(param), COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        assertDoesNotThrow(() -> service.deleteInvitation(param));
-        verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
-        verify(deleteSpaceInvitationPort).deleteSpaceInvitation(spaceId, email);
+        verify(loadSpaceInvitationPort).loadSpaceInvitation(inviteId);
+        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
+        verify(deleteSpaceInvitationPort).deleteSpaceInvitation(inviteId);
     }
 }
