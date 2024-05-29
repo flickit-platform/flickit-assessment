@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "db1f88b6-d7d9-4e31-9f56-505f7e06f470",
-		"name": "flickit-assessment-users",
+		"_postman_id": "e5d37b66-4e80-4d3e-8515-e7e40a8808eb",
+		"name": "flickit-assessment-users Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "11099181"
 	},
@@ -662,6 +662,30 @@
 			"response": []
 		},
 		{
+			"name": "Delete Space Invitation",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces-invitations/{{inviteId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces-invitations",
+						"{{inviteId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Space Invitees",
 			"request": {
 				"method": "GET",
@@ -820,6 +844,10 @@
 			"key": "authorization_header",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "inviteId",
+			"value": "428f8bc2-f47f-4190-b620-3dad8bd8a20b"
 		}
 	]
 }
