@@ -29,20 +29,20 @@ public interface CreateAssessmentUseCase {
         Long spaceId;
 
         @NotNull(message = CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
-        Long assessmentKitId;
+        Long kitId;
 
         @NotNull(message = CREATE_ASSESSMENT_COLOR_ID_NOT_NULL)
         Integer colorId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID createdBy;
+        UUID currentUserId;
 
-        public Param(Long spaceId, String title, Long assessmentKitId, Integer colorId, UUID createdBy) {
+        public Param(Long spaceId, String title, Long kitId, Integer colorId, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
             this.spaceId = spaceId;
-            this.assessmentKitId = assessmentKitId;
+            this.kitId = kitId;
             this.colorId = colorId;
-            this.createdBy = createdBy;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
