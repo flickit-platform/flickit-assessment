@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
@@ -111,4 +112,20 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
         @Param("userId") UUID userId,
         @Param("includeUnpublished") boolean includeUnpublishedKits,
         PageRequest pageable);
+
+    @Query("""
+            SELECT k.kitVersionId
+            FROM AssessmentKitJpaEntity k
+            WHERE k.id = :kitId
+        """)
+    Optional<Long> loadKitVersionId(@Param("kitId") long kitId);
+
+    @Query("""
+            SELECT k.id
+            FROM AssessmentKitJpaEntity k
+            WHERE k.id = :kitId and k.published AND (k.isPrivate = FALSE
+                OR (k.isPrivate = TRUE
+                AND (k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId  = :userId))))
+        """)
+    Optional<Long> existsByUserId(@Param("kitId") long kitId, @Param("userId") UUID userId);
 }
