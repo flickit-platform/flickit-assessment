@@ -3,7 +3,6 @@ package org.flickit.assessment.users.adapter.out.persistence.spaceinvitee;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
@@ -83,7 +82,7 @@ public class SpaceInviteePersistenceJpaAdapter implements
     @Override
     public SpaceInvitee loadSpaceInvitation(UUID id) {
         SpaceInviteeJpaEntity entity = repository.findById(id)
-            .orElseThrow(() -> new ValidationException(DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND));
 
         return SpaceInviteeMapper.mapToDomain(entity);
     }
@@ -91,7 +90,7 @@ public class SpaceInviteePersistenceJpaAdapter implements
     @Override
     public void deleteSpaceInvitation(UUID inviteId) {
         if (!repository.existsById(inviteId))
-            throw new ValidationException(DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND);
+            throw new ResourceNotFoundException(DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND);
 
         repository.deleteById(inviteId);
     }
