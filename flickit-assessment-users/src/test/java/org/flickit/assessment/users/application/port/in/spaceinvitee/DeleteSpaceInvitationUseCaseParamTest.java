@@ -28,5 +28,4 @@ class DeleteSpaceInvitationUseCaseParamTest {
             () -> new Param(inviteId, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
-
 }
