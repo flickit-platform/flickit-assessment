@@ -16,16 +16,30 @@ import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID>, JpaSpecificationExecutor<AssessmentJpaEntity> {
 
-    @Query("SELECT a as assessment, r.maturityLevelId as maturityLevelId, r.isCalculateValid as isCalculateValid , r.isConfidenceValid as isConfidenceValid " +
-        "FROM AssessmentJpaEntity a " +
-        "LEFT JOIN AssessmentResultJpaEntity r " +
-        "ON a.id = r.assessment.id " +
-        "WHERE a.spaceId IN :spaceIds AND " +
-        "a.deleted=false AND " +
-        "(a.assessmentKitId=:kitId OR :kitId IS NULL) AND " +
-        "r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id) " +
-        "ORDER BY a.lastModificationTime DESC")
+    @Query("""
+            SELECT a as assessment, r.maturityLevelId as maturityLevelId, r.isCalculateValid as isCalculateValid , r.isConfidenceValid as isConfidenceValid
+            FROM AssessmentJpaEntity a
+            LEFT JOIN AssessmentResultJpaEntity r ON a.id = r.assessment.id
+            WHERE a.spaceId IN :spaceIds
+                AND a.deleted=false
+                AND (a.assessmentKitId=:kitId OR :kitId IS NULL)
+                AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)
+            ORDER BY a.lastModificationTime DESC
+        """)
     Page<AssessmentListItemView> findBySpaceIdAndDeletedFalseOrderByLastModificationTimeDesc(List<Long> spaceIds, Long kitId, Pageable pageable);
+
+    @Query("""
+            SELECT
+                a as assessment,
+                r as assessmentResult
+            FROM AssessmentJpaEntity a
+            LEFT JOIN AssessmentResultJpaEntity r ON a.id = r.assessment.id
+            WHERE a.spaceId = :spaceId
+                AND a.deleted=false
+                AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)
+            ORDER BY a.lastModificationTime DESC
+        """)
+    Page<AssessmentJoinResultView> findBySpaceId(@Param("spaceId") Long spaceId, Pageable pageable);
 
     @Modifying
     @Query("""

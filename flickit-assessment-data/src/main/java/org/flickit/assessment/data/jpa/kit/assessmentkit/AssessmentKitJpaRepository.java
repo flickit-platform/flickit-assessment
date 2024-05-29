@@ -111,4 +111,6 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
         @Param("userId") UUID userId,
         @Param("includeUnpublished") boolean includeUnpublishedKits,
         PageRequest pageable);
+
+    List<AssessmentKitJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
 }

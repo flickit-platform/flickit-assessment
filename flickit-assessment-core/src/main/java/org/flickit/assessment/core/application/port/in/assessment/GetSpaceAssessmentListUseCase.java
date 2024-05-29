@@ -14,7 +14,7 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
-public interface GetAssessmentListUseCase {
+public interface GetSpaceAssessmentListUseCase {
 
     PaginatedResponse<AssessmentListItem> getAssessmentList(Param param);
 
@@ -22,9 +22,8 @@ public interface GetAssessmentListUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
+        @NotNull(message = GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL)
         Long spaceId;
-
-        Long kitId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
@@ -36,13 +35,13 @@ public interface GetAssessmentListUseCase {
         @Min(value = 0, message = GET_ASSESSMENT_LIST_PAGE_MIN)
         int page;
 
-        public Param(Long spaceId, Long kitId, UUID currentUserId, int size, int page) {
+        public Param(Long spaceId, UUID currentUserId, int size, int page) {
             this.spaceId = spaceId;
-            this.kitId = kitId;
             this.currentUserId = currentUserId;
             this.size = size;
             this.page = page;
             this.validateSelf();
         }
     }
+
 }
