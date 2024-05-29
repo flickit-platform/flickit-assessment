@@ -36,7 +36,7 @@ class DeleteSpaceInvitationServiceTest {
     DeleteSpaceInvitationPort deleteSpaceInvitationPort;
 
     @Test
-    @DisplayName("Deleting a space's invitation, should be done by owner")
+    @DisplayName("Deleting a user space invitation should be done by owner")
     void testDeleteSpaceInvitation_invalidOwner_userNotAllowed() {
         UUID inviteId = UUID.randomUUID();
         String email = "admin@flickit.ir";
@@ -57,7 +57,7 @@ class DeleteSpaceInvitationServiceTest {
     }
 
     @Test
-    @DisplayName("Deleting a space's invitation, with valid parameters should be successful")
+    @DisplayName("Deleting a user space invitation, with valid parameters should be successful")
     void testDeleteSpaceInvitation_validParameters_successful() {
         UUID inviteId = UUID.randomUUID();
         String email = "admin@flickit.ir";

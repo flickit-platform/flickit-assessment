@@ -17,8 +17,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class DeleteSpaceInvitationService implements DeleteSpaceInvitationUseCase {
 
-    private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final LoadSpaceInvitationPort loadSpaceInvitee;
+    private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final DeleteSpaceInvitationPort deleteSpaceUserInvitationsPort;
 
     @Override
