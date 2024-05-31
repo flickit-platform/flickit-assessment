@@ -53,7 +53,10 @@ public class SubjectPersistenceJpaAdapter implements
             .getKitVersionId();
 
         return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .map(e -> SubjectMapper.mapToDomainModel(e, null))
+            .map(e -> SubjectMapper.mapToDomainModel(e,
+                e.getAttributes().stream()
+                    .map(AttributeMapper::mapToDomainModel)
+                    .toList()))
             .toList();
     }
 

@@ -23,7 +23,7 @@ public class AssessmentMapper {
             param.colorId(),
             param.spaceId(),
             param.creationTime(),
-            param.lastModificationTime(),
+            param.creationTime(),
             param.deletionTime(),
             param.deleted(),
             param.createdBy(),
@@ -47,7 +47,8 @@ public class AssessmentMapper {
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getDeletionTime(),
-            entity.isDeleted()
+            entity.isDeleted(),
+            entity.getCreatedBy()
         );
     }
 

@@ -60,6 +60,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final KitVersionJpaRepository kitVersionRepository;
     private final KitTagRelationJpaRepository kitTagRelationRepository;
 
+
     @Override
     public PaginatedResponse<GetKitUserListUseCase.UserListItem> loadKitUsers(LoadKitUsersPort.Param param) {
         Page<UserJpaEntity> pageResult = repository.findAllKitUsers(
@@ -181,7 +182,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 AssessmentKitMapper.mapToDomainModel(v.getKit()),
-                ExpertGroupMapper.toDomainModel(v.getExpertGroup())
+                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())
             ))
             .toList();
 
@@ -201,7 +202,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 AssessmentKitMapper.mapToDomainModel(v.getKit()),
-                ExpertGroupMapper.toDomainModel(v.getExpertGroup())))
+                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())))
             .toList();
 
         return new PaginatedResponse<>(

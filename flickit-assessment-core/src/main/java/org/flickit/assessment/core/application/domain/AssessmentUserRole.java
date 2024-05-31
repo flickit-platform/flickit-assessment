@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 
 import java.util.Arrays;
@@ -10,7 +11,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.UPDATE_ASSESSMENT;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.PermissionGroup.*;
 
 @Getter
@@ -35,6 +35,24 @@ public enum AssessmentUserRole {
 
     public int getId() {
         return this.ordinal();
+    }
+
+    public static AssessmentUserRole valueOfById(int id) {
+        if (!isValidId(id))
+            return null;
+        return values()[id];
+    }
+
+    public static boolean isValidId(int id) {
+        return id >= 0 && id < AssessmentUserRole.values().length;
+    }
+
+    public boolean hasAccess(AssessmentPermission permission) {
+        return this.getPermissions().contains(permission);
+    }
+
+    public String getDescription() {
+        return MessageBundle.message("AssessmentUserRole_" + name());
     }
 
     @Getter
@@ -68,7 +86,11 @@ public enum AssessmentUserRole {
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
-            UPDATE_ASSESSMENT));
+            UPDATE_ASSESSMENT,
+            GRANT_USER_ASSESSMENT_ROLE,
+            UPDATE_USER_ASSESSMENT_ROLE,
+            DELETE_USER_ASSESSMENT_ROLE,
+            GET_ASSESSMENT_USERS));
 
         private final Set<AssessmentPermission> permissions;
     }
