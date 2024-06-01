@@ -23,7 +23,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
-@Component
+@Component("coreAssessmentUserRolePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class AssessmentUserRolePersistenceJpaAdapter implements
     LoadUserRoleForAssessmentPort,

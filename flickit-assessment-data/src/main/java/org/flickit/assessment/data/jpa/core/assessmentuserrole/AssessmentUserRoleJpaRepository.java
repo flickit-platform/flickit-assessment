@@ -45,4 +45,6 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
         """)
     Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId,
                                                  Pageable pageable);
+
+    void deleteByUserId(UUID userId);
 }
