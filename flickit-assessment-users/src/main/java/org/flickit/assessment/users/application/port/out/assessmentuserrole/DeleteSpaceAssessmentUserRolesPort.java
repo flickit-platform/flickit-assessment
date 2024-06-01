@@ -2,7 +2,7 @@ package org.flickit.assessment.users.application.port.out.assessmentuserrole;
 
 import java.util.UUID;
 
-public interface DeleteAssessmentUserRoleByUserIdPort {
+public interface DeleteSpaceAssessmentUserRolesPort {
 
-    void delete(UUID userId);
+    void delete(long spaceId, UUID userId);
 }
