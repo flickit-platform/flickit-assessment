@@ -58,6 +58,6 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
     }
 
     private User reform(User user) {
-        return new User(user.id(), user.displayName(), createFileDownloadLinkPort.createDownloadLink(user.picture(), EXPIRY_DURATION));
+        return new User(user.id(), user.displayName(), createFileDownloadLinkPort.createDownloadLink(user.pictureLink(), EXPIRY_DURATION));
     }
 }
