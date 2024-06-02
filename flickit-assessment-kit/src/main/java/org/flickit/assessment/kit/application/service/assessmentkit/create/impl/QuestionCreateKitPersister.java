@@ -104,7 +104,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         dslQuestion.getQuestionImpacts().forEach(impact -> {
             Long attributeId = attributes.get(impact.getAttributeCode());
             Long maturityLevelId = maturityLevels.get(impact.getMaturityLevel().getCode());
-            createImpact(impact, questionId, attributeId, maturityLevelId, optionIndexToIdMap, currentUserId);
+            createImpact(impact, kitVersionId, questionId, attributeId, maturityLevelId, optionIndexToIdMap, currentUserId);
         });
     }
 
@@ -128,6 +128,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
     }
 
     private void createImpact(QuestionImpactDslModel dslQuestionImpact,
+                              Long kitVersionId,
                               Long questionId,
                               Long attributeId,
                               Long maturityLevelId,
@@ -139,6 +140,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             attributeId,
             maturityLevelId,
             dslQuestionImpact.getWeight(),
+            kitVersionId,
             questionId,
             LocalDateTime.now(),
             LocalDateTime.now(),

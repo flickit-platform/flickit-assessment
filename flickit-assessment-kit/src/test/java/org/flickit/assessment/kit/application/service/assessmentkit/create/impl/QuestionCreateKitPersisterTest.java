@@ -111,6 +111,7 @@ class QuestionCreateKitPersisterTest {
             attribute.getId(),
             levelTwo.getId(),
             dslImpact.getWeight(),
+            kitId,
             question.getId(),
             LocalDateTime.now(),
             LocalDateTime.now(),

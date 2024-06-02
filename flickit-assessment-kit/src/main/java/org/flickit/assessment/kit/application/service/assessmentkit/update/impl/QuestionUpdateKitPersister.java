@@ -95,6 +95,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 QuestionDslModel dslQuestion = codeToDslQuestion.get(questionEntry.getKey());
                 boolean isKitModificationMajor = updateQuestion(
                     question,
+                    savedKit.getKitVersionId(),
                     dslQuestion,
                     savedAttributeIdToCodeMap,
                     savedLevelIdToCodeMap,
@@ -167,7 +168,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             dslQuestion.getAnswerOptions().forEach(option -> createAnswerOption(option, questionId, kitVersionId, currentUserId));
 
             dslQuestion.getQuestionImpacts().forEach(impact ->
-                createImpact(impact, questionId, attributes, maturityLevels, currentUserId));
+                createImpact(impact, kitVersionId, questionId, attributes, maturityLevels, currentUserId));
         });
     }
 
@@ -193,7 +194,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private void createImpact(QuestionImpactDslModel dslQuestionImpact,
-                              Long questionId,
+                              Long kitVersionId, Long questionId,
                               Map<String, Long> attributes,
                               Map<String, Long> maturityLevels,
                               UUID currentUserId) {
@@ -202,6 +203,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             attributes.get(dslQuestionImpact.getAttributeCode()),
             maturityLevels.get(dslQuestionImpact.getMaturityLevel().getCode()),
             dslQuestionImpact.getWeight(),
+            kitVersionId,
             questionId,
             LocalDateTime.now(),
             LocalDateTime.now(),
@@ -230,7 +232,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private boolean updateQuestion(Question savedQuestion,
-                                   QuestionDslModel dslQuestion,
+                                   Long kitVersionId, QuestionDslModel dslQuestion,
                                    Map<Long, String> savedAttributes,
                                    Map<Long, String> savedLevels,
                                    Map<String, Long> updatedAttributes,
@@ -261,6 +263,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         updateAnswerOptions(savedQuestion, dslQuestion, currentUserId);
         boolean isMajorUpdateQuestionImpact = updateQuestionImpacts(savedQuestion,
+            kitVersionId,
             dslQuestion,
             savedAttributes,
             savedLevels,
@@ -296,6 +299,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private boolean updateQuestionImpacts(Question savedQuestion,
+                                          Long kitVersionId,
                                           QuestionDslModel dslQuestion,
                                           Map<Long, String> savedAttributes,
                                           Map<Long, String> savedLevels,
@@ -313,6 +317,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         newImpacts.forEach(
             i -> createImpact(dslImpactMap.get(i),
+                kitVersionId,
                 savedQuestion.getId(),
                 updatedAttributes,
                 updatedLevels,

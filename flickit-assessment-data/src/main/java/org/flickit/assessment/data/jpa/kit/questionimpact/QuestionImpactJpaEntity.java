@@ -28,6 +28,9 @@ public class QuestionImpactJpaEntity {
     @Column(name = "weight", nullable = false)
     private Integer weight;
 
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
+
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
