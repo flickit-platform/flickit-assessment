@@ -29,7 +29,6 @@ public class FileProperties {
         "image/jpeg",
         "image/png",
         "image/gif",
-        "image/bmp",
-        "image/webp"
+        "image/bmp"
     );
 }
