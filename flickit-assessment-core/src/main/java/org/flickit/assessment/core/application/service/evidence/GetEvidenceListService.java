@@ -30,7 +30,7 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
     public PaginatedResponse<EvidenceListItem> getEvidenceList(GetEvidenceListUseCase.Param param) {
         if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        var portResult =  loadEvidencesPort.loadNotDeletedEvidences(
+        var portResult = loadEvidencesPort.loadNotDeletedEvidences(
             param.getQuestionId(),
             param.getAssessmentId(),
             param.getPage(),
@@ -38,17 +38,17 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
         );
 
         return new PaginatedResponse<>(
-                addPictureLink(portResult.getItems()),
-                param.getPage(),
-                param.getSize(),
-                portResult.getSort(),
-                portResult.getOrder(),
-                portResult.getTotal()
+            addPictureLink(portResult.getItems()),
+            param.getPage(),
+            param.getSize(),
+            portResult.getSort(),
+            portResult.getOrder(),
+            portResult.getTotal()
         );
     }
 
-    List<EvidenceListItem> addPictureLink(List<EvidenceListItem> items){
-        return items.stream().map(e-> new EvidenceListItem(
+    List<EvidenceListItem> addPictureLink(List<EvidenceListItem> items) {
+        return items.stream().map(e -> new EvidenceListItem(
             e.id(),
             e.description(),
             e.type(),
@@ -58,6 +58,8 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
     }
 
     private User reform(User user) {
-        return new User(user.id(), user.displayName(), createFileDownloadLinkPort.createDownloadLink(user.pictureLink(), EXPIRY_DURATION));
+        return new User(user.id(),
+            user.displayName(),
+            createFileDownloadLinkPort.createDownloadLink(user.pictureLink(), EXPIRY_DURATION));
     }
 }
