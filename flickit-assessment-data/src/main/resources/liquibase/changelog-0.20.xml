@@ -212,4 +212,13 @@
                                  initiallyDeferred="true"
                                  onDelete="CASCADE"/>
     </changeSet>
+
+    <changeSet id="0.20-29" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_subject_questionnaire">
+            <column name="kit_version_id" type="bigint"
+                    valueComputed="fak_questionnaire.kit_version_id FROM fak_questionnaire WHERE fak_questionnaire.id = questionnaire_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

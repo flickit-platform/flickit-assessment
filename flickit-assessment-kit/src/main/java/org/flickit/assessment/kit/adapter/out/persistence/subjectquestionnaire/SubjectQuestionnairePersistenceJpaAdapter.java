@@ -37,15 +37,15 @@ public class SubjectQuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public long persist(long subjectId, long questionnaireId) {
-        return  repository.save(mapToJpaEntity(subjectId, questionnaireId)).getId();
+    public long persist(long subjectId, long questionnaireId, Long kitVersionId) {
+        return repository.save(mapToJpaEntity(subjectId, questionnaireId, kitVersionId)).getId();
     }
 
     @Override
-    public void persistAll(Map<Long, Set<Long>> questionnaireIdToSubjectIdsMap) {
+    public void persistAll(Map<Long, Set<Long>> questionnaireIdToSubjectIdsMap, Long kitVersionId) {
         List<SubjectQuestionnaireJpaEntity> entities = questionnaireIdToSubjectIdsMap.keySet().stream()
             .flatMap(questionnaireId -> questionnaireIdToSubjectIdsMap.get(questionnaireId).stream()
-                .map(subjectId -> mapToJpaEntity(subjectId, questionnaireId)))
+                .map(subjectId -> mapToJpaEntity(subjectId, questionnaireId, kitVersionId)))
             .toList();
         repository.saveAll(entities);
     }
