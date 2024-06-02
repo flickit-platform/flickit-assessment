@@ -305,4 +305,15 @@
                                  initiallyDeferred="true"
                                  onDelete="CASCADE"/>
     </changeSet>
+
+    <changeSet id="0.20-42" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint tableName="fak_subject_questionnaire"
+                              constraintName="uq_fak_subjectquestionnaire_subjectid_questionnaireid"/>
+    </changeSet>
+
+    <changeSet id="0.20-43" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fak_subject_questionnaire"
+                             columnNames="subject_id, questionnaire_id, kit_version_id"
+                             constraintName="uq_fak_subjectquestionnaire_subjectid_questionnaireid"/>
+    </changeSet>
 </databaseChangeLog>
