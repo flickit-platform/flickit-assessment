@@ -221,4 +221,46 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="0.20-30" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_question"
+                                  constraintName="fk_fak_question_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.20-31" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_subject_questionnaire"
+                                  constraintName="fk_fak_subjectquestionnaire_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.20-32" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.20-33" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_questionnaire"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.20-34" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_question"
+                                 baseColumnNames="questionnaire_id, kit_version_id"
+                                 constraintName="fk_fak_question_questionnaire"
+                                 referencedTableName="fak_questionnaire"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.20-35" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_subject_questionnaire"
+                                 baseColumnNames="questionnaire_id, kit_version_id"
+                                 constraintName="fk_fak_subjectquestionnaire_questionnaire"
+                                 referencedTableName="fak_questionnaire"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
 </databaseChangeLog>
