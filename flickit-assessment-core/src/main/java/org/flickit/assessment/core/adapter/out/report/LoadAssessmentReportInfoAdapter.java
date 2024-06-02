@@ -103,10 +103,15 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                 expertGroupEntity.getTitle(),
                 minioAdapter.createDownloadLink(expertGroupEntity.getPicture(), EXPIRY_DURATION));
 
+        List<MaturityLevel> maturityLevels = maturityLevelJpaEntities.stream()
+            .map(e -> MaturityLevelMapper.mapToDomainModel(e, null))
+            .toList();
+
         return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
             assessmentKitEntity.getTitle(),
             assessmentKitEntity.getSummary(),
             maturityLevelJpaEntities.size(),
+            maturityLevels,
             expertGroup);
     }
 
