@@ -68,4 +68,39 @@
                                  initiallyDeferred="true"
                                  onDelete="CASCADE"/>
     </changeSet>
+
+    <changeSet id="0.20-09" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_question_impact"
+                                  constraintName="fk_fak_questionimpact_attribute"/>
+    </changeSet>
+
+    <changeSet id="0.20-10" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_attribute"/>
+    </changeSet>
+
+    <changeSet id="0.20-11" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_attribute"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_attribute"/>
+    </changeSet>
+
+    <changeSet id="0.20-12" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_question_impact">
+            <column name="kit_version_id" type="bigint"
+                    valueComputed="fak_attribute.kit_version_id FROM fak_attribute WHERE fak_attribute.id = attribute_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.20-13" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_question_impact"
+                                 baseColumnNames="attribute_id, kit_version_id"
+                                 constraintName="fk_fak_questionimpact_attribute"
+                                 referencedTableName="fak_attribute"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
 </databaseChangeLog>
