@@ -6,19 +6,23 @@ import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListU
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesPort;
+import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetEvidenceListServiceTest {
@@ -31,6 +35,9 @@ class GetEvidenceListServiceTest {
 
     @Mock
     private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+
+    @Mock
+    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
     void testGetEvidenceList_ResultsFound_2ItemsReturned() {
@@ -53,6 +60,7 @@ class GetEvidenceListServiceTest {
         PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new Param(question1Id, assessmentId, 10, 0, currentUserId));
 
         assertEquals(2, result.getItems().size());
+        verify(createFileDownloadLinkPort, times(2)).createDownloadLink(anyString(),any(Duration.class));
     }
 
     @Test
@@ -74,6 +82,7 @@ class GetEvidenceListServiceTest {
         PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new Param(QUESTION2_ID, assessmentId, 10, 0, currentUserId));
 
         assertEquals(0, result.getItems().size());
+        verifyNoInteractions(createFileDownloadLinkPort);
     }
 
     private EvidenceListItem createEvidence() {
@@ -82,7 +91,7 @@ class GetEvidenceListServiceTest {
             "desc",
             "type",
             LocalDateTime.now(),
-            new GetEvidenceListUseCase.User(UUID.randomUUID(), "user1")
+            new GetEvidenceListUseCase.User(UUID.randomUUID(), "user1", "pictureLink")
         );
     }
 }
