@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.users.common.ErrorMessageKey;
-import org.flickit.assessment.common.validation.FileSize;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,7 +42,6 @@ public interface CreateExpertGroupUseCase {
         @Size(max = 200, message = ErrorMessageKey.CREATE_EXPERT_GROUP_WEBSITE_SIZE_MAX)
         String website;
 
-        @FileSize(maxSize = 5, message = ErrorMessageKey.CREATE_EXPERT_GROUP_PICTURE_FILE_SIZE_MAX)
         MultipartFile picture;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
