@@ -103,4 +103,71 @@
                                  initiallyDeferred="true"
                                  onDelete="CASCADE"/>
     </changeSet>
+
+    <changeSet id="0.20-14" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_level_competence"
+                                  constraintName="fk_fak_levelcompetence_maturitylevel_affectedlevelid"/>
+    </changeSet>
+
+    <changeSet id="0.20-15" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_level_competence"
+                                  constraintName="fk_fak_levelcompetence_maturitylevel_effectivelevelid"/>
+    </changeSet>
+
+    <changeSet id="0.20-16" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_question_impact"
+                                  constraintName="fk_fak_questionimpact_maturitylevel"/>
+    </changeSet>
+
+    <changeSet id="0.20-17" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_maturity_level"/>
+    </changeSet>
+
+    <changeSet id="0.20-18" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_maturity_level"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_maturity_level"/>
+    </changeSet>
+
+    <changeSet id="0.20-19" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_level_competence">
+            <column name="kit_version_id" type="bigint"
+                    valueComputed="fak_maturity_level.kit_version_id FROM fak_maturity_level WHERE fak_maturity_level.id = affected_level_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.20-20" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_level_competence"
+                                 baseColumnNames="affected_level_id, kit_version_id"
+                                 constraintName="fk_fak_levelcompetence_maturitylevel_affectedlevelid"
+                                 referencedTableName="fak_maturity_level"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.20-21" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_level_competence"
+                                 baseColumnNames="effective_level_id, kit_version_id"
+                                 constraintName="fk_fak_levelcompetence_maturitylevel_effectivelevelid"
+                                 referencedTableName="fak_maturity_level"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.20-22" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_question_impact"
+                                 baseColumnNames="maturity_level_id, kit_version_id"
+                                 constraintName="fk_fak_questionimpact_maturitylevel"
+                                 referencedTableName="fak_maturity_level"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
 </databaseChangeLog>
