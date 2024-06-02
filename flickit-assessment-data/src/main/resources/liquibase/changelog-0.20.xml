@@ -33,4 +33,39 @@
                                  deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>
+
+    <changeSet id="0.20-04" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_answer_option_impact"
+                                  constraintName="fak_answeroptionimpact_answeroption"/>
+    </changeSet>
+
+    <changeSet id="0.20-05" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_answer_option"/>
+    </changeSet>
+
+    <changeSet id="0.20-06" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_answer_option"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_answer_option"/>
+    </changeSet>
+
+    <changeSet id="0.20-07" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_answer_option_impact">
+            <column name="kit_version_id" type="bigint"
+                    valueComputed="fak_answer_option.kit_version_id FROM fak_answer_option WHERE fak_answer_option.id = option_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.20-08" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_answer_option_impact"
+                                 baseColumnNames="option_id, kit_version_id"
+                                 constraintName="fak_answeroptionimpact_answeroption"
+                                 referencedTableName="fak_answer_option"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
 </databaseChangeLog>
