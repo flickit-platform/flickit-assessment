@@ -47,17 +47,17 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
         );
     }
 
-    List<EvidenceListItem> addPictureLink(List<EvidenceListItem> items) {
+    private List<EvidenceListItem> addPictureLink(List<EvidenceListItem> items) {
         return items.stream().map(e -> new EvidenceListItem(
             e.id(),
             e.description(),
             e.type(),
             e.lastModificationTime(),
-            reform(e.createdBy())
+            addPictureLinkToUser(e.createdBy())
         )).toList();
     }
 
-    private User reform(User user) {
+    private User addPictureLinkToUser(User user) {
         return new User(user.id(),
             user.displayName(),
             createFileDownloadLinkPort.createDownloadLink(user.pictureLink(), EXPIRY_DURATION));
