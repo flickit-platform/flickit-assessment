@@ -90,7 +90,8 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         });
 
         // update competences of existing levels
-        boolean isCompetencesChanged = updateCompetencesToExistingLevels(savedLevelCodesMap,
+        boolean isCompetencesChanged = updateCompetencesToExistingLevels(savedKit.getKitVersionId(),
+            savedLevelCodesMap,
             dslLevelCodesMap,
             existingLevels,
             codeToPersistedLevels,
@@ -106,7 +107,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
 
             dslLevelCompetenceCodes.forEach((key, value) -> {
                 Long effectiveLevelId = codeToPersistedLevels.get(key).getId();
-                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, currentUserId);
+                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, savedKit.getKitVersionId(), currentUserId);
             });
         });
 
@@ -161,7 +162,8 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private boolean updateCompetencesToExistingLevels(Map<String, MaturityLevel> savedLevelCodesMap,
+    private boolean updateCompetencesToExistingLevels(Long kitVersionId,
+                                                      Map<String, MaturityLevel> savedLevelCodesMap,
                                                       Map<String, MaturityLevelDslModel> dslLevelCodesMap,
                                                       Set<String> existingLevels,
                                                       Map<String, MaturityLevel> codeToPersistedLevels,
@@ -192,7 +194,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             newCompetences.forEach(cmpCode -> {
                 Long effectiveLevelId = codeToPersistedLevels.get(cmpCode).getId();
                 Integer value = dslLevel.getCompetencesCodeToValueMap().get(cmpCode);
-                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, currentUserId);
+                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, kitVersionId, currentUserId);
             });
 
             // delete removed competences
@@ -218,8 +220,8 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         return isCompetencesChanged;
     }
 
-    private void createLevelCompetence(long affectedLevelId, long effectiveLevelId, int value, UUID currentUserId) {
-        createLevelCompetencePort.persist(affectedLevelId, effectiveLevelId, value, currentUserId);
+    private void createLevelCompetence(long affectedLevelId, long effectiveLevelId, int value, Long kitVersionId, UUID currentUserId) {
+        createLevelCompetencePort.persist(affectedLevelId, effectiveLevelId, value, kitVersionId, currentUserId);
         log.debug("LevelCompetence[affectedId={}, effectiveId={}, value={}] created.", affectedLevelId, effectiveLevelId, value);
     }
 
