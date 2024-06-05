@@ -77,5 +77,5 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
 
-    List<SubjectJpaEntity> findAllByRefNumIn(Set<UUID> refNum);
+    List<SubjectJpaEntity> findAllByIdInAndKitVersionId(Set<Long> ids, long kitVersionId);
 }

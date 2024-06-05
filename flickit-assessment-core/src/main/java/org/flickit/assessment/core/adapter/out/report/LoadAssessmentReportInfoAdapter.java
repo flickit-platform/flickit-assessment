@@ -13,6 +13,7 @@ import org.flickit.assessment.core.application.domain.report.AttributeReportItem
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.SubjectRefNumAttributeValueView;
@@ -89,8 +90,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessment.getCreationTime(),
             assessment.getLastModificationTime());
 
-        UUID assessmentResultId = assessmentResultEntity.getId();
-        List<AssessmentSubjectReportItem> subjects = buildSubjectReportItems(assessmentResultId, idToMaturityLevelEntities);
+        List<AssessmentSubjectReportItem> subjects = buildSubjectReportItems(assessmentResultEntity, idToMaturityLevelEntities);
 
         return new Result(assessmentReportItem, subjects);
     }
@@ -110,22 +110,26 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             expertGroup);
     }
 
-    private List<AssessmentSubjectReportItem> buildSubjectReportItems(UUID assessmentResultId,
+    private List<AssessmentSubjectReportItem> buildSubjectReportItems(AssessmentResultJpaEntity assessmentResult,
                                                                       Map<Long, MaturityLevelJpaEntity> idToMaturityLevelEntities) {
-        List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
+        List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResult.getId());
         Set<UUID> refNums = subjectValueEntities.stream()
             .map(SubjectValueJpaEntity::getSubjectRefNum)
+            .collect(Collectors.toSet());
+
+        Set<Long> subjectIds = subjectValueEntities.stream()
+            .map(SubjectValueJpaEntity::getSubjectId)
             .collect(Collectors.toSet());
 
         var subjectRefNumToSubjectValue = subjectValueEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectRefNum, Function.identity()));
 
         var subjectRefNumToAttributeValueMap = qualityAttributeValueJpaRepository.findByAssessmentResultIdAndSubjectRefNumIn(
-            assessmentResultId, refNums)
+            assessmentResult.getId(), refNums)
             .stream()
             .collect(groupingBy(SubjectRefNumAttributeValueView::getSubjectRefNum));
 
-        List<SubjectJpaEntity> subjectEntities = subjectJpaRepository.findAllByRefNumIn(refNums);
+        List<SubjectJpaEntity> subjectEntities = subjectJpaRepository.findAllByIdInAndKitVersionId(subjectIds, assessmentResult.getKitVersionId());
 
         return subjectEntities.stream()
             .map(e -> {
