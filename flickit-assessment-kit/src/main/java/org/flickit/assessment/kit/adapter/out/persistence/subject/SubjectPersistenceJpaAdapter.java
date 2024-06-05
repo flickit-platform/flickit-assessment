@@ -33,6 +33,7 @@ public class SubjectPersistenceJpaAdapter implements
     @Override
     public void update(UpdateSubjectPort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.title(),
             param.index(),
             param.description(),

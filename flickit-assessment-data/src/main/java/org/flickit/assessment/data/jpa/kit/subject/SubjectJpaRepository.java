@@ -23,10 +23,11 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
             s.description = :description,
             s.lastModificationTime = :lastModificationTime,
             s.lastModifiedBy = :lastModifiedBy
-            WHERE s.id = :id
+            WHERE s.id = :id AND s.kitVersionId = :kitVersionId
         """)
     void update(
         @Param(value = "id") long id,
+        @Param(value = "kitVersionId") long kitVersionId,
         @Param(value = "title") String title,
         @Param(value = "index") int index,
         @Param(value = "description") String description,
