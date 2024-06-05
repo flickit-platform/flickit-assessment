@@ -120,7 +120,7 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
         """)
     Optional<Long> loadKitVersionId(@Param("kitId") long kitId);
 
-    Optional<AssessmentKitJpaEntity> loadByKitVersionId(long kitVersionId);
+    Optional<AssessmentKitJpaEntity> findByKitVersionId(long kitVersionId);
 
     @Query("""
             SELECT k.id

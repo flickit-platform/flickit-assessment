@@ -65,7 +65,7 @@ public class QuestionnairePersistenceJpaAdapter implements
 
     @Override
     public Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitVersionId) {
-        var kit = assessmentKitRepository.loadByKitVersionId(kitVersionId).orElseThrow(()-> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+        var kit = assessmentKitRepository.findByKitVersionId(kitVersionId).orElseThrow(()-> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         QuestionnaireJpaEntity questionnaireEntity = repository.findQuestionnaireByIdAndKitId(questionnaireId, kit.getId())
             .orElseThrow(() ->  new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
