@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpert
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class GetKitSubjectDetailService implements GetKitSubjectDetailUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
+    private final LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
     private final LoadSubjectPort loadSubjectPort;
     private final CountSubjectQuestionsPort countSubjectQuestionsPort;
 
@@ -28,7 +30,9 @@ public class GetKitSubjectDetailService implements GetKitSubjectDetailUseCase {
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var subject = loadSubjectPort.load(param.getKitId(), param.getSubjectId());
+        long kitVersionId = loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(param.getKitId());
+
+        var subject = loadSubjectPort.load(param.getSubjectId(), kitVersionId);
         var attributes = subject.getAttributes().stream().map(this::toAttribute).toList();
         var questionsCount = countSubjectQuestionsPort.countBySubjectId(param.getSubjectId());
         return new Result(questionsCount, subject.getDescription(), attributes);

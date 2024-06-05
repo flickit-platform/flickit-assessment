@@ -52,7 +52,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     CountKitListStatsPort,
     DeleteAssessmentKitPort,
     CountKitAssessmentsPort,
-    LoadExpertGroupKitListPort {
+    LoadExpertGroupKitListPort,
+    LoadLastPublishedKitVersionIdByKitIdPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -249,5 +250,11 @@ public class AssessmentKitPersistenceJpaAdapter implements
             AssessmentKitJpaEntity.Fields.LAST_MODIFICATION_TIME,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
+    }
+
+    @Override
+    public long loadKitVersionId(long kitId) {
+        return repository.loadKitVersionId(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
     }
 }
