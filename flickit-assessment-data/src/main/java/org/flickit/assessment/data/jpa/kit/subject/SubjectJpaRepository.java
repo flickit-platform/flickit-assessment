@@ -72,9 +72,10 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
             FROM SubjectJpaEntity s
             JOIN SubjectQuestionnaireJpaEntity sq ON s.id = sq.subjectId
             WHERE sq.questionnaireId = :questionnaireId
-            ORDER BY s.index
+            ORDER BY s.index AND s.kitVersionId = :kitVersionId
     """)
-    List<SubjectJpaEntity> findAllByQuestionnaireId(long questionnaireId);
+    List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
+                                                                   @Param("kitVersionId") long kitVersionId);
 
     List<SubjectJpaEntity> findAllByRefNumIn(Set<UUID> refNum);
 }

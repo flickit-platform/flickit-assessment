@@ -64,12 +64,14 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitId) {
-        QuestionnaireJpaEntity questionnaireEntity = repository.findQuestionnaireByIdAndKitId(questionnaireId, kitId)
+    public Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitVersionId) {
+        var kit = assessmentKitRepository.loadByKitVersionId(kitVersionId).orElseThrow(()-> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+
+        QuestionnaireJpaEntity questionnaireEntity = repository.findQuestionnaireByIdAndKitId(questionnaireId, kit.getId())
             .orElseThrow(() ->  new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
 
         List<QuestionJpaEntity> questionEntities = questionRepository.findAllByQuestionnaireIdOrderByIndexAsc(questionnaireId);
-        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByQuestionnaireId(questionnaireId);
+        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByQuestionnaireIdAndKitVersionId(questionnaireId, kitVersionId);
 
         List<String> relatedSubjects = subjectEntities.stream()
             .map(SubjectJpaEntity::getTitle)
