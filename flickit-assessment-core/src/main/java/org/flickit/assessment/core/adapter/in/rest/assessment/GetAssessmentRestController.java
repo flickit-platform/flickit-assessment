@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.adapter.in.rest.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.core.adapter.in.rest.assessment.GetAssessmentResponseDto.AssessmentCreatorResponseDto;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result;
@@ -25,10 +26,12 @@ public class GetAssessmentRestController {
     }
 
     private GetAssessmentResponseDto toResponse(Result result) {
+        var createdBy = result.createdBy();
         return new GetAssessmentResponseDto(
             result.assessmentId(),
             result.assessmentTitle(),
             result.spaceId(),
-            result.kitId());
+            result.kitId(),
+            new AssessmentCreatorResponseDto(createdBy.id(), createdBy.displayName()));
     }
 }
