@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Long> {
+public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, SubjectJpaEntity.EntityId> {
 
     List<SubjectJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
