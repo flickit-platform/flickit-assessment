@@ -6,6 +6,7 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_ASSESSMENT_ID_NOT_NULL;
@@ -34,6 +35,7 @@ public interface GetAssessmentUseCase {
                   String assessmentTitle,
                   Long spaceId,
                   Long kitId,
+                  LocalDateTime creationTime,
                   AssessmentCreator createdBy) {
     }
 

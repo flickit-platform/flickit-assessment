@@ -31,6 +31,7 @@ public class GetAssessmentService implements GetAssessmentUseCase {
             assessment.getTitle(),
             assessment.getSpaceId(),
             assessment.getAssessmentKit().getId(),
+            assessment.getCreationTime(),
             toUser(createdBy)
         );
     }

@@ -32,6 +32,7 @@ public class GetAssessmentRestController {
             result.assessmentTitle(),
             result.spaceId(),
             result.kitId(),
+            result.creationTime(),
             new AssessmentCreatorResponseDto(createdBy.id(), createdBy.displayName()));
     }
 }
