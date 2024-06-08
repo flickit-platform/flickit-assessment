@@ -30,6 +30,14 @@ public interface GetAssessmentUseCase {
         }
     }
 
-    record Result(UUID assessmentId, String assessmentTitle, Long spaceId, Long kitId) {
+    record Result(UUID assessmentId,
+                  String assessmentTitle,
+                  Long spaceId,
+                  Long kitId,
+                  AssessmentCreator createdBy) {
+    }
+
+    record AssessmentCreator(UUID id,
+                             String displayName) {
     }
 }
