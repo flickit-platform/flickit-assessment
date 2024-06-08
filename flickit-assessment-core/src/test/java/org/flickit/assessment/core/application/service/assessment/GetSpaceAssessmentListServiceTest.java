@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListPort;
-import org.flickit.assessment.core.application.port.out.space.CheckSpaceAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
