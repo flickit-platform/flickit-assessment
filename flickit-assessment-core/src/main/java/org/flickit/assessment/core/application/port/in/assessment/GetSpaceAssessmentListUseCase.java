@@ -22,17 +22,17 @@ public interface GetSpaceAssessmentListUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_ASSESSMENT_LIST_SPACE_ID_NOT_NULL)
+        @NotNull(message = GET_SPACE_ASSESSMENT_LIST_SPACE_ID_NOT_NULL)
         Long spaceId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        @Min(value = 1, message = GET_ASSESSMENT_LIST_SIZE_MIN)
-        @Max(value = 100, message = GET_ASSESSMENT_LIST_SIZE_MAX)
+        @Min(value = 1, message = GET_SPACE_ASSESSMENT_LIST_SIZE_MIN)
+        @Max(value = 100, message = GET_SPACE_ASSESSMENT_LIST_SIZE_MAX)
         int size;
 
-        @Min(value = 0, message = GET_ASSESSMENT_LIST_PAGE_MIN)
+        @Min(value = 0, message = GET_SPACE_ASSESSMENT_LIST_PAGE_MIN)
         int page;
 
         public Param(Long spaceId, UUID currentUserId, int size, int page) {
