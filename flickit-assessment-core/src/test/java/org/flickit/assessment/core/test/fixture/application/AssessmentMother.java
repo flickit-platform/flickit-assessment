@@ -2,7 +2,7 @@ package org.flickit.assessment.core.test.fixture.application;
 
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
-import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
+import org.flickit.assessment.core.application.domain.AssessmentListItem;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

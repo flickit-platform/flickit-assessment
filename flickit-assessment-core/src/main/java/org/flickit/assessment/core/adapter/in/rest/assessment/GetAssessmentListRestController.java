@@ -30,19 +30,19 @@ public class GetAssessmentListRestController {
         @RequestParam(defaultValue = "0") int page) {
         UUID currentUserId = userContext.getUser().id();
 
-        PaginatedResponse<AssessmentListItem> result = null;
+        PaginatedResponse<AssessmentListItem> result;
         if (spaceId != null)
-            result = spaceAssessmentListUseCase.getAssessmentList(toParam(spaceId, currentUserId, size, page));
+            result = spaceAssessmentListUseCase.getAssessmentList(toSpaceAssessmentsParam(spaceId, currentUserId, size, page));
         else
-            result = assessmentListUseCase.getAssessmentList(toParam(spaceId, kitId, currentUserId, size, page));
+            result = assessmentListUseCase.getAssessmentList(toUserAssessmentParam(kitId, currentUserId, size, page));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private GetAssessmentListUseCase.Param toParam(Long spaceId, Long kitId, UUID currentUserId, int size, int page) {
-        return new GetAssessmentListUseCase.Param(spaceId, kitId, currentUserId, size, page);
+    private GetSpaceAssessmentListUseCase.Param toSpaceAssessmentsParam(Long spaceId, UUID currentUserId, int size, int page) {
+        return new GetSpaceAssessmentListUseCase.Param(spaceId, currentUserId, size, page);
     }
 
-    private GetSpaceAssessmentListUseCase.Param toParam(Long spaceId, UUID currentUserId, int size, int page) {
-        return new GetSpaceAssessmentListUseCase.Param(spaceId, currentUserId, size, page);
+    private GetAssessmentListUseCase.Param toUserAssessmentParam(Long kitId, UUID currentUserId, int size, int page) {
+        return new GetAssessmentListUseCase.Param(kitId, currentUserId, size, page);
     }
 }
