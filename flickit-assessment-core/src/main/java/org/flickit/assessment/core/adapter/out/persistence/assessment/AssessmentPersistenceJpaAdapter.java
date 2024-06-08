@@ -90,7 +90,7 @@ public class AssessmentPersistenceJpaAdapter implements
                 SpaceJpaEntity spaceEntity = e.getSpace();
                 AssessmentListItem.Space space = new AssessmentListItem.Space(spaceEntity.getId(), spaceEntity.getTitle());
                 AssessmentListItem.MaturityLevel maturityLevel = null;
-                if (e.getAssessmentResult().getIsCalculateValid()) {
+                if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
                     MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(e.getAssessmentResult().getMaturityLevelId());
                     maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
                         maturityLevelEntity.getTitle(),
@@ -147,7 +147,7 @@ public class AssessmentPersistenceJpaAdapter implements
                 AssessmentListItem.Kit kit = new AssessmentListItem.Kit(kitEntity.getId(), kitEntity.getTitle(), kitLevelEntities.size());
                 AssessmentListItem.Space space = null;
                 AssessmentListItem.MaturityLevel maturityLevel = null;
-                if (e.getAssessmentResult().getIsCalculateValid()) {
+                if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
                     MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(e.getAssessmentResult().getMaturityLevelId());
                     maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
                         maturityLevelEntity.getTitle(),
