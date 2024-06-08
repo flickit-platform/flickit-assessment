@@ -61,7 +61,7 @@
     <changeSet id="0.20-08" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseTableName="fak_answer_option_impact"
                                  baseColumnNames="option_id, kit_version_id"
-                                 constraintName="fak_answeroptionimpact_answeroption"
+                                 constraintName="fk_fak_answeroptionimpact_answeroption"
                                  referencedTableName="fak_answer_option"
                                  referencedColumnNames="id, kit_version_id"
                                  deferrable="true"
