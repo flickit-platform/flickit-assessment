@@ -128,4 +128,6 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                 AND (k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId  = :userId))))
         """)
     Optional<Long> existsByUserId(@Param("kitId") long kitId, @Param("userId") UUID userId);
+
+    List<AssessmentKitJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
 }
