@@ -73,7 +73,8 @@ class CalculateConfidenceServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_CONFIDENCE)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.calculate(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.calculate(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(loadConfidenceLevelCalculateInfoPort,
             updateCalculatedConfidenceLevelResultPort,

@@ -72,6 +72,7 @@ class AddEvidenceServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCreatedById(), ADD_EVIDENCE)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.addEvidence(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.addEvidence(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }

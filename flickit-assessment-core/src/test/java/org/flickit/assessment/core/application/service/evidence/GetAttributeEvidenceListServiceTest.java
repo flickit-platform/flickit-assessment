@@ -70,7 +70,8 @@ class GetAttributeEvidenceListServiceTest {
         Param param = new Param(UUID.randomUUID(), 1L, "POSITIVE",  UUID.randomUUID(), 10, 0);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_EVIDENCE_LIST)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getAttributeEvidenceList(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeEvidenceList(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
         verify(loadAttributeEvidencesPort, never()).loadAttributeEvidences(any(), any(), anyInt(), anyInt(), anyInt());
     }
 

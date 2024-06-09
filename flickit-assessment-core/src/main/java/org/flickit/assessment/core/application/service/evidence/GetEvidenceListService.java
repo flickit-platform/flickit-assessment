@@ -24,6 +24,7 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
     public PaginatedResponse<EvidenceListItem> getEvidenceList(GetEvidenceListUseCase.Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE_LIST))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         return loadEvidencesPort.loadNotDeletedEvidences(
             param.getQuestionId(),
             param.getAssessmentId(),

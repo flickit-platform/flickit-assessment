@@ -63,6 +63,7 @@ class DeleteAssessmentServiceTest {
         DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(assessmentId, currentUserId);
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, DELETE_ASSESSMENT)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.deleteAssessment(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteAssessment(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }

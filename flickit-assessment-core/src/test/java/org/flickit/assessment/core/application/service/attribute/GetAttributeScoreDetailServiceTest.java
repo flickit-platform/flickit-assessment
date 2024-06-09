@@ -118,6 +118,7 @@ class GetAttributeScoreDetailServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_SCORE_DETAIL)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getAttributeScoreDetail(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeScoreDetail(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }

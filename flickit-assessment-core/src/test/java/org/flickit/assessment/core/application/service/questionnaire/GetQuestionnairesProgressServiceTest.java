@@ -71,9 +71,11 @@ class GetQuestionnairesProgressServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_QUESTIONNAIRES_PROGRESS)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getQuestionnairesProgress(useCaseParam), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionnairesProgress(useCaseParam));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(assessmentAccessChecker, times(1)).isAuthorized(useCaseParam.getAssessmentId(), useCaseParam.getCurrentUserId(), VIEW_QUESTIONNAIRES_PROGRESS);
+        verify(assessmentAccessChecker, times(1))
+            .isAuthorized(useCaseParam.getAssessmentId(), useCaseParam.getCurrentUserId(), VIEW_QUESTIONNAIRES_PROGRESS);
         verify(getQuestionnairesProgressPort, never()).getQuestionnairesProgressByAssessmentId(any());
     }
 }

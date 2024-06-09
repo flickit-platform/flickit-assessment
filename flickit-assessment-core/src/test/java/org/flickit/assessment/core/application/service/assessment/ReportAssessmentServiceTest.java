@@ -112,6 +112,7 @@ class ReportAssessmentServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.reportAssessment(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.reportAssessment(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }

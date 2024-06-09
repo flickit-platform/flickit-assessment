@@ -84,6 +84,7 @@ class GetAssessmentProgressServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_PROGRESS)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getAssessmentProgress(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentProgress(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }

@@ -70,7 +70,8 @@ class SubmitAnswerServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.submitAnswer(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.submitAnswer(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(loadAssessmentResultPort,
             loadAnswerPort,
@@ -281,7 +282,7 @@ class SubmitAnswerServiceTest {
         AnswerOption answerOption = AnswerOptionMother.optionOne();
         var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, answerOption.getId(), ConfidenceLevel.getDefault().getId(), newIsNotApplicable, currentUserId);
 
-        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, param.getCurrentUserId())).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId())).thenReturn(false);
 

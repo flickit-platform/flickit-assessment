@@ -98,6 +98,7 @@ class UpdateAssessmentServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), UPDATE_ASSESSMENT)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.updateAssessment(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAssessment(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }

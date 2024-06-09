@@ -87,6 +87,7 @@ class GetSubjectProgressServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_PROGRESS)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getSubjectProgress(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getSubjectProgress(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }

@@ -49,9 +49,10 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param), COMMON_CURRENT_USER_NOT_ALLOWED);
-        verifyNoInteractions(loadQuestionnaireQuestionListPort,
-            loadQuestionsAnswerListPort);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadQuestionnaireQuestionListPort, loadQuestionsAnswerListPort);
     }
 
     @Test
@@ -90,7 +91,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             "asc",
             1
         );
-        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.FALSE);
+        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2,
+            null, question.getId(), null), question.getId(), 1, Boolean.FALSE);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
@@ -112,6 +114,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(question.getIndex(), item.index());
         assertEquals(question.getHint(), item.hint());
         assertEquals(question.getMayNotBeApplicable(), item.mayNotBeApplicable());
+        assertNotNull(answer.getSelectedOption());
         assertEquals(answer.getSelectedOption().getId(), item.answer().selectedOption().id());
         assertEquals(question.getOptions().get(0).getTitle(), item.answer().selectedOption().title());
     }

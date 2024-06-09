@@ -82,7 +82,8 @@ class UpdateEvidenceServiceTest {
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(savedEvidence);
 
-        assertThrows(AccessDeniedException.class, () -> service.updateEvidence(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateEvidence(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test

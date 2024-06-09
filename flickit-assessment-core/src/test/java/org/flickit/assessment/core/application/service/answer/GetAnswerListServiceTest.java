@@ -124,6 +124,7 @@ class GetAnswerListServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ANSWER)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> getAnswerListService.getAnswerList(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> getAnswerListService.getAnswerList(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }

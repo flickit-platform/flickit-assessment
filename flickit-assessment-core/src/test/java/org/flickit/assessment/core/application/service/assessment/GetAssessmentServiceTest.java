@@ -103,7 +103,8 @@ class GetAssessmentServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT)).thenReturn(false);
 
         Param param = new Param(assessmentId, currentUserId);
-        assertThrows(AccessDeniedException.class, () -> service.getAssessment(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessment(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
         verify(getAssessmentPort, never()).getAssessmentById(any());
