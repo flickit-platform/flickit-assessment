@@ -97,10 +97,6 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         AND level.id in :levelIds
     """)
     Set<Long> findSelectedLevelIdsRelatedToAssessment(UUID assessmentId, Set<Long> levelIds);
-
-    List<AssessmentJpaEntity> findBySpaceId(long spaceId);
-
-
 }
 
 

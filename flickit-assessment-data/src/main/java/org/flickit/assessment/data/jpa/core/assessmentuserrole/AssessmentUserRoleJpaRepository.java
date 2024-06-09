@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,5 +46,11 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
     Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId,
                                                  Pageable pageable);
 
-    void deleteByUserIdAndAssessmentIdIn(UUID userId, List<UUID> assessmentIds);
+    @Modifying
+    @Query("""
+            DELETE FROM AssessmentUserRoleJpaEntity r
+            WHERE r.userId = :userId AND r.assessmentId IN
+                (SELECT a.id FROM AssessmentJpaEntity a WHERE a.spaceId = :spaceId)
+        """)
+    void deleteByUserIdAndSpaceId(@Param("userId") UUID userId, @Param("spaceId") Long spaceId);
 }
