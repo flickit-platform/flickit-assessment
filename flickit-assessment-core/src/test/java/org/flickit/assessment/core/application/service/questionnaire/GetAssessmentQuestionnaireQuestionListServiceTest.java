@@ -151,6 +151,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(question.getHint(), item.hint());
         assertEquals(question.getMayNotBeApplicable(), item.mayNotBeApplicable());
         assertNull(item.answer().selectedOption());
+        assertTrue(item.answer().isNotApplicable());
+        assertNotNull(item.answer().confidenceLevel());
     }
 
     @Test
@@ -187,6 +189,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(question.getIndex(), item.index());
         assertEquals(question.getHint(), item.hint());
         assertEquals(question.getMayNotBeApplicable(), item.mayNotBeApplicable());
+        assertFalse(item.answer().isNotApplicable());
         assertNull(item.answer().selectedOption());
+        assertNull(item.answer().confidenceLevel());
     }
 }

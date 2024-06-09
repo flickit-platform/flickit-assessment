@@ -48,8 +48,12 @@ class ReportAssessmentServiceTest {
 
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
+        MaturityLevel softwareLevel = MaturityLevelMother.levelFour();
+        MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
+        List<MaturityLevel> maturityLevels = List.of(softwareLevel, teamLevel);
+
         var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1", "picture/link");
-        var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", 3, expertGroup);
+        var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", 3, maturityLevels, expertGroup);
         MaturityLevel assessmentMaturityLevel = MaturityLevelMother.levelThree();
         LocalDateTime creationTime = LocalDateTime.now();
         LocalDateTime lastModificationTime = LocalDateTime.now();
@@ -64,8 +68,7 @@ class ReportAssessmentServiceTest {
             creationTime,
             lastModificationTime);
 
-        MaturityLevel softwareLevel = MaturityLevelMother.levelFour();
-        MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
+
         var subjects = List.of(
             new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", 20.0, softwareLevel, List.of()),
             new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
@@ -94,6 +97,7 @@ class ReportAssessmentServiceTest {
         assertEquals(assessmentReport.assessment().assessmentKit().title(), result.assessment().assessmentKit().title());
         assertEquals(assessmentReport.assessment().assessmentKit().summary(), result.assessment().assessmentKit().summary());
         assertEquals(assessmentReport.assessment().assessmentKit().maturityLevelCount(), result.assessment().assessmentKit().maturityLevelCount());
+        assertEquals(assessmentReport.assessment().assessmentKit().maturityLevels(), result.assessment().assessmentKit().maturityLevels());
         assertEquals(assessmentReport.assessment().assessmentKit().expertGroup().id(), result.assessment().assessmentKit().expertGroup().id());
         assertEquals(assessmentReport.assessment().assessmentKit().expertGroup().title(), result.assessment().assessmentKit().expertGroup().title());
 
