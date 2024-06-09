@@ -110,9 +110,8 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerNotExistAndOptionIdIsNull_SavesAnswerAndDoesNotInvalidatesAssessmentResult() {
+    void testSubmitAnswer_AnswerNotExistAndOptionIdIsNullAndIsNotApplicableIsFalse_DontSavesAnswerAndDontInvalidatesAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
-        UUID savedAnswerId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         Boolean isNotApplicable = Boolean.FALSE;
         var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, null, ConfidenceLevel.getDefault().getId(), isNotApplicable, UUID.randomUUID());
@@ -120,21 +119,10 @@ class SubmitAnswerServiceTest {
         when(checkUserAssessmentAccessPort.hasAccess(assessmentId, param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.empty());
-        when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
 
         service.submitAnswer(param);
 
-        ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
-        verify(createAnswerPort).persist(saveAnswerParam.capture());
-        assertEquals(assessmentResult.getId(), saveAnswerParam.getValue().assessmentResultId());
-        assertEquals(QUESTIONNAIRE_ID, saveAnswerParam.getValue().questionnaireId());
-        assertEquals(QUESTION_ID, saveAnswerParam.getValue().questionId());
-        assertNull(saveAnswerParam.getValue().answerOptionId());
-        assertNull(saveAnswerParam.getValue().confidenceLevelId());
-        assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
-
-        verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
-        verifyNoInteractions(loadQuestionMayNotBeApplicablePort, invalidateAssessmentResultPort, updateAnswerPort);
+        verifyNoInteractions(loadQuestionMayNotBeApplicablePort, createAnswerPort, updateAnswerPort, invalidateAssessmentResultPort);
     }
 
     @Test

@@ -69,7 +69,10 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                     .findAny()
                     .orElse(null);
             }
-            answerDto = new QuestionAnswer(answerOption, ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()), answer.getIsNotApplicable());
+            ConfidenceLevel confidenceLevel = null;
+            if (answerOption != null || Boolean.TRUE.equals(answer.getIsNotApplicable()))
+                confidenceLevel = ConfidenceLevel.valueOfById(answer.getConfidenceLevelId());
+            answerDto = new QuestionAnswer(answerOption, confidenceLevel, answer.getIsNotApplicable());
         }
         return new Result(
             question.getId(),

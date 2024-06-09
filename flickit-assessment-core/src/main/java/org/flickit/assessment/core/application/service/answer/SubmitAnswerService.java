@@ -81,6 +81,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
+        if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
+            return new Result(null);
         UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId));
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId, Boolean.FALSE, Boolean.FALSE);
