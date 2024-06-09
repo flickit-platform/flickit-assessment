@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
 
 import java.util.List;
 import java.util.UUID;
@@ -52,10 +53,14 @@ class GetKitDetailServiceTest {
     @Mock
     private LoadQuestionnairesPort loadQuestionnairesPort;
 
+    @Mock
+    private LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
+
     @Test
     void testGetKitDetail_WhenKitExist_shouldReturnKitDetails() {
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var currentUserId = expertGroup.getOwnerId();
+        var kitVersionId = 1L;
         GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, currentUserId);
 
         List<MaturityLevel> maturityLevels = List.of(
@@ -67,8 +72,9 @@ class GetKitDetailServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(maturityLevels);
-        when(loadSubjectsPort.loadByKitId(param.getKitId())).thenReturn(subjects);
+        when(loadSubjectsPort.loadByKitIdAndKitVersionId(param.getKitId(), kitVersionId)).thenReturn(subjects);
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(questionnaires);
+        when(loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
 
         Result result = service.getKitDetail(param);
 
