@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.port.out.assessment.CreateAssessm
 import org.flickit.assessment.core.application.port.out.assessmentkit.CheckKitAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
@@ -24,6 +25,7 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.Assessment.generateSlugCode;
 import static org.flickit.assessment.core.application.domain.AssessmentColor.getValidId;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_KIT_NOT_ALLOWED;
 
@@ -40,6 +42,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
     private final LoadSubjectsPort loadSubjectsPort;
+    private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Override
     public Result createAssessment(Param param) {
@@ -51,6 +54,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         UUID id = createAssessmentPort.persist(toParam(param));
         createAssessmentResult(id, loadKitVersionIdPort.loadVersionId(param.getKitId()));
+
+        grantUserAssessmentRolePort.persist(id, param.getCurrentUserId(), MANAGER.getId());
+
         return new Result(id);
     }
 

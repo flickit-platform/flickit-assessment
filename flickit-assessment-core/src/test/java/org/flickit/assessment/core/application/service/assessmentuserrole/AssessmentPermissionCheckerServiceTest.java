@@ -55,20 +55,6 @@ class AssessmentPermissionCheckerServiceTest {
     }
 
     @Test
-    void testIsAuthorized_userIsAssessmentCreator_shouldBeFullyAuthorized() {
-        Assessment assessment = AssessmentMother.assessment();
-        var assessmentId = assessment.getId();
-        var userId = assessment.getCreatedBy();
-        when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-
-        AssessmentUserRole.MANAGER.getPermissions()
-            .forEach(x ->
-                assertTrue(service.isAuthorized(assessmentId, userId, x))
-            );
-        verifyNoInteractions(loadSpaceOwnerPort, loadUserRoleForAssessmentPort);
-    }
-
-    @Test
     void testIsAuthorized_userHasNotAnyRole_shouldReturnFalse() {
         Assessment assessment = AssessmentMother.assessment();
         var assessmentId = assessment.getId();

@@ -4,6 +4,7 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.QualityAttribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
@@ -12,6 +13,7 @@ import org.flickit.assessment.core.application.port.out.assessment.CreateAssessm
 import org.flickit.assessment.core.application.port.out.assessmentkit.CheckKitAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
@@ -63,6 +65,9 @@ class CreateAssessmentServiceTest {
     @Mock
     private CheckKitAccessPort checkKitAccessPort;
 
+    @Mock
+    private GrantUserAssessmentRolePort grantUserAssessmentRolePort;
+
     @Test
     void testCreateAssessment_ValidParam_PersistsAndReturnsId() {
         UUID currentUserId = UUID.randomUUID();
@@ -92,6 +97,17 @@ class CreateAssessmentServiceTest {
         assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
         assertEquals(param.getColorId(), createPortParam.getValue().colorId());
         assertNotNull(createPortParam.getValue().creationTime());
+
+        ArgumentCaptor<UUID> grantPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
+        ArgumentCaptor<UUID> grantPortUserId = ArgumentCaptor.forClass(UUID.class);
+        ArgumentCaptor<Integer> grantPortRoleId = ArgumentCaptor.forClass(Integer.class);
+        verify(grantUserAssessmentRolePort).persist(grantPortAssessmentId.capture(),
+            grantPortUserId.capture(),
+            grantPortRoleId.capture());
+
+        assertEquals(expectedId, grantPortAssessmentId.getValue());
+        assertEquals(param.getCurrentUserId(), grantPortUserId.getValue());
+        assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getValue());
     }
 
     @Test
@@ -157,6 +173,7 @@ class CreateAssessmentServiceTest {
         service.createAssessment(param);
 
         verify(createSubjectValuePort, times(1)).persistAll(anyList(), any());
+        verify(grantUserAssessmentRolePort, times(1)).persist(any(), any(UUID.class), anyInt());
     }
 
     @Test
@@ -191,6 +208,7 @@ class CreateAssessmentServiceTest {
         service.createAssessment(param);
 
         verify(createQualityAttributeValuePort, times(1)).persistAll(anyList(), any());
+        verify(grantUserAssessmentRolePort, times(1)).persist(any(), any(UUID.class), anyInt());
     }
 
     @Test
@@ -215,6 +233,7 @@ class CreateAssessmentServiceTest {
         verify(createAssessmentPort).persist(createPortParam.capture());
 
         assertEquals(AssessmentColor.getDefault().getId(), createPortParam.getValue().colorId());
+        verify(grantUserAssessmentRolePort, times(1)).persist(any(), any(UUID.class), anyInt());
     }
 
     @Test
