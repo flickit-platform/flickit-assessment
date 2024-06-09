@@ -70,7 +70,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                     .orElse(null);
             }
             ConfidenceLevel confidenceLevel = null;
-            if (answerOption != null && Boolean.TRUE.equals(answer.getIsNotApplicable()))
+            if (answerOption != null || Boolean.TRUE.equals(answer.getIsNotApplicable()))
                 confidenceLevel = ConfidenceLevel.valueOfById(answer.getConfidenceLevelId());
             answerDto = new QuestionAnswer(answerOption, confidenceLevel, answer.getIsNotApplicable());
         }
