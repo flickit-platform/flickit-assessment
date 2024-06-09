@@ -32,8 +32,6 @@ public class AssessmentPermissionCheckerService implements AssessmentPermissionC
     public boolean isAuthorized(UUID assessmentId, UUID userId, AssessmentPermission permission) {
         var assessment = getAssessmentPort.getAssessmentById(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_NOT_FOUND));
-        if (Objects.equals(userId, assessment.getCreatedBy()))
-            return ASSESSMENT_CREATED_BY_ROLE.hasAccess(permission);
 
         var spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(assessment.getSpace().getId());
         if (Objects.equals(userId, spaceOwnerId))

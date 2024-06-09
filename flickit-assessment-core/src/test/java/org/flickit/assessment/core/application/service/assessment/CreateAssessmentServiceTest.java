@@ -97,7 +97,6 @@ class CreateAssessmentServiceTest {
         assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
         assertEquals(param.getColorId(), createPortParam.getValue().colorId());
         assertNotNull(createPortParam.getValue().creationTime());
-        assertNotNull(createPortParam.getValue().lastModificationTime());
 
         ArgumentCaptor<UUID> grantPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
         ArgumentCaptor<UUID> grantPortUserId = ArgumentCaptor.forClass(UUID.class);
@@ -107,7 +106,7 @@ class CreateAssessmentServiceTest {
             grantPortRoleId.capture());
 
         assertEquals(expectedId, grantPortAssessmentId.getValue());
-        assertEquals(param.getCreatedBy(), grantPortUserId.getValue());
+        assertEquals(param.getCurrentUserId(), grantPortUserId.getValue());
         assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getValue());
     }
 

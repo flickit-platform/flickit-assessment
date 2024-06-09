@@ -42,7 +42,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
     private final LoadSubjectsPort loadSubjectsPort;
-    private final LoadAssessmentKitVersionIdPort loadKitVersionIdPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Override
@@ -56,7 +55,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         UUID id = createAssessmentPort.persist(toParam(param));
         createAssessmentResult(id, loadKitVersionIdPort.loadVersionId(param.getKitId()));
 
-        grantUserAssessmentRolePort.persist(id, param.getCreatedBy(), MANAGER.getId());
+        grantUserAssessmentRolePort.persist(id, param.getCurrentUserId(), MANAGER.getId());
 
         return new Result(id);
     }
