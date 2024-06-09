@@ -5,6 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentKit;
+import org.flickit.assessment.core.application.domain.Space;
+import org.flickit.assessment.core.application.domain.User;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -31,15 +34,13 @@ public interface GetAssessmentUseCase {
         }
     }
 
-    record Result(UUID assessmentId,
-                  String assessmentTitle,
-                  Long spaceId,
-                  Long kitId,
+    record Result(UUID id,
+                  String title,
+                  Space space,
+                  AssessmentKit kit,
                   LocalDateTime creationTime,
-                  AssessmentCreator createdBy) {
-    }
+                  LocalDateTime lastModificationTime,
+                  User createdBy) {
 
-    record AssessmentCreator(UUID id,
-                             String displayName) {
     }
 }

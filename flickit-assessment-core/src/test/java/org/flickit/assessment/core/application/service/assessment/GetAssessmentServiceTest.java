@@ -50,9 +50,16 @@ class GetAssessmentServiceTest {
         verify(getAssessmentPort).getAssessmentById(assessmentIdArgument.capture());
 
         assertEquals(assessmentId, assessmentIdArgument.getValue());
-        assertEquals(assessment.getTitle(), result.assessmentTitle());
-        assertEquals(assessment.getSpaceId(), result.spaceId());
-        assertEquals(assessment.getAssessmentKit().getId(), result.kitId());
+        assertEquals(assessment.getTitle(), result.title());
+        assertEquals(assessment.getSpace().getId(), result.space().getId());
+        assertEquals(assessment.getSpace().getTitle(), result.space().getTitle());
+        assertEquals(assessment.getAssessmentKit().getId(), result.kit().getId());
+        assertEquals(assessment.getAssessmentKit().getTitle(), result.kit().getTitle());
+        assertEquals(assessment.getCreationTime(), result.creationTime());
+        assertEquals(assessment.getLastModificationTime(), result.lastModificationTime());
+        assertEquals(assessmentCreator.getId(), result.createdBy().getId());
+        assertEquals(assessmentCreator.getDisplayName(), result.createdBy().getDisplayName());
+
         verify(getAssessmentPort, times(1)).getAssessmentById(any());
         verify(loadUserPort, times(1)).loadById(any());
     }

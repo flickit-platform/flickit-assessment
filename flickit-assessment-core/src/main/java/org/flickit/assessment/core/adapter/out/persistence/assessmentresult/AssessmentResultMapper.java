@@ -32,7 +32,7 @@ public class AssessmentResultMapper {
     public static AssessmentResult mapToDomainModel(AssessmentResultJpaEntity entity) {
         return new AssessmentResult(
             entity.getId(),
-            AssessmentMapper.mapToDomainModel(entity.getAssessment()),
+            AssessmentMapper.mapToDomainModel(entity.getAssessment(), null, null),
             entity.getKitVersionId(),
             new ArrayList<>(),
             entity.getMaturityLevelId() == null ? null :

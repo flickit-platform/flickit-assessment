@@ -24,19 +24,18 @@ public class GetAssessmentService implements GetAssessmentUseCase {
     public Result getAssessment(Param param) {
         var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND));
+
         var createdBy = loadUserPort.loadById(assessment.getCreatedBy())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_CREATED_BY_ID_NOT_FOUND));
+
         return new Result(
             assessment.getId(),
             assessment.getTitle(),
-            assessment.getSpaceId(),
-            assessment.getAssessmentKit().getId(),
+            assessment.getSpace(),
+            assessment.getAssessmentKit(),
             assessment.getCreationTime(),
-            toUser(createdBy)
+            assessment.getLastModificationTime(),
+            new User(createdBy.getId(), createdBy.getDisplayName())
         );
-    }
-
-    private AssessmentCreator toUser(User user) {
-        return new AssessmentCreator(user.getId(), user.getDisplayName());
     }
 }

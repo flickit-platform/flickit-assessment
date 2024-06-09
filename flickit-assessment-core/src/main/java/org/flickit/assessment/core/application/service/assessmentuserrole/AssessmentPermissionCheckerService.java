@@ -36,7 +36,7 @@ public class AssessmentPermissionCheckerService implements AssessmentPermissionC
         if (Objects.equals(userId, assessment.getCreatedBy()))
             return ASSESSMENT_CREATED_BY_ROLE.hasAccess(permission);
 
-        var spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(assessment.getSpaceId());
+        var spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(assessment.getSpace().getId());
         if (Objects.equals(userId, spaceOwnerId))
             return SPACE_OWNER_ROLE.hasAccess(permission);
 

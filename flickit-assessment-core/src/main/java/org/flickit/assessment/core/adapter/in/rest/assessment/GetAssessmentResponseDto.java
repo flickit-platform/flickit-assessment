@@ -4,14 +4,21 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record GetAssessmentResponseDto(
-    UUID assessmentId,
-    String assessmentTitle,
-    Long spaceId,
-    Long kitId,
+    UUID id,
+    String title,
+    Space space,
+    Kit kit,
     LocalDateTime creationTime,
-    AssessmentCreatorResponseDto createdBy) {
+    LocalDateTime lastModificationTime,
+    User createdBy) {
 
-    record AssessmentCreatorResponseDto(UUID id,
-                                        String displayName) {
+    public record Space(long id, String title) {
+    }
+
+    public record Kit(long id, String title) {
+
+    }
+
+    record User(UUID id, String displayName) {
     }
 }

@@ -53,7 +53,17 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
-    Optional<AssessmentJpaEntity> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
+    @Query("""
+            SELECT
+                a AS assessment,
+                k AS kit,
+                s AS space
+            FROM AssessmentJpaEntity a
+            LEFT JOIN AssessmentKitJpaEntity k ON a.assessmentKitId = k.id
+            Left JOIN SpaceJpaEntity s ON a.spaceId = s.id
+            WHERE a.id = :id AND a.deleted = FALSE
+        """)
+    Optional<AssessmentKitSpaceJoinView> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +

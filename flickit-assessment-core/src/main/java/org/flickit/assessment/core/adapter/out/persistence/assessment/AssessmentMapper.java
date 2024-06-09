@@ -5,9 +5,11 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
+import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
+import org.flickit.assessment.data.jpa.core.assessment.AssessmentKitSpaceJoinView;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentListItemView;
 
 
@@ -31,24 +33,25 @@ public class AssessmentMapper {
         );
     }
 
-    public static Assessment mapToDomainModel(AssessmentJpaEntity entity) {
-        AssessmentKit kit = new AssessmentKit(entity.getAssessmentKitId(), null, null);
-        return mapToDomainModel(entity, kit);
+    public static Assessment mapToDomainModel(AssessmentKitSpaceJoinView view) {
+        AssessmentKit kit = new AssessmentKit(view.getKit().getId(), view.getKit().getTitle(), null, null);
+        Space space = new Space(view.getSpace().getId(), view.getSpace().getTitle());
+        return mapToDomainModel(view.getAssessment(), kit, space);
     }
 
-    public static Assessment mapToDomainModel(AssessmentJpaEntity entity, AssessmentKit kit) {
+    public static Assessment mapToDomainModel(AssessmentJpaEntity assessment, AssessmentKit kit, Space space) {
         return new Assessment(
-            entity.getId(),
-            entity.getCode(),
-            entity.getTitle(),
+            assessment.getId(),
+            assessment.getCode(),
+            assessment.getTitle(),
             kit,
-            entity.getColorId(),
-            entity.getSpaceId(),
-            entity.getCreationTime(),
-            entity.getLastModificationTime(),
-            entity.getDeletionTime(),
-            entity.isDeleted(),
-            entity.getCreatedBy()
+            assessment.getColorId(),
+            space,
+            assessment.getCreationTime(),
+            assessment.getLastModificationTime(),
+            assessment.getDeletionTime(),
+            assessment.isDeleted(),
+            assessment.getCreatedBy()
         );
     }
 
