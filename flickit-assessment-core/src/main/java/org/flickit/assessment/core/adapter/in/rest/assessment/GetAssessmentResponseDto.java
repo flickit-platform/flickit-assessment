@@ -6,19 +6,18 @@ import java.util.UUID;
 public record GetAssessmentResponseDto(
     UUID id,
     String title,
-    Space space,
-    Kit kit,
+    SpaceResponseDto space,
+    KitResponseDto kit,
     LocalDateTime creationTime,
     LocalDateTime lastModificationTime,
-    User createdBy) {
+    UserResponseDto createdBy) {
 
-    public record Space(long id, String title) {
+    record SpaceResponseDto(long id, String title) {
     }
 
-    public record Kit(long id, String title) {
-
+    record KitResponseDto(long id, String title) {
     }
 
-    record User(UUID id, String displayName) {
+    record UserResponseDto(UUID id, String displayName) {
     }
 }

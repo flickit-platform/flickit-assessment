@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.adapter.in.rest.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.adapter.in.rest.assessment.GetAssessmentResponseDto.User;
+import org.flickit.assessment.core.adapter.in.rest.assessment.GetAssessmentResponseDto.UserResponseDto;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result;
@@ -29,10 +29,10 @@ public class GetAssessmentRestController {
         return new GetAssessmentResponseDto(
             result.id(),
             result.title(),
-            new GetAssessmentResponseDto.Space(result.space().getId(), result.space().getTitle()),
-            new GetAssessmentResponseDto.Kit(result.kit().getId(), result.kit().getTitle()),
+            new GetAssessmentResponseDto.SpaceResponseDto(result.space().getId(), result.space().getTitle()),
+            new GetAssessmentResponseDto.KitResponseDto(result.kit().getId(), result.kit().getTitle()),
             result.creationTime(),
             result.lastModificationTime(),
-            new User(result.createdBy().getId(), result.createdBy().getDisplayName()));
+            new UserResponseDto(result.createdBy().getId(), result.createdBy().getDisplayName()));
     }
 }
