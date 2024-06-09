@@ -103,7 +103,7 @@ class DeleteSpaceMemberServiceTest {
         assertDoesNotThrow(() -> service.deleteMember(param));
         verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
         verify(checkSpaceAccessPort).checkIsMember(spaceId, userId);
-        verify(deleteSpaceAssessmentUserRolesPort).delete(spaceId, userId);
+        verify(deleteSpaceAssessmentUserRolesPort).delete(userId, spaceId);
         verify(deleteSpaceMemberPort).delete(spaceId, userId);
     }
 }

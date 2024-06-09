@@ -36,7 +36,7 @@ public class LeaveSpaceService implements LeaveSpaceUseCase {
         if (Objects.equals(spaceOwnerId, param.getCurrentUserId()))
             throw new ValidationException(LEAVE_SPACE_OWNER_NOT_ALLOWED);
 
-        deleteSpaceAssessmentUserRolesPort.delete(param.getId(), param.getCurrentUserId());
+        deleteSpaceAssessmentUserRolesPort.delete(param.getCurrentUserId(), param.getId());
         deleteSpaceMemberPort.delete(param.getId(), param.getCurrentUserId());
     }
 }

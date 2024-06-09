@@ -86,7 +86,7 @@ class LeaveSpaceServiceTest {
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
-        verify(deleteSpaceAssessmentUserRolesPort).delete(spaceId, currentUserId);
+        verify(deleteSpaceAssessmentUserRolesPort).delete(currentUserId, spaceId);
         verify(spaceMemberPort).delete(param.getId(), param.getCurrentUserId());
     }
 }

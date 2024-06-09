@@ -34,7 +34,7 @@ public class DeleteSpaceMemberService implements DeleteSpaceMemberUseCase {
         if (!access)
             throw new ResourceNotFoundException(DELETE_SPACE_MEMBER_USER_ID_NOT_FOUND);
 
-        deleteSpaceAssessmentUserRolesPort.delete(param.getSpaceId(), param.getUserId());
+        deleteSpaceAssessmentUserRolesPort.delete(param.getUserId(), param.getSpaceId());
         deleteSpaceMemberPort.delete(param.getSpaceId(), param.getUserId());
     }
 

@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface DeleteSpaceAssessmentUserRolesPort {
 
-    void delete(long spaceId, UUID userId);
+    void delete(UUID userId, long spaceId);
 }
