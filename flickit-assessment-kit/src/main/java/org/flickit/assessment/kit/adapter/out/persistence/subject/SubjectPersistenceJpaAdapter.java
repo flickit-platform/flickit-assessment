@@ -45,7 +45,7 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Subject> loadByKitIdAndKitVersionId(long kitId, long kitVersionId) {
+    public List<Subject> loadByKitVersionId(long kitVersionId) {
         return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(e -> SubjectMapper.mapToDomainModel(e,
                 e.getAttributes().stream()

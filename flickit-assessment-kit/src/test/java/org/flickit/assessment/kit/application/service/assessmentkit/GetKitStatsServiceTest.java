@@ -81,7 +81,7 @@ class GetKitStatsServiceTest {
 
         when(countKitStatsPort.countKitStats(assessmentKit.getId())).thenReturn(counts);
         when(loadAssessmentKitPort.load(assessmentKit.getId())).thenReturn(assessmentKit);
-        when(loadSubjectsPort.loadByKitIdAndKitVersionId(anyLong(), anyLong())).thenReturn(subjects);
+        when(loadSubjectsPort.loadByKitVersionId(anyLong())).thenReturn(subjects);
 
         GetKitStatsUseCase.Result kitStats = service.getKitStats(param);
 
