@@ -29,9 +29,11 @@ public class UpdateEvidenceService implements UpdateEvidenceUseCase {
     @Override
     public Result updateEvidence(Param param) {
         Evidence evidence = loadEvidencePort.loadNotDeletedEvidence(param.getId());
+
         if (!Objects.equals(evidence.getCreatedById(), param.getCurrentUserId()) ||
             !assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), UPDATE_EVIDENCE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         var updateParam = new UpdateEvidencePort.Param(
             param.getId(),
             param.getDescription(),
