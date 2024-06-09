@@ -45,7 +45,7 @@ class AssessmentPermissionCheckerServiceTest {
         var userId = UUID.randomUUID();
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
 
-        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpaceId())).thenReturn(userId);
+        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpace().getId())).thenReturn(userId);
 
         AssessmentUserRole.MANAGER.getPermissions()
             .forEach(x ->
@@ -61,7 +61,7 @@ class AssessmentPermissionCheckerServiceTest {
         var userId = UUID.randomUUID();
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpaceId())).thenReturn(UUID.randomUUID());
+        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpace().getId())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(null);
 
         AssessmentUserRole.VIEWER.getPermissions()
@@ -77,7 +77,7 @@ class AssessmentPermissionCheckerServiceTest {
         var userId = UUID.randomUUID();
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpaceId())).thenReturn(UUID.randomUUID());
+        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpace().getId())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(AssessmentUserRole.VIEWER);
 
         AssessmentUserRole.VIEWER.getPermissions()

@@ -138,6 +138,7 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.isPrivate(), result.isPrivate());
         assertEquals(kit.getCreationTime(), result.creationTime());
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
+        assertEquals(kit.getExpertGroupId(), result.expertGroupId());
 
         assertEquals(counts.likes(), result.like().count());
         assertFalse(result.like().liked());
@@ -188,6 +189,7 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.isPrivate(), result.isPrivate());
         assertEquals(kit.getCreationTime(), result.creationTime());
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
+        assertEquals(kit.getExpertGroupId(), result.expertGroupId());
 
         assertEquals(counts.likes(), result.like().count());
         assertTrue(result.like().liked());

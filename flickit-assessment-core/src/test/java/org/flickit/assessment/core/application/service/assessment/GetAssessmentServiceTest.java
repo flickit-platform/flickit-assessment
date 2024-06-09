@@ -2,9 +2,11 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Assessment;
+import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,12 +32,17 @@ class GetAssessmentServiceTest {
     @Mock
     private GetAssessmentPort getAssessmentPort;
 
+    @Mock
+    private LoadUserPort loadUserPort;
+
     @Test
     void testGetAssessment_validResult() {
         Assessment assessment = AssessmentMother.assessment();
         UUID assessmentId = assessment.getId();
+        User assessmentCreator = new User(assessment.getCreatedBy(), "Display name");
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
+        when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
 
         Result result = service.getAssessment(new Param(assessmentId));
 
@@ -43,10 +50,18 @@ class GetAssessmentServiceTest {
         verify(getAssessmentPort).getAssessmentById(assessmentIdArgument.capture());
 
         assertEquals(assessmentId, assessmentIdArgument.getValue());
-        assertEquals(assessment.getTitle(), result.assessmentTitle());
-        assertEquals(assessment.getSpaceId(), result.spaceId());
-        assertEquals(assessment.getAssessmentKit().getId(), result.kitId());
+        assertEquals(assessment.getTitle(), result.title());
+        assertEquals(assessment.getSpace().getId(), result.space().getId());
+        assertEquals(assessment.getSpace().getTitle(), result.space().getTitle());
+        assertEquals(assessment.getAssessmentKit().getId(), result.kit().getId());
+        assertEquals(assessment.getAssessmentKit().getTitle(), result.kit().getTitle());
+        assertEquals(assessment.getCreationTime(), result.creationTime());
+        assertEquals(assessment.getLastModificationTime(), result.lastModificationTime());
+        assertEquals(assessmentCreator.getId(), result.createdBy().getId());
+        assertEquals(assessmentCreator.getDisplayName(), result.createdBy().getDisplayName());
+
         verify(getAssessmentPort, times(1)).getAssessmentById(any());
+        verify(loadUserPort, times(1)).loadById(any());
     }
 
     @Test
@@ -64,5 +79,6 @@ class GetAssessmentServiceTest {
 
         assertEquals(assessmentId, assessmentIdArgument.getValue());
         verify(getAssessmentPort, times(1)).getAssessmentById(any());
+        verify(loadUserPort, never()).loadById(any());
     }
 }

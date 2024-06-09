@@ -73,6 +73,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             stats.assessmentCounts(),
             subjects.size(),
             stats.questionnairesCount(),
+            kit.getExpertGroupId(),
             subjects,
             questionnaires,
             maturityLevels,
