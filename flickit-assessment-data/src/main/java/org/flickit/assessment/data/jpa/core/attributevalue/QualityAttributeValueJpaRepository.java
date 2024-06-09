@@ -26,7 +26,7 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
         SELECT av
         FROM QualityAttributeValueJpaEntity av
         LEFT JOIN AttributeJpaEntity att ON av.attributeRefNum = att.refNum
-            and av.assessmentResult.kitVersionId = att.kitVersionId
+            and av.assessmentResult.kitVersionId = att.subject.kitVersionId
             and av.assessmentResult.id = :assessmentResultId
         WHERE att.subject.id = :subjectId
         """)
@@ -39,7 +39,7 @@ public interface QualityAttributeValueJpaRepository extends JpaRepository<Qualit
                 att as attribute
             FROM QualityAttributeValueJpaEntity av
             LEFT JOIN AttributeJpaEntity att ON av.attributeRefNum = att.refNum
-                and av.assessmentResult.kitVersionId = att.kitVersionId
+                and av.assessmentResult.kitVersionId = att.subject.kitVersionId
                 and av.assessmentResult.id = :assessmentResultId
             WHERE att.subject.refNum IN :subjectRefNums
         """)

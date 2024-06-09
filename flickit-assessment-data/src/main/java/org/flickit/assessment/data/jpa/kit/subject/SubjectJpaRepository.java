@@ -43,11 +43,6 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
         """)
     List<SubjectJpaEntity> loadByKitVersionIdWithAttributes(@Param(value = "kitVersionId") Long kitVersionId);
 
-    @Query("""
-            SELECT s as subject
-            FROM SubjectJpaEntity s
-            WHERE s.id = :id AND s.kitVersionId = :kitVersionId
-        """)
     Optional<SubjectJpaEntity> findByIdAndKitVersionId(@Param(value = "id") long id, @Param(value = "kitVersionId") long kitVersionId);
 
     @Query("""
