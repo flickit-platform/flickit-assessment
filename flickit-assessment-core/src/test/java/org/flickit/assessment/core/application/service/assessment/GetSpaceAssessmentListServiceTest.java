@@ -112,6 +112,7 @@ class GetSpaceAssessmentListServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
 
         var param = new GetSpaceAssessmentListUseCase.Param(spaceId, currentUserId, 10, 0);
+
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }

@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.in.rest.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.adapter.in.rest.assessment.GetAssessmentResponseDto.UserResponseDto;
+import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result;
@@ -18,10 +19,12 @@ import java.util.UUID;
 public class GetAssessmentRestController {
 
     private final GetAssessmentUseCase useCase;
+    private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}")
     public ResponseEntity<GetAssessmentResponseDto> getAssessment(@PathVariable("assessmentId") UUID assessmentId) {
-        var response = toResponse(useCase.getAssessment(new Param(assessmentId)));
+        UUID currentUserId = userContext.getUser().id();
+        var response = toResponse(useCase.getAssessment(new Param(assessmentId, currentUserId)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

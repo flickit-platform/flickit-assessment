@@ -96,12 +96,10 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     @Query("""
             SELECT a.id
             FROM AssessmentJpaEntity a
-            WHERE
-              a.id = :assessmentId AND
+            WHERE a.id = :assessmentId AND
             EXISTS (
               SELECT 1 FROM SpaceUserAccessJpaEntity su
-              WHERE a.spaceId = su.spaceId AND su.userId = :userId
-            )
+              WHERE a.spaceId = su.spaceId AND su.userId = :userId)
         """)
     Optional<UUID> checkUserAccess(@Param(value = "assessmentId") UUID assessmentId,
                                    @Param(value = "userId") UUID userId);
