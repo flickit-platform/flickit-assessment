@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
-@Component
+@Component("userAssessmentUserRolePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class AssessmentUserRolePersistenceJpaAdapter implements DeleteSpaceAssessmentUserRolesPort {
 
