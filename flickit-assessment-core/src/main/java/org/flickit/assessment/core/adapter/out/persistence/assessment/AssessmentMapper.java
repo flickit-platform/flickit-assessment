@@ -5,11 +5,9 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.Space;
-import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentKitSpaceJoinView;
-import org.flickit.assessment.data.jpa.core.assessment.AssessmentListItemView;
 
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

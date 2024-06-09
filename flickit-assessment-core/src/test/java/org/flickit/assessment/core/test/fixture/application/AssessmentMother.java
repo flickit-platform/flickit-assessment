@@ -4,7 +4,6 @@ import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.domain.Space;
-import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
