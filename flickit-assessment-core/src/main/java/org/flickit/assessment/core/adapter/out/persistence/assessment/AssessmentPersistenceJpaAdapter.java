@@ -11,6 +11,7 @@ import org.flickit.assessment.core.application.port.out.assessment.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
+import org.flickit.assessment.data.jpa.core.assessment.AssessmentKitSpaceJoinView;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
@@ -204,7 +205,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public Optional<Assessment> getAssessmentById(UUID assessmentId) {
-        Optional<AssessmentJpaEntity> entity = repository.findByIdAndDeletedFalse(assessmentId);
+        Optional<AssessmentKitSpaceJoinView> entity = repository.findByIdAndDeletedFalse(assessmentId);
         return entity.map(AssessmentMapper::mapToDomainModel);
     }
 
