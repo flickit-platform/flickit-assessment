@@ -3,7 +3,6 @@ package org.flickit.assessment.core.adapter.out.persistence.assessment;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.Assessment;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
@@ -54,20 +53,4 @@ public class AssessmentMapper {
             assessment.getCreatedBy()
         );
     }
-
-    public static AssessmentListItem mapToAssessmentListItem(AssessmentListItemView itemView) {
-        AssessmentJpaEntity assessmentEntity = itemView.getAssessment();
-        return new AssessmentListItem(
-            assessmentEntity.getId(),
-            assessmentEntity.getTitle(),
-            assessmentEntity.getAssessmentKitId(),
-            assessmentEntity.getSpaceId(),
-            AssessmentColor.valueOfById(assessmentEntity.getColorId()),
-            assessmentEntity.getLastModificationTime(),
-            itemView.getMaturityLevelId(),
-            itemView.getIsCalculateValid(),
-            itemView.getIsConfidenceValid()
-        );
-    }
-
 }
