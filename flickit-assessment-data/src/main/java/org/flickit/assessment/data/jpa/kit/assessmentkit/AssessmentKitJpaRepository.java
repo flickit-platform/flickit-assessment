@@ -134,10 +134,9 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
     @Query("""
             SELECT k
             FROM AssessmentKitJpaEntity k
-            LEFT JOIN KitUserAccessJpaEntity ku ON k.id = ku.kitId
-            WHERE k.title LIKE %:queryTerm% AND k.published = TRUE
-                AND ((k.isPrivate = FALSE AND (ku.userId IS NULL OR ku.userId = :userId))
-                OR (k.isPrivate = TRUE AND (ku.userId = :userId  OR (k.createdBy = :userId AND ku.userId IS NULL))))
+            WHERE LOWER(k.title) LIKE LOWER(CONCAT('%', :queryTerm, '%')) AND k.published = TRUE
+                AND (k.isPrivate = FALSE OR (k.isPrivate
+                    AND k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId = :userId)))
         """)
     Page<AssessmentKitJpaEntity> findAllByTitleAndUserId(@Param("queryTerm") String query,
                                                          @Param("userId") UUID userId,
