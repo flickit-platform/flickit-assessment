@@ -33,7 +33,6 @@ public interface SearchKitOptionsUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-
         public Param(String query, int page, int size, UUID currentUserId) {
             this.query = query;
             this.page = page;
