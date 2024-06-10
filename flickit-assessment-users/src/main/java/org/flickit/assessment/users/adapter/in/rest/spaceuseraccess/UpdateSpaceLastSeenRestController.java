@@ -2,7 +2,6 @@ package org.flickit.assessment.users.adapter.in.rest.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.users.adapter.in.rest.space.CreateSpaceResponseDto;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.UpdateSpaceLastSeenUseCase;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.UpdateSpaceLastSeenUseCase.Param;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,7 @@ public class UpdateSpaceLastSeenRestController {
     private final UserContext userContext;
 
     @PutMapping("/spaces/{id}/seen")
-    public ResponseEntity<CreateSpaceResponseDto> updateSpaceLastSeen(@PathVariable("id") Long spaceId) {
+    public ResponseEntity<Void> updateSpaceLastSeen(@PathVariable("id") Long spaceId) {
         UUID currentUserId = userContext.getUser().id();
         useCase.updateLastSeen(toParam(spaceId, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);

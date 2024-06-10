@@ -1,16 +1,15 @@
-package org.flickit.assessment.advice.adapter.out.persistence.space;
+package org.flickit.assessment.core.adapter.out.persistence.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Component("adviceSpacePersistenceJpaAdapter")
+@Component("coreSpaceUserAccessPersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class SpaceUserAccessPersistenceJpaAdapter implements
-        CheckSpaceAccessPort {
+public class SpaceUserAccessPersistenceJpaAdapter implements CheckSpaceAccessPort {
 
     private final SpaceUserAccessJpaRepository repository;
 

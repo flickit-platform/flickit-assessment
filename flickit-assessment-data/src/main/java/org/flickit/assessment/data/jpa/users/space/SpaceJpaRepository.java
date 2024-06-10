@@ -47,7 +47,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             SELECT
                 s as space,
                 COUNT(DISTINCT sua.userId) as membersCount,
-                COUNT(DISTINCT fa.id) as assessmentsCount,
+                COUNT(DISTINCT CASE WHEN fa.deleted = FALSE THEN fa.id ELSE NULL END) as assessmentsCount,
                 MAX(sua.lastSeen) as lastSeen
             FROM SpaceJpaEntity s
             LEFT JOIN AssessmentJpaEntity fa on s.id = fa.spaceId

@@ -7,7 +7,6 @@ import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.Mat
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMother;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
 import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
@@ -22,6 +21,7 @@ import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepo
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
@@ -239,7 +239,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId) {
         Long kitId = assessmentEntity.getAssessmentKitId();
         List<MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(kitVersionId);
-        AssessmentKit kit = new AssessmentKit(kitId, kitVersionId, maturityLevels);
-        return mapToDomainModel(assessmentEntity, kit);
+        AssessmentKit kit = new AssessmentKit(kitId, null, kitVersionId, maturityLevels);
+        return mapToDomainModel(assessmentEntity, kit, null);
     }
 }
