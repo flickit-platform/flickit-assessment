@@ -124,10 +124,10 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<AssessmentListItem> loadSpaceAssessments(Long spaceId,
-                                                                      UUID currentUserId,
+                                                                      UUID userId,
                                                                       int page,
                                                                       int size) {
-        var pageResult = repository.findBySpaceId(spaceId, MANAGER.getId(), currentUserId,
+        var pageResult = repository.findBySpaceId(spaceId, MANAGER.getId(), userId,
             PageRequest.of(page, size, Sort.Direction.DESC, AssessmentResultJpaEntity.Fields.LAST_MODIFICATION_TIME));
 
         List<Long> kitVersionIds = pageResult.getContent().stream()
