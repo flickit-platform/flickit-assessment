@@ -33,24 +33,4 @@
                                  deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>
-
-    <changeSet id="0.20-04" author="Ali Sedaghat">
-        <renameTable oldTableName="fac_quality_attribute_value" newTableName="fac_attribute_value"/>
-    </changeSet>
-
-    <changeSet id="0.20-05" author="Ali Sedaghat">
-        <sql>alter table fac_attribute_value rename constraint pk_fac_quality_attribute_value to pk_fac_attribute_value;</sql>
-    </changeSet>
-
-    <changeSet id="0.20-06" author="Ali Sedaghat">
-        <dropForeignKeyConstraint baseTableName="fac_attribute_value" constraintName="fk_fac_qualityattributevalue_assessmentresult"/>
-    </changeSet>
-
-    <changeSet id="0.20-07" author="Ali Sedaghat">
-        <addForeignKeyConstraint baseTableName="fac_attribute_value" baseColumnNames="assessment_result_id"
-                                 constraintName="fk_fac_attributevalue_assessmentresult"
-                                 referencedTableName="fac_assessment_result"
-                                 referencedColumnNames="id"/>
-    </changeSet>
-
 </databaseChangeLog>
