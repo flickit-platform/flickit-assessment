@@ -1,8 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
@@ -16,7 +14,6 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +25,6 @@ public class MaturityLevelPersistenceJpaAdapter implements
     LoadAttributeMaturityLevelsPort {
 
     private final MaturityLevelJpaRepository repository;
-    private final AssessmentKitJpaRepository assessmentKitRepository;
 
     @Override
     public Long persist(MaturityLevel level, Long kitVersionId, UUID createdBy) {
@@ -57,11 +53,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<MaturityLevel> loadByKitId(Long kitId) {
-        var kitVersionId = assessmentKitRepository.findById(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
-            .getKitVersionId();
-
+    public List<MaturityLevel> loadByKitVersionId(Long kitVersionId) {
         return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
