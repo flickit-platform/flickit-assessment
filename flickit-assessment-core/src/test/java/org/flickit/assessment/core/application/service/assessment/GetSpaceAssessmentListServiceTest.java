@@ -52,7 +52,7 @@ class GetSpaceAssessmentListServiceTest {
 
         UUID currentUserId = UUID.randomUUID();
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadAssessmentPort.loadSpaceAssessments(spaceId, 0, 10)).thenReturn(paginatedResponse);
+        when(loadAssessmentPort.loadSpaceAssessments(spaceId, currentUserId, 0, 10)).thenReturn(paginatedResponse);
 
         var param = new GetSpaceAssessmentListUseCase.Param(spaceId, currentUserId, 10, 0);
         PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(param);
@@ -77,7 +77,7 @@ class GetSpaceAssessmentListServiceTest {
         UUID currentUserId = UUID.randomUUID();
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadAssessmentPort.loadSpaceAssessments(spaceId, 0, 20))
+        when(loadAssessmentPort.loadSpaceAssessments(spaceId, currentUserId, 0, 20))
             .thenReturn(paginatedRes);
 
         var param = new GetSpaceAssessmentListUseCase.Param(spaceId, currentUserId, 20, 0);
@@ -85,13 +85,16 @@ class GetSpaceAssessmentListServiceTest {
 
         ArgumentCaptor<Long> spaceIdArgument = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<Integer> sizeArgument = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<UUID> currentUserIdArgument = ArgumentCaptor.forClass(UUID.class);
         ArgumentCaptor<Integer> pageArgument = ArgumentCaptor.forClass(Integer.class);
         verify(loadAssessmentPort).loadSpaceAssessments(
             spaceIdArgument.capture(),
+            currentUserIdArgument.capture(),
             pageArgument.capture(),
             sizeArgument.capture());
 
         assertEquals(spaceId, spaceIdArgument.getValue());
+        assertEquals(currentUserId, currentUserIdArgument.getValue());
         assertEquals(20, sizeArgument.getValue());
         assertEquals(0, pageArgument.getValue());
 
@@ -102,7 +105,7 @@ class GetSpaceAssessmentListServiceTest {
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
         assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
 
-        verify(loadAssessmentPort, times(1)).loadSpaceAssessments(any(), anyInt(), anyInt());
+        verify(loadAssessmentPort, times(1)).loadSpaceAssessments(any(), any(), anyInt(), anyInt());
     }
 
     @Test

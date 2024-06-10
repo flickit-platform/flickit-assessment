@@ -39,15 +39,24 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     @Query("""
             SELECT
                 a as assessment,
-                r as assessmentResult
+                r as assessmentResult,
+                CASE
+                    WHEN ur.roleId = :managerRoleId OR space.ownerId = :currentUserId THEN TRUE ELSE FALSE
+                END as manageable
             FROM AssessmentJpaEntity a
             LEFT JOIN AssessmentResultJpaEntity r ON a.id = r.assessment.id
+            LEFT JOIN AssessmentUserRoleJpaEntity ur ON a.id = ur.assessmentId AND ur.userId = :currentUserId
+            LEFT JOIN SpaceJpaEntity space ON a.spaceId = space.id
             WHERE a.spaceId = :spaceId
                 AND a.deleted=false
                 AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)
+                AND (space.ownerId = : currentUserId OR ur.roleId is not null)
             ORDER BY a.lastModificationTime DESC
         """)
-    Page<AssessmentJoinResultView> findBySpaceId(@Param("spaceId") Long spaceId, Pageable pageable);
+    Page<AssessmentJoinResultView> findBySpaceId(@Param("spaceId") Long spaceId,
+                                                 @Param("managerRoleId") Integer managerRoleId,
+                                                 @Param("currentUserId") UUID currentUserId,
+                                                 Pageable pageable);
 
     @Modifying
     @Query("""

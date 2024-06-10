@@ -9,5 +9,5 @@ public interface LoadAssessmentListPort {
 
     PaginatedResponse<AssessmentListItem> loadUserAssessments(Long kitId, UUID userId, int page, int size);
 
-    PaginatedResponse<AssessmentListItem> loadSpaceAssessments(Long spaceId, int page, int size);
+    PaginatedResponse<AssessmentListItem> loadSpaceAssessments(Long spaceId, UUID currentUserId, int page, int size);
 }

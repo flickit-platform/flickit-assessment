@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity.Fields.ASSESSMENT_KIT_ID;
 import static org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity.Fields.SPACE_ID;
@@ -107,7 +108,8 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessment().getLastModificationTime(),
                     maturityLevel,
                     e.getAssessmentResult().getIsCalculateValid(),
-                    e.getAssessmentResult().getIsConfidenceValid());
+                    e.getAssessmentResult().getIsConfidenceValid(),
+                    false); //TODO load it from database
             }).toList();
 
         return new PaginatedResponse<>(
@@ -121,9 +123,12 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentListItem> loadSpaceAssessments(Long spaceId, int page, int size) {
-        var pageResult = repository.findBySpaceId(spaceId, PageRequest.of(page, size,
-            Sort.Direction.DESC, AssessmentResultJpaEntity.Fields.LAST_MODIFICATION_TIME));
+    public PaginatedResponse<AssessmentListItem> loadSpaceAssessments(Long spaceId,
+                                                                      UUID currentUserId,
+                                                                      int page,
+                                                                      int size) {
+        var pageResult = repository.findBySpaceId(spaceId, MANAGER.getId(), currentUserId,
+            PageRequest.of(page, size, Sort.Direction.DESC, AssessmentResultJpaEntity.Fields.LAST_MODIFICATION_TIME));
 
         List<Long> kitVersionIds = pageResult.getContent().stream()
             .map(e -> e.getAssessmentResult().getKitVersionId())
@@ -164,7 +169,8 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessment().getLastModificationTime(),
                     maturityLevel,
                     e.getAssessmentResult().getIsCalculateValid(),
-                    e.getAssessmentResult().getIsConfidenceValid());
+                    e.getAssessmentResult().getIsConfidenceValid(),
+                    e.getManageable());
             }).toList();
 
 
