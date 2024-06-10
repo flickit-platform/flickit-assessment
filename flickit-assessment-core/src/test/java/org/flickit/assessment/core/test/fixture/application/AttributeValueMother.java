@@ -9,8 +9,8 @@ import static org.flickit.assessment.core.test.fixture.application.MaturityScore
 
 public class AttributeValueMother {
 
-    public static AttributeValue toBeCalcWithQAAndAnswers(QualityAttribute qualityAttribute, List<Answer> answers) {
-        return new AttributeValue(UUID.randomUUID(), qualityAttribute, answers);
+    public static AttributeValue toBeCalcWithQAAndAnswers(Attribute attribute, List<Answer> answers) {
+        return new AttributeValue(UUID.randomUUID(), attribute, answers);
     }
 
     public static AttributeValue toBeCalcAsLevelThreeWithWeight(int weight) {
@@ -31,7 +31,7 @@ public class AttributeValueMother {
             AnswerMother.noScoreOnLevel4());
 
         return new AttributeValue(UUID.randomUUID(),
-            QualityAttributeMother.withQuestionsAndWeight(questions, weight),
+            AttributeMother.withQuestionsAndWeight(questions, weight),
             answers);
     }
 
@@ -54,11 +54,11 @@ public class AttributeValueMother {
 
 
         return new AttributeValue(UUID.randomUUID(),
-            QualityAttributeMother.withQuestionsAndWeight(questions, weight),
+            AttributeMother.withQuestionsAndWeight(questions, weight),
             answers);
     }
 
-    public static AttributeValue withAttributeAndMaturityLevel(QualityAttribute attribute, MaturityLevel maturityLevel) {
+    public static AttributeValue withAttributeAndMaturityLevel(Attribute attribute, MaturityLevel maturityLevel) {
         return new AttributeValue(
             UUID.randomUUID(),
             attribute,
@@ -85,7 +85,7 @@ public class AttributeValueMother {
             AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q5.getId()));
 
         return new AttributeValue(UUID.randomUUID(),
-            QualityAttributeMother.withQuestionsAndWeight(questions, weight),
+            AttributeMother.withQuestionsAndWeight(questions, weight),
             answers);
     }
 

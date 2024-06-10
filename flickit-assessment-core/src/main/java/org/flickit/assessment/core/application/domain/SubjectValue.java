@@ -47,7 +47,7 @@ public class SubjectValue {
         int sum = 0;
         for (AttributeValue qav : attributeValues) {
             weightedSum += qav.getWeightedLevel();
-            sum += qav.getQualityAttribute().getWeight();
+            sum += qav.getAttribute().getWeight();
         }
         return sum != 0 ? (int) Math.round((double) weightedSum / sum) : 0;
     }
@@ -63,7 +63,7 @@ public class SubjectValue {
         for (AttributeValue qav : attributeValues) {
             if (qav.getConfidenceValue() != null) {
                 weightedSum.add(qav.getWeightedConfidenceValue());
-                sum.add(qav.getQualityAttribute().getWeight());
+                sum.add(qav.getAttribute().getWeight());
             }
         }
         return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();

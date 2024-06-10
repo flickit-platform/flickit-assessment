@@ -102,8 +102,8 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
     }
 
     private Map<UUID, List<AttributeValue>> createNewAttributeValues(List<Subject> kitSubjects, List<SubjectValue> subjectValues, UUID assessmentResultId) {
-        List<QualityAttribute> kitAttributes = kitSubjects.stream()
-            .flatMap(s -> s.getQualityAttributes().stream())
+        List<Attribute> kitAttributes = kitSubjects.stream()
+            .flatMap(s -> s.getAttributes().stream())
             .toList();
 
         List<AttributeValue> attributeValues = subjectValues.stream()
@@ -112,17 +112,17 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
             .toList();
 
         var attributesWithValue = attributeValues.stream()
-            .map(q -> q.getQualityAttribute().getId())
+            .map(q -> q.getAttribute().getId())
             .collect(Collectors.toSet());
 
         var newAttributeIds = kitAttributes.stream()
-            .map(QualityAttribute::getId)
+            .map(Attribute::getId)
             .filter(a -> !attributesWithValue.contains(a))
             .toList();
 
         Map<Long, Long> attributeIdToSubjectId = new HashMap<>();
         for (Subject subject : kitSubjects) {
-            for (QualityAttribute attribute : subject.getQualityAttributes())
+            for (Attribute attribute : subject.getAttributes())
                 attributeIdToSubjectId.put(attribute.getId(), subject.getId());
         }
 
@@ -131,7 +131,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
         Map<UUID, List<AttributeValue>> results = new HashMap<>();
         newAttributeValues.forEach(attrValue -> {
-            Long subjId = attributeIdToSubjectId.get(attrValue.getQualityAttribute().getId());
+            Long subjId = attributeIdToSubjectId.get(attrValue.getAttribute().getId());
             SubjectValue subjectValue = subjectIdToSubjectValue.get(subjId);
             results.compute(subjectValue.getId(), (subjValueId, attrValues) -> {
                 List<AttributeValue> list = attrValues != null ? attrValues : new ArrayList<>();

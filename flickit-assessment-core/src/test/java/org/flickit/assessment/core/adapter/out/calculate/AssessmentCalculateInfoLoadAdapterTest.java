@@ -57,7 +57,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private AnswerJpaRepository answerRepo;
     @Mock
-    private AttributeValueJpaRepository qualityAttrValueRepo;
+    private AttributeValueJpaRepository attrValueRepository;
     @Mock
     private SubjectValueJpaRepository subjectValueRepo;
     @Mock
@@ -125,9 +125,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
                 .findFirst()
                 .ifPresentOrElse(
                     av -> {
-                        assertNotNull(av.getQualityAttribute());
-                        assertNotNull(av.getQualityAttribute().getQuestions());
-                        assertEquals(5, av.getQualityAttribute().getQuestions().size());
+                        assertNotNull(av.getAttribute());
+                        assertNotNull(av.getAttribute().getQuestions());
+                        assertEquals(5, av.getAttribute().getQuestions().size());
                     },
                     Assertions::fail
                 )
@@ -292,7 +292,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(Optional.of(context.assessmentResultEntity()));
         when(subjectValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.subjectValues());
-        when(qualityAttrValueRepo.findByAssessmentResultId(eq(context.assessmentResultEntity().getId())))
+        when(attrValueRepository.findByAssessmentResultId(eq(context.assessmentResultEntity().getId())))
             .thenReturn(context.attributeValues());
         when(subjectRepository.loadByKitVersionIdWithAttributes(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(context.subjects);

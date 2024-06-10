@@ -42,7 +42,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final AnswerJpaRepository answerRepo;
-    private final AttributeValueJpaRepository qualityAttrValueRepo;
+    private final AttributeValueJpaRepository attrValueRepository;
     private final SubjectValueJpaRepository subjectValueRepo;
     private final SubjectJpaRepository subjectRepository;
     private final QuestionJpaRepository questionRepository;
@@ -69,7 +69,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
          that are already saved with this assessmentResult
          */
         var subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
-        var allAttributeValueEntities = qualityAttrValueRepo.findByAssessmentResultId(assessmentResultId);
+        var allAttributeValueEntities = attrValueRepository.findByAssessmentResultId(assessmentResultId);
 
         // load all subjects and their related attributes (by assessmentKit)
         Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByKitVersionIdWithAttributes(kitVersionId).stream()
@@ -147,7 +147,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             Long attributeId = attributeIdToRefNumMap.get(attributeRefNum);
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            QualityAttribute attribute = new QualityAttribute(
+            Attribute attribute = new Attribute(
                 attributeId,
                 qaIdToWeightMap.get(attributeId),
                 impactfulQuestions
@@ -205,12 +205,12 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
     /**
      * build subjectValues domain with all information needed for calculate their maturity levels
-     * @param qualityAttrIdToValue map of attributeIds to their corresponding value
+     * @param attrIdToValue map of attributeIds to their corresponding value
      * @param subjectIdToEntity map of subjectIds to it's entity
      * @param subjectValueEntities list of subjectValue entities
      * @return list of subjectValues
      */
-    private static List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> qualityAttrIdToValue,
+    private static List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> attrIdToValue,
                                                          Map<Long, SubjectJpaEntity> subjectIdToEntity,
                                                          List<SubjectValueJpaEntity> subjectValueEntities) {
         List<SubjectValue> subjectValues = new ArrayList<>();
@@ -218,10 +218,10 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .collect(toMap(SubjectValueJpaEntity::getSubjectId, sv -> sv));
 
         for (Map.Entry<Long, SubjectJpaEntity> sEntity : subjectIdToEntity.entrySet()) {
-            List<QualityAttribute> attributes = sEntity.getValue().getAttributes().stream()
+            List<Attribute> attributes = sEntity.getValue().getAttributes().stream()
                 .map(AttributeMapper::mapToDomainModel).toList();
             List<AttributeValue> qavList = attributes.stream()
-                .map(q -> qualityAttrIdToValue.get(q.getId()))
+                .map(q -> attrIdToValue.get(q.getId()))
                 .filter(Objects::nonNull)
                 .toList();
             if (qavList.isEmpty())

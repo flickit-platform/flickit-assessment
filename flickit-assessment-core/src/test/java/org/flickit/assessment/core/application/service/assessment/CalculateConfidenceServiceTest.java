@@ -103,8 +103,8 @@ class CalculateConfidenceServiceTest {
         );
 
         List<SubjectValue> subjectValues = List.of(
-            SubjectValueMother.withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getQualityAttribute).toList()),
-            SubjectValueMother.withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getQualityAttribute).toList())
+            SubjectValueMother.withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getAttribute).toList()),
+            SubjectValueMother.withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
         );
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
@@ -148,12 +148,12 @@ class CalculateConfidenceServiceTest {
         );
 
         List<SubjectValue> subjectValues = List.of(
-            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getQualityAttribute).toList()),
-            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getQualityAttribute).toList())
+            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getAttribute).toList()),
+            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
         );
 
         var newAttributeValue = toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId());
-        var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(), List.of(newAttributeValue.getQualityAttribute()));
+        var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(), List.of(newAttributeValue.getAttribute()));
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
         subjects.add(newSubjectValue.getSubject());

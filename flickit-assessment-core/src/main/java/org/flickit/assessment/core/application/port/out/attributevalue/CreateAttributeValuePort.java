@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface CreateAttributeValuePort {
 
-    List<AttributeValue> persistAll(List<Long> qualityAttributeIds, UUID resultId);
+    List<AttributeValue> persistAll(List<Long> attributeIds, UUID resultId);
 }

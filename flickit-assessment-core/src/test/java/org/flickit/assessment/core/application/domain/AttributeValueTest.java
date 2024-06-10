@@ -27,7 +27,7 @@ class AttributeValueTest {
             AnswerMother.fullScoreOnLevels45());
 
         AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculate(allLevels());
 
@@ -53,7 +53,7 @@ class AttributeValueTest {
             AnswerMother.noScoreOnLevel4());
 
         AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculate(allLevels());
 
@@ -77,7 +77,7 @@ class AttributeValueTest {
             AnswerMother.fullScoreOnLevels45());
 
         AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculate(allLevels());
 
@@ -110,7 +110,7 @@ class AttributeValueTest {
             AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5());
 
         AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculate(allLevels());
 
@@ -136,7 +136,7 @@ class AttributeValueTest {
             AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5());
 
         AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculate(allLevels());
 
@@ -160,7 +160,7 @@ class AttributeValueTest {
             AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q5.getId()));
 
         AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculateConfidenceValue();
 

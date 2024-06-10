@@ -2,7 +2,7 @@ package org.flickit.assessment.core.test.fixture.application;
 
 
 import org.flickit.assessment.core.application.domain.MaturityLevel;
-import org.flickit.assessment.core.application.domain.QualityAttribute;
+import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 
@@ -21,13 +21,13 @@ public class SubjectValueMother {
         return subjectValue;
     }
 
-    public static SubjectValue withQAValuesAndMaturityLevelAndSubjectWithQAs(List<AttributeValue> qaValues, MaturityLevel maturityLevel, List<QualityAttribute> qas) {
+    public static SubjectValue withQAValuesAndMaturityLevelAndSubjectWithQAs(List<AttributeValue> qaValues, MaturityLevel maturityLevel, List<Attribute> qas) {
         SubjectValue subjectValue = new SubjectValue(UUID.randomUUID(), SubjectMother.withAttributes(qas), qaValues);
         subjectValue.setMaturityLevel(maturityLevel);
         return subjectValue;
     }
 
-    public static SubjectValue withQAValuesAndSubjectWithQAs(List<AttributeValue> qaValues, List<QualityAttribute> qas) {
+    public static SubjectValue withQAValuesAndSubjectWithQAs(List<AttributeValue> qaValues, List<Attribute> qas) {
         return new SubjectValue(UUID.randomUUID(), SubjectMother.withAttributes(qas), qaValues);
     }
 }

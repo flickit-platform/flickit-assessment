@@ -133,7 +133,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             long attributeId = attributeIdToRefNumMap.get(qavEntity.getAttributeRefNum());
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            QualityAttribute attribute = new QualityAttribute(
+            Attribute attribute = new Attribute(
                 attributeId,
                 qaIdToWeightMap.get(attributeId),
                 impactfulQuestions
@@ -194,22 +194,22 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
     /**
      * build subjectValues domain with all information needed for calculate their maturity levels
      *
-     * @param qualityAttrIdToValue map of attributeIds to their corresponding value
+     * @param attrIdToValue map of attributeIds to their corresponding value
      * @param subjectIdToEntity    map of subjectIds to it's entity
      * @param subjectValueEntities list of subjectValue entities
      * @return list of subjectValues
      */
-    private static List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> qualityAttrIdToValue, Map<Long, SubjectJpaEntity> subjectIdToEntity,
+    private static List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> attrIdToValue, Map<Long, SubjectJpaEntity> subjectIdToEntity,
                                                          List<SubjectValueJpaEntity> subjectValueEntities) {
         List<SubjectValue> subjectValues = new ArrayList<>();
         Map<Long, SubjectValueJpaEntity> subjectIdToValue = subjectValueEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectId, sv -> sv));
 
         for (Map.Entry<Long, SubjectJpaEntity> sEntity : subjectIdToEntity.entrySet()) {
-            List<QualityAttribute> attributes = sEntity.getValue().getAttributes().stream()
+            List<Attribute> attributes = sEntity.getValue().getAttributes().stream()
                 .map(AttributeMapper::mapToDomainModel).toList();
             List<AttributeValue> qavList = attributes.stream()
-                .map(q -> qualityAttrIdToValue.get(q.getId()))
+                .map(q -> attrIdToValue.get(q.getId()))
                 .filter(Objects::nonNull)
                 .toList();
             if (qavList.isEmpty())

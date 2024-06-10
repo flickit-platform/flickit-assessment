@@ -121,13 +121,13 @@ class CalculateAssessmentServiceTest {
         );
 
         List<SubjectValue> subjectValues = List.of(
-            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getQualityAttribute).toList()),
-            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getQualityAttribute).toList())
+            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getAttribute).toList()),
+            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
         );
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
         var newAttributeValue = toBeCalcAsLevelFourWithWeight(4);
-        var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(newAttributeValue), List.of(newAttributeValue.getQualityAttribute()));
+        var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(newAttributeValue), List.of(newAttributeValue.getAttribute()));
         subjects.add(newSubjectValue.getSubject());
 
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);

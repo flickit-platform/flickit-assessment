@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.service.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.QualityAttribute;
+import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
@@ -84,7 +84,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         List<Subject> subjects = loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId);
         List<Long> subjectIds = subjects.stream().map(Subject::getId).toList();
         List<Long> attributeIds = subjects.stream()
-            .map(x -> x.getQualityAttributes().stream().map(QualityAttribute::getId).toList())
+            .map(x -> x.getAttributes().stream().map(Attribute::getId).toList())
             .flatMap(List::stream).toList();
         createSubjectValuePort.persistAll(subjectIds, assessmentResultId);
         createAttributeValuePort.persistAll(attributeIds, assessmentResultId);

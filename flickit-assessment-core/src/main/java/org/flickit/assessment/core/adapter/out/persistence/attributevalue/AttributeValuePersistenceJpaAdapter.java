@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.attributematurityscore.AttributeMaturityScoreMapper;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.MaturityScore;
-import org.flickit.assessment.core.application.domain.QualityAttribute;
+import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValueListPort;
@@ -42,12 +42,12 @@ public class AttributeValuePersistenceJpaAdapter implements
     private final AttributeJpaRepository attributeRepository;
 
     @Override
-    public List<AttributeValue> persistAll(List<Long> qualityAttributeIds, UUID assessmentResultId) {
+    public List<AttributeValue> persistAll(List<Long> attributeIds, UUID assessmentResultId) {
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
-        List<AttributeValueJpaEntity> entities = qualityAttributeIds.stream().map(qualityAttributeId -> {
-            UUID attributeRefNum = attributeRepository.findRefNumById(qualityAttributeId);
+        List<AttributeValueJpaEntity> entities = attributeIds.stream().map(attributeId -> {
+            UUID attributeRefNum = attributeRepository.findRefNumById(attributeId);
             AttributeValueJpaEntity attributeValue = AttributeValueMapper.mapToJpaEntity(attributeRefNum);
             attributeValue.setAssessmentResult(assessmentResult);
             return attributeValue;
@@ -87,7 +87,7 @@ public class AttributeValuePersistenceJpaAdapter implements
         return entities.stream()
             .map(x -> new AttributeValue(
                 x.getId(),
-                new QualityAttribute(attributeIdsToRefNumMap.get(x.getAttributeRefNum()), 1, null),
+                new Attribute(attributeIdsToRefNumMap.get(x.getAttributeRefNum()), 1, null),
                 null,
                 toMaturityScore(attributeIdToScores, x),
                 maturityLevels.get(x.getMaturityLevelId()),
