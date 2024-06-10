@@ -199,10 +199,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
             .map(entity -> {
                 AnswerOptionJpaEntity option = idToAnswerOptionEntity.get(entity.getAnswerOptionId());
-                AnswerOption answerOption;
-                if (option == null)
-                    answerOption = null;
-                else {
+                AnswerOption answerOption = null;
+                if (option != null) {
                     var impactsEntities = context.optionIdToAnswerOptionImpactsMap.get(option.getId());
                     answerOption = AnswerOptionMapper.mapToDomainModel(option, impactsEntities);
                 }
