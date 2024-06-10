@@ -301,10 +301,10 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(Optional.of(context.assessmentResultEntity()));
         when(subjectValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.subjectValues());
-        when(attrValueRepository.findByAssessmentResultId(eq(context.assessmentResultEntity().getId())))
+        when(attrValueRepository.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.attributeValues());
-        when(qualityAttrValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
-            .thenReturn(context.qualityAttributeValues());
+        when(attrValueRepository.findByAssessmentResultId(context.assessmentResultEntity().getId()))
+            .thenReturn(context.attributeValues());
         when(subjectRepository.loadByKitVersionIdWithAttributes(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(context.subjects);
         when(questionRepository.loadByKitVersionId(context.assessmentResultEntity().getKitVersionId()))

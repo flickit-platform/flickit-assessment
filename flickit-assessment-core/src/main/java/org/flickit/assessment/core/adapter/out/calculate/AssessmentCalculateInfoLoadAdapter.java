@@ -8,8 +8,6 @@ import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.Mat
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
-import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
-import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;

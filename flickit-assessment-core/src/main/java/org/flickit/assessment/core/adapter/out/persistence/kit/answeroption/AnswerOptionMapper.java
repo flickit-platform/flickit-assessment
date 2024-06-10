@@ -16,6 +16,11 @@ public class AnswerOptionMapper {
         var impacts = answerOptionImpacts.stream()
             .map(AnswerOptionImpactMapper::mapToDomainModel)
             .toList();
-        return new AnswerOption(answerOption.getId(), answerOption.getQuestionId(), impacts);
+        return new AnswerOption(
+            answerOption.getId(),
+            answerOption.getIndex(),
+            answerOption.getTitle(),
+            answerOption.getQuestionId(),
+            impacts);
     }
 }
