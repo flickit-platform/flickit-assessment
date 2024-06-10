@@ -14,10 +14,10 @@ import static java.util.stream.Collectors.*;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class QualityAttributeValue {
+public class AttributeValue {
 
     private final UUID id;
-    private final QualityAttribute qualityAttribute;
+    private final Attribute attribute;
     private final List<Answer> answers;
     private Set<MaturityScore> maturityScores = new HashSet<>();
     private MaturityLevel maturityLevel;
@@ -36,11 +36,11 @@ public class QualityAttributeValue {
     }
 
     private Map<Long, Double> calcTotalScore(List<MaturityLevel> maturityLevels) {
-        if (qualityAttribute.getQuestions() == null)
+        if (attribute.getQuestions() == null)
             return new HashMap<>();
         return maturityLevels.stream()
             .flatMap(ml ->
-                qualityAttribute.getQuestions().stream()
+                attribute.getQuestions().stream()
                     .filter(question -> !isMarkedAsNotApplicable(question.getId()))
                     .map(question -> question.findImpactByMaturityLevel(ml))
                     .filter(Objects::nonNull)
@@ -102,7 +102,7 @@ public class QualityAttributeValue {
 
     public int getWeightedLevel() {
         Assert.notNull(maturityLevel, () -> "maturityLevel should not be null");
-        return maturityLevel.getValue() * qualityAttribute.getWeight();
+        return maturityLevel.getValue() * attribute.getWeight();
     }
 
     public void calculateConfidenceValue() {
@@ -117,15 +117,15 @@ public class QualityAttributeValue {
     }
 
     private Map<Long, Double> findAnsweredQuestions() {
-        if (answers == null || qualityAttribute.getQuestions() == null) {
+        if (answers == null || attribute.getQuestions() == null) {
             return Collections.emptyMap();
         }
         List<Answer> validAnswers = answers.stream()
             .filter(x -> (Boolean.TRUE.equals(x.getIsNotApplicable()) || x.getSelectedOption() != null))
             .toList();
-        return qualityAttribute.getQuestions().stream()
+        return attribute.getQuestions().stream()
             .filter(q -> validAnswers.stream().anyMatch(a -> a.getQuestionId().equals(q.getId())))
-            .collect(Collectors.toMap(Question::getId, QualityAttributeValue::calculateQuestionWeight));
+            .collect(Collectors.toMap(Question::getId, AttributeValue::calculateQuestionWeight));
     }
 
     private static double calculateQuestionWeight(Question question) {
@@ -154,6 +154,6 @@ public class QualityAttributeValue {
     }
 
     public Double getWeightedConfidenceValue() {
-        return confidenceValue * qualityAttribute.getWeight();
+        return confidenceValue * attribute.getWeight();
     }
 }

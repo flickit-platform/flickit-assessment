@@ -8,7 +8,7 @@ import java.util.List;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class QualityAttributeValueTest {
+class AttributeValueTest {
 
     @Test
     void testCalculate_fullScoreOnAllLevels() {
@@ -26,8 +26,8 @@ class QualityAttributeValueTest {
             AnswerMother.fullScoreOnLevels45(),
             AnswerMother.fullScoreOnLevels45());
 
-        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculate(allLevels());
 
@@ -52,8 +52,8 @@ class QualityAttributeValueTest {
             AnswerMother.fullScoreOnLevels23(),
             AnswerMother.noScoreOnLevel4());
 
-        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculate(allLevels());
 
@@ -76,8 +76,8 @@ class QualityAttributeValueTest {
             AnswerMother.fullScoreOnLevels45(),
             AnswerMother.fullScoreOnLevels45());
 
-        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculate(allLevels());
 
@@ -109,8 +109,8 @@ class QualityAttributeValueTest {
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5());
 
-        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculate(allLevels());
 
@@ -135,8 +135,8 @@ class QualityAttributeValueTest {
             AnswerMother.fullScoreOnLevels24(),
             AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5());
 
-        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculate(allLevels());
 
@@ -159,8 +159,8 @@ class QualityAttributeValueTest {
             AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q4.getId()),
             AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q5.getId()));
 
-        QualityAttributeValue qav = QualityAttributeValueMother.toBeCalcWithQAAndAnswers(
-            QualityAttributeMother.withQuestions(questions), answers);
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withQuestions(questions), answers);
 
         qav.calculateConfidenceValue();
 

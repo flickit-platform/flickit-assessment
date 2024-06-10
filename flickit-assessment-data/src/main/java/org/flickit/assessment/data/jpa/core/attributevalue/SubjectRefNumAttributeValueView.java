@@ -8,7 +8,7 @@ public interface SubjectRefNumAttributeValueView {
 
     UUID getSubjectRefNum();
 
-    QualityAttributeValueJpaEntity getAttributeValue();
+    AttributeValueJpaEntity getAttributeValue();
 
     AttributeJpaEntity getAttribute();
 }

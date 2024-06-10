@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.QualityAttributeValue;
+import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateAssessmentUseCase;
@@ -11,7 +11,7 @@ import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessm
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
-import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.junit.jupiter.api.Test;
@@ -28,8 +28,8 @@ import java.util.UUID;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
-import static org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother.toBeCalcAsLevelFourWithWeight;
-import static org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight;
+import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcAsLevelFourWithWeight;
+import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcAsLevelThreeWithWeight;
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValues;
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndSubjectWithQAs;
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,7 +61,7 @@ class CalculateAssessmentServiceTest {
     private CreateSubjectValuePort createSubjectValuePort;
 
     @Mock
-    private CreateQualityAttributeValuePort createAttributeValuePort;
+    private CreateAttributeValuePort createAttributeValuePort;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
@@ -70,14 +70,14 @@ class CalculateAssessmentServiceTest {
     void testCalculateMaturityLevel_ValidInput_ValidResults() {
         LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
 
-        List<QualityAttributeValue> s1AttributeValues = List.of(
+        List<AttributeValue> s1AttributeValues = List.of(
             toBeCalcAsLevelFourWithWeight(2),
             toBeCalcAsLevelFourWithWeight(2),
             toBeCalcAsLevelThreeWithWeight(3),
             toBeCalcAsLevelThreeWithWeight(3)
         );
 
-        List<QualityAttributeValue> s2AttributeValues = List.of(
+        List<AttributeValue> s2AttributeValues = List.of(
             toBeCalcAsLevelFourWithWeight(4),
             toBeCalcAsLevelThreeWithWeight(1)
         );
@@ -108,26 +108,26 @@ class CalculateAssessmentServiceTest {
 
     @Test
     void testCalculateMaturityLevel_KitChanged_CreatesNewAttributeAnSubjectValuesAndCalculates() {
-        List<QualityAttributeValue> s1AttributeValues = List.of(
+        List<AttributeValue> s1AttributeValues = List.of(
             toBeCalcAsLevelFourWithWeight(2),
             toBeCalcAsLevelFourWithWeight(2),
             toBeCalcAsLevelThreeWithWeight(3),
             toBeCalcAsLevelThreeWithWeight(3)
         );
 
-        List<QualityAttributeValue> s2AttributeValues = List.of(
+        List<AttributeValue> s2AttributeValues = List.of(
             toBeCalcAsLevelFourWithWeight(4),
             toBeCalcAsLevelThreeWithWeight(1)
         );
 
         List<SubjectValue> subjectValues = List.of(
-            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(QualityAttributeValue::getQualityAttribute).toList()),
-            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(QualityAttributeValue::getQualityAttribute).toList())
+            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getAttribute).toList()),
+            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
         );
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
         var newAttributeValue = toBeCalcAsLevelFourWithWeight(4);
-        var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(newAttributeValue), List.of(newAttributeValue.getQualityAttribute()));
+        var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(newAttributeValue), List.of(newAttributeValue.getAttribute()));
         subjects.add(newSubjectValue.getSubject());
 
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);

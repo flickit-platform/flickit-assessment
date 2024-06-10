@@ -13,7 +13,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.SubjectRefNumAttributeValueView;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
@@ -54,7 +54,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final ExpertGroupJpaRepository expertGroupJpaRepository;
     private final MaturityLevelJpaRepository maturityLevelJpaRepository;
     private final SubjectJpaRepository subjectJpaRepository;
-    private final QualityAttributeValueJpaRepository qualityAttributeValueJpaRepository;
+    private final AttributeValueJpaRepository attributeValueJpaRepository;
     private final MinioAdapter minioAdapter;
 
     @Override
@@ -121,8 +121,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var subjectRefNumToSubjectValue = subjectValueEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectRefNum, Function.identity()));
 
-        var subjectRefNumToAttributeValueMap = qualityAttributeValueJpaRepository.findByAssessmentResultIdAndSubjectRefNumIn(
-                assessmentResultId, refNums)
+        var subjectRefNumToAttributeValueMap = attributeValueJpaRepository.findByAssessmentResultIdAndSubjectRefNumIn(
+            assessmentResultId, refNums)
             .stream()
             .collect(groupingBy(SubjectRefNumAttributeValueView::getSubjectRefNum));
 

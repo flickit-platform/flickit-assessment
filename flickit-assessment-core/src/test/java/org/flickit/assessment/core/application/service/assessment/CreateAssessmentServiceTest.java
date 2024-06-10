@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
-import org.flickit.assessment.core.application.domain.QualityAttribute;
+import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase.Param;
@@ -14,11 +14,11 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.CheckKitAc
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.assessment.core.test.fixture.application.QualityAttributeMother;
+import org.flickit.assessment.core.test.fixture.application.AttributeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -54,7 +54,7 @@ class CreateAssessmentServiceTest {
     private CreateSubjectValuePort createSubjectValuePort;
 
     @Mock
-    private CreateQualityAttributeValuePort createQualityAttributeValuePort;
+    private CreateAttributeValuePort createAttributeValuePort;
 
     @Mock
     private LoadAssessmentKitVersionIdPort loadAssessmentKitVersionIdPort;
@@ -153,11 +153,11 @@ class CreateAssessmentServiceTest {
             createdBy
         );
 
-        QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
-        QualityAttribute qa2 = QualityAttributeMother.simpleAttribute();
-        QualityAttribute qa3 = QualityAttributeMother.simpleAttribute();
-        QualityAttribute qa4 = QualityAttributeMother.simpleAttribute();
-        QualityAttribute qa5 = QualityAttributeMother.simpleAttribute();
+        Attribute qa1 = AttributeMother.simpleAttribute();
+        Attribute qa2 = AttributeMother.simpleAttribute();
+        Attribute qa3 = AttributeMother.simpleAttribute();
+        Attribute qa4 = AttributeMother.simpleAttribute();
+        Attribute qa5 = AttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
             new Subject(2L, "subject2", List.of(qa3, qa4)),
@@ -177,7 +177,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void testCreateAssessment_ValidCommand_PersistsQualityAttributeValue() {
+    void testCreateAssessment_ValidCommand_PersistsAttributeValue() {
         long assessmentKitId = 1L;
         Long kitVersionId = 123L;
         UUID currentUserId = UUID.randomUUID();
@@ -188,11 +188,11 @@ class CreateAssessmentServiceTest {
             1,
             currentUserId
         );
-        QualityAttribute qa1 = QualityAttributeMother.simpleAttribute();
-        QualityAttribute qa2 = QualityAttributeMother.simpleAttribute();
-        QualityAttribute qa3 = QualityAttributeMother.simpleAttribute();
-        QualityAttribute qa4 = QualityAttributeMother.simpleAttribute();
-        QualityAttribute qa5 = QualityAttributeMother.simpleAttribute();
+        Attribute qa1 = AttributeMother.simpleAttribute();
+        Attribute qa2 = AttributeMother.simpleAttribute();
+        Attribute qa3 = AttributeMother.simpleAttribute();
+        Attribute qa4 = AttributeMother.simpleAttribute();
+        Attribute qa5 = AttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
             new Subject(1L, "subject2", List.of(qa1, qa2)),
@@ -207,8 +207,8 @@ class CreateAssessmentServiceTest {
 
         service.createAssessment(param);
 
-        verify(createQualityAttributeValuePort, times(1)).persistAll(anyList(), any());
         verify(grantUserAssessmentRolePort, times(1)).persist(any(), any(UUID.class), anyInt());
+        verify(createAttributeValuePort, times(1)).persistAll(anyList(), any());
     }
 
     @Test

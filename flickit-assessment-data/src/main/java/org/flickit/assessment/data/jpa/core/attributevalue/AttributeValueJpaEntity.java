@@ -8,14 +8,14 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.UUID;
 
 @Entity
-@Table(name = "fac_quality_attribute_value")
+@Table(name = "fac_attribute_value")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class QualityAttributeValueJpaEntity {
+public class AttributeValueJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
