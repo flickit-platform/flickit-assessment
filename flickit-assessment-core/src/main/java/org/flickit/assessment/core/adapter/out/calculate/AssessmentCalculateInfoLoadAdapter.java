@@ -193,14 +193,15 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         Set<Long> impactfulQuestionIds = impactfulQuestions.stream()
             .map(Question::getId)
             .collect(toSet());
-        Map<Long, AnswerOptionJpaEntity> idToAnswerOptionDto = context.allAnswerOptionsEntities.stream()
+        Map<Long, AnswerOptionJpaEntity> idToAnswerOptionEntity = context.allAnswerOptionsEntities.stream()
             .collect(toMap(AnswerOptionJpaEntity::getId, x -> x));
         return context.allAnswerEntities.stream()
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
             .map(entity -> {
-                AnswerOptionJpaEntity option = idToAnswerOptionDto.get(entity.getAnswerOptionId());
+                AnswerOptionJpaEntity option = idToAnswerOptionEntity.get(entity.getAnswerOptionId());
                 AnswerOption answerOption;
-                if (option == null) answerOption = null;
+                if (option == null)
+                    answerOption = null;
                 else {
                     var impactsEntities = context.optionIdToAnswerOptionImpactsMap.get(option.getId());
                     answerOption = AnswerOptionMapper.mapToDomainModel(option, impactsEntities);
