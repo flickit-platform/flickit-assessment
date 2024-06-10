@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.architecture.namingconvention.adapter.out.rest;
+package org.flickit.assessment.kit.architecture.namingconvention.adapter.out.rest;
 
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -7,7 +7,7 @@ import com.tngtech.archunit.lang.ArchRule;
 import org.springframework.stereotype.Component;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static org.flickit.assessment.core.architecture.constants.ArchUnitTestConstants.*;
+import static org.flickit.assessment.kit.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = {ADAPTER_FULL_PACKAGE}, importOptions = DoNotIncludeTests.class)
 public class RestAdapterNamingConventionArchUnitTest {

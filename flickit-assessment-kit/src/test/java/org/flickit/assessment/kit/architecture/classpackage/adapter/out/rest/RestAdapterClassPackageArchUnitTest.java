@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.architecture.classpackage.adapter.out.rest;
+package org.flickit.assessment.kit.architecture.classpackage.adapter.out.rest;
 
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static org.flickit.assessment.core.architecture.constants.ArchUnitTestConstants.*;
+import static org.flickit.assessment.kit.architecture.constants.ArchUnitTestConstants.*;
 
 @AnalyzeClasses(packages = {ADAPTER_FULL_PACKAGE}, importOptions = ImportOption.DoNotIncludeTests.class)
 public class RestAdapterClassPackageArchUnitTest {

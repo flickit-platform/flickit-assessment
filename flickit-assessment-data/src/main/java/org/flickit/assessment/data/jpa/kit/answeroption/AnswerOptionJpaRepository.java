@@ -32,5 +32,5 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
             WHERE a.questionId IN :questionIds
             ORDER BY q.index, a.index
         """)
-    List<AnswerOptionJpaEntity> findAllByQuestionIdInOrderByQuestionIdIndex(List<Long> questionIds);
+    List<AnswerOptionJpaEntity> findAllByQuestionIdIn(List<Long> questionIds);
 }

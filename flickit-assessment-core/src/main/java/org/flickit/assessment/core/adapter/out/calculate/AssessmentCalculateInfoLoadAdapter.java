@@ -2,13 +2,12 @@ package org.flickit.assessment.core.adapter.out.calculate;
 
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
-import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMother;
+import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
-import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionDto;
-import org.flickit.assessment.core.adapter.out.rest.answeroption.AnswerOptionRestAdapter;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
@@ -20,6 +19,10 @@ import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEnti
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
+import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
@@ -31,8 +34,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
 
@@ -46,12 +48,13 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private final SubjectValueJpaRepository subjectValueRepo;
     private final SubjectJpaRepository subjectRepository;
     private final QuestionJpaRepository questionRepository;
-
-    private final AnswerOptionRestAdapter answerOptionRestAdapter;
+    private final AnswerOptionJpaRepository answerOptionRepository;
+    private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
-                   List<AnswerOptionDto> allAnswerOptionsDto,
+                   List<AnswerOptionJpaEntity> allAnswerOptionsEntities,
+                   Map<Long, List<AnswerOptionImpactJpaEntity>> optionIdToAnswerOptionImpactsMap,
                    List<AttributeValueJpaEntity> allAttributeValueEntities,
                    Map<Long, SubjectJpaEntity> subjectIdToEntity,
                    Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> impactfulQuestions) {
@@ -86,12 +89,15 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         based on answers, extract all selected options
         and load all those answerOptions with their impacts
         */
-        List<Long> allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
-        List<AnswerOptionDto> allAnswerOptionsDto = answerOptionRestAdapter.loadAnswerOptionByIds(allAnswerOptionIds);
+        var allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
+        var allAnswerOptionEntities = answerOptionRepository.findAllById(allAnswerOptionIds);
+        var optionIdToAnswerOptionImpactEntitiesMap = answerOptionImpactRepository.findAllByOptionIdIn(allAnswerOptionIds).stream()
+            .collect(groupingBy(AnswerOptionImpactJpaEntity::getOptionId));
 
         Context context = new Context(
             allAnswerEntities,
-            allAnswerOptionsDto,
+            allAnswerOptionEntities,
+            optionIdToAnswerOptionImpactEntitiesMap,
             allAttributeValueEntities,
             subjectIdToEntity,
             impactfulQuestions);
@@ -171,7 +177,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .filter(q -> q.getValue() != null)
             .map(q -> QuestionMapper.mapToDomainModel(q.getKey(),
                 q.getValue().stream()
-                    .map(QuestionImpactMother::mapToDomainModel)
+                    .map(QuestionImpactMapper::mapToDomainModel)
                     .toList()))
             .toList();
     }
@@ -187,13 +193,17 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         Set<Long> impactfulQuestionIds = impactfulQuestions.stream()
             .map(Question::getId)
             .collect(toSet());
-        Map<Long, AnswerOptionDto> idToAnswerOptionDto = context.allAnswerOptionsDto.stream()
-            .collect(toMap(AnswerOptionDto::id, x -> x));
+        Map<Long, AnswerOptionJpaEntity> idToAnswerOptionEntity = context.allAnswerOptionsEntities.stream()
+            .collect(toMap(AnswerOptionJpaEntity::getId, x -> x));
         return context.allAnswerEntities.stream()
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
             .map(entity -> {
-                AnswerOptionDto optionDto = idToAnswerOptionDto.get(entity.getAnswerOptionId());
-                AnswerOption answerOption = optionDto != null ? optionDto.dtoToDomain() : null;
+                AnswerOptionJpaEntity option = idToAnswerOptionEntity.get(entity.getAnswerOptionId());
+                AnswerOption answerOption = null;
+                if (option != null) {
+                    var impactsEntities = context.optionIdToAnswerOptionImpactsMap.get(option.getId());
+                    answerOption = AnswerOptionMapper.mapToDomainModel(option, impactsEntities);
+                }
                 return new Answer(
                     entity.getId(),
                     answerOption,

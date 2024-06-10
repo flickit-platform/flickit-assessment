@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
-import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMother;
+import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
@@ -158,7 +158,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             .filter(q -> q.getValue() != null)
             .map(q -> QuestionMapper.mapToDomainModel(q.getKey(),
                 q.getValue().stream()
-                    .map(QuestionImpactMother::mapToDomainModel)
+                    .map(QuestionImpactMapper::mapToDomainModel)
                     .toList()))
             .toList();
     }
