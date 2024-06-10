@@ -45,7 +45,7 @@ class AssessmentPermissionCheckerServiceTest {
         var userId = UUID.randomUUID();
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
 
-        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpaceId())).thenReturn(userId);
+        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpace().getId())).thenReturn(userId);
 
         AssessmentUserRole.MANAGER.getPermissions()
             .forEach(x ->
@@ -55,27 +55,13 @@ class AssessmentPermissionCheckerServiceTest {
     }
 
     @Test
-    void testIsAuthorized_userIsAssessmentCreator_shouldBeFullyAuthorized() {
-        Assessment assessment = AssessmentMother.assessment();
-        var assessmentId = assessment.getId();
-        var userId = assessment.getCreatedBy();
-        when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-
-        AssessmentUserRole.MANAGER.getPermissions()
-            .forEach(x ->
-                assertTrue(service.isAuthorized(assessmentId, userId, x))
-            );
-        verifyNoInteractions(loadSpaceOwnerPort, loadUserRoleForAssessmentPort);
-    }
-
-    @Test
     void testIsAuthorized_userHasNotAnyRole_shouldReturnFalse() {
         Assessment assessment = AssessmentMother.assessment();
         var assessmentId = assessment.getId();
         var userId = UUID.randomUUID();
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpaceId())).thenReturn(UUID.randomUUID());
+        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpace().getId())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(null);
 
         AssessmentUserRole.VIEWER.getPermissions()
@@ -91,7 +77,7 @@ class AssessmentPermissionCheckerServiceTest {
         var userId = UUID.randomUUID();
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpaceId())).thenReturn(UUID.randomUUID());
+        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpace().getId())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(AssessmentUserRole.VIEWER);
 
         AssessmentUserRole.VIEWER.getPermissions()

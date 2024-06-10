@@ -11,8 +11,8 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
@@ -57,7 +57,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private AnswerJpaRepository answerRepo;
     @Mock
-    private QualityAttributeValueJpaRepository qualityAttrValueRepo;
+    private AttributeValueJpaRepository attrValueRepository;
     @Mock
     private SubjectValueJpaRepository subjectValueRepo;
     @Mock
@@ -88,9 +88,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
         assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues());
 
         var resultAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
-            .flatMap(sv -> sv.getQualityAttributeValues().stream())
+            .flatMap(sv -> sv.getAttributeValues().stream())
             .toList();
-        assertAttributeValues(context.qualityAttributeValues, resultAttributeValues);
+        assertAttributeValues(context.attributeValues, resultAttributeValues);
 
         List<Answer> answers = new ArrayList<>(resultAttributeValues.stream()
             .flatMap(qav -> qav.getAnswers().stream())
@@ -118,16 +118,16 @@ class AssessmentCalculateInfoLoadAdapterTest {
         );
     }
 
-    private static void assertAttributeValues(List<QualityAttributeValueJpaEntity> attributeValueJpaEntities, List<QualityAttributeValue> resultAttributeValues) {
+    private static void assertAttributeValues(List<AttributeValueJpaEntity> attributeValueJpaEntities, List<AttributeValue> resultAttributeValues) {
         attributeValueJpaEntities.forEach(entity ->
             resultAttributeValues.stream()
                 .filter(av -> av.getId() == entity.getId())
                 .findFirst()
                 .ifPresentOrElse(
                     av -> {
-                        assertNotNull(av.getQualityAttribute());
-                        assertNotNull(av.getQualityAttribute().getQuestions());
-                        assertEquals(5, av.getQualityAttribute().getQuestions().size());
+                        assertNotNull(av.getAttribute());
+                        assertNotNull(av.getAttribute().getQuestions());
+                        assertEquals(5, av.getAttribute().getQuestions().size());
                     },
                     Assertions::fail
                 )
@@ -183,7 +183,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var qav4 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute4.getRefNum());
         var qav5 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute5.getRefNum());
         var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6.getRefNum());
-        List<QualityAttributeValueJpaEntity> qualityAttributeValues = List.of(qav1, qav2, qav3, qav4, qav5, qav6);
+        List<AttributeValueJpaEntity> attributeValues = List.of(qav1, qav2, qav3, qav4, qav5, qav6);
 
         var subjectValue1 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
         var subjectValue2 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
@@ -279,7 +279,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
         return new Context(
             assessmentResultEntity,
             subjectValues,
-            qualityAttributeValues,
+            attributeValues,
             subjects,
             questions,
             questionIdToImpactsMap,
@@ -292,8 +292,8 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(Optional.of(context.assessmentResultEntity()));
         when(subjectValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.subjectValues());
-        when(qualityAttrValueRepo.findByAssessmentResultId(eq(context.assessmentResultEntity().getId())))
-            .thenReturn(context.qualityAttributeValues());
+        when(attrValueRepository.findByAssessmentResultId(eq(context.assessmentResultEntity().getId())))
+            .thenReturn(context.attributeValues());
         when(subjectRepository.loadByKitVersionIdWithAttributes(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(context.subjects);
         when(questionRepository.loadByKitVersionId(context.assessmentResultEntity().getKitVersionId()))
@@ -330,7 +330,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
     record Context(
         AssessmentResultJpaEntity assessmentResultEntity,
         List<SubjectValueJpaEntity> subjectValues,
-        List<QualityAttributeValueJpaEntity> qualityAttributeValues,
+        List<AttributeValueJpaEntity> attributeValues,
         List<SubjectJpaEntity> subjects,
         List<QuestionJpaEntity> questionEntities,
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap,

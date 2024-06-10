@@ -128,4 +128,17 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                 AND (k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId  = :userId))))
         """)
     Optional<Long> existsByUserId(@Param("kitId") long kitId, @Param("userId") UUID userId);
+
+    List<AssessmentKitJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
+
+    @Query("""
+            SELECT k
+            FROM AssessmentKitJpaEntity k
+            WHERE LOWER(k.title) LIKE LOWER(CONCAT('%', :queryTerm, '%')) AND k.published = TRUE
+                AND (k.isPrivate = FALSE OR (k.isPrivate
+                    AND k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId = :userId)))
+        """)
+    Page<AssessmentKitJpaEntity> findAllByTitleAndUserId(@Param("queryTerm") String query,
+                                                         @Param("userId") UUID userId,
+                                                         Pageable pageable);
 }
