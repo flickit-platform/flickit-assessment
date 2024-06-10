@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
-import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -30,12 +29,12 @@ public class MaturityLevelMapper {
         LocalDateTime creationTime = LocalDateTime.now();
         return new MaturityLevelJpaEntity(
             null,
+            kitVersionId,
             UUID.randomUUID(),
             level.getCode(),
             level.getIndex(),
             level.getTitle(),
             level.getValue(),
-            kitVersionId,
             creationTime,
             creationTime,
             createdBy,

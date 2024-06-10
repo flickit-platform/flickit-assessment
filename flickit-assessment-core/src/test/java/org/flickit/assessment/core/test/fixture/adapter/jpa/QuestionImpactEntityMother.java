@@ -8,6 +8,7 @@ import java.util.UUID;
 public class QuestionImpactEntityMother {
 
     private static long questionImpactId = 134L;
+    private static long kitVersionId = 1L;
 
     public static QuestionImpactJpaEntity questionImpactEntity(Long maturityLevelId, Long questionId, Long qualityAttributeId) {
         return new QuestionImpactJpaEntity(
@@ -15,7 +16,7 @@ public class QuestionImpactEntityMother {
             1,
             questionId,
             qualityAttributeId,
-            MaturityLevelJpaEntityMother.maturityLevelEntity(maturityLevelId),
+            MaturityLevelJpaEntityMother.maturityLevelEntity(maturityLevelId, kitVersionId),
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),
