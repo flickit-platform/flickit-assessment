@@ -9,39 +9,62 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID>, JpaSpecificationExecutor<AssessmentJpaEntity> {
 
-    @Query("SELECT a as assessment, r.maturityLevelId as maturityLevelId, r.isCalculateValid as isCalculateValid , r.isConfidenceValid as isConfidenceValid " +
-        "FROM AssessmentJpaEntity a " +
-        "LEFT JOIN AssessmentResultJpaEntity r " +
-        "ON a.id = r.assessment.id " +
-        "WHERE a.spaceId IN :spaceIds AND " +
-        "a.deleted=false AND " +
-        "(a.assessmentKitId=:kitId OR :kitId IS NULL) AND " +
-        "r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id) " +
-        "ORDER BY a.lastModificationTime DESC")
-    Page<AssessmentListItemView> findBySpaceIdAndDeletedFalseOrderByLastModificationTimeDesc(List<Long> spaceIds, Long kitId, Pageable pageable);
+    @Query("""
+            SELECT
+                a as assessment,
+                r as assessmentResult,
+                k as assessmentKit,
+                s as space
+            FROM AssessmentJpaEntity a
+            LEFT JOIN AssessmentResultJpaEntity r ON a.id = r.assessment.id
+            LEFT JOIN AssessmentKitJpaEntity k ON k.id = a.assessmentKitId
+            LEFT JOIN SpaceUserAccessJpaEntity sua ON sua.spaceId = a.spaceId
+            LEFT JOIN SpaceJpaEntity s ON s.id = a.spaceId
+            WHERE sua.userId = :userId
+                AND (a.assessmentKitId = :kitId OR :kitId IS NULL)
+                AND a.deleted = FALSE
+                AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)
+            ORDER BY a.lastModificationTime DESC
+        """)
+    Page<UserAssessmentListItemView> findByUserId(@Param("kitId") Long kitId,
+                                                  @Param("userId") UUID userId,
+                                                  Pageable pageable);
+
+    @Query("""
+            SELECT
+                a as assessment,
+                r as assessmentResult
+            FROM AssessmentJpaEntity a
+            LEFT JOIN AssessmentResultJpaEntity r ON a.id = r.assessment.id
+            WHERE a.spaceId = :spaceId
+                AND a.deleted=false
+                AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)
+            ORDER BY a.lastModificationTime DESC
+        """)
+    Page<AssessmentJoinResultView> findBySpaceId(@Param("spaceId") Long spaceId, Pageable pageable);
 
     @Modifying
-    @Query("UPDATE AssessmentJpaEntity a SET " +
-        "a.title = :title, " +
-        "a.colorId = :colorId, " +
-        "a.code = :code, " +
-        "a.lastModificationTime = :lastModificationTime, " +
-        "a.lastModifiedBy = :lastModifiedBy " +
-        "WHERE a.id = :id")
+    @Query("""
+            UPDATE AssessmentJpaEntity a SET
+                a.title = :title,
+                a.colorId = :colorId,
+                a.code = :code,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastModifiedBy = :lastModifiedBy
+            WHERE a.id = :id
+        """)
     void update(@Param(value = "id") UUID id,
                 @Param(value = "title") String title,
                 @Param(value = "code") String code,
                 @Param(value = "colorId") Integer colorId,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
-
 
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +
@@ -52,6 +75,18 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
+    @Query("""
+            SELECT
+                a AS assessment,
+                k AS kit,
+                s AS space
+            FROM AssessmentJpaEntity a
+            LEFT JOIN AssessmentKitJpaEntity k ON a.assessmentKitId = k.id
+            Left JOIN SpaceJpaEntity s ON a.spaceId = s.id
+            WHERE a.id = :id AND a.deleted = FALSE
+        """)
+    Optional<AssessmentKitSpaceJoinView> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
+
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +
         "a.lastModificationTime = :lastModificationTime " +
@@ -61,12 +96,10 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     @Query("""
             SELECT a.id
             FROM AssessmentJpaEntity a
-            WHERE
-              a.id = :assessmentId AND
+            WHERE a.id = :assessmentId AND
             EXISTS (
               SELECT 1 FROM SpaceUserAccessJpaEntity su
-              WHERE a.spaceId = su.spaceId AND su.userId = :userId
-            )
+              WHERE a.spaceId = su.spaceId AND su.userId = :userId)
         """)
     Optional<UUID> checkUserAccess(@Param(value = "assessmentId") UUID assessmentId,
                                    @Param(value = "userId") UUID userId);
@@ -94,8 +127,6 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         AND level.id in :levelIds
     """)
     Set<Long> findSelectedLevelIdsRelatedToAssessment(UUID assessmentId, Set<Long> levelIds);
-
-
 }
 
 

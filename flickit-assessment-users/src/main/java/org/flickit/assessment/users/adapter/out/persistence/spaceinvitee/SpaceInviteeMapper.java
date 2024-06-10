@@ -3,7 +3,7 @@ package org.flickit.assessment.users.adapter.out.persistence.spaceinvitee;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
-import org.flickit.assessment.users.application.domain.SpaceInvitation;
+import org.flickit.assessment.users.application.domain.SpaceInvitee;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,8 +20,10 @@ public class SpaceInviteeMapper {
         );
     }
 
-    static SpaceInvitation mapToDomain(SpaceInviteeJpaEntity entity) {
-        return new SpaceInvitation(entity.getEmail(),
+    static SpaceInvitee mapToDomain(SpaceInviteeJpaEntity entity) {
+        return new SpaceInvitee(
+            entity.getId(),
+            entity.getEmail(),
             entity.getSpaceId(),
             entity.getCreatedBy(),
             entity.getCreationTime(),
