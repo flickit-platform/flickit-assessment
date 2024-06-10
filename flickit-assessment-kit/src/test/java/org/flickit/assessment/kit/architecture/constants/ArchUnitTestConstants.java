@@ -7,13 +7,13 @@ public class ArchUnitTestConstants {
 
     // Full Package
     public final static String ADAPTER_FULL_PACKAGE = "org.flickit.assessment.kit.adapter";
-    public final static String APPLICATION_PORT_IN_FULL_PACKAGE = "org.flickit.assessment.core.application.port.in";
-    public final static String APPLICATION_PORT_OUT_FULL_PACKAGE = "org.flickit.assessment.core.application.port.out";
-    public final static String APPLICATION_PORT_FULL_PACKAGE = "org.flickit.assessment.core.application.port";
-    public final static String APPLICATION_SERVICE_FULL_PACKAGE = "org.flickit.assessment.core.application.service";
-    public final static String APPLICATION_DOMAIN_FULL_PACKAGE = "org.flickit.assessment.core.application.domain";
-    public final static String ADAPTER_IN_REST_FULL_PACKAGE = "org.flickit.assessment.core.adapter.in.rest";
-    public final static String APPLICATION_FULL_PACKAGE = "org.flickit.assessment.core.application";
+    public final static String APPLICATION_PORT_IN_FULL_PACKAGE = "org.flickit.assessment.kit.application.port.in";
+    public final static String APPLICATION_PORT_OUT_FULL_PACKAGE = "org.flickit.assessment.kit.application.port.out";
+    public final static String APPLICATION_PORT_FULL_PACKAGE = "org.flickit.assessment.kit.application.port";
+    public final static String APPLICATION_SERVICE_FULL_PACKAGE = "org.flickit.assessment.kit.application.service";
+    public final static String APPLICATION_DOMAIN_FULL_PACKAGE = "org.flickit.assessment.kit.application.domain";
+    public final static String ADAPTER_IN_REST_FULL_PACKAGE = "org.flickit.assessment.kit.adapter.in.rest";
+    public final static String APPLICATION_FULL_PACKAGE = "org.flickit.assessment.kit.application";
 
     // Package
     public final static String ADAPTER_IN_REST = "..adapter.in.rest..";
@@ -29,7 +29,7 @@ public class ArchUnitTestConstants {
     public final static String APPLICATION_PORT_IN = "..application.port.in..";
     public final static String APPLICATION_PORT_OUT = "..application.port.out..";
     public final static String APPLICATION_SERVICE_CONSTANT = "..application.service.constant..";
-    public final static String APPLICATION = "..assessment.core.application..";
+    public final static String APPLICATION = "..assessment.kit.application..";
     public final static String TEST_FIXTURE = "..test.fixture..";
 
     // Suffix
