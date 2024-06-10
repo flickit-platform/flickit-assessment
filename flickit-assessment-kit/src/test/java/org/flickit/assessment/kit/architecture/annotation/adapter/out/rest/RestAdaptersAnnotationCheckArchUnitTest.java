@@ -1,16 +1,14 @@
-package org.flickit.assessment.core.architecture.annotation.adapter.out.rest;
+package org.flickit.assessment.kit.architecture.annotation.adapter.out.rest;
 
 import com.tngtech.archunit.junit.AnalyzeClasses;
-import com.tngtech.archunit.junit.ArchIgnore;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static org.flickit.assessment.core.architecture.constants.ArchUnitTestConstants.*;
+import static org.flickit.assessment.kit.architecture.constants.ArchUnitTestConstants.*;
 
-@ArchIgnore
 @AnalyzeClasses(packages = ADAPTER_FULL_PACKAGE)
 public class RestAdaptersAnnotationCheckArchUnitTest {
 
