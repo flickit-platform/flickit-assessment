@@ -9,13 +9,12 @@ import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
-import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -32,6 +31,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Slf4j
@@ -40,8 +40,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class CreateAdviceService implements CreateAdviceUseCase {
 
-    private final LoadAssessmentSpacePort loadAssessmentSpacePort;
-    private final CheckSpaceAccessPort checkSpaceAccessPort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadSelectedAttributeIdsRelatedToAssessmentPort loadSelectedAttributeIdsRelatedToAssessmentPort;
     private final LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
@@ -80,10 +79,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
-        var spaceId = loadAssessmentSpacePort.loadAssessmentSpaceId(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_NOT_FOUND));
-
-        if (!checkSpaceAccessPort.checkIsMember(spaceId, currentUserId))
+        if (!assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, CREATE_ADVICE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 

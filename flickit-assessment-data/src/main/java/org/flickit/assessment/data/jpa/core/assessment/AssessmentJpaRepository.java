@@ -75,7 +75,17 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
-    Optional<AssessmentJpaEntity> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
+    @Query("""
+            SELECT
+                a AS assessment,
+                k AS kit,
+                s AS space
+            FROM AssessmentJpaEntity a
+            LEFT JOIN AssessmentKitJpaEntity k ON a.assessmentKitId = k.id
+            Left JOIN SpaceJpaEntity s ON a.spaceId = s.id
+            WHERE a.id = :id AND a.deleted = FALSE
+        """)
+    Optional<AssessmentKitSpaceJoinView> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
     @Modifying
     @Query("UPDATE AssessmentJpaEntity a SET " +
@@ -86,12 +96,10 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     @Query("""
             SELECT a.id
             FROM AssessmentJpaEntity a
-            WHERE
-              a.id = :assessmentId AND
+            WHERE a.id = :assessmentId AND
             EXISTS (
               SELECT 1 FROM SpaceUserAccessJpaEntity su
-              WHERE a.spaceId = su.spaceId AND su.userId = :userId
-            )
+              WHERE a.spaceId = su.spaceId AND su.userId = :userId)
         """)
     Optional<UUID> checkUserAccess(@Param(value = "assessmentId") UUID assessmentId,
                                    @Param(value = "userId") UUID userId);
@@ -119,8 +127,6 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         AND level.id in :levelIds
     """)
     Set<Long> findSelectedLevelIdsRelatedToAssessment(UUID assessmentId, Set<Long> levelIds);
-
-
 }
 
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public class QualityAttribute {
+public class Attribute {
 
     private final long id;
     private final int weight;
