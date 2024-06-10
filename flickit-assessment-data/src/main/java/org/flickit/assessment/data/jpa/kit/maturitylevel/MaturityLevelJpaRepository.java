@@ -29,15 +29,15 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
                 a.id as id,
                 a.index as index,
                 a.title as title,
-                COUNT(DISTINCT CASE WHEN qi.maturityLevel.id = a.id THEN qi.questionId ELSE NULL END) as questionCount
+                COUNT(DISTINCT (CASE WHEN qi.maturityLevel.id = a.id THEN qi.questionId ELSE NULL END)) as questionCount
             FROM MaturityLevelJpaEntity a
             LEFT JOIN KitVersionJpaEntity kv On kv.id = a.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi ON qi.attributeId = :attributeId
-            WHERE kv.kit.id = :kitId
+            WHERE kv.kit.kitVersionId = :kitVersionId
             GROUP BY a.id
             ORDER BY a.index
         """)
-    List<MaturityQuestionCountView> loadAttributeLevels(@Param("kitId") Long kitId, @Param("attributeId") Long attributeId);
+    List<MaturityQuestionCountView> loadAttributeLevels(@Param("attributeId") Long attributeId, @Param("kitVersionId") Long kitVersionId);
 
     @Query("""
               SELECT COUNT(m) > 0

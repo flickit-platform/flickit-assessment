@@ -60,8 +60,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<LoadAttributeMaturityLevelsPort.Result> loadAttributeLevels(long kitId, long attributeId) {
-        return repository.loadAttributeLevels(kitId, attributeId).stream()
+    public List<LoadAttributeMaturityLevelsPort.Result> loadAttributeLevels(long attributeId, long kitVersionId) {
+        return repository.loadAttributeLevels(attributeId, kitVersionId).stream()
             .map(e -> new LoadAttributeMaturityLevelsPort.Result(e.getId(), e.getTitle(), e.getIndex(), e.getQuestionCount()))
             .toList();
     }
