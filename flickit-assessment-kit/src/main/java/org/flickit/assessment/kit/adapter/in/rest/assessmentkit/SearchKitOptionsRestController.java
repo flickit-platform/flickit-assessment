@@ -20,7 +20,7 @@ public class SearchKitOptionsRestController {
     private final UserContext currentUser;
     private final SearchKitOptionsUseCase useCase;
 
-    @GetMapping("/assessment-kits/options/select")
+    @GetMapping("/assessment-kits/options/search")
     public ResponseEntity<PaginatedResponse<SearchKitOptionsUseCase.KitListItem>> searchKitOptions(
         @RequestParam(value = "queryTerm", defaultValue = "", required = false) String queryTerm,
         @RequestParam(defaultValue = "0") int page,

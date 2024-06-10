@@ -685,7 +685,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-kits/options/select?queryTerm=SD&page=0&size=5",
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/options/search?query=SD&page=0&size=5",
 					"host": [
 						"{{base_url}}"
 					],
@@ -693,7 +693,7 @@
 						"{{api_path}}",
 						"assessment-kits",
 						"options",
-						"select"
+						"search"
 					],
 					"query": [
 						{
