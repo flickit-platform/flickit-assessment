@@ -24,13 +24,13 @@ public class LevelCompetenceJpaEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "affected_level_id", referencedColumnName = "id", nullable = false)
-    @JoinColumn(name="kit_version_id", referencedColumnName="kit_version_id", nullable = false)
+    @JoinColumn(name = "affected_level_id",insertable = false, updatable = false, referencedColumnName = "id", nullable = false)
+    @JoinColumn(name="kit_version_id", insertable = false, updatable = false, referencedColumnName="kit_version_id", nullable = false)
     private MaturityLevelJpaEntity affectedLevel;
 
     @ManyToOne
-    @JoinColumn(name = "effective_level_id", referencedColumnName = "id", nullable = false)
-    @JoinColumn(name="kit_version_id", referencedColumnName="kit_version_id", nullable = false)
+    @JoinColumn(name = "effective_level_id",insertable = false, updatable = false, referencedColumnName = "id", nullable = false)
+    @JoinColumn(name="kit_version_id", insertable = false, updatable = false, referencedColumnName="kit_version_id", nullable = false)
     private MaturityLevelJpaEntity effectiveLevel;
 
     @Column(name = "value", nullable = false)

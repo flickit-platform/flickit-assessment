@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
@@ -11,8 +12,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 
 @Component
@@ -32,16 +33,20 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public void delete(Long id, Long kitVersionId) {
+        repository.deleteById(new MaturityLevelJpaEntity.EntityId(id, kitVersionId));
     }
 
     @Override
-    public void update(List<MaturityLevel> maturityLevels, UUID lastModifiedBy) {
-        Map<Long, MaturityLevel> idToModel = maturityLevels.stream().collect(toMap(MaturityLevel::getId, x -> x));
+    public void update(List<MaturityLevel> maturityLevels, Long kitVersionId, UUID lastModifiedBy) {
+        Map<EntityId, MaturityLevel> idToModel = maturityLevels.stream()
+            .collect(Collectors.toMap(
+                ml -> new EntityId(ml.getId(), kitVersionId),
+                ml -> ml
+            ));
         List<MaturityLevelJpaEntity> entities = repository.findAllById(idToModel.keySet());
         entities.forEach(x -> {
-            MaturityLevel newLevel = idToModel.get(x.getId());
+            MaturityLevel newLevel = idToModel.get(new EntityId(x.getId(), kitVersionId));
             x.setIndex(newLevel.getIndex());
             x.setTitle(newLevel.getTitle());
             x.setValue(newLevel.getValue());
