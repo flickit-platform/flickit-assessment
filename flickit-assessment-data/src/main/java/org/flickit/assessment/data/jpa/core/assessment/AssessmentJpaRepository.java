@@ -20,20 +20,26 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 a as assessment,
                 r as assessmentResult,
                 k as assessmentKit,
-                s as space
+                s as space,
+                CASE
+                    WHEN ur.roleId = :managerRoleId OR s.ownerId = :userId THEN TRUE ELSE FALSE
+                END as manageable
             FROM AssessmentJpaEntity a
             LEFT JOIN AssessmentResultJpaEntity r ON a.id = r.assessment.id
             LEFT JOIN AssessmentKitJpaEntity k ON k.id = a.assessmentKitId
             LEFT JOIN SpaceUserAccessJpaEntity sua ON sua.spaceId = a.spaceId
             LEFT JOIN SpaceJpaEntity s ON s.id = a.spaceId
+            LEFT JOIN AssessmentUserRoleJpaEntity ur ON a.id = ur.assessmentId AND ur.userId = :userId
             WHERE sua.userId = :userId
                 AND (a.assessmentKitId = :kitId OR :kitId IS NULL)
                 AND a.deleted = FALSE
                 AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)
+                AND (s.ownerId = :userId OR ur.roleId is not null)
             ORDER BY a.lastModificationTime DESC
         """)
     Page<UserAssessmentListItemView> findByUserId(@Param("kitId") Long kitId,
                                                   @Param("userId") UUID userId,
+                                                  @Param("managerRoleId") Integer managerRoleId,
                                                   Pageable pageable);
 
     @Query("""

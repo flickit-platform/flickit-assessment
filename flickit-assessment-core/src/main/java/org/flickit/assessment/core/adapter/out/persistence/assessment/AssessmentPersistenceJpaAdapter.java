@@ -67,7 +67,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<AssessmentListItem> loadUserAssessments(Long kitId, UUID userId, int page, int size) {
-        var pageResult = repository.findByUserId(kitId, userId, PageRequest.of(page, size));
+        var pageResult = repository.findByUserId(kitId, userId, MANAGER.getId(), PageRequest.of(page, size));
 
         List<Long> kitVersionIds = pageResult.getContent().stream()
             .map(e -> e.getAssessmentKit().getKitVersionId())
@@ -109,7 +109,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     maturityLevel,
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
-                    false); //TODO load it from database
+                    e.getManageable());
             }).toList();
 
         return new PaginatedResponse<>(

@@ -13,4 +13,6 @@ public interface UserAssessmentListItemView {
     AssessmentKitJpaEntity getAssessmentKit();
 
     SpaceJpaEntity getSpace();
+
+    boolean getManageable();
 }
