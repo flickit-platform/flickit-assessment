@@ -27,13 +27,14 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     LoadExpertGroupMemberStatusPort,
     LoadExpertGroupAccessPort,
     ConfirmExpertGroupInvitationPort,
-    DeleteExpertGroupMemberPort {
+    DeleteExpertGroupMemberPort,
+    UpdateExpertGroupLastSeenPort {
 
     private final ExpertGroupAccessJpaRepository repository;
 
     @Override
     public PaginatedResponse<Member> loadExpertGroupMembers(long expertGroupId, int status, int page, int size) {
-        var pageResult = repository.findExpertGroupMembers(expertGroupId, status,
+        var pageResult = repository.findExpertGroupMembers(expertGroupId, status, LocalDateTime.now(),
             PageRequest.of(page, size, Sort.Direction.DESC, ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME));
 
         var items = pageResult
@@ -96,5 +97,10 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
         ExpertGroupAccessJpaEntity entity = repository.findByExpertGroupIdAndAndUserId(expertGroupId, userId)
             .orElseThrow(() -> new ResourceNotFoundException(DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND));
         repository.delete(entity);
+    }
+
+    @Override
+    public void updateLastSeen(long expertGroupId, UUID userId, LocalDateTime currentTime) {
+        repository.updateLastSeen(expertGroupId, userId, currentTime);
     }
 }

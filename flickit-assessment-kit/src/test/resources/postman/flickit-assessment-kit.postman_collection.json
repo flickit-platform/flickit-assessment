@@ -513,74 +513,206 @@
 			},
 			"response": []
 		},
-      {
-        "name": "Get Kit Tags",
-        "request": {
-          "method": "GET",
-          "header": [],
-          "url": {
-            "raw": "{{base_url}}/{{api_path}}/assessment-kit-tags?page=0&size=20",
-            "host": [
-              "{{base_url}}"
-            ],
-            "path": [
-              "{{api_path}}",
-              "assessment-kit-tags"
-            ],
-            "query": [
-              {
-                "key": "page",
-                "value": "0"
-              },
-              {
-                "key": "size",
-                "value": "20"
-              }
-            ]
-          }
-        },
-        "response": []
-      },
-      {
-        "name": "Search Kit Options",
-        "request": {
-          "method": "GET",
-          "header": [
-            {
-              "key": "Authorization",
-              "value": "{{authorization_header}}",
-              "type": "text"
-            }
-          ],
-          "url": {
-            "raw": "{{base_url}}/{{api_path}}/assessment-kits/options/select?queryTerm=SD&page=0&size=5",
-            "host": [
-              "{{base_url}}"
-            ],
-            "path": [
-              "{{api_path}}",
-              "assessment-kits",
-              "options",
-              "select"
-            ],
-            "query": [
-              {
-                "key": "queryTerm",
-                "value": "SD"
-              },
-              {
-                "key": "page",
-                "value": "0"
-              },
-              {
-                "key": "size",
-                "value": "5"
-              }
-            ]
-          }
-        },
-        "response": []
-      }
+		{
+			"name": "Get Kit Tags",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kit-tags?page=0&size=20",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kit-tags"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "20"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Toggle Kit Like",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/386/likes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"386",
+						"likes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Kit List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits?isPrivate=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits"
+					],
+					"query": [
+						{
+							"key": "isPrivate",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Assessment Kit",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/302",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"302"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Expert Group Kit List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/1/assessment-kits",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"1",
+						"assessment-kits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Published Kit",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/144",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"144"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Kit Options",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/options/select?queryTerm=SD&page=0&size=5",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"options",
+						"select"
+					],
+					"query": [
+						{
+							"key": "queryTerm",
+							"value": "SD"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		}
 	],
 	"event": [
 		{

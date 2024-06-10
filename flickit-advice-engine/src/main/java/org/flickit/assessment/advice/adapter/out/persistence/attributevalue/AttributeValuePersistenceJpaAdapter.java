@@ -3,8 +3,8 @@ package org.flickit.assessment.advice.adapter.out.persistence.attributevalue;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.toMap;
 @RequiredArgsConstructor
 public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrentAndTargetLevelIndexPort {
 
-    private final QualityAttributeValueJpaRepository repository;
+    private final AttributeValueJpaRepository repository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final AttributeJpaRepository attributeRepository;
 
@@ -41,7 +41,7 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
             .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
         var attributeValues = repository.findByAssessmentResult_assessment_IdAndAttributeRefNumIn(assessmentId, attributeRefNumToIdMap.keySet().stream().toList());
 
-        Map<Long, QualityAttributeValueJpaEntity> attributeIdToAttributeValueMap = attributeValues.stream()
+        Map<Long, AttributeValueJpaEntity> attributeIdToAttributeValueMap = attributeValues.stream()
             .collect(toMap(a -> attributeRefNumToIdMap.get(a.getAttributeRefNum()), a -> a));
 
         List<Result> result = new ArrayList<>();

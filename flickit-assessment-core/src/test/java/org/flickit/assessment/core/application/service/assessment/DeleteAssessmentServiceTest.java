@@ -1,8 +1,8 @@
 package org.flickit.assessment.core.application.service.assessment;
 
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessment.DeleteAssessmentUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
 import org.flickit.assessment.core.application.port.out.assessment.DeleteAssessmentPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.DELETE_ASSESSMENT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -31,13 +33,14 @@ class DeleteAssessmentServiceTest {
     private DeleteAssessmentPort deleteAssessmentPort;
 
     @Mock
-    private CheckAssessmentExistencePort checkAssessmentExistencePort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
     void testDeleteAssessment_ValidAssessmentId_DeleteSuccessfully() {
-        UUID id = UUID.randomUUID();
-        DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(id);
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(true);
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(assessmentId, currentUserId);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, DELETE_ASSESSMENT)).thenReturn(true);
         doNothing().when(deleteAssessmentPort).deleteById(any(), any());
 
         service.deleteAssessment(param);
@@ -46,27 +49,21 @@ class DeleteAssessmentServiceTest {
         ArgumentCaptor<Long> portDeletionTimeParam = ArgumentCaptor.forClass(Long.class);
         verify(deleteAssessmentPort).deleteById(portIdParam.capture(), portDeletionTimeParam.capture());
 
-        assertEquals(id, portIdParam.getValue());
+        assertEquals(assessmentId, portIdParam.getValue());
         assertThat(portDeletionTimeParam.getValue(), not(equalTo(NOT_DELETED_DELETION_TIME)));
         long now = System.currentTimeMillis();
         assertThat(portDeletionTimeParam.getValue(), lessThanOrEqualTo(now));
-        verify(checkAssessmentExistencePort, times(1)).existsById(any());
         verify(deleteAssessmentPort, times(1)).deleteById(any(), any());
     }
 
     @Test
-    void testDeleteAssessment_InvalidAssessmentId_ThrowsException() {
-        UUID id = UUID.randomUUID();
-        DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(id);
-        when(checkAssessmentExistencePort.existsById(id)).thenReturn(false);
+    void testDeleteAssessment_WhenCurrentUserIdIsNull_ThenThrowsException() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        DeleteAssessmentUseCase.Param param = new DeleteAssessmentUseCase.Param(assessmentId, currentUserId);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, DELETE_ASSESSMENT)).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class, () -> service.deleteAssessment(param));
-
-        ArgumentCaptor<UUID> portIdParam = ArgumentCaptor.forClass(UUID.class);
-        verify(checkAssessmentExistencePort).existsById(portIdParam.capture());
-
-        assertEquals(id, portIdParam.getValue());
-        verify(checkAssessmentExistencePort, times(1)).existsById(any());
-        verify(deleteAssessmentPort, never()).deleteById(any(), any());
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteAssessment(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }

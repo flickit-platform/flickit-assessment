@@ -3,10 +3,9 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.DeleteKitUserAccessUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.kituseraccess.LoadKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.user.LoadUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +19,6 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
-import static org.flickit.assessment.kit.test.fixture.application.KitUserMother.simpleKitUser;
 import static org.flickit.assessment.kit.test.fixture.application.UserMother.userWithId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,11 +32,9 @@ class DeleteUserAccessServiceTest {
     @Mock
     private DeleteKitUserAccessPort deleteKitUserAccessPort;
     @Mock
-    private LoadKitUserAccessPort loadKitUserAccessPort;
+    private CheckKitUserAccessPort checkKitUserAccessPort;
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
-    @Mock
-    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     @Mock
     private LoadUserPort loadUserPort;
 
@@ -50,7 +46,7 @@ class DeleteUserAccessServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
         when(loadUserPort.loadById(userId)).thenReturn(Optional.of(userWithId(userId)));
-        when(loadKitUserAccessPort.loadByKitIdAndUserId(kitId, userId)).thenReturn(Optional.of(simpleKitUser(kitId, userId)));
+        when(checkKitUserAccessPort.hasAccess(kitId, userId)).thenReturn(true);
         doNothing().when(deleteKitUserAccessPort).delete(new DeleteKitUserAccessPort.Param(kitId, userId));
 
         var param = new DeleteKitUserAccessUseCase.Param(kitId, userId, expertGroup.getOwnerId());
@@ -64,7 +60,7 @@ class DeleteUserAccessServiceTest {
     }
 
     @Test
-    void testGrantUserAccessToKit_InvalidCurrentUser_ThrowsException() {
+    void testDeleteUserAccess_InvalidCurrentUser_ThrowsException() {
         Long kitId = 1L;
         UUID currentUserId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
@@ -78,7 +74,7 @@ class DeleteUserAccessServiceTest {
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroup(any());
-        verify(loadKitUserAccessPort, never()).loadByKitIdAndUserId(any(), any());
+        verify(checkKitUserAccessPort, never()).hasAccess(any(), any());
         verify(deleteKitUserAccessPort, never()).delete(any(DeleteKitUserAccessPort.Param.class));
     }
 
@@ -97,7 +93,7 @@ class DeleteUserAccessServiceTest {
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroup(any());
-        verify(loadKitUserAccessPort, never()).loadByKitIdAndUserId(any(), any());
+        verify(checkKitUserAccessPort, never()).hasAccess(any(), any());
         verify(deleteKitUserAccessPort, never()).delete(any(DeleteKitUserAccessPort.Param.class));
     }
 
@@ -116,7 +112,7 @@ class DeleteUserAccessServiceTest {
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroup(any());
-        verifyNoInteractions(loadKitUserAccessPort);
+        verifyNoInteractions(checkKitUserAccessPort);
         verifyNoInteractions(loadUserPort);
         verifyNoInteractions(deleteKitUserAccessPort);
     }

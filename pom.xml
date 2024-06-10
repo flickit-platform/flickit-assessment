@@ -27,7 +27,7 @@
     </modules>
 
 	<properties>
-		<revision>0.17.0-SNAPSHOT</revision>
+		<revision>0.21.0-SNAPSHOT</revision>
 
 		<java.version>17</java.version>
 		<spring-boot.version>3.0.6</spring-boot.version>
@@ -191,12 +191,12 @@
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
 						<labels>
 							<org.opencontainers.image.source>
-								https://github.com/flickit-platform/flickit-assessment
+								https://github.com/flickit-platform-dev/flickit-assessment
 							</org.opencontainers.image.source>
 						</labels>
 					</container>
 					<from>
-						<image>ghcr.io/flickit-platform/jdk:17.0.7</image>
+						<image>ghcr.io/flickit-platform-dev/jdk:17.0.7</image>
 					</from>
 				</configuration>
 			</plugin>

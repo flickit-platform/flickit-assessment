@@ -1,13 +1,13 @@
 package org.flickit.assessment.data.jpa.users.spaceinvitee;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Table(name = "fau_space_invitee")
@@ -19,6 +19,9 @@ import java.util.UUID;
 public class SpaceInviteeJpaEntity {
 
     @Id
+    @EqualsAndHashCode.Include
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", nullable = false)
     UUID id;
 
@@ -28,12 +31,17 @@ public class SpaceInviteeJpaEntity {
     @Column(name = "email", nullable = false)
     String email;
 
-    @Column(name = "expiration_time", nullable = false)
-    LocalDateTime expirationDate;
+    @Column(name = "created_by", nullable = false)
+    UUID createdBy;
 
     @Column(name = "creation_time", nullable = false)
     LocalDateTime creationTime;
 
-    @Column(name = "created_by", nullable = false)
-    UUID createdBy;
+    @Column(name = "expiration_date", nullable = false)
+    LocalDateTime expirationDate;
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String CREATION_TIME = "creationTime";
+    }
 }

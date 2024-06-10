@@ -26,8 +26,10 @@ class GetExpertGroupServiceTest {
 
     @InjectMocks
     private GetExpertGroupService service;
+
     @Mock
     private LoadExpertGroupPort loadExpertGroupPort;
+
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
@@ -74,6 +76,7 @@ class GetExpertGroupServiceTest {
         var result = service.getExpertGroup(param);
 
         ArgumentCaptor<Long> loadPortParam = ArgumentCaptor.forClass(Long.class);
+
         verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture());
 
         assertNotNull(result);
@@ -94,6 +97,7 @@ class GetExpertGroupServiceTest {
         GetExpertGroupUseCase.Result result = service.getExpertGroup(param);
 
         ArgumentCaptor<Long> expertGroupIdArgument = ArgumentCaptor.forClass(Long.class);
+
         verify(loadExpertGroupPort).loadExpertGroup(expertGroupIdArgument.capture());
 
         assertEquals(expertGroupId, expertGroupIdArgument.getValue());
@@ -103,14 +107,17 @@ class GetExpertGroupServiceTest {
 
     @Test
     void testGetExpertGroup_ValidInputs_expertGroupNotFound() {
+        long expertGroupId = 123L;
         when(loadExpertGroupPort.loadExpertGroup(anyLong()))
             .thenThrow(new ResourceNotFoundException(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND));
 
-        var param = new GetExpertGroupUseCase.Param(134L, UUID.randomUUID());
+        var param = new GetExpertGroupUseCase.Param(expertGroupId, UUID.randomUUID());
 
         var throwable = assertThrows(ResourceNotFoundException.class,
             () -> service.getExpertGroup(param));
         assertThat(throwable).hasMessage(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND);
+
+        verify(loadExpertGroupPort).loadExpertGroup(expertGroupId);
     }
 }
 
