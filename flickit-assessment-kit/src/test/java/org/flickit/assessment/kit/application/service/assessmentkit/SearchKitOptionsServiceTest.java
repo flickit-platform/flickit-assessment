@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
 class SearchKitOptionsServiceTest {
 
@@ -31,11 +30,7 @@ class SearchKitOptionsServiceTest {
 
     @Test
     void testSearchKitOptions_ValidInput_ValidResult() {
-        SearchKitOptionsUseCase.Param param = new SearchKitOptionsUseCase.Param(
-            0,
-            10,
-            UUID.randomUUID(),
-            "");
+        var param = new SearchKitOptionsUseCase.Param("", 0, 10, UUID.randomUUID());
 
         AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
         List<AssessmentKit> items = List.of(assessmentKit);

@@ -253,8 +253,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<AssessmentKit> searchKitOptions(SearchKitOptionsPort.Param param) {
-        String queryTerm = param.queryTerm() == null ? "": param.queryTerm();
-        Page<AssessmentKitJpaEntity> kitEntityPage = repository.findAllByTitleAndUserId(queryTerm,
+        String query = param.query() == null ? "": param.query();
+        Page<AssessmentKitJpaEntity> kitEntityPage = repository.findAllByTitleAndUserId(query,
             param.currentUserId(),
             PageRequest.of(param.page(), param.size()));
 

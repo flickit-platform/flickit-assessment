@@ -132,14 +132,14 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
     List<AssessmentKitJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
 
     @Query("""
-        SELECT k
-        FROM AssessmentKitJpaEntity k
+            SELECT k
+            FROM AssessmentKitJpaEntity k
             LEFT JOIN KitUserAccessJpaEntity ku ON k.id = ku.kitId
-        WHERE k.title LIKE %:queryTerm% AND k.published = TRUE
-            AND ((k.isPrivate = FALSE AND (ku.userId IS NULL OR ku.userId = :userId))
-            OR (k.isPrivate = TRUE AND (ku.userId = :userId  OR (k.createdBy = :userId AND ku.userId IS NULL))))
-    """)
-    Page<AssessmentKitJpaEntity> findAllByTitleAndUserId(@Param("queryTerm") String queryTerm,
+            WHERE k.title LIKE %:queryTerm% AND k.published = TRUE
+                AND ((k.isPrivate = FALSE AND (ku.userId IS NULL OR ku.userId = :userId))
+                OR (k.isPrivate = TRUE AND (ku.userId = :userId  OR (k.createdBy = :userId AND ku.userId IS NULL))))
+        """)
+    Page<AssessmentKitJpaEntity> findAllByTitleAndUserId(@Param("queryTerm") String query,
                                                          @Param("userId") UUID userId,
                                                          Pageable pageable);
 }

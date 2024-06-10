@@ -20,10 +20,10 @@ public class SearchKitOptionsService implements SearchKitOptionsUseCase {
 
     @Override
     public PaginatedResponse<KitListItem> searchKitOptions(Param param) {
-        PaginatedResponse<AssessmentKit> paginatedResponse = port.searchKitOptions(toParam(param.getQueryTerm(),
-            param.getCurrentUserId(),
+        PaginatedResponse<AssessmentKit> paginatedResponse = port.searchKitOptions(toParam(param.getQuery(),
             param.getPage(),
-            param.getSize()));
+            param.getSize(),
+            param.getCurrentUserId()));
 
         List<KitListItem> items = paginatedResponse.getItems().stream()
             .map(e -> new KitListItem(e.getId(), e.getTitle()))
@@ -38,7 +38,7 @@ public class SearchKitOptionsService implements SearchKitOptionsUseCase {
             paginatedResponse.getTotal());
     }
 
-    private SearchKitOptionsPort.Param toParam(String queryTerm, UUID currentUserId, int page, int size) {
-        return new SearchKitOptionsPort.Param(queryTerm, currentUserId, page, size);
+    private SearchKitOptionsPort.Param toParam(String query, int page, int size, UUID currentUserId) {
+        return new SearchKitOptionsPort.Param(query, page, size, currentUserId);
     }
 }

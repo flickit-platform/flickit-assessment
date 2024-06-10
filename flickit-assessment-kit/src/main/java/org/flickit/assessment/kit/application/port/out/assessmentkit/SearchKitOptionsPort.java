@@ -9,5 +9,5 @@ public interface SearchKitOptionsPort {
 
     PaginatedResponse<AssessmentKit> searchKitOptions(Param param);
 
-    record Param(String queryTerm, UUID currentUserId, int page, int size) {}
+    record Param(String query, int page, int size, UUID currentUserId) {}
 }

@@ -22,16 +22,16 @@ public class SearchKitOptionsRestController {
 
     @GetMapping("/assessment-kits/options/search")
     public ResponseEntity<PaginatedResponse<SearchKitOptionsUseCase.KitListItem>> searchKitOptions(
-        @RequestParam(value = "queryTerm", defaultValue = "", required = false) String queryTerm,
+        @RequestParam(value = "query", defaultValue = "", required = false) String query,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size) {
 
         UUID currentUserId = currentUser.getUser().id();
-        var response = useCase.searchKitOptions(toParam(queryTerm, currentUserId, page, size));
+        var response = useCase.searchKitOptions(toParam(query, page, size, currentUserId));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private SearchKitOptionsUseCase.Param toParam(String queryTerm, UUID currentUserId, int page, int size) {
-        return new SearchKitOptionsUseCase.Param(page, size, currentUserId, queryTerm);
+    private SearchKitOptionsUseCase.Param toParam(String query, int page, int size, UUID currentUserId) {
+        return new SearchKitOptionsUseCase.Param(query, page, size, currentUserId);
     }
 }

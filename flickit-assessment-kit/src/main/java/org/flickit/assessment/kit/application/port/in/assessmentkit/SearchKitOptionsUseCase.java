@@ -21,6 +21,8 @@ public interface SearchKitOptionsUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
+        String query;
+
         @Min(value = 0, message = SEARCH_KIT_OPTIONS_PAGE_MIN)
         int page;
 
@@ -31,13 +33,12 @@ public interface SearchKitOptionsUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        String queryTerm;
 
-        public Param(int page, int size, UUID currentUserId, String queryTerm) {
+        public Param(String query, int page, int size, UUID currentUserId) {
+            this.query = query;
             this.page = page;
             this.size = size;
             this.currentUserId = currentUserId;
-            this.queryTerm = queryTerm;
             this.validateSelf();
         }
     }

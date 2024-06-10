@@ -8,7 +8,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SearchKitOptionsUseCaseParamTest {
 
@@ -17,7 +17,7 @@ class SearchKitOptionsUseCaseParamTest {
         UUID currentUserId = UUID.randomUUID();
 
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new SearchKitOptionsUseCase.Param(-1, 1, currentUserId, ""));
+            () -> new SearchKitOptionsUseCase.Param("",-1, 1, currentUserId));
         assertThat(throwable).hasMessage("page: " + SEARCH_KIT_OPTIONS_PAGE_MIN);
     }
 
@@ -25,7 +25,7 @@ class SearchKitOptionsUseCaseParamTest {
     void testSearchKitOptions_SizeIsLessThanMin_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new SearchKitOptionsUseCase.Param(0, -1, currentUserId, ""));
+            () -> new SearchKitOptionsUseCase.Param("",0, -1, currentUserId));
         assertThat(throwable).hasMessage("size: " + SEARCH_KIT_OPTION_SIZE_MIN);
     }
 
@@ -33,14 +33,14 @@ class SearchKitOptionsUseCaseParamTest {
     void testSearchKitOptions_SizeIsMoreThanMax_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new SearchKitOptionsUseCase.Param(0, 101, currentUserId, ""));
+            () -> new SearchKitOptionsUseCase.Param("",0, 101, currentUserId));
         assertThat(throwable).hasMessage("size: " + SEARCH_KIT_OPTIONS_SIZE_MAX);
     }
 
     @Test
     void testSearchKitOptions_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new SearchKitOptionsUseCase.Param(0, 10, null, ""));
+            () -> new SearchKitOptionsUseCase.Param("",0, 10, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }
