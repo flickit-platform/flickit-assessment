@@ -265,7 +265,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         return new PaginatedResponse<>(kits,
             kitEntityPage.getNumber(),
             kitEntityPage.getSize(),
-            AssessmentKitJpaEntity.Fields.NAME,
+            AssessmentKitJpaEntity.Fields.TITLE,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) kitEntityPage.getTotalElements());
     }
