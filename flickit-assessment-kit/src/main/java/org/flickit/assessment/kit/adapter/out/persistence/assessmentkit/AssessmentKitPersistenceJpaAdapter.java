@@ -256,7 +256,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         String query = param.query() == null ? "": param.query();
         Page<AssessmentKitJpaEntity> kitEntityPage = repository.findAllByTitleAndUserId(query,
             param.currentUserId(),
-            PageRequest.of(param.page(), param.size()));
+            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, AssessmentKitJpaEntity.Fields.TITLE));
 
         List<AssessmentKit> kits = kitEntityPage.getContent().stream()
             .map(AssessmentKitMapper::mapToDomainModel)
