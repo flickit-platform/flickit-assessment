@@ -8,14 +8,20 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SearchKitOptionsUseCaseParamTest {
 
     @Test
+    void testSearchKitOptions_QueryIsNull_Success() {
+        UUID currentUserId = UUID.randomUUID();
+        assertDoesNotThrow(() -> new SearchKitOptionsUseCase.Param(null,0, 10, currentUserId));
+    }
+
+    @Test
     void testSearchKitOptions_PageIsLessThanMin_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
-
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new SearchKitOptionsUseCase.Param("",-1, 1, currentUserId));
         assertThat(throwable).hasMessage("page: " + SEARCH_KIT_OPTIONS_PAGE_MIN);
