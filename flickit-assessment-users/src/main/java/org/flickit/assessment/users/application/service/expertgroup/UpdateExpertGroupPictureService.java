@@ -20,24 +20,22 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class UpdateExpertGroupPictureService implements UpdateExpertGroupPictureUseCase {
 
-    private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
+    private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadExpertGroupPort loadExpertGroupPort;
-    private final UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
-    private final UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
-    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
     private final DeleteFilePort deleteFilePort;
+    private final UploadExpertGroupPicturePort uploadExpertGroupPicturePort;
+    private final UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
+    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public Result update(Param param) {
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
-        var picture = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
-        if (picture != null && !picture.isBlank())
-            deleteFilePort.delete(picture);
 
-        picture = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
-        updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), picture);
+        var picturePath = loadExpertGroupPort.loadExpertGroup(param.getExpertGroupId()).getPicture();
+        if (picturePath != null && !picturePath.isBlank())
+            deleteFilePort.deletePicture(picturePath);
 
         picturePath = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
         updateExpertGroupPicturePort.updatePicture(param.getExpertGroupId(), picturePath);
