@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.questionnaire;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.Answer;
@@ -9,7 +10,6 @@ import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_QUESTIONNAIRE_QUESTIONS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -26,13 +27,13 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class GetAssessmentQuestionnaireQuestionListService implements GetAssessmentQuestionnaireQuestionListUseCase {
 
-    private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
     private final LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
 
     @Override
     public PaginatedResponse<Result> getQuestionnaireQuestionList(Param param) {
-        if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         var pageResult = loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(),
             param.getSize(),
@@ -69,7 +70,10 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                     .findAny()
                     .orElse(null);
             }
-            answerDto = new QuestionAnswer(answerOption, ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()), answer.getIsNotApplicable());
+            ConfidenceLevel confidenceLevel = null;
+            if (answerOption != null || Boolean.TRUE.equals(answer.getIsNotApplicable()))
+                confidenceLevel = ConfidenceLevel.valueOfById(answer.getConfidenceLevelId());
+            answerDto = new QuestionAnswer(answerOption, confidenceLevel, answer.getIsNotApplicable());
         }
         return new Result(
             question.getId(),

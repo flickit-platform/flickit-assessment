@@ -37,7 +37,7 @@ public class EvidenceMapper {
             entity.getDescription(),
             entity.getType() != null ? EvidenceType.values()[entity.getType()].getTitle() : null,
             entity.getLastModificationTime(),
-            new GetEvidenceListUseCase.User(user.getId(), user.getDisplayName())
+            new GetEvidenceListUseCase.User(user.getId(), user.getDisplayName(), user.getPicture())
         );
     }
 

@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.evidence;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.EvidenceType;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.UPDATE_EVIDENCE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.EvidenceMother.simpleEvidence;
@@ -35,6 +37,9 @@ class UpdateEvidenceServiceTest {
     @Mock
     private LoadEvidencePort loadEvidencePort;
 
+    @Mock
+    private AssessmentAccessChecker assessmentAccessChecker;
+
     @Test
     void testUpdateEvidence_ValidParam_UpdatedAndReturnsId() {
         var savedEvidence = simpleEvidence();
@@ -49,6 +54,7 @@ class UpdateEvidenceServiceTest {
         var updateResult = new UpdateEvidencePort.Result(savedEvidence.getId());
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(savedEvidence);
+        when(assessmentAccessChecker.isAuthorized(savedEvidence.getAssessmentId(), param.getCurrentUserId(), UPDATE_EVIDENCE)).thenReturn(true);
         when(updateEvidencePort.update(any())).thenReturn(updateResult);
 
         UpdateEvidenceUseCase.Result result = service.updateEvidence(param);
@@ -76,8 +82,26 @@ class UpdateEvidenceServiceTest {
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(savedEvidence);
 
-        var exception = assertThrows(AccessDeniedException.class, () -> service.updateEvidence(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateEvidence(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    }
+
+    @Test
+    void testUpdateEvidence_NotAuthorizedUser_ThrowsException() {
+        var savedEvidence = simpleEvidence();
+        var code = EvidenceType.values()[savedEvidence.getType()].getCode();
+        var param = new UpdateEvidenceUseCase.Param(
+            savedEvidence.getId(),
+            "new " + savedEvidence.getDescription(),
+            code,
+            savedEvidence.getCreatedById()
+        );
+
+        when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(savedEvidence);
+        when(assessmentAccessChecker.isAuthorized(savedEvidence.getAssessmentId(), param.getCurrentUserId(), UPDATE_EVIDENCE)).thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateEvidence(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
