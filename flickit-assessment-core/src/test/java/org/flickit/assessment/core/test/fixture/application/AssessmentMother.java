@@ -40,7 +40,8 @@ public class AssessmentMother {
             LocalDateTime.now(),
             new AssessmentListItem.MaturityLevel(counter, "levelTitle"+counter, 1, 2),
             Boolean.TRUE,
-            Boolean.TRUE
+            Boolean.TRUE,
+            Boolean.FALSE
         );
     }
 }

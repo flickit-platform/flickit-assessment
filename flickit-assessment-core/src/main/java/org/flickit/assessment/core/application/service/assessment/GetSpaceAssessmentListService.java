@@ -32,6 +32,7 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
 
         return loadAssessmentsBySpace.loadSpaceAssessments(
             spaceId,
+            param.getCurrentUserId(),
             param.getPage(),
             param.getSize()
         );
