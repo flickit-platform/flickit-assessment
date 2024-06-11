@@ -52,7 +52,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     CountKitListStatsPort,
     DeleteAssessmentKitPort,
     CountKitAssessmentsPort,
-    LoadExpertGroupKitListPort {
+    LoadExpertGroupKitListPort,
+    SearchKitOptionsPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -181,7 +182,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 AssessmentKitMapper.mapToDomainModel(v.getKit()),
-                ExpertGroupMapper.toDomainModel(v.getExpertGroup())
+                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())
             ))
             .toList();
 
@@ -201,7 +202,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 AssessmentKitMapper.mapToDomainModel(v.getKit()),
-                ExpertGroupMapper.toDomainModel(v.getExpertGroup())))
+                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())))
             .toList();
 
         return new PaginatedResponse<>(
@@ -248,5 +249,24 @@ public class AssessmentKitPersistenceJpaAdapter implements
             AssessmentKitJpaEntity.Fields.LAST_MODIFICATION_TIME,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
+    }
+
+    @Override
+    public PaginatedResponse<AssessmentKit> searchKitOptions(SearchKitOptionsPort.Param param) {
+        String query = param.query() == null ? "" : param.query();
+        Page<AssessmentKitJpaEntity> kitEntityPage = repository.findAllByTitleAndUserId(query,
+            param.currentUserId(),
+            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, AssessmentKitJpaEntity.Fields.TITLE));
+
+        List<AssessmentKit> kits = kitEntityPage.getContent().stream()
+            .map(AssessmentKitMapper::mapToDomainModel)
+            .toList();
+
+        return new PaginatedResponse<>(kits,
+            kitEntityPage.getNumber(),
+            kitEntityPage.getSize(),
+            AssessmentKitJpaEntity.Fields.TITLE,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) kitEntityPage.getTotalElements());
     }
 }

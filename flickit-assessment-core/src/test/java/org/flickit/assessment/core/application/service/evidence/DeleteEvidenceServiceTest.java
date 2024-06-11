@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.evidence;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Evidence;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.DELETE_EVIDENCE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +37,9 @@ class DeleteEvidenceServiceTest {
     @Mock
     private LoadEvidencePort loadEvidencePort;
 
+    @Mock
+    private AssessmentAccessChecker assessmentAccessChecker;
+
     @Test
     void testDeleteEvidence_IdGiven_Delete() {
         Evidence evidence = EvidenceMother.simpleEvidence();
@@ -42,6 +47,7 @@ class DeleteEvidenceServiceTest {
         UUID currentUserId = evidence.getCreatedById();
         doNothing().when(deleteEvidencePort).deleteById(evidenceId);
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
+        when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), currentUserId, DELETE_EVIDENCE)).thenReturn(true);
         service.deleteEvidence(new DeleteEvidenceUseCase.Param(evidenceId, currentUserId));
 
         ArgumentCaptor<UUID> idDeletePortArgument = ArgumentCaptor.forClass(UUID.class);
@@ -75,10 +81,28 @@ class DeleteEvidenceServiceTest {
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
 
         DeleteEvidenceUseCase.Param param = new DeleteEvidenceUseCase.Param(evidenceId, currentUserId);
-        var exception = assertThrows(AccessDeniedException.class,
-            () -> service.deleteEvidence(param));
 
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteEvidence(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verify(deleteEvidencePort, never()).deleteById(any());
+
+        ArgumentCaptor<UUID> idCheckPortArgument = ArgumentCaptor.forClass(UUID.class);
+        verify(loadEvidencePort).loadNotDeletedEvidence(idCheckPortArgument.capture());
+
+        assertEquals(evidenceId, idCheckPortArgument.getValue());
+    }
+
+    @Test
+    void testDeleteEvidence_NotAuthorizedUser_ThrowsException() {
+        Evidence evidence = EvidenceMother.simpleEvidence();
+        UUID evidenceId = evidence.getId();
+        UUID currentUserId = evidence.getCreatedById();
+        when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
+        when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), currentUserId, DELETE_EVIDENCE)).thenReturn(false);
+
+        DeleteEvidenceUseCase.Param param = new DeleteEvidenceUseCase.Param(evidenceId, currentUserId);
+        assertThrows(AccessDeniedException.class, () -> service.deleteEvidence(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(deleteEvidencePort, never()).deleteById(any());
 
         ArgumentCaptor<UUID> idCheckPortArgument = ArgumentCaptor.forClass(UUID.class);

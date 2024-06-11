@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface LoadSpaceOwnerPort {
 
-    UUID loadOwnerId (long id);
+    UUID loadOwnerId(long spaceId);
 }

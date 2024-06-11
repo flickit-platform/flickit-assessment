@@ -4,7 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceUseCase;
-import org.flickit.assessment.users.application.port.out.LoadSpaceDetailsPort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpaceDetailsPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.test.fixture.application.SpaceMother;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +20,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetSpaceServiceTest {

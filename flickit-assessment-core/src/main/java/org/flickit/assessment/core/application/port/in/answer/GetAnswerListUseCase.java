@@ -11,6 +11,7 @@ import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetAnswerListUseCase {
@@ -27,6 +28,9 @@ public interface GetAnswerListUseCase {
         @NotNull(message = GET_ANSWER_LIST_QUESTIONNAIRE_ID_NOTNULL)
         Long questionnaireId;
 
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
         @Min(value = 1, message = GET_ANSWER_LIST_SIZE_MIN)
         @Max(value = 100, message = GET_ANSWER_LIST_SIZE_MAX)
         int size;
@@ -34,9 +38,10 @@ public interface GetAnswerListUseCase {
         @Min(value = 0, message = GET_ANSWER_LIST_PAGE_MIN)
         int page;
 
-        public Param(UUID assessmentId, Long questionnaireId, int size, int page) {
+        public Param(UUID assessmentId, Long questionnaireId, UUID currentUserId, int size, int page) {
             this.assessmentId = assessmentId;
             this.questionnaireId = questionnaireId;
+            this.currentUserId = currentUserId;
             this.size = size;
             this.page = page;
             this.validateSelf();
