@@ -12,6 +12,7 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -76,11 +77,14 @@ public class MaturityLevelPersistenceJpaAdapter implements
         return maturityLevelEntities.stream()
             .map(e -> {
                 MaturityLevel maturityLevel = MaturityLevelMapper.mapToDomainModel(e);
-                List<LevelCompetenceJpaEntity> levelCompetenceJpaEntities = levelIdToLevelCompetences.get(maturityLevel.getId());
-                List<MaturityLevelCompetence> maturityLevelCompetences = levelCompetenceJpaEntities.stream()
-                    .map(x -> new MaturityLevelCompetence(x.getEffectiveLevelId(), x.getValue()))
-                    .toList();
-                maturityLevel.setCompetences(maturityLevelCompetences);
+                if (levelIdToLevelCompetences.containsKey(e.getId())) {
+                    List<LevelCompetenceJpaEntity> levelCompetenceJpaEntities = levelIdToLevelCompetences.get(maturityLevel.getId());
+                    List<MaturityLevelCompetence> maturityLevelCompetences = levelCompetenceJpaEntities.stream()
+                        .map(x -> new MaturityLevelCompetence(x.getEffectiveLevelId(), x.getValue()))
+                        .toList();
+                    maturityLevel.setCompetences(maturityLevelCompetences);
+                } else
+                    maturityLevel.setCompetences(new ArrayList<>());
                 return maturityLevel;
             }).toList();
     }
