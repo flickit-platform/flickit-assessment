@@ -4,23 +4,22 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
-import org.flickit.assessment.core.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.QuestionnaireProgress;
 import org.flickit.assessment.core.application.port.out.answer.*;
-import org.flickit.assessment.core.application.port.out.questionnaire.GetQuestionnairesProgressPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.question.FirstUnansweredQuestionView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -28,7 +27,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class AnswerPersistenceJpaAdapter implements
     CreateAnswerPort,
-    GetQuestionnairesProgressPort,
     CountAnswersByQuestionIdsPort,
     LoadAnswerPort,
     UpdateAnswerPort,
@@ -66,23 +64,6 @@ public class AnswerPersistenceJpaAdapter implements
     @Override
     public int countByQuestionIds(UUID assessmentResultId, List<Long> questionIds) {
         return repository.getCountByQuestionIds(assessmentResultId, questionIds);
-    }
-
-    @Override
-    public List<QuestionnaireProgress> getQuestionnairesProgressByAssessmentId(UUID assessmentId) {
-        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND));
-
-        var progresses = repository.getQuestionnairesProgressByAssessmentResultId(assessmentResult.getId());
-        var unansweredQuestions = questionRepository.findQuestionnairesFirstUnansweredQuestion(assessmentResult.getId());
-
-        Map<Long, Integer> questionnaireIdToQuestionIndex = unansweredQuestions.stream()
-            .collect(Collectors.toMap(FirstUnansweredQuestionView::getQuestionnaireId, FirstUnansweredQuestionView::getIndex));
-        return progresses.stream()
-            .map(p -> new QuestionnaireProgress(p.getQuestionnaireId(),
-                p.getAnswerCount(),
-                questionnaireIdToQuestionIndex.get(p.getQuestionnaireId())))
-            .toList();
     }
 
     @Override

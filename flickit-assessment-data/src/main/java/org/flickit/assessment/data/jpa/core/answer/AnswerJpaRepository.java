@@ -31,11 +31,6 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     int getCountByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 
-    @Query("SELECT a.questionnaireId as questionnaireId, COUNT(a.questionnaireId) as answerCount FROM AnswerJpaEntity a " +
-        "where a.assessmentResult.id=:assessmentResultId AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true) " +
-        "GROUP BY a.questionnaireId")
-    List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(UUID assessmentResultId);
-
     @Modifying
     @Query("UPDATE AnswerJpaEntity a SET " +
         "a.answerOptionId = :answerOptionId, " +

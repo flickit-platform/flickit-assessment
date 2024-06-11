@@ -76,7 +76,6 @@ public enum AssessmentUserRole {
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
-            VIEW_QUESTIONNAIRES_PROGRESS,
             VIEW_QUESTIONNAIRE_QUESTIONS)),
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
