@@ -6,7 +6,11 @@ import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpert
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -20,20 +24,15 @@ public class UpdateExpertGroupPictureRestController {
     @PutMapping("/expert-groups/{id}/picture")
     public ResponseEntity<UpdateExpertGroupPictureResponseDto> updateExpertGroupPicture(
         @PathVariable("id") Long id,
-        @ModelAttribute UpdateExpertGroupPictureRequestDto request) {
+        @RequestParam MultipartFile pictureFile) {
         UUID currentUserId = userContext.getUser().id();
-        UpdateExpertGroupPictureResponseDto response =
-            toResponseDto(useCase.update(toParam(id, request, currentUserId)));
+        var response = toResponseDto(useCase.update(toParam(id, pictureFile, currentUserId)));
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    private Param toParam(Long id, UpdateExpertGroupPictureRequestDto request, UUID currentUserId) {
-        return new Param(
-            id,
-            request.picture(),
-            currentUserId
-        );
+    private Param toParam(Long id, MultipartFile pictureFile, UUID currentUserId) {
+        return new Param(id, pictureFile, currentUserId);
     }
 
     private UpdateExpertGroupPictureResponseDto toResponseDto(UpdateExpertGroupPictureUseCase.Result result) {
