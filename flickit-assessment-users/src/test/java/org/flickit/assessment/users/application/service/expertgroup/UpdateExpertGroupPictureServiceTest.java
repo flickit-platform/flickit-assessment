@@ -24,7 +24,6 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_I
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.mockito.Mockito.*;
 
-
 @ExtendWith(MockitoExtension.class)
 class UpdateExpertGroupPictureServiceTest {
 
@@ -48,7 +47,6 @@ class UpdateExpertGroupPictureServiceTest {
 
     @Mock
     CreateFileDownloadLinkPort createFileDownloadLinkPort;
-
 
     @Test
     @DisplayName("An existing expert group should undergo updating.")
