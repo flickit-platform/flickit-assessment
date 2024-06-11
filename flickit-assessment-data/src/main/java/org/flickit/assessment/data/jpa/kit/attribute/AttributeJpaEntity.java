@@ -71,5 +71,4 @@ public class AttributeJpaEntity {
     @JoinColumn(name = "subject_id", referencedColumnName = "id")
     @JoinColumn(name="kit_version_id", referencedColumnName="kit_version_id")
     private SubjectJpaEntity subject;
-
 }

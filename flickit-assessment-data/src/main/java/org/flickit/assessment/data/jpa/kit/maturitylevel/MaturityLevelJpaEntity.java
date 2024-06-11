@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.maturitylevel;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 
 import java.io.Serializable;
@@ -63,12 +62,6 @@ public class MaturityLevelJpaEntity {
         this.id = id;
         this.kitVersionId = kitVersionId;
     }
-
-    @OneToMany(mappedBy = "affectedLevel", cascade = CascadeType.REMOVE)
-    private List<LevelCompetenceJpaEntity> affectedCompetences;
-
-    @OneToMany(mappedBy = "effectiveLevel", cascade = CascadeType.REMOVE)
-    private List<LevelCompetenceJpaEntity> effectiveCompetences;
 
     @OneToMany(mappedBy = "maturityLevel", cascade = CascadeType.REMOVE)
     private List<QuestionImpactJpaEntity> questionImpacts;
