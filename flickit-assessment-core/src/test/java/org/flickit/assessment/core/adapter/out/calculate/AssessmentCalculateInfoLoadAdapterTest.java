@@ -2,7 +2,6 @@ package org.flickit.assessment.core.adapter.out.calculate;
 
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.application.domain.*;
-import org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
@@ -36,6 +35,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeJapEntityMother.createAttributeEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.QuestionImpactEntityMother.questionImpactEntity;
@@ -160,7 +160,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
     }
 
     private static Context createContext() {
-        var assessmentResultEntity = AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity(null, Boolean.FALSE, Boolean.FALSE);
+        var assessmentResultEntity = validSimpleAssessmentResultEntity(null, Boolean.FALSE, Boolean.FALSE);
+        Long kitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
+        Long kitVersionId = assessmentResultEntity.getKitVersionId();
 
         var attributeId = 134L;
         var attribute1Id = attributeId++;
@@ -169,8 +171,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var attribute4Id = attributeId++;
         var attribute5Id = attributeId++;
         var attribute6Id = attributeId;
-
-        Long kitId = 123L;
 
         AttributeJpaEntity attribute1 = createAttributeEntity(attribute1Id, 1, kitId);
         AttributeJpaEntity attribute2 = createAttributeEntity(attribute2Id, 2, kitId);
@@ -278,9 +278,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, null, question5.getId(), null, null, null, null);
         List<AnswerOptionJpaEntity> answerOptionEntities = new ArrayList<>(List.of(answerOptionEntity1, answerOptionEntity2, answerOptionEntity3));
 
-        var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, 1L, impact11, 1, null, null, null, null);
-        var answerImpact21 = new AnswerOptionImpactJpaEntity(2L, 2L, impact21, 1, null, null, null, null);
-        var answerImpact31 = new AnswerOptionImpactJpaEntity(3L, 5L, impact31, 1, null, null, null, null);
+        var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, 1L, impact11, 1, kitVersionId, null, null, null, null);
+        var answerImpact21 = new AnswerOptionImpactJpaEntity(2L, 2L, impact21, 1, kitVersionId, null, null, null, null);
+        var answerImpact31 = new AnswerOptionImpactJpaEntity(3L, 5L, impact31, 1, kitVersionId, null, null, null, null);
         List<AnswerOptionImpactJpaEntity> answerOptionImpactEntities = new ArrayList<>(List.of(answerImpact11, answerImpact21, answerImpact31));
 
         return new Context(
