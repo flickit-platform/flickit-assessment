@@ -802,7 +802,7 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "picture",
+							"key": "pictureFile",
 							"type": "file",
 							"src": "/home/maziyar/Pictures/index.jpeg"
 						}
