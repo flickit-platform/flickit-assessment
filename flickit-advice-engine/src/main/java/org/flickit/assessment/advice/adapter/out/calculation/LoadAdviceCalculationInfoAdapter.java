@@ -7,8 +7,8 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.ImprovableImpactfulQuestionView;
@@ -28,7 +28,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
     private final QuestionJpaRepository questionRepository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
     private final AttributeMaturityScoreJpaRepository attributeMaturityScoreRepository;
-    private final QualityAttributeValueJpaRepository attributeValueRepository;
+    private final AttributeValueJpaRepository attributeValueRepository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     private static final double DEFAULT_ATTRIBUTE_MATURITY_SCORE = 0.0;
@@ -49,7 +49,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                 Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevelId();
                 var assessmentResultJpaEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
                     .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
-                QualityAttributeValueJpaEntity attributeValueEntity =
+                AttributeValueJpaEntity attributeValueEntity =
                     attributeValueRepository.findByAttributeIdAndAssessmentResult_Id(attributeId, assessmentResultJpaEntity.getId());
 
                 Double gainedScorePercentage = attributeMaturityScoreRepository

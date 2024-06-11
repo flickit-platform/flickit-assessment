@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "60b3ff78-3c18-458f-9708-86db42cfe804",
+		"_postman_id": "1361b4fc-32b1-4404-be6d-c7e73a79d441",
 		"name": "flickit-assessment-core",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "6692064"
+		"_exporter_id": "8794215"
 	},
 	"item": [
 		{
@@ -13,8 +13,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -46,8 +45,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -84,17 +82,15 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments?spaceIds=1&kitId=138&page=0&size=10",
+					"raw": "{{base_url}}/{{api_path}}/assessments?kitId=393&page=0&size=10",
 					"host": [
 						"{{base_url}}"
 					],
@@ -104,12 +100,53 @@
 					],
 					"query": [
 						{
-							"key": "spaceIds",
-							"value": "1"
+							"key": "kitId",
+							"value": "393"
 						},
 						{
-							"key": "kitId",
-							"value": "138"
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Space Assessment List",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments?spaceId=8&page=0&size=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments"
+					],
+					"query": [
+						{
+							"key": "spaceId",
+							"value": "8"
 						},
 						{
 							"key": "page",
@@ -131,12 +168,11 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/3bfa613e-4e50-46a4-96aa-a061f104224e",
+					"raw": "{{base_url}}/{{api_path}}/assessment/3bfa613e-4e50-46a4-96aa-a061f104224e",
 					"host": [
 						"{{base_url}}"
 					],
@@ -156,8 +192,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -181,8 +216,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -205,8 +239,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -244,13 +277,11 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -282,8 +313,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -317,8 +347,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -357,8 +386,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -387,13 +415,11 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -434,8 +460,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -461,8 +486,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -491,13 +515,11 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -526,13 +548,11 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -559,8 +579,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -597,13 +616,11 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -630,8 +647,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -678,8 +694,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -703,8 +718,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -727,8 +741,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -762,8 +775,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -814,8 +826,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -878,13 +889,11 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "default",
 						"disabled": true
 					},
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -920,8 +929,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -1015,8 +1023,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -1043,6 +1050,28 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	],
 	"variable": [
