@@ -107,7 +107,7 @@ class UpdateExpertGroupPictureServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupPort.loadExpertGroup(expertGroupId)).thenReturn(expertGroup);
-        doNothing().when(deleteFilePort).delete(expertGroup.getPicture());
+        doNothing().when(deleteFilePort).deletePicture(expertGroup.getPicture());
         when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
         doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
@@ -116,7 +116,7 @@ class UpdateExpertGroupPictureServiceTest {
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verify(loadExpertGroupPort).loadExpertGroup(expertGroupId);
-        verify(deleteFilePort).delete(expertGroup.getPicture());
+        verify(deleteFilePort).deletePicture(expertGroup.getPicture());
         verify(uploadExpertGroupPicturePort).uploadPicture(picture);
         verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
     }
