@@ -36,7 +36,7 @@ public class LevelCompetencePersistenceJpaAdapter implements
             null,
             maturityLevelJpaRepository.findByIdAndKitVersionId(affectedLevelId, kitVersionId)
                 .orElseThrow(() -> new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND)),
-            maturityLevelJpaRepository.findByIdAndKitVersionId(affectedLevelId, kitVersionId)
+            maturityLevelJpaRepository.findByIdAndKitVersionId(effectiveLevelId, kitVersionId)
                 .orElseThrow(() -> new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND)),
             value,
             kitVersionId,
