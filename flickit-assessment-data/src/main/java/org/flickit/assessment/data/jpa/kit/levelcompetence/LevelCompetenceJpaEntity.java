@@ -22,8 +22,10 @@ public class LevelCompetenceJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(name = "affected_level_id", nullable = false)
     private Long affectedLevelId;
 
+    @Column(name = "effective_level_id", nullable = false)
     private Long effectiveLevelId;
 
     @Column(name = "value", nullable = false)

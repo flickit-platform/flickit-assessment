@@ -1,10 +1,13 @@
 package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
+import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +29,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     LoadAttributeMaturityLevelsPort {
 
     private final MaturityLevelJpaRepository repository;
+    private final LevelCompetenceJpaRepository levelCompetenceRepository;
 
     @Override
     public Long persist(MaturityLevel level, Long kitVersionId, UUID createdBy) {
@@ -59,9 +63,26 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public List<MaturityLevel> loadByKitVersionId(Long kitVersionId) {
-        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .map(MaturityLevelMapper::mapToDomainModel)
+        List<MaturityLevelJpaEntity> maturityLevelEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+
+        List<Long> levelIds = maturityLevelEntities.stream()
+            .map(MaturityLevelJpaEntity::getId)
             .toList();
+
+        List<LevelCompetenceJpaEntity> levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdIn(levelIds);
+        Map<Long, List<LevelCompetenceJpaEntity>> levelIdToLevelCompetences = levelCompetenceEntities.stream()
+            .collect(Collectors.groupingBy(LevelCompetenceJpaEntity::getAffectedLevelId));
+
+        return maturityLevelEntities.stream()
+            .map(e -> {
+                MaturityLevel maturityLevel = MaturityLevelMapper.mapToDomainModel(e);
+                List<LevelCompetenceJpaEntity> levelCompetenceJpaEntities = levelIdToLevelCompetences.get(maturityLevel.getId());
+                List<MaturityLevelCompetence> maturityLevelCompetences = levelCompetenceJpaEntities.stream()
+                    .map(x -> new MaturityLevelCompetence(x.getEffectiveLevelId(), x.getValue()))
+                    .toList();
+                maturityLevel.setCompetences(maturityLevelCompetences);
+                return maturityLevel;
+            }).toList();
     }
 
     @Override
