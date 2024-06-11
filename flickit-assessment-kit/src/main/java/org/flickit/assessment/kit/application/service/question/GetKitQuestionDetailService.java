@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -30,6 +31,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
     private final LoadAllAttributesPort loadAllAttributesPort;
     private final LoadQuestionPort loadQuestionPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private final LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
 
     @Override
     public Result getKitQuestionDetail(Param param) {
@@ -46,12 +48,13 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
             .sorted(comparingInt(Option::index))
             .toList();
 
-        List<Impact> attributeImpacts = loadAttributeImpacts(question, maturityLevelsMap);
+        long kitVersionId = loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(param.getKitId());
+        List<Impact> attributeImpacts = loadAttributeImpacts(kitVersionId, question, maturityLevelsMap);
 
         return new Result(question.getHint(), options, attributeImpacts);
     }
 
-    private List<Impact> loadAttributeImpacts(Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
+    private List<Impact> loadAttributeImpacts(long kitVersionId, Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
         var impacts = question.getImpacts();
 
         var answerIdToIndexMap = question.getOptions().stream()
@@ -63,7 +66,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
 
         var attributeIds = attributeIdToImpacts.keySet().stream().toList();
 
-        var attributeIdToTitleMap = loadAllAttributesPort.loadAllByIds(attributeIds).stream()
+        var attributeIdToTitleMap = loadAllAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId).stream()
             .collect(toMap(Attribute::getId, Attribute::getTitle));
         return attributeIds.stream()
             .map(attributeId -> toAttributeImpact(

@@ -3,12 +3,12 @@ package org.flickit.assessment.data.jpa.kit.attribute;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@IdClass(AttributeJpaEntity.EntityId.class)
 @Table(name = "fak_attribute")
 @Getter
 @Setter
@@ -23,6 +23,10 @@ public class AttributeJpaEntity {
     @SequenceGenerator(name = "fak_attribute_id_seq", sequenceName = "fak_attribute_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
+
+    @Id
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "ref_num", nullable = false)
     private UUID refNum;
@@ -54,6 +58,9 @@ public class AttributeJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
+    @Column(name = "subject_id", nullable = false)
+    private Long subjectId;
+
 
     public AttributeJpaEntity(Long id, String code, String title, Integer index, String description, Integer weight,
                               LocalDateTime creationTime, LocalDateTime lastModificationTime, UUID refNum) {
@@ -67,9 +74,12 @@ public class AttributeJpaEntity {
         this.lastModificationTime = lastModificationTime;
         this.refNum = refNum;
     }
-    @ManyToOne
-    @JoinColumn(name = "subject_id", referencedColumnName = "id")
-    @JoinColumn(name="kit_version_id", referencedColumnName="kit_version_id")
-    private SubjectJpaEntity subject;
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId {
+        private Long id;
+        private Long kitVersionId;
+    }
 }

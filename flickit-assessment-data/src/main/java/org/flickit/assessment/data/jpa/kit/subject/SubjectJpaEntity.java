@@ -61,9 +61,6 @@ public class SubjectJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @OneToMany(mappedBy = "subject")
-    private List<AttributeJpaEntity> attributes;
-
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

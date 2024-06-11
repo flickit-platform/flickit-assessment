@@ -2,6 +2,9 @@ package org.flickit.assessment.kit.adapter.out.persistence.subject;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.application.domain.Subject;
@@ -12,6 +15,8 @@ import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
@@ -26,6 +31,7 @@ public class SubjectPersistenceJpaAdapter implements
     LoadSubjectPort {
 
     private final SubjectJpaRepository repository;
+    private final AttributeJpaRepository attributeRepository;
 
     @Override
     public void update(UpdateSubjectPort.Param param) {
@@ -46,9 +52,15 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public List<Subject> loadByKitVersionId(long kitVersionId) {
-        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+        List<SubjectJpaEntity> subjectEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+        List<Long> subjectEntityIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdIn(subjectEntityIds);
+        Map<Long, List<AttributeJpaEntity>> subjectEntityIdToAttrEntities = attributeEntities.stream()
+            .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
+
+        return subjectEntities.stream()
             .map(e -> SubjectMapper.mapToDomainModel(e,
-                e.getAttributes().stream()
+                subjectEntityIdToAttrEntities.get(e.getId()).stream()
                     .map(AttributeMapper::mapToDomainModel)
                     .toList()))
             .toList();
@@ -56,9 +68,10 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public Subject load(long subjectId, long kitVersionId) {
-        var subject = repository.findByIdAndKitVersionId (subjectId, kitVersionId)
+        var subjectEntity = repository.findByIdAndKitVersionId (subjectId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND));
-        return mapToDomainModel(subject,
-            subject.getAttributes().stream().map(AttributeMapper::mapToDomainModel).toList());
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectId(subjectId);
+        return mapToDomainModel(subjectEntity,
+            attributeEntities.stream().map(AttributeMapper::mapToDomainModel).toList());
     }
 }

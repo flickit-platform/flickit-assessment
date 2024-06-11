@@ -15,6 +15,8 @@ import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMatu
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
@@ -39,6 +41,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
     private final SubjectValueJpaRepository subjectValueRepo;
     private final MaturityLevelJpaRepository maturityLevelJpaRepository;
     private final SubjectJpaRepository subjectRepository;
+    private final AttributeJpaRepository attributeRepository;
     private final QualityAttributeValueJpaRepository attributeValueRepository;
     private final AttributeMaturityScoreJpaRepository attributeMaturityScoreRepository;
 
@@ -100,7 +103,9 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             attrMaturityScoreEntities.stream()
                 .collect(groupingBy(AttributeMaturityScoreJpaEntity::getAttributeValueId));
 
-        return subjectEntity.getAttributes().stream()
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectId(subjectEntity.getId());
+
+        return attributeEntities.stream()
             .map(e -> {
                 QualityAttributeValueJpaEntity attrValueEntity = attrRefNumToAttValueEntity.get(e.getRefNum());
                 MaturityLevel maturityLevelEntity = idToMaturityLevelMap.get(attrValueEntity.getMaturityLevelId());

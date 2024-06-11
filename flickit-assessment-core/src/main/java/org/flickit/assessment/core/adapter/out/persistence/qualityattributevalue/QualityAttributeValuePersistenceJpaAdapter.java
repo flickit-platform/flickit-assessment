@@ -48,7 +48,7 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
 
         List<QualityAttributeValueJpaEntity> entities = qualityAttributeIds.stream().map(qualityAttributeId -> {
             UUID attributeRefNum = attributeRepository.findRefNumById(qualityAttributeId);
-            QualityAttributeValueJpaEntity qualityAttributeValue = QualityAttributeValueMapper.mapToJpaEntity(attributeRefNum);
+            QualityAttributeValueJpaEntity qualityAttributeValue = QualityAttributeValueMapper.mapToJpaEntity(qualityAttributeId, attributeRefNum);
             qualityAttributeValue.setAssessmentResult(assessmentResult);
             return qualityAttributeValue;
         }).toList();
@@ -56,7 +56,7 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
         var persistedEntities = repository.saveAll(entities);
 
         return persistedEntities.stream().map(q -> {
-            var attributeEntity = attributeRepository.findBySubject_KitVersionIdAndRefNum(assessmentResult.getKitVersionId(), q.getAttributeRefNum());
+            var attributeEntity = attributeRepository.findByKitVersionIdAndRefNum(assessmentResult.getKitVersionId(), q.getAttributeRefNum());
             return QualityAttributeValueMapper.mapToDomainModel(q, attributeEntity);
         }).toList();
     }
@@ -81,7 +81,7 @@ public class QualityAttributeValuePersistenceJpaAdapter implements
 
         List<UUID> attributeRefNums = entities.stream().map(QualityAttributeValueJpaEntity::getAttributeRefNum).toList();
         Long kitVersionId = entities.get(0).getAssessmentResult().getKitVersionId();
-        Map<UUID, Long> attributeIdsToRefNumMap = attributeRepository.findAllBySubject_KitVersionIdAndRefNumIn(kitVersionId, attributeRefNums).stream()
+        Map<UUID, Long> attributeIdsToRefNumMap = attributeRepository.findAllByKitVersionIdAndRefNumIn(kitVersionId, attributeRefNums).stream()
             .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
 
         return entities.stream()

@@ -35,14 +35,6 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
         @Param(value = "lastModifiedBy") UUID lastModifiedBy
     );
 
-    @Query("""
-            SELECT s as subject
-            FROM SubjectJpaEntity s
-            JOIN FETCH s.attributes a
-            WHERE s.kitVersionId = :kitVersionId
-        """)
-    List<SubjectJpaEntity> loadByKitVersionIdWithAttributes(@Param(value = "kitVersionId") Long kitVersionId);
-
     Optional<SubjectJpaEntity> findByIdAndKitVersionId(@Param(value = "id") long id, @Param(value = "kitVersionId") long kitVersionId);
 
     @Query("""
