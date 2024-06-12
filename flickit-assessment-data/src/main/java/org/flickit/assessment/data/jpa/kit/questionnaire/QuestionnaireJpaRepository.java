@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, Long> {
+public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, QuestionnaireJpaEntity.EntityId> {
 
     List<QuestionnaireJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
