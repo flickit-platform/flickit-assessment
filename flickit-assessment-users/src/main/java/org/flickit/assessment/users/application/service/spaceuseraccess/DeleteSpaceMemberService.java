@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.DeleteSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.out.assessmentuserrole.DeleteSpaceAssessmentUserRolesPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
@@ -24,6 +25,7 @@ public class DeleteSpaceMemberService implements DeleteSpaceMemberUseCase {
     private final LoadSpaceOwnerPort loadSpaceOwnerPort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final DeleteSpaceMemberPort deleteSpaceMemberPort;
+    private final DeleteSpaceAssessmentUserRolesPort deleteSpaceAssessmentUserRolesPort;
 
     @Override
     public void deleteMember(Param param) {
@@ -31,6 +33,8 @@ public class DeleteSpaceMemberService implements DeleteSpaceMemberUseCase {
         var access = checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getUserId());
         if (!access)
             throw new ResourceNotFoundException(DELETE_SPACE_MEMBER_USER_ID_NOT_FOUND);
+
+        deleteSpaceAssessmentUserRolesPort.delete(param.getUserId(), param.getSpaceId());
         deleteSpaceMemberPort.delete(param.getSpaceId(), param.getUserId());
     }
 

@@ -46,7 +46,7 @@ public class QuestionPersistenceJpaAdapter implements
         List<Long> ids = pageResult.getContent().stream()
             .map(QuestionJpaEntity::getId)
             .toList();
-        var questionIdToAnswerOptionsMap = answerOptionRepository.findAllByQuestionIdInOrderByQuestionIdIndex(ids).stream()
+        var questionIdToAnswerOptionsMap = answerOptionRepository.findAllByQuestionIdIn(ids).stream()
             .collect(groupingBy(AnswerOptionJpaEntity::getQuestionId));
 
         var items = pageResult.getContent().stream()

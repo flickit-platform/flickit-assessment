@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.in.rest.answer;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase;
 import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class GetAnswerListRestController {
 
     private final GetAnswerListUseCase useCase;
+    private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/answers")
     ResponseEntity<PaginatedResponse<GetAnswerListUseCase.AnswerListItem>> getAnswerList(
@@ -27,11 +29,12 @@ public class GetAnswerListRestController {
         @RequestParam(defaultValue = "50") int size,
         @RequestParam(defaultValue = "0") int page) {
 
-        PaginatedResponse<AnswerListItem> result = useCase.getAnswerList(toParam(assessmentId, questionnaireId, size, page));
+        UUID currentUserId = userContext.getUser().id();
+        PaginatedResponse<AnswerListItem> result = useCase.getAnswerList(toParam(assessmentId, questionnaireId, currentUserId, size, page));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private GetAnswerListUseCase.Param toParam(UUID assessmentId, Long questionnaireId, int size, int page) {
-        return new GetAnswerListUseCase.Param(assessmentId, questionnaireId, size, page);
+    private GetAnswerListUseCase.Param toParam(UUID assessmentId, Long questionnaireId, UUID currentUserId, int size, int page) {
+        return new GetAnswerListUseCase.Param(assessmentId, questionnaireId, currentUserId, size, page);
     }
 }

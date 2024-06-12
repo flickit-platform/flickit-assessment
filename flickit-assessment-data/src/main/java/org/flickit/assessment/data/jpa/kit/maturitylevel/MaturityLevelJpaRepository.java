@@ -46,4 +46,6 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
               WHERE  m.id = :id AND kv.kit.id = :kitId
         """)
     boolean existsByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
+
+    List<MaturityLevelJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
 }

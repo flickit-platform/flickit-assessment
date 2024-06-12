@@ -72,7 +72,6 @@ public enum AssessmentUserRole {
             VIEW_ANSWER,
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
-            VIEW_EVIDENCE,
             VIEW_ATTRIBUTE_EVIDENCE_LIST,
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,

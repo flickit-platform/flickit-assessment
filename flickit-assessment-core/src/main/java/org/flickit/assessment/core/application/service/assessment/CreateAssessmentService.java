@@ -3,14 +3,15 @@ package org.flickit.assessment.core.application.service.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.QualityAttribute;
+import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.CheckKitAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
+import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
@@ -24,6 +25,7 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.Assessment.generateSlugCode;
 import static org.flickit.assessment.core.application.domain.AssessmentColor.getValidId;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_KIT_NOT_ALLOWED;
 
@@ -38,8 +40,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final LoadAssessmentKitVersionIdPort loadKitVersionIdPort;
     private final CreateAssessmentResultPort createAssessmentResultPort;
     private final CreateSubjectValuePort createSubjectValuePort;
-    private final CreateQualityAttributeValuePort createQualityAttributeValuePort;
+    private final CreateAttributeValuePort createAttributeValuePort;
     private final LoadSubjectsPort loadSubjectsPort;
+    private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Override
     public Result createAssessment(Param param) {
@@ -51,6 +54,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         UUID id = createAssessmentPort.persist(toParam(param));
         createAssessmentResult(id, loadKitVersionIdPort.loadVersionId(param.getKitId()));
+
+        grantUserAssessmentRolePort.persist(id, param.getCurrentUserId(), MANAGER.getId());
+
         return new Result(id);
     }
 
@@ -78,9 +84,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         List<Subject> subjects = loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId);
         List<Long> subjectIds = subjects.stream().map(Subject::getId).toList();
         List<Long> attributeIds = subjects.stream()
-            .map(x -> x.getQualityAttributes().stream().map(QualityAttribute::getId).toList())
+            .map(x -> x.getAttributes().stream().map(Attribute::getId).toList())
             .flatMap(List::stream).toList();
         createSubjectValuePort.persistAll(subjectIds, assessmentResultId);
-        createQualityAttributeValuePort.persistAll(attributeIds, assessmentResultId);
+        createAttributeValuePort.persistAll(attributeIds, assessmentResultId);
     }
 }
