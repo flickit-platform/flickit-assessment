@@ -42,12 +42,12 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(Long affectedLevelId, Long effectiveLevelId, Integer value, UUID lastModifiedBy) {
+    public void update(Long affectedLevelId, Long effectiveLevelId, Long kitVersionId, Integer value, UUID lastModifiedBy) {
         repository.update(
             affectedLevelId,
             effectiveLevelId,
+            kitVersionId,
             value,
-            LocalDateTime.now(),
-            lastModifiedBy);
+            LocalDateTime.now(), lastModifiedBy);
     }
 }
