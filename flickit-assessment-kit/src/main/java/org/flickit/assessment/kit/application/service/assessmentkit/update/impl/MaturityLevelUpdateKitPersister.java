@@ -202,7 +202,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             // delete removed competences
             deletedCompetences.forEach(cmpCode -> {
                     Long effectiveLevelId = savedLevelCodesMap.get(cmpCode).getId();
-                    deleteLevelCompetence(affectedLevel.getId(), effectiveLevelId);
+                    deleteLevelCompetence(affectedLevel.getId(), effectiveLevelId, kitVersionId);
                 }
             );
 
@@ -233,8 +233,8 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         log.debug("MaturityLevel[id={}, code={}] deleted from kit[{}].", deletedLevel.getId(), deletedLevel.getCode(), kitId);
     }
 
-    private void deleteLevelCompetence(Long affectedLevelId, Long effectiveLevelId) {
-        deleteLevelCompetencePort.delete(affectedLevelId, effectiveLevelId);
+    private void deleteLevelCompetence(Long affectedLevelId, Long effectiveLevelId, Long kitVersionId) {
+        deleteLevelCompetencePort.delete(affectedLevelId, effectiveLevelId, kitVersionId);
         log.debug("LevelCompetence[affectedId={}, effectiveId={}] deleted.", affectedLevelId, effectiveLevelId);
     }
 

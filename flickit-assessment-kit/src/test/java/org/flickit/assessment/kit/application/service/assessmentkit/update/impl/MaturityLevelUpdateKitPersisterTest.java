@@ -240,7 +240,7 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevelOne, dslLevelTwo, dslLevelThree))
             .build();
 
-        doNothing().when(deleteLevelCompetencePort).delete(levelThree().getId(), levelTwo().getId());
+        doNothing().when(deleteLevelCompetencePort).delete(levelThree().getId(), levelTwo().getId(), savedKit.getKitVersionId());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
