@@ -16,7 +16,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class SubjectJpaEntity {
 
     @Id
@@ -72,5 +72,4 @@ public class SubjectJpaEntity {
         private long id;
         private long kitVersionId;
     }
-
 }
