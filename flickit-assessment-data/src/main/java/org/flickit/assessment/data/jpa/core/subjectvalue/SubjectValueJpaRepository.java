@@ -28,7 +28,7 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
             UPDATE SubjectValueJpaEntity a SET a.confidenceValue = :confidenceValue
             WHERE a.id = :id
         """)
-    void updateConfidenceValuelById(@Param(value = "id") UUID id,
-                                    @Param(value = "confidenceValue") Double confidenceValue);
+    void updateConfidenceValueById(@Param(value = "id") UUID id,
+                                   @Param(value = "confidenceValue") Double confidenceValue);
 
 }
