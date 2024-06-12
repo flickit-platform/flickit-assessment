@@ -602,53 +602,6 @@
 			"response": []
 		},
 		{
-			"name": "Count Assessments",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/counters?spaceId=2&deleted=true&notDeleted=true&total=true",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessments",
-						"counters"
-					],
-					"query": [
-						{
-							"key": "assessmentKitId",
-							"value": "131",
-							"disabled": true
-						},
-						{
-							"key": "spaceId",
-							"value": "2"
-						},
-						{
-							"key": "deleted",
-							"value": "true"
-						},
-						{
-							"key": "notDeleted",
-							"value": "true"
-						},
-						{
-							"key": "total",
-							"value": "true"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Delete Evidence",
 			"request": {
 				"method": "DELETE",
