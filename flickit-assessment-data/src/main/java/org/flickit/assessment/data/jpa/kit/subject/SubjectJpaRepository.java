@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Long> {
+public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, SubjectJpaEntity.EntityId> {
 
     List<SubjectJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
@@ -41,13 +41,8 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
             JOIN FETCH s.attributes a
             WHERE s.kitVersionId = :kitVersionId
         """)
-    List<SubjectJpaEntity> loadByKitVersionIdWithAttributes(@Param(value = "kitVersionId") Long kitVersionId);
+    List<SubjectJpaEntity> findByKitVersionIdWithAttributes(@Param(value = "kitVersionId") Long kitVersionId);
 
-    @Query("""
-            SELECT s as subject
-            FROM SubjectJpaEntity s
-            WHERE s.id = :id AND s.kitVersionId = :kitVersionId
-        """)
     Optional<SubjectJpaEntity> findByIdAndKitVersionId(@Param(value = "id") long id, @Param(value = "kitVersionId") long kitVersionId);
 
     @Query("""

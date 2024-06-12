@@ -16,7 +16,6 @@ public class AttributeJapEntityMother {
             index,
             "description" + id,
             1,
-            kitId,
             creationTime,
             creationTime,
             UUID.randomUUID()

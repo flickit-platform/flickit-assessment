@@ -26,7 +26,7 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
         SELECT av
         FROM AttributeValueJpaEntity av
         LEFT JOIN AttributeJpaEntity att ON av.attributeRefNum = att.refNum
-            and av.assessmentResult.kitVersionId = att.kitVersionId
+            and av.assessmentResult.kitVersionId = att.subject.kitVersionId
             and av.assessmentResult.id = :assessmentResultId
         WHERE att.subject.id = :subjectId
         """)
@@ -39,7 +39,7 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
                 att as attribute
             FROM AttributeValueJpaEntity av
             LEFT JOIN AttributeJpaEntity att ON av.attributeRefNum = att.refNum
-                and av.assessmentResult.kitVersionId = att.kitVersionId
+                and av.assessmentResult.kitVersionId = att.subject.kitVersionId
                 and av.assessmentResult.id = :assessmentResultId
             WHERE att.subject.id IN :subjectIds
         """)

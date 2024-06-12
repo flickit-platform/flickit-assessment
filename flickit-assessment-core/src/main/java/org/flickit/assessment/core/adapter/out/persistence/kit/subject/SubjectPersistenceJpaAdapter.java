@@ -24,7 +24,7 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public List<Subject> loadByKitVersionIdWithAttributes(Long kitVersionId) {
-        var views = repository.loadByKitVersionIdWithAttributes(kitVersionId);
+        var views = repository.findByKitVersionIdWithAttributes(kitVersionId);
 
         return views.stream().map(entity -> {
             List<Attribute> attributes = entity.getAttributes().stream()

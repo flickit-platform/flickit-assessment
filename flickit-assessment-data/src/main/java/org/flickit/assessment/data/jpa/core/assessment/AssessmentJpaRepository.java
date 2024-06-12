@@ -125,7 +125,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         JOIN AssessmentKitJpaEntity kit
         ON asm.assessmentKitId = kit.id
         JOIN AttributeJpaEntity attr
-        ON attr.kitVersionId = kit.kitVersionId
+        ON attr.subject.kitVersionId = kit.kitVersionId
         WHERE asm.id = :assessmentId
         AND attr.id in :attributeIds
     """)

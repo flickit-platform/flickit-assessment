@@ -31,13 +31,13 @@ public class SubjectMapper {
         LocalDateTime creationTime = LocalDateTime.now();
         return new SubjectJpaEntity(
             null,
+            param.kitVersionId(),
             UUID.randomUUID(),
             param.code(),
             param.index(),
             param.title(),
             param.description(),
             param.weight(),
-            param.kitVersionId(),
             creationTime,
             creationTime,
             param.createdBy(),

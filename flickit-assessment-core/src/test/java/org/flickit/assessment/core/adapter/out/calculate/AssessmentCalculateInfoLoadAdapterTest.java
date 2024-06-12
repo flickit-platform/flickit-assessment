@@ -192,9 +192,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var subjectValue3 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
         List<SubjectValueJpaEntity> subjectValues = List.of(subjectValue1, subjectValue2, subjectValue3);
 
-        var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(), 1, List.of(attribute1, attribute2));
-        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(), 1, List.of(attribute3, attribute4));
-        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), 1, List.of(attribute5, attribute6));
+        var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(),kitVersionId, 1, List.of(attribute1, attribute2));
+        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(),kitVersionId, 1, List.of(attribute3, attribute4));
+        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(),kitVersionId, 1, List.of(attribute5, attribute6));
         List<SubjectJpaEntity> subjects = List.of(subject1, subject2, subject3);
 
         var question1 = questionEntity(1L, kitId, 1L, Boolean.FALSE, Boolean.TRUE);
@@ -305,7 +305,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.attributeValues());
         when(attrValueRepository.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.attributeValues());
-        when(subjectRepository.loadByKitVersionIdWithAttributes(context.assessmentResultEntity().getKitVersionId()))
+        when(subjectRepository.findByKitVersionIdWithAttributes(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(context.subjects);
         when(questionRepository.loadByKitVersionId(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(questionJoinImpactView(context.questionEntities, context.questionIdToImpactsMap));
