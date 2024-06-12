@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase.Result;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -21,7 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
 
 import java.util.List;
 import java.util.UUID;
@@ -54,7 +54,7 @@ class GetKitDetailServiceTest {
     private LoadQuestionnairesPort loadQuestionnairesPort;
 
     @Mock
-    private LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
+    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Test
     void testGetKitDetail_WhenKitExist_shouldReturnKitDetails() {
@@ -74,7 +74,7 @@ class GetKitDetailServiceTest {
         when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(maturityLevels);
         when(loadSubjectsPort.loadByKitVersionId(kitVersionId)).thenReturn(subjects);
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(questionnaires);
-        when(loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
 
         Result result = service.getKitDetail(param);
 
