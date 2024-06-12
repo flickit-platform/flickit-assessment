@@ -17,12 +17,12 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
 
     @Modifying
     @Query("""
-        UPDATE SubjectJpaEntity s SET
-            s.title = :title,
-            s.index = :index,
-            s.description = :description,
-            s.lastModificationTime = :lastModificationTime,
-            s.lastModifiedBy = :lastModifiedBy
+            UPDATE SubjectJpaEntity s SET
+                s.title = :title,
+                s.index = :index,
+                s.description = :description,
+                s.lastModificationTime = :lastModificationTime,
+                s.lastModifiedBy = :lastModifiedBy
             WHERE s.id = :id AND s.kitVersionId = :kitVersionId
         """)
     void update(
@@ -53,8 +53,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
     @Query("""
             SELECT s.id AS id, s.title AS title, sq.questionnaireId AS questionnaireId
             FROM SubjectJpaEntity s
-            JOIN SubjectQuestionnaireJpaEntity sq
-                ON s.id = sq.subjectId
+            JOIN SubjectQuestionnaireJpaEntity sq ON s.id = sq.subjectId
             WHERE sq.questionnaireId IN :questionnaireIds AND s.kitVersionId = :kitVersionId
         """)
     List<SubjectWithQuestionnaireIdView> findAllWithQuestionnaireIdByKitVersionId(@Param(value = "questionnaireIds") List<Long> questionnaireIds,
@@ -66,7 +65,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
             JOIN SubjectQuestionnaireJpaEntity sq ON s.id = sq.subjectId
             WHERE sq.questionnaireId = :questionnaireId AND s.kitVersionId = :kitVersionId
             ORDER BY s.index
-    """)
+        """)
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
 
