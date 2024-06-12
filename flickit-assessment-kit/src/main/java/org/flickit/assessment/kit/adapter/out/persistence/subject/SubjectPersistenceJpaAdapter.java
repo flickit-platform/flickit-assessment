@@ -33,6 +33,7 @@ public class SubjectPersistenceJpaAdapter implements
     @Override
     public void update(UpdateSubjectPort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.title(),
             param.index(),
             param.description(),
@@ -61,8 +62,8 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public Subject load(long kitId, long subjectId) {
-        var subject = repository.findByIdAndKitId(kitId, subjectId)
+    public Subject load(long subjectId, long kitVersionId) {
+        var subject = repository.findByIdAndKitVersionId (subjectId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND));
         return mapToDomainModel(subject,
             subject.getAttributes().stream().map(AttributeMapper::mapToDomainModel).toList());

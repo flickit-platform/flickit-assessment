@@ -53,7 +53,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     DeleteAssessmentKitPort,
     CountKitAssessmentsPort,
     LoadExpertGroupKitListPort,
-    SearchKitOptionsPort {
+    SearchKitOptionsPort,
+    LoadActiveKitVersionIdPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -268,5 +269,11 @@ public class AssessmentKitPersistenceJpaAdapter implements
             AssessmentKitJpaEntity.Fields.TITLE,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) kitEntityPage.getTotalElements());
+    }
+
+    @Override
+    public long loadKitVersionId(long kitId) {
+        return repository.loadKitVersionId(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
     }
 }

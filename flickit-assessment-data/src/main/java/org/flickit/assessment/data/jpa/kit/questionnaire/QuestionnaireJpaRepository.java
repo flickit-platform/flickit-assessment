@@ -43,9 +43,9 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
                 COUNT(DISTINCT question.id) as questionCount
             FROM QuestionnaireJpaEntity q
             JOIN QuestionJpaEntity question
-                ON q.id = question.questionnaireId and q.kitVersionId = question.kitVersionId
+                ON q.id = question.questionnaireId AND q.kitVersionId = question.kitVersionId
             WHERE q.kitVersionId = :kitVersionId
-            GROUP BY q.id, q.kitVersionId
+            GROUP BY q.id, q.kitVersionId, q.index
             ORDER BY q.index
         """)
     Page<QuestionnaireListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId, Pageable pageable);
