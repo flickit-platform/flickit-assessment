@@ -2,7 +2,6 @@ package org.flickit.assessment.core.adapter.out.calculate;
 
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.application.domain.*;
-import org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
@@ -36,6 +35,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeJapEntityMother.createAttributeEntity;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AttributeValueJpaEntityMother.attributeValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.QuestionImpactEntityMother.questionImpactEntity;
@@ -160,7 +160,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
     }
 
     private static Context createContext() {
-        var assessmentResultEntity = AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity(null, Boolean.FALSE, Boolean.FALSE);
+        var assessmentResultEntity = validSimpleAssessmentResultEntity(null, Boolean.FALSE, Boolean.FALSE);
+        Long kitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
+        Long kitVersionId = assessmentResultEntity.getKitVersionId();
 
         var attributeId = 134L;
         var attribute1Id = attributeId++;
@@ -169,9 +171,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var attribute4Id = attributeId++;
         var attribute5Id = attributeId++;
         var attribute6Id = attributeId;
-
-        Long kitId = 123L;
-        Long kitVersionId = 12L;
 
         AttributeJpaEntity attribute1 = createAttributeEntity(attribute1Id, 1, kitId);
         AttributeJpaEntity attribute2 = createAttributeEntity(attribute2Id, 2, kitId);
