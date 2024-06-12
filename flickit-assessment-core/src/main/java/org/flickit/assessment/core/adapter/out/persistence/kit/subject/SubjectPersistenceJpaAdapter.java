@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.subject;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
-import org.flickit.assessment.core.application.domain.QualityAttribute;
+import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
@@ -38,7 +38,7 @@ public class SubjectPersistenceJpaAdapter implements
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
         return views.stream().map(entity -> {
-            List<QualityAttribute> attributes = subjectEntityIdToAttrEntities.get(entity.getId()).stream()
+            List<Attribute> attributes = subjectEntityIdToAttrEntities.get(entity.getId()).stream()
                 .map(AttributeMapper::mapToDomainModel)
                 .toList();
 

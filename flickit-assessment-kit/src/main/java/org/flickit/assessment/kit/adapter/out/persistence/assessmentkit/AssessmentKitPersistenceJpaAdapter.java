@@ -53,14 +53,14 @@ public class AssessmentKitPersistenceJpaAdapter implements
     DeleteAssessmentKitPort,
     CountKitAssessmentsPort,
     LoadExpertGroupKitListPort,
-    LoadLastPublishedKitVersionIdByKitIdPort {
+    SearchKitOptionsPort,
+    LoadActiveKitVersionIdPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
     private final ExpertGroupJpaRepository expertGroupRepository;
     private final KitVersionJpaRepository kitVersionRepository;
     private final KitTagRelationJpaRepository kitTagRelationRepository;
-
 
     @Override
     public PaginatedResponse<GetKitUserListUseCase.UserListItem> loadKitUsers(LoadKitUsersPort.Param param) {
@@ -250,6 +250,25 @@ public class AssessmentKitPersistenceJpaAdapter implements
             AssessmentKitJpaEntity.Fields.LAST_MODIFICATION_TIME,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
+    }
+
+    @Override
+    public PaginatedResponse<AssessmentKit> searchKitOptions(SearchKitOptionsPort.Param param) {
+        String query = param.query() == null ? "" : param.query();
+        Page<AssessmentKitJpaEntity> kitEntityPage = repository.findAllByTitleAndUserId(query,
+            param.currentUserId(),
+            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, AssessmentKitJpaEntity.Fields.TITLE));
+
+        List<AssessmentKit> kits = kitEntityPage.getContent().stream()
+            .map(AssessmentKitMapper::mapToDomainModel)
+            .toList();
+
+        return new PaginatedResponse<>(kits,
+            kitEntityPage.getNumber(),
+            kitEntityPage.getSize(),
+            AssessmentKitJpaEntity.Fields.TITLE,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) kitEntityPage.getTotalElements());
     }
 
     @Override

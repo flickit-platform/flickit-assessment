@@ -1,19 +1,19 @@
-package org.flickit.assessment.core.adapter.out.persistence.qualityattributevalue;
+package org.flickit.assessment.core.adapter.out.persistence.attributevalue;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.core.application.domain.QualityAttribute;
-import org.flickit.assessment.core.application.domain.QualityAttributeValue;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
+import org.flickit.assessment.core.application.domain.Attribute;
+import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class QualityAttributeValueMapper {
+public class AttributeValueMapper {
 
-    public static QualityAttributeValueJpaEntity mapToJpaEntity(long attributeId, UUID attributeRefNum) {
-        return new QualityAttributeValueJpaEntity(
+    public static AttributeValueJpaEntity mapToJpaEntity(long attributeId, UUID attributeRefNum) {
+        return new AttributeValueJpaEntity(
             null,
             null,
             attributeId,
@@ -23,9 +23,9 @@ public class QualityAttributeValueMapper {
         );
     }
 
-    public static QualityAttributeValue mapToDomainModel(QualityAttributeValueJpaEntity entity, AttributeJpaEntity attributeEntity) {
-        var attribute = new QualityAttribute(attributeEntity.getId(), attributeEntity.getWeight(), null);
-        return new QualityAttributeValue(
+    public static AttributeValue mapToDomainModel(AttributeValueJpaEntity entity, AttributeJpaEntity attributeEntity) {
+        var attribute = new Attribute(attributeEntity.getId(), attributeEntity.getWeight(), null);
+        return new AttributeValue(
             entity.getId(),
             attribute,
             null

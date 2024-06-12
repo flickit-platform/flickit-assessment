@@ -17,12 +17,12 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
 
     @Modifying
     @Query("""
-        UPDATE SubjectJpaEntity s SET
-            s.title = :title,
-            s.index = :index,
-            s.description = :description,
-            s.lastModificationTime = :lastModificationTime,
-            s.lastModifiedBy = :lastModifiedBy
+            UPDATE SubjectJpaEntity s SET
+                s.title = :title,
+                s.index = :index,
+                s.description = :description,
+                s.lastModificationTime = :lastModificationTime,
+                s.lastModifiedBy = :lastModifiedBy
             WHERE s.id = :id AND s.kitVersionId = :kitVersionId
         """)
     void update(
@@ -38,17 +38,9 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
     Optional<SubjectJpaEntity> findByIdAndKitVersionId(@Param(value = "id") long id, @Param(value = "kitVersionId") long kitVersionId);
 
     @Query("""
-            SELECT s.refNum
-            FROM SubjectJpaEntity s
-            WHERE s.id = :subjectId
-        """)
-    UUID findRefNumById(@Param(value = "subjectId") Long subjectId); //TODO: It should be removed
-
-    @Query("""
             SELECT s.id AS id, s.title AS title, sq.questionnaireId AS questionnaireId
             FROM SubjectJpaEntity s
-            JOIN SubjectQuestionnaireJpaEntity sq
-                ON s.id = sq.subjectId
+            JOIN SubjectQuestionnaireJpaEntity sq ON s.id = sq.subjectId
             WHERE sq.questionnaireId IN :questionnaireIds AND s.kitVersionId = :kitVersionId
         """)
     List<SubjectWithQuestionnaireIdView> findAllWithQuestionnaireIdByKitVersionId(@Param(value = "questionnaireIds") List<Long> questionnaireIds,
@@ -60,7 +52,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
             JOIN SubjectQuestionnaireJpaEntity sq ON s.id = sq.subjectId
             WHERE sq.questionnaireId = :questionnaireId AND s.kitVersionId = :kitVersionId
             ORDER BY s.index
-    """)
+        """)
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
 
