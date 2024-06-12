@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.questionnaire.GetKitQuestionnaireDetailUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
@@ -40,7 +40,7 @@ class GetKitQuestionnaireDetailServiceTest {
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
 
     @Mock
-    private LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
+    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Test
     void testGetKitQuestionnaireDetail_ValidInput_ValidResult() {
@@ -68,7 +68,7 @@ class GetKitQuestionnaireDetailServiceTest {
             List.of(question));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
         when(loadKitQuestionnaireDetailPort.loadKitQuestionnaireDetail(questionnaireId, kitVersionId)).thenReturn(expectedResult);
 
@@ -112,7 +112,7 @@ class GetKitQuestionnaireDetailServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
-        when(loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
         when(loadKitQuestionnaireDetailPort.loadKitQuestionnaireDetail(questionnaireId, kitVersionId))
             .thenThrow(new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
 

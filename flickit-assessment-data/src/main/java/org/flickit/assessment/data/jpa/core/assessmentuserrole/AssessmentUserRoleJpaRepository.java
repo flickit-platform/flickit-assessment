@@ -45,4 +45,12 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
         """)
     Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId,
                                                  Pageable pageable);
+
+    @Modifying
+    @Query("""
+            DELETE FROM AssessmentUserRoleJpaEntity r
+            WHERE r.userId = :userId AND r.assessmentId IN
+                (SELECT a.id FROM AssessmentJpaEntity a WHERE a.spaceId = :spaceId)
+        """)
+    void deleteByUserIdAndSpaceId(@Param("userId") UUID userId, @Param("spaceId") Long spaceId);
 }

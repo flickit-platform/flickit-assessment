@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.DeleteSpaceMemberUseCase.Param;
+import org.flickit.assessment.users.application.port.out.assessmentuserrole.DeleteSpaceAssessmentUserRolesPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
@@ -35,6 +36,9 @@ class DeleteSpaceMemberServiceTest {
 
     @Mock
     DeleteSpaceMemberPort deleteSpaceMemberPort;
+
+    @Mock
+    DeleteSpaceAssessmentUserRolesPort deleteSpaceAssessmentUserRolesPort;
 
     @Test
     @DisplayName("Deleting a member from space, should be done by owner")
@@ -99,6 +103,7 @@ class DeleteSpaceMemberServiceTest {
         assertDoesNotThrow(() -> service.deleteMember(param));
         verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
         verify(checkSpaceAccessPort).checkIsMember(spaceId, userId);
+        verify(deleteSpaceAssessmentUserRolesPort).delete(userId, spaceId);
         verify(deleteSpaceMemberPort).delete(spaceId, userId);
     }
 }

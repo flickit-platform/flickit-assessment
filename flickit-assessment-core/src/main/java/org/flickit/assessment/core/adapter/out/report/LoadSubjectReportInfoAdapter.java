@@ -12,8 +12,8 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
@@ -39,7 +39,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
     private final SubjectValueJpaRepository subjectValueRepo;
     private final MaturityLevelJpaRepository maturityLevelJpaRepository;
     private final SubjectJpaRepository subjectRepository;
-    private final QualityAttributeValueJpaRepository attributeValueRepository;
+    private final AttributeValueJpaRepository attributeValueRepository;
     private final AttributeMaturityScoreJpaRepository attributeMaturityScoreRepository;
 
     @Override
@@ -68,7 +68,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
     private SubjectReportItem buildSubject(SubjectJpaEntity subjectEntity,
                                            AssessmentResultJpaEntity assessmentResultEntity,
                                            Map<Long, MaturityLevel> idToMaturityLevelMap) {
-        var svEntity = subjectValueRepo.findBySubjectRefNumAndAssessmentResult_Id(subjectEntity.getRefNum(),
+        var svEntity = subjectValueRepo.findBySubjectIdAndAssessmentResult_Id(subjectEntity.getId(),
                 assessmentResultEntity.getId())
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
 
@@ -89,9 +89,9 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
         var attrValueEntities = attributeValueRepository.findByAssessmentResultIdAndSubjectId(
             assessmentResultEntity.getId(), subjectEntity.getId());
         var attrRefNumToAttValueEntity = attrValueEntities.stream()
-            .collect(toMap(QualityAttributeValueJpaEntity::getAttributeRefNum, Function.identity()));
+            .collect(toMap(AttributeValueJpaEntity::getAttributeRefNum, Function.identity()));
         List<UUID> attrValueIds = attrValueEntities.stream()
-            .map(QualityAttributeValueJpaEntity::getId)
+            .map(AttributeValueJpaEntity::getId)
             .toList();
 
         var attrMaturityScoreEntities =
@@ -102,7 +102,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
         return subjectEntity.getAttributes().stream()
             .map(e -> {
-                QualityAttributeValueJpaEntity attrValueEntity = attrRefNumToAttValueEntity.get(e.getRefNum());
+                AttributeValueJpaEntity attrValueEntity = attrRefNumToAttValueEntity.get(e.getRefNum());
                 MaturityLevel maturityLevelEntity = idToMaturityLevelMap.get(attrValueEntity.getMaturityLevelId());
 
                 return new SubjectAttributeReportItem(e.getId(),
