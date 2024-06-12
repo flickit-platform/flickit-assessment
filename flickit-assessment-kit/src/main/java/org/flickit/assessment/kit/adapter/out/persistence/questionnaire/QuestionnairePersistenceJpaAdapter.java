@@ -13,9 +13,9 @@ import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMappe
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -45,6 +45,7 @@ public class QuestionnairePersistenceJpaAdapter implements
     @Override
     public void update(UpdateQuestionnairePort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.title(),
             param.index(),
             param.description(),

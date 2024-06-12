@@ -24,10 +24,11 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         q.description = :description,
         q.lastModificationTime = :lastModificationTime,
         q.lastModifiedBy = :lastModifiedBy
-        WHERE q.id = :id
+        WHERE q.id = :id AND q.kitVersionId = :kitVersionId
         """)
     void update(
         @Param(value = "id") long id,
+        @Param(value = "kitVersionId") long kitVersionId,
         @Param(value = "title") String title,
         @Param(value = "index") int index,
         @Param(value = "description") String description,
