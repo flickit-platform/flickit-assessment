@@ -43,7 +43,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
               SELECT COUNT(m) > 0
               FROM MaturityLevelJpaEntity m
               LEFT JOIN KitVersionJpaEntity kv ON m.kitVersionId = kv.id
-              WHERE  m.id = :id AND kv.kit.id = :kitId
+              WHERE  m.id = :id AND kv.kit.kitVersionId = :kitVersionId
         """)
     boolean existsByIdAndKitVersionId(@Param("id") long id, @Param("kitVersionId") long kitVersionId);
 
