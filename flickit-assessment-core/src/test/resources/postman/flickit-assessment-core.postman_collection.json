@@ -415,32 +415,6 @@
 			"response": []
 		},
 		{
-			"name": "Get Questionnaires Progress",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/c4e0b4a4-66a1-4383-872f-be9fc6c3cecb/questionnaires/progress",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessments",
-						"c4e0b4a4-66a1-4383-872f-be9fc6c3cecb",
-						"questionnaires",
-						"progress"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Get Assessment Questionnaire List",
 			"request": {
 				"method": "GET",
