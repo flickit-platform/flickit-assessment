@@ -109,11 +109,12 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<Answer> loadByQuestionnaire(UUID assessmentId, long questionnaireId, int size, int page) {
-        if (!questionnaireRepository.checkQuestionnaireAndAssessmentBelongsSameKit(assessmentId, questionnaireId))
-            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
-
         var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
+
+        var questionnaire = questionnaireRepository.findByIdAndKitVersionId(questionnaireId, assessmentResult.getKitVersionId());
+        if (questionnaire.isEmpty())
+            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
 
         var pageResult = repository.findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIndexAsc(assessmentResult.getId(),
             questionnaireId,
