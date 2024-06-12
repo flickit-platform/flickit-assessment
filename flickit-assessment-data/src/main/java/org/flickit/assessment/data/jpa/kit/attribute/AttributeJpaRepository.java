@@ -98,5 +98,5 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
               LEFT JOIN KitVersionJpaEntity kv ON a.subject.kitVersionId = kv.id
               WHERE  a.id = :id AND kv.kit.id = :kitId
         """)
-    boolean existsByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
+    boolean existsByIdAndKitVersionId(@Param("id") long id, @Param("kitId") long kitId);
 }

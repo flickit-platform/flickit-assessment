@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, MaturityLevelJpaEntity.EntityId> {
 
@@ -46,11 +45,9 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
               LEFT JOIN KitVersionJpaEntity kv ON m.kitVersionId = kv.id
               WHERE  m.id = :id AND kv.kit.id = :kitId
         """)
-    boolean existsByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
+    boolean existsByIdAndKitVersionId(@Param("id") long id, @Param("kitVersionId") long kitVersionId);
 
     List<MaturityLevelJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
-
-    Optional<MaturityLevelJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
 
     void deleteByIdAndKitVersionId(Long id, Long kitVersionId);
 }

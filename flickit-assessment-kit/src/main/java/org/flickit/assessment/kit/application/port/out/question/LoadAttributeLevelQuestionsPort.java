@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface LoadAttributeLevelQuestionsPort {
 
-    List<Result> loadAttributeLevelQuestions(long kitId, long attributeId, long maturityLevelId);
+    List<Result> loadAttributeLevelQuestions(long kitVersionId, long attributeId, long maturityLevelId);
 
     record Result(Question question, Questionnaire questionnaire) {
     }
