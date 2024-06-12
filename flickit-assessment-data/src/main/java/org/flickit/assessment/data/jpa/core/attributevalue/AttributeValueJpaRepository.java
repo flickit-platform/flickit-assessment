@@ -35,16 +35,16 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
 
     @Query("""
             SELECT av as attributeValue,
-                att.subject.refNum as subjectRefNum,
+                att.subject.id as subjectId,
                 att as attribute
             FROM AttributeValueJpaEntity av
             LEFT JOIN AttributeJpaEntity att ON av.attributeRefNum = att.refNum
                 and av.assessmentResult.kitVersionId = att.kitVersionId
                 and av.assessmentResult.id = :assessmentResultId
-            WHERE att.subject.refNum IN :subjectRefNums
+            WHERE att.subject.id IN :subjectIds
         """)
-    List<SubjectRefNumAttributeValueView> findByAssessmentResultIdAndSubjectRefNumIn(@Param(value = "assessmentResultId") UUID assessmentResultId,
-                                                                                     @Param(value = "subjectRefNums") Collection<UUID> subjectRefNums);
+    List<SubjectIdAttributeValueView> findByAssessmentResultIdAndSubjectIdIn(@Param(value = "assessmentResultId") UUID assessmentResultId,
+                                                                             @Param(value = "subjectIds") Collection<Long> subjectIds);
 
     @Modifying
     @Query("update AttributeValueJpaEntity a set a.maturityLevelId = :maturityLevelId where a.id = :id")

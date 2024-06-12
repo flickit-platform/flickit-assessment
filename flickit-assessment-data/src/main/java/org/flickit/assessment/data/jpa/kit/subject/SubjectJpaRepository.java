@@ -51,13 +51,6 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Lo
     Optional<SubjectJpaEntity> findByIdAndKitVersionId(@Param(value = "id") long id, @Param(value = "kitVersionId") long kitVersionId);
 
     @Query("""
-            SELECT s.refNum
-            FROM SubjectJpaEntity s
-            WHERE s.id = :subjectId
-        """)
-    UUID findRefNumById(@Param(value = "subjectId") Long subjectId); //TODO: It should be removed
-
-    @Query("""
             SELECT s.id AS id, s.title AS title, sq.questionnaireId AS questionnaireId
             FROM SubjectJpaEntity s
             JOIN SubjectQuestionnaireJpaEntity sq

@@ -31,8 +31,7 @@ public class SubjectValuePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
         List<SubjectValueJpaEntity> entities = subjectIds.stream().map(subjectId -> {
-            UUID subjectRefNum = subjectRepository.findRefNumById(subjectId); //TODO: It should be removed and replaced by kitVersionId
-            SubjectValueJpaEntity subjectValue = SubjectValueMapper.mapToJpaEntity(subjectId, subjectRefNum);
+            SubjectValueJpaEntity subjectValue = SubjectValueMapper.mapToJpaEntity(subjectId);
             subjectValue.setAssessmentResult(assessmentResult);
             return subjectValue;
         }).toList();

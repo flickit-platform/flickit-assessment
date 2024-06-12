@@ -68,7 +68,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
     private SubjectReportItem buildSubject(SubjectJpaEntity subjectEntity,
                                            AssessmentResultJpaEntity assessmentResultEntity,
                                            Map<Long, MaturityLevel> idToMaturityLevelMap) {
-        var svEntity = subjectValueRepo.findBySubjectRefNumAndAssessmentResult_Id(subjectEntity.getRefNum(),
+        var svEntity = subjectValueRepo.findBySubjectIdAndAssessmentResult_Id(subjectEntity.getId(),
                 assessmentResultEntity.getId())
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
 
