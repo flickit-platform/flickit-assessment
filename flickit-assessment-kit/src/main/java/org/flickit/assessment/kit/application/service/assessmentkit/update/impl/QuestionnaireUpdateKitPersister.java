@@ -101,7 +101,8 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private Questionnaire updateQuestionnaire(long kitVersionId, Questionnaire savedQuestionnaire,
+    private Questionnaire updateQuestionnaire(long kitVersionId,
+                                              Questionnaire savedQuestionnaire,
                                               QuestionnaireDslModel dslQuestionnaire,
                                               UUID currentUserId) {
         if (!savedQuestionnaire.getTitle().equals(dslQuestionnaire.getTitle()) ||
