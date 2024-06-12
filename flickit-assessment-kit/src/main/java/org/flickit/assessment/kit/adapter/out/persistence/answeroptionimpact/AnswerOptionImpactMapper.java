@@ -28,6 +28,7 @@ public class AnswerOptionImpactMapper {
             param.optionId(),
             questionImpactEntity,
             param.value(),
+            param.kitVersionId(),
             creationTime,
             creationTime,
             param.createdBy(),
