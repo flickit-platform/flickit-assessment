@@ -51,4 +51,6 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
     List<MaturityLevelJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
 
     Optional<MaturityLevelJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
+
+    void deleteByIdAndKitVersionId(Long id, Long kitVersionId);
 }

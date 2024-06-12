@@ -39,7 +39,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public void delete(Long id, Long kitVersionId) {
-        repository.deleteById(new MaturityLevelJpaEntity.EntityId(id, kitVersionId));
+        repository.deleteByIdAndKitVersionId(id, kitVersionId);
     }
 
     @Override
