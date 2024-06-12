@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.adapter.out.persistence.answer;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetQuestionnairesProgressUseCase.QuestionnaireProgress;
@@ -14,9 +13,6 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.FirstUnansweredQuestionView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -32,14 +28,12 @@ public class AnswerPersistenceJpaAdapter implements
     CountAnswersByQuestionIdsPort,
     LoadAnswerPort,
     UpdateAnswerPort,
-    LoadAnswerListPort,
     LoadQuestionsAnswerListPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final QuestionJpaRepository questionRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
-    private final QuestionnaireJpaRepository questionnaireRepository;
 
     @Override
     public UUID persist(CreateAnswerPort.Param param) {
@@ -105,32 +99,6 @@ public class AnswerPersistenceJpaAdapter implements
         }
 
         repository.update(param.answerId(), param.answerOptionId(), param.confidenceLevelId(), param.isNotApplicable(), param.currentUserId());
-    }
-
-    @Override
-    public PaginatedResponse<Answer> loadByQuestionnaire(UUID assessmentId, long questionnaireId, int size, int page) {
-        if (!questionnaireRepository.checkQuestionnaireAndAssessmentBelongsSameKit(assessmentId, questionnaireId))
-            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
-
-        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
-
-        var pageResult = repository.findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIndexAsc(assessmentResult.getId(),
-            questionnaireId,
-            PageRequest.of(page, size));
-
-        var items = pageResult
-            .getContent().stream()
-            .map(AnswerMapper::mapToDomainModel)
-            .toList();
-        return new PaginatedResponse<>(
-            items,
-            pageResult.getNumber(),
-            pageResult.getSize(),
-            AnswerJpaEntity.Fields.QUESTION_INDEX,
-            Sort.Direction.ASC.name().toLowerCase(),
-            (int) pageResult.getTotalElements()
-        );
     }
 
     @Override

@@ -2,7 +2,6 @@ package org.flickit.assessment.common.application.domain.assessment;
 
 public enum AssessmentPermission {
 
-    VIEW_ANSWER,
     ANSWER_QUESTION,
     VIEW_REPORT_ASSESSMENT,
     CALCULATE_ASSESSMENT,
