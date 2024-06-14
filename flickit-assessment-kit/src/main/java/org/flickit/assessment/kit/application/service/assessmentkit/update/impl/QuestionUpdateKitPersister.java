@@ -233,7 +233,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private boolean updateQuestion(Question savedQuestion,
-                                   Long kitVersionId, QuestionDslModel dslQuestion,
+                                   Long kitVersionId,
+                                   QuestionDslModel dslQuestion,
                                    Map<Long, String> savedAttributes,
                                    Map<Long, String> savedLevels,
                                    Map<String, Long> updatedAttributes,
@@ -247,6 +248,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             !savedQuestion.getAdvisable().equals(dslQuestion.isAdvisable())) {
             var updateParam = new UpdateQuestionPort.Param(
                 savedQuestion.getId(),
+                kitVersionId,
                 dslQuestion.getTitle(),
                 dslQuestion.getIndex(),
                 dslQuestion.getDescription(),

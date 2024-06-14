@@ -49,6 +49,7 @@ public class QuestionPersistenceJpaAdapter implements
     @Override
     public void update(UpdateQuestionPort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.title(),
             param.index(),
             param.hint(),

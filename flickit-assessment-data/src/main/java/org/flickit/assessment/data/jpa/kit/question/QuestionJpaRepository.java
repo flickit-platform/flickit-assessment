@@ -27,9 +27,10 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 q.advisable = :advisable,
                 q.lastModificationTime = :lastModificationTime,
                 q.lastModifiedBy = :lastModifiedBy
-            WHERE q.id = :id
+            WHERE q.id = :id AND q.kitVersionId = :kitVersionId
         """)
     void update(@Param("id") Long id,
+                @Param("kitVersionId") Long kitVersionId,
                 @Param("title") String title,
                 @Param("index") Integer index,
                 @Param("hint") String hint,
