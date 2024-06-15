@@ -33,18 +33,12 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
             FROM MaturityLevelJpaEntity a
             LEFT JOIN KitVersionJpaEntity kv On kv.id = a.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi ON qi.attributeId = :attributeId
-            WHERE kv.kit.kitVersionId = :kitVersionId
+            WHERE kv.id = :kitVersionId
             GROUP BY a.id
             ORDER BY a.index
         """)
     List<MaturityQuestionCountView> loadAttributeLevels(@Param("attributeId") Long attributeId, @Param("kitVersionId") Long kitVersionId);
 
-    @Query("""
-              SELECT COUNT(m) > 0
-              FROM MaturityLevelJpaEntity m
-              LEFT JOIN KitVersionJpaEntity kv ON m.kitVersionId = kv.id
-              WHERE  m.id = :id AND kv.kit.kitVersionId = :kitVersionId
-        """)
     boolean existsByIdAndKitVersionId(@Param("id") long id, @Param("kitVersionId") long kitVersionId);
 
     List<MaturityLevelJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
