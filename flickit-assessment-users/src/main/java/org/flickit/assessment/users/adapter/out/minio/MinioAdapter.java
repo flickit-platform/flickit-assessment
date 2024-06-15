@@ -102,17 +102,7 @@ public class MinioAdapter implements
 
     @SneakyThrows
     @Override
-    public String updatePicture(MultipartFile pictureFile, String path) {
-        String bucketName = properties.getBucketNames().getAvatar();
-        String objectName = path.replaceFirst("^" + bucketName + "/", "");
-
-        writeFile(bucketName, objectName, pictureFile.getInputStream(), pictureFile.getContentType());
-        return bucketName + SLASH + objectName;
-    }
-
-    @SneakyThrows
-    @Override
-    public void delete(String path) {
+    public void deletePicture(String path) {
         String bucketName = properties.getBucketNames().getAvatar();
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
 
