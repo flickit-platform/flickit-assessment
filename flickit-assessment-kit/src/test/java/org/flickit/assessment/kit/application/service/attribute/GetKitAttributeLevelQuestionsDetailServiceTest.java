@@ -6,7 +6,7 @@ import org.flickit.assessment.kit.application.domain.AnswerOptionImpact;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeLevelQuestionsDetailUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadAttributeLevelQuestionsPort;
@@ -44,7 +44,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
     private LoadAttributeLevelQuestionsPort loadAttributeLevelQuestionsPort;
 
     @Mock
-    private LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
+    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Test
     void testGetKitAttributeLevelQuestionsDetail_CurrentUserIsNotMemberOfKitExpertGroup_ThrowsException() {
@@ -77,7 +77,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
         when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitVersionId, attributeId, maturityLevel))
             .thenThrow(new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
-        when(loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
         var param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
             kitId,
@@ -103,7 +103,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
         when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitVersionId, attributeId, maturityLevel))
             .thenThrow(new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
-        when(loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
         var param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
             kitId,
@@ -153,7 +153,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
 
         when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitVersionId, attr1.getId(), maturityLevel2.getId()))
             .thenReturn(portResult);
-        when(loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
 
         var result = service.getKitAttributeLevelQuestionsDetail(param);

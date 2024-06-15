@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.question;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase.Param;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -55,7 +55,7 @@ class GetKitQuestionDetailServiceTest {
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
-    private LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
+    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Test
     void testGetKitQuestionDetail_WhenQuestionExist_shouldReturnQuestionDetails() {
@@ -102,7 +102,7 @@ class GetKitQuestionDetailServiceTest {
         when(loadQuestionPort.load(question.getId(), kitId)).thenReturn(question);
         when(loadAllAttributesPort.loadAllByIds(List.of(attr1.getId(), attr2.getId()))).thenReturn(List.of(attr1, attr2));
         when(loadMaturityLevelsPort.loadByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
-        when(loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
         var result = service.getKitQuestionDetail(param);
 

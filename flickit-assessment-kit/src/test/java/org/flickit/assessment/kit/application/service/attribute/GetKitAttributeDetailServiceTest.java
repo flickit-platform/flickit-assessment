@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase.Param;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase.Result;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.CountAttributeImpactfulQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
@@ -50,7 +50,7 @@ class GetKitAttributeDetailServiceTest {
     private LoadAttributeMaturityLevelsPort loadAttributeMaturityLevelsPort;
 
     @Mock
-    private LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
+    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Test
     void testGetKitAttributeDetail_WhenAttributeExist_shouldReturnAttributeDetails() {
@@ -70,7 +70,7 @@ class GetKitAttributeDetailServiceTest {
             .thenReturn(expectedQuestionCount);
         when(loadAttributeMaturityLevelsPort.loadAttributeLevels(param.getAttributeId(), kitVersionId))
             .thenReturn(expectedMaturityLevels);
-        when(loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
 
         Result result = service.getKitAttributeDetail(param);
 
