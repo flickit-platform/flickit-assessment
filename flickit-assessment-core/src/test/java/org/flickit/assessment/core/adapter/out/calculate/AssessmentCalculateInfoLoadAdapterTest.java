@@ -179,12 +179,12 @@ class AssessmentCalculateInfoLoadAdapterTest {
         AttributeJpaEntity attribute5 = createAttributeEntity(attribute5Id, 5, kitId);
         AttributeJpaEntity attribute6 = createAttributeEntity(attribute6Id, 6, kitId);
 
-        var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1.getRefNum());
-        var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2.getRefNum());
-        var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3.getRefNum());
-        var qav4 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute4.getRefNum());
-        var qav5 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute5.getRefNum());
-        var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6.getRefNum());
+        var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1.getRefNum(), attribute1Id);
+        var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2.getRefNum(), attribute2Id);
+        var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3.getRefNum(), attribute3Id);
+        var qav4 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute4.getRefNum(), attribute4Id);
+        var qav5 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute5.getRefNum(), attribute5Id);
+        var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6.getRefNum(), attribute6Id);
         List<AttributeValueJpaEntity> attributeValues = List.of(qav1, qav2, qav3, qav4, qav5, qav6);
 
         var subjectValue1 = subjectValueWithNullMaturityLevel(assessmentResultEntity);

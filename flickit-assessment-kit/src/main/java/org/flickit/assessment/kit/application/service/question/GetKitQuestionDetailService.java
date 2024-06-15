@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -31,7 +31,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
     private final LoadAllAttributesPort loadAllAttributesPort;
     private final LoadQuestionPort loadQuestionPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
+    private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Override
     public Result getKitQuestionDetail(Param param) {
@@ -48,7 +48,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
             .sorted(comparingInt(Option::index))
             .toList();
 
-        long kitVersionId = loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(param.getKitId());
+        long kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
         List<Impact> attributeImpacts = loadAttributeImpacts(kitVersionId, question, maturityLevelsMap);
 
         return new Result(question.getHint(), options, attributeImpacts);
