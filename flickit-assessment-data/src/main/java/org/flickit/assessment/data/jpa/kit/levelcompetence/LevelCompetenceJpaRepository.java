@@ -15,9 +15,11 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
     List<LevelCompetenceJpaEntity> findAllByAffectedLevelIdIn(Iterable<Long> levelIds);
 
     @Modifying
-    @Query("DELETE LevelCompetenceJpaEntity l WHERE " +
-        "l.effectiveLevelId = :effectiveLevelId AND " +
-        "l.affectedLevelId = :affectedLevelId")
+    @Query("""
+            DELETE LevelCompetenceJpaEntity l
+            WHERE l.effectiveLevelId = :effectiveLevelId AND
+                  l.affectedLevelId = :affectedLevelId
+            """)
     void delete(@Param(value = "affectedLevelId") Long affectedLevelId,
                 @Param(value = "effectiveLevelId") Long effectiveLevelId);
 
