@@ -49,19 +49,20 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
               ao.index as optionIndex,
               ao.title as optionTitle
             FROM QuestionJpaEntity qsn
-            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id
-             and ans.assessmentResult.kitVersionId = qsn.kitVersionId and ans.assessmentResult.id = :assessmentResultId
-            LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ans.assessmentResult.kitVersionId = ao.kitVersionId
+            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id and qsn.kitVersionId = qr.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
             LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id and ov.optionId = ans.answerOptionId
-             and ov.kitVersionId = ans.assessmentResult.kitVersionId
+            and ov.kitVersionId = qi.kitVersionId
             WHERE
               qi.attributeId = :attributeId
               AND qi.maturityLevel.id = :maturityLevelId
+              and qsn.kitVersionId = :kitVersionId
             ORDER BY qr.title asc, qsn.index asc
         """)
     List<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentResultId") UUID assessmentResultId,
+                                                               @Param("kitVersionId") long kitVersionId,
                                                                @Param("attributeId") Long attributeId,
                                                                @Param("maturityLevelId") Long maturityLevelId);
 
