@@ -8,10 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.config.MinioConfigProperties;
-import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Component;
+import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;

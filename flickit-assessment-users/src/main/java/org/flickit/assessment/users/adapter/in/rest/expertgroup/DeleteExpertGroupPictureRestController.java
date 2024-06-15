@@ -18,8 +18,7 @@ public class DeleteExpertGroupPictureRestController {
     private final UserContext userContext;
 
     @DeleteMapping("/expert-groups/{id}/picture")
-    public ResponseEntity<Void> deleteExpertGroupPicture(
-        @PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteExpertGroupPicture(@PathVariable("id") Long id) {
         UUID currentUserId = userContext.getUser().id();
         useCase.delete(toParam(id, currentUserId));
 
