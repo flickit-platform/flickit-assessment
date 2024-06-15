@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
@@ -40,7 +39,6 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
     private final DeleteLevelCompetencePort deleteLevelCompetencePort;
     private final CreateLevelCompetencePort createLevelCompetencePort;
     private final UpdateLevelCompetencePort updateLevelCompetencePort;
-    private final LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
 
     @Override
     public int order() {
