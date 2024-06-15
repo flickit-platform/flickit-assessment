@@ -14,7 +14,6 @@ class DeleteExpertGroupPictureUseCaseParamTest {
 
     @Test
     void testDeleteExpertGroupPictureParam_idIsNull_ErrorMessage() {
-
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteExpertGroupPictureUseCase.Param(null, currentUserId));

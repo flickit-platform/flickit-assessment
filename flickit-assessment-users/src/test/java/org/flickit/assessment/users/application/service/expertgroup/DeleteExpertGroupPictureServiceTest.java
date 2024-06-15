@@ -38,9 +38,8 @@ class DeleteExpertGroupPictureServiceTest {
     @Mock
     UpdateExpertGroupPicturePort updateExpertGroupPicturePort;
 
-
     @Test
-    @DisplayName("An existing expert group should undergo deleting picture.")
+    @DisplayName("Deleting an expert group picture should be done on an existing expert group.")
     void testDeleteExpertGroupPicture_expertGroupNotExist_resourceNotFound() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -75,7 +74,7 @@ class DeleteExpertGroupPictureServiceTest {
     }
 
     @Test
-    @DisplayName("Deleting an expert group picture should be done on an existing expert group")
+    @DisplayName("Deleting an expert group picture should be done on an expert group which has already picture.")
     void testDeleteExpertGroupPicture_alreadyHasPicture_fileDelete() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
