@@ -41,7 +41,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
             JOIN FETCH s.attributes a
             WHERE s.kitVersionId = :kitVersionId
         """)
-    List<SubjectJpaEntity> loadByKitVersionIdWithAttributes(@Param(value = "kitVersionId") Long kitVersionId);
+    List<SubjectJpaEntity> findByKitVersionIdWithAttributes(@Param(value = "kitVersionId") Long kitVersionId);
 
     Optional<SubjectJpaEntity> findByIdAndKitVersionId(@Param(value = "id") long id, @Param(value = "kitVersionId") long kitVersionId);
 
