@@ -96,7 +96,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
               SELECT COUNT(a) > 0
               FROM AttributeJpaEntity a
               LEFT JOIN KitVersionJpaEntity kv ON a.subject.kitVersionId = kv.id
-              WHERE  a.id = :id AND kv.kit.id = :kitId
+              WHERE  a.id = :id AND kv.id = :kitVersionId
         """)
-    boolean existsByIdAndKitVersionId(@Param("id") long id, @Param("kitId") long kitId);
+    boolean existsByIdAndKitVersionId(@Param("id") long id, @Param("kitVersionId") long kitVersionId);
 }
