@@ -70,7 +70,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .map(MaturityLevelJpaEntity::getId)
             .toList();
 
-        List<LevelCompetenceJpaEntity> levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdIn(levelIds);
+        List<LevelCompetenceJpaEntity> levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdInAndKitVersionId(levelIds, kitVersionId);
         Map<Long, List<LevelCompetenceJpaEntity>> levelIdToLevelCompetences = levelCompetenceEntities.stream()
             .collect(Collectors.groupingBy(LevelCompetenceJpaEntity::getAffectedLevelId));
 

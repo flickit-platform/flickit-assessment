@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompetenceJpaEntity, Long> {
 
     List<LevelCompetenceJpaEntity> findByAffectedLevelId(Long affectedLevelId);
-    List<LevelCompetenceJpaEntity> findAllByAffectedLevelIdIn(Iterable<Long> levelIds);
+    List<LevelCompetenceJpaEntity> findAllByAffectedLevelIdInAndKitVersionId(Iterable<Long> levelIds, Long kitVersionId);
 
     @Modifying
     @Query("""
