@@ -15,6 +15,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOpt
 import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.kit.application.domain.*;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadAttributeLevelQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
@@ -45,6 +46,7 @@ public class QuestionPersistenceJpaAdapter implements
     private final AnswerOptionJpaRepository answerOptionRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final AttributeJpaRepository attributeRepository;
+    private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Override
     public void update(UpdateQuestionPort.Param param) {
@@ -99,7 +101,8 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public List<LoadAttributeLevelQuestionsPort.Result> loadAttributeLevelQuestions(long kitId, long attributeId, long maturityLevelId) {
-        if (!attributeRepository.existsByIdAndKitId(attributeId, kitId))
+        long kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(kitId);
+        if (!attributeRepository.existsByIdAndKitVersionId(attributeId, kitVersionId))
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
         if (!maturityLevelRepository.existsByIdAndKitId(maturityLevelId, kitId))

@@ -65,7 +65,7 @@ class GetKitAttributeDetailServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
-        when(loadAttributePort.load(param.getAttributeId(), param.getKitId()))
+        when(loadAttributePort.load(param.getAttributeId(), kitVersionId))
             .thenReturn(expectedAttribute);
         when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         when(countAttributeImpactfulQuestionsPort.countQuestions(param.getAttributeId(), kitVersionId))

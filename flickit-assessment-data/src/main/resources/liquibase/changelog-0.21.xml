@@ -318,4 +318,14 @@
                              columnNames="subject_id, questionnaire_id, kit_version_id"
                              constraintName="uq_fak_subjectquestionnaire_subjectid_questionnaireid"/>
     </changeSet>
+
+    <changeSet id="0.21-46" author="Ali Sedaghat">
+        <renameColumn tableName="fac_attribute_value" oldColumnName="quality_attribute_id" newColumnName="attribute_id"/>
+    </changeSet>
+
+    <changeSet id="0.21-47" author="Ali Sedaghat">
+        <update tableName="fac_attribute_value">
+            <column name="attribute_id" valueComputed="fak_attribute.id FROM fak_attribute WHERE fak_attribute.ref_num = attribute_ref_num"/>
+        </update>
+    </changeSet>
 </databaseChangeLog>

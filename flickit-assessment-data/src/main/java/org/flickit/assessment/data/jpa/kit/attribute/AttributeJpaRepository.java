@@ -11,9 +11,14 @@ import java.util.*;
 public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity, AttributeJpaEntity.EntityId> {
 
     List<AttributeJpaEntity> findAllBySubjectId(long subjectId);
+
     List<AttributeJpaEntity> findAllBySubjectIdIn(Collection<Long> subjectId);
-    List<AttributeJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> id, Long kitVersionId);
-    List<AttributeJpaEntity> findAllBySubjectIdInAndKitVersionId(Collection<Long> subjectIds, long kitVersionId);
+
+    List<AttributeJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> attributedIds, Long kitVersionId);
+
+    Optional<AttributeJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
+
+    boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
     @Modifying
     @Query("""
@@ -66,24 +71,10 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                                                                @Param("attributeId") Long attributeId,
                                                                @Param("maturityLevelId") Long maturityLevelId);
 
-    List<AttributeJpaEntity> findAllByKitVersionIdAndRefNumIn(Long kitVersionId, List<UUID> refNums);
-
-    List<AttributeJpaEntity> findByIdIn(@Param(value = "ids") List<Long> ids);
-
-    Optional<AttributeJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
-
     @Query("""
             SELECT COUNT(DISTINCT(q.id, q.kitVersionId)) FROM QuestionJpaEntity q
             JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id AND qi.kitVersionId = q.kitVersionId
             WHERE qi.attributeId = :attributeId AND qi.kitVersionId = :kitVersionId
         """)
     Integer countAttributeImpactfulQuestions(@Param("attributeId") long attributeId, @Param("kitVersionId") long kitVersionId);
-
-    @Query("""
-              SELECT COUNT(a) > 0
-              FROM AttributeJpaEntity a
-              LEFT JOIN KitVersionJpaEntity kv ON a.kitVersionId = kv.id
-              WHERE  a.id = :id AND kv.kit.id = :kitId
-        """)
-    boolean existsByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
 }
