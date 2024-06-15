@@ -31,12 +31,13 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public Long persist(Long affectedLevelId, Long effectiveLevelId, int value, UUID createdBy) {
+    public Long persist(Long affectedLevelId, Long effectiveLevelId, int value, Long kitVersionId, UUID createdBy) {
         LevelCompetenceJpaEntity entity = new LevelCompetenceJpaEntity(
             null,
             maturityLevelJpaRepository.findById(affectedLevelId).orElseThrow(() -> new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND)),
             maturityLevelJpaRepository.findById(effectiveLevelId).orElseThrow(() -> new ResourceNotFoundException(FIND_MATURITY_LEVEL_ID_NOT_FOUND)),
             value,
+            kitVersionId,
             LocalDateTime.now(),
             LocalDateTime.now(),
             createdBy,

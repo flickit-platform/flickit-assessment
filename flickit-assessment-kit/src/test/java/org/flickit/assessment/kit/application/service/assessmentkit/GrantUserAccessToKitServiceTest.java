@@ -3,9 +3,9 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
+import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,9 +26,6 @@ class GrantUserAccessToKitServiceTest {
 
     @InjectMocks
     private GrantUserAccessToKitService service;
-
-    @Mock
-    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Mock
     private LoadKitExpertGroupPort loadExpertGroupIdPort;
@@ -84,7 +81,7 @@ class GrantUserAccessToKitServiceTest {
     @Test
     void testGrantUserAccessToKit_InvalidKitIdExpertGroupOwnerNull_ThrowsException() {
         var currentUserId = UUID.randomUUID();
-        ExpertGroup expertGroup = new ExpertGroup(123L, "title", null, null);
+        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,

@@ -249,7 +249,7 @@
 					],
 					"path": [
 						"{{api_path}}",
-						"space",
+						"spaces",
 						"{{id}}"
 					]
 				}
@@ -691,6 +691,133 @@
 							"key": "size",
 							"value": "3"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Leave Space",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/leave",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces",
+						"{{id}}",
+						"leave"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update ExpertGroup LastSeen",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/seen",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"seen"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Expert Group",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"title\",\n    \"bio\": \"bio\",\n    \"about\": \"about\",\n    \"website\" : \"https://www.webite.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Expert Group Picture",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "pictureFile",
+							"type": "file",
+							"src": "/home/maziyar/Pictures/index.jpeg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/picture",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"picture"
 					]
 				}
 			},

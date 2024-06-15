@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.adapter.out.persistence.subject;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.application.domain.Subject;
@@ -16,7 +15,6 @@ import java.util.List;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 
 
 @Component
@@ -28,11 +26,11 @@ public class SubjectPersistenceJpaAdapter implements
     LoadSubjectPort {
 
     private final SubjectJpaRepository repository;
-    private final AssessmentKitJpaRepository assessmentKitRepository;
 
     @Override
     public void update(UpdateSubjectPort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.title(),
             param.index(),
             param.description(),
@@ -47,19 +45,18 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Subject> loadByKitId(long kitId) {
-        var kitVersionId = assessmentKitRepository.findById(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND))
-            .getKitVersionId();
-
+    public List<Subject> loadByKitVersionId(long kitVersionId) {
         return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .map(e -> SubjectMapper.mapToDomainModel(e, null))
+            .map(e -> SubjectMapper.mapToDomainModel(e,
+                e.getAttributes().stream()
+                    .map(AttributeMapper::mapToDomainModel)
+                    .toList()))
             .toList();
     }
 
     @Override
-    public Subject load(long kitId, long subjectId) {
-        var subject = repository.findByIdAndKitId(kitId, subjectId)
+    public Subject load(long subjectId, long kitVersionId) {
+        var subject = repository.findByIdAndKitVersionId (subjectId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND));
         return mapToDomainModel(subject,
             subject.getAttributes().stream().map(AttributeMapper::mapToDomainModel).toList());

@@ -9,6 +9,7 @@ public interface UpdateQuestionnairePort {
 
     record Param(
         long id,
+        long kitVersionId,
         String title,
         int index,
         String description,

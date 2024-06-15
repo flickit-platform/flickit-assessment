@@ -71,16 +71,16 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     List<AttributeJpaEntity> findAllByRefNumIn(Set<UUID> refNums);
 
-    AttributeJpaEntity findByKitVersionIdAndRefNum(Long kitVersionId, UUID refNum);
+    AttributeJpaEntity findBySubject_KitVersionIdAndRefNum(Long kitVersionId, UUID refNum);
 
-    List<AttributeJpaEntity> findAllByKitVersionIdAndRefNumIn(Long kitVersionId, List<UUID> refNums);
+    List<AttributeJpaEntity> findAllBySubject_KitVersionIdAndRefNumIn(Long kitVersionId, List<UUID> refNums);
 
     List<AttributeJpaEntity> findByIdIn(@Param(value = "ids") List<Long> ids);
 
     @Query("""
             SELECT a as attribute
             FROM AttributeJpaEntity a
-            LEFT JOIN KitVersionJpaEntity kv On kv.id = a.kitVersionId
+            LEFT JOIN KitVersionJpaEntity kv On kv.id = a.subject.kitVersionId
             WHERE a.id = :id AND kv.kit.id = :kitId
         """)
     Optional<AttributeJpaEntity> findByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
@@ -95,7 +95,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
     @Query("""
               SELECT COUNT(a) > 0
               FROM AttributeJpaEntity a
-              LEFT JOIN KitVersionJpaEntity kv ON a.kitVersionId = kv.id
+              LEFT JOIN KitVersionJpaEntity kv ON a.subject.kitVersionId = kv.id
               WHERE  a.id = :id AND kv.kit.id = :kitId
         """)
     boolean existsByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);

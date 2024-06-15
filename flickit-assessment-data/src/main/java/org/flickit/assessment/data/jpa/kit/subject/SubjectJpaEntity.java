@@ -4,17 +4,19 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
+@IdClass(SubjectJpaEntity.EntityId.class)
 @Table(name = "fak_subject")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class SubjectJpaEntity {
 
     @Id
@@ -23,6 +25,11 @@ public class SubjectJpaEntity {
     @SequenceGenerator(name = "fak_subject_id_seq", sequenceName = "fak_subject_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
+
+    @Id
+    @EqualsAndHashCode.Include
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "ref_num", nullable = false)
     private UUID refNum;
@@ -42,9 +49,6 @@ public class SubjectJpaEntity {
     @Column(name = "weight", nullable = false)
     private Integer weight = 1;
 
-    @Column(name = "kit_version_id", nullable = false)
-    private Long kitVersionId;
-
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
@@ -59,4 +63,13 @@ public class SubjectJpaEntity {
 
     @OneToMany(mappedBy = "subject")
     private List<AttributeJpaEntity> attributes;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId implements Serializable {
+
+        private long id;
+        private long kitVersionId;
+    }
 }

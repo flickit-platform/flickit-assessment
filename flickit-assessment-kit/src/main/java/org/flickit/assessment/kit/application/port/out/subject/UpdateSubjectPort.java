@@ -9,6 +9,7 @@ public interface UpdateSubjectPort {
 
     record Param(
         long id,
+        long kitVersionId,
         String title,
         int index,
         String description,

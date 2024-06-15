@@ -8,8 +8,13 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.exception.InvalidContentException;
 import org.flickit.assessment.kit.application.port.out.kitdsl.ParsDslFilePort;
 import org.flickit.assessment.kit.config.DslParserRestProperties;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +29,7 @@ import java.util.zip.ZipInputStream;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPLOAD_KIT_DSL_DSL_HAS_ERROR;
 
 @Component
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
 @AllArgsConstructor
 public class DslParserRestAdapter implements ParsDslFilePort {
 

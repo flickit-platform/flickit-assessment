@@ -34,6 +34,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     CheckExpertGroupExistsPort,
     DeleteExpertGroupPort,
     CountExpertGroupKitsPort,
+    UpdateExpertGroupPort,
     UpdateExpertGroupPicturePort {
 
     private final ExpertGroupJpaRepository repository;
@@ -109,6 +110,12 @@ public class ExpertGroupPersistenceJpaAdapter implements
     public CountExpertGroupKitsPort.Result countKits(long expertGroupId) {
         var resultEntity = repository.countKits(expertGroupId);
         return mapKitsCountToPortResult(resultEntity);
+    }
+
+    @Override
+    public void update(UpdateExpertGroupPort.Param param) {
+        repository.update(param.id(), param.code(), param.title(), param.bio(), param.about(), param.website(),
+            param.lastModificationTime(), param.lastModifiedBy());
     }
 
     @Override

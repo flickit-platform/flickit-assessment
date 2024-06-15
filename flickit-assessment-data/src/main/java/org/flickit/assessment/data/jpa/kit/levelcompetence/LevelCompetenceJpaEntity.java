@@ -34,6 +34,9 @@ public class LevelCompetenceJpaEntity {
     @Column(name = "value", nullable = false)
     private Integer value;
 
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 

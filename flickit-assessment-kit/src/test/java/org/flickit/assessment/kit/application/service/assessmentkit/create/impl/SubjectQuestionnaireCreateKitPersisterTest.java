@@ -63,7 +63,7 @@ class SubjectQuestionnaireCreateKitPersisterTest {
         context.put(KEY_QUESTIONNAIRES, Map.of(questionnaire.getCode(), questionnaire.getId()));
         context.put(KEY_SUBJECTS, Map.of(subject.getCode(), subject.getId()));
 
-        doNothing().when(createSubjectQuestionnairePort).persistAll(Map.of(questionnaire.getId(), Set.of(subject.getId())));
+        doNothing().when(createSubjectQuestionnairePort).persistAll(Map.of(questionnaire.getId(), Set.of(subject.getId())), KIT_ID);
 
         persister.persist(context, dslModel, KIT_ID, CURRENT_USER_ID);
 

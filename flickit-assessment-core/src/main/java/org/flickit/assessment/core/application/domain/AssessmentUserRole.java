@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 
 import java.util.Arrays;
@@ -10,7 +11,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.UPDATE_ASSESSMENT;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.PermissionGroup.*;
 
 @Getter
@@ -51,6 +51,10 @@ public enum AssessmentUserRole {
         return this.getPermissions().contains(permission);
     }
 
+    public String getDescription() {
+        return MessageBundle.message("AssessmentUserRole_" + name());
+    }
+
     @Getter
     @RequiredArgsConstructor
     enum PermissionGroup {
@@ -65,15 +69,12 @@ public enum AssessmentUserRole {
             VIEW_SUBJECT_PROGRESS,
             VIEW_SUBJECT_REPORT)),
         COMMENTER_PERMISSIONS(Set.of(
-            VIEW_ANSWER,
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
-            VIEW_EVIDENCE,
             VIEW_ATTRIBUTE_EVIDENCE_LIST,
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
-            VIEW_QUESTIONNAIRES_PROGRESS,
             VIEW_QUESTIONNAIRE_QUESTIONS)),
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
@@ -83,7 +84,10 @@ public enum AssessmentUserRole {
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
             UPDATE_ASSESSMENT,
-            GRANT_USER_ASSESSMENT_ROLE));
+            GRANT_USER_ASSESSMENT_ROLE,
+            UPDATE_USER_ASSESSMENT_ROLE,
+            DELETE_USER_ASSESSMENT_ROLE,
+            GET_ASSESSMENT_USERS));
 
         private final Set<AssessmentPermission> permissions;
     }
