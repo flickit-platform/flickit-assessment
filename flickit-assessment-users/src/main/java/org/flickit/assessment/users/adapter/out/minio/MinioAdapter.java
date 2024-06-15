@@ -106,6 +106,8 @@ public class MinioAdapter implements
         String bucketName = properties.getBucketNames().getAvatar();
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
 
+        checkFileExistence(bucketName, objectName);
+
         String latestVersionId = minioClient.listObjects(
             ListObjectsArgs.builder()
                 .bucket(bucketName)
