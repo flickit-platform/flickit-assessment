@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -46,9 +47,13 @@ public class AttributeValuePersistenceJpaAdapter implements
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllByIdInAndKitVersionId(attributeIds, assessmentResult.getKitVersionId());
+        Map<Long, AttributeJpaEntity> attrEntityIdToAttrEntity = attributeEntities.stream()
+            .collect(toMap(AttributeJpaEntity::getId, Function.identity())); //todo: should be deleted, when deleting refNum column
+
         List<AttributeValueJpaEntity> entities = attributeIds.stream().map(attributeId -> {
-            UUID attributeRefNum = attributeRepository.findRefNumById(attributeId);
-            AttributeValueJpaEntity attributeValue = AttributeValueMapper.mapToJpaEntity(attributeId, attributeRefNum);
+            AttributeJpaEntity attributeEntity = attrEntityIdToAttrEntity.get(attributeId);
+            AttributeValueJpaEntity attributeValue = AttributeValueMapper.mapToJpaEntity(attributeId, attributeEntity.getRefNum());
             attributeValue.setAssessmentResult(assessmentResult);
             return attributeValue;
         }).toList();
@@ -56,7 +61,7 @@ public class AttributeValuePersistenceJpaAdapter implements
         var persistedEntities = repository.saveAll(entities);
 
         return persistedEntities.stream().map(q -> {
-            var attributeEntity = attributeRepository.findByKitVersionIdAndRefNum(assessmentResult.getKitVersionId(), q.getAttributeRefNum());
+            AttributeJpaEntity attributeEntity = attrEntityIdToAttrEntity.get(q.getAttributeId());
             return AttributeValueMapper.mapToDomainModel(q, attributeEntity);
         }).toList();
     }
@@ -64,12 +69,6 @@ public class AttributeValuePersistenceJpaAdapter implements
     @Override
     public List<AttributeValue> loadAll(UUID assessmentResultId, Map<Long, MaturityLevel> maturityLevels) {
         List<AttributeValueJpaEntity> entities = repository.findByAssessmentResultId(assessmentResultId);
-
-        return toAttributeValues(entities, maturityLevels);
-    }
-
-    public List<AttributeValue> loadBySubjectId(UUID assessmentResultId, Long subjectId, Map<Long, MaturityLevel> maturityLevels) {
-        List<AttributeValueJpaEntity> entities = repository.findByAssessmentResultIdAndSubjectId(assessmentResultId, subjectId);
 
         return toAttributeValues(entities, maturityLevels);
     }
