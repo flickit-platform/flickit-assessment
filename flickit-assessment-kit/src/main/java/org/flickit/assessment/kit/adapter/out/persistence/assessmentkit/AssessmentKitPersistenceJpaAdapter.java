@@ -54,7 +54,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     CountKitAssessmentsPort,
     LoadExpertGroupKitListPort,
     SearchKitOptionsPort,
-    LoadLastPublishedKitVersionIdByKitIdPort {
+    LoadActiveKitVersionIdPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;

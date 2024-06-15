@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.CountAttributeImpactfulQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
@@ -24,14 +24,14 @@ public class GetKitAttributeDetailService implements GetKitAttributeDetailUseCas
     private final LoadAttributePort loadAttributePort;
     private final CountAttributeImpactfulQuestionsPort countAttributeImpactfulQuestionsPort;
     private final LoadAttributeMaturityLevelsPort loadAttributeMaturityLevelsPort;
-    private final LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
+    private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Override
     public Result getKitAttributeDetail(Param param) {
         var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        var kitVersionId = loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(param.getKitId());
+        var kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
 
         var attribute = loadAttributePort.load(param.getAttributeId(), param.getKitId());
         var questionCount = countAttributeImpactfulQuestionsPort.countQuestions(param.getAttributeId());

@@ -8,7 +8,7 @@ import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadLastPublishedKitVersionIdByKitIdPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
@@ -40,7 +40,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
     private final DeleteLevelCompetencePort deleteLevelCompetencePort;
     private final CreateLevelCompetencePort createLevelCompetencePort;
     private final UpdateLevelCompetencePort updateLevelCompetencePort;
-    private final LoadLastPublishedKitVersionIdByKitIdPort loadLastPublishedKitVersionIdByKitIdPort;
+    private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Override
     public int order() {
@@ -228,7 +228,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
     }
 
     private void deleteMaturityLevel(MaturityLevel deletedLevel, Long kitId) {
-        var kitVersionId = loadLastPublishedKitVersionIdByKitIdPort.loadKitVersionId(kitId);
+        var kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(kitId);
         deleteMaturityLevelPort.delete(deletedLevel.getId(), kitVersionId);
         log.debug("MaturityLevel[id={}, code={}] deleted from kit[{}].", deletedLevel.getId(), deletedLevel.getCode(), kitId);
     }
