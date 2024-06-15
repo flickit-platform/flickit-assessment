@@ -61,12 +61,6 @@ public class ErrorMessageKey {
     public static final String CALCULATE_ASSESSMENT_ID_NOT_NULL = "calculate-assessment.assessment.id.notNull";
     public static final String CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "calculate-assessment.assessmentResult.notFount";
 
-    public static final String GET_ANSWER_LIST_ASSESSMENT_ID_NOTNULL = "get-answer-list.assessmentId.notNull";
-    public static final String GET_ANSWER_LIST_QUESTIONNAIRE_ID_NOTNULL = "get-answer-list.questionnaireId.notNull";
-    public static final String GET_ANSWER_LIST_SIZE_MIN = "get-answer-list.size.min";
-    public static final String GET_ANSWER_LIST_SIZE_MAX = "get-answer-list.size.max";
-    public static final String GET_ANSWER_LIST_PAGE_MIN = "get-answer-list.page.min";
-
     public static final String GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL = "get-attribute-evidence-list.assessmentId.notNull";
     public static final String GET_ATTRIBUTE_EVIDENCE_LIST_ATTRIBUTE_ID_NOT_NULL = "get-attribute-evidence-list.attributeId.notNull";
     public static final String GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND = "get-attribute-evidence-list.assessmentId.notFound";
@@ -91,9 +85,6 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-assessment-progress.assessment.id.notNull";
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_NOT_FOUND = "get-assessment-progress.assessment.notFound";
 
-    public static final String GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-questionnaires-progress.assessmentId.notNull";
-    public static final String GET_QUESTIONNAIRES_PROGRESS_ASSESSMENT_RESULT_NOT_FOUND = "get-questionnaires-progress.assessmentResult.notFound";
-
     public static final String REPORT_SUBJECT_ASSESSMENT_ID_NOT_NULL = "report-subject.assessment.id.notNull";
     public static final String REPORT_SUBJECT_ID_NOT_NULL = "report-subject.subject.id.notNull";
     public static final String REPORT_SUBJECT_ID_NOT_FOUND = "report-subject.subject.id.notFound";
@@ -117,8 +108,6 @@ public class ErrorMessageKey {
 
     public static final String DELETE_ASSESSMENT_ID_NOT_NULL = "delete-assessment.id.notNull";
     public static final String DELETE_ASSESSMENT_ID_NOT_FOUND = "delete-assessment.id.notFound";
-
-    public static final String COUNT_ASSESSMENTS_KIT_ID_AND_SPACE_ID_NOT_NULL = "count-assessments.assessment.kit.id.and.space.id.notNull";
 
     public static final String DELETE_EVIDENCE_EVIDENCE_ID_NOT_NULL = "delete-evidence.id.notNull";
 

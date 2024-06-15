@@ -15,7 +15,7 @@ import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.SubjectRefNumAttributeValueView;
+import org.flickit.assessment.data.jpa.core.attributevalue.SubjectIdAttributeValueView;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
@@ -114,42 +114,39 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private List<AssessmentSubjectReportItem> buildSubjectReportItems(AssessmentResultJpaEntity assessmentResult,
                                                                       Map<Long, MaturityLevel> idToMaturityLevel) {
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResult.getId());
-        Set<UUID> refNums = subjectValueEntities.stream()
-            .map(SubjectValueJpaEntity::getSubjectRefNum)
-            .collect(Collectors.toSet());
 
         Set<Long> subjectIds = subjectValueEntities.stream()
             .map(SubjectValueJpaEntity::getSubjectId)
             .collect(Collectors.toSet());
 
-        var subjectRefNumToSubjectValue = subjectValueEntities.stream()
-            .collect(toMap(SubjectValueJpaEntity::getSubjectRefNum, Function.identity()));
+        var subjectIdToSubjectValue = subjectValueEntities.stream()
+            .collect(Collectors.toMap(SubjectValueJpaEntity::getSubjectId, Function.identity()));
 
-        var subjectRefNumToAttributeValueMap = attributeValueJpaRepository.findByAssessmentResultIdAndSubjectRefNumIn(
-                assessmentResult.getId(), refNums)
+        var subjectIdToAttributeValueMap = attributeValueJpaRepository.findByAssessmentResultIdAndSubjectIdIn(
+                assessmentResult.getId(), subjectIds)
             .stream()
-            .collect(groupingBy(SubjectRefNumAttributeValueView::getSubjectRefNum));
+            .collect(groupingBy(SubjectIdAttributeValueView::getSubjectId));
 
         List<SubjectJpaEntity> subjectEntities = subjectJpaRepository.findAllByIdInAndKitVersionId(subjectIds, assessmentResult.getKitVersionId());
 
         return subjectEntities.stream()
             .map(e -> {
-                Long maturityLevelId = subjectRefNumToSubjectValue.get(e.getRefNum()).getMaturityLevelId();
+                Long maturityLevelId = subjectIdToSubjectValue.get(e.getId()).getMaturityLevelId();
                 MaturityLevel subjectMaturityLevel = idToMaturityLevel.get(maturityLevelId);
                 return new AssessmentSubjectReportItem(e.getId(),
                     e.getTitle(),
                     e.getIndex(),
                     e.getDescription(),
-                    subjectRefNumToSubjectValue.get(e.getRefNum()).getConfidenceValue(),
+                    subjectIdToSubjectValue.get(e.getId()).getConfidenceValue(),
                     subjectMaturityLevel,
-                    subjectRefNumToAttributeValueMap.get(e.getRefNum()).stream()
+                    subjectIdToAttributeValueMap.get(e.getId()).stream()
                         .map(x -> buildAttributeReportItem(idToMaturityLevel, x))
                         .toList());
             }).toList();
     }
 
     private AttributeReportItem buildAttributeReportItem(Map<Long, MaturityLevel> idToMaturityLevel,
-                                                         SubjectRefNumAttributeValueView attributeValueView) {
+                                                         SubjectIdAttributeValueView attributeValueView) {
         var attribute = attributeValueView.getAttribute();
         var attributeValue = attributeValueView.getAttributeValue();
         var maturityLevel = idToMaturityLevel.get(attributeValue.getMaturityLevelId());
