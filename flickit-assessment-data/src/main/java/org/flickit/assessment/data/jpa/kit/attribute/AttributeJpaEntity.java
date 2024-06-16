@@ -61,7 +61,6 @@ public class AttributeJpaEntity {
     @Column(name = "subject_id", nullable = false)
     private Long subjectId;
 
-
     public AttributeJpaEntity(Long id,
                               long kitVersionId,
                               String code,
@@ -88,6 +87,7 @@ public class AttributeJpaEntity {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class EntityId {
+
         private Long id;
         private Long kitVersionId;
     }

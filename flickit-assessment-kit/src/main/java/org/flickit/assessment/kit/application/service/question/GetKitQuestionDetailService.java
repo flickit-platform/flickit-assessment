@@ -40,8 +40,9 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         Question question = loadQuestionPort.load(param.getQuestionId(), param.getKitId());
+        var kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
 
-        var maturityLevelsMap = loadMaturityLevelsPort.loadByKitId(param.getKitId()).stream()
+        var maturityLevelsMap = loadMaturityLevelsPort.loadByKitVersionId(kitVersionId).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));
         var options = question.getOptions().stream()
             .map(opt -> new Option(opt.getIndex(), opt.getTitle()))

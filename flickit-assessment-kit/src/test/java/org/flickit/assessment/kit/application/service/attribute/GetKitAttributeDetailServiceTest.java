@@ -57,8 +57,7 @@ class GetKitAttributeDetailServiceTest {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var expectedQuestionCount = 14;
-        long kitVersionId = 100;
-
+        var kitVersionId = 10L;
         Attribute expectedAttribute = AttributeMother.attributeWithTitle("EgAttribute");
         List<LoadAttributeMaturityLevelsPort.Result> expectedMaturityLevels =
             List.of(new LoadAttributeMaturityLevelsPort.Result(1L, "MaturityLevelEg", 1, 15));
@@ -67,11 +66,11 @@ class GetKitAttributeDetailServiceTest {
 
         when(loadAttributePort.load(param.getAttributeId(), kitVersionId))
             .thenReturn(expectedAttribute);
-        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         when(countAttributeImpactfulQuestionsPort.countQuestions(param.getAttributeId(), kitVersionId))
             .thenReturn(expectedQuestionCount);
-        when(loadAttributeMaturityLevelsPort.loadAttributeLevels(param.getKitId(), param.getAttributeId()))
+        when(loadAttributeMaturityLevelsPort.loadAttributeLevels(param.getAttributeId(), kitVersionId))
             .thenReturn(expectedMaturityLevels);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
 
         Result result = service.getKitAttributeDetail(param);
 

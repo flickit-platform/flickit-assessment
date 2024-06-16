@@ -44,26 +44,26 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     @Query("""
             SELECT
-              qr.title as questionnaireTitle,
-              qsn.id as questionId,
-              qsn.index as questionIndex,
-              qsn.title as questionTitle,
-              ans as answer,
-              qi as questionImpact,
-              ov as optionImpact,
-              ao.index as optionIndex,
-              ao.title as optionTitle
+                qr.title as questionnaireTitle,
+                qsn.id as questionId,
+                qsn.index as questionIndex,
+                qsn.title as questionTitle,
+                ans as answer,
+                qi as questionImpact,
+                ov as optionImpact,
+                ao.index as optionIndex,
+                ao.title as optionTitle
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
             LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id and qsn.kitVersionId = qr.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
             LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id and ov.optionId = ans.answerOptionId
-            and ov.kitVersionId = qi.kitVersionId
+            AND ov.kitVersionId = qi.kitVersionId
             WHERE
-              qi.attributeId = :attributeId
-              AND qi.maturityLevel.id = :maturityLevelId
-              and qsn.kitVersionId = :kitVersionId
+                qi.attributeId = :attributeId
+                AND qi.maturityLevel.id = :maturityLevelId
+                AND qsn.kitVersionId = :kitVersionId
             ORDER BY qr.title asc, qsn.index asc
         """)
     List<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentResultId") UUID assessmentResultId,
