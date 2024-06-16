@@ -12,14 +12,15 @@ import java.util.UUID;
 public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompetenceJpaEntity, Long> {
 
     List<LevelCompetenceJpaEntity> findByAffectedLevelId(Long affectedLevelId);
-    List<LevelCompetenceJpaEntity> findAllByAffectedLevelIdIn(Iterable<Long> levelIds);
+
+    List<LevelCompetenceJpaEntity> findAllByAffectedLevelIdInAndKitVersionId(Iterable<Long> levelIds, Long kitVersionId);
 
     @Modifying
     @Query("""
             DELETE LevelCompetenceJpaEntity l
-            WHERE l.effectiveLevelId = :effectiveLevelId AND
-                  l.affectedLevelId = :affectedLevelId AND
-                  l.kitVersionId = :kitVersionId
+            WHERE l.effectiveLevelId = :effectiveLevelId
+                AND l.affectedLevelId = :affectedLevelId
+                AND l.kitVersionId = :kitVersionId
         """)
     void delete(@Param(value = "affectedLevelId") Long affectedLevelId,
                 @Param(value = "effectiveLevelId") Long effectiveLevelId,
@@ -27,17 +28,18 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
 
     @Modifying
     @Query("""
-           UPDATE LevelCompetenceJpaEntity l SET
-            l.value = :value,
-            l.lastModificationTime = :lastModificationTime,
-            l.lastModifiedBy = :lastModifiedBy
-           WHERE l.affectedLevelId = :affectedLevelId AND
-                 l.effectiveLevelId = :effectiveLevelId AND
-                 l.kitVersionId = :kitVersionId
-           """)
+            UPDATE LevelCompetenceJpaEntity l SET
+                l.value = :value,
+                l.lastModificationTime = :lastModificationTime,
+                l.lastModifiedBy = :lastModifiedBy
+            WHERE l.affectedLevelId = :affectedLevelId
+                AND l.effectiveLevelId = :effectiveLevelId
+                AND l.kitVersionId = :kitVersionId
+        """)
     void update(@Param(value = "affectedLevelId") Long affectedLevelId,
                 @Param(value = "effectiveLevelId") Long effectiveLevelId,
-                @Param(value = "kitVersionId") Long kitVersionId, @Param(value = "value") Integer value,
+                @Param(value = "kitVersionId") Long kitVersionId,
+                @Param(value = "value") Integer value,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
 }

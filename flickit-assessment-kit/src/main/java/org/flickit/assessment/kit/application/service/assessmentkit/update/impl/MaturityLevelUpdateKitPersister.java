@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
@@ -40,7 +39,6 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
     private final DeleteLevelCompetencePort deleteLevelCompetencePort;
     private final CreateLevelCompetencePort createLevelCompetencePort;
     private final UpdateLevelCompetencePort updateLevelCompetencePort;
-    private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Override
     public int order() {
@@ -65,7 +63,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
 
         Map<String, MaturityLevel> codeToPersistedLevels = new HashMap<>();
 
-        deletedLevels.forEach(i -> deleteMaturityLevel(savedLevelCodesMap.get(i), savedKit.getId()));
+        deletedLevels.forEach(i -> deleteMaturityLevel(savedLevelCodesMap.get(i), savedKit.getKitVersionId()));
 
         boolean existingLevelValueUpdated = false;
         List<MaturityLevel> updatedLevels = new ArrayList<>();
@@ -227,10 +225,9 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         log.debug("LevelCompetence[affectedId={}, effectiveId={}, value={}] created.", affectedLevelId, effectiveLevelId, value);
     }
 
-    private void deleteMaturityLevel(MaturityLevel deletedLevel, Long kitId) {
-        var kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(kitId);
+    private void deleteMaturityLevel(MaturityLevel deletedLevel, Long kitVersionId) {
         deleteMaturityLevelPort.delete(deletedLevel.getId(), kitVersionId);
-        log.debug("MaturityLevel[id={}, code={}] deleted from kit[{}].", deletedLevel.getId(), deletedLevel.getCode(), kitId);
+        log.debug("MaturityLevel[id={}, code={}] deleted from kitVersionId[{}].", deletedLevel.getId(), deletedLevel.getCode(), kitVersionId);
     }
 
     private void deleteLevelCompetence(Long affectedLevelId, Long effectiveLevelId, Long kitVersionId) {

@@ -5,7 +5,6 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
@@ -52,8 +51,7 @@ class MaturityLevelUpdateKitPersisterTest {
     private CreateLevelCompetencePort createLevelCompetencePort;
     @Mock
     private UpdateLevelCompetencePort updateLevelCompetencePort;
-    @Mock
-    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
+
     @Test
     void testOrder() {
         assertEquals(1, persister.order());
@@ -133,8 +131,6 @@ class MaturityLevelUpdateKitPersisterTest {
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .maturityLevels(dslLevels)
             .build();
-
-        when(loadActiveKitVersionIdPort.loadKitVersionId(savedKit.getId())).thenReturn(savedKit.getKitVersionId());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());

@@ -64,7 +64,8 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
                 savedKit.getKitVersionId(),
                 currentUserId)));
         sameQuestionnairesCodes.forEach(i ->
-            finalQuestionnaires.add(updateQuestionnaire(savedQuestionnaireCodesMap.get(i),
+            finalQuestionnaires.add(updateQuestionnaire(savedKit.getKitVersionId(),
+                savedQuestionnaireCodesMap.get(i),
                 dslQuestionnaireCodesMap.get(i),
                 currentUserId)));
 
@@ -100,7 +101,8 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private Questionnaire updateQuestionnaire(Questionnaire savedQuestionnaire,
+    private Questionnaire updateQuestionnaire(long kitVersionId,
+                                              Questionnaire savedQuestionnaire,
                                               QuestionnaireDslModel dslQuestionnaire,
                                               UUID currentUserId) {
         if (!savedQuestionnaire.getTitle().equals(dslQuestionnaire.getTitle()) ||
@@ -108,6 +110,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             savedQuestionnaire.getIndex() != dslQuestionnaire.getIndex()) {
             var updateParam = new UpdateQuestionnairePort.Param(
                 savedQuestionnaire.getId(),
+                kitVersionId,
                 dslQuestionnaire.getTitle(),
                 dslQuestionnaire.getIndex(),
                 dslQuestionnaire.getDescription(),

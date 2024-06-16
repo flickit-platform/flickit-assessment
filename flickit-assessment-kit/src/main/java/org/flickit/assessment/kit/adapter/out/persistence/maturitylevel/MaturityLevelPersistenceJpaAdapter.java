@@ -39,7 +39,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public void delete(Long id, Long kitVersionId) {
-        repository.deleteById(new MaturityLevelJpaEntity.EntityId(id, kitVersionId));
+        repository.deleteByIdAndKitVersionId(id, kitVersionId);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .map(MaturityLevelJpaEntity::getId)
             .toList();
 
-        List<LevelCompetenceJpaEntity> levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdIn(levelIds);
+        List<LevelCompetenceJpaEntity> levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdInAndKitVersionId(levelIds, kitVersionId);
         Map<Long, List<LevelCompetenceJpaEntity>> levelIdToLevelCompetences = levelCompetenceEntities.stream()
             .collect(Collectors.groupingBy(LevelCompetenceJpaEntity::getAffectedLevelId));
 

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, Long> {
+public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, QuestionnaireJpaEntity.EntityId> {
 
     List<QuestionnaireJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
@@ -24,10 +24,11 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         q.description = :description,
         q.lastModificationTime = :lastModificationTime,
         q.lastModifiedBy = :lastModifiedBy
-        WHERE q.id = :id
+        WHERE q.id = :id AND q.kitVersionId = :kitVersionId
         """)
     void update(
         @Param(value = "id") long id,
+        @Param(value = "kitVersionId") long kitVersionId,
         @Param(value = "title") String title,
         @Param(value = "index") int index,
         @Param(value = "description") String description,
@@ -50,12 +51,5 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         """)
     Page<QuestionnaireListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId, Pageable pageable);
 
-    @Query("""
-            SELECT qn
-            FROM AssessmentKitJpaEntity k
-                JOIN KitVersionJpaEntity kv ON k.id = kv.kit.id
-                JOIN QuestionnaireJpaEntity qn ON qn.kitVersionId = kv.id
-            WHERE qn.id = :questionnaireId AND k.id = :kitId
-        """)
-    Optional<QuestionnaireJpaEntity> findQuestionnaireByIdAndKitId(@Param("questionnaireId") Long questionnaireId, @Param("kitId") Long kitId);
+    Optional<QuestionnaireJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
 }
