@@ -25,10 +25,10 @@ public class AnswerOptionMapper {
         LocalDateTime creationTime = LocalDateTime.now();
         return new AnswerOptionJpaEntity(
             null,
+            param.kitVersionId(),
             UUID.randomUUID(),
             param.index(),
             param.title(),
-            param.kitVersionId(),
             param.questionId(),
             creationTime,
             creationTime,
