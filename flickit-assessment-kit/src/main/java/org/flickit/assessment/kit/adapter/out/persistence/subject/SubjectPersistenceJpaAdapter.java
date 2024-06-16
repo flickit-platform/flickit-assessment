@@ -55,12 +55,12 @@ public class SubjectPersistenceJpaAdapter implements
         List<SubjectJpaEntity> subjectEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId);
         List<Long> subjectEntityIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectEntityIds, kitVersionId);
-        Map<Long, List<AttributeJpaEntity>> subjectEntityIdToAttrEntities = attributeEntities.stream()
+        Map<Long, List<AttributeJpaEntity>> subjectIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
         return subjectEntities.stream()
             .map(e -> SubjectMapper.mapToDomainModel(e,
-                subjectEntityIdToAttrEntities.get(e.getId()).stream()
+                subjectIdToAttrEntities.get(e.getId()).stream()
                     .map(AttributeMapper::mapToDomainModel)
                     .toList()))
             .toList();
