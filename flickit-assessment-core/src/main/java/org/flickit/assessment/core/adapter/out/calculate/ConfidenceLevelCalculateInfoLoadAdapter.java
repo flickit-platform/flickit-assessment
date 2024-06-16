@@ -49,7 +49,6 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
                    List<AttributeValueJpaEntity> allAttributeValueEntities,
-                   Map<Long, SubjectJpaEntity> subjectIdToEntity,
                    Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> impactfulQuestions) {
     }
 
@@ -68,8 +67,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         var allAttributeValueEntities = attributeValueRepo.findByAssessmentResultId(assessmentResultId);
 
         // load all subjects and their related attributes (by assessmentKit)
-        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .collect(toMap(SubjectJpaEntity::getId, x -> x, (s1, s2) -> s1));
+        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
 
         // load all questions with their impacts (by assessmentKit)
         List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByKitVersionId(kitVersionId);
@@ -82,12 +80,11 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         Context context = new Context(
             allAnswerEntities,
             allAttributeValueEntities,
-            subjectIdToEntity,
             impactfulQuestions);
 
-        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context, kitVersionId);
+        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context, subjectEntities, kitVersionId);
 
-        List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValue, subjectIdToEntity, subjectValueEntities, kitVersionId);
+        List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValue, subjectEntities, subjectValueEntities, kitVersionId);
 
         return new AssessmentResult(
             assessmentResultId,
@@ -123,10 +120,9 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * @param kitVersionId the intended version of kit
      * @return a map of each attributeId to it's corresponding attributeValue
      */
-    private Map<Long, AttributeValue> buildAttributeValues(Context context, long kitVersionId) {
-        List<SubjectJpaEntity> subjectEntities = context.subjectIdToEntity().values().stream().toList();
-        List<Long> subjectEntityIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectEntityIds, kitVersionId);
+    private Map<Long, AttributeValue> buildAttributeValues(Context context, List<SubjectJpaEntity> subjectEntities, long kitVersionId) {
+        List<Long> subjectIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectIds, kitVersionId);
 
         Map<Long, List<AttributeJpaEntity>> subjectIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
@@ -201,25 +197,24 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * build subjectValues domain with all information needed for calculate their maturity levels
      *
      * @param attrIdToValue        map of attributeIds to their corresponding value
-     * @param subjectIdToEntity    map of subjectIds to it's entity
+     * @param subjectEntities    list of subjects
      * @param subjectValueEntities list of subjectValue entities
      * @param kitVersionId         the intended version of kit
      * @return list of subjectValues
      */
-    private List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> attrIdToValue, Map<Long, SubjectJpaEntity> subjectIdToEntity,
+    private List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> attrIdToValue, List<SubjectJpaEntity> subjectEntities,
                                                   List<SubjectValueJpaEntity> subjectValueEntities, long kitVersionId) {
         List<SubjectValue> subjectValues = new ArrayList<>();
         Map<Long, SubjectValueJpaEntity> subjectIdToValue = subjectValueEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectId, sv -> sv));
 
-        List<SubjectJpaEntity> subjectEntities = subjectIdToEntity.values().stream().toList();
-        List<Long> subjectEntityIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectEntityIds, kitVersionId);
-        Map<Long, List<AttributeJpaEntity>> subjectEntityIdToAttrEntities = attributeEntities.stream()
+        List<Long> subjectIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectIds, kitVersionId);
+        Map<Long, List<AttributeJpaEntity>> subjectIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
-        for (Map.Entry<Long, SubjectJpaEntity> sEntity : subjectIdToEntity.entrySet()) {
-            List<Attribute> attributes = subjectEntityIdToAttrEntities.get(sEntity.getKey()).stream()
+        for (SubjectJpaEntity sEntity : subjectEntities) {
+            List<Attribute> attributes = subjectIdToAttrEntities.get(sEntity.getId()).stream()
                 .map(AttributeMapper::mapToDomainModel).toList();
             List<AttributeValue> qavList = attributes.stream()
                 .map(q -> attrIdToValue.get(q.getId()))
@@ -227,8 +222,8 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
                 .toList();
             if (qavList.isEmpty())
                 continue;
-            SubjectValueJpaEntity svEntity = subjectIdToValue.get(sEntity.getKey());
-            subjectValues.add(new SubjectValue(svEntity.getId(), SubjectMapper.mapToDomainModel(sEntity.getValue(), attributes), qavList));
+            SubjectValueJpaEntity svEntity = subjectIdToValue.get(sEntity.getId());
+            subjectValues.add(new SubjectValue(svEntity.getId(), SubjectMapper.mapToDomainModel(sEntity, attributes), qavList));
         }
         return subjectValues;
     }
