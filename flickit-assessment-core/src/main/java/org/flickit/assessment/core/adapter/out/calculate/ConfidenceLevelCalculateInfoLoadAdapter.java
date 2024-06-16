@@ -127,19 +127,16 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         List<SubjectJpaEntity> subjectEntities = context.subjectIdToEntity().values().stream().toList();
         List<Long> subjectEntityIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectEntityIds, kitVersionId);
-        Map<Long, List<AttributeJpaEntity>> subjectEntityIdToAttrEntities = attributeEntities.stream()
+
+        Map<Long, List<AttributeJpaEntity>> subjectIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
         Map<Long, Integer> qaIdToWeightMap = subjectEntities.stream()
-            .flatMap(x -> subjectEntityIdToAttrEntities.get(x.getId()).stream())
+            .flatMap(x -> subjectIdToAttrEntities.get(x.getId()).stream())
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
-
-        Map<UUID, Long> attributeIdToRefNumMap = subjectEntities.stream()
-            .flatMap(x -> subjectEntityIdToAttrEntities.get(x.getId()).stream())
-            .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
 
         Map<Long, AttributeValue> attributeIdToValueMap = new HashMap<>();
         for (AttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
-            long attributeId = attributeIdToRefNumMap.get(qavEntity.getAttributeRefNum());
+            long attributeId = qavEntity.getAttributeId();
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
             Attribute attribute = new Attribute(

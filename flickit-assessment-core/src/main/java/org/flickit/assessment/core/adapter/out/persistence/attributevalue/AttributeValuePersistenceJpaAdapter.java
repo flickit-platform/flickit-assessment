@@ -35,11 +35,11 @@ public class AttributeValuePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllByIdInAndKitVersionId(attributeIds, assessmentResult.getKitVersionId());
-        Map<Long, AttributeJpaEntity> attrEntityIdToAttrEntity = attributeEntities.stream()
-            .collect(toMap(AttributeJpaEntity::getId, Function.identity())); //todo: should be deleted, when deleting refNum column
+        Map<Long, AttributeJpaEntity> attrIdToAttrEntity = attributeEntities.stream()
+            .collect(toMap(AttributeJpaEntity::getId, Function.identity()));
 
         List<AttributeValueJpaEntity> entities = attributeIds.stream().map(attributeId -> {
-            AttributeJpaEntity attributeEntity = attrEntityIdToAttrEntity.get(attributeId);
+            AttributeJpaEntity attributeEntity = attrIdToAttrEntity.get(attributeId);
             AttributeValueJpaEntity attributeValue = AttributeValueMapper.mapToJpaEntity(attributeId, attributeEntity.getRefNum());
             attributeValue.setAssessmentResult(assessmentResult);
             return attributeValue;
@@ -48,7 +48,7 @@ public class AttributeValuePersistenceJpaAdapter implements
         var persistedEntities = repository.saveAll(entities);
 
         return persistedEntities.stream().map(q -> {
-            AttributeJpaEntity attributeEntity = attrEntityIdToAttrEntity.get(q.getAttributeId());
+            AttributeJpaEntity attributeEntity = attrIdToAttrEntity.get(q.getAttributeId());
             return AttributeValueMapper.mapToDomainModel(q, attributeEntity);
         }).toList();
     }

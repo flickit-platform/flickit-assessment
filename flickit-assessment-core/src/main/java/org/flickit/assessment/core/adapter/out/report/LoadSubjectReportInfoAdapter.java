@@ -91,8 +91,8 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
                                                              Map<Long, MaturityLevel> idToMaturityLevelMap) {
         var attrValueEntities = attributeValueRepository.findByAssessmentResultIdAndSubjectId(
             assessmentResultEntity.getId(), subjectEntity.getId());
-        var attrRefNumToAttValueEntity = attrValueEntities.stream()
-            .collect(toMap(AttributeValueJpaEntity::getAttributeRefNum, Function.identity()));
+        var attrIdToAttValueEntity = attrValueEntities.stream()
+            .collect(toMap(AttributeValueJpaEntity::getAttributeId, Function.identity()));
         List<UUID> attrValueIds = attrValueEntities.stream()
             .map(AttributeValueJpaEntity::getId)
             .toList();
@@ -107,7 +107,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
         return attributeEntities.stream()
             .map(e -> {
-                AttributeValueJpaEntity attrValueEntity = attrRefNumToAttValueEntity.get(e.getRefNum());
+                AttributeValueJpaEntity attrValueEntity = attrIdToAttValueEntity.get(e.getId());
                 MaturityLevel maturityLevelEntity = idToMaturityLevelMap.get(attrValueEntity.getMaturityLevelId());
 
                 return new SubjectAttributeReportItem(e.getId(),
