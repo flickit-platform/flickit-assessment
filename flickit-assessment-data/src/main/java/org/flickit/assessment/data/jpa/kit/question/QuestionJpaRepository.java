@@ -13,9 +13,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, Long> {
+public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, QuestionJpaEntity.EntityId> {
 
     List<QuestionJpaEntity> findAllByKitVersionId(@Param("kitVersionId") Long kitVersionId);
+
+    Optional<QuestionJpaEntity> findByIdAndKitVersionId(Long id,
+                                                        Long kitVersionId);
 
     @Modifying
     @Query("""
@@ -111,13 +114,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.id IN :ids
         """)
     List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids);
-
-    @Query("""
-            SELECT q.refNum
-            FROM QuestionJpaEntity q
-            WHERE q.id = :questionId
-        """)
-    Optional<UUID> findRefNumById(@Param("questionId") Long questionId);
 
     @Query("""
             SELECT
