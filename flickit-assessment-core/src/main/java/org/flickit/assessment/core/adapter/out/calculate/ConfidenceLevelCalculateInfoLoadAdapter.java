@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
-import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMother;
+import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
@@ -13,8 +13,8 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
@@ -39,13 +39,13 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final AnswerJpaRepository answerRepo;
-    private final QualityAttributeValueJpaRepository attributeValueRepo;
+    private final AttributeValueJpaRepository attributeValueRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
     private final QuestionJpaRepository questionRepository;
     private final SubjectJpaRepository subjectRepository;
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
-                   List<QualityAttributeValueJpaEntity> allAttributeValueEntities,
+                   List<AttributeValueJpaEntity> allAttributeValueEntities,
                    Map<Long, SubjectJpaEntity> subjectIdToEntity,
                    Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> impactfulQuestions) {
     }
@@ -65,7 +65,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         var allAttributeValueEntities = attributeValueRepo.findByAssessmentResultId(assessmentResultId);
 
         // load all subjects and their related attributes (by assessmentKit)
-        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.loadByKitVersionIdWithAttributes(kitVersionId).stream()
+        Map<Long, SubjectJpaEntity> subjectIdToEntity = subjectRepository.findByKitVersionIdWithAttributes(kitVersionId).stream()
             .collect(toMap(SubjectJpaEntity::getId, x -> x, (s1, s2) -> s1));
 
         // load all questions with their impacts (by assessmentKit)
@@ -82,7 +82,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             subjectIdToEntity,
             impactfulQuestions);
 
-        Map<Long, QualityAttributeValue> attributeIdToValue = buildAttributeValues(context);
+        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context);
 
         List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValue, subjectIdToEntity, subjectValueEntities);
 
@@ -119,7 +119,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * @param context all previously loaded data
      * @return a map of each attributeId to it's corresponding attributeValue
      */
-    private Map<Long, QualityAttributeValue> buildAttributeValues(Context context) {
+    private Map<Long, AttributeValue> buildAttributeValues(Context context) {
         Map<Long, Integer> qaIdToWeightMap = context.subjectIdToEntity().values().stream()
             .flatMap(x -> x.getAttributes().stream())
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
@@ -128,18 +128,18 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             .flatMap(x -> x.getAttributes().stream())
             .collect(toMap(AttributeJpaEntity::getRefNum, AttributeJpaEntity::getId));
 
-        Map<Long, QualityAttributeValue> attributeIdToValueMap = new HashMap<>();
-        for (QualityAttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
+        Map<Long, AttributeValue> attributeIdToValueMap = new HashMap<>();
+        for (AttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
             long attributeId = attributeIdToRefNumMap.get(qavEntity.getAttributeRefNum());
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            QualityAttribute attribute = new QualityAttribute(
+            Attribute attribute = new Attribute(
                 attributeId,
                 qaIdToWeightMap.get(attributeId),
                 impactfulQuestions
             );
 
-            var attributeValue = new QualityAttributeValue(qavEntity.getId(), attribute, impactfulAnswers);
+            var attributeValue = new AttributeValue(qavEntity.getId(), attribute, impactfulAnswers);
 
             attributeIdToValueMap.put(attribute.getId(), attributeValue);
         }
@@ -158,7 +158,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             .filter(q -> q.getValue() != null)
             .map(q -> QuestionMapper.mapToDomainModel(q.getKey(),
                 q.getValue().stream()
-                    .map(QuestionImpactMother::mapToDomainModel)
+                    .map(QuestionImpactMapper::mapToDomainModel)
                     .toList()))
             .toList();
     }
@@ -194,22 +194,22 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
     /**
      * build subjectValues domain with all information needed for calculate their maturity levels
      *
-     * @param qualityAttrIdToValue map of attributeIds to their corresponding value
+     * @param attrIdToValue map of attributeIds to their corresponding value
      * @param subjectIdToEntity    map of subjectIds to it's entity
      * @param subjectValueEntities list of subjectValue entities
      * @return list of subjectValues
      */
-    private static List<SubjectValue> buildSubjectValues(Map<Long, QualityAttributeValue> qualityAttrIdToValue, Map<Long, SubjectJpaEntity> subjectIdToEntity,
+    private static List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> attrIdToValue, Map<Long, SubjectJpaEntity> subjectIdToEntity,
                                                          List<SubjectValueJpaEntity> subjectValueEntities) {
         List<SubjectValue> subjectValues = new ArrayList<>();
         Map<Long, SubjectValueJpaEntity> subjectIdToValue = subjectValueEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectId, sv -> sv));
 
         for (Map.Entry<Long, SubjectJpaEntity> sEntity : subjectIdToEntity.entrySet()) {
-            List<QualityAttribute> attributes = sEntity.getValue().getAttributes().stream()
+            List<Attribute> attributes = sEntity.getValue().getAttributes().stream()
                 .map(AttributeMapper::mapToDomainModel).toList();
-            List<QualityAttributeValue> qavList = attributes.stream()
-                .map(q -> qualityAttrIdToValue.get(q.getId()))
+            List<AttributeValue> qavList = attributes.stream()
+                .map(q -> attrIdToValue.get(q.getId()))
                 .filter(Objects::nonNull)
                 .toList();
             if (qavList.isEmpty())
@@ -225,7 +225,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * @return assessment with all information needed for calculation
      */
     private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId) {
-        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), kitVersionId,null);
-        return mapToDomainModel(assessmentEntity, kit);
+        AssessmentKit kit = new AssessmentKit(assessmentEntity.getAssessmentKitId(), null, kitVersionId, null);
+        return mapToDomainModel(assessmentEntity, kit, null);
     }
 }

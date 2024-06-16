@@ -42,9 +42,6 @@ public class AttributeJpaEntity {
     @Column(name = "weight", nullable = false)
     private Integer weight;
 
-    @Column(name = "kit_version_id", nullable = false)
-    private Long kitVersionId;
-
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
@@ -58,7 +55,7 @@ public class AttributeJpaEntity {
     private UUID lastModifiedBy;
 
 
-    public AttributeJpaEntity(Long id, String code, String title, Integer index, String description, Integer weight, Long kitVersionId,
+    public AttributeJpaEntity(Long id, String code, String title, Integer index, String description, Integer weight,
                               LocalDateTime creationTime, LocalDateTime lastModificationTime, UUID refNum) {
         this.id = id;
         this.code = code;
@@ -66,13 +63,12 @@ public class AttributeJpaEntity {
         this.index = index;
         this.description = description;
         this.weight = weight;
-        this.kitVersionId = kitVersionId;
         this.creationTime = creationTime;
         this.lastModificationTime = lastModificationTime;
         this.refNum = refNum;
     }
     @ManyToOne
     @JoinColumn(name = "subject_id", referencedColumnName = "id")
+    @JoinColumn(name="kit_version_id", referencedColumnName="kit_version_id")
     private SubjectJpaEntity subject;
-
 }

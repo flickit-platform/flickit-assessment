@@ -28,6 +28,9 @@ public class QuestionImpactJpaEntity {
     @Column(name = "weight", nullable = false)
     private Integer weight;
 
+    @Column(name = "kit_version_id",insertable = false, updatable = false, nullable = false)
+    private Long kitVersionId;
+
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
@@ -36,6 +39,7 @@ public class QuestionImpactJpaEntity {
 
     @ManyToOne
     @JoinColumn(name = "maturity_level_id", referencedColumnName = "id")
+    @JoinColumn(name="kit_version_id", referencedColumnName="kit_version_id")
     private MaturityLevelJpaEntity maturityLevel;
 
     @OneToMany(mappedBy = "questionImpact", cascade = CascadeType.REMOVE)

@@ -9,17 +9,17 @@ import java.util.UUID;
 
 public class SubjectJpaEntityMother {
 
-    public static SubjectJpaEntity subjectWithAttributes(Long subjectId, Integer index, List<AttributeJpaEntity> attributes) {
+    public static SubjectJpaEntity subjectWithAttributes(Long subjectId, Long kitVersionId, Integer index, List<AttributeJpaEntity> attributes) {
         LocalDateTime creationTime = LocalDateTime.now();
         return new SubjectJpaEntity(
             subjectId,
+            kitVersionId,
             UUID.randomUUID(),
             "code" + subjectId,
             index,
             "title" + subjectId,
             "description" + subjectId,
             1,
-            1L,
             creationTime,
             creationTime,
             null,

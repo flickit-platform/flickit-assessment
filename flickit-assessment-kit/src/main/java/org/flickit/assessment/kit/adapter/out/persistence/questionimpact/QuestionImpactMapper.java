@@ -15,6 +15,7 @@ public class QuestionImpactMapper {
             entity.getAttributeId(),
             entity.getMaturityLevel().getId(),
             entity.getWeight(),
+            entity.getKitVersionId(),
             entity.getQuestionId(),
             entity.getCreationTime(),
             entity.getLastModificationTime(),
@@ -27,6 +28,7 @@ public class QuestionImpactMapper {
         return new QuestionImpactJpaEntity(
             null,
             impact.getWeight(),
+            impact.getKitVersionId(),
             impact.getQuestionId(),
             impact.getAttributeId(),
             maturityLevelJpaEntity,

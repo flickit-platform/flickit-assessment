@@ -26,7 +26,7 @@ public class AttributeMapper {
         );
     }
 
-    public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, Long kitVersionId, SubjectJpaEntity subjectJpaEntity) {
+    public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, SubjectJpaEntity subjectJpaEntity) {
         return new AttributeJpaEntity(
             null,
             UUID.randomUUID(),
@@ -35,7 +35,6 @@ public class AttributeMapper {
             attribute.getTitle(),
             attribute.getDescription(),
             attribute.getWeight(),
-            kitVersionId,
             attribute.getCreationTime(),
             attribute.getLastModificationTime(),
             attribute.getCreatedBy(),
