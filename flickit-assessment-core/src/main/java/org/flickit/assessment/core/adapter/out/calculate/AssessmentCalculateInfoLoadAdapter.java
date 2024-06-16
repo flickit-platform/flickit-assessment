@@ -90,7 +90,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         and load all those answerOptions with their impacts
         */
         var allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
-        var allAnswerOptionEntities = answerOptionRepository.findAllById(allAnswerOptionIds);
+        var allAnswerOptionEntities = answerOptionRepository.findAllByQuestionIdInOrderByQuestionIdIndex(allAnswerOptionIds);
         var optionIdToAnswerOptionImpactEntitiesMap = answerOptionImpactRepository.findAllByOptionIdIn(allAnswerOptionIds).stream()
             .collect(groupingBy(AnswerOptionImpactJpaEntity::getOptionId));
 
