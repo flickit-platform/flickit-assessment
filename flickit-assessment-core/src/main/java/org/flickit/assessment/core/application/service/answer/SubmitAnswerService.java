@@ -58,7 +58,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         confidenceLevelId = (answerOptionId != null || Objects.equals(Boolean.TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
 
         if (loadedAnswer.isEmpty()) {
-            return saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId);
+            return saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId, assessmentResult.getKitVersionId());
         }
 
         var loadedAnswerOptionId = loadedAnswer.get().getSelectedOption() == null ? null : loadedAnswer.get().getSelectedOption().getId();
@@ -68,7 +68,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var isConfidenceLevelChanged = !Objects.equals(confidenceLevelId, loadedAnswer.get().getConfidenceLevelId());
 
         if (isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged) {
-            var updateParam = toUpdateAnswerParam(loadedAnswer.get().getId(), answerOptionId, confidenceLevelId,
+            var updateParam = toUpdateAnswerParam(loadedAnswer.get().getId(), answerOptionId, confidenceLevelId, assessmentResult.getKitVersionId(),
                 param.getIsNotApplicable(), param.getCurrentUserId());
             var isCalculateValid = !isAnswerOptionChanged && !isNotApplicableChanged;
             updateAnswerPort.update(updateParam);
@@ -80,28 +80,29 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return new Result(loadedAnswer.get().getId());
     }
 
-    private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
-        UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId));
+    private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId, Long kitVersionId) {
+        UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId, kitVersionId));
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId, Boolean.FALSE, Boolean.FALSE);
         }
         return new Result(savedAnswerId);
     }
 
-    private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
+    private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId, Long kitVersionId) {
         return new CreateAnswerPort.Param(
             assessmentResultId,
             param.getQuestionnaireId(),
             param.getQuestionId(),
             answerOptionId,
             confidenceLevelId,
+            kitVersionId,
             param.getIsNotApplicable(),
             param.getCurrentUserId()
         );
     }
 
     private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId, Long answerOptionId, Integer confidenceLevelId,
-                                                       Boolean isNotApplicable, UUID currentUserId) {
-        return new UpdateAnswerPort.Param(answerId, answerOptionId, confidenceLevelId, isNotApplicable, currentUserId);
+                                                       Long kitVersionId, Boolean isNotApplicable, UUID currentUserId) {
+        return new UpdateAnswerPort.Param(answerId, answerOptionId, confidenceLevelId, isNotApplicable, kitVersionId, currentUserId);
     }
 }

@@ -11,6 +11,7 @@ public interface UpdateAnswerOptionPort {
         Long id,
         String title,
         LocalDateTime lastModificationTime,
+        Long kitVersionId,
         UUID lastModifiedBy
     ) {}
 }

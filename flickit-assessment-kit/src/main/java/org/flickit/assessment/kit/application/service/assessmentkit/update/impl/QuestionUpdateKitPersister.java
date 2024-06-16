@@ -100,6 +100,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                     savedLevelIdToCodeMap,
                     postUpdateAttributes,
                     postUpdateMaturityLevels,
+                    savedKit.getKitVersionId(),
                     currentUserId);
                 if (isKitModificationMajor)
                     isMajorUpdate = true;
@@ -235,6 +236,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                    Map<Long, String> savedLevels,
                                    Map<String, Long> updatedAttributes,
                                    Map<String, Long> updatedLevels,
+                                   Long kitVersionId,
                                    UUID currentUserId) {
         boolean isMajorUpdate = false;
         if (!savedQuestion.getTitle().equals(dslQuestion.getTitle()) ||
@@ -259,7 +261,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             }
         }
 
-        updateAnswerOptions(savedQuestion, dslQuestion, currentUserId);
+        updateAnswerOptions(savedQuestion, dslQuestion, kitVersionId, currentUserId);
         boolean isMajorUpdateQuestionImpact = updateQuestionImpacts(savedQuestion,
             dslQuestion,
             savedAttributes,
@@ -271,7 +273,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         return isMajorUpdate || isMajorUpdateQuestionImpact;
     }
 
-    private void updateAnswerOptions(Question savedQuestion, QuestionDslModel dslQuestion, UUID currentUserId) {
+    private void updateAnswerOptions(Question savedQuestion, QuestionDslModel dslQuestion, Long kitVersionId, UUID currentUserId) {
         Map<Integer, AnswerOption> savedOptionIndexMap = savedQuestion.getOptions().stream()
             .collect(toMap(AnswerOption::getIndex, a -> a));
 
@@ -283,8 +285,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             String dslOptionTitle = dslOptionIndexMap.get(optionEntry.getKey()).getCaption();
             if (!savedOptionTitle.equals(dslOptionTitle)) {
                 updateAnswerOptionPort.update(new UpdateAnswerOptionPort.Param(optionEntry.getValue().getId(),
-                    dslOptionTitle,
-                    LocalDateTime.now(),
+                    dslOptionTitle, LocalDateTime.now(), kitVersionId,
                     currentUserId));
                 log.debug("AnswerOption[id={}, index={}, newTitle{}, questionId{}] updated.",
                     optionEntry.getValue().getId(), optionEntry.getKey(), dslOptionTitle, savedQuestion.getId());
