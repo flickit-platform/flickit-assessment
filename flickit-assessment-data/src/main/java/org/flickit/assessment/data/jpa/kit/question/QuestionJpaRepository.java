@@ -52,11 +52,11 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     @Query("""
             SELECT DISTINCT q FROM QuestionJpaEntity q
-            LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
-            LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id
-            WHERE at.subject.id = :subjectId
+            LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
+            LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id AND qi.kitVersionId = q.kitVersionId
+            WHERE at.subject.id = :subjectId AND at.subject.kitVersionId = :kitVersionId
         """)
-    List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
+    List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId, @Param("kitVersionId") Long kitVersionId);
 
     @Query("""
             SELECT COUNT (DISTINCT q.id) FROM QuestionJpaEntity q

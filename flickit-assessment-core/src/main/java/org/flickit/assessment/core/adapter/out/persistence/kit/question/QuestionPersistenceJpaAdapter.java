@@ -33,8 +33,8 @@ public class QuestionPersistenceJpaAdapter implements
     private final AnswerOptionJpaRepository answerOptionRepository;
 
     @Override
-    public List<Question> loadQuestionsBySubject(long subjectId) {
-        return repository.findBySubjectId(subjectId).stream()
+    public List<Question> loadQuestionsBySubject(long subjectId, long kitVersionId) {
+        return repository.findBySubjectId(subjectId, kitVersionId).stream()
             .map(q -> QuestionMapper.mapToDomainModel(q.getId(), null))
             .toList();
     }
