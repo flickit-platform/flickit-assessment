@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, QuestionJpaEntity.EntityId> {
 
-    List<QuestionJpaEntity> findAllByKitVersionId(@Param("kitVersionId") Long kitVersionId);
+    List<QuestionJpaEntity> findAllByKitVersionId(long kitVersionId);
 
     Optional<QuestionJpaEntity> findByIdAndKitVersionId(Long id,
                                                         Long kitVersionId);
