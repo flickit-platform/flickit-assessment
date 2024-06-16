@@ -25,6 +25,7 @@ public class AttributeJpaEntity {
     private Long id;
 
     @Id
+    @EqualsAndHashCode.Include
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 
