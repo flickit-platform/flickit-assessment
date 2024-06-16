@@ -75,7 +75,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                                                                @Param("maturityLevelId") Long maturityLevelId);
 
     @Query("""
-            SELECT COUNT(DISTINCT(q.id, q.kitVersionId))
+            SELECT COUNT(DISTINCT(q.id))
             FROM QuestionJpaEntity q
             JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id AND qi.kitVersionId = q.kitVersionId
             WHERE qi.attributeId = :attributeId AND qi.kitVersionId = :kitVersionId
