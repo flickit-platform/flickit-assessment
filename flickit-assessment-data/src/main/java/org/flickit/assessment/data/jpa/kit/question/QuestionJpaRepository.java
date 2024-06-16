@@ -17,8 +17,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     List<QuestionJpaEntity> findAllByKitVersionId(long kitVersionId);
 
-    Optional<QuestionJpaEntity> findByIdAndKitVersionId(Long id,
-                                                        Long kitVersionId);
+    Optional<QuestionJpaEntity> findByIdAndKitVersionId(long id,
+                                                        long kitVersionId);
 
     @Modifying
     @Query("""
