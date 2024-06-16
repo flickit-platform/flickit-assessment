@@ -46,8 +46,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             SELECT q as question, qi as questionImpact
             FROM QuestionJpaEntity q
             LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
-            WHERE q.questionnaireId IN
-                (SELECT qu.id FROM QuestionnaireJpaEntity qu WHERE qu.kitVersionId = :kitVersionId)
+            WHERE q.kitVersionId = :kitVersionId
         """)
     List<QuestionJoinQuestionImpactView> loadByKitVersionId(@Param("kitVersionId") Long kitVersionId);
 
