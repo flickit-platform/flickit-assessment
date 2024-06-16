@@ -29,7 +29,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
                 a.id as id,
                 a.index as index,
                 a.title as title,
-                COUNT(DISTINCT CASE WHEN qi.maturityLevel.id = a.id THEN qi.questionId ELSE NULL END) as questionCount
+                COUNT(DISTINCT (CASE WHEN qi.maturityLevel.id = a.id THEN qi.questionId ELSE NULL END)) as questionCount
             FROM MaturityLevelJpaEntity a
             LEFT JOIN KitVersionJpaEntity kv On kv.id = a.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi ON qi.attributeId = :attributeId
