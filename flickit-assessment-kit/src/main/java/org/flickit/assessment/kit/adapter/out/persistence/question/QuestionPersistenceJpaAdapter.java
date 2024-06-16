@@ -65,8 +65,8 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public int countBySubjectId(long subjectId) {
-        return repository.countDistinctBySubjectId(subjectId);
+    public int countBySubjectId(long subjectId, long kitVersionId) {
+        return repository.countDistinctBySubjectId(subjectId, kitVersionId);
     }
 
     @Override
