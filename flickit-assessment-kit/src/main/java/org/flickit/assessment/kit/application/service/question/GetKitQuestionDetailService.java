@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -30,6 +31,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
     private final LoadAllAttributesPort loadAllAttributesPort;
     private final LoadQuestionPort loadQuestionPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Override
     public Result getKitQuestionDetail(Param param) {
@@ -38,8 +40,9 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         Question question = loadQuestionPort.load(param.getQuestionId(), param.getKitId());
+        var kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
 
-        var maturityLevelsMap = loadMaturityLevelsPort.loadByKitId(param.getKitId()).stream()
+        var maturityLevelsMap = loadMaturityLevelsPort.loadByKitVersionId(kitVersionId).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));
         var options = question.getOptions().stream()
             .map(opt -> new Option(opt.getIndex(), opt.getTitle()))

@@ -13,21 +13,25 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
 
     List<LevelCompetenceJpaEntity> findByAffectedLevelId(Long affectedLevelId);
 
+    List<LevelCompetenceJpaEntity> findAllByAffectedLevelIdInAndKitVersionId(Iterable<Long> levelIds, Long kitVersionId);
+
     @Modifying
-    @Query("DELETE LevelCompetenceJpaEntity l WHERE " +
-        "l.effectiveLevel.id = :effectiveLevelId AND " +
-        "l.affectedLevel.id = :affectedLevelId")
+    @Query("""
+            DELETE LevelCompetenceJpaEntity l
+            WHERE l.effectiveLevelId = :effectiveLevelId
+                AND l.affectedLevelId = :affectedLevelId
+        """)
     void delete(@Param(value = "affectedLevelId") Long affectedLevelId,
                 @Param(value = "effectiveLevelId") Long effectiveLevelId);
 
     @Modifying
     @Query("""
-           UPDATE LevelCompetenceJpaEntity l SET
-            l.value = :value,
-            l.lastModificationTime = :lastModificationTime,
-            l.lastModifiedBy = :lastModifiedBy
-           WHERE l.affectedLevel.id = :affectedLevelId AND l.effectiveLevel.id = :effectiveLevelId
-           """)
+            UPDATE LevelCompetenceJpaEntity l SET
+                l.value = :value,
+                l.lastModificationTime = :lastModificationTime,
+                l.lastModifiedBy = :lastModifiedBy
+            WHERE l.affectedLevelId = :affectedLevelId AND l.effectiveLevelId = :effectiveLevelId
+        """)
     void update(@Param(value = "affectedLevelId") Long affectedLevelId,
                 @Param(value = "effectiveLevelId") Long effectiveLevelId,
                 @Param(value = "value") Integer value,
