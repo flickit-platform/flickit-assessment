@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeLevelQuestionsDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadAttributeLevelQuestionsPort;
@@ -23,14 +24,16 @@ public class GetKitKitAttributeLevelQuestionsDetailService implements GetKitAttr
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final LoadAttributeLevelQuestionsPort loadAttributeLevelQuestionsPort;
+    private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Override
     public Result getKitAttributeLevelQuestionsDetail(Param param) {
         ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+        var kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
 
-        var result = loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(param.getKitId(), param.getAttributeId(), param.getMaturityLevelId());
+        var result = loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitVersionId, param.getAttributeId(), param.getMaturityLevelId());
 
         List<Result.Question> questions = result.stream()
             .map(e -> mapToResultQuestion(e.question(), e.questionnaire()))

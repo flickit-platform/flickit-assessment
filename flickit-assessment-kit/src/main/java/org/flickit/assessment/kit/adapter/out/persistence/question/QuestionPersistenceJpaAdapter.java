@@ -99,11 +99,11 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<LoadAttributeLevelQuestionsPort.Result> loadAttributeLevelQuestions(long kitId, long attributeId, long maturityLevelId) {
-        if (!attributeRepository.existsByIdAndKitId(attributeId, kitId))
+    public List<LoadAttributeLevelQuestionsPort.Result> loadAttributeLevelQuestions(long kitVersionId, long attributeId, long maturityLevelId) {
+        if (!attributeRepository.existsByIdAndKitVersionId(attributeId, kitVersionId))
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
-        if (!maturityLevelRepository.existsByIdAndKitId(maturityLevelId, kitId))
+        if (!maturityLevelRepository.existsByIdAndKitVersionId(maturityLevelId, kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
         var views = repository.findByAttributeIdAndMaturityLevelId(attributeId, maturityLevelId);
 

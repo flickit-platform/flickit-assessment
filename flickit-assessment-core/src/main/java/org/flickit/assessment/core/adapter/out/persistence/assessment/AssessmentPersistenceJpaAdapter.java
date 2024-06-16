@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.adapter.out.persistence.assessment;
 
-import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.SpaceAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
@@ -23,7 +22,6 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -36,9 +34,6 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity.Fields.ASSESSMENT_KIT_ID;
-import static org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity.Fields.SPACE_ID;
-import static org.springframework.data.jpa.domain.Specification.where;
 
 @Component
 @RequiredArgsConstructor
@@ -49,7 +44,6 @@ public class AssessmentPersistenceJpaAdapter implements
     GetAssessmentProgressPort,
     GetAssessmentPort,
     DeleteAssessmentPort,
-    CountAssessmentsPort,
     CheckUserAssessmentAccessPort,
     SpaceAccessChecker {
 
@@ -78,8 +72,8 @@ public class AssessmentPersistenceJpaAdapter implements
         Map<Long, List<MaturityLevelJpaEntity>> kitVersionIdToMaturityLevelEntities = kitMaturityLevelEntities.stream()
             .collect(Collectors.groupingBy(MaturityLevelJpaEntity::getKitVersionId));
 
-        List<Long> assessmentMaturityLevelIds = pageResult.getContent().stream()
-            .map(e -> e.getAssessmentResult().getMaturityLevelId())
+        List<MaturityLevelJpaEntity.EntityId> assessmentMaturityLevelIds = pageResult.getContent().stream()
+            .map(e -> new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentKit().getKitVersionId()))
             .toList();
 
         Map<Long, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevel =
@@ -223,41 +217,6 @@ public class AssessmentPersistenceJpaAdapter implements
             throw new ResourceNotFoundException(DELETE_ASSESSMENT_ID_NOT_FOUND);
 
         repository.delete(id, deletionTime);
-    }
-
-    @Override
-    public CountAssessmentsPort.Result count(CountAssessmentsPort.Param param) {
-        Integer totalCount = null;
-        Integer deletedCount = null;
-        Integer notDeletedCount = null;
-
-        Specification<AssessmentJpaEntity> baseCondition = (r, cq, cb) -> {
-            Predicate p = cb.and();
-            if (param.kitId() != null)
-                p = cb.and(cb.equal(r.get(ASSESSMENT_KIT_ID), param.kitId()), p);
-            if (param.spaceId() != null)
-                p = cb.and(cb.equal(r.get(SPACE_ID), param.spaceId()), p);
-            return p;
-        };
-
-        if (param.deleted()) {
-            deletedCount = (int) repository.count(where(baseCondition).and(deletedCondition(true)));
-        }
-        if (param.notDeleted()) {
-            notDeletedCount = (int) repository.count(where(baseCondition).and(deletedCondition(false)));
-        }
-        if (param.total()) {
-            if (param.deleted() && param.notDeleted())
-                totalCount = deletedCount + notDeletedCount;
-            else
-                totalCount = (int) repository.count(where(baseCondition));
-        }
-
-        return new CountAssessmentsPort.Result(totalCount, deletedCount, notDeletedCount);
-    }
-
-    private static Specification<AssessmentJpaEntity> deletedCondition(boolean deleted) {
-        return (r, cq, cb) -> cb.equal(r.get("deleted"), deleted);
     }
 
     @Override
