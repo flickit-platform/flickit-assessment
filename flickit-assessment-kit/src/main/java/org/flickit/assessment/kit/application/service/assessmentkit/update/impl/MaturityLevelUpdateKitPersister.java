@@ -200,7 +200,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             // delete removed competences
             deletedCompetences.forEach(cmpCode -> {
                     Long effectiveLevelId = savedLevelCodesMap.get(cmpCode).getId();
-                    deleteLevelCompetence(affectedLevel.getId(), effectiveLevelId);
+                    deleteLevelCompetence(affectedLevel.getId(), effectiveLevelId, kitVersionId);
                 }
             );
 
@@ -211,7 +211,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
                 Long effectiveLevelId = codeToPersistedLevels.get(cmpCode).getId();
                 if (oldValue != newValue) {
                     isCompetencesChanged = true;
-                    updateLevelCompetence(affectedLevel.getId(), effectiveLevelId, newValue, currentUserId);
+                    updateLevelCompetence(affectedLevel.getId(), effectiveLevelId, kitVersionId, newValue, currentUserId);
                 }
             }
 
@@ -230,13 +230,13 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
         log.debug("MaturityLevel[id={}, code={}] deleted from kitVersionId[{}].", deletedLevel.getId(), deletedLevel.getCode(), kitVersionId);
     }
 
-    private void deleteLevelCompetence(Long affectedLevelId, Long effectiveLevelId) {
-        deleteLevelCompetencePort.delete(affectedLevelId, effectiveLevelId);
+    private void deleteLevelCompetence(Long affectedLevelId, Long effectiveLevelId, Long kitVersionId) {
+        deleteLevelCompetencePort.delete(affectedLevelId, effectiveLevelId, kitVersionId);
         log.debug("LevelCompetence[affectedId={}, effectiveId={}] deleted.", affectedLevelId, effectiveLevelId);
     }
 
-    private void updateLevelCompetence(long affectedLevelId, long effectiveLevelId, int value, UUID currentUserId) {
-        updateLevelCompetencePort.update(affectedLevelId, effectiveLevelId, value, currentUserId);
+    private void updateLevelCompetence(long affectedLevelId, long effectiveLevelId, Long kitVersionId, int value, UUID currentUserId) {
+        updateLevelCompetencePort.update(affectedLevelId, effectiveLevelId, kitVersionId, value, currentUserId);
         log.debug("LevelCompetence[affectedId={}, effectiveId={}, value={}] updated.", affectedLevelId, effectiveLevelId, value);
     }
 

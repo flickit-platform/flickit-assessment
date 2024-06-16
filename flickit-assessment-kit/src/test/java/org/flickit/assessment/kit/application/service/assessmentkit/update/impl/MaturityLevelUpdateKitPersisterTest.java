@@ -236,7 +236,7 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevelOne, dslLevelTwo, dslLevelThree))
             .build();
 
-        doNothing().when(deleteLevelCompetencePort).delete(levelThree().getId(), levelTwo().getId());
+        doNothing().when(deleteLevelCompetencePort).delete(levelThree().getId(), levelTwo().getId(), savedKit.getKitVersionId());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
@@ -270,7 +270,7 @@ class MaturityLevelUpdateKitPersisterTest {
 
         UUID uuid = UUID.randomUUID();
 
-        doNothing().when(updateLevelCompetencePort).update(levelTwo().getId(), levelTwo().getId(), 100, uuid);
+        doNothing().when(updateLevelCompetencePort).update(levelTwo().getId(), levelTwo().getId(), savedKit.getKitVersionId(), 100, uuid);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, uuid);
