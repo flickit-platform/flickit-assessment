@@ -103,7 +103,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             attrMaturityScoreEntities.stream()
                 .collect(groupingBy(AttributeMaturityScoreJpaEntity::getAttributeValueId));
 
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectId(subjectEntity.getId());
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectEntity.getId(), subjectEntity.getKitVersionId());
 
         return attributeEntities.stream()
             .map(e -> {

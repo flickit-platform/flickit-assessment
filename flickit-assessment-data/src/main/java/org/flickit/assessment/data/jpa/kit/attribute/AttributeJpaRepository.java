@@ -6,15 +6,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity, AttributeJpaEntity.EntityId> {
 
-    List<AttributeJpaEntity> findAllBySubjectId(long subjectId);
+    List<AttributeJpaEntity> findAllBySubjectIdAndKitVersionId(long subjectId, long kitVersionId);
 
-    List<AttributeJpaEntity> findAllBySubjectIdIn(Collection<Long> subjectId);
+    List<AttributeJpaEntity> findAllBySubjectIdInAndKitVersionId(Collection<Long> subjectId, long kitVersionId);
 
-    List<AttributeJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> attributedIds, Long kitVersionId);
+    List<AttributeJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> attributedIds, long kitVersionId);
 
     Optional<AttributeJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
 
@@ -59,7 +62,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id and qsn.kitVersionId = qr.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
             LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id and ov.optionId = ans.answerOptionId
-            AND ov.kitVersionId = qi.kitVersionId
+                AND ov.kitVersionId = qi.kitVersionId
             WHERE
                 qi.attributeId = :attributeId
                 AND qi.maturityLevel.id = :maturityLevelId
@@ -72,7 +75,8 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                                                                @Param("maturityLevelId") Long maturityLevelId);
 
     @Query("""
-            SELECT COUNT(DISTINCT(q.id, q.kitVersionId)) FROM QuestionJpaEntity q
+            SELECT COUNT(DISTINCT(q.id, q.kitVersionId))
+            FROM QuestionJpaEntity q
             JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id AND qi.kitVersionId = q.kitVersionId
             WHERE qi.attributeId = :attributeId AND qi.kitVersionId = :kitVersionId
         """)

@@ -54,7 +54,7 @@ public class SubjectPersistenceJpaAdapter implements
     public List<Subject> loadByKitVersionId(long kitVersionId) {
         List<SubjectJpaEntity> subjectEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId);
         List<Long> subjectEntityIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdIn(subjectEntityIds);
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectEntityIds, kitVersionId);
         Map<Long, List<AttributeJpaEntity>> subjectEntityIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
@@ -70,7 +70,7 @@ public class SubjectPersistenceJpaAdapter implements
     public Subject load(long subjectId, long kitVersionId) {
         var subjectEntity = repository.findByIdAndKitVersionId (subjectId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND));
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectId(subjectId);
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, kitVersionId);
         return mapToDomainModel(subjectEntity,
             attributeEntities.stream().map(AttributeMapper::mapToDomainModel).toList());
     }

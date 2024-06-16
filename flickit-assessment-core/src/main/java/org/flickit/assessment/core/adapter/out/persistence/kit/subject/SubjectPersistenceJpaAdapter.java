@@ -33,7 +33,7 @@ public class SubjectPersistenceJpaAdapter implements
         var views = repository.findAllByKitVersionIdOrderByIndex(kitVersionId);
 
         List<Long> subjectEntityIds = views.stream().map(SubjectJpaEntity::getId).toList();
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdIn(subjectEntityIds);
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectEntityIds, kitVersionId);
         Map<Long, List<AttributeJpaEntity>> subjectEntityIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 

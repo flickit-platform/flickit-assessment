@@ -78,10 +78,11 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Test
     void testLoad() {
         Context context = createContext();
+        long kitVersionId = context.assessmentResultEntity.getKitVersionId();
 
-        doMocks(context);
+        doMocks(context, kitVersionId);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        when(maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(context.assessmentResultEntity.getKitVersionId()))
+        when(maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(kitVersionId))
             .thenReturn(maturityLevels);
 
         var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
@@ -164,7 +165,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
     private static Context createContext() {
         var assessmentResultEntity = validSimpleAssessmentResultEntity(null, Boolean.FALSE, Boolean.FALSE);
-        Long kitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
         Long kitVersionId = assessmentResultEntity.getKitVersionId();
 
         var attributeId = 134L;
@@ -310,7 +310,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
         );
     }
 
-    private void doMocks(Context context) {
+    private void doMocks(Context context, long kitVersionId) {
         when(assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(context.assessmentResultEntity().getAssessment().getId()))
             .thenReturn(Optional.of(context.assessmentResultEntity()));
         when(subjectValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
@@ -321,7 +321,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.subjects);
         when(questionRepository.loadByKitVersionId(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(questionJoinImpactView(context.questionEntities, context.questionIdToImpactsMap));
-        when(attributeRepository.findAllBySubjectIdIn(context.subjects.stream().map(SubjectJpaEntity::getId).toList()))
+        when(attributeRepository.findAllBySubjectIdInAndKitVersionId(context.subjects.stream().map(SubjectJpaEntity::getId).toList(), kitVersionId))
             .thenReturn(context.attributes);
         when(answerRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.answerEntities());

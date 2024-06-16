@@ -85,9 +85,9 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             subjectIdToEntity,
             impactfulQuestions);
 
-        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context);
+        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context, kitVersionId);
 
-        List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValue, subjectIdToEntity, subjectValueEntities);
+        List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValue, subjectIdToEntity, subjectValueEntities, kitVersionId);
 
         return new AssessmentResult(
             assessmentResultId,
@@ -119,13 +119,14 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * build attributeValues domain
      * with all information needed for calculate their maturity levels
      *
-     * @param context all previously loaded data
+     * @param context      all previously loaded data
+     * @param kitVersionId the intended version of kit
      * @return a map of each attributeId to it's corresponding attributeValue
      */
-    private Map<Long, AttributeValue> buildAttributeValues(Context context) {
+    private Map<Long, AttributeValue> buildAttributeValues(Context context, long kitVersionId) {
         List<SubjectJpaEntity> subjectEntities = context.subjectIdToEntity().values().stream().toList();
         List<Long> subjectEntityIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdIn(subjectEntityIds);
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectEntityIds, kitVersionId);
         Map<Long, List<AttributeJpaEntity>> subjectEntityIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
         Map<Long, Integer> qaIdToWeightMap = subjectEntities.stream()
@@ -202,20 +203,21 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
     /**
      * build subjectValues domain with all information needed for calculate their maturity levels
      *
-     * @param attrIdToValue map of attributeIds to their corresponding value
+     * @param attrIdToValue        map of attributeIds to their corresponding value
      * @param subjectIdToEntity    map of subjectIds to it's entity
      * @param subjectValueEntities list of subjectValue entities
+     * @param kitVersionId         the intended version of kit
      * @return list of subjectValues
      */
     private List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> attrIdToValue, Map<Long, SubjectJpaEntity> subjectIdToEntity,
-                                                         List<SubjectValueJpaEntity> subjectValueEntities) {
+                                                  List<SubjectValueJpaEntity> subjectValueEntities, long kitVersionId) {
         List<SubjectValue> subjectValues = new ArrayList<>();
         Map<Long, SubjectValueJpaEntity> subjectIdToValue = subjectValueEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectId, sv -> sv));
 
         List<SubjectJpaEntity> subjectEntities = subjectIdToEntity.values().stream().toList();
         List<Long> subjectEntityIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdIn(subjectEntityIds);
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectEntityIds, kitVersionId);
         Map<Long, List<AttributeJpaEntity>> subjectEntityIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
