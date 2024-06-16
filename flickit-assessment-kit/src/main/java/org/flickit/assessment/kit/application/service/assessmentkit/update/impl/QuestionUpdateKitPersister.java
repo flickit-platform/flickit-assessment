@@ -95,7 +95,6 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 QuestionDslModel dslQuestion = codeToDslQuestion.get(questionEntry.getKey());
                 boolean isKitModificationMajor = updateQuestion(
                     question,
-                    savedKit.getKitVersionId(),
                     dslQuestion,
                     savedAttributeIdToCodeMap,
                     savedLevelIdToCodeMap,
@@ -234,7 +233,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private boolean updateQuestion(Question savedQuestion,
-                                   Long kitVersionId, QuestionDslModel dslQuestion,
+                                   QuestionDslModel dslQuestion,
                                    Map<Long, String> savedAttributes,
                                    Map<Long, String> savedLevels,
                                    Map<String, Long> updatedAttributes,
