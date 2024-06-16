@@ -49,7 +49,6 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
             .sorted(comparingInt(Option::index))
             .toList();
 
-        long kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
         List<Impact> attributeImpacts = loadAttributeImpacts(kitVersionId, question, maturityLevelsMap);
 
         return new Result(question.getHint(), options, attributeImpacts);
