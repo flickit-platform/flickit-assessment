@@ -35,7 +35,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
             LEFT JOIN KitVersionJpaEntity kv On kv.id = a.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi ON qi.attributeId = :attributeId
             WHERE kv.kit.kitVersionId = :kitVersionId
-            GROUP BY a.id
+            GROUP BY a.id , a.index, a.title
             ORDER BY a.index
         """)
     List<MaturityQuestionCountView> loadAttributeLevels(@Param("attributeId") Long attributeId, @Param("kitVersionId") Long kitVersionId);
