@@ -95,12 +95,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 QuestionDslModel dslQuestion = codeToDslQuestion.get(questionEntry.getKey());
                 boolean isKitModificationMajor = updateQuestion(
                     question,
-                    dslQuestion,
+                    savedKit.getKitVersionId(), dslQuestion,
                     savedAttributeIdToCodeMap,
                     savedLevelIdToCodeMap,
                     postUpdateAttributes,
                     postUpdateMaturityLevels,
-                    savedKit.getKitVersionId(),
                     currentUserId);
                 if (isKitModificationMajor)
                     isMajorUpdate = true;
@@ -233,12 +232,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private boolean updateQuestion(Question savedQuestion,
-                                   QuestionDslModel dslQuestion,
+                                   Long kitVersionId, QuestionDslModel dslQuestion,
                                    Map<Long, String> savedAttributes,
                                    Map<Long, String> savedLevels,
                                    Map<String, Long> updatedAttributes,
                                    Map<String, Long> updatedLevels,
-                                   Long kitVersionId,
                                    UUID currentUserId) {
         boolean isMajorUpdate = false;
         if (!savedQuestion.getTitle().equals(dslQuestion.getTitle()) ||
