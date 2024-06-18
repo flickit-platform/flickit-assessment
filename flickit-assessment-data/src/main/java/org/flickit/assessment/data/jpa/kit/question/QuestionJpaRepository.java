@@ -51,7 +51,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             SELECT DISTINCT q FROM QuestionJpaEntity q
             LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
             LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id
-            WHERE at.subject.id = :subjectId
+            WHERE at.subjectId = :subjectId
         """)
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 
@@ -59,7 +59,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             SELECT COUNT (DISTINCT q.id) FROM QuestionJpaEntity q
             LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
             LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id
-            WHERE at.subject.id = :subjectId
+            WHERE at.subjectId = :subjectId
         """)
     Integer countDistinctBySubjectId(@Param("subjectId") long subjectId);
 
