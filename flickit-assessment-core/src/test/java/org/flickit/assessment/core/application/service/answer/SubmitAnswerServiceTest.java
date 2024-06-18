@@ -201,7 +201,7 @@ class SubmitAnswerServiceTest {
         when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId())).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
-        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), null, ConfidenceLevel.getDefault().getId(), isNotApplicable, assessmentResult.getKitVersionId(), currentUserId);
+        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), null, ConfidenceLevel.getDefault().getId(), isNotApplicable, currentUserId);
         doNothing().when(updateAnswerPort).update(updateParam);
 
         service.submitAnswer(param);
@@ -254,7 +254,7 @@ class SubmitAnswerServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
-        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), answerOption.getId(), ConfidenceLevel.getDefault().getId(), newIsNotApplicable, assessmentResult.getKitVersionId(), currentUserId);
+        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), answerOption.getId(), ConfidenceLevel.getDefault().getId(), newIsNotApplicable, currentUserId);
         doNothing().when(updateAnswerPort).update(updateParam);
 
         service.submitAnswer(param);
