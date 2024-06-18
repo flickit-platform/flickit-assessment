@@ -28,8 +28,8 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
 
     @Modifying
     @Query("""
-            UPDATE LevelCompetenceJpaEntity l SET
-                l.value = :value,
+            UPDATE LevelCompetenceJpaEntity l
+            SET l.value = :value,
                 l.lastModificationTime = :lastModificationTime,
                 l.lastModifiedBy = :lastModifiedBy
             WHERE l.affectedLevelId = :affectedLevelId

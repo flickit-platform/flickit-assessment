@@ -15,12 +15,16 @@ import java.util.UUID;
 
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, Long> {
 
-    List<QuestionJpaEntity> findAllByKitVersionId(@Param("kitVersionId") Long kitVersionId);
+    List<QuestionJpaEntity> findAllByKitVersionId(Long kitVersionId);
+
+    List<QuestionJpaEntity> findAllByQuestionnaireIdOrderByIndexAsc(Long questionnaireId);
+
+    Page<QuestionJpaEntity> findAllByQuestionnaireIdOrderByIndex(long questionnaireId, Pageable pageable);
 
     @Modifying
     @Query("""
-            UPDATE QuestionJpaEntity q SET
-                q.title = :title,
+            UPDATE QuestionJpaEntity q
+            SET q.title = :title,
                 q.hint = :hint,
                 q.index = :index,
                 q.mayNotBeApplicable = :mayNotBeApplicable,
@@ -39,7 +43,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
-            SELECT q as question, qi as questionImpact
+            SELECT q as question,
+                qi as questionImpact
             FROM QuestionJpaEntity q
             LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
             WHERE q.questionnaireId IN
@@ -48,7 +53,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionJoinQuestionImpactView> loadByKitVersionId(@Param("kitVersionId") Long kitVersionId);
 
     @Query("""
-            SELECT DISTINCT q FROM QuestionJpaEntity q
+            SELECT DISTINCT q
+            FROM QuestionJpaEntity q
             LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
             LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id
             WHERE at.subjectId = :subjectId
@@ -56,7 +62,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId);
 
     @Query("""
-            SELECT COUNT (DISTINCT q.id) FROM QuestionJpaEntity q
+            SELECT COUNT (DISTINCT q.id)
+            FROM QuestionJpaEntity q
             LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
             LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id
             WHERE at.subjectId = :subjectId
@@ -87,11 +94,13 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                AND qi.attributeId = :attributeId
                AND qi.maturityLevelId = :maturityLevelId)
                OR (asm.id = :assessmentId
-               AND ans.answerOptionId IS NULL
-               AND qi.attributeId = :attributeId)
+                   AND ans.answerOptionId IS NULL
+                   AND qi.attributeId = :attributeId)
                AND qi.maturityLevelId = :maturityLevelId
         """)
-    List<ImprovableImpactfulQuestionView> findImprovableImpactfulQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
+    List<ImprovableImpactfulQuestionView> findImprovableImpactfulQuestions(@Param("assessmentId") UUID assessmentId,
+                                                                           @Param("attributeId") Long attributeId,
+                                                                           @Param("maturityLevelId") Long maturityLevelId);
 
     @Query("""
             SELECT
@@ -100,10 +109,10 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 q.index AS index,
                 ao AS option,
                 atr AS attribute,
-                questionnair AS questionnaire
+                questionnaire AS questionnaire
             FROM QuestionJpaEntity q
             JOIN AnswerOptionJpaEntity ao ON q.id = ao.questionId
-            JOIN QuestionnaireJpaEntity questionnair ON q.questionnaireId = questionnair.id
+            JOIN QuestionnaireJpaEntity questionnaire ON q.questionnaireId = questionnaire.id
             JOIN AnswerOptionImpactJpaEntity impact ON ao.id = impact.optionId
             JOIN QuestionImpactJpaEntity question_impact ON impact.questionImpact = question_impact
             JOIN AttributeJpaEntity atr ON question_impact.attributeId = atr.id
@@ -112,28 +121,24 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids);
 
     @Query("""
-            SELECT
-                MIN(q.index) as index,
+            SELECT MIN(q.index) as index,
                 qn.id as questionnaireId
             FROM QuestionJpaEntity q JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id
             JOIN KitVersionJpaEntity kv ON qn.kitVersionId = kv.id
             JOIN AssessmentResultJpaEntity ar ON ar.kitVersionId = kv.id
             WHERE ar.id = :assessmentResultId AND q.id NOT IN (
-                SELECT
-                    fq.id
-                FROM QuestionJpaEntity fq JOIN QuestionnaireJpaEntity qsn ON fq.questionnaireId = qsn.id
-                JOIN AnswerJpaEntity ans ON  ans.questionRefNum = fq.refNum
-                WHERE ans.assessmentResult.id = :assessmentResultId and (ans.answerOptionId IS NOT NULL OR ans.isNotApplicable = TRUE))
-            AND qn.id IN (
-                SELECT fqn.id
-                FROM QuestionnaireJpaEntity fqn JOIN AnswerJpaEntity fans ON fans.questionnaireId = fqn.id
-                WHERE fans.assessmentResult.id = :assessmentResultId
-            ) GROUP BY qn.id order by qn.id
-    """)
+                    SELECT fq.id
+                    FROM QuestionJpaEntity fq JOIN QuestionnaireJpaEntity qsn ON fq.questionnaireId = qsn.id
+                    JOIN AnswerJpaEntity ans ON  ans.questionRefNum = fq.refNum
+                    WHERE ans.assessmentResult.id = :assessmentResultId AND (ans.answerOptionId IS NOT NULL OR ans.isNotApplicable = TRUE))
+                AND qn.id IN (
+                    SELECT fqn.id
+                    FROM QuestionnaireJpaEntity fqn JOIN AnswerJpaEntity fans ON fans.questionnaireId = fqn.id
+                    WHERE fans.assessmentResult.id = :assessmentResultId)
+            GROUP BY qn.id
+            ORDER BY qn.id
+        """)
     List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
-
-    List<QuestionJpaEntity> findAllByQuestionnaireIdOrderByIndexAsc(Long questionnaireId);
-
 
     @Query("""
             SELECT q as question
@@ -168,6 +173,4 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.kitVersionId = :kitVersionId
         """)
     int countByKitVersionId(@Param("kitVersionId") long kitVersionId);
-
-    Page<QuestionJpaEntity> findAllByQuestionnaireIdOrderByIndex(@Param("questionnaireId") long questionnaireId, Pageable pageable);
 }
