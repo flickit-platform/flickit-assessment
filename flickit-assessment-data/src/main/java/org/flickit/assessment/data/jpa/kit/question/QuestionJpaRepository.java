@@ -74,25 +74,24 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 qi.weight AS questionImpactWeight,
                 ansoi.value AS optionImpactValue
            FROM QuestionJpaEntity q
-           JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id
-           JOIN AssessmentKitJpaEntity kit ON qn.kitVersionId = kit.kitVersionId
-           JOIN AssessmentJpaEntity asm ON asm.assessmentKitId = kit.id
-           JOIN AssessmentResultJpaEntity asmr ON asm.id = asmr.assessment.id
-           JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
-           JOIN AnswerOptionJpaEntity qanso ON q.id = qanso.questionId
-           LEFT JOIN  AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId and qi.id = ansoi.questionImpact.id
+           JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id AND q.kitVersionId = qn.kitVersionId
+           JOIN AssessmentResultJpaEntity asmr ON asmr.assessment.id = :assessmentId
+           JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
+           JOIN AnswerOptionJpaEntity qanso ON q.id = qanso.questionId AND q.kitVersionId = qanso.kitVersionId
+           LEFT JOIN  AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId and qi.id = ansoi.questionImpact.id AND qi.kitVersionId = ansoi.kitVersionId
            LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = asmr.id and q.id = ans.questionId
-           LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id
-           WHERE (asm.id = :assessmentId
+           LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.id = anso.questionId AND q.kitVersionId = anso.kitVersionId
+           WHERE (asmr.assessment.id = :assessmentId
                AND anso.index NOT IN (SELECT MAX(sq_ans.index)
                                   FROM AnswerOptionJpaEntity sq_ans
                                   WHERE sq_ans.questionId = q.id)
                AND qi.attributeId = :attributeId
                AND qi.maturityLevel.id = :maturityLevelId)
-               OR (asm.id = :assessmentId
+               OR (asmr.assessment.id = :assessmentId
                AND ans.answerOptionId IS NULL
                AND qi.attributeId = :attributeId)
                AND qi.maturityLevel.id = :maturityLevelId
+               AND q.kitVersionId = asmr.kitVersionId
         """)
     List<ImprovableImpactfulQuestionView> findImprovableImpactfulQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
 
