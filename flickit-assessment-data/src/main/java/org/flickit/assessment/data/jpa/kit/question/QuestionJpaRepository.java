@@ -104,14 +104,13 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 atr AS attribute,
                 questionnair AS questionnaire
             FROM QuestionJpaEntity q
-            JOIN AnswerOptionJpaEntity ao ON q.id = ao.questionId
-            JOIN QuestionnaireJpaEntity questionnair ON q.questionnaireId = questionnair.id
-            JOIN AnswerOptionImpactJpaEntity impact ON ao.id = impact.optionId
-            JOIN QuestionImpactJpaEntity question_impact ON impact.questionImpact = question_impact
-            JOIN AttributeJpaEntity atr ON question_impact.attributeId = atr.id
-            WHERE q.id IN :ids
+            JOIN AnswerOptionJpaEntity ao ON q.id = ao.questionId AND q.kitVersionId = ao.kitVersionId
+            JOIN QuestionnaireJpaEntity questionnair ON q.questionnaireId = questionnair.id AND q.kitVersionId = questionnair.kitVersionId
+            JOIN AnswerOptionImpactJpaEntity impact ON ao.id = impact.optionId AND ao.kitVersionId = impact.kitVersionId
+            JOIN AttributeJpaEntity atr ON impact.questionImpact.attributeId = atr.id AND impact.questionImpact.kitVersionId = atr.subject.kitVersionId
+            WHERE q.id IN :ids AND q.kitVersionId = :kitVersionId
         """)
-    List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids);
+    List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids, @Param("kitVersionId") Long kitVersionId);
 
     @Query("""
             SELECT
