@@ -136,7 +136,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     """)
     List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
 
-    List<QuestionJpaEntity> findAllByQuestionnaireIdOrderByIndexAsc(Long questionnaireId);
+    List<QuestionJpaEntity> findAllByQuestionnaireIdAndKitVersionIdOrderByIndexAsc(Long questionnaireId, Long kitVersionId);
 
 
     @Query("""
