@@ -21,15 +21,18 @@ public class AppSpecProperties {
     @NotBlank
     private String expertGroupInviteUrlPath = "account/expert-group-invitation";
 
+    @NotBlank
+    private String name = "Flickit";
+
     @Valid
     private Email email = new Email();
 
     @Setter
     @Getter
     @ToString
-    public static class Email {
+    public class Email {
 
         @NotBlank
-        String fromDisplayName = "Flickit Platform";
+        String fromDisplayName = name + " Platform";
     }
 }
