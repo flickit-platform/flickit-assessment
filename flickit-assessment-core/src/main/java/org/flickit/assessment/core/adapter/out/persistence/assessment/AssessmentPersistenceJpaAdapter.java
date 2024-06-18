@@ -5,7 +5,6 @@ import org.flickit.assessment.common.application.domain.assessment.SpaceAccessCh
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Assessment;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.port.out.assessment.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
@@ -101,7 +100,6 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessment().getTitle(),
                     kit,
                     space,
-                    AssessmentColor.valueOfById(e.getAssessment().getColorId()),
                     e.getAssessment().getLastModificationTime(),
                     maturityLevel,
                     e.getAssessmentResult().getIsCalculateValid(),
@@ -162,7 +160,6 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessment().getTitle(),
                     kit,
                     space,
-                    AssessmentColor.valueOfById(e.getAssessment().getColorId()),
                     e.getAssessment().getLastModificationTime(),
                     maturityLevel,
                     e.getAssessmentResult().getIsCalculateValid(),
