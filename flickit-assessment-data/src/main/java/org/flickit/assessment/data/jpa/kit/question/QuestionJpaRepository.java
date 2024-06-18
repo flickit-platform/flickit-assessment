@@ -146,16 +146,17 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 ov as optionImpact,
                 ao as answerOption
             FROM QuestionJpaEntity qsn
-            LEFT JOIN AnswerOptionJpaEntity ao on qsn.id = ao.questionId
-            LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id
-            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId
-            LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id
-            WHERE qi.attributeId = :attributeId
-                AND qi.maturityLevel.id = :maturityLevelId
+            LEFT JOIN AnswerOptionJpaEntity ao on qsn.id = ao.questionId AND qsn.kitVersionId = ao.kitVersionId
+            LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id AND qsn.kitVersionId = qr.kitVersionId
+            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId AND qsn.kitVersionId = qi.kitVersionId
+            LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id AND ov.kitVersionId = qi.kitVersionId
+            WHERE qi.attributeId = :attributeId AND qi.kitVersionId = :kitVersionId
+                AND qi.maturityLevel.id = :maturityLevelId AND qi.maturityLevel.kitVersionId = :kitVersionId
             ORDER BY qr.title asc, qsn.index asc
         """)
-    List<AttributeLevelImpactfulQuestionsView> findByAttributeIdAndMaturityLevelId(@Param("attributeId") long attributeId,
-                                                                                   @Param("maturityLevelId") long maturityLevelId);
+    List<AttributeLevelImpactfulQuestionsView> findByAttributeIdAndMaturityLevelIdAndKitVersionId(@Param("attributeId") long attributeId,
+                                                                                                  @Param("maturityLevelId") long maturityLevelId,
+                                                                                                  @Param("kitVersionId") long kitVersionId);
 
     @Query("""
             SELECT COUNT(q)

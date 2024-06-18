@@ -105,7 +105,7 @@ public class QuestionPersistenceJpaAdapter implements
 
         if (!maturityLevelRepository.existsByIdAndKitVersionId(maturityLevelId, kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
-        var views = repository.findByAttributeIdAndMaturityLevelId(attributeId, maturityLevelId);
+        var views = repository.findByAttributeIdAndMaturityLevelIdAndKitVersionId(attributeId, maturityLevelId, kitVersionId);
 
         Map<QuestionJpaEntity, List<AttributeLevelImpactfulQuestionsView>> myMap = views.stream()
             .collect(Collectors.groupingBy(AttributeLevelImpactfulQuestionsView::getQuestion));
