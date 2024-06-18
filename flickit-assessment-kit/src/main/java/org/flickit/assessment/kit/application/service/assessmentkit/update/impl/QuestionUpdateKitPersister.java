@@ -194,7 +194,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private void createImpact(QuestionImpactDslModel dslQuestionImpact,
-                              Long kitVersionId, Long questionId,
+                              Long kitVersionId,
+                              Long questionId,
                               Map<String, Long> attributes,
                               Map<String, Long> maturityLevels,
                               UUID currentUserId) {
@@ -213,7 +214,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
         log.debug("QuestionImpact[impactId={}, questionId={}] created.", impactId, questionId);
 
-        Map<Integer, Long> optionIndexToIdMap = loadAnswerOptionsByQuestionPort.loadByQuestionId(questionId).stream()
+        Map<Integer, Long> optionIndexToIdMap = loadAnswerOptionsByQuestionPort.loadByQuestionId(questionId, kitVersionId).stream()
             .collect(toMap(AnswerOption::getIndex, AnswerOption::getId));
 
         dslQuestionImpact.getOptionsIndextoValueMap().keySet().forEach(
