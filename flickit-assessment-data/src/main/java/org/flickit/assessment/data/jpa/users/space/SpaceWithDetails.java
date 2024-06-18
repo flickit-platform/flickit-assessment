@@ -1,6 +1,6 @@
 package org.flickit.assessment.data.jpa.users.space;
 
-public interface SpaceWithCounters {
+public interface SpaceWithDetails {
 
     SpaceJpaEntity getSpace();
 

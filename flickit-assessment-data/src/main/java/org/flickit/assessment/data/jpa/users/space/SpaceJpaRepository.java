@@ -31,7 +31,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             WHERE s.id = :spaceId AND a.deleted = FALSE
             GROUP BY s.id
         """)
-    Optional<SpaceWithCounters> loadSpaceDetails(@Param("spaceId") long id);
+    Optional<SpaceWithDetails> loadSpaceDetails(@Param("spaceId") long id);
 
     @Modifying
     @Query("""
@@ -62,7 +62,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             GROUP BY s.id, u.displayName
             ORDER BY lastSeen DESC
         """)
-    Page<SpaceWithCounters> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
+    Page<SpaceWithDetails> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
 
     @Query("""
             SELECT
