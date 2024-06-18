@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
@@ -95,7 +94,6 @@ class CreateAssessmentServiceTest {
         assertEquals("title-example", createPortParam.getValue().code());
         assertEquals(param.getTitle(), createPortParam.getValue().title());
         assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
-        assertEquals(param.getColorId(), createPortParam.getValue().colorId());
         assertNotNull(createPortParam.getValue().creationTime());
 
         ArgumentCaptor<UUID> grantPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
@@ -232,7 +230,6 @@ class CreateAssessmentServiceTest {
         ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
         verify(createAssessmentPort).persist(createPortParam.capture());
 
-        assertEquals(AssessmentColor.getDefault().getId(), createPortParam.getValue().colorId());
         verify(grantUserAssessmentRolePort, times(1)).persist(any(), any(UUID.class), anyInt());
     }
 

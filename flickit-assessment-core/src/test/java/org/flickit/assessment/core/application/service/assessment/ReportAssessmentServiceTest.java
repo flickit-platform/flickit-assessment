@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
@@ -64,7 +63,6 @@ class ReportAssessmentServiceTest {
             1.5,
             true,
             true,
-            AssessmentColor.BLUE,
             creationTime,
             lastModificationTime);
 
@@ -88,7 +86,6 @@ class ReportAssessmentServiceTest {
         assertEquals(assessmentReport.assessment().isCalculateValid(), result.assessment().isCalculateValid());
         assertEquals(assessmentReport.assessment().isConfidenceValid(), result.assessment().isConfidenceValid());
         assertEquals(assessmentReport.assessment().lastModificationTime(), result.assessment().lastModificationTime());
-        assertEquals(assessmentReport.assessment().color(), result.assessment().color());
         assertEquals(assessmentReport.assessment().maturityLevel().getId(), result.assessment().maturityLevel().getId());
         assertEquals(assessmentReport.assessment().maturityLevel().getIndex(), result.assessment().maturityLevel().getIndex());
         assertEquals(assessmentReport.assessment().maturityLevel().getTitle(), result.assessment().maturityLevel().getTitle());

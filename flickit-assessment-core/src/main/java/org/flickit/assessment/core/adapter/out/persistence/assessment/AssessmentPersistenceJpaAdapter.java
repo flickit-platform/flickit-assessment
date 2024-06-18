@@ -187,7 +187,6 @@ public class AssessmentPersistenceJpaAdapter implements
             param.id(),
             param.title(),
             param.code(),
-            param.colorId(),
             param.lastModificationTime(),
             param.lastModifiedBy());
         return new UpdateAssessmentPort.Result(param.id());
