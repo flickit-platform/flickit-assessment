@@ -46,18 +46,20 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
     @Query("""
             SELECT
                 s as space,
+                u.displayName as ownerName,
                 COUNT(DISTINCT sua.userId) as membersCount,
-                COUNT(DISTINCT CASE WHEN fa.deleted = FALSE THEN fa.id ELSE NULL END) as assessmentsCount,
+                COUNT(DISTINCT (CASE WHEN fa.deleted = FALSE THEN fa.id ELSE NULL END)) as assessmentsCount,
                 MAX(sua.lastSeen) as lastSeen
             FROM SpaceJpaEntity s
             LEFT JOIN AssessmentJpaEntity fa on s.id = fa.spaceId
+            LEFT JOIN UserJpaEntity u ON s.ownerId = u.id
             LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId
             WHERE s.deleted = FALSE
                 AND EXISTS (
                     SELECT 1 FROM SpaceUserAccessJpaEntity sua
                     WHERE sua.spaceId = s.id AND sua.userId = :userId
             )
-            GROUP BY s.id
+            GROUP BY s.id, u.displayName
             ORDER BY lastSeen DESC
         """)
     Page<SpaceWithCounters> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);

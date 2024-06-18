@@ -37,9 +37,10 @@ class GetSpaceListServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var space1 = SpaceMother.createSpace(currentUserId);
         var space2 = SpaceMother.createSpace(UUID.randomUUID());
+        String ownerName = "sample name";
         var spacePortList = List.of(
-            new LoadSpaceListPort.Result(space1, 2, 5),
-            new Result(space2, 4, 3));
+            new LoadSpaceListPort.Result(space1, ownerName, 2, 5),
+            new Result(space2, ownerName, 4, 3));
 
         PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
             spacePortList,
@@ -59,14 +60,14 @@ class GetSpaceListServiceTest {
         assertEquals(2, result.getItems().size());
         assertEquals(spacePortList.get(0).space().getId(), result.getItems().get(0).id());
         assertEquals(spacePortList.get(0).space().getTitle(), result.getItems().get(0).title());
-        assertTrue(result.getItems().get(0).isOwner());
+        assertTrue(result.getItems().get(0).owner().getIsCurrentUserOwner());
         assertEquals(spacePortList.get(0).space().getLastModificationTime(), result.getItems().get(0).lastModificationTime());
         assertEquals(spacePortList.get(0).assessmentsCount(), result.getItems().get(0).assessmentsCount());
         assertEquals(spacePortList.get(0).membersCount(), result.getItems().get(0).membersCount());
 
         assertEquals(spacePortList.get(1).space().getId(), result.getItems().get(1).id());
         assertEquals(spacePortList.get(1).space().getTitle(), result.getItems().get(1).title());
-        assertFalse(result.getItems().get(1).isOwner());
+        assertFalse(result.getItems().get(1).owner().getIsCurrentUserOwner());
         assertEquals(spacePortList.get(1).space().getLastModificationTime(), result.getItems().get(1).lastModificationTime());
         assertEquals(spacePortList.get(1).assessmentsCount(), result.getItems().get(1).assessmentsCount());
         assertEquals(spacePortList.get(1).membersCount(), result.getItems().get(1).membersCount());

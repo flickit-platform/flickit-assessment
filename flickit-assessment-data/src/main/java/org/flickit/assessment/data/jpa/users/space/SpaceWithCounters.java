@@ -4,6 +4,8 @@ public interface SpaceWithCounters {
 
     SpaceJpaEntity getSpace();
 
+    String getOwnerName();
+
     int getMembersCount();
 
     int getAssessmentsCount();

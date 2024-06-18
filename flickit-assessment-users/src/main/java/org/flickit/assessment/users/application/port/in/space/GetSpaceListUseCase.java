@@ -3,6 +3,8 @@ package org.flickit.assessment.users.application.port.in.space;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -40,7 +42,14 @@ public interface GetSpaceListUseCase {
         }
     }
 
-    record SpaceListItem(long id, String title, boolean isOwner, LocalDateTime lastModificationTime,
+    record SpaceListItem(long id, String title, Owner owner, LocalDateTime lastModificationTime,
                          int membersCount, int assessmentsCount) {
+        @Data
+        @AllArgsConstructor
+        public static class Owner {
+            UUID id;
+            String displayName;
+            Boolean isCurrentUserOwner;
+        }
     }
 }
