@@ -28,7 +28,7 @@ public class QuestionImpactJpaEntity {
     @Column(name = "weight", nullable = false)
     private Integer weight;
 
-    @Column(name = "kit_version_id",insertable = false, updatable = false, nullable = false)
+    @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 
     @Column(name = "question_id", nullable = false)
@@ -37,10 +37,8 @@ public class QuestionImpactJpaEntity {
     @Column(name = "attribute_id", nullable = false)
     private Long attributeId;
 
-    @ManyToOne
-    @JoinColumn(name = "maturity_level_id", referencedColumnName = "id")
-    @JoinColumn(name="kit_version_id", referencedColumnName="kit_version_id")
-    private MaturityLevelJpaEntity maturityLevel;
+    @Column(name = "maturity_level_id", nullable = false)
+    private Long maturityLevelId;
 
     @OneToMany(mappedBy = "questionImpact", cascade = CascadeType.REMOVE)
     private List<AnswerOptionImpactJpaEntity> answerOptionImpacts;
@@ -59,18 +57,20 @@ public class QuestionImpactJpaEntity {
 
     public QuestionImpactJpaEntity(Long id,
                                    Integer weight,
+                                   Long kitVersionId,
                                    Long questionId,
                                    Long attributeId,
-                                   MaturityLevelJpaEntity maturityLevel,
+                                   Long maturityLevelId,
                                    LocalDateTime creationTime,
                                    LocalDateTime lastModificationTime,
                                    UUID createdBy,
                                    UUID lastModifiedBy) {
         this.id = id;
         this.weight = weight;
+        this.kitVersionId = kitVersionId;
         this.questionId = questionId;
         this.attributeId = attributeId;
-        this.maturityLevel = maturityLevel;
+        this.maturityLevelId = maturityLevelId;
         this.creationTime = creationTime;
         this.lastModificationTime = lastModificationTime;
         this.createdBy = createdBy;

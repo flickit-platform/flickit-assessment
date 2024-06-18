@@ -65,7 +65,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 AND ov.kitVersionId = qi.kitVersionId
             WHERE
                 qi.attributeId = :attributeId
-                AND qi.maturityLevel.id = :maturityLevelId
+                AND qi.maturityLevelId = :maturityLevelId
                 AND qsn.kitVersionId = :kitVersionId
             ORDER BY qr.title asc, qsn.index asc
         """)

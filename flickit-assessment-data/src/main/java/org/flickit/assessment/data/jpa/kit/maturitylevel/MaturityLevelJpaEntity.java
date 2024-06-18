@@ -2,11 +2,9 @@ package org.flickit.assessment.data.jpa.kit.maturitylevel;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -61,33 +59,6 @@ public class MaturityLevelJpaEntity {
     public MaturityLevelJpaEntity(Long id, Long kitVersionId) {
         this.id = id;
         this.kitVersionId = kitVersionId;
-    }
-
-    @OneToMany(mappedBy = "maturityLevel", cascade = CascadeType.REMOVE)
-    private List<QuestionImpactJpaEntity> questionImpacts;
-
-    public MaturityLevelJpaEntity(Long id,
-                                  Long kitVersionId,
-                                  UUID refNum,
-                                  String code,
-                                  Integer index,
-                                  String title,
-                                  Integer value,
-                                  LocalDateTime creationTime,
-                                  LocalDateTime lastModificationTime,
-                                  UUID createdBy,
-                                  UUID lastModifiedBy) {
-        this.id = id;
-        this.kitVersionId = kitVersionId;
-        this.refNum = refNum;
-        this.code = code;
-        this.index = index;
-        this.title = title;
-        this.value = value;
-        this.creationTime = creationTime;
-        this.lastModificationTime = lastModificationTime;
-        this.createdBy = createdBy;
-        this.lastModifiedBy = lastModifiedBy;
     }
 
     @Data
