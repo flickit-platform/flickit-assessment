@@ -60,14 +60,14 @@ class GetSpaceListServiceTest {
         assertEquals(2, result.getItems().size());
         assertEquals(spacePortList.get(0).space().getId(), result.getItems().get(0).id());
         assertEquals(spacePortList.get(0).space().getTitle(), result.getItems().get(0).title());
-        assertTrue(result.getItems().get(0).owner().getIsCurrentUserOwner());
+        assertTrue(result.getItems().get(0).owner().isCurrentUserOwner());
         assertEquals(spacePortList.get(0).space().getLastModificationTime(), result.getItems().get(0).lastModificationTime());
         assertEquals(spacePortList.get(0).assessmentsCount(), result.getItems().get(0).assessmentsCount());
         assertEquals(spacePortList.get(0).membersCount(), result.getItems().get(0).membersCount());
 
         assertEquals(spacePortList.get(1).space().getId(), result.getItems().get(1).id());
         assertEquals(spacePortList.get(1).space().getTitle(), result.getItems().get(1).title());
-        assertFalse(result.getItems().get(1).owner().getIsCurrentUserOwner());
+        assertFalse(result.getItems().get(1).owner().isCurrentUserOwner());
         assertEquals(spacePortList.get(1).space().getLastModificationTime(), result.getItems().get(1).lastModificationTime());
         assertEquals(spacePortList.get(1).assessmentsCount(), result.getItems().get(1).assessmentsCount());
         assertEquals(spacePortList.get(1).membersCount(), result.getItems().get(1).membersCount());
