@@ -17,6 +17,7 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepositor
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -65,6 +66,8 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private QuestionJpaRepository questionRepository;
     @Mock
+    private AttributeJpaRepository attributeRepository;
+    @Mock
     private AnswerOptionJpaRepository answerOptionRepository;
     @Mock
     private AnswerOptionImpactJpaRepository answerOptionImpactRepository;
@@ -75,10 +78,11 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Test
     void testLoad() {
         Context context = createContext();
+        long kitVersionId = context.assessmentResultEntity.getKitVersionId();
 
-        doMocks(context);
+        doMocks(context, kitVersionId);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        when(maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(context.assessmentResultEntity.getKitVersionId()))
+        when(maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(kitVersionId))
             .thenReturn(maturityLevels);
 
         var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
@@ -161,7 +165,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
     private static Context createContext() {
         var assessmentResultEntity = validSimpleAssessmentResultEntity(null, Boolean.FALSE, Boolean.FALSE);
-        Long kitId = assessmentResultEntity.getAssessment().getAssessmentKitId();
         Long kitVersionId = assessmentResultEntity.getKitVersionId();
 
         var attributeId = 134L;
@@ -172,42 +175,52 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var attribute5Id = attributeId++;
         var attribute6Id = attributeId;
 
-        AttributeJpaEntity attribute1 = createAttributeEntity(attribute1Id, 1, kitId);
-        AttributeJpaEntity attribute2 = createAttributeEntity(attribute2Id, 2, kitId);
-        AttributeJpaEntity attribute3 = createAttributeEntity(attribute3Id, 3, kitId);
-        AttributeJpaEntity attribute4 = createAttributeEntity(attribute4Id, 4, kitId);
-        AttributeJpaEntity attribute5 = createAttributeEntity(attribute5Id, 5, kitId);
-        AttributeJpaEntity attribute6 = createAttributeEntity(attribute6Id, 6, kitId);
-
-        var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1.getRefNum());
-        var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2.getRefNum());
-        var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3.getRefNum());
-        var qav4 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute4.getRefNum());
-        var qav5 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute5.getRefNum());
-        var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6.getRefNum());
-        List<AttributeValueJpaEntity> attributeValues = List.of(qav1, qav2, qav3, qav4, qav5, qav6);
-
         var subjectValue1 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
         var subjectValue2 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
         var subjectValue3 = subjectValueWithNullMaturityLevel(assessmentResultEntity);
         List<SubjectValueJpaEntity> subjectValues = List.of(subjectValue1, subjectValue2, subjectValue3);
 
-        var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(),kitVersionId, 1, List.of(attribute1, attribute2));
-        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(),kitVersionId, 1, List.of(attribute3, attribute4));
-        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(),kitVersionId, 1, List.of(attribute5, attribute6));
+        AttributeJpaEntity attribute1 = createAttributeEntity(attribute1Id, 1, kitVersionId, subjectValue1.getSubjectId());
+        AttributeJpaEntity attribute2 = createAttributeEntity(attribute2Id, 2, kitVersionId, subjectValue1.getSubjectId());
+        AttributeJpaEntity attribute3 = createAttributeEntity(attribute3Id, 3, kitVersionId, subjectValue2.getSubjectId());
+        AttributeJpaEntity attribute4 = createAttributeEntity(attribute4Id, 4, kitVersionId, subjectValue2.getSubjectId());
+        AttributeJpaEntity attribute5 = createAttributeEntity(attribute5Id, 5, kitVersionId, subjectValue3.getSubjectId());
+        AttributeJpaEntity attribute6 = createAttributeEntity(attribute6Id, 6, kitVersionId, subjectValue3.getSubjectId());
+        List<AttributeJpaEntity> attributes = List.of(attribute1, attribute2, attribute3, attribute4, attribute5, attribute6);
+
+        var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1.getRefNum(), attribute1Id);
+        var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2.getRefNum(), attribute2Id);
+        var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3.getRefNum(), attribute3Id);
+        var qav4 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute4.getRefNum(), attribute4Id);
+        var qav5 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute5.getRefNum(), attribute5Id);
+        var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6.getRefNum(), attribute6Id);
+        List<AttributeValueJpaEntity> attributeValues = List.of(qav1, qav2, qav3, qav4, qav5, qav6);
+
+        var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(), kitVersionId, 1, List.of(attribute1, attribute2));
+        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(), kitVersionId, 1, List.of(attribute3, attribute4));
+        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), kitVersionId, 1, List.of(attribute5, attribute6));
         List<SubjectJpaEntity> subjects = List.of(subject1, subject2, subject3);
 
-        var question1 = questionEntity(1L, kitId, 1L, Boolean.FALSE, Boolean.TRUE);
-        var question2 = questionEntity(2L, kitId, 1L, Boolean.FALSE, Boolean.TRUE);
-        var question3 = questionEntity(3L, kitId, 1L, Boolean.FALSE, Boolean.TRUE);
-        var question4 = questionEntity(4L, kitId, 1L, Boolean.FALSE, Boolean.TRUE);
-        var question5 = questionEntity(5L, kitId, 1L, Boolean.FALSE, Boolean.TRUE);
-        var question6 = questionEntity(6L, kitId, 1L, Boolean.FALSE, Boolean.TRUE);
-        var question7 = questionEntity(7L, kitId, 1L, Boolean.FALSE, Boolean.TRUE);
-        var question8 = questionEntity(8L, kitId, 1L, Boolean.FALSE, Boolean.TRUE);
-        var question9 = questionEntity(9L, kitId, 1L, Boolean.FALSE, Boolean.TRUE);
-        var question10 = questionEntity(10L, kitId, 1L, Boolean.FALSE, Boolean.TRUE);
-        List<QuestionJpaEntity> questions = List.of(question1, question2, question3, question4, question5, question6, question7, question8, question9, question10);
+        var question1 = questionEntity(1L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question2 = questionEntity(2L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question3 = questionEntity(3L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question4 = questionEntity(4L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question5 = questionEntity(5L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question6 = questionEntity(6L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question7 = questionEntity(7L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question8 = questionEntity(8L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question9 = questionEntity(9L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
+        var question10 = questionEntity(10L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
+        List<QuestionJpaEntity> questions = List.of(question1,
+            question2,
+            question3,
+            question4,
+            question5,
+            question6,
+            question7,
+            question8,
+            question9,
+            question10);
 
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap = new HashMap<>();
         var impact11 = questionImpactEntity(LEVEL_ONE_ID, question1.getId(), attribute1Id);
@@ -288,6 +301,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             subjectValues,
             attributeValues,
             subjects,
+            attributes,
             questions,
             questionIdToImpactsMap,
             answerEntities,
@@ -296,19 +310,19 @@ class AssessmentCalculateInfoLoadAdapterTest {
         );
     }
 
-    private void doMocks(Context context) {
+    private void doMocks(Context context, long kitVersionId) {
         when(assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(context.assessmentResultEntity().getAssessment().getId()))
             .thenReturn(Optional.of(context.assessmentResultEntity()));
         when(subjectValueRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.subjectValues());
-        when(attrValueRepository.findByAssessmentResultId(context.assessmentResultEntity().getId()))
+        when(attrValueRepository.findByAssessmentResultId((context.assessmentResultEntity().getId())))
             .thenReturn(context.attributeValues());
-        when(attrValueRepository.findByAssessmentResultId(context.assessmentResultEntity().getId()))
-            .thenReturn(context.attributeValues());
-        when(subjectRepository.findByKitVersionIdWithAttributes(context.assessmentResultEntity().getKitVersionId()))
+        when(subjectRepository.findAllByKitVersionIdOrderByIndex(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(context.subjects);
         when(questionRepository.loadByKitVersionId(context.assessmentResultEntity().getKitVersionId()))
             .thenReturn(questionJoinImpactView(context.questionEntities, context.questionIdToImpactsMap));
+        when(attributeRepository.findAllBySubjectIdInAndKitVersionId(context.subjects.stream().map(SubjectJpaEntity::getId).toList(), kitVersionId))
+            .thenReturn(context.attributes);
         when(answerRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
             .thenReturn(context.answerEntities());
         when(answerOptionRepository.findAllById(any()))
@@ -345,6 +359,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
         List<SubjectValueJpaEntity> subjectValues,
         List<AttributeValueJpaEntity> attributeValues,
         List<SubjectJpaEntity> subjects,
+        List<AttributeJpaEntity> attributes,
         List<QuestionJpaEntity> questionEntities,
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap,
         List<AnswerJpaEntity> answerEntities,

@@ -49,12 +49,12 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
             .sorted(comparingInt(Option::index))
             .toList();
 
-        List<Impact> attributeImpacts = loadAttributeImpacts(question, maturityLevelsMap);
+        List<Impact> attributeImpacts = loadAttributeImpacts(kitVersionId, question, maturityLevelsMap);
 
         return new Result(question.getHint(), options, attributeImpacts);
     }
 
-    private List<Impact> loadAttributeImpacts(Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
+    private List<Impact> loadAttributeImpacts(long kitVersionId, Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
         var impacts = question.getImpacts();
 
         var answerIdToIndexMap = question.getOptions().stream()
@@ -66,7 +66,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
 
         var attributeIds = attributeIdToImpacts.keySet().stream().toList();
 
-        var attributeIdToTitleMap = loadAllAttributesPort.loadAllByIds(attributeIds).stream()
+        var attributeIdToTitleMap = loadAllAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId).stream()
             .collect(toMap(Attribute::getId, Attribute::getTitle));
         return attributeIds.stream()
             .map(attributeId -> toAttributeImpact(

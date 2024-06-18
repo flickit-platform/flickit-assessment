@@ -55,7 +55,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
 
         List<Subject> subjects = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(e -> {
-                List<Attribute> attributes = attributeRepository.findAllBySubjectId(e.getId()).stream()
+                List<Attribute> attributes = attributeRepository.findAllBySubjectIdAndKitVersionId(e.getId(), kitVersionId).stream()
                     .map(AttributeMapper::mapToDomainModel)
                     .toList();
                 return SubjectMapper.mapToDomainModel(e, attributes);})

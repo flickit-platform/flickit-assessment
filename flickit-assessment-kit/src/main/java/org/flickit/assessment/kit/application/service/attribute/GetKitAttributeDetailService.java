@@ -33,8 +33,8 @@ public class GetKitAttributeDetailService implements GetKitAttributeDetailUseCas
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         var kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
 
-        var attribute = loadAttributePort.load(param.getAttributeId(), param.getKitId());
-        var questionCount = countAttributeImpactfulQuestionsPort.countQuestions(param.getAttributeId());
+        var attribute = loadAttributePort.load(param.getAttributeId(), kitVersionId);
+        var questionCount = countAttributeImpactfulQuestionsPort.countQuestions(param.getAttributeId(), kitVersionId);
         var maturityLevels = loadAttributeMaturityLevelsPort.loadAttributeLevels(param.getAttributeId(), kitVersionId).stream()
             .map(e -> new GetKitAttributeDetailUseCase.MaturityLevel(e.id(), e.index(), e.title(), e.questionCount()))
             .toList();
