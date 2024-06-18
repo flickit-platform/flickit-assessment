@@ -74,7 +74,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             currentUserId
         );
         UUID expectedId = UUID.randomUUID();
@@ -115,7 +114,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             createdBy
         );
         UUID assessmentId = UUID.randomUUID();
@@ -147,7 +145,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             assessmentKitId,
-            1,
             createdBy
         );
 
@@ -183,7 +180,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             assessmentKitId,
-            1,
             currentUserId
         );
         Attribute qa1 = AttributeMother.simpleAttribute();
@@ -210,37 +206,12 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void testCreateAssessment_InvalidColor_UseDefaultColor() {
-        UUID currentUserId = UUID.randomUUID();
-        Param param = new Param(
-            1L,
-            "title example",
-            1L,
-            7,
-            currentUserId
-        );
-        List<Subject> expectedResponse = List.of();
-
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
-        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
-
-        service.createAssessment(param);
-
-        ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
-        verify(createAssessmentPort).persist(createPortParam.capture());
-
-        verify(grantUserAssessmentRolePort, times(1)).persist(any(), any(UUID.class), anyInt());
-    }
-
-    @Test
     void testCreateAssessment_WhenUserDoesNotHaveAccessToSpace_ThenThrowsException() {
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
-            1,
             currentUserId
         );
 
@@ -257,7 +228,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             currentUserId
         );
 

@@ -60,24 +60,6 @@ class UpdateAssessmentServiceTest {
     }
 
     @Test
-    void testUpdateAssessment_InvalidColor_UseDefaultColor() {
-        UUID id = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
-            id,
-            "title example",
-            currentUserId
-        );
-        when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), UPDATE_ASSESSMENT)).thenReturn(true);
-        when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
-
-        service.updateAssessment(param);
-
-        ArgumentCaptor<UpdateAssessmentPort.AllParam> updatePortParam = ArgumentCaptor.forClass(UpdateAssessmentPort.AllParam.class);
-        verify(updateAssessmentPort).update(updatePortParam.capture());
-    }
-
-    @Test
     void testUpdateAssessment_UserHasNoAccessToAssessment_ThrowAccessDeniedException() {
         UUID id = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
