@@ -74,7 +74,7 @@ public class QuestionPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
         Question question = QuestionMapper.mapToDomainModel(questionEntity);
 
-        var impacts = questionImpactRepository.findAllByQuestionId(id).stream()
+        var impacts = questionImpactRepository.findAllByQuestionIdAndKitVersionId(id, questionEntity.getKitVersionId()).stream()
             .map(QuestionImpactMapper::mapToDomainModel)
             .map(this::setOptionImpacts)
             .toList();
