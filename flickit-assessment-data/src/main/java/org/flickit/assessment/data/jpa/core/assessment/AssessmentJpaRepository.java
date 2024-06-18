@@ -96,8 +96,8 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 k AS kit,
                 s AS space
             FROM AssessmentJpaEntity a
-            LEFT JOIN AssessmentKitJpaEntity k ON a.assessmentKitId = k.id
-            Left JOIN SpaceJpaEntity s ON a.spaceId = s.id
+            JOIN AssessmentKitJpaEntity k ON a.assessmentKitId = k.id
+            JOIN SpaceJpaEntity s ON a.spaceId = s.id
             WHERE a.id = :id AND a.deleted = FALSE
         """)
     Optional<AssessmentKitSpaceJoinView> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
@@ -125,7 +125,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         JOIN AssessmentKitJpaEntity kit
         ON asm.assessmentKitId = kit.id
         JOIN AttributeJpaEntity attr
-        ON attr.subject.kitVersionId = kit.kitVersionId
+        ON attr.kitVersionId = kit.kitVersionId
         WHERE asm.id = :assessmentId
         AND attr.id in :attributeIds
     """)

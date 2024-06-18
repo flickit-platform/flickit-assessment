@@ -31,7 +31,7 @@ public class AttributePersistenceJpaAdapter implements LoadAttributeScoreDetailP
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var questionsView = repository.findImpactFullQuestionsScore(assessmentResult.getId(), attributeId, maturityLevelId);
+        var questionsView = repository.findImpactFullQuestionsScore(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, maturityLevelId);
 
         return questionsView.stream()
             .collect(Collectors.groupingBy(ImpactFullQuestionsView::getQuestionnaireTitle))

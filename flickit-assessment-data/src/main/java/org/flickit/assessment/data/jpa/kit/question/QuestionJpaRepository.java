@@ -17,8 +17,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     List<QuestionJpaEntity> findAllByKitVersionId(long kitVersionId);
 
-    Optional<QuestionJpaEntity> findByIdAndKitVersionId(long id,
-                                                        long kitVersionId);
+    Optional<QuestionJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
 
     @Modifying
     @Query("""
@@ -110,7 +109,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             JOIN AttributeJpaEntity atr ON impact.questionImpact.attributeId = atr.id AND impact.questionImpact.kitVersionId = atr.subject.kitVersionId
             WHERE q.id IN :ids AND q.kitVersionId = :kitVersionId
         """)
-    List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids, @Param("kitVersionId") Long kitVersionId);
+    List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids);
 
     @Query("""
             SELECT

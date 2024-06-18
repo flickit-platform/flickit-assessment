@@ -12,10 +12,11 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AttributeValueMapper {
 
-    public static AttributeValueJpaEntity mapToJpaEntity(UUID attributeRefNum) {
+    public static AttributeValueJpaEntity mapToJpaEntity(long attributeId, UUID attributeRefNum) {
         return new AttributeValueJpaEntity(
             null,
             null,
+            attributeId,
             attributeRefNum,
             null,
             null

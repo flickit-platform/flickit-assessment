@@ -21,8 +21,8 @@ public class LevelCompetencePersistenceJpaAdapter implements
     private final LevelCompetenceJpaRepository repository;
 
     @Override
-    public void delete(Long affectedLevelId, Long maturityLevelId) {
-        repository.delete(affectedLevelId, maturityLevelId);
+    public void delete(Long affectedLevelId, Long maturityLevelId, Long kitVersionId) {
+        repository.delete(affectedLevelId, maturityLevelId, kitVersionId);
     }
 
     @Override
@@ -42,12 +42,12 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(Long affectedLevelId, Long effectiveLevelId, Integer value, UUID lastModifiedBy) {
+    public void update(Long affectedLevelId, Long effectiveLevelId, Long kitVersionId, Integer value, UUID lastModifiedBy) {
         repository.update(
             affectedLevelId,
             effectiveLevelId,
+            kitVersionId,
             value,
-            LocalDateTime.now(),
-            lastModifiedBy);
+            LocalDateTime.now(), lastModifiedBy);
     }
 }

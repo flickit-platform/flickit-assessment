@@ -14,9 +14,10 @@ public class QuestionImpactEntityMother {
         return new QuestionImpactJpaEntity(
             questionImpactId++,
             1,
+            kitVersionId,
             questionId,
             attributeId,
-            MaturityLevelJpaEntityMother.maturityLevelEntity(maturityLevelId, kitVersionId),
+            maturityLevelId,
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),

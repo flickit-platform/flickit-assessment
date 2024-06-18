@@ -7,10 +7,11 @@ import java.util.UUID;
 
 public class AttributeJapEntityMother {
 
-    public static AttributeJpaEntity createAttributeEntity(Long id, Integer index, Long kitId) {
+    public static AttributeJpaEntity createAttributeEntity(Long id, Integer index, Long kitVersionId, long subjectId) {
         LocalDateTime creationTime = LocalDateTime.now();
         return new AttributeJpaEntity(
             id,
+            kitVersionId,
             "code" + id,
             "title" + id,
             index,
@@ -18,7 +19,6 @@ public class AttributeJapEntityMother {
             1,
             creationTime,
             creationTime,
-            UUID.randomUUID()
-        );
+            subjectId);
     }
 }

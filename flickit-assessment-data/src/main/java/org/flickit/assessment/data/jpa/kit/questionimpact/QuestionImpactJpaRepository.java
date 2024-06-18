@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpactJpaEntity, Long> {
 
-    List<QuestionImpactJpaEntity> findAllByQuestionIdAndKitVersionId(Long questionId, Long kitVersionId);
+    List<QuestionImpactJpaEntity> findAllByQuestionIdAndKitVersionId(long questionId, long kitVersionId);
 
     @Modifying
     @Query("""

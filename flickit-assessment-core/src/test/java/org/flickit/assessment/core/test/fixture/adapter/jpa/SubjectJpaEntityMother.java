@@ -23,8 +23,6 @@ public class SubjectJpaEntityMother {
             creationTime,
             creationTime,
             null,
-            null,
-            attributes
-        );
+            null);
     }
 }
