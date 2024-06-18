@@ -85,11 +85,11 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                                   FROM AnswerOptionJpaEntity sq_ans
                                   WHERE sq_ans.questionId = q.id)
                AND qi.attributeId = :attributeId
-               AND qi.maturityLevel.id = :maturityLevelId)
+               AND qi.maturityLevelId = :maturityLevelId)
                OR (asm.id = :assessmentId
                AND ans.answerOptionId IS NULL
                AND qi.attributeId = :attributeId)
-               AND qi.maturityLevel.id = :maturityLevelId
+               AND qi.maturityLevelId = :maturityLevelId
         """)
     List<ImprovableImpactfulQuestionView> findImprovableImpactfulQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
 
