@@ -16,7 +16,6 @@ public interface CreateAnswerPort {
                  Long questionId,
                  Long answerOptionId,
                  Integer confidenceLevelId,
-                 Long kitVersionId,
                  Boolean isNotApplicable,
                  UUID currentUserId) {
     }
