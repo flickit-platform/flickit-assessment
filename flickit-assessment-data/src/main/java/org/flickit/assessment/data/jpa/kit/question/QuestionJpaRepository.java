@@ -136,7 +136,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     """)
     List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
 
-    List<QuestionJpaEntity> findAllByQuestionnaireIdAndKitVersionIdOrderByIndexAsc(Long questionnaireId, Long kitVersionId);
+    Page<QuestionJpaEntity> findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(Long questionnaireId, Long kitVersionId, Pageable pageable);
 
     @Query("""
             SELECT
@@ -164,6 +164,4 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.kitVersionId = :kitVersionId
         """)
     int countByKitVersionId(@Param("kitVersionId") long kitVersionId);
-
-    Page<QuestionJpaEntity> findAllByQuestionnaireIdOrderByIndex(@Param("questionnaireId") long questionnaireId, Pageable pageable);
 }

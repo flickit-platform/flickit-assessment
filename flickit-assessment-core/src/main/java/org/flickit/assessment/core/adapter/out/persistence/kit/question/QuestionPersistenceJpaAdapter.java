@@ -40,8 +40,8 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<Question> loadByQuestionnaireId(Long questionnaireId, int size, int page) {
-        var pageResult = repository.findAllByQuestionnaireIdOrderByIndex(questionnaireId, PageRequest.of(page, size));
+    public PaginatedResponse<Question> loadByQuestionnaireId(Long questionnaireId, Long kitVersionId, int size, int page) {
+        var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(questionnaireId, kitVersionId, PageRequest.of(page, size));
         List<Long> ids = pageResult.getContent().stream()
             .map(QuestionJpaEntity::getId)
             .toList();
