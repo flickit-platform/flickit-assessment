@@ -28,8 +28,7 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
         FROM AttributeValueJpaEntity av
         LEFT JOIN AttributeJpaEntity att ON av.attributeId = att.id
         WHERE att.subjectId = :subjectId AND av.assessmentResult.id = :assessmentResultId
-        AND att.kitVersionId =
-        (SELECT asm.kitVersionId FROM AssessmentResultJpaEntity asm WHERE asm.id = :assessmentResultId)
+            AND att.kitVersionId = av.assessmentResult.kitVersionId
         """)
     List<AttributeValueJpaEntity> findByAssessmentResultIdAndSubjectId(@Param(value = "assessmentResultId") UUID assessmentResultId,
                                                                        @Param(value = "subjectId") Long subjectId);
