@@ -69,7 +69,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
         List<Question> questions = questionRepository.findAllByKitVersionId(kitVersionId).stream()
             .map(QuestionMapper::mapToDomainModel)
             .toList();
-        setQuestionImpacts(questions);
+        setQuestionImpacts(questions, kitVersionId);
         setQuestionOptions(questions);
 
         List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
@@ -102,9 +102,9 @@ public class LoadAssessmentKitFullInfoAdapter implements
                 .toList()));
     }
 
-    private void setQuestionImpacts(List<Question> questions) {
+    private void setQuestionImpacts(List<Question> questions, long kitVersionId) {
         questions.forEach(question -> question.setImpacts(
-            questionImpactRepository.findAllByQuestionId(question.getId()).stream()
+            questionImpactRepository.findAllByQuestionIdAndKitVersionId(question.getId(), kitVersionId).stream()
                 .map(QuestionImpactMapper::mapToDomainModel)
                 .map(this::setOptionImpacts)
                 .toList()

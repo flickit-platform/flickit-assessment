@@ -85,11 +85,11 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                                   FROM AnswerOptionJpaEntity sq_ans
                                   WHERE sq_ans.questionId = q.id)
                AND qi.attributeId = :attributeId
-               AND qi.maturityLevel.id = :maturityLevelId)
+               AND qi.maturityLevelId = :maturityLevelId)
                OR (asm.id = :assessmentId
                AND ans.answerOptionId IS NULL
                AND qi.attributeId = :attributeId)
-               AND qi.maturityLevel.id = :maturityLevelId
+               AND qi.maturityLevelId = :maturityLevelId
         """)
     List<ImprovableImpactfulQuestionView> findImprovableImpactfulQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
 
@@ -110,13 +110,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.id IN :ids
         """)
     List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids);
-
-    @Query("""
-            SELECT q.refNum
-            FROM QuestionJpaEntity q
-            WHERE q.id = :questionId
-        """)
-    Optional<UUID> findRefNumById(@Param("questionId") Long questionId);
 
     @Query("""
             SELECT
@@ -163,7 +156,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId
             LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id
             WHERE qi.attributeId = :attributeId
-                AND qi.maturityLevel.id = :maturityLevelId
+                AND qi.maturityLevelId = :maturityLevelId
             ORDER BY qr.title asc, qsn.index asc
         """)
     List<AttributeLevelImpactfulQuestionsView> findByAttributeIdAndMaturityLevelId(@Param("attributeId") long attributeId,
