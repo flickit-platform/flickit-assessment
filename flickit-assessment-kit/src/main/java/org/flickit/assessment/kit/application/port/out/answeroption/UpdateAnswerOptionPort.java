@@ -9,9 +9,8 @@ public interface UpdateAnswerOptionPort {
 
     record Param(
         Long id,
+        Long kitVersionId,
         String title,
         LocalDateTime lastModificationTime,
-        Long kitVersionId,
-        UUID lastModifiedBy
-    ) {}
+        UUID lastModifiedBy) {}
 }
