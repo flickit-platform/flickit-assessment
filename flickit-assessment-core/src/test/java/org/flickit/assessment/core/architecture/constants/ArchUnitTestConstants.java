@@ -44,8 +44,8 @@ public class ArchUnitTestConstants {
     public final static String USE_CASE_PARAM_TEST_SUFFIX = "UseCaseParamTest";
     public final static String SERVICE_TEST_SUFFIX = "ServiceTest";
     public final static String SERVICE_SUFFIX = "Service";
-    public final static String ENUM_SERVICE = "(.*)(GetAssessmentColorsService|GetConfidenceLevelsService|GetEvidenceTypesService|GetAssessmentUserRolesService)";
-    public final static String ENUM_SERVICE_TEST = "(.*)(GetAssessmentColorsServiceTest|GetConfidenceLevelsServiceTest|GetEvidenceTypesServiceTest|GetAssessmentUserRolesServiceTest)";
+    public final static String ENUM_SERVICE = "(.*)(GetConfidenceLevelsService|GetEvidenceTypesService|GetAssessmentUserRolesService)";
+    public final static String ENUM_SERVICE_TEST = "(.*)(GetConfidenceLevelsServiceTest|GetEvidenceTypesServiceTest|GetAssessmentUserRolesServiceTest)";
     public final static String USE_CASE_SUFFIX = "UseCase";
     public final static String PORT_SUFFIX = "Port";
     public static final String TEST_CLASS_SUFFIX = "Test";
