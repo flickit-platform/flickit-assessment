@@ -72,13 +72,13 @@ public class AssessmentPersistenceJpaAdapter implements
         Map<Long, List<MaturityLevelJpaEntity>> kitVersionIdToMaturityLevelEntities = kitMaturityLevelEntities.stream()
             .collect(Collectors.groupingBy(MaturityLevelJpaEntity::getKitVersionId));
 
-        List<Long> assessmentMaturityLevelIds = pageResult.getContent().stream()
-            .map(e -> e.getAssessmentResult().getMaturityLevelId())
-            .toList();
+        var assessmentMaturityLevelIds = pageResult.getContent().stream()
+            .map(e -> new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentKit().getKitVersionId()))
+            .collect(Collectors.toSet());
 
-        Map<Long, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevel =
+        var maturityLevelIdToMaturityLevel =
             maturityLevelRepository.findAllById(assessmentMaturityLevelIds).stream()
-                .collect(Collectors.toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+                .collect(Collectors.toMap(e -> new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId()), Function.identity()));
 
         List<AssessmentListItem> items = pageResult.getContent().stream()
             .map(e -> {
@@ -89,7 +89,8 @@ public class AssessmentPersistenceJpaAdapter implements
                 AssessmentListItem.Space space = new AssessmentListItem.Space(spaceEntity.getId(), spaceEntity.getTitle());
                 AssessmentListItem.MaturityLevel maturityLevel = null;
                 if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
-                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(e.getAssessmentResult().getMaturityLevelId());
+                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel
+                        .get(new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentResult().getKitVersionId()));
                     maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
                         maturityLevelEntity.getTitle(),
                         maturityLevelEntity.getValue(),
@@ -208,6 +209,8 @@ public class AssessmentPersistenceJpaAdapter implements
     @Override
     public Optional<Assessment> getAssessmentById(UUID assessmentId) {
         Optional<AssessmentKitSpaceJoinView> entity = repository.findByIdAndDeletedFalse(assessmentId);
+        if (entity.isEmpty())
+            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
         return entity.map(AssessmentMapper::mapToDomainModel);
     }
 

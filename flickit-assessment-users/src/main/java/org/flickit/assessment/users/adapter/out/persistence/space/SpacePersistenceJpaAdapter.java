@@ -40,6 +40,7 @@ public class SpacePersistenceJpaAdapter implements
         List<LoadSpaceListPort.Result> items = pageResult.getContent().stream()
             .map(entity -> new LoadSpaceListPort.Result(
                 mapToDomain(entity.getSpace()),
+                entity.getOwnerName(),
                 entity.getMembersCount(),
                 entity.getAssessmentsCount()))
             .toList();

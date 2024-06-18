@@ -41,9 +41,7 @@ public class SubjectMapper {
             creationTime,
             creationTime,
             param.createdBy(),
-            param.createdBy(),
-            null
-        );
+            param.createdBy());
     }
 }
 

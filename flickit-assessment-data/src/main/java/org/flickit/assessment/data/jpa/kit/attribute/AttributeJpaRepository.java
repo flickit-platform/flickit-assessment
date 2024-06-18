@@ -6,14 +6,22 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
-public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity, Long> {
+public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity, AttributeJpaEntity.EntityId> {
 
-    List<AttributeJpaEntity> findAllBySubjectId(long subjectId);
+    List<AttributeJpaEntity> findAllBySubjectIdAndKitVersionId(long subjectId, long kitVersionId);
+
+    List<AttributeJpaEntity> findAllBySubjectIdInAndKitVersionId(Collection<Long> subjectId, long kitVersionId);
+
+    List<AttributeJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> attributedIds, long kitVersionId);
+
+    Optional<AttributeJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
+
+    boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
     @Modifying
     @Query("""
@@ -24,10 +32,11 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 a.weight = :weight,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy,
-                a.subject.id = :subjectId
-            WHERE a.id = :id
+                a.subjectId = :subjectId
+            WHERE a.id = :id AND a.kitVersionId = :kitVersionId
         """)
     void update(@Param("id") long id,
+                @Param("kitVersionId") long kitVersionId,
                 @Param("title") String title,
                 @Param("index") int index,
                 @Param("description") String description,
@@ -38,65 +47,38 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     @Query("""
             SELECT
-              qr.title as questionnaireTitle,
-              qsn.id as questionId,
-              qsn.index as questionIndex,
-              qsn.title as questionTitle,
-              ans as answer,
-              qi as questionImpact,
-              ov as optionImpact,
-              ao.index as optionIndex,
-              ao.title as optionTitle
+                qr.title as questionnaireTitle,
+                qsn.id as questionId,
+                qsn.index as questionIndex,
+                qsn.title as questionTitle,
+                ans as answer,
+                qi as questionImpact,
+                ov as optionImpact,
+                ao.index as optionIndex,
+                ao.title as optionTitle
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
-            LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id
-            LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id
-            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId
+            LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
+            LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id and qsn.kitVersionId = qr.kitVersionId
+            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
             LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id and ov.optionId = ans.answerOptionId
+                AND ov.kitVersionId = qi.kitVersionId
             WHERE
-              qi.attributeId = :attributeId
-              AND qi.maturityLevel.id = :maturityLevelId
+                qi.attributeId = :attributeId
+                AND qi.maturityLevelId = :maturityLevelId
+                AND qsn.kitVersionId = :kitVersionId
             ORDER BY qr.title asc, qsn.index asc
         """)
     List<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentResultId") UUID assessmentResultId,
+                                                               @Param("kitVersionId") long kitVersionId,
                                                                @Param("attributeId") Long attributeId,
                                                                @Param("maturityLevelId") Long maturityLevelId);
 
     @Query("""
-        SELECT a.refNum
-        FROM AttributeJpaEntity a
-        WHERE a.id = :attributeId
+            SELECT COUNT(DISTINCT(q.id))
+            FROM QuestionJpaEntity q
+            JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id AND qi.kitVersionId = q.kitVersionId
+            WHERE qi.attributeId = :attributeId AND qi.kitVersionId = :kitVersionId
         """)
-    UUID findRefNumById(@Param("attributeId") Long attributeId);
-
-    List<AttributeJpaEntity> findAllByRefNumIn(Set<UUID> refNums);
-
-    AttributeJpaEntity findBySubject_KitVersionIdAndRefNum(Long kitVersionId, UUID refNum);
-
-    List<AttributeJpaEntity> findAllBySubject_KitVersionIdAndRefNumIn(Long kitVersionId, List<UUID> refNums);
-
-    List<AttributeJpaEntity> findByIdIn(@Param(value = "ids") List<Long> ids);
-
-    @Query("""
-            SELECT a as attribute
-            FROM AttributeJpaEntity a
-            LEFT JOIN KitVersionJpaEntity kv On kv.id = a.subject.kitVersionId
-            WHERE a.id = :id AND kv.kit.id = :kitId
-        """)
-    Optional<AttributeJpaEntity> findByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
-
-    @Query("""
-            SELECT COUNT(DISTINCT q.id) FROM QuestionJpaEntity q
-            JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id
-            WHERE qi.attributeId = :attributeId
-        """)
-    Integer countAttributeImpactfulQuestions(@Param(value = "attributeId") Long attributeId);
-
-    @Query("""
-              SELECT COUNT(a) > 0
-              FROM AttributeJpaEntity a
-              LEFT JOIN KitVersionJpaEntity kv ON a.subject.kitVersionId = kv.id
-              WHERE  a.id = :id AND kv.kit.id = :kitId
-        """)
-    boolean existsByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
+    Integer countAttributeImpactfulQuestions(@Param("attributeId") long attributeId, @Param("kitVersionId") long kitVersionId);
 }

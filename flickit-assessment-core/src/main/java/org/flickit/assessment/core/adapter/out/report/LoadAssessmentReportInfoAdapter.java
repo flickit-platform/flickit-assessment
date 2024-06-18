@@ -51,10 +51,10 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final AssessmentJpaRepository assessmentRepository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
-    private final AssessmentKitJpaRepository assessmentKitJpaRepository;
-    private final ExpertGroupJpaRepository expertGroupJpaRepository;
-    private final MaturityLevelJpaRepository maturityLevelJpaRepository;
-    private final SubjectJpaRepository subjectJpaRepository;
+    private final AssessmentKitJpaRepository assessmentKitRepository;
+    private final ExpertGroupJpaRepository expertGroupRepository;
+    private final MaturityLevelJpaRepository maturityLevelRepository;
+    private final SubjectJpaRepository subjectRepository;
     private final AttributeValueJpaRepository attributeValueJpaRepository;
     private final MinioAdapter minioAdapter;
 
@@ -67,14 +67,14 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
         AssessmentJpaEntity assessment = assessmentResultEntity.getAssessment();
-        AssessmentKitJpaEntity assessmentKitEntity = assessmentKitJpaRepository.findById(assessment.getAssessmentKitId())
+        AssessmentKitJpaEntity assessmentKitEntity = assessmentKitRepository.findById(assessment.getAssessmentKitId())
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND));
 
-        ExpertGroupJpaEntity expertGroupEntity = expertGroupJpaRepository.findById(assessmentKitEntity.getExpertGroupId())
+        ExpertGroupJpaEntity expertGroupEntity = expertGroupRepository.findById(assessmentKitEntity.getExpertGroupId())
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_EXPERT_GROUP_NOT_FOUND));
 
         long kitVersionId = assessmentResultEntity.getKitVersionId();
-        var maturityLevelEntities = maturityLevelJpaRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+        var maturityLevelEntities = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
 
         Map<Long, MaturityLevel> idToMaturityLevel = maturityLevelEntities.stream()
             .collect(toMap(MaturityLevelJpaEntity::getId, e -> mapToDomainModel(e, null)));
@@ -127,7 +127,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .stream()
             .collect(groupingBy(SubjectIdAttributeValueView::getSubjectId));
 
-        List<SubjectJpaEntity> subjectEntities = subjectJpaRepository.findAllByIdInAndKitVersionId(subjectIds, assessmentResult.getKitVersionId());
+        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, assessmentResult.getKitVersionId());
 
         return subjectEntities.stream()
             .map(e -> {
