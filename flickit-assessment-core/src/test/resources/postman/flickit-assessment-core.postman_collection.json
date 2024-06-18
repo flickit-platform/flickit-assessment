@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "1361b4fc-32b1-4404-be6d-c7e73a79d441",
+		"_postman_id": "97429090-62af-45b3-acf3-595e2b9f41f2",
 		"name": "flickit-assessment-core",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "8794215"
+		"_exporter_id": "11099181"
 	},
 	"item": [
 		{
@@ -18,7 +18,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"colorId\": 1,\n    \"spaceId\": 1\n}",
+					"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"spaceId\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -50,7 +50,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"The title2\",\r\n    \"colorId\": 1\r\n}",
+					"raw": "{\r\n    \"title\": \"The title2\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -117,51 +117,6 @@
 			"response": []
 		},
 		{
-			"name": "Get Space Assessment List",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"disabled": true
-					},
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments?spaceId=8&page=0&size=10",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessments"
-					],
-					"query": [
-						{
-							"key": "spaceId",
-							"value": "8"
-						},
-						{
-							"key": "page",
-							"value": "0"
-						},
-						{
-							"key": "size",
-							"value": "10"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Get Assessment",
 			"request": {
 				"method": "GET",
@@ -204,29 +159,6 @@
 						"{{api_path}}",
 						"assessments",
 						"ff1b2ae3-92b7-437d-b321-539753b71608"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Assessment Colors",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessment-colors"
 					]
 				}
 			},
@@ -341,6 +273,45 @@
 			"response": []
 		},
 		{
+			"name": "Get Answers",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/8028f9a4-a7a8-4391-995d-4645c15d53aa/answers?questionnaireId=1&page=0&size=50",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"8028f9a4-a7a8-4391-995d-4645c15d53aa",
+						"answers"
+					],
+					"query": [
+						{
+							"key": "questionnaireId",
+							"value": "1"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "50"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Report Assessment",
 			"request": {
 				"method": "GET",
@@ -409,6 +380,32 @@
 							"key": "page",
 							"value": "0"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Questionnaires Progress",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/c4e0b4a4-66a1-4383-872f-be9fc6c3cecb/questionnaires/progress",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"c4e0b4a4-66a1-4383-872f-be9fc6c3cecb",
+						"questionnaires",
+						"progress"
 					]
 				}
 			},
@@ -570,6 +567,53 @@
 						"subjects",
 						"57",
 						"progress"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Count Assessments",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/counters?spaceId=2&deleted=true&notDeleted=true&total=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"counters"
+					],
+					"query": [
+						{
+							"key": "assessmentKitId",
+							"value": "131",
+							"disabled": true
+						},
+						{
+							"key": "spaceId",
+							"value": "2"
+						},
+						{
+							"key": "deleted",
+							"value": "true"
+						},
+						{
+							"key": "notDeleted",
+							"value": "true"
+						},
+						{
+							"key": "total",
+							"value": "true"
+						}
 					]
 				}
 			},
