@@ -112,13 +112,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids);
 
     @Query("""
-            SELECT q.refNum
-            FROM QuestionJpaEntity q
-            WHERE q.id = :questionId
-        """)
-    Optional<UUID> findRefNumById(@Param("questionId") Long questionId);
-
-    @Query("""
             SELECT
                 MIN(q.index) as index,
                 qn.id as questionnaireId
@@ -163,7 +156,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId
             LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id
             WHERE qi.attributeId = :attributeId
-                AND qi.maturityLevel.id = :maturityLevelId
+                AND qi.maturityLevelId = :maturityLevelId
             ORDER BY qr.title asc, qsn.index asc
         """)
     List<AttributeLevelImpactfulQuestionsView> findByAttributeIdAndMaturityLevelId(@Param("attributeId") long attributeId,
