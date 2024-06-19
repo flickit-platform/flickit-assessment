@@ -74,7 +74,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             "asc",
             1
         );
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
@@ -100,9 +100,9 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             "asc",
             1
         );
+        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2,
             null, question.getId(), null), question.getId(), 1, Boolean.FALSE);
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
@@ -143,7 +143,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             1
         );
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.TRUE);
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
@@ -184,7 +184,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             1
         );
         Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 1, Boolean.FALSE);
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
