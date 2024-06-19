@@ -9,10 +9,11 @@ public class QuestionJpaEntityMother {
 
     public static int index = 1;
 
-    public static QuestionJpaEntity questionEntity(Long questionId, Long kitId, Long questionnaireId, boolean mayNotBeApplicable, boolean advisable) {
+    public static QuestionJpaEntity questionEntity(Long questionId, Long kitVersionId, Long questionnaireId, boolean mayNotBeApplicable, boolean advisable) {
         LocalDateTime creationTime = LocalDateTime.now();
         return new QuestionJpaEntity(
             questionId,
+            kitVersionId,
             UUID.randomUUID(),
             "code" + questionId,
             index++,
@@ -20,7 +21,6 @@ public class QuestionJpaEntityMother {
             "description" + questionId,
             mayNotBeApplicable,
             advisable,
-            kitId,
             questionnaireId,
             creationTime,
             creationTime,

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface LoadCreatedAdviceDetailsPort {
 
-    List<Result> loadAdviceDetails(List<Long> questionIds);
+    List<Result> loadAdviceDetails(List<Long> questionIds, Long kitVersionId);
 
     record Result(
         AdviceQuestion question,

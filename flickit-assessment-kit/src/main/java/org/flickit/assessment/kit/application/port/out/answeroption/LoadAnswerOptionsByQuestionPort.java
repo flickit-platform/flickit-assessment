@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface LoadAnswerOptionsByQuestionPort {
 
-    List<AnswerOption> loadByQuestionId(Long questionId);
+    List<AnswerOption> loadByQuestionId(Long questionId, Long kitVersionId);
 }

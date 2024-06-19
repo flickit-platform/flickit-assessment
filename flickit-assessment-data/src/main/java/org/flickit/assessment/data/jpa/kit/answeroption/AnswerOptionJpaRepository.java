@@ -26,7 +26,7 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
-    List<AnswerOptionJpaEntity> findByQuestionId(Long questionId);
+    List<AnswerOptionJpaEntity> findByQuestionIdAndKitVersionId(Long questionId, Long kitVersionId);
 
     @Query("""
             SELECT a FROM AnswerOptionJpaEntity a
