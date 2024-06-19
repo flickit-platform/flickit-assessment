@@ -35,9 +35,6 @@ public class AnswerJpaEntity {
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
-    @Column(name = "question_ref_num", nullable = false)
-    private UUID questionRefNum;
-
     @Column(name = "answer_option_id")
     private Long answerOptionId;
 

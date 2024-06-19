@@ -356,4 +356,8 @@
     <changeSet id="0.21-54" author="Maziyar Gerami">
         <dropColumn tableName="fac_attribute_value" columnName="attribute_ref_num"/>
     </changeSet>
+
+    <changeSet id="0.21-55" author="Maziyar Gerami">
+        <dropColumn tableName="fac_evidence" columnName="question_ref_num"/>
+    </changeSet>
 </databaseChangeLog>

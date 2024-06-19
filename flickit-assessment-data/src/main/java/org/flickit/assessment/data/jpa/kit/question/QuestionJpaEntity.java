@@ -24,9 +24,6 @@ public class QuestionJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "ref_num", nullable = false)
-    private UUID refNum;
-
     @Column(name = "code")
     private String code;
 
