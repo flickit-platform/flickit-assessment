@@ -33,15 +33,15 @@ public class QuestionPersistenceJpaAdapter implements
     private final AnswerOptionJpaRepository answerOptionRepository;
 
     @Override
-    public List<Question> loadQuestionsBySubject(long subjectId) {
-        return repository.findBySubjectId(subjectId).stream()
+    public List<Question> loadQuestionsBySubject(long subjectId, long kitVersionId) {
+        return repository.findBySubjectId(subjectId, kitVersionId).stream()
             .map(q -> QuestionMapper.mapToDomainModel(q.getId(), null))
             .toList();
     }
 
     @Override
-    public PaginatedResponse<Question> loadByQuestionnaireId(Long questionnaireId, long kitVersionId, int size, int page) {
-        var pageResult = repository.findAllByQuestionnaireIdOrderByIndex(questionnaireId, PageRequest.of(page, size));
+    public PaginatedResponse<Question> loadByQuestionnaireId(Long questionnaireId, Long kitVersionId, int size, int page) {
+        var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(questionnaireId, kitVersionId, PageRequest.of(page, size));
         List<Long> ids = pageResult.getContent().stream()
             .map(QuestionJpaEntity::getId)
             .toList();
@@ -70,8 +70,8 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean loadMayNotBeApplicableById(Long id) {
-        return repository.findById(id)
+    public boolean loadMayNotBeApplicableById(Long id, long kitVersionId) {
+        return repository.findByIdAndKitVersionId(id, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND))
             .getMayNotBeApplicable();
     }

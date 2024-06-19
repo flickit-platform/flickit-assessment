@@ -31,18 +31,23 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 public class GetAssessmentQuestionnaireQuestionListService implements GetAssessmentQuestionnaireQuestionListUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
 
     @Override
     public PaginatedResponse<Result> getQuestionnaireQuestionList(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
+
+        var kitVersionId = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND))
+            .getKitVersionId();
+
         var pageResult = loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(),
-            assessmentResult.getKitVersionId(), param.getSize(), param.getPage());
+            kitVersionId,
+            param.getSize(),
+            param.getPage());
 
         List<Long> questionIds = pageResult.getItems().stream()
             .map(Question::getId)

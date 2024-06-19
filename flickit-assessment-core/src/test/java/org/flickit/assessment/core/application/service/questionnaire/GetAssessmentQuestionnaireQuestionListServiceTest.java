@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerOption;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Result;
@@ -41,10 +42,10 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private LoadAssessmentResultPort loadAssessmentResultPort;
+    private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
 
     @Mock
-    private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
+    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
     private LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
@@ -58,7 +59,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentResultPort, loadQuestionnaireQuestionListPort, loadQuestionsAnswerListPort);
+        verifyNoInteractions(loadQuestionnaireQuestionListPort, loadAssessmentResultPort, loadQuestionsAnswerListPort);
     }
 
     @Test
