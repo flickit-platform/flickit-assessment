@@ -30,15 +30,14 @@ public class AssessmentResultMapper {
         );
     }
 
-    public static AssessmentResult mapToDomainModel(AssessmentResultJpaEntity entity) {
+    public static AssessmentResult mapToDomainModel(AssessmentResultJpaEntity entity, MaturityLevel maturityLevel) {
         var kit = new AssessmentKit(entity.getAssessment().getAssessmentKitId(), null, entity.getKitVersionId(), null);
         return new AssessmentResult(
             entity.getId(),
             AssessmentMapper.mapToDomainModel(entity.getAssessment(), kit, null),
             entity.getKitVersionId(),
             new ArrayList<>(),
-            entity.getMaturityLevelId() == null ? null :
-                new MaturityLevel(entity.getMaturityLevelId(), null, 1, 0, new ArrayList<>()),
+            maturityLevel,
             entity.getConfidenceValue(),
             entity.getIsCalculateValid(),
             entity.getIsConfidenceValid(),

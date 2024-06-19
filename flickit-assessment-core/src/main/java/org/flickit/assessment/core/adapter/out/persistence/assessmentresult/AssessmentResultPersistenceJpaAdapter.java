@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.assessmentresult;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
@@ -10,6 +11,7 @@ import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -26,6 +28,7 @@ public class AssessmentResultPersistenceJpaAdapter implements
 
     private final AssessmentResultJpaRepository repo;
     private final AssessmentJpaRepository assessmentRepo;
+    private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
     public void invalidateById(UUID assessmentResultId, Boolean isCalculateValid, Boolean isConfidenceValid) {
@@ -45,8 +48,13 @@ public class AssessmentResultPersistenceJpaAdapter implements
     @Override
     public Optional<AssessmentResult> loadByAssessmentId(UUID assessmentId) {
         var entity = repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
-        return entity.map(AssessmentResultMapper::mapToDomainModel);
+        if (entity.isEmpty())
+            return Optional.empty();
+        var maturityLevelId = entity.get().getMaturityLevelId();
+        var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(maturityLevelId, entity.get().getKitVersionId());
+        var maturityLevel = maturityLevelEntity.map(maturityLevelJpaEntity ->
+            MaturityLevelMapper.mapToDomainModel(maturityLevelJpaEntity, null)).orElse(null);
+        return Optional.of(AssessmentResultMapper.mapToDomainModel(entity.get(), maturityLevel));
     }
-
 }
 
