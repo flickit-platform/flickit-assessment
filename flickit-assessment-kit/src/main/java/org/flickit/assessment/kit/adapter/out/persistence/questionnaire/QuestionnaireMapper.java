@@ -26,7 +26,6 @@ public class QuestionnaireMapper {
         return new QuestionnaireJpaEntity(
             null,
             kitVersionId,
-            UUID.randomUUID(),
             questionnaire.getCode(),
             questionnaire.getIndex(),
             questionnaire.getTitle(),

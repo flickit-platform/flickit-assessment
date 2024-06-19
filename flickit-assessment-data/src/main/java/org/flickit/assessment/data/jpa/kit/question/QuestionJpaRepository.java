@@ -122,7 +122,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 SELECT
                     fq.id
                 FROM QuestionJpaEntity fq JOIN QuestionnaireJpaEntity qsn ON fq.questionnaireId = qsn.id
-                JOIN AnswerJpaEntity ans ON  ans.questionRefNum = fq.refNum
+                JOIN AnswerJpaEntity ans ON  ans.questionId = fq.id
                 WHERE ans.assessmentResult.id = :assessmentResultId and (ans.answerOptionId IS NOT NULL OR ans.isNotApplicable = TRUE))
             AND qn.id IN (
                 SELECT fqn.id
