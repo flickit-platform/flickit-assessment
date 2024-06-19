@@ -2,9 +2,9 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.application.domain.AnswerOption;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static java.util.stream.Collectors.groupingBy;
-
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND;
 
 @Component("coreQuestionPersistenceJpaAdapter")
@@ -41,12 +40,12 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<Question> loadByQuestionnaireId(Long questionnaireId, int size, int page) {
+    public PaginatedResponse<Question> loadByQuestionnaireId(Long questionnaireId, long kitVersionId, int size, int page) {
         var pageResult = repository.findAllByQuestionnaireIdOrderByIndex(questionnaireId, PageRequest.of(page, size));
         List<Long> ids = pageResult.getContent().stream()
             .map(QuestionJpaEntity::getId)
             .toList();
-        var questionIdToAnswerOptionsMap = answerOptionRepository.findAllByQuestionIdInOrderByQuestionIdIndex(ids).stream()
+        var questionIdToAnswerOptionsMap = answerOptionRepository.findAllByQuestionIdInAndKitVersionIdOrderByQuestionIdIndex(ids, kitVersionId).stream()
             .collect(groupingBy(AnswerOptionJpaEntity::getQuestionId));
 
         var items = pageResult.getContent().stream()
