@@ -48,8 +48,9 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                     AND evd.deleted = false
                     AND q.id IN (SELECT qs.id
                                  FROM QuestionJpaEntity qs
+                                 LEFT JOIN AssessmentResultJpaEntity ar ON qs.kitVersionId = ar.kitVersionId
                                  LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
-                                 WHERE qi.attributeId = :attributeId)
+                                 WHERE qi.attributeId = :attributeId AND ar.assessment.id = :assessmentId)
                 ORDER BY evd.lastModificationTime DESC
         """)
     Page<String> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(@Param(value = "assessmentId") UUID assessmentId,
