@@ -26,5 +26,5 @@ public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOpt
                     @Param("lastModificationTime") LocalDateTime lastModificationTime,
                     @Param("lastModifiedBy") UUID lastModifiedBy);
 
-    List<AnswerOptionImpactJpaEntity> findAllByOptionIdIn(List<Long> optionIds);
+    List<AnswerOptionImpactJpaEntity> findAllByOptionIdInAndKitVersionId(List<Long> optionIds, long kitVersionId);
 }
