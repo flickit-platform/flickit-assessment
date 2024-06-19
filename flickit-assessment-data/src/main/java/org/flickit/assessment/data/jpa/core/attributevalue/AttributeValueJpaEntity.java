@@ -31,9 +31,6 @@ public class AttributeValueJpaEntity {
     @Column(name = "attribute_id", nullable = false)
     private Long attributeId;
 
-    @Column(name = "attribute_ref_num", nullable = false)
-    private UUID attributeRefNum;
-
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
 
