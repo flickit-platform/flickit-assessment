@@ -53,7 +53,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             SELECT DISTINCT q FROM QuestionJpaEntity q
             LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
             LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id AND qi.kitVersionId = q.kitVersionId
-            WHERE at.subject.id = :subjectId AND at.subject.kitVersionId = :kitVersionId
+            WHERE at.subjectId = :subjectId AND at.kitVersionId = :kitVersionId
         """)
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId, @Param("kitVersionId") Long kitVersionId);
 
@@ -61,7 +61,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             SELECT COUNT (DISTINCT q.id) FROM QuestionJpaEntity q
             LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
             LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id AND qi.kitVersionId = q.kitVersionId
-            WHERE at.subject.id = :subjectId AND at.subject.kitVersionId = :kitVersionId
+            WHERE at.subjectId = :subjectId AND at.kitVersionId = :kitVersionId
         """)
     Integer countDistinctBySubjectId(@Param("subjectId") long subjectId, @Param("kitVersionId") Long kitVersionId);
 
@@ -85,11 +85,11 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                                   FROM AnswerOptionJpaEntity sq_ans
                                   WHERE sq_ans.questionId = q.id)
                AND qi.attributeId = :attributeId
-               AND qi.maturityLevel.id = :maturityLevelId)
+               AND qi.maturityLevelId = :maturityLevelId)
                OR (asmr.assessment.id = :assessmentId
                AND ans.answerOptionId IS NULL
                AND qi.attributeId = :attributeId)
-               AND qi.maturityLevel.id = :maturityLevelId
+               AND qi.maturityLevelId = :maturityLevelId
                AND q.kitVersionId = asmr.kitVersionId
         """)
     List<ImprovableImpactfulQuestionView> findImprovableImpactfulQuestions(UUID assessmentId, Long attributeId, Long maturityLevelId);
@@ -106,10 +106,10 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             JOIN AnswerOptionJpaEntity ao ON q.id = ao.questionId AND q.kitVersionId = ao.kitVersionId
             JOIN QuestionnaireJpaEntity questionnair ON q.questionnaireId = questionnair.id AND q.kitVersionId = questionnair.kitVersionId
             JOIN AnswerOptionImpactJpaEntity impact ON ao.id = impact.optionId AND ao.kitVersionId = impact.kitVersionId
-            JOIN AttributeJpaEntity atr ON impact.questionImpact.attributeId = atr.id AND impact.questionImpact.kitVersionId = atr.subject.kitVersionId
+            JOIN AttributeJpaEntity atr ON impact.questionImpact.attributeId = atr.id AND impact.questionImpact.kitVersionId = atr.kitVersionId
             WHERE q.id IN :ids AND q.kitVersionId = :kitVersionId
         """)
-    List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids);
+    List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids, @Param("kitVersionId") long kitVersionId);
 
     @Query("""
             SELECT
@@ -149,8 +149,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id AND qsn.kitVersionId = qr.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId AND qsn.kitVersionId = qi.kitVersionId
             LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id AND ov.kitVersionId = qi.kitVersionId
-            WHERE qi.attributeId = :attributeId AND qi.kitVersionId = :kitVersionId
-                AND qi.maturityLevel.id = :maturityLevelId AND qi.maturityLevel.kitVersionId = :kitVersionId
+            WHERE qi.attributeId = :attributeId AND qi.maturityLevelId = :maturityLevelId AND qi.kitVersionId = :kitVersionId
             ORDER BY qr.title asc, qsn.index asc
         """)
     List<AttributeLevelImpactfulQuestionsView> findByAttributeIdAndMaturityLevelIdAndKitVersionId(@Param("attributeId") long attributeId,
