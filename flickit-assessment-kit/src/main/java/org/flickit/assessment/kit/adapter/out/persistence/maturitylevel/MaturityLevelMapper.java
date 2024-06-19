@@ -26,7 +26,6 @@ public class MaturityLevelMapper {
         return new MaturityLevelJpaEntity(
             null,
             kitVersionId,
-            UUID.randomUUID(),
             level.getCode(),
             level.getIndex(),
             level.getTitle(),
