@@ -18,7 +18,7 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
 
     @Query("""
             SELECT u FROM UserJpaEntity u
-            WHERE u.id IN (SELECT ku.id.userId FROM KitUserAccessJpaEntity ku WHERE ku.id.kitId = :kitId)
+            WHERE u.id IN (SELECT ku.userId FROM KitUserAccessJpaEntity ku WHERE ku.kitId = :kitId)
         """)
     Page<UserJpaEntity> findAllKitUsers(Long kitId, Pageable pageable);
 
@@ -119,8 +119,6 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.id = :kitId
         """)
     Optional<Long> loadKitVersionId(@Param("kitId") long kitId);
-
-    Optional<AssessmentKitJpaEntity> findByKitVersionId(long kitVersionId);
 
     @Query("""
             SELECT k.id
