@@ -6,8 +6,8 @@ import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpert
 import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -20,7 +20,7 @@ public class CreateExpertGroupRestController {
     private final UserContext userContext;
 
     @PostMapping("/expert-groups")
-    public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(@RequestBody CreateExpertGroupRequestDto request) {
+    public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(@ModelAttribute CreateExpertGroupRequestDto request) {
         UUID currentUserId = userContext.getUser().id();
         var response = toResponseDto(useCase.createExpertGroup(toParam(request, currentUserId)));
 
@@ -28,13 +28,12 @@ public class CreateExpertGroupRestController {
     }
 
     private Param toParam(CreateExpertGroupRequestDto request, UUID currentUserId) {
-        String website = request.website();
         return new CreateExpertGroupUseCase.Param(
             request.title(),
             request.bio(),
             request.about(),
             request.picture(),
-            (website != null && !website.isBlank()) ? website.strip() : null,
+            request.website(),
             currentUserId
         );
     }

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpaEntity, AnswerOptionJpaEntity.EntityId> {
 
-    List<AnswerOptionJpaEntity> findByQuestionId(Long questionId);
+    List<AnswerOptionJpaEntity> findByQuestionIdAndKitVersionId(Long questionId, Long kitVersionId);
 
     Optional<AnswerOptionJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
 
@@ -35,8 +35,8 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
     @Query("""
             SELECT a
             FROM AnswerOptionJpaEntity a
-            JOIN QuestionJpaEntity q ON a.questionId = q.id
-            WHERE a.questionId IN :questionIds
+            JOIN QuestionJpaEntity q ON a.questionId = q.id AND a.kitVersionId = q.kitVersionId
+            WHERE a.questionId IN :questionIds AND a.kitVersionId = :kitVersionId
             ORDER BY q.index, a.index
         """)
     List<AnswerOptionJpaEntity> findAllByQuestionIdInOrderByQuestionIdIndex(List<Long> questionIds);

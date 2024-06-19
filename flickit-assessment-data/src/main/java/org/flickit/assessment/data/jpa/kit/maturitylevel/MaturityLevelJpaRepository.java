@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, MaturityLevelJpaEntity.EntityId> {
 
@@ -15,6 +16,8 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
     List<MaturityLevelJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
 
     void deleteByIdAndKitVersionId(Long id, Long kitVersionId);
+
+    Optional<MaturityLevelJpaEntity> findByIdAndKitVersionId(Long id, long kitVersionId);
 
     @Query("""
             SELECT l as maturityLevel,
