@@ -105,6 +105,7 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_ASSESSMENT_ID_NOT_NULL = "get-assessment.assessmentId.notNull";
     public static final String GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND = "get-assessment.assessmentId.notFound";
     public static final String GET_ASSESSMENT_ASSESSMENT_CREATED_BY_ID_NOT_FOUND = "get-assessment.createdById.notFound";
+    public static final String GET_ASSESSMENT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment.assessmentResultId.notFound";
 
     public static final String DELETE_ASSESSMENT_ID_NOT_NULL = "delete-assessment.id.notNull";
     public static final String DELETE_ASSESSMENT_ID_NOT_FOUND = "delete-assessment.id.notFound";
