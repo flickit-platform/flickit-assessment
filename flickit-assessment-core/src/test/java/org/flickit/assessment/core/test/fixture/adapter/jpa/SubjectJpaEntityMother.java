@@ -14,7 +14,6 @@ public class SubjectJpaEntityMother {
         return new SubjectJpaEntity(
             subjectId,
             kitVersionId,
-            UUID.randomUUID(),
             "code" + subjectId,
             index,
             "title" + subjectId,
