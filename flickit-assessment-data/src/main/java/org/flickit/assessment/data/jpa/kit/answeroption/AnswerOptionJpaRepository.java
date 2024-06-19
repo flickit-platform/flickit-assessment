@@ -39,5 +39,6 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
             WHERE a.questionId IN :questionIds AND a.kitVersionId = :kitVersionId
             ORDER BY q.index, a.index
         """)
-    List<AnswerOptionJpaEntity> findAllByQuestionIdInOrderByQuestionIdIndex(List<Long> questionIds);
+    List<AnswerOptionJpaEntity> findAllByQuestionIdInAndKitVersionIdOrderByQuestionIdIndex(@Param("questionIds") List<Long> questionIds,
+                                                                                           @Param("kitVersionId") Long kitVersionId);
 }
