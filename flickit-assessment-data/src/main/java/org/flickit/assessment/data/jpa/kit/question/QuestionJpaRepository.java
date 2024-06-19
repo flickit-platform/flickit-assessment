@@ -52,7 +52,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     @Query("""
             SELECT DISTINCT q FROM QuestionJpaEntity q
             LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
-            LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id AND qi.kitVersionId = q.kitVersionId
+            LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id AND qi.kitVersionId = at.kitVersionId
             WHERE at.subjectId = :subjectId AND at.kitVersionId = :kitVersionId
         """)
     List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId, @Param("kitVersionId") Long kitVersionId);
@@ -60,7 +60,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     @Query("""
             SELECT COUNT (DISTINCT q.id) FROM QuestionJpaEntity q
             LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
-            LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id AND qi.kitVersionId = q.kitVersionId
+            LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id AND qi.kitVersionId = at.kitVersionId
             WHERE at.subjectId = :subjectId AND at.kitVersionId = :kitVersionId
         """)
     Integer countDistinctBySubjectId(@Param("subjectId") long subjectId, @Param("kitVersionId") Long kitVersionId);
