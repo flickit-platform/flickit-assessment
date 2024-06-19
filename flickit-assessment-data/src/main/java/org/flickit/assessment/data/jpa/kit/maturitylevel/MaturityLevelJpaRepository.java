@@ -1,6 +1,5 @@
 package org.flickit.assessment.data.jpa.kit.maturitylevel;
 
-import jakarta.annotation.Nullable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +11,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
 
     List<MaturityLevelJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
-    Optional<MaturityLevelJpaEntity> findByIdAndKitVersionId(@Nullable Long id, long kitVersionId);
+    Optional<MaturityLevelJpaEntity> findByIdAndKitVersionId(Long id, long kitVersionId);
 
     @Query("""
             SELECT l as maturityLevel, c as levelCompetence
