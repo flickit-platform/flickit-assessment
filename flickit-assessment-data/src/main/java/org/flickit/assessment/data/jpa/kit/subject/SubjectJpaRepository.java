@@ -13,32 +13,35 @@ import java.util.UUID;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, SubjectJpaEntity.EntityId> {
 
-    List<SubjectJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
+    List<SubjectJpaEntity> findAllByKitVersionIdOrderByIndex(long kitVersionId);
+
+    Optional<SubjectJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
+
+    List<SubjectJpaEntity> findAllByIdInAndKitVersionId(Set<Long> ids, long kitVersionId);
 
     @Modifying
     @Query("""
-            UPDATE SubjectJpaEntity s SET
-                s.title = :title,
+            UPDATE SubjectJpaEntity s
+            SET s.title = :title,
                 s.index = :index,
                 s.description = :description,
                 s.lastModificationTime = :lastModificationTime,
                 s.lastModifiedBy = :lastModifiedBy
             WHERE s.id = :id AND s.kitVersionId = :kitVersionId
         """)
-    void update(
-        @Param(value = "id") long id,
-        @Param(value = "kitVersionId") long kitVersionId,
-        @Param(value = "title") String title,
-        @Param(value = "index") int index,
-        @Param(value = "description") String description,
-        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
-        @Param(value = "lastModifiedBy") UUID lastModifiedBy
+    void update(@Param(value = "id") long id,
+                @Param(value = "kitVersionId") long kitVersionId,
+                @Param(value = "title") String title,
+                @Param(value = "index") int index,
+                @Param(value = "description") String description,
+                @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
+                @Param(value = "lastModifiedBy") UUID lastModifiedBy
     );
 
-    Optional<SubjectJpaEntity> findByIdAndKitVersionId(@Param(value = "id") long id, @Param(value = "kitVersionId") long kitVersionId);
-
     @Query("""
-            SELECT s.id AS id, s.title AS title, sq.questionnaireId AS questionnaireId
+            SELECT s.id AS id,
+                s.title AS title,
+                sq.questionnaireId AS questionnaireId
             FROM SubjectJpaEntity s
             JOIN SubjectQuestionnaireJpaEntity sq ON s.id = sq.subjectId
             WHERE sq.questionnaireId IN :questionnaireIds AND s.kitVersionId = :kitVersionId
@@ -55,6 +58,4 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
         """)
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
-
-    List<SubjectJpaEntity> findAllByIdInAndKitVersionId(Set<Long> ids, long kitVersionId);
 }
