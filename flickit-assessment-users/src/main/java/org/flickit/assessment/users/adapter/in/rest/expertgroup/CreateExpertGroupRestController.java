@@ -22,8 +22,7 @@ public class CreateExpertGroupRestController {
     @PostMapping("/expert-groups")
     public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(@RequestBody CreateExpertGroupRequestDto request) {
         UUID currentUserId = userContext.getUser().id();
-        CreateExpertGroupResponseDto response =
-            toResponseDto(useCase.createExpertGroup(toParam(request, currentUserId)));
+        var response = toResponseDto(useCase.createExpertGroup(toParam(request, currentUserId)));
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
