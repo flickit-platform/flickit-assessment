@@ -30,12 +30,13 @@ public class UpdateExpertGroupRestController {
     }
 
     private Param toParam(Long id, UpdateExpertGroupRequestDto request, UUID currentUserId) {
+        String website = request.website();
         return new Param(
             id,
             request.title(),
             request.bio(),
             request.about(),
-            request.website(),
+            (website != null && !website.isBlank()) ? website.strip() : null,
             currentUserId);
     }
 }
