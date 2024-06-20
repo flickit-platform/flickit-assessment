@@ -34,7 +34,7 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                 u.displayName AS displayName,
                 u.picture AS picturePath,
                 CASE
-                    WHEN sp.createdBy = u.id THEN :managerRoleId ELSE a.roleId
+                    WHEN sp.ownerId = u.id THEN :managerRoleId ELSE a.roleId
                 END as roleId
             FROM UserJpaEntity u
             JOIN AssessmentUserRoleJpaEntity a ON u.id = a.userId
