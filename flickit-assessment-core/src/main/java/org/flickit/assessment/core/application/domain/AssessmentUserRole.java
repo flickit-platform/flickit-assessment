@@ -69,15 +69,12 @@ public enum AssessmentUserRole {
             VIEW_SUBJECT_PROGRESS,
             VIEW_SUBJECT_REPORT)),
         COMMENTER_PERMISSIONS(Set.of(
-            VIEW_ANSWER,
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
-            VIEW_EVIDENCE,
             VIEW_ATTRIBUTE_EVIDENCE_LIST,
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
-            VIEW_QUESTIONNAIRES_PROGRESS,
             VIEW_QUESTIONNAIRE_QUESTIONS)),
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,

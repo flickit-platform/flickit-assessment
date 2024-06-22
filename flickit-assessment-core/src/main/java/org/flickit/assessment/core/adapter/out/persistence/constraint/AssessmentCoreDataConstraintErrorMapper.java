@@ -15,7 +15,7 @@ public class AssessmentCoreDataConstraintErrorMapper implements DataConstraintEr
     Map<String, String> constraintToErrorMsg = Map.ofEntries(
         entry("uq_fac_assessment_spaceid_code_deletion_time", CREATE_ASSESSMENT_DUPLICATE_TITLE_AND_SPACE_ID),
         entry("fk_fac_assessmentresult_assessment", CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND),
-        entry("fk_fac_qualityattributevalue_assessmentresult", CREATE_QUALITY_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND),
+        entry("fk_fac_attributevalue_assessmentresult", CREATE_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND),
         entry("fk_fac_subjectvalue_assessmentresult", CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND),
         entry("fk_fac_answer_assessmentresult", SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND),
         entry("fk_fac_answer_account_user_created_by", COMMON_CURRENT_USER_NOT_FOUND),

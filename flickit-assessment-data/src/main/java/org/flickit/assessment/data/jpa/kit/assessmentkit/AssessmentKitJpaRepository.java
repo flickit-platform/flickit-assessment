@@ -16,30 +16,35 @@ import java.util.UUID;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
+    List<AssessmentKitJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
+
     @Query("""
-            SELECT u FROM UserJpaEntity u
-            WHERE u.id IN (SELECT ku.id.userId FROM KitUserAccessJpaEntity ku WHERE ku.id.kitId = :kitId)
+            SELECT u
+            FROM UserJpaEntity u
+            WHERE u.id IN (SELECT ku.userId FROM KitUserAccessJpaEntity ku WHERE ku.kitId = :kitId)
         """)
     Page<UserJpaEntity> findAllKitUsers(Long kitId, Pageable pageable);
 
     @Modifying
     @Query("""
-            UPDATE AssessmentKitJpaEntity a SET
-                a.lastMajorModificationTime = :lastMajorModificationTime
+            UPDATE AssessmentKitJpaEntity a
+            SET a.lastMajorModificationTime = :lastMajorModificationTime
             WHERE a.id = :kitId
         """)
     void updateLastMajorModificationTime(@Param("kitId") Long kitId,
                                          @Param("lastMajorModificationTime") LocalDateTime lastMajorModificationTime);
 
     @Query("""
-            SELECT k.lastMajorModificationTime FROM AssessmentKitJpaEntity k
+            SELECT k.lastMajorModificationTime
+            FROM AssessmentKitJpaEntity k
             WHERE k.id = :kitId
         """)
     LocalDateTime loadLastMajorModificationTime(@Param("kitId") Long kitId);
 
     @Modifying
     @Query("""
-            UPDATE AssessmentKitJpaEntity a SET a.kitVersionId = :kitVersionId
+            UPDATE AssessmentKitJpaEntity a
+            SET a.kitVersionId = :kitVersionId
             WHERE a.id = :id
         """)
     void updateKitVersionId(@Param(value = "id") Long id, @Param(value = "kitVersionId") Long kitVersionId);
@@ -128,4 +133,15 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                 AND (k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId  = :userId))))
         """)
     Optional<Long> existsByUserId(@Param("kitId") long kitId, @Param("userId") UUID userId);
+
+    @Query("""
+            SELECT k
+            FROM AssessmentKitJpaEntity k
+            WHERE LOWER(k.title) LIKE LOWER(CONCAT('%', :queryTerm, '%')) AND k.published = TRUE
+                AND (k.isPrivate = FALSE OR (k.isPrivate
+                    AND k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId = :userId)))
+        """)
+    Page<AssessmentKitJpaEntity> findAllByTitleAndUserId(@Param("queryTerm") String query,
+                                                         @Param("userId") UUID userId,
+                                                         Pageable pageable);
 }

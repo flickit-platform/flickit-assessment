@@ -111,6 +111,7 @@ class QuestionCreateKitPersisterTest {
             attribute.getId(),
             levelTwo.getId(),
             dslImpact.getWeight(),
+            kitId,
             question.getId(),
             LocalDateTime.now(),
             LocalDateTime.now(),
@@ -119,8 +120,8 @@ class QuestionCreateKitPersisterTest {
         );
         when(createQuestionImpactPort.persist(createImpact)).thenReturn(impact.getId());
 
-        var createOptionImpact1Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact1.getOptionId(), optionImpact1.getValue(), currentUserId);
-        var createOptionImpact2Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact2.getOptionId(), optionImpact2.getValue(), currentUserId);
+        var createOptionImpact1Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact1.getOptionId(), optionImpact1.getValue(), kitId, currentUserId);
+        var createOptionImpact2Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact2.getOptionId(), optionImpact2.getValue(), kitId, currentUserId);
         when(createAnswerOptionImpactPort.persist(createOptionImpact1Param)).thenReturn(optionImpact1.getId());
         when(createAnswerOptionImpactPort.persist(createOptionImpact2Param)).thenReturn(optionImpact2.getId());
 

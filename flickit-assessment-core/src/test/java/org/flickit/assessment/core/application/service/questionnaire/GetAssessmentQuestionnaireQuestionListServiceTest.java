@@ -1,16 +1,19 @@
 package org.flickit.assessment.core.application.service.questionnaire;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerOption;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Result;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,8 +22,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_QUESTIONNAIRE_QUESTIONS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,10 +39,13 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     private GetAssessmentQuestionnaireQuestionListService service;
 
     @Mock
-    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
     private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
+
+    @Mock
+    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
     private LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
@@ -45,13 +53,13 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     @Test
     void testGetAssessmentQuestionnaireQuestionList_InvalidCurrentUser_ThrowsException() {
         Param param = new Param(UUID.randomUUID(), 12L, 10, 0, UUID.randomUUID());
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(false);
 
-        var exception = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
-        verifyNoInteractions(loadQuestionnaireQuestionListPort,
-            loadQuestionsAnswerListPort);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadQuestionnaireQuestionListPort, loadAssessmentResultPort, loadQuestionsAnswerListPort);
     }
 
     @Test
@@ -66,10 +74,12 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             "asc",
             1
         );
+        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), assessmentResult.getKitVersionId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
@@ -90,11 +100,14 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             "asc",
             1
         );
-        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.FALSE);
+        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2,
+            null, question.getId(), null), question.getId(), 1, Boolean.FALSE);
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), assessmentResult.getKitVersionId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
@@ -112,6 +125,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(question.getIndex(), item.index());
         assertEquals(question.getHint(), item.hint());
         assertEquals(question.getMayNotBeApplicable(), item.mayNotBeApplicable());
+        assertNotNull(answer.getSelectedOption());
         assertEquals(answer.getSelectedOption().getId(), item.answer().selectedOption().id());
         assertEquals(question.getOptions().get(0).getTitle(), item.answer().selectedOption().title());
     }
@@ -129,10 +143,12 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             1
         );
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.TRUE);
+        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), assessmentResult.getKitVersionId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
@@ -151,6 +167,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(question.getHint(), item.hint());
         assertEquals(question.getMayNotBeApplicable(), item.mayNotBeApplicable());
         assertNull(item.answer().selectedOption());
+        assertTrue(item.answer().isNotApplicable());
+        assertNotNull(item.answer().confidenceLevel());
     }
 
     @Test
@@ -166,10 +184,12 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             1
         );
         Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 1, Boolean.FALSE);
+        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
-        when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getSize(), param.getPage()))
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), assessmentResult.getKitVersionId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
@@ -187,6 +207,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(question.getIndex(), item.index());
         assertEquals(question.getHint(), item.hint());
         assertEquals(question.getMayNotBeApplicable(), item.mayNotBeApplicable());
+        assertFalse(item.answer().isNotApplicable());
         assertNull(item.answer().selectedOption());
+        assertNull(item.answer().confidenceLevel());
     }
 }

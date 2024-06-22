@@ -57,6 +57,6 @@ public class MaturityLevelPersistenceJpaAdapter implements
         return new LevelCompetence(
             entity.getId(),
             entity.getValue(),
-            entity.getEffectiveLevel().getId());
+            entity.getEffectiveLevelId());
     }
 }
