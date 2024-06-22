@@ -15,8 +15,6 @@ import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaEntity;
-import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.SubjectIdAttributeValueView;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
@@ -29,19 +27,20 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
-import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper.mapToDomainModel;
-import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Slf4j
@@ -61,7 +60,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final AttributeValueJpaRepository attributeValueJpaRepository;
     private final MinioAdapter minioAdapter;
     private final SpaceJpaRepository spaceRepository;
-    private final AssessmentUserRoleJpaRepository assessmentUserRoleRepository;
 
     @Override
     public Result load(UUID assessmentId, UUID currentUserId) {
@@ -87,8 +85,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var spaceEntity = spaceRepository.findById(assessment.getSpaceId())
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_SPACE_NOT_FOUND));
 
-        boolean manageable = loadManageable(assessmentId, currentUserId, spaceEntity);
-
         AssessmentReportItem assessmentReportItem = new AssessmentReportItem(assessmentId,
             assessment.getTitle(),
             buildAssessmentKitItem(expertGroupEntity, assessmentKitEntity, idToMaturityLevel.values().stream().toList()),
@@ -96,7 +92,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentResultEntity.getConfidenceValue(),
             assessmentResultEntity.getIsCalculateValid(),
             assessmentResultEntity.getIsConfidenceValid(),
-            manageable,
             AssessmentColor.valueOfById(assessment.getColorId()),
             assessment.getCreationTime(),
             assessment.getLastModificationTime(),
@@ -168,16 +163,5 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             attribute.getIndex(),
             attributeValue.getConfidenceValue(),
             maturityLevel);
-    }
-
-    private boolean loadManageable(UUID assessmentId, UUID currentUserId, SpaceJpaEntity spaceEntity) {
-        if (Objects.equals(currentUserId, spaceEntity.getOwnerId()))
-            return true;
-        else {
-            var userRoleId = assessmentUserRoleRepository.findByAssessmentIdAndUserId(assessmentId, currentUserId)
-                .map(AssessmentUserRoleJpaEntity::getRoleId)
-                .orElse(null);
-            return Objects.equals(userRoleId, MANAGER.getId());
-        }
     }
 }

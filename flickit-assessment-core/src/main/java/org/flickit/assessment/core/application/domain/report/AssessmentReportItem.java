@@ -14,11 +14,11 @@ public record AssessmentReportItem(UUID id,
                                    Double confidenceValue,
                                    boolean isCalculateValid,
                                    boolean isConfidenceValid,
-                                   boolean manageable,
                                    AssessmentColor color,
                                    LocalDateTime creationTime,
                                    LocalDateTime lastModificationTime,
                                    Space space) {
+
     public record AssessmentKitItem(
         Long id,
         String title,
@@ -26,6 +26,7 @@ public record AssessmentReportItem(UUID id,
         Integer maturityLevelCount,
         List<MaturityLevel> maturityLevels,
         ExpertGroup expertGroup) {
+
         public record ExpertGroup(Long id, String title, String picture) {
         }
     }
