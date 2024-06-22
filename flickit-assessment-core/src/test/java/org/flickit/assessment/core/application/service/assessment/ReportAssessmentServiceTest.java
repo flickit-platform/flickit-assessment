@@ -66,6 +66,7 @@ class ReportAssessmentServiceTest {
             1.5,
             true,
             true,
+            false,
             AssessmentColor.BLUE,
             creationTime,
             lastModificationTime,
@@ -79,7 +80,7 @@ class ReportAssessmentServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
-        when(loadReportInfoPort.load(assessmentId)).thenReturn(assessmentReport);
+        when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
 
         ReportAssessmentUseCase.Result result = service.reportAssessment(param);
 
