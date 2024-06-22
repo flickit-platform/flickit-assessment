@@ -30,9 +30,9 @@ public class AppSpecProperties {
     @Setter
     @Getter
     @ToString
-    public class Email {
+    public static class Email {
 
         @NotBlank
-        String fromDisplayName = name + " Platform";
+        String fromDisplayName = "Flickit";
     }
 }
