@@ -21,7 +21,8 @@ public enum AssessmentUserRole {
     VIEWER("Viewer", VIEWER_PERMISSIONS),
     COMMENTER("Commenter", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS),
     ASSESSOR("Assessor", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS),
-    MANAGER("Manager", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS, MANAGER_PERMISSIONS);
+    MANAGER("Manager", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS, MANAGER_PERMISSIONS),
+    ASSESSOR_ASSISTANT("Assessor Assistant", ASSESSOR_ASSISTANT_PERMISSIONS);
 
     private final String title;
     private final Set<AssessmentPermission> permissions;
@@ -87,7 +88,20 @@ public enum AssessmentUserRole {
             GRANT_USER_ASSESSMENT_ROLE,
             UPDATE_USER_ASSESSMENT_ROLE,
             DELETE_USER_ASSESSMENT_ROLE,
-            GET_ASSESSMENT_USERS));
+            GET_ASSESSMENT_USERS)),
+        ASSESSOR_ASSISTANT_PERMISSIONS(Set.of(
+            VIEW_ASSESSMENT_LIST,
+            VIEW_ASSESSMENT_PROGRESS,
+            VIEW_ASSESSMENT,
+            VIEW_SUBJECT_PROGRESS,
+            ADD_EVIDENCE,
+            DELETE_EVIDENCE,
+            VIEW_EVIDENCE_LIST,
+            UPDATE_EVIDENCE,
+            VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
+            VIEW_QUESTIONNAIRE_QUESTIONS,
+            ANSWER_QUESTION
+        ));
 
         private final Set<AssessmentPermission> permissions;
     }

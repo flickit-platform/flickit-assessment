@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Set;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ANSWER_QUESTION;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,8 +19,9 @@ class AssessmentUserRoleTest {
         assertEquals(1, COMMENTER.getId());
         assertEquals(2, ASSESSOR.getId());
         assertEquals(3, MANAGER.getId());
+        assertEquals(4, ASSESSOR_ASSISTANT.getId());
 
-        assertEquals(4, AssessmentUserRole.values().length);
+        assertEquals(5, AssessmentUserRole.values().length);
     }
 
     @Test
@@ -28,6 +30,7 @@ class AssessmentUserRoleTest {
         assertEquals("Commenter", COMMENTER.getTitle());
         assertEquals("Assessor", ASSESSOR.getTitle());
         assertEquals("Manager", MANAGER.getTitle());
+        assertEquals("Assessor Assistant", ASSESSOR_ASSISTANT.getTitle());
     }
 
     @Test
@@ -51,6 +54,22 @@ class AssessmentUserRoleTest {
     @Test
     void testAssessmentUserRole_ManagerShouldHaveAllPermissions() {
         assertTrue(MANAGER.getPermissions().containsAll(List.of(AssessmentPermission.values())));
+    }
+
+    @Test
+    void testAssessmentUserRole_AssessorAssistantShouldNotHaveViewerAllPermissions() {
+        assertFalse(ASSESSOR_ASSISTANT.getPermissions().containsAll(VIEWER.getPermissions()));
+    }
+
+    @Test
+    void testAssessmentUserRole_AssessorAssistantShouldNotHaveAssessorAllPermissions() {
+        assertTrue(ASSESSOR.getPermissions().containsAll(ASSESSOR_ASSISTANT.getPermissions()));
+        assertFalse(ASSESSOR_ASSISTANT.getPermissions().containsAll(ASSESSOR.getPermissions()));
+    }
+
+    @Test
+    void testAssessmentUserRole_AssessorAssistantShouldHaveAnswerQuestionPermission() {
+        assertTrue(ASSESSOR_ASSISTANT.hasAccess(ANSWER_QUESTION));
     }
 
     @Test
