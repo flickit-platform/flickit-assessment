@@ -672,13 +672,13 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces-invitations/{{inviteId}}",
+					"raw": "{{base_url}}/{{api_path}}/space-invitations/{{inviteId}}",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"spaces-invitations",
+						"space-invitations",
 						"{{inviteId}}"
 					]
 				}
