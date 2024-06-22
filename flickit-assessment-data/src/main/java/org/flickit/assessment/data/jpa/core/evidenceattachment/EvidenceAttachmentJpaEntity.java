@@ -34,8 +34,4 @@ public class EvidenceAttachmentJpaEntity {
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
-
-    @Column(name = "deleted", nullable = false)
-    private Boolean deleted;
-
 }

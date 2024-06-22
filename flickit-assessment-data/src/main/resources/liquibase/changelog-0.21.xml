@@ -348,9 +348,6 @@
             <column name="creation_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="deleted" type="boolean">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
     </changeSet>
 </databaseChangeLog>
