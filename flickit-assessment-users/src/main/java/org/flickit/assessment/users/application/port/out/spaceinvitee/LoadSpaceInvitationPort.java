@@ -2,9 +2,10 @@ package org.flickit.assessment.users.application.port.out.spaceinvitee;
 
 import org.flickit.assessment.users.application.domain.SpaceInvitee;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface LoadSpaceInvitationPort {
 
-    SpaceInvitee loadSpaceInvitation(UUID inviteId);
+    Optional<SpaceInvitee> loadSpaceInvitation(UUID inviteId);
 }

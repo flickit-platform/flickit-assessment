@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
@@ -80,18 +81,12 @@ public class SpaceInviteePersistenceJpaAdapter implements
     }
 
     @Override
-    public SpaceInvitee loadSpaceInvitation(UUID id) {
-        SpaceInviteeJpaEntity entity = repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND));
-
-        return SpaceInviteeMapper.mapToDomain(entity);
+    public Optional<SpaceInvitee> loadSpaceInvitation(UUID id) {
+        return repository.findById(id).map(SpaceInviteeMapper::mapToDomain);
     }
 
     @Override
     public void deleteSpaceInvitation(UUID inviteId) {
-        if (!repository.existsById(inviteId))
-            throw new ResourceNotFoundException(DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND);
-
         repository.deleteById(inviteId);
     }
 }
