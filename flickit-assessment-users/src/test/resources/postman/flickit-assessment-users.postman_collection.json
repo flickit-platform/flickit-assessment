@@ -846,6 +846,25 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Tenant Info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/tenant/info",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"tenant",
+						"info"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
