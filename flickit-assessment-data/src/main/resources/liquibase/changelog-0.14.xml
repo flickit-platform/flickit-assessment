@@ -120,7 +120,7 @@
     </changeSet>
 
     <changeSet id="0.14-22" author="Ali Sedaghat">
-        <renameSequence oldSequenceName="baseinfo_profiledsl_id_seq" newSequenceName="fak_kit_dsl_id_seq"/>
+        <renameSequence oldSequenceName="baseinfo_assessmentkitdsl_id_seq" newSequenceName="fak_kit_dsl_id_seq"/>
     </changeSet>
 
     <changeSet id="0.14-23" author="Ali Sedaghat">
