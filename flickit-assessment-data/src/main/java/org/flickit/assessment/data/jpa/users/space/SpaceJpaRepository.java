@@ -26,9 +26,9 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
                 COUNT(DISTINCT sua.userId) as membersCount,
                 COUNT(DISTINCT a.id) as assessmentsCount
             FROM SpaceJpaEntity s
-            LEFT JOIN AssessmentJpaEntity a on s.id = a.spaceId
+            LEFT JOIN AssessmentJpaEntity a on s.id = a.spaceId AND a.deleted = FALSE
             LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId
-            WHERE s.id = :spaceId AND a.deleted = FALSE
+            WHERE s.id = :spaceId AND s.deleted = FALSE
             GROUP BY s.id
         """)
     Optional<SpaceWithDetails> loadSpaceDetails(@Param("spaceId") long id);

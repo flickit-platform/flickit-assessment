@@ -29,13 +29,12 @@ public class CreateExpertGroupRestController {
     }
 
     private Param toParam(CreateExpertGroupRequestDto request, UUID currentUserId) {
-        String website = request.website();
         return new CreateExpertGroupUseCase.Param(
             request.title(),
             request.bio(),
             request.about(),
             request.picture(),
-            (website != null && !website.isBlank()) ? website.strip() : null,
+            request.website(),
             currentUserId
         );
     }

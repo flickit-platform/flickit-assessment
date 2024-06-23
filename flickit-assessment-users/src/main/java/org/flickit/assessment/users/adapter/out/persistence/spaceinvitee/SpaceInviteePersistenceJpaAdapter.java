@@ -7,9 +7,7 @@ import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
 import org.flickit.assessment.users.application.domain.SpaceInvitee;
-import org.flickit.assessment.users.application.port.out.spaceinvitee.DeleteSpaceUserInvitationsPort;
-import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceInviteesPort;
-import org.flickit.assessment.users.application.port.out.spaceinvitee.LoadSpaceUserInvitationsPort;
+import org.flickit.assessment.users.application.port.out.spaceinvitee.*;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,8 +15,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +26,9 @@ public class SpaceInviteePersistenceJpaAdapter implements
     LoadSpaceUserInvitationsPort,
     DeleteSpaceUserInvitationsPort,
     InviteSpaceMemberPort,
-    LoadSpaceInviteesPort {
+    LoadSpaceInviteesPort,
+    LoadSpaceInvitationPort,
+    DeleteSpaceInvitationPort {
 
     private final SpaceInviteeJpaRepository repository;
     private final SpaceJpaRepository spaceRepository;
@@ -76,5 +78,15 @@ public class SpaceInviteePersistenceJpaAdapter implements
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public Optional<SpaceInvitee> loadSpaceInvitation(UUID id) {
+        return repository.findById(id).map(SpaceInviteeMapper::mapToDomain);
+    }
+
+    @Override
+    public void deleteSpaceInvitation(UUID inviteId) {
+        repository.deleteById(inviteId);
     }
 }

@@ -49,6 +49,7 @@ public class QuestionPersistenceJpaAdapter implements
     @Override
     public void update(UpdateQuestionPort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.title(),
             param.index(),
             param.hint(),
@@ -64,22 +65,22 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public int countBySubjectId(long subjectId) {
-        return repository.countDistinctBySubjectId(subjectId);
+    public int countBySubjectId(long subjectId, long kitVersionId) {
+        return repository.countDistinctBySubjectId(subjectId, kitVersionId);
     }
 
     @Override
-    public Question load(long id, long kitId) {
-        var questionEntity = repository.findByIdAndKitId(id, kitId)
+    public Question load(long id, long kitVersionId) {
+        var questionEntity = repository.findByIdAndKitVersionId(id, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
         Question question = QuestionMapper.mapToDomainModel(questionEntity);
 
-        var impacts = questionImpactRepository.findAllByQuestionIdAndKitVersionId(id, questionEntity.getKitVersionId()).stream()
+        var impacts = questionImpactRepository.findAllByQuestionIdAndKitVersionId(id, kitVersionId).stream()
             .map(QuestionImpactMapper::mapToDomainModel)
             .map(this::setOptionImpacts)
             .toList();
 
-        var options = answerOptionRepository.findByQuestionId(id).stream()
+        var options = answerOptionRepository.findByQuestionIdAndKitVersionId(id, kitVersionId).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
 
@@ -104,7 +105,7 @@ public class QuestionPersistenceJpaAdapter implements
 
         if (!maturityLevelRepository.existsByIdAndKitVersionId(maturityLevelId, kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
-        var views = repository.findByAttributeIdAndMaturityLevelId(attributeId, maturityLevelId);
+        var views = repository.findByAttributeIdAndMaturityLevelIdAndKitVersionId(attributeId, maturityLevelId, kitVersionId);
 
         Map<QuestionJpaEntity, List<AttributeLevelImpactfulQuestionsView>> myMap = views.stream()
             .collect(Collectors.groupingBy(AttributeLevelImpactfulQuestionsView::getQuestion));
