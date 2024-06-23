@@ -45,6 +45,10 @@ public class ErrorMessageKey {
     public static final String GET_KIT_LIST_SIZE_MIN = "get-kit-list.size.min";
     public static final String GET_KIT_LIST_SIZE_MAX = "get-kit-list.size.max";
 
+    public static final String SEARCH_KIT_OPTIONS_PAGE_MIN = "search-kit-options.page.min";
+    public static final String SEARCH_KIT_OPTION_SIZE_MIN = "search-kit-options.size.min";
+    public static final String SEARCH_KIT_OPTIONS_SIZE_MAX = "search-kit-options.size.max";
+
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_NULL = "get-kit-minimal-info.kitId.notNull";
     public static final String GET_KIT_MINIMAL_INFO_KIT_ID_NOT_FOUND = "get-kit-minimal-info.kitId.notFound";
 

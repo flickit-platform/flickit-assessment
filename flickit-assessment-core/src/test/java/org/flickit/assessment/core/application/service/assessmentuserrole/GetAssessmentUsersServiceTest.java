@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GET_ASSESSMENT_USERS;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +46,8 @@ class GetAssessmentUsersServiceTest {
 
         when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, GET_ASSESSMENT_USERS)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getAssessmentUsers(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentUsers(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @ParameterizedTest
@@ -136,5 +138,4 @@ class GetAssessmentUsersServiceTest {
         assertEquals(expectedAssessmentUser.role().id(), actualAssessmentUser.role().id());
         assertEquals(expectedAssessmentUser.role().title(), actualAssessmentUser.role().title());
     }
-
 }

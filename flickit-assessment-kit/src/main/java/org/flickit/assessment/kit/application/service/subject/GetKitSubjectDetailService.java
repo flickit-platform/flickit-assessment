@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.subject;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.subject.GetKitSubjectDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
@@ -19,6 +20,7 @@ public class GetKitSubjectDetailService implements GetKitSubjectDetailUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
+    private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
     private final LoadSubjectPort loadSubjectPort;
     private final CountSubjectQuestionsPort countSubjectQuestionsPort;
 
@@ -28,9 +30,11 @@ public class GetKitSubjectDetailService implements GetKitSubjectDetailUseCase {
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var subject = loadSubjectPort.load(param.getKitId(), param.getSubjectId());
+        long kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
+
+        var subject = loadSubjectPort.load(param.getSubjectId(), kitVersionId);
         var attributes = subject.getAttributes().stream().map(this::toAttribute).toList();
-        var questionsCount = countSubjectQuestionsPort.countBySubjectId(param.getSubjectId());
+        var questionsCount = countSubjectQuestionsPort.countBySubjectId(param.getSubjectId(), kitVersionId);
         return new Result(questionsCount, subject.getDescription(), attributes);
     }
 

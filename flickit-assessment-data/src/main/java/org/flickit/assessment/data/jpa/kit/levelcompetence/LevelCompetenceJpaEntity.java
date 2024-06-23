@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.levelcompetence;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -23,16 +22,17 @@ public class LevelCompetenceJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "affected_level_id", referencedColumnName = "id", nullable = false)
-    private MaturityLevelJpaEntity affectedLevel;
+    @Column(name = "affected_level_id", nullable = false)
+    private Long affectedLevelId;
 
-    @ManyToOne
-    @JoinColumn(name = "effective_level_id", referencedColumnName = "id", nullable = false)
-    private MaturityLevelJpaEntity effectiveLevel;
+    @Column(name = "effective_level_id", nullable = false)
+    private Long effectiveLevelId;
 
     @Column(name = "value", nullable = false)
     private Integer value;
+
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

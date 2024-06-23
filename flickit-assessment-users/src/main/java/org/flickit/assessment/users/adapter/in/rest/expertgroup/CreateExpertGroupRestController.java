@@ -20,23 +20,20 @@ public class CreateExpertGroupRestController {
     private final UserContext userContext;
 
     @PostMapping("/expert-groups")
-    public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(
-        @ModelAttribute CreateExpertGroupRequestDto request) {
+    public ResponseEntity<CreateExpertGroupResponseDto> createExpertGroup(@ModelAttribute CreateExpertGroupRequestDto request) {
         UUID currentUserId = userContext.getUser().id();
-        CreateExpertGroupResponseDto response =
-            toResponseDto(useCase.createExpertGroup(toParam(request, currentUserId)));
+        var response = toResponseDto(useCase.createExpertGroup(toParam(request, currentUserId)));
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     private Param toParam(CreateExpertGroupRequestDto request, UUID currentUserId) {
-        String website = request.website();
         return new CreateExpertGroupUseCase.Param(
             request.title(),
             request.bio(),
             request.about(),
             request.picture(),
-            (website != null && !website.isBlank()) ? website.strip() : null,
+            request.website(),
             currentUserId
         );
     }

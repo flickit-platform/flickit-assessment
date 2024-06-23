@@ -76,10 +76,10 @@ public class AssessmentResult {
         MutableInt weightedSum = new MutableInt();
         MutableInt sum = new MutableInt();
         subjectValues.stream()
-            .flatMap(x -> x.getQualityAttributeValues().stream())
+            .flatMap(x -> x.getAttributeValues().stream())
             .forEach(x -> {
                 weightedSum.add(x.getWeightedLevel());
-                sum.add(x.getQualityAttribute().getWeight());
+                sum.add(x.getAttribute().getWeight());
             });
         return (int) Math.round((double) weightedSum.getValue() / sum.getValue());
     }
@@ -100,11 +100,11 @@ public class AssessmentResult {
         MutableDouble weightedSum = new MutableDouble();
         MutableDouble sum = new MutableDouble();
         subjectValues.stream()
-            .flatMap(x -> x.getQualityAttributeValues().stream())
+            .flatMap(x -> x.getAttributeValues().stream())
             .filter(x -> x.getConfidenceValue() != null)
             .forEach(x -> {
                 weightedSum.add(x.getWeightedConfidenceValue());
-                sum.add(x.getQualityAttribute().getWeight());
+                sum.add(x.getAttribute().getWeight());
             });
         return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
     }

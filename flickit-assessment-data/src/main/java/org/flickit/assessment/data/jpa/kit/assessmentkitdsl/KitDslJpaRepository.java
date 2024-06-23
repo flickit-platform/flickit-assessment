@@ -13,8 +13,8 @@ public interface KitDslJpaRepository extends JpaRepository<KitDslJpaEntity, Long
 
     @Modifying
     @Query("""
-            UPDATE KitDslJpaEntity a SET
-                a.kitId = :kitId,
+            UPDATE KitDslJpaEntity a
+            SET a.kitId = :kitId,
                 a.lastModifiedBy = :lastModifiedBy,
                 a.lastModificationTime = :lastModificationTime
             WHERE a.id = :id
@@ -26,8 +26,8 @@ public interface KitDslJpaRepository extends JpaRepository<KitDslJpaEntity, Long
 
     @Modifying
     @Query("""
-            UPDATE KitDslJpaEntity a SET
-                a.kitId = null,
+            UPDATE KitDslJpaEntity a
+            SET a.kitId = null,
                 a.lastModifiedBy = :lastModifiedBy,
                 a.lastModificationTime = :lastModificationTime
             WHERE a.kitId = :kitId
@@ -37,9 +37,9 @@ public interface KitDslJpaRepository extends JpaRepository<KitDslJpaEntity, Long
                      @Param("lastModificationTime") LocalDateTime lastModificationTime);
 
     @Query("""
-            SELECT kd.dslPath as url
-            FROM KitDslJpaEntity kd
-            WHERE kd.kitId = :kitId
+            SELECT a.dslPath as url
+            FROM KitDslJpaEntity a
+            WHERE a.kitId = :kitId
         """)
     Optional<String> findDslPathByKitId(@Param("kitId") long kitId);
 }

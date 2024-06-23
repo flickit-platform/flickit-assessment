@@ -55,7 +55,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
 
         List<Subject> subjects = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(e -> {
-                List<Attribute> attributes = attributeRepository.findAllBySubjectId(e.getId()).stream()
+                List<Attribute> attributes = attributeRepository.findAllBySubjectIdAndKitVersionId(e.getId(), kitVersionId).stream()
                     .map(AttributeMapper::mapToDomainModel)
                     .toList();
                 return SubjectMapper.mapToDomainModel(e, attributes);})
@@ -69,8 +69,8 @@ public class LoadAssessmentKitFullInfoAdapter implements
         List<Question> questions = questionRepository.findAllByKitVersionId(kitVersionId).stream()
             .map(QuestionMapper::mapToDomainModel)
             .toList();
-        setQuestionImpacts(questions);
-        setQuestionOptions(questions);
+        setQuestionImpacts(questions, kitVersionId);
+        setQuestionOptions(questions, kitVersionId);
 
         List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
@@ -102,17 +102,17 @@ public class LoadAssessmentKitFullInfoAdapter implements
                 .toList()));
     }
 
-    private void setQuestionImpacts(List<Question> questions) {
+    private void setQuestionImpacts(List<Question> questions, long kitVersionId) {
         questions.forEach(question -> question.setImpacts(
-            questionImpactRepository.findAllByQuestionId(question.getId()).stream()
+            questionImpactRepository.findAllByQuestionIdAndKitVersionId(question.getId(), kitVersionId).stream()
                 .map(QuestionImpactMapper::mapToDomainModel)
                 .map(this::setOptionImpacts)
                 .toList()
         ));
     }
 
-    private void setQuestionOptions(List<Question> questions) {
-        questions.forEach(q -> q.setOptions(loadAnswerOptionsByQuestionPort.loadByQuestionId(q.getId())));
+    private void setQuestionOptions(List<Question> questions, long kitVersionId) {
+        questions.forEach(q -> q.setOptions(loadAnswerOptionsByQuestionPort.loadByQuestionId(q.getId(), kitVersionId)));
     }
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact) {

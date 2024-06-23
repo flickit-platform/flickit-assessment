@@ -33,9 +33,13 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                 u.email AS email,
                 u.displayName AS displayName,
                 u.picture AS picturePath,
-                a.roleId AS roleId
+                CASE
+                    WHEN sp.ownerId = u.id THEN :managerRoleId ELSE a.roleId
+                END as roleId
             FROM UserJpaEntity u
             JOIN AssessmentUserRoleJpaEntity a ON u.id = a.userId
+            JOIN AssessmentJpaEntity assessment ON assessment.id = a.assessmentId
+            JOIN SpaceJpaEntity sp ON assessment.spaceId = sp.id
             WHERE a.assessmentId = :assessmentId
             AND EXISTS (
                   SELECT 1 FROM SpaceUserAccessJpaEntity sua
@@ -44,5 +48,14 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                 )
         """)
     Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId,
+                                                 @Param("managerRoleId") int managerRoleId,
                                                  Pageable pageable);
+
+    @Modifying
+    @Query("""
+            DELETE FROM AssessmentUserRoleJpaEntity r
+            WHERE r.userId = :userId AND r.assessmentId IN
+                (SELECT a.id FROM AssessmentJpaEntity a WHERE a.spaceId = :spaceId)
+        """)
+    void deleteByUserIdAndSpaceId(@Param("userId") UUID userId, @Param("spaceId") Long spaceId);
 }
