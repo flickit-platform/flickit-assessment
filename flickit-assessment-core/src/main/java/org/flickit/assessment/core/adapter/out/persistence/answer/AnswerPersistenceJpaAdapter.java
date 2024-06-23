@@ -37,7 +37,7 @@ public class AnswerPersistenceJpaAdapter implements
     public UUID persist(CreateAnswerPort.Param param) {
         var assessmentResult = assessmentResultRepo.findById(param.assessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
-        var question = questionRepository.findById(param.questionId())
+        var question = questionRepository.findByIdAndKitVersionId(param.questionId(), assessmentResult.getKitVersionId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND));
         AnswerOptionJpaEntity answerOption = null;
         if (param.answerOptionId() != null)

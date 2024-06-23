@@ -7,11 +7,17 @@ import org.flickit.assessment.common.application.port.out.ValidateAssessmentResu
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+import java.util.UUID;
+
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 
 @Slf4j
 @Service
@@ -22,6 +28,8 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentReportInfoPort loadReportInfoPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
+    private final LoadSpaceOwnerPort loadSpaceOwnerPort;
+    private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
 
     @Override
     public Result reportAssessment(Param param) {
@@ -30,10 +38,23 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var assessmentReport = loadReportInfoPort.load(param.getAssessmentId());
+        var assessmentReport = loadReportInfoPort.load(param.getAssessmentId(), param.getCurrentUserId());
 
         log.debug("AssessmentReport returned for assessmentId=[{}].", param.getAssessmentId());
 
-        return new Result(assessmentReport.assessment(), assessmentReport.subjects());
+        var spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(assessmentReport.assessment().space().id());
+
+        boolean manageable = isManageable(param.getAssessmentId(), param.getCurrentUserId(), spaceOwnerId);
+        var permissions = new Permissions(manageable);
+
+        return new Result(assessmentReport.assessment(), assessmentReport.subjects(), permissions);
+    }
+
+    private boolean isManageable(UUID assessmentId, UUID currentUserId, UUID spaceOwnerId) {
+        if (Objects.equals(currentUserId, spaceOwnerId))
+            return true;
+
+        var userRole = loadUserRoleForAssessmentPort.load(assessmentId, currentUserId);
+        return Objects.equals(userRole, MANAGER);
     }
 }

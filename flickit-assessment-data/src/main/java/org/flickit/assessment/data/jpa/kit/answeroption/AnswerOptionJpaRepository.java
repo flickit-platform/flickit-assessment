@@ -12,6 +12,12 @@ import java.util.UUID;
 
 public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpaEntity, AnswerOptionJpaEntity.EntityId> {
 
+    List<AnswerOptionJpaEntity> findByQuestionIdAndKitVersionId(Long questionId, Long kitVersionId);
+
+    Optional<AnswerOptionJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
+
+    List<AnswerOptionJpaEntity> findAllByIdInAndKitVersionId(List<Long> allAnswerOptionIds, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE AnswerOptionJpaEntity a
@@ -26,17 +32,13 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
-    List<AnswerOptionJpaEntity> findByQuestionId(Long questionId);
-
     @Query("""
-            SELECT a FROM AnswerOptionJpaEntity a
-            JOIN QuestionJpaEntity q ON a.questionId = q.id
-            WHERE a.questionId IN :questionIds
+            SELECT a
+            FROM AnswerOptionJpaEntity a
+            JOIN QuestionJpaEntity q ON a.questionId = q.id AND a.kitVersionId = q.kitVersionId
+            WHERE a.questionId IN :questionIds AND a.kitVersionId = :kitVersionId
             ORDER BY q.index, a.index
         """)
-    List<AnswerOptionJpaEntity> findAllByQuestionIdInOrderByQuestionIdIndex(List<Long> questionIds);
-
-    Optional<AnswerOptionJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
-
-    List<AnswerOptionJpaEntity> findAllByIdInAndKitVersionId(List<Long> allAnswerOptionIds, long kitVersionId);
+    List<AnswerOptionJpaEntity> findAllByQuestionIdInAndKitVersionIdOrderByQuestionIdIndex(@Param("questionIds") List<Long> questionIds,
+                                                                                           @Param("kitVersionId") Long kitVersionId);
 }

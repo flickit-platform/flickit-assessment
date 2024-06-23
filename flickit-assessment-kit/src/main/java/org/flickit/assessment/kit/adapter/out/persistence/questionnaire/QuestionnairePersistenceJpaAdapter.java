@@ -69,7 +69,8 @@ public class QuestionnairePersistenceJpaAdapter implements
         QuestionnaireJpaEntity questionnaireEntity = repository.findByIdAndKitVersionId(questionnaireId, kitVersionId)
             .orElseThrow(() ->  new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
 
-        List<QuestionJpaEntity> questionEntities = questionRepository.findAllByQuestionnaireIdOrderByIndexAsc(questionnaireId);
+        List<QuestionJpaEntity> questionEntities = questionRepository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(questionnaireId, kitVersionId, null)
+            .getContent();
         List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByQuestionnaireIdAndKitVersionId(questionnaireId, kitVersionId);
 
         List<String> relatedSubjects = subjectEntities.stream()
