@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.service.expertgroup;
 
+import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
@@ -14,9 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.unit.DataSize;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,6 +32,9 @@ class UpdateExpertGroupPictureServiceTest {
 
     @InjectMocks
     UpdateExpertGroupPictureService service;
+
+    @Mock
+    FileProperties fileProperties;
 
     @Mock
     LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
@@ -109,6 +115,8 @@ class UpdateExpertGroupPictureServiceTest {
         when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
         doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
 
         assertDoesNotThrow(() -> service.update(param));
 
@@ -137,6 +145,8 @@ class UpdateExpertGroupPictureServiceTest {
         when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
         doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
 
         assertDoesNotThrow(() -> service.update(param));
 
@@ -166,6 +176,8 @@ class UpdateExpertGroupPictureServiceTest {
         when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
         doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
 
         assertDoesNotThrow(() -> service.update(param));
 
