@@ -16,7 +16,9 @@ public record AssessmentReportItem(UUID id,
                                    boolean isConfidenceValid,
                                    AssessmentColor color,
                                    LocalDateTime creationTime,
-                                   LocalDateTime lastModificationTime) {
+                                   LocalDateTime lastModificationTime,
+                                   Space space) {
+
     public record AssessmentKitItem(
         Long id,
         String title,
@@ -24,7 +26,13 @@ public record AssessmentReportItem(UUID id,
         Integer maturityLevelCount,
         List<MaturityLevel> maturityLevels,
         ExpertGroup expertGroup) {
+
         public record ExpertGroup(Long id, String title, String picture) {
         }
+    }
+
+    public record Space(
+        Long id,
+        String title) {
     }
 }

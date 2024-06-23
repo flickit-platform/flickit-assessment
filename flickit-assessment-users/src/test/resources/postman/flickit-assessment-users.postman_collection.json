@@ -662,6 +662,30 @@
 			"response": []
 		},
 		{
+			"name": "Delete Space Invitation",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/space-invitations/{{inviteId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"space-invitations",
+						"{{inviteId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Space Invitees",
 			"request": {
 				"method": "GET",
@@ -859,6 +883,10 @@
 			"key": "authorization_header",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "inviteId",
+			"value": "428f8bc2-f47f-4190-b620-3dad8bd8a20b"
 		}
 	]
 }
