@@ -160,4 +160,5 @@ public class ErrorMessageKey {
 
     public static final String CREATE_EVIDENCE_ATTACHMENT_EVIDENCE_ID_NOT_NULL = "create-assessment-attachment-evidence.evidenceId.notNull";
     public static final String CREATE_EVIDENCE_ATTACHMENT_ATTACHMENT_NOT_NULL = "create-assessment-attachment-evidence.attachment.notNull";
+    public static final String CREATE_EVIDENCE_ATTACHMENT_CURRENT_USER_NOT_ALLOWED = "create-assessment-attachment-evidence.currentUser.notAllowed";
 }

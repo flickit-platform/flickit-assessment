@@ -14,7 +14,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_EVIDENCE
 
 public interface CreateEvidenceAttachmentUseCase {
 
-    String createAttachment(Param param);
+    Result createAttachment(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -36,4 +36,6 @@ public interface CreateEvidenceAttachmentUseCase {
             this.validateSelf();
         }
     }
+
+    record Result(UUID attachmentId, String link) {}
 }

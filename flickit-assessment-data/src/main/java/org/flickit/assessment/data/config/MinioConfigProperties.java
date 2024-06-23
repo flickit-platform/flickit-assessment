@@ -23,6 +23,7 @@ public class MinioConfigProperties {
 
         private String dsl;
         private String avatar;
+        private String attachment;
     }
 }
 

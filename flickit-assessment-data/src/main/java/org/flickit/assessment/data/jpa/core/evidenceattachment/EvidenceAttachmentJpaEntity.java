@@ -30,7 +30,7 @@ public class EvidenceAttachmentJpaEntity {
     private String file;
 
     @Column(name = "created_by", nullable = false)
-    private String createdBy;
+    private UUID createdBy;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

@@ -3,7 +3,7 @@ package org.flickit.assessment.core.adapter.in.rest.evidenceattachment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.evidenceattachment.CreateEvidenceAttachmentUseCase;
-import org.flickit.assessment.core.application.port.in.evidenceattachment.CreateEvidenceAttachmentUseCase.Param;
+import org.flickit.assessment.core.application.port.in.evidenceattachment.CreateEvidenceAttachmentUseCase.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +34,7 @@ public class CreateEvidenceAttachmentRestController {
         return new Param(evidenceId, attachment, currentUserId);
     }
 
-    private CreateEvidenceAttachmentResponseDto toResponseDto(String link) {
-        return new CreateEvidenceAttachmentResponseDto(link);
+    private CreateEvidenceAttachmentResponseDto toResponseDto(Result result) {
+        return new CreateEvidenceAttachmentResponseDto(result.attachmentId(), result.link());
     }
 }
