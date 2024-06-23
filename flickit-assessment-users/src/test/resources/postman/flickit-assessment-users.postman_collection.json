@@ -865,6 +865,25 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Tenant Logo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/tenant/logo",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"tenant",
+						"logo"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
