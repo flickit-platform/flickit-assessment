@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.application.service.evidenceattachment;
 
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.port.in.evidenceattachment.CreateEvidenceAttachmentUseCase.Param;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
@@ -74,7 +74,7 @@ class CreateEvidenceAttachmentServiceTest {
 
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
 
-        var throwable = assertThrows(ValidationException.class, () -> service.createAttachment(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.createAttachment(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage(), "Should return ValidationException error");
 
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);

@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.application.service.evidenceattachment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.evidenceattachment.CreateEvidenceAttachmentUseCase;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
@@ -31,7 +31,7 @@ public class CreateEvidenceAttachmentService implements CreateEvidenceAttachment
     public Result createAttachment(Param param) {
         var evidence = loadEvidencePort.loadNotDeletedEvidence(param.getEvidenceId());
         if (!evidence.getCreatedById().equals(param.getCurrentUserId()))
-            throw new ValidationException(COMMON_CURRENT_USER_NOT_ALLOWED);
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         String path = uploadEvidenceAttachmentPort.uploadAttachment(param.getAttachment());
 
