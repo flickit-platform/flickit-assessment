@@ -91,7 +91,7 @@ public enum AssessmentUserRole {
             UPDATE_USER_ASSESSMENT_ROLE,
             DELETE_USER_ASSESSMENT_ROLE,
             GET_ASSESSMENT_USERS)),
-        ASSESSOR_ASSISTANT_PERMISSIONS(Set.of(
+        ASSOCIATE_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,
             VIEW_ASSESSMENT,
