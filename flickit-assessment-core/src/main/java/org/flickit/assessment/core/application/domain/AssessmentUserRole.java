@@ -18,16 +18,18 @@ import static org.flickit.assessment.core.application.domain.AssessmentUserRole.
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AssessmentUserRole {
 
-    VIEWER("Viewer", VIEWER_PERMISSIONS),
-    COMMENTER("Commenter", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS),
-    ASSESSOR("Assessor", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS),
-    MANAGER("Manager", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS, MANAGER_PERMISSIONS),
-    ASSESSOR_ASSISTANT("Assessor Assistant", ASSESSOR_ASSISTANT_PERMISSIONS);
+    VIEWER(1, "Viewer", VIEWER_PERMISSIONS),
+    COMMENTER(2, "Commenter", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS),
+    ASSESSOR(4, "Assessor", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS),
+    MANAGER(5, "Manager", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS, MANAGER_PERMISSIONS),
+    ASSOCIATE(3, "Associate", ASSOCIATE_PERMISSIONS);
 
+    private final int index;
     private final String title;
     private final Set<AssessmentPermission> permissions;
 
-    AssessmentUserRole(String title, PermissionGroup... permissionsGroups) {
+    AssessmentUserRole(int index, String title, PermissionGroup... permissionsGroups) {
+        this.index = index;
         this.title = title;
         this.permissions = Arrays.stream(permissionsGroups)
             .flatMap(x -> x.getPermissions().stream())

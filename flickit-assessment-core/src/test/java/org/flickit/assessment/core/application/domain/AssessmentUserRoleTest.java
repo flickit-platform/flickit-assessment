@@ -19,7 +19,7 @@ class AssessmentUserRoleTest {
         assertEquals(1, COMMENTER.getId());
         assertEquals(2, ASSESSOR.getId());
         assertEquals(3, MANAGER.getId());
-        assertEquals(4, ASSESSOR_ASSISTANT.getId());
+        assertEquals(4, ASSOCIATE.getId());
 
         assertEquals(5, AssessmentUserRole.values().length);
     }
@@ -30,7 +30,7 @@ class AssessmentUserRoleTest {
         assertEquals("Commenter", COMMENTER.getTitle());
         assertEquals("Assessor", ASSESSOR.getTitle());
         assertEquals("Manager", MANAGER.getTitle());
-        assertEquals("Assessor Assistant", ASSESSOR_ASSISTANT.getTitle());
+        assertEquals("Associate", ASSOCIATE.getTitle());
     }
 
     @Test
@@ -57,19 +57,19 @@ class AssessmentUserRoleTest {
     }
 
     @Test
-    void testAssessmentUserRole_AssessorAssistantShouldNotHaveViewerAllPermissions() {
-        assertFalse(ASSESSOR_ASSISTANT.getPermissions().containsAll(VIEWER.getPermissions()));
+    void testAssessmentUserRole_AssociateShouldNotHaveViewerAllPermissions() {
+        assertFalse(ASSOCIATE.getPermissions().containsAll(VIEWER.getPermissions()));
     }
 
     @Test
-    void testAssessmentUserRole_AssessorAssistantShouldNotHaveAssessorAllPermissions() {
-        assertTrue(ASSESSOR.getPermissions().containsAll(ASSESSOR_ASSISTANT.getPermissions()));
-        assertFalse(ASSESSOR_ASSISTANT.getPermissions().containsAll(ASSESSOR.getPermissions()));
+    void testAssessmentUserRole_AssociateShouldNotHaveAssessorAllPermissions() {
+        assertTrue(ASSESSOR.getPermissions().containsAll(ASSOCIATE.getPermissions()));
+        assertFalse(ASSOCIATE.getPermissions().containsAll(ASSESSOR.getPermissions()));
     }
 
     @Test
-    void testAssessmentUserRole_AssessorAssistantShouldHaveAnswerQuestionPermission() {
-        assertTrue(ASSESSOR_ASSISTANT.hasAccess(ANSWER_QUESTION));
+    void testAssessmentUserRole_AssociateShouldHaveAnswerQuestionPermission() {
+        assertTrue(ASSOCIATE.hasAccess(ANSWER_QUESTION));
     }
 
     @Test
