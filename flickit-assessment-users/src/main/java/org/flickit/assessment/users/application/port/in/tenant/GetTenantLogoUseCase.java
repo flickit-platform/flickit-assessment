@@ -4,6 +4,6 @@ public interface GetTenantLogoUseCase {
 
     Result getTenantLogo();
 
-    record Result(String logoLink){
+    record Result(String logoLink, String favLink){
     }
 }
