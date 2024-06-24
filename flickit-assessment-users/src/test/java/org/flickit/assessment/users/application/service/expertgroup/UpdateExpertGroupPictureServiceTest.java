@@ -192,7 +192,7 @@ class UpdateExpertGroupPictureServiceTest {
     }
 
     @Test
-    @DisplayName("The file content should be based the predefined circumstance")
+    @DisplayName("The file content should be based on the predefined circumstance")
     void testUpdateExpertGroupPicture_invalidPictureFileContent_throwException() {
         var expertGroupId = 0L;
         var currentUserId = UUID.randomUUID();

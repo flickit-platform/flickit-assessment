@@ -93,7 +93,7 @@ class CreateExpertGroupServiceTest {
     }
 
     @Test
-    @DisplayName("If persisting faced a problem, creating expert group should case an error")
+    @DisplayName("If persisting an expert group faces a problem, creating the expert group should cause an error")
     void testCreateExpertGroup_expertGroupPersistProblem_error() throws IOException {
         UUID currentUserId = UUID.randomUUID();
         String link = "https://link/to/uploaded/file";
@@ -139,7 +139,7 @@ class CreateExpertGroupServiceTest {
     }
 
     @Test
-    @DisplayName("The file size should be under the predefined circumstance")
+    @DisplayName("The file content should be under the predefined circumstance")
     void testCreateExpertGroup_invalidPictureFileContent_throwException() {
         MockMultipartFile picture = new MockMultipartFile("pic", "pic.png", "application/zip", "some file".getBytes());
         Param param = new Param("Expert Group Name",
