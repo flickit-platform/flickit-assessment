@@ -7,10 +7,6 @@ import org.flickit.assessment.core.application.port.in.evidenceattachment.Create
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.SaveEvidenceAttachmentPort;
-
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_EVIDENCE_ATTACHMENT_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,15 +15,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.junit.jupiter.api.DisplayName;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ID_NOT_FOUND;
 import static org.mockito.Mockito.*;
-
-import org.junit.jupiter.api.DisplayName;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ID_NOT_FOUND;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @ExtendWith(MockitoExtension.class)
 class CreateEvidenceAttachmentServiceTest {
@@ -65,7 +62,7 @@ class CreateEvidenceAttachmentServiceTest {
 
     @Test
     @DisplayName("Creating an attachment for an evidence should be done by the creator of the evidence.")
-    void createEvidenceAttachment_UerIsNotOwnerEvidence_ValidationException() {
+    void createEvidenceAttachment_CurrentUserIsNotEvidenceCreator_ValidationException() {
         var evidenceId = UUID.randomUUID();
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
         var currentUserId = UUID.randomUUID();
@@ -78,7 +75,7 @@ class CreateEvidenceAttachmentServiceTest {
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAttachment(param));
-        assertEquals(CREATE_EVIDENCE_ATTACHMENT_CURRENT_USER_NOT_ALLOWED, throwable.getMessage(), "Should return ValidationException error");
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage(), "Should return ValidationException error");
 
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
         verifyNoInteractions(uploadEvidenceAttachmentPort, saveEvidenceAttachmentPort, createFileDownloadLinkPort);
