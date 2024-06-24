@@ -328,5 +328,4 @@
             <column name="attribute_id" valueComputed="fak_attribute.id FROM fak_attribute WHERE fak_attribute.ref_num = attribute_ref_num"/>
         </update>
     </changeSet>
-
 </databaseChangeLog>
