@@ -13,6 +13,6 @@ public class GetTenantLogoService implements GetTenantLogoUseCase {
 
     @Override
     public Result getTenantLogo() {
-        return new Result(appSpecProperties.getLogo());
+        return new Result(appSpecProperties.getLogo(), appSpecProperties.getFavIcon());
     }
 }
