@@ -91,7 +91,6 @@ class CreateEvidenceAttachmentServiceTest {
         var attachmentId = UUID.randomUUID();
         var filePath = "path/to/attachment.txt";
         var link = "http://link/to/attachment.txt/whith/expiray/date";
-        var now = LocalDateTime.now();
         var uniqueFileNme = UUID.randomUUID();
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
         var currentUserId = UUID.randomUUID();
@@ -100,11 +99,10 @@ class CreateEvidenceAttachmentServiceTest {
         var evidence = new Evidence(evidenceId, "des", currentUserId, currentUserId, uniqueFileNme,
             0L, 1, time, time, false);
 
-        ArgumentCaptor<UUID> uuidArgumentCaptor = ArgumentCaptor.forClass(UUID.class);
         ArgumentCaptor<LocalDateTime> timeArgumentCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
 
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
-        when(uploadEvidenceAttachmentPort.uploadAttachment(eq(attachment), uuidArgumentCaptor.capture())).thenReturn(filePath);
+        when(uploadEvidenceAttachmentPort.uploadAttachment(attachment)).thenReturn(filePath);
         when(saveEvidenceAttachmentPort.saveAttachment(eq(evidenceId), eq(filePath), eq(currentUserId), timeArgumentCaptor.capture())).thenReturn(attachmentId);
         when(createFileDownloadLinkPort.createDownloadLink(filePath, Duration.ofDays(1))).thenReturn(link);
 
@@ -113,7 +111,7 @@ class CreateEvidenceAttachmentServiceTest {
         assertEquals(link, result.link(), "Link should match");
 
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
-        verify(uploadEvidenceAttachmentPort).uploadAttachment(eq(attachment), uuidArgumentCaptor.capture());
+        verify(uploadEvidenceAttachmentPort).uploadAttachment(attachment);
         verify(createFileDownloadLinkPort).createDownloadLink(filePath, Duration.ofDays(1));
         verify(saveEvidenceAttachmentPort).saveAttachment(eq(evidenceId), eq(filePath), eq(currentUserId), timeArgumentCaptor.capture());
     }

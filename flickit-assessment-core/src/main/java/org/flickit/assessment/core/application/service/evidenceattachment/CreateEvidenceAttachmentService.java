@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_EVIDENCE_ATTACHMENT_CURRENT_USER_NOT_ALLOWED;
 
@@ -34,8 +33,7 @@ public class CreateEvidenceAttachmentService implements CreateEvidenceAttachment
         if (!evidence.getCreatedById().equals(param.getCurrentUserId()))
             throw new ValidationException(CREATE_EVIDENCE_ATTACHMENT_CURRENT_USER_NOT_ALLOWED);
 
-        var uniqueFileName = UUID.randomUUID();
-        String path = uploadEvidenceAttachmentPort.uploadAttachment(param.getAttachment(), uniqueFileName);
+        String path = uploadEvidenceAttachmentPort.uploadAttachment(param.getAttachment());
 
         var attachmentId = saveEvidenceAttachmentPort.saveAttachment(param.getEvidenceId(), path, param.getCurrentUserId(), LocalDateTime.now());
         var link = createFileDownloadLinkPort.createDownloadLink(path, EXPIRY_DURATION);
