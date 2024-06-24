@@ -48,7 +48,8 @@ class DeleteExpertGroupPictureServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId))
             .thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.delete(param), EXPERT_GROUP_ID_NOT_FOUND);
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.delete(param), EXPERT_GROUP_ID_NOT_FOUND);
+        assertEquals(EXPERT_GROUP_ID_NOT_FOUND, throwable.getMessage());
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(loadExpertGroupPort,
             updateExpertGroupPicturePort,
@@ -65,7 +66,8 @@ class DeleteExpertGroupPictureServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId))
             .thenReturn(UUID.randomUUID());
 
-        assertThrows(AccessDeniedException.class, () -> service.delete(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.delete(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verifyNoInteractions(deleteFilePort);
         verifyNoInteractions(loadExpertGroupPort,
@@ -74,7 +76,7 @@ class DeleteExpertGroupPictureServiceTest {
     }
 
     @Test
-    @DisplayName("Deleting an expert group picture should be done on an expert group which has already picture.")
+    @DisplayName("Deleting an expert group picture should be done on an expert group already has a picture")
     void testDeleteExpertGroupPicture_alreadyHasPicture_fileDelete() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -95,7 +97,7 @@ class DeleteExpertGroupPictureServiceTest {
     }
 
     @Test
-    @DisplayName("Deleting an expert group picture won't take any action if there is no picture (null).")
+    @DisplayName("Deleting an expert group picture won't take action if no picture (null).")
     void testRemoveExpertGroupPicture_doesNotHavePicture_doNothing() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -114,7 +116,7 @@ class DeleteExpertGroupPictureServiceTest {
     }
 
     @Test
-    @DisplayName("Deleting an expert group picture won't take any action if there is no picture (blank).")
+    @DisplayName("Deleting an expert group picture won't take action if there is no picture (blank).")
     void testRemoveExpertGroupPicture_pictureIsBlank_doNothing() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
