@@ -1,10 +1,8 @@
 package org.flickit.assessment.data.jpa.core.evidenceattachment;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,6 +18,9 @@ import java.util.UUID;
 public class EvidenceAttachmentJpaEntity {
 
     @Id
+    @EqualsAndHashCode.Include
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", nullable = false, updatable = false, columnDefinition = "uuid")
     private UUID id;
 

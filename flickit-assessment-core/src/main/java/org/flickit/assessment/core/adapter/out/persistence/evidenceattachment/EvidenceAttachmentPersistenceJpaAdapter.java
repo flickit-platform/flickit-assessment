@@ -13,7 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EvidenceAttachmentPersistenceJpaAdapter implements SaveEvidenceAttachmentPort {
 
-    EvidenceAttachmentJpaRepository repository;
+    private final EvidenceAttachmentJpaRepository repository;
 
     @Override
     public UUID saveAttachment(UUID evidenceId, String filePath, UUID currentUserId, LocalDateTime now) {
