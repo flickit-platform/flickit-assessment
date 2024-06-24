@@ -27,7 +27,7 @@ class CreateEvidenceAttachmentUseCaseParamTest {
     }
 
     @Test
-    void testCreateEvidenceAttachmentParam_attachmentIsNull_ErrorMessage() throws IOException {
+    void testCreateEvidenceAttachmentParam_attachmentIsNull_ErrorMessage() {
         UUID evidenceId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -44,6 +44,4 @@ class CreateEvidenceAttachmentUseCaseParamTest {
             () -> new CreateEvidenceAttachmentUseCase.Param(evidenceId, attachment, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
-
-
 }

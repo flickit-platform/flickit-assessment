@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_EVIDENCE_ATTACHMENT_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
 @Transactional
@@ -31,7 +31,7 @@ public class CreateEvidenceAttachmentService implements CreateEvidenceAttachment
     public Result createAttachment(Param param) {
         var evidence = loadEvidencePort.loadNotDeletedEvidence(param.getEvidenceId());
         if (!evidence.getCreatedById().equals(param.getCurrentUserId()))
-            throw new ValidationException(CREATE_EVIDENCE_ATTACHMENT_CURRENT_USER_NOT_ALLOWED);
+            throw new ValidationException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         String path = uploadEvidenceAttachmentPort.uploadAttachment(param.getAttachment());
 

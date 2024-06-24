@@ -48,7 +48,7 @@ class CreateEvidenceAttachmentServiceTest {
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
-    @DisplayName("Creating an attachment for a non-exist evidence should return NotFoundException error.")
+    @DisplayName("Creating an attachment for non-existent evidence should return NotFoundException error.")
     void createEvidenceAttachment_NonExistEvidence_notFoundException() {
         var evidenceId = UUID.randomUUID();
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
@@ -115,5 +115,4 @@ class CreateEvidenceAttachmentServiceTest {
         verify(createFileDownloadLinkPort).createDownloadLink(filePath, Duration.ofDays(1));
         verify(saveEvidenceAttachmentPort).saveAttachment(eq(evidenceId), eq(filePath), eq(currentUserId), timeArgumentCaptor.capture());
     }
-
 }
