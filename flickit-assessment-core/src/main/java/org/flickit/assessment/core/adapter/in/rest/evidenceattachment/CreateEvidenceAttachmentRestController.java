@@ -21,7 +21,7 @@ public class CreateEvidenceAttachmentRestController {
     private final CreateEvidenceAttachmentUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("evidences/{id}/attachment")
+    @PostMapping("evidences/{id}/attachments")
     public ResponseEntity<CreateEvidenceAttachmentResponseDto> createEvidenceAttachment(@PathVariable("id") UUID id,
                                                                                         @RequestParam("attachment") MultipartFile attachment) {
         UUID currentUserId = userContext.getUser().id();
