@@ -25,10 +25,27 @@ public class FileProperties {
     DataSize dslMaxSize = DataSize.ofMegabytes(5);
 
     @NotNull
+    DataSize attachmentMaxSize = DataSize.ofMegabytes(5);
+
+    @NotNull
+    int attachmentMaxCount = 5;
+
+    @NotNull
     private List<String> pictureContentTypes = Arrays.asList(
         "image/jpeg",
         "image/png",
         "image/gif",
         "image/bmp"
+    );
+
+    @NotNull
+    private List<String> attachmentContentTypes = Arrays.asList(
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/bmp",
+        "text/plain",
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     );
 }
