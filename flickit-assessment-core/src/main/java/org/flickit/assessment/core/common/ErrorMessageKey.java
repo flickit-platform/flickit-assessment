@@ -160,4 +160,6 @@ public class ErrorMessageKey {
 
     public static final String CREATE_EVIDENCE_ATTACHMENT_EVIDENCE_ID_NOT_NULL = "create-evidence-attachment.evidenceId.notNull";
     public static final String CREATE_EVIDENCE_ATTACHMENT_ATTACHMENT_NOT_NULL = "create-evidence-attachment.attachment.notNull";
+    public static final String CREATE_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX = "create-evidence-attachment.attachmentsCount.max";
+    public static final String CREATE_EVIDENCE_ATTACHMENT_ATTACHMENT_SIZE_MAX = "create-evidence-attachment.attachmentSize.max";
 }

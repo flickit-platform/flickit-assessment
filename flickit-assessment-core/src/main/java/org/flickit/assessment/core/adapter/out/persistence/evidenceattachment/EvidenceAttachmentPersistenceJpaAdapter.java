@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.adapter.out.persistence.evidenceattachment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.core.application.port.out.evidenceattachment.CountEvidenceAttachmentsPort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.SaveEvidenceAttachmentPort;
 import org.flickit.assessment.data.jpa.core.evidenceattachment.EvidenceAttachmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidenceattachment.EvidenceAttachmentJpaRepository;
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class EvidenceAttachmentPersistenceJpaAdapter implements SaveEvidenceAttachmentPort {
+public class EvidenceAttachmentPersistenceJpaAdapter implements SaveEvidenceAttachmentPort, CountEvidenceAttachmentsPort {
 
     private final EvidenceAttachmentJpaRepository repository;
 
@@ -20,5 +21,10 @@ public class EvidenceAttachmentPersistenceJpaAdapter implements SaveEvidenceAtta
         var unsavedEntity = new EvidenceAttachmentJpaEntity(null, evidenceId, filePath, currentUserId, now);
         var savedEntity = repository.save(unsavedEntity);
         return savedEntity.getId();
+    }
+
+    @Override
+    public int countAttachments(UUID evidenceId) {
+        return repository.countByEvidenceId(evidenceId);
     }
 }
