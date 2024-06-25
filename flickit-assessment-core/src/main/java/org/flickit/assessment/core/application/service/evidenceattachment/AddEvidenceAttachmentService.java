@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.port.in.evidenceattachment.CreateEvidenceAttachmentUseCase;
+import org.flickit.assessment.core.application.port.in.evidenceattachment.AddEvidenceAttachmentUseCase;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.CountEvidenceAttachmentsPort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
@@ -19,12 +19,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateEvidenceAttachmentService implements CreateEvidenceAttachmentUseCase {
+public class AddEvidenceAttachmentService implements AddEvidenceAttachmentUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
@@ -36,7 +36,7 @@ public class CreateEvidenceAttachmentService implements CreateEvidenceAttachment
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
-    public Result createAttachment(Param param) {
+    public Result addAttachment(Param param) {
         var evidence = loadEvidencePort.loadNotDeletedEvidence(param.getEvidenceId());
         if (!evidence.getCreatedById().equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -53,7 +53,7 @@ public class CreateEvidenceAttachmentService implements CreateEvidenceAttachment
 
     private void validateAttachment(MultipartFile attachment, UUID evidenceId) {
         if (countEvidenceAttachmentsPort.countAttachments(evidenceId) >= fileProperties.getAttachmentMaxCount())
-            throw new ValidationException(CREATE_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX);
+            throw new ValidationException(ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX);
 
         if (attachment.getSize() > fileProperties.getAttachmentMaxSize().toBytes())
             throw new ValidationException(UPLOAD_FILE_SIZE_MAX);

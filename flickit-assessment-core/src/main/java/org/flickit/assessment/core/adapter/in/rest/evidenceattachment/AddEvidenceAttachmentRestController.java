@@ -2,8 +2,8 @@ package org.flickit.assessment.core.adapter.in.rest.evidenceattachment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.port.in.evidenceattachment.CreateEvidenceAttachmentUseCase;
-import org.flickit.assessment.core.application.port.in.evidenceattachment.CreateEvidenceAttachmentUseCase.*;
+import org.flickit.assessment.core.application.port.in.evidenceattachment.AddEvidenceAttachmentUseCase;
+import org.flickit.assessment.core.application.port.in.evidenceattachment.AddEvidenceAttachmentUseCase.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,16 +16,16 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class CreateEvidenceAttachmentRestController {
+public class AddEvidenceAttachmentRestController {
 
-    private final CreateEvidenceAttachmentUseCase useCase;
+    private final AddEvidenceAttachmentUseCase useCase;
     private final UserContext userContext;
 
     @PostMapping("evidences/{id}/attachments")
-    public ResponseEntity<CreateEvidenceAttachmentResponseDto> createEvidenceAttachment(@PathVariable("id") UUID id,
-                                                                                        @RequestParam("attachment") MultipartFile attachment) {
+    public ResponseEntity<AddEvidenceAttachmentResponseDto> addEvidenceAttachment(@PathVariable("id") UUID id,
+                                                                                  @RequestParam("attachment") MultipartFile attachment) {
         UUID currentUserId = userContext.getUser().id();
-        var response = toResponseDto(useCase.createAttachment(toParam(id, attachment, currentUserId)));
+        var response = toResponseDto(useCase.addAttachment(toParam(id, attachment, currentUserId)));
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -34,7 +34,7 @@ public class CreateEvidenceAttachmentRestController {
         return new Param(evidenceId, attachment, currentUserId);
     }
 
-    private CreateEvidenceAttachmentResponseDto toResponseDto(Result result) {
-        return new CreateEvidenceAttachmentResponseDto(result.attachmentId(), result.link());
+    private AddEvidenceAttachmentResponseDto toResponseDto(Result result) {
+        return new AddEvidenceAttachmentResponseDto(result.attachmentId(), result.link());
     }
 }
