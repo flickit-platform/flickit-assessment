@@ -60,9 +60,10 @@ class AddEvidenceAttachmentServiceTest {
     @DisplayName("Adding an attachment to non-existent evidence should return NotFoundException error.")
     void addEvidenceAttachment_NonExistEvidence_notFoundException() {
         var evidenceId = UUID.randomUUID();
+        var description = "Some description";
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
         var currentUserId = UUID.randomUUID();
-        var param = new Param(evidenceId, attachment, currentUserId);
+        var param = new Param(evidenceId, attachment, description, currentUserId);
 
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenThrow(new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.addAttachment(param));
@@ -80,7 +81,7 @@ class AddEvidenceAttachmentServiceTest {
         var currentUserId = UUID.randomUUID();
         var userId = UUID.randomUUID();
         var time = LocalDateTime.now();
-        var param = new Param(evidenceId, attachment, currentUserId);
+        var param = new Param(evidenceId, attachment, null, currentUserId);
         var evidence = new Evidence(evidenceId, "des", userId, userId, UUID.randomUUID(),
             0L, 1, time, time, false);
 
@@ -98,13 +99,14 @@ class AddEvidenceAttachmentServiceTest {
     void addEvidenceAttachment_ValidParameters_savingTheAttachment() {
         var evidenceId = UUID.randomUUID();
         var attachmentId = UUID.randomUUID();
+        var description = "Some description";
         var filePath = "path/to/attachment.txt";
         var link = "http://link/to/attachment.txt/whith/expiray/date";
         var uniqueFileNme = UUID.randomUUID();
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
         var currentUserId = UUID.randomUUID();
         var time = LocalDateTime.now();
-        var param = new Param(evidenceId, attachment, currentUserId);
+        var param = new Param(evidenceId, attachment, description, currentUserId);
         var evidence = new Evidence(evidenceId, "des", currentUserId, currentUserId, uniqueFileNme,
             0L, 1, time, time, false);
 
@@ -116,7 +118,7 @@ class AddEvidenceAttachmentServiceTest {
         when(fileProperties.getAttachmentMaxSize()).thenReturn(DataSize.ofMegabytes(5));
         when(fileProperties.getAttachmentContentTypes()).thenReturn(List.of("text/plain"));
         when(uploadEvidenceAttachmentPort.uploadAttachment(attachment)).thenReturn(filePath);
-        when(saveEvidenceAttachmentPort.saveAttachment(eq(evidenceId), eq(filePath), eq(currentUserId), timeArgumentCaptor.capture())).thenReturn(attachmentId);
+        when(saveEvidenceAttachmentPort.saveAttachment(eq(evidenceId), eq(filePath), eq(description), eq(currentUserId), timeArgumentCaptor.capture())).thenReturn(attachmentId);
         when(createFileDownloadLinkPort.createDownloadLink(filePath, Duration.ofDays(1))).thenReturn(link);
 
         var result = service.addAttachment(param);
@@ -126,17 +128,18 @@ class AddEvidenceAttachmentServiceTest {
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
         verify(uploadEvidenceAttachmentPort).uploadAttachment(attachment);
         verify(createFileDownloadLinkPort).createDownloadLink(filePath, Duration.ofDays(1));
-        verify(saveEvidenceAttachmentPort).saveAttachment(eq(evidenceId), eq(filePath), eq(currentUserId), timeArgumentCaptor.capture());
+        verify(saveEvidenceAttachmentPort).saveAttachment(eq(evidenceId), eq(filePath), eq(description), eq(currentUserId), timeArgumentCaptor.capture());
     }
 
     @Test
     @DisplayName("Adding an attachment for an evidence should be bound to the maximum number of attachments.")
     void addEvidenceAttachment_exceedMaxCountAttachments_ValidationError() {
         var evidenceId = UUID.randomUUID();
+        var description = "Some description";
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
         var currentUserId = UUID.randomUUID();
         var time = LocalDateTime.now();
-        var param = new Param(evidenceId, attachment, currentUserId);
+        var param = new Param(evidenceId, attachment, description, currentUserId);
         var evidence = new Evidence(evidenceId, "des", currentUserId, currentUserId, UUID.randomUUID(),
             0L, 1, time, time, false);
 
@@ -155,10 +158,11 @@ class AddEvidenceAttachmentServiceTest {
     @DisplayName("Adding an attachment for an 'evidence' should be bound to the maximum size of attachments.")
     void addEvidenceAttachment_exceedMaxMaxSize_ValidationError() {
         var evidenceId = UUID.randomUUID();
+        var description = "Some description";
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", new byte[6 * 1024 * 1024]);
         var currentUserId = UUID.randomUUID();
         var time = LocalDateTime.now();
-        var param = new Param(evidenceId, attachment, currentUserId);
+        var param = new Param(evidenceId, attachment, description, currentUserId);
         var evidence = new Evidence(evidenceId, "des", currentUserId, currentUserId, UUID.randomUUID(),
             0L, 1, time, time, false);
 
@@ -178,10 +182,11 @@ class AddEvidenceAttachmentServiceTest {
     @DisplayName("Adding an attachment for an 'evidence' should be bound to predefined content types.")
     void addEvidenceAttachment_InvalidContentType_ValidationError() {
         var evidenceId = UUID.randomUUID();
+        var description = "Some description";
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "video/mp4", "attachment.txt".getBytes());
         var currentUserId = UUID.randomUUID();
         var time = LocalDateTime.now();
-        var param = new Param(evidenceId, attachment, currentUserId);
+        var param = new Param(evidenceId, attachment, description, currentUserId);
         var evidence = new Evidence(evidenceId, "des", currentUserId, currentUserId, UUID.randomUUID(),
             0L, 1, time, time, false);
 

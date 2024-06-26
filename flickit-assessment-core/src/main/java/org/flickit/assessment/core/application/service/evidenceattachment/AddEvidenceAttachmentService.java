@@ -46,7 +46,7 @@ public class AddEvidenceAttachmentService implements AddEvidenceAttachmentUseCas
         String path = uploadEvidenceAttachmentPort.uploadAttachment(param.getAttachment());
 
         var attachmentId = saveEvidenceAttachmentPort.saveAttachment(
-            param.getEvidenceId(), path, param.getCurrentUserId(), LocalDateTime.now());
+            param.getEvidenceId(), path, param.getDescription(), param.getCurrentUserId(), LocalDateTime.now());
         var attachmentLink = createFileDownloadLinkPort.createDownloadLink(path, EXPIRY_DURATION);
 
         return new Result(attachmentId, attachmentLink);

@@ -17,8 +17,8 @@ public class EvidenceAttachmentPersistenceJpaAdapter implements SaveEvidenceAtta
     private final EvidenceAttachmentJpaRepository repository;
 
     @Override
-    public UUID saveAttachment(UUID evidenceId, String filePath, UUID currentUserId, LocalDateTime now) {
-        var unsavedEntity = new EvidenceAttachmentJpaEntity(null, evidenceId, filePath, currentUserId, now);
+    public UUID saveAttachment(UUID evidenceId, String filePath, String description, UUID currentUserId, LocalDateTime now) {
+        var unsavedEntity = new EvidenceAttachmentJpaEntity(null, evidenceId, filePath, description, currentUserId, now);
         var savedEntity = repository.save(unsavedEntity);
         return savedEntity.getId();
     }
