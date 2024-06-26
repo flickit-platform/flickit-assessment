@@ -143,6 +143,7 @@ class GetSpaceAssessmentListServiceTest {
         List<AssessmentListItem> items = assessments.getItems();
         assertEquals(1, items.size());
         assertNull(items.get(0).maturityLevel());
+        assertFalse(items.get(0).viewable());
     }
 
     @Test
