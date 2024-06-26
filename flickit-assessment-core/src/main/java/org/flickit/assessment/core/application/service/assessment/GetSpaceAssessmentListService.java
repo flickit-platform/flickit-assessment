@@ -53,7 +53,8 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
                         null,
                         e.isCalculateValid(),
                         e.isConfidenceValid(),
-                        e.manageable());
+                        e.manageable(),
+                        false);
                 else
                     return e;
             }).toList();
