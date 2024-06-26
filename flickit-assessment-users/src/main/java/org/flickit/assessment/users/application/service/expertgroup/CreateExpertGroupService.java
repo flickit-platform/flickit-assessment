@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.service.expertgroup;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
@@ -20,12 +21,12 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FO
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PICTURE_SIZE_MAX;
 import static org.flickit.assessment.users.application.domain.ExpertGroup.generateSlugCode;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
-    private static final Logger log = LoggerFactory.getLogger(CreateExpertGroupService.class);
     private final FileProperties fileProperties;
     private final CreateExpertGroupPort createExpertGroupPort;
     private final CreateExpertGroupAccessPort createExpertGroupAccessPort;
@@ -33,13 +34,15 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
     @Override
     public Result createExpertGroup(Param param) {
-        validatePicture(param.getPicture());
         String pictureFilePath = null;
         if (param.getPicture() != null) {
             log.warn("MultipartFile: {}", param.getPicture());
             log.warn("Supported Content Types: {}", fileProperties.getPictureContentTypes());
             log.warn("Content Type: {}", param.getPicture().getContentType());
         }
+
+        validatePicture(param.getPicture());
+
 
 
         if (param.getPicture() != null && !param.getPicture().isEmpty())
