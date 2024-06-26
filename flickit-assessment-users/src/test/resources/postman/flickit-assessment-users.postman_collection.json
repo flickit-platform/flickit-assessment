@@ -436,7 +436,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/space/{{id}}/members",
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members",
 					"host": [
 						"{{base_url}}"
 					],
@@ -832,6 +832,32 @@
 						}
 					]
 				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/picture",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"picture"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Expert Group Picture",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/picture",
 					"host": [
