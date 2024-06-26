@@ -9,6 +9,8 @@ import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpert
 import org.flickit.assessment.users.application.port.out.expertgroup.CreateExpertGroupPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +25,7 @@ import static org.flickit.assessment.users.application.domain.ExpertGroup.genera
 @RequiredArgsConstructor
 public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
+    private static final Logger log = LoggerFactory.getLogger(CreateExpertGroupService.class);
     private final FileProperties fileProperties;
     private final CreateExpertGroupPort createExpertGroupPort;
     private final CreateExpertGroupAccessPort createExpertGroupAccessPort;
@@ -32,6 +35,12 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
     public Result createExpertGroup(Param param) {
         validatePicture(param.getPicture());
         String pictureFilePath = null;
+        if (param.getPicture() != null) {
+            log.info("MultipartFile: {}", param.getPicture());
+            log.info("Supported Content Types: {}", fileProperties.getPictureContentTypes());
+            log.info("Content Type: {}", param.getPicture().getContentType());
+        }
+
 
         if (param.getPicture() != null && !param.getPicture().isEmpty())
             pictureFilePath = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
@@ -46,10 +55,10 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
         if (picture == null || picture.isEmpty()) return;
 
         if (picture.getSize() >= fileProperties.getPictureMaxSize().toBytes())
-            throw new ValidationException (UPLOAD_FILE_PICTURE_SIZE_MAX);
+            throw new ValidationException(UPLOAD_FILE_PICTURE_SIZE_MAX);
 
         if (!fileProperties.getPictureContentTypes().contains(picture.getContentType()))
-            throw new ValidationException (UPLOAD_FILE_FORMAT_NOT_VALID);
+            throw new ValidationException(UPLOAD_FILE_FORMAT_NOT_VALID);
     }
 
     private CreateExpertGroupPort.Param toCreateExpertGroupParam(Param param, String pictureFilePath) {
