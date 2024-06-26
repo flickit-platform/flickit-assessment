@@ -28,7 +28,7 @@ public class FileProperties {
     DataSize attachmentMaxSize = DataSize.ofMegabytes(5);
 
     @NotNull
-    int attachmentMaxCount = 5;
+    Integer attachmentMaxCount = 5;
 
     @NotNull
     private List<String> pictureContentTypes = Arrays.asList(
@@ -46,6 +46,9 @@ public class FileProperties {
         "image/bmp",
         "text/plain",
         "application/pdf",
+        "application/x-zip",
+        "application/x-rar-compressed",
+        "application/tar",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     );
 }
