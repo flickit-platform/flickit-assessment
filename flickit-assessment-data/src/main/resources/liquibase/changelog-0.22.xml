@@ -16,6 +16,9 @@
             <column name="file" type="varchar">
                 <constraints nullable="false"/>
             </column>
+            <column name="description" type="varchar(100)">
+                <constraints nullable="true"/>
+            </column>
             <column name="created_by" type="uuid">
                 <constraints nullable="false" foreignKeyName="fk_fac_evidence_attachment_user_createdBy"
                 referencedTableName="account_user" referencedColumnNames="id"/>

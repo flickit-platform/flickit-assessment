@@ -30,6 +30,9 @@ public class EvidenceAttachmentJpaEntity {
     @Column(name = "file", nullable = false)
     private String file;
 
+    @Column(name = "description", length = 100)
+    private String description;
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
