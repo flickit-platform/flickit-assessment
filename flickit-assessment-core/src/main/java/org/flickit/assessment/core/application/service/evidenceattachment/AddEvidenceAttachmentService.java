@@ -28,12 +28,12 @@ public class AddEvidenceAttachmentService implements AddEvidenceAttachmentUseCas
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
-    private final LoadEvidencePort loadEvidencePort;
     private final FileProperties fileProperties;
-    private final CountEvidenceAttachmentsPort countEvidenceAttachmentsPort;
-    private final UploadEvidenceAttachmentPort uploadEvidenceAttachmentPort;
+    private final LoadEvidencePort loadEvidencePort;
     private final SaveEvidenceAttachmentPort saveEvidenceAttachmentPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
+    private final CountEvidenceAttachmentsPort countEvidenceAttachmentsPort;
+    private final UploadEvidenceAttachmentPort uploadEvidenceAttachmentPort;
 
     @Override
     public Result addAttachment(Param param) {
@@ -45,10 +45,11 @@ public class AddEvidenceAttachmentService implements AddEvidenceAttachmentUseCas
 
         String path = uploadEvidenceAttachmentPort.uploadAttachment(param.getAttachment());
 
-        var attachmentId = saveEvidenceAttachmentPort.saveAttachment(param.getEvidenceId(), path, param.getCurrentUserId(), LocalDateTime.now());
-        var link = createFileDownloadLinkPort.createDownloadLink(path, EXPIRY_DURATION);
+        var attachmentId = saveEvidenceAttachmentPort.saveAttachment(
+            param.getEvidenceId(), path, param.getCurrentUserId(), LocalDateTime.now());
+        var attachmentLink = createFileDownloadLinkPort.createDownloadLink(path, EXPIRY_DURATION);
 
-        return new Result(attachmentId, link);
+        return new Result(attachmentId, attachmentLink);
     }
 
     private void validateAttachment(MultipartFile attachment, UUID evidenceId) {
