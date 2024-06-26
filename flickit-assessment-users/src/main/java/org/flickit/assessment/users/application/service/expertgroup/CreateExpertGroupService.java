@@ -36,9 +36,9 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
         validatePicture(param.getPicture());
         String pictureFilePath = null;
         if (param.getPicture() != null) {
-            log.info("MultipartFile: {}", param.getPicture());
-            log.info("Supported Content Types: {}", fileProperties.getPictureContentTypes());
-            log.info("Content Type: {}", param.getPicture().getContentType());
+            log.warn("MultipartFile: {}", param.getPicture());
+            log.warn("Supported Content Types: {}", fileProperties.getPictureContentTypes());
+            log.warn("Content Type: {}", param.getPicture().getContentType());
         }
 
 
