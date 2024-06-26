@@ -73,7 +73,7 @@ class AddEvidenceAttachmentServiceTest {
     }
 
     @Test
-    @DisplayName("Adding an attachment for an evidence should be done by the creator of the evidence.")
+    @DisplayName("Adding an attachment for an 'evidence' should be done by the creator of the evidence.")
     void addEvidenceAttachment_CurrentUserIsNotEvidenceCreator_ValidationException() {
         var evidenceId = UUID.randomUUID();
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
@@ -94,7 +94,7 @@ class AddEvidenceAttachmentServiceTest {
     }
 
     @Test
-    @DisplayName("Adding an attachment for an evidence with valid parameters should cause saving the attachment")
+    @DisplayName("Adding an attachment for an 'evidence' with valid parameters should cause saving the attachment")
     void addEvidenceAttachment_ValidParameters_savingTheAttachment() {
         var evidenceId = UUID.randomUUID();
         var attachmentId = UUID.randomUUID();
@@ -130,7 +130,7 @@ class AddEvidenceAttachmentServiceTest {
     }
 
     @Test
-    @DisplayName("Adding an attachment for an evidence should bound to the maximum number of attachments.")
+    @DisplayName("Adding an attachment for an evidence should be bound to the maximum number of attachments.")
     void addEvidenceAttachment_exceedMaxCountAttachments_ValidationError() {
         var evidenceId = UUID.randomUUID();
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
@@ -145,14 +145,14 @@ class AddEvidenceAttachmentServiceTest {
         when(countEvidenceAttachmentsPort.countAttachments(evidenceId)).thenReturn(5);
 
         var throwable = assertThrows(ValidationException.class, () -> service.addAttachment(param),
-            "When the attachments are more than predefined maximum count, adding attachment should fail with ValidationException");
+            "When the attachments are more than the predefined maximum count, adding an attachment should fail with ValidationException.");
 
         assertEquals(ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX, throwable.getMessage());
         verifyNoInteractions(uploadEvidenceAttachmentPort, saveEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
     @Test
-    @DisplayName("Adding an attachment for an evidence should bound to the maximum size of attachments.")
+    @DisplayName("Adding an attachment for an 'evidence' should be bound to the maximum size of attachments.")
     void addEvidenceAttachment_exceedMaxMaxSize_ValidationError() {
         var evidenceId = UUID.randomUUID();
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", new byte[6 * 1024 * 1024]);
@@ -168,14 +168,14 @@ class AddEvidenceAttachmentServiceTest {
         when(fileProperties.getAttachmentMaxSize()).thenReturn(DataSize.ofMegabytes(5));
 
         var throwable = assertThrows(ValidationException.class, () -> service.addAttachment(param),
-            "When the attachments are more than predefined maximum file size, adding attachment should fail with ValidationException");
+            "When the attachments are more than the predefined maximum file size, adding an attachment should fail with ValidationException");
 
         assertEquals(UPLOAD_FILE_SIZE_MAX, throwable.getMessage());
         verifyNoInteractions(uploadEvidenceAttachmentPort, saveEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
     @Test
-    @DisplayName("Adding an attachment for an evidence should bound to predefined content types.")
+    @DisplayName("Adding an attachment for an 'evidence' should be bound to predefined content types.")
     void addEvidenceAttachment_InvalidContentType_ValidationError() {
         var evidenceId = UUID.randomUUID();
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "video/mp4", "attachment.txt".getBytes());
@@ -192,7 +192,7 @@ class AddEvidenceAttachmentServiceTest {
         when(fileProperties.getAttachmentContentTypes()).thenReturn(List.of("text/plain"));
 
         var throwable = assertThrows(ValidationException.class, () -> service.addAttachment(param),
-            "When an attachment does not have valid content type, adding attachment should fail with ValidationException");
+            "When an attachment does not have a valid content type, adding an attachment should fail with ValidationException.");
 
         assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessage());
         verifyNoInteractions(uploadEvidenceAttachmentPort, saveEvidenceAttachmentPort, createFileDownloadLinkPort);
