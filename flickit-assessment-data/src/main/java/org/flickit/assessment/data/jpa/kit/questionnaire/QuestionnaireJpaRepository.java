@@ -12,27 +12,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, Long> {
+public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, QuestionnaireJpaEntity.EntityId> {
 
     List<QuestionnaireJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
+    Optional<QuestionnaireJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
+
     @Modifying
     @Query("""
-        UPDATE QuestionnaireJpaEntity q
-        SET q.title = :title,
-        q.index = :index,
-        q.description = :description,
-        q.lastModificationTime = :lastModificationTime,
-        q.lastModifiedBy = :lastModifiedBy
-        WHERE q.id = :id
+            UPDATE QuestionnaireJpaEntity q
+            SET q.title = :title,
+                q.index = :index,
+                q.description = :description,
+                q.lastModificationTime = :lastModificationTime,
+                q.lastModifiedBy = :lastModifiedBy
+            WHERE q.id = :id AND q.kitVersionId = :kitVersionId
         """)
-    void update(
-        @Param(value = "id") long id,
-        @Param(value = "title") String title,
-        @Param(value = "index") int index,
-        @Param(value = "description") String description,
-        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
-        @Param(value = "lastModifiedBy") UUID lastModifiedBy
+    void update(@Param(value = "id") long id,
+                @Param(value = "kitVersionId") long kitVersionId,
+                @Param(value = "title") String title,
+                @Param(value = "index") int index,
+                @Param(value = "description") String description,
+                @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
+                @Param(value = "lastModifiedBy") UUID lastModifiedBy
     );
 
     @Query("""
@@ -42,20 +44,11 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
                 q.index as index,
                 COUNT(DISTINCT question.id) as questionCount
             FROM QuestionnaireJpaEntity q
-            JOIN QuestionJpaEntity question
-                ON q.id = question.questionnaireId
+            JOIN QuestionJpaEntity question ON q.id = question.questionnaireId AND q.kitVersionId = question.kitVersionId
             WHERE q.kitVersionId = :kitVersionId
-            GROUP BY q.id
+            GROUP BY q.id, q.kitVersionId, q.index
             ORDER BY q.index
         """)
-    Page<QuestionnaireListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId, Pageable pageable);
-
-    @Query("""
-            SELECT qn
-            FROM AssessmentKitJpaEntity k
-                JOIN KitVersionJpaEntity kv ON k.id = kv.kit.id
-                JOIN QuestionnaireJpaEntity qn ON qn.kitVersionId = kv.id
-            WHERE qn.id = :questionnaireId AND k.id = :kitId
-        """)
-    Optional<QuestionnaireJpaEntity> findQuestionnaireByIdAndKitId(@Param("questionnaireId") Long questionnaireId, @Param("kitId") Long kitId);
+    Page<QuestionnaireListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId,
+                                                                           Pageable pageable);
 }

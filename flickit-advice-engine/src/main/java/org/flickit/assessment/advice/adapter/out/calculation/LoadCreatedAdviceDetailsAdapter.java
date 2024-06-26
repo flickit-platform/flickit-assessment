@@ -28,8 +28,8 @@ public class LoadCreatedAdviceDetailsAdapter implements
     private final QuestionJpaRepository repository;
 
     @Override
-    public List<Result> loadAdviceDetails(List<Long> questionIds) {
-        var questionViews = repository.findAdviceQuestionsDetail(questionIds);
+    public List<Result> loadAdviceDetails(List<Long> questionIds, Long kitVersionId) {
+        var questionViews = repository.findAdviceQuestionsDetail(questionIds, kitVersionId);
 
         return questionViews.stream()
             .collect(groupingBy(QuestionAdviceView::getId))

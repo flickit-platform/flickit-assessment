@@ -4,8 +4,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerOption;
-import org.flickit.assessment.core.application.domain.ConfidenceLevel;
-import org.flickit.assessment.core.application.port.in.answer.GetAnswerListUseCase.AnswerListItem;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 
@@ -30,20 +28,9 @@ public class AnswerMapper {
         );
     }
 
-    public static AnswerListItem mapJpaEntityToAnswerItem(AnswerJpaEntity answer) {
-        ConfidenceLevel confidenceLevel = answer.getConfidenceLevelId() != null ? ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()) : null;
-        return new AnswerListItem(
-            answer.getId(),
-            answer.getQuestionId(),
-            answer.getAnswerOptionId(),
-            confidenceLevel,
-            answer.getIsNotApplicable()
-        );
-    }
-
     public static Answer mapToDomainModel(AnswerJpaEntity answer) {
         var answerOption = answer.getAnswerOptionId() != null ?
-            new AnswerOption(answer.getAnswerOptionId(), answer.getQuestionId(), new ArrayList<>()) : null;
+            new AnswerOption(answer.getAnswerOptionId(), null, null, answer.getQuestionId(), new ArrayList<>()) : null;
         return new Answer(
             answer.getId(),
             answerOption,

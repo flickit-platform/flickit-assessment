@@ -30,6 +30,7 @@ public class AttributePersistenceJpaAdapter implements
     @Override
     public void update(UpdateAttributePort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.title(),
             param.index(),
             param.description(),
@@ -41,25 +42,26 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public Long persist(Attribute attribute, Long subjectId, Long kitVersionId) {
-        SubjectJpaEntity subjectJpaEntity = subjectRepository.getReferenceById(subjectId);
-        return repository.save(mapToJpaEntity(attribute, kitVersionId, subjectJpaEntity)).getId();
+        var entityId = new SubjectJpaEntity.EntityId(subjectId, kitVersionId);
+        SubjectJpaEntity subjectJpaEntity = subjectRepository.getReferenceById(entityId);
+        return repository.save(mapToJpaEntity(attribute, subjectJpaEntity)).getId();
     }
 
     @Override
-    public Attribute load(Long attributeId, Long kitId) {
-        var attribute = repository.findByIdAndKitId(attributeId, kitId)
+    public Attribute load(Long attributeId, Long kitVersionId) {
+        var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND));
         return mapToDomainModel(attribute);
     }
 
     @Override
-    public int countQuestions(long attributeId) {
-        return repository.countAttributeImpactfulQuestions(attributeId);
+    public int countQuestions(long attributeId, long kitVersionId) {
+        return repository.countAttributeImpactfulQuestions(attributeId, kitVersionId);
     }
 
     @Override
-    public List<Attribute> loadAllByIds(List<Long> attributeIds) {
-        return repository.findAllById(attributeIds).stream()
+    public List<Attribute> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId) {
+        return repository.findAllByIdInAndKitVersionId(attributeIds, kitVersionId).stream()
             .map(AttributeMapper::mapToDomainModel)
             .toList();
     }

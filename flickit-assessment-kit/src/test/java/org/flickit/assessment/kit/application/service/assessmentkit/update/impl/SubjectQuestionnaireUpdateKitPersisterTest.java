@@ -139,8 +139,10 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
 
         var subjectIdArgumentCaptor = ArgumentCaptor.forClass(Long.class);
         var questionnaireIdArgumentCaptor = ArgumentCaptor.forClass(Long.class);
-        verify(createPort, times(1)).persist(subjectIdArgumentCaptor.capture(), questionnaireIdArgumentCaptor.capture());
+        var kitVersionIdArgumentCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(createPort, times(1)).persist(subjectIdArgumentCaptor.capture(), questionnaireIdArgumentCaptor.capture(), kitVersionIdArgumentCaptor.capture());
         assertEquals(team.getId(), subjectIdArgumentCaptor.getValue());
         assertEquals(teamLearning.getId(), questionnaireIdArgumentCaptor.getValue());
+        assertEquals(savedKit.getKitVersionId(), kitVersionIdArgumentCaptor.getValue());
     }
 }

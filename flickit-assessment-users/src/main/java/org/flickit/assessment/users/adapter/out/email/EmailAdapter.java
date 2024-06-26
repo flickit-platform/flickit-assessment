@@ -43,13 +43,13 @@ public class EmailAdapter implements
     private String createText(long expertGroupId, UUID inviteToken) {
         String inviteUrl = String.join("/", appSpecProperties.getHost(), appSpecProperties.getExpertGroupInviteUrlPath(),
             String.valueOf(expertGroupId), inviteToken.toString());
-        return MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY, inviteUrl);
+        return MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY, inviteUrl, appSpecProperties.getName());
     }
 
     @Override
     public void inviteToFlickit(String to) {
-        String subject = MessageBundle.message(INVITE_SPACE_MEMBER_MAIL_SUBJECT);
-        String text =  MessageBundle.message(INVITE_SPACE_MEMBER_MAIL_BODY, appSpecProperties.getHost());
+        String subject = MessageBundle.message(INVITE_SPACE_MEMBER_MAIL_SUBJECT, appSpecProperties.getName());
+        String text =  MessageBundle.message(INVITE_SPACE_MEMBER_MAIL_BODY, appSpecProperties.getHost(), appSpecProperties.getName());
         log.debug("Sending invite email to [{}]", to);
         sendMail(to, subject, text);
     }
@@ -62,10 +62,14 @@ public class EmailAdapter implements
 
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(to);
-        helper.setFrom(springMailProperties.getUsername());
+        helper.setFrom(getFrom());
         helper.setSubject(subject);
         helper.setText(text, true);
 
         mailSender.send(message);
+    }
+
+    private String getFrom() {
+        return String.format("%s <%s>", appSpecProperties.getEmail().getFromDisplayName(), springMailProperties.getUsername());
     }
 }

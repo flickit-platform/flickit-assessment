@@ -13,23 +13,32 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
 
     List<LevelCompetenceJpaEntity> findByAffectedLevelId(Long affectedLevelId);
 
-    @Modifying
-    @Query("DELETE LevelCompetenceJpaEntity l WHERE " +
-        "l.effectiveLevel.id = :effectiveLevelId AND " +
-        "l.affectedLevel.id = :affectedLevelId")
-    void delete(@Param(value = "affectedLevelId") Long affectedLevelId,
-                @Param(value = "effectiveLevelId") Long effectiveLevelId);
+    List<LevelCompetenceJpaEntity> findAllByAffectedLevelIdInAndKitVersionId(Iterable<Long> levelIds, Long kitVersionId);
 
     @Modifying
     @Query("""
-           UPDATE LevelCompetenceJpaEntity l SET
-            l.value = :value,
-            l.lastModificationTime = :lastModificationTime,
-            l.lastModifiedBy = :lastModifiedBy
-           WHERE l.affectedLevel.id = :affectedLevelId AND l.effectiveLevel.id = :effectiveLevelId
-           """)
+            DELETE LevelCompetenceJpaEntity l
+            WHERE l.effectiveLevelId = :effectiveLevelId
+                AND l.affectedLevelId = :affectedLevelId
+                AND l.kitVersionId = :kitVersionId
+        """)
+    void delete(@Param(value = "affectedLevelId") Long affectedLevelId,
+                @Param(value = "effectiveLevelId") Long effectiveLevelId,
+                @Param(value = "kitVersionId") Long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE LevelCompetenceJpaEntity l
+            SET l.value = :value,
+                l.lastModificationTime = :lastModificationTime,
+                l.lastModifiedBy = :lastModifiedBy
+            WHERE l.affectedLevelId = :affectedLevelId
+                AND l.effectiveLevelId = :effectiveLevelId
+                AND l.kitVersionId = :kitVersionId
+        """)
     void update(@Param(value = "affectedLevelId") Long affectedLevelId,
                 @Param(value = "effectiveLevelId") Long effectiveLevelId,
+                @Param(value = "kitVersionId") Long kitVersionId,
                 @Param(value = "value") Integer value,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);

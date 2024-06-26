@@ -1,5 +1,6 @@
 package org.flickit.assessment.common.config;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,4 +20,25 @@ public class AppSpecProperties {
 
     @NotBlank
     private String expertGroupInviteUrlPath = "account/expert-group-invitation";
+
+    @NotBlank
+    private String name = "Flickit";
+
+    @NotBlank
+    private String logo;
+
+    @NotBlank
+    private String favIcon;
+
+    @Valid
+    private Email email = new Email();
+
+    @Setter
+    @Getter
+    @ToString
+    public static class Email {
+
+        @NotBlank
+        String fromDisplayName = "Flickit";
+    }
 }

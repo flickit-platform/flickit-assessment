@@ -36,7 +36,7 @@ public class SubjectQuestionnaireCreateKitPersister implements CreateKitPersiste
     @Transactional(propagation = Propagation.MANDATORY)
     public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitVersionId, UUID currentUserId) {
         var questionnaireIdToSubjectIdsMap = extractQuestionnaireIdToSubjectIdMap(ctx, dslKit);
-        createSubjectQuestionnairePort.persistAll(questionnaireIdToSubjectIdsMap);
+        createSubjectQuestionnairePort.persistAll(questionnaireIdToSubjectIdsMap, kitVersionId);
         log.debug("{} SubjectQuestionnaires created.", questionnaireIdToSubjectIdsMap.size());
     }
 

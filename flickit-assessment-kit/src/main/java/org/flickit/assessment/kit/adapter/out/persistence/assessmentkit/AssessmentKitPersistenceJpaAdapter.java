@@ -51,7 +51,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
     LoadPublishedKitListPort,
     CountKitListStatsPort,
     DeleteAssessmentKitPort,
-    CountKitAssessmentsPort {
+    CountKitAssessmentsPort,
+    LoadExpertGroupKitListPort,
+    SearchKitOptionsPort,
+    LoadActiveKitVersionIdPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -180,7 +183,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 AssessmentKitMapper.mapToDomainModel(v.getKit()),
-                ExpertGroupMapper.toDomainModel(v.getExpertGroup())
+                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())
             ))
             .toList();
 
@@ -200,7 +203,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 AssessmentKitMapper.mapToDomainModel(v.getKit()),
-                ExpertGroupMapper.toDomainModel(v.getExpertGroup())))
+                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())))
             .toList();
 
         return new PaginatedResponse<>(
@@ -230,5 +233,47 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public long count(Long kitId) {
         return repository.countAllKitAssessments(kitId);
+    }
+
+    @Override
+    public PaginatedResponse<AssessmentKit> loadExpertGroupKits(long expertGroupId, UUID userId,
+                                                                boolean includeUnpublishedKits, int page, int size) {
+        var pageResult = repository.findExpertGroupKitsOrderByPublishedAndModificationTimeDesc(expertGroupId,
+            userId,
+            includeUnpublishedKits,
+            PageRequest.of(page, size));
+        var items = pageResult.getContent().stream().map(AssessmentKitMapper::mapToDomainModel).toList();
+
+        return new PaginatedResponse<>(items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            AssessmentKitJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            Sort.Direction.DESC.name().toLowerCase(),
+            (int) pageResult.getTotalElements());
+    }
+
+    @Override
+    public PaginatedResponse<AssessmentKit> searchKitOptions(SearchKitOptionsPort.Param param) {
+        String query = param.query() == null ? "" : param.query();
+        Page<AssessmentKitJpaEntity> kitEntityPage = repository.findAllByTitleAndUserId(query,
+            param.currentUserId(),
+            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, AssessmentKitJpaEntity.Fields.TITLE));
+
+        List<AssessmentKit> kits = kitEntityPage.getContent().stream()
+            .map(AssessmentKitMapper::mapToDomainModel)
+            .toList();
+
+        return new PaginatedResponse<>(kits,
+            kitEntityPage.getNumber(),
+            kitEntityPage.getSize(),
+            AssessmentKitJpaEntity.Fields.TITLE,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) kitEntityPage.getTotalElements());
+    }
+
+    @Override
+    public long loadKitVersionId(long kitId) {
+        return repository.loadKitVersionId(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
     }
 }

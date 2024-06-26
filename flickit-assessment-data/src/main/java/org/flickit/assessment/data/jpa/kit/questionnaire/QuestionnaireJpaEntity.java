@@ -3,12 +3,14 @@ package org.flickit.assessment.data.jpa.kit.questionnaire;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @Entity
+@IdClass(QuestionnaireJpaEntity.EntityId.class)
 @Table(name = "fak_questionnaire")
 @Getter
 @Setter
@@ -23,6 +25,11 @@ public class QuestionnaireJpaEntity {
     @SequenceGenerator(name = "fak_questionnaire_id_seq", sequenceName = "fak_questionnaire_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
+
+    @Id
+    @EqualsAndHashCode.Include
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "ref_num", nullable = false)
     private UUID refNum;
@@ -39,9 +46,6 @@ public class QuestionnaireJpaEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "kit_version_id", nullable = false)
-    private Long kitVersionId;
-
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
@@ -53,6 +57,15 @@ public class QuestionnaireJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId implements Serializable {
+
+        private long id;
+        private long kitVersionId;
+    }
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
