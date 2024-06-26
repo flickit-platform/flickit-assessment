@@ -956,6 +956,11 @@
 							"key": "attachment",
 							"type": "file",
 							"src": "/home/maziyar/Downloads/pic.png"
+						},
+						{
+							"key": "description",
+							"value": "Some Description",
+							"type": "text"
 						}
 					]
 				},
