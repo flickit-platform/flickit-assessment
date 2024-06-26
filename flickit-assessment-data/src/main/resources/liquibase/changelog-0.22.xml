@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.21-48" author="Maziyar Gerami">
+    <changeSet id="0.22-01" author="Maziyar Gerami">
         <createTable tableName="fac_evidence_attachment">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_evidence_attachment"/>
@@ -15,6 +15,9 @@
             </column>
             <column name="file" type="varchar">
                 <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(100)">
+                <constraints nullable="true"/>
             </column>
             <column name="created_by" type="uuid">
                 <constraints nullable="false" foreignKeyName="fk_fac_evidence_attachment_user_createdBy"
