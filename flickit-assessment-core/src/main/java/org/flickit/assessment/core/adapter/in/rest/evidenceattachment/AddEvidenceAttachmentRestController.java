@@ -35,6 +35,6 @@ public class AddEvidenceAttachmentRestController {
     }
 
     private AddEvidenceAttachmentResponseDto toResponseDto(Result result) {
-        return new AddEvidenceAttachmentResponseDto(result.attachmentId(), result.link());
+        return new AddEvidenceAttachmentResponseDto(result.attachmentId(), result.attachmentLink());
     }
 }

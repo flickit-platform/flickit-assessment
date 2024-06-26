@@ -37,5 +37,5 @@ public interface AddEvidenceAttachmentUseCase {
         }
     }
 
-    record Result(UUID attachmentId, String link) {}
+    record Result(UUID attachmentId, String attachmentLink) {}
 }

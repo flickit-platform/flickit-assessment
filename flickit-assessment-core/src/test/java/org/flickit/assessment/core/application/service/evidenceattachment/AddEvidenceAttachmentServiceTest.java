@@ -121,7 +121,7 @@ class AddEvidenceAttachmentServiceTest {
 
         var result = service.addAttachment(param);
         assertEquals(attachmentId, result.attachmentId(), "Attachment id should match");
-        assertEquals(link, result.link(), "Link should match");
+        assertEquals(link, result.attachmentLink(), "Link should match");
 
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
         verify(uploadEvidenceAttachmentPort).uploadAttachment(attachment);
