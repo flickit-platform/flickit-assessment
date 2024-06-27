@@ -25,7 +25,6 @@ public class GetComparableAssessmentListRestController {
         @RequestParam(value = "kitId", required = false) Long kitId,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page) {
-
         UUID currentUserId = userContext.getUser().id();
         var result = assessmentListUseCase.getComparableAssessmentList(toUserAssessmentParam(kitId, currentUserId, size, page));
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -34,5 +33,4 @@ public class GetComparableAssessmentListRestController {
     private GetComparableAssessmentListUseCase.Param toUserAssessmentParam(Long kitId, UUID currentUserId, int size, int page) {
         return new GetComparableAssessmentListUseCase.Param(kitId, currentUserId, size, page);
     }
-
 }
