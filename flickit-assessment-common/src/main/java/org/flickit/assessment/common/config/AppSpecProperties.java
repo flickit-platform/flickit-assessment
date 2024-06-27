@@ -24,6 +24,12 @@ public class AppSpecProperties {
     @NotBlank
     private String name = "Flickit";
 
+    @NotBlank
+    private String logo;
+
+    @NotBlank
+    private String favIcon;
+
     @Valid
     private Email email = new Email();
 

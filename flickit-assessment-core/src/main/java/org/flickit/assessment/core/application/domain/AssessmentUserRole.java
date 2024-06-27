@@ -18,15 +18,18 @@ import static org.flickit.assessment.core.application.domain.AssessmentUserRole.
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AssessmentUserRole {
 
-    VIEWER("Viewer", VIEWER_PERMISSIONS),
-    COMMENTER("Commenter", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS),
-    ASSESSOR("Assessor", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS),
-    MANAGER("Manager", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS, MANAGER_PERMISSIONS);
+    VIEWER(1, "Viewer", VIEWER_PERMISSIONS),
+    COMMENTER(2, "Commenter", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS),
+    ASSESSOR(4, "Assessor", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS),
+    MANAGER(5, "Manager", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS, MANAGER_PERMISSIONS),
+    ASSOCIATE(3, "Associate", ASSOCIATE_PERMISSIONS);
 
+    private final int index;
     private final String title;
     private final Set<AssessmentPermission> permissions;
 
-    AssessmentUserRole(String title, PermissionGroup... permissionsGroups) {
+    AssessmentUserRole(int index, String title, PermissionGroup... permissionsGroups) {
+        this.index = index;
         this.title = title;
         this.permissions = Arrays.stream(permissionsGroups)
             .flatMap(x -> x.getPermissions().stream())
@@ -87,7 +90,20 @@ public enum AssessmentUserRole {
             GRANT_USER_ASSESSMENT_ROLE,
             UPDATE_USER_ASSESSMENT_ROLE,
             DELETE_USER_ASSESSMENT_ROLE,
-            GET_ASSESSMENT_USERS));
+            GET_ASSESSMENT_USERS)),
+        ASSOCIATE_PERMISSIONS(Set.of(
+            VIEW_ASSESSMENT_LIST,
+            VIEW_ASSESSMENT_PROGRESS,
+            VIEW_ASSESSMENT,
+            VIEW_SUBJECT_PROGRESS,
+            ADD_EVIDENCE,
+            DELETE_EVIDENCE,
+            VIEW_EVIDENCE_LIST,
+            UPDATE_EVIDENCE,
+            VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
+            VIEW_QUESTIONNAIRE_QUESTIONS,
+            ANSWER_QUESTION
+        ));
 
         private final Set<AssessmentPermission> permissions;
     }

@@ -436,7 +436,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/space/{{id}}/members",
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members",
 					"host": [
 						"{{base_url}}"
 					],
@@ -842,6 +842,70 @@
 						"expert-groups",
 						"{{id}}",
 						"picture"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Expert Group Picture",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/picture",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"picture"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tenant Info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/tenant/info",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"tenant",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tenant Logo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/tenant/logo",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"tenant",
+						"logo"
 					]
 				}
 			},
