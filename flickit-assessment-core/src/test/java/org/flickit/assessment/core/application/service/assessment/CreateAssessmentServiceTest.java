@@ -122,6 +122,50 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
+    void testCreateAssessment_CurrentUserIsSpaceOwner_PersistOneAssessmentUserRole() {
+        UUID currentUserId = UUID.randomUUID();
+        Param param = new Param(
+            1L,
+            "title example",
+            1L,
+            1,
+            currentUserId
+        );
+        UUID expectedId = UUID.randomUUID();
+
+
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
+        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
+        when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
+        List<Subject> expectedResponse = List.of();
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
+        when(loadSpaceOwnerPort.loadOwnerIdByAssessmentId(any())).thenReturn(currentUserId);
+
+        CreateAssessmentUseCase.Result result = service.createAssessment(param);
+        assertEquals(expectedId, result.id());
+
+        ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
+        verify(createAssessmentPort).persist(createPortParam.capture());
+
+        assertEquals("title-example", createPortParam.getValue().code());
+        assertEquals(param.getTitle(), createPortParam.getValue().title());
+        assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
+        assertEquals(param.getColorId(), createPortParam.getValue().colorId());
+        assertNotNull(createPortParam.getValue().creationTime());
+
+        ArgumentCaptor<UUID> grantPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
+        ArgumentCaptor<UUID> grantPortUserId = ArgumentCaptor.forClass(UUID.class);
+        ArgumentCaptor<Integer> grantPortRoleId = ArgumentCaptor.forClass(Integer.class);
+        verify(grantUserAssessmentRolePort, times(1)).persist(grantPortAssessmentId.capture(),
+            grantPortUserId.capture(),
+            grantPortRoleId.capture());
+
+        assertEquals(expectedId, grantPortAssessmentId.getAllValues().get(0));
+        assertEquals(currentUserId, grantPortUserId.getAllValues().get(0));
+        assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getAllValues().get(0));
+    }
+
+    @Test
     void testCreateAssessment_ValidParam_PersistsAssessmentResult() {
         UUID createdBy = UUID.randomUUID();
         Param param = new Param(

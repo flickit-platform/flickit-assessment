@@ -151,8 +151,6 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         WHERE asm.id = :assessmentId
     """)
     Optional<UUID> findSpaceOwnerById(UUID assessmentId);
-
-
 }
 
 
