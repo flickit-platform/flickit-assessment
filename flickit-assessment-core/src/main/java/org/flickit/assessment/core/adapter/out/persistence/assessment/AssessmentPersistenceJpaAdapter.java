@@ -233,6 +233,4 @@ public class AssessmentPersistenceJpaAdapter implements
     public boolean hasAccess(UUID assessmentId, UUID userId) {
         return repository.checkUserAccess(assessmentId, userId).isPresent();
     }
-
-
 }
