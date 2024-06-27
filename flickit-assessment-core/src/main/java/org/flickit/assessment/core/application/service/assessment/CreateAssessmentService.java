@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
@@ -12,6 +13,7 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssess
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -34,6 +37,9 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSME
 @RequiredArgsConstructor
 public class CreateAssessmentService implements CreateAssessmentUseCase {
 
+    private static final AssessmentUserRole SPACE_OWNER_ROLE = MANAGER;
+    private static final AssessmentUserRole ASSESSMENT_CREATOR_ROLE = MANAGER;
+
     private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final CheckKitAccessPort checkKitAccessPort;
     private final CreateAssessmentPort createAssessmentPort;
@@ -42,6 +48,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
     private final LoadSubjectsPort loadSubjectsPort;
+    private final LoadSpaceOwnerPort loadSpaceOwnerPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Override
@@ -55,7 +62,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         UUID id = createAssessmentPort.persist(toParam(param));
         createAssessmentResult(id, loadKitVersionIdPort.loadVersionId(param.getKitId()));
 
-        grantUserAssessmentRolePort.persist(id, param.getCurrentUserId(), MANAGER.getId());
+        grantAssessmentAccesses(param, id);
 
         return new Result(id);
     }
@@ -88,5 +95,12 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             .flatMap(List::stream).toList();
         createSubjectValuePort.persistAll(subjectIds, assessmentResultId);
         createAttributeValuePort.persistAll(attributeIds, assessmentResultId);
+    }
+
+    private void grantAssessmentAccesses(Param param, UUID assessmentId) {
+        var spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(assessmentId);
+        if (!Objects.equals(param.getCurrentUserId(), spaceOwnerId))
+            grantUserAssessmentRolePort.persist(assessmentId, spaceOwnerId, SPACE_OWNER_ROLE.getId());
+        grantUserAssessmentRolePort.persist(assessmentId, param.getCurrentUserId(), ASSESSMENT_CREATOR_ROLE.getId());
     }
 }

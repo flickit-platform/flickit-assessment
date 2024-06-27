@@ -33,9 +33,10 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                 u.email AS email,
                 u.displayName AS displayName,
                 u.picture AS picturePath,
+                a.roleId as roleId,
                 CASE
-                    WHEN sp.ownerId = u.id THEN :managerRoleId ELSE a.roleId
-                END as roleId
+                    WHEN sp.ownerId = u.id THEN false ELSE true
+                END as editable
             FROM UserJpaEntity u
             JOIN AssessmentUserRoleJpaEntity a ON u.id = a.userId
             JOIN AssessmentJpaEntity assessment ON assessment.id = a.assessmentId
@@ -47,9 +48,7 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                   WHERE fa.id = :assessmentId AND sua.userId  = a.userId
                 )
         """)
-    Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId,
-                                                 @Param("managerRoleId") int managerRoleId,
-                                                 Pageable pageable);
+    Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId, Pageable pageable);
 
     @Modifying
     @Query("""
