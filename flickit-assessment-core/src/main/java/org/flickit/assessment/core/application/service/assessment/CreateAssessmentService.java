@@ -13,7 +13,7 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssess
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerByAssessmentPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
@@ -48,7 +48,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
     private final LoadSubjectsPort loadSubjectsPort;
-    private final LoadSpaceOwnerByAssessmentPort loadSpaceOwnerPort;
+    private final LoadSpaceOwnerPort loadSpaceOwnerPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Override
@@ -97,10 +97,10 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         createAttributeValuePort.persistAll(attributeIds, assessmentResultId);
     }
 
-    private void grantAssessmentAccesses(Param param, UUID id) {
-        var spaceOwnerId = loadSpaceOwnerPort.loadOwnerIdByAssessmentId(id);
+    private void grantAssessmentAccesses(Param param, UUID assessmentId) {
+        var spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(assessmentId);
         if (!Objects.equals(param.getCurrentUserId(), spaceOwnerId))
-            grantUserAssessmentRolePort.persist(id, spaceOwnerId, SPACE_OWNER_ROLE.getId());
-        grantUserAssessmentRolePort.persist(id, param.getCurrentUserId(), ASSESSMENT_CREATOR_ROLE.getId());
+            grantUserAssessmentRolePort.persist(assessmentId, spaceOwnerId, SPACE_OWNER_ROLE.getId());
+        grantUserAssessmentRolePort.persist(assessmentId, param.getCurrentUserId(), ASSESSMENT_CREATOR_ROLE.getId());
     }
 }

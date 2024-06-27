@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.UpdateUserAssessmentRoleUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.UpdateUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerByAssessmentPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,7 +39,7 @@ class UpdateUserAssessmentRoleServiceTest {
     private UpdateUserAssessmentRolePort updateUserAssessmentRolePort;
 
     @Mock
-    private LoadSpaceOwnerByAssessmentPort loadSpaceOwnerPort;
+    private LoadSpaceOwnerPort loadSpaceOwnerPort;
 
     @Test
     void testUpdateAssessmentUserRole_CurrentUserDoesNotHaveRequiredRole_ThrowsException() {
@@ -108,8 +108,7 @@ class UpdateUserAssessmentRoleServiceTest {
             .thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getUserId()))
             .thenReturn(true);
-        when(loadSpaceOwnerPort.loadOwnerIdByAssessmentId(param.getAssessmentId()))
-            .thenReturn(param.getUserId());
+        when(loadSpaceOwnerPort.loadOwnerId(param.getAssessmentId())).thenReturn(param.getUserId());
 
         var exception = assertThrows(ValidationException.class, () -> service.updateAssessmentUserRole(param));
         assertEquals(UPDATE_ASSESSMENT_USER_ROLE_USER_ID_IS_SPACE_OWNER, exception.getMessage());
@@ -130,8 +129,7 @@ class UpdateUserAssessmentRoleServiceTest {
             .thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getUserId()))
             .thenReturn(true);
-        when(loadSpaceOwnerPort.loadOwnerIdByAssessmentId(param.getAssessmentId()))
-            .thenReturn(UUID.randomUUID());
+        when(loadSpaceOwnerPort.loadOwnerId(param.getAssessmentId())).thenReturn(UUID.randomUUID());
 
         doNothing().when(updateUserAssessmentRolePort)
             .update(param.getAssessmentId(), param.getUserId(), param.getRoleId());

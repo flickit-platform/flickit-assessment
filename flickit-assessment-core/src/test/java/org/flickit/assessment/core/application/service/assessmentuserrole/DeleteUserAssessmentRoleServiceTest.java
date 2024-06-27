@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.DeleteUserAssessmentRoleUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.DeleteUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerByAssessmentPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +38,7 @@ class DeleteUserAssessmentRoleServiceTest {
     DeleteUserAssessmentRolePort deleteUserAssessmentRolePort;
 
     @Mock
-    private LoadSpaceOwnerByAssessmentPort loadSpaceOwnerPort;
+    private LoadSpaceOwnerPort loadSpaceOwnerPort;
 
     @Test
     @DisplayName("Deleting an assessment user role should be done only by a user with the required permission")
@@ -89,8 +89,7 @@ class DeleteUserAssessmentRoleServiceTest {
             .thenReturn(true);
         when(checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
             .thenReturn(true);
-        when(loadSpaceOwnerPort.loadOwnerIdByAssessmentId(param.getAssessmentId()))
-            .thenReturn(param.getUserId());
+        when(loadSpaceOwnerPort.loadOwnerId(param.getAssessmentId())).thenReturn(param.getUserId());
 
         var exception = assertThrows(ValidationException.class, () -> service.deleteAssessmentUserRole(param));
         assertEquals(DELETE_ASSESSMENT_USER_ROLE_USER_ID_IS_SPACE_OWNER, exception.getMessage());
