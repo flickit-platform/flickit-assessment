@@ -48,8 +48,7 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                   WHERE fa.id = :assessmentId AND sua.userId  = a.userId
                 )
         """)
-    Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId,
-                                                 Pageable pageable);
+    Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId, Pageable pageable);
 
     @Modifying
     @Query("""
