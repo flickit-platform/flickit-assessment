@@ -8,6 +8,7 @@ import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.port.out.assessment.*;
+import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerByAssessmentPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
@@ -45,7 +46,8 @@ public class AssessmentPersistenceJpaAdapter implements
     GetAssessmentPort,
     DeleteAssessmentPort,
     CheckUserAssessmentAccessPort,
-    SpaceAccessChecker {
+    SpaceAccessChecker,
+    LoadSpaceOwnerByAssessmentPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -232,5 +234,11 @@ public class AssessmentPersistenceJpaAdapter implements
     @Override
     public boolean hasAccess(UUID assessmentId, UUID userId) {
         return repository.checkUserAccess(assessmentId, userId).isPresent();
+    }
+
+    @Override
+    public UUID loadOwnerIdByAssessmentId(UUID assessmentId) {
+        return repository.findSpaceOwnerById(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
     }
 }

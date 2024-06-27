@@ -148,6 +148,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER = "update-assessment-user-role.userId.notMember";
     public static final String UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND = "update-assessment-user-role.assessmentId.userId.notFound";
     public static final String UPDATE_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "update-assessment-user-role.roleId.notFound";
+    public static final String UPDATE_ASSESSMENT_USER_ROLE_USER_ID_IS_SPACE_OWNER = "update-assessment-user-role.userId.isSpaceOwner";
 
     public static final String DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "delete-assessment-user-role.assessmentId.notNull";
     public static final String DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "delete-assessment-user-role.userId.notNull";

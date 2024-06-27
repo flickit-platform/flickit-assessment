@@ -142,6 +142,17 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         AND level.id in :levelIds
     """)
     Set<Long> findSelectedLevelIdsRelatedToAssessment(UUID assessmentId, Set<Long> levelIds);
+
+    @Query("""
+        SELECT sp.ownerId
+        FROM AssessmentJpaEntity asm
+        JOIN SpaceJpaEntity sp
+        ON asm.spaceId = sp.id
+        WHERE asm.id = :assessmentId
+    """)
+    Optional<UUID> findSpaceOwnerById(UUID assessmentId);
+
+
 }
 
 
