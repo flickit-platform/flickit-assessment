@@ -2,8 +2,8 @@ package org.flickit.assessment.core.adapter.in.rest.evidenceattachment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.domain.EvidenceAttachment;
 import org.flickit.assessment.core.application.port.in.evidenceattachment.GetEvidenceAttachmentsUseCase;
+import org.flickit.assessment.core.application.port.in.evidenceattachment.GetEvidenceAttachmentsUseCase.EvidenceAttachmentListItem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +31,7 @@ public class GetEvidenceAttachmentsRestController {
         return new GetEvidenceAttachmentsUseCase.Param(id, currentUserId);
     }
 
-    private GetEvidenceAttachmentsResponseDto toResponseDto(List<EvidenceAttachment> evidenceAttachments) {
+    private GetEvidenceAttachmentsResponseDto toResponseDto(List<EvidenceAttachmentListItem> evidenceAttachments) {
         return new GetEvidenceAttachmentsResponseDto(evidenceAttachments);
     }
 }

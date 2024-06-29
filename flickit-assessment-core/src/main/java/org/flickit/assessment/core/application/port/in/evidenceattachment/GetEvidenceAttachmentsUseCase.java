@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.core.application.domain.EvidenceAttachment;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +14,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 
 public interface GetEvidenceAttachmentsUseCase {
 
-    List<EvidenceAttachment> getEvidenceAttachments(Param param);
+    List<EvidenceAttachmentListItem> getEvidenceAttachments(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -33,4 +32,6 @@ public interface GetEvidenceAttachmentsUseCase {
             this.validateSelf();
         }
     }
+
+    record EvidenceAttachmentListItem(UUID id, UUID evidenceId, String fileLink, String description) {}
 }

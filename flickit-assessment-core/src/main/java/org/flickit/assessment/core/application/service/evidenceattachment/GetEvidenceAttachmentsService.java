@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.evidenceattachment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.EvidenceAttachment;
 import org.flickit.assessment.core.application.port.in.evidenceattachment.GetEvidenceAttachmentsUseCase;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -27,7 +26,7 @@ public class GetEvidenceAttachmentsService implements GetEvidenceAttachmentsUseC
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     @Override
-    public List<EvidenceAttachment> getEvidenceAttachments(Param param) {
+    public List<EvidenceAttachmentListItem> getEvidenceAttachments(Param param) {
         var evidence = loadEvidencePort.loadNotDeletedEvidence(param.getEvidenceId());
 
         if (!evidence.getCreatedById().equals(param.getCurrentUserId()))
@@ -39,8 +38,8 @@ public class GetEvidenceAttachmentsService implements GetEvidenceAttachmentsUseC
             .map(this::addPictureLink).toList();
     }
 
-    private EvidenceAttachment addPictureLink(LoadEvidenceAttachmentsPort.Result evidenceAttachment) {
-        return new EvidenceAttachment(evidenceAttachment.id(),
+    private EvidenceAttachmentListItem addPictureLink(LoadEvidenceAttachmentsPort.Result evidenceAttachment) {
+        return new EvidenceAttachmentListItem(evidenceAttachment.id(),
             evidenceAttachment.evidenceId(),
             createFileDownloadLinkPort.createDownloadLink(evidenceAttachment.file(), EXPIRY_DURATION),
             evidenceAttachment.description());
