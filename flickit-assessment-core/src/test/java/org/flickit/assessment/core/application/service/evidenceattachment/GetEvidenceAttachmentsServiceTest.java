@@ -4,7 +4,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
-import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentListPort;
+import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentsPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.flickit.assessment.core.application.port.in.evidenceattachment.GetEvidenceAttachmentListUseCase.Param;
+import org.flickit.assessment.core.application.port.in.evidenceattachment.GetEvidenceAttachmentsUseCase.Param;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -25,16 +25,16 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GetEvidenceAttachmentListServiceTest {
+class GetEvidenceAttachmentsServiceTest {
 
     @InjectMocks
-    private GetEvidenceAttachmentListService service;
+    private GetEvidenceAttachmentsService service;
 
     @Mock
     LoadEvidencePort loadEvidencePort;
 
     @Mock
-    LoadEvidenceAttachmentListPort loadEvidenceAttachmentListPort;
+    LoadEvidenceAttachmentsPort loadEvidenceAttachmentsPort;
 
     @Mock
     CreateFileDownloadLinkPort createFileDownloadLinkPort;
@@ -47,11 +47,11 @@ class GetEvidenceAttachmentListServiceTest {
         var param = new Param(evidenceId, currentUserId);
 
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenThrow(new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getEvidenceAttachmentList(param));
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getEvidenceAttachments(param));
         assertEquals(EVIDENCE_ID_NOT_FOUND, throwable.getMessage());
 
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
-        verifyNoInteractions(loadEvidenceAttachmentListPort, createFileDownloadLinkPort);
+        verifyNoInteractions(loadEvidenceAttachmentsPort, createFileDownloadLinkPort);
     }
 
     @Test
@@ -64,11 +64,11 @@ class GetEvidenceAttachmentListServiceTest {
             0L, 1, LocalDateTime.now(), LocalDateTime.now(), false);
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getEvidenceId())).thenReturn(evidence);
-        var throwable = assertThrows(ValidationException.class, () -> service.getEvidenceAttachmentList(param));
+        var throwable = assertThrows(ValidationException.class, () -> service.getEvidenceAttachments(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
-        verifyNoInteractions(loadEvidenceAttachmentListPort, createFileDownloadLinkPort);
+        verifyNoInteractions(loadEvidenceAttachmentsPort, createFileDownloadLinkPort);
     }
 
     @Test
@@ -79,18 +79,18 @@ class GetEvidenceAttachmentListServiceTest {
         var param = new Param(evidenceId, currentUserId);
         var evidence = new Evidence(evidenceId, "des", currentUserId, UUID.randomUUID(), UUID.randomUUID(),
             0L, 1, LocalDateTime.now(), LocalDateTime.now(), false);
-        var attachment1 = new LoadEvidenceAttachmentListPort.Result(UUID.randomUUID(), evidenceId, "path/to/file", "des");
-        var attachment2 = new LoadEvidenceAttachmentListPort.Result(UUID.randomUUID(), evidenceId, "path/to/file", "des");
+        var attachment1 = new LoadEvidenceAttachmentsPort.Result(UUID.randomUUID(), evidenceId, "path/to/file", "des");
+        var attachment2 = new LoadEvidenceAttachmentsPort.Result(UUID.randomUUID(), evidenceId, "path/to/file", "des");
         var attachments = List.of(attachment1, attachment2);
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getEvidenceId())).thenReturn(evidence);
-        when(loadEvidenceAttachmentListPort.loadEvidenceAttachmentList(evidenceId)).thenReturn(attachments);
+        when(loadEvidenceAttachmentsPort.loadEvidenceAttachments(evidenceId)).thenReturn(attachments);
         when(createFileDownloadLinkPort.createDownloadLink(anyString(), any(Duration.class))).thenReturn("link");
 
-        assertDoesNotThrow(() -> service.getEvidenceAttachmentList(param));
+        assertDoesNotThrow(() -> service.getEvidenceAttachments(param));
 
         verify(loadEvidencePort).loadNotDeletedEvidence(param.getEvidenceId());
-        verify(loadEvidenceAttachmentListPort).loadEvidenceAttachmentList(evidenceId);
+        verify(loadEvidenceAttachmentsPort).loadEvidenceAttachments(evidenceId);
         verify(createFileDownloadLinkPort, times(2)).createDownloadLink(anyString(), any(Duration.class));
     }
 }

@@ -158,5 +158,5 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_USERS_SIZE_MAX = "get-assessment-users.size.max";
     public static final String GET_ASSESSMENT_USERS_PAGE_MIN = "get-assessment-users.page.min";
 
-    public static final String GET_EVIDENCE_ATTACHMENT_LIST_EVIDENCE_ID_NULL = "get-evidence-attachment-list.evidenceId.notNull";
+    public static final String GET_EVIDENCE_ATTACHMENTS_EVIDENCE_ID_NULL = "get-evidence-attachments.evidenceId.notNull";
 }

@@ -9,19 +9,19 @@ import org.flickit.assessment.core.application.domain.EvidenceAttachment;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_EVIDENCE_ATTACHMENT_LIST_EVIDENCE_ID_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_EVIDENCE_ATTACHMENTS_EVIDENCE_ID_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
 
-public interface GetEvidenceAttachmentListUseCase {
+public interface GetEvidenceAttachmentsUseCase {
 
-    List<EvidenceAttachment> getEvidenceAttachmentList(Param param);
+    List<EvidenceAttachment> getEvidenceAttachments(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_EVIDENCE_ATTACHMENT_LIST_EVIDENCE_ID_NULL)
+        @NotNull(message = GET_EVIDENCE_ATTACHMENTS_EVIDENCE_ID_NULL)
         UUID evidenceId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

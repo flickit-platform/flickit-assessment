@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.evidenceattachment;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentListPort.Result;
+import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentsPort.Result;
 import org.flickit.assessment.data.jpa.core.evidenceattachment.EvidenceAttachmentJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
