@@ -18,6 +18,7 @@ public class EvidenceAttachmentPersistenceJpaAdapter implements LoadEvidenceAtta
     public List<Result> loadEvidenceAttachments(UUID evidenceId) {
 
         var jpaEntityList =  repository.findByEvidenceId(evidenceId);
-        return jpaEntityList.stream().map(EvidenceAttachmentMapper::mapEvidenceAttachment).toList();
+        return jpaEntityList.stream()
+            .map(EvidenceAttachmentMapper::mapToPortResult).toList();
     }
 }

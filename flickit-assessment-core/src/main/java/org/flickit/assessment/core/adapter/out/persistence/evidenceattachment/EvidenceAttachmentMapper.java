@@ -8,7 +8,7 @@ import org.flickit.assessment.data.jpa.core.evidenceattachment.EvidenceAttachmen
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvidenceAttachmentMapper {
 
-    static Result mapEvidenceAttachment(EvidenceAttachmentJpaEntity evidenceAttachment) {
+    static Result mapToPortResult(EvidenceAttachmentJpaEntity evidenceAttachment) {
         return new Result(evidenceAttachment.getId(), evidenceAttachment.getEvidenceId(),
             evidenceAttachment.getFile(), evidenceAttachment.getDescription());
     }
