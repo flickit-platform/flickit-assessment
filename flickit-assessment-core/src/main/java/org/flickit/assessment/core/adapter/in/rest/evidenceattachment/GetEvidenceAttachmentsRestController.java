@@ -21,12 +21,17 @@ public class GetEvidenceAttachmentsRestController {
     private final UserContext userContext;
 
     @GetMapping("/evidences/{id}/attachments")
-    public ResponseEntity<List<EvidenceAttachment>> getEvidenceAttachments(@PathVariable UUID id) {
+    public ResponseEntity<GetEvidenceAttachmentsResponseDto> getEvidenceAttachments(@PathVariable UUID id) {
         var currentUserId = userContext.getUser().id();
-        return new ResponseEntity<> (useCase.getEvidenceAttachments(toParam(id, currentUserId)), HttpStatus.OK);
+        var evidenceAttachments = useCase.getEvidenceAttachments(toParam(id, currentUserId));
+        return new ResponseEntity<>(toResponseDto(evidenceAttachments), HttpStatus.OK);
     }
 
     private GetEvidenceAttachmentsUseCase.Param toParam(UUID id, UUID currentUserId) {
         return new GetEvidenceAttachmentsUseCase.Param(id, currentUserId);
+    }
+
+    private GetEvidenceAttachmentsResponseDto toResponseDto(List<EvidenceAttachment> evidenceAttachments) {
+        return new GetEvidenceAttachmentsResponseDto(evidenceAttachments);
     }
 }
