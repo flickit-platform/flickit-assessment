@@ -6,5 +6,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface EvidenceAttachmentJpaRepository extends JpaRepository<EvidenceAttachmentJpaEntity, Long> {
+
     List<EvidenceAttachmentJpaEntity> findByEvidenceId(UUID evidenceId);
 }
