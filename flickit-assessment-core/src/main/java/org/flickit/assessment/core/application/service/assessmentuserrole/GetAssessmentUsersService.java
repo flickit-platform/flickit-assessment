@@ -44,7 +44,8 @@ public class GetAssessmentUsersService implements GetAssessmentUsersUseCase {
                     e.email(),
                     e.displayName(),
                     pictureLink,
-                    role);
+                    role,
+                    e.editable());
             }).toList();
 
         return new PaginatedResponse<>(items,

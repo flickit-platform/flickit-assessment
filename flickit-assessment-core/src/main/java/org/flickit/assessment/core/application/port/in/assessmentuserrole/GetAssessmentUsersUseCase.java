@@ -48,7 +48,8 @@ public interface GetAssessmentUsersUseCase {
         String email,
         String displayName,
         String pictureLink,
-        Role role) {
+        Role role,
+        boolean editable) {
 
         public record Role(int id, String title) {
         }
