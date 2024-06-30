@@ -31,9 +31,6 @@ public class QuestionnaireJpaEntity {
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 
-    @Column(name = "ref_num", nullable = false)
-    private UUID refNum;
-
     @Column(name = "code", length = 50, nullable = false)
     private String code;
 

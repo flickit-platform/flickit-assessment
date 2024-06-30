@@ -7,7 +7,6 @@ import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionMapper {
@@ -31,7 +30,6 @@ public class QuestionMapper {
         return new QuestionJpaEntity(
             null,
             param.kitVersionId(),
-            UUID.randomUUID(),
             param.code(),
             param.index(),
             param.title(),

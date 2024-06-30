@@ -15,13 +15,8 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
 
     List<AttributeValueJpaEntity> findByAssessmentResult_assessment_IdAndAttributeIdIn(UUID assessmentId, Collection<Long> attributeIds);
 
-    @Query("""
-        SELECT qav FROM AttributeValueJpaEntity qav
-        LEFT JOIN AttributeJpaEntity a ON a.refNum = qav.attributeRefNum
-        WHERE qav.assessmentResult.id = :assessmentResultId AND a.id = :attributeId
-        """)
-    AttributeValueJpaEntity findByAttributeIdAndAssessmentResult_Id(@Param(value = "attributeId") Long attributeId,
-                                                                    @Param(value = "assessmentResultId") UUID assessmentResultId);
+    AttributeValueJpaEntity findByAttributeIdAndAssessmentResultId(@Param(value = "attributeId") Long attributeId,
+                                                                   @Param(value = "assessmentResultId") UUID assessmentResultId);
 
     @Query("""
         SELECT av
