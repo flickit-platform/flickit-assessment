@@ -64,4 +64,8 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="0.23-11" author="Maziyar Gerami">
+        <dropColumn tableName="fac_assessment" columnName="color_id"/>
+    </changeSet>
 </databaseChangeLog>
