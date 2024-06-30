@@ -3,12 +3,14 @@ package org.flickit.assessment.data.jpa.kit.question;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @Entity
+@IdClass(QuestionJpaEntity.EntityId.class)
 @Table(name = "fak_question")
 @Getter
 @Setter
@@ -23,6 +25,11 @@ public class QuestionJpaEntity {
     @SequenceGenerator(name = "fak_question_id_seq", sequenceName = "fak_question_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
+
+    @Id
+    @EqualsAndHashCode.Include
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "code")
     private String code;
@@ -42,9 +49,6 @@ public class QuestionJpaEntity {
     @Column(name = "advisable", nullable = false)
     private Boolean advisable;
 
-    @Column(name = "kit_version_id", nullable = false)
-    private Long kitVersionId;
-
     @Column(name = "questionnaire_id", nullable = false)
     private Long questionnaireId;
 
@@ -59,6 +63,15 @@ public class QuestionJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId implements Serializable {
+
+        private long id;
+        private long kitVersionId;
+    }
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {

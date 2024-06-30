@@ -25,8 +25,8 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     @Modifying
     @Query("""
-            UPDATE AttributeJpaEntity a SET
-                a.title = :title,
+            UPDATE AttributeJpaEntity a
+            SET a.title = :title,
                 a.index = :index,
                 a.description = :description,
                 a.weight = :weight,
@@ -63,8 +63,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
             LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id and ov.optionId = ans.answerOptionId
                 AND ov.kitVersionId = qi.kitVersionId
-            WHERE
-                qi.attributeId = :attributeId
+            WHERE qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qsn.kitVersionId = :kitVersionId
             ORDER BY qr.title asc, qsn.index asc
@@ -78,7 +77,8 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             SELECT COUNT(DISTINCT(q.id))
             FROM QuestionJpaEntity q
             JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id AND qi.kitVersionId = q.kitVersionId
-            WHERE qi.attributeId = :attributeId AND qi.kitVersionId = :kitVersionId
+            WHERE qi.attributeId = :attributeId
+                AND qi.kitVersionId = :kitVersionId
         """)
     Integer countAttributeImpactfulQuestions(@Param("attributeId") long attributeId, @Param("kitVersionId") long kitVersionId);
 }

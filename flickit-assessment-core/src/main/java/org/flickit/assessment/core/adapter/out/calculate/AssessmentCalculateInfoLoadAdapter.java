@@ -92,7 +92,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         */
         var allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
         var allAnswerOptionEntities = answerOptionRepository.findAllByIdInAndKitVersionId(allAnswerOptionIds, kitVersionId);
-        var optionIdToAnswerOptionImpactEntitiesMap = answerOptionImpactRepository.findAllByOptionIdIn(allAnswerOptionIds).stream()
+        var optionIdToAnswerOptionImpactEntitiesMap = answerOptionImpactRepository.findAllByOptionIdInAndKitVersionId(allAnswerOptionIds, kitVersionId).stream()
             .collect(groupingBy(AnswerOptionImpactJpaEntity::getOptionId));
 
         Context context = new Context(

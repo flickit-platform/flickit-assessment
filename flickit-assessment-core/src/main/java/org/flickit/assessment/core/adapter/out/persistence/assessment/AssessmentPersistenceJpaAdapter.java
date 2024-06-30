@@ -106,7 +106,8 @@ public class AssessmentPersistenceJpaAdapter implements
                     maturityLevel,
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
-                    e.getManageable());
+                    e.getManageable(),
+                    true);
             }).toList();
 
         return new PaginatedResponse<>(
@@ -167,7 +168,8 @@ public class AssessmentPersistenceJpaAdapter implements
                     maturityLevel,
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
-                    e.getManageable());
+                    e.getManageable(),
+                    true);
             }).toList();
 
 

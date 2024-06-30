@@ -70,7 +70,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
             .map(QuestionMapper::mapToDomainModel)
             .toList();
         setQuestionImpacts(questions, kitVersionId);
-        setQuestionOptions(questions);
+        setQuestionOptions(questions, kitVersionId);
 
         List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
@@ -111,8 +111,8 @@ public class LoadAssessmentKitFullInfoAdapter implements
         ));
     }
 
-    private void setQuestionOptions(List<Question> questions) {
-        questions.forEach(q -> q.setOptions(loadAnswerOptionsByQuestionPort.loadByQuestionId(q.getId())));
+    private void setQuestionOptions(List<Question> questions, long kitVersionId) {
+        questions.forEach(q -> q.setOptions(loadAnswerOptionsByQuestionPort.loadByQuestionId(q.getId(), kitVersionId)));
     }
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact) {

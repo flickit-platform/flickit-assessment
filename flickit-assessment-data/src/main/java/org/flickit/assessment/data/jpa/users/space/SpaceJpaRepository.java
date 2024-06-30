@@ -21,14 +21,22 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
     Optional<UUID> loadOwnerIdById(@Param("id") long id);
 
     @Query("""
+            SELECT sp.ownerId
+            FROM AssessmentJpaEntity asm
+            JOIN SpaceJpaEntity sp ON asm.spaceId = sp.id
+            WHERE asm.id = :assessmentId
+        """)
+    Optional<UUID> findOwnerByAssessmentId(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
             SELECT
                 s as space,
                 COUNT(DISTINCT sua.userId) as membersCount,
                 COUNT(DISTINCT a.id) as assessmentsCount
             FROM SpaceJpaEntity s
-            LEFT JOIN AssessmentJpaEntity a on s.id = a.spaceId
+            LEFT JOIN AssessmentJpaEntity a on s.id = a.spaceId AND a.deleted = FALSE
             LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId
-            WHERE s.id = :spaceId AND a.deleted = FALSE
+            WHERE s.id = :spaceId AND s.deleted = FALSE
             GROUP BY s.id
         """)
     Optional<SpaceWithDetails> loadSpaceDetails(@Param("spaceId") long id);

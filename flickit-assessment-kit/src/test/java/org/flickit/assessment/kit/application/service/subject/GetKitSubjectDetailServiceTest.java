@@ -60,7 +60,7 @@ class GetKitSubjectDetailServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         when(loadSubjectPort.load(param.getSubjectId(), kitVersionId)).thenReturn(subject);
-        when(countSubjectQuestionsPort.countBySubjectId(param.getSubjectId())).thenReturn(questionsCount);
+        when(countSubjectQuestionsPort.countBySubjectId(param.getSubjectId(), kitVersionId)).thenReturn(questionsCount);
 
         var result = service.getKitSubjectDetail(param);
 

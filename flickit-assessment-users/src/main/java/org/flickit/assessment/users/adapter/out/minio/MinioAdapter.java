@@ -103,12 +103,23 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public void deletePicture(String path) {
-        String bucketName = properties.getBucketNames().getAvatar();
+        String bucketName = path.replaceFirst("/.*" ,"");
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
+
+        checkFileExistence(bucketName, objectName);
+
+        String latestVersionId = minioClient.listObjects(
+            ListObjectsArgs.builder()
+                .bucket(bucketName)
+                .prefix(objectName)
+                .includeVersions(true)
+                .build()
+        ).iterator().next().get().versionId();
 
         minioClient.removeObject(RemoveObjectArgs.builder()
             .bucket(bucketName)
             .object(objectName)
+            .versionId(latestVersionId)
             .build());
     }
 }

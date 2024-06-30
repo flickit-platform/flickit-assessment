@@ -13,18 +13,18 @@ public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOpt
 
     List<AnswerOptionImpactJpaEntity> findAllByQuestionImpactId(Long impactId);
 
+    List<AnswerOptionImpactJpaEntity> findAllByOptionIdInAndKitVersionId(List<Long> optionIds, long kitVersionId);
+
     @Modifying
     @Query("""
-        UPDATE AnswerOptionImpactJpaEntity a
-        SET a.value = :value,
-        a.lastModificationTime = :lastModificationTime,
-        a.lastModifiedBy = :lastModifiedBy
-        WHERE a.id = :id
+            UPDATE AnswerOptionImpactJpaEntity a
+            SET a.value = :value,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastModifiedBy = :lastModifiedBy
+            WHERE a.id = :id
         """)
         void update(@Param("id") Long id,
                     @Param("value") Double value,
                     @Param("lastModificationTime") LocalDateTime lastModificationTime,
                     @Param("lastModifiedBy") UUID lastModifiedBy);
-
-    List<AnswerOptionImpactJpaEntity> findAllByOptionIdIn(List<Long> optionIds);
 }

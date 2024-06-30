@@ -45,8 +45,7 @@ import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEnt
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -327,7 +326,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.answerEntities());
         when(answerOptionRepository.findAllByIdInAndKitVersionId(any(), anyLong()))
             .thenReturn(context.answerOptionEntities());
-        when(answerOptionImpactRepository.findAllByOptionIdIn(any()))
+        when(answerOptionImpactRepository.findAllByOptionIdInAndKitVersionId(any(), eq(kitVersionId)))
             .thenReturn(context.answerOptionImpactEntities);
     }
 
