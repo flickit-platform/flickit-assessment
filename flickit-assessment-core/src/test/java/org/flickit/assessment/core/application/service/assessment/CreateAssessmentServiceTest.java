@@ -125,7 +125,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             currentUserId
         );
         UUID expectedId = UUID.randomUUID();
