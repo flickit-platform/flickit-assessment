@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase.Param;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeDetailUseCase.Result;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.CountAttributeImpactfulQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
@@ -48,23 +49,28 @@ class GetKitAttributeDetailServiceTest {
     @Mock
     private LoadAttributeMaturityLevelsPort loadAttributeMaturityLevelsPort;
 
+    @Mock
+    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
+
     @Test
     void testGetKitAttributeDetail_WhenAttributeExist_shouldReturnAttributeDetails() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var expectedQuestionCount = 14;
+        var kitVersionId = 10L;
         Attribute expectedAttribute = AttributeMother.attributeWithTitle("EgAttribute");
         List<LoadAttributeMaturityLevelsPort.Result> expectedMaturityLevels =
             List.of(new LoadAttributeMaturityLevelsPort.Result(1L, "MaturityLevelEg", 1, 15));
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
-        when(loadAttributePort.load(param.getAttributeId(), param.getKitId()))
+        when(loadAttributePort.load(param.getAttributeId(), kitVersionId))
             .thenReturn(expectedAttribute);
-        when(countAttributeImpactfulQuestionsPort.countQuestions(param.getAttributeId()))
+        when(countAttributeImpactfulQuestionsPort.countQuestions(param.getAttributeId(), kitVersionId))
             .thenReturn(expectedQuestionCount);
-        when(loadAttributeMaturityLevelsPort.loadAttributeLevels(param.getKitId(), param.getAttributeId()))
+        when(loadAttributeMaturityLevelsPort.loadAttributeLevels(param.getAttributeId(), kitVersionId))
             .thenReturn(expectedMaturityLevels);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
 
         Result result = service.getKitAttributeDetail(param);
 

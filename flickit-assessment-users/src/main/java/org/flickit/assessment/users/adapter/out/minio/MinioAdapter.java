@@ -1,9 +1,6 @@
 package org.flickit.assessment.users.adapter.out.minio;
 
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
-import io.minio.StatObjectArgs;
+import io.minio.*;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import jakarta.annotation.Nullable;
@@ -13,6 +10,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,14 +19,15 @@ import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 import static org.flickit.assessment.users.adapter.out.minio.MinioConstants.PIC_FILE_NAME;
-import static org.flickit.assessment.users.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
 @Component("usersMinioAdapter")
 @AllArgsConstructor
 public class MinioAdapter implements
     UploadExpertGroupPicturePort,
-    CreateFileDownloadLinkPort {
+    CreateFileDownloadLinkPort,
+    DeleteFilePort {
 
     public static final String SLASH = "/";
     public static final String DOT = ".";
@@ -67,7 +66,7 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
-        if(filePath == null || filePath.isBlank())
+        if (filePath == null || filePath.isBlank())
             return null;
 
         String bucketName = filePath.substring(0, filePath.indexOf(SLASH));
@@ -99,5 +98,28 @@ public class MinioAdapter implements
         } catch (ErrorResponseException e) {
             throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public void deletePicture(String path) {
+        String bucketName = path.replaceFirst("/.*" ,"");
+        String objectName = path.replaceFirst("^" + bucketName + "/", "");
+
+        checkFileExistence(bucketName, objectName);
+
+        String latestVersionId = minioClient.listObjects(
+            ListObjectsArgs.builder()
+                .bucket(bucketName)
+                .prefix(objectName)
+                .includeVersions(true)
+                .build()
+        ).iterator().next().get().versionId();
+
+        minioClient.removeObject(RemoveObjectArgs.builder()
+            .bucket(bucketName)
+            .object(objectName)
+            .versionId(latestVersionId)
+            .build());
     }
 }

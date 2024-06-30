@@ -9,6 +9,7 @@ import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 public class SpaceUserAccessMapper {
 
     public static SpaceUserAccessJpaEntity mapToJpaEntity(SpaceUserAccess access) {
-        return new SpaceUserAccessJpaEntity(access.getSpaceId(), access.getUserId(), access.getCreatedBy(), access.getCreationTime());
+        return new SpaceUserAccessJpaEntity(access.getSpaceId(), access.getUserId(),
+            access.getCreatedBy(), access.getCreationTime(),access.getCreationTime());
     }
 }

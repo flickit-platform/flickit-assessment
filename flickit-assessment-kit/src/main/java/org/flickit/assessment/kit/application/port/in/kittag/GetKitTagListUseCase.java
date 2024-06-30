@@ -7,8 +7,6 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.kit.application.domain.KitTag;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
-
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 

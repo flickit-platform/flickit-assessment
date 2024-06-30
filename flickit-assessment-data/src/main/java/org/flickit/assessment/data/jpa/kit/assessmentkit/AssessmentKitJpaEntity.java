@@ -75,5 +75,6 @@ public class AssessmentKitJpaEntity {
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
         public static final String TITLE = "title";
+        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
     }
 }

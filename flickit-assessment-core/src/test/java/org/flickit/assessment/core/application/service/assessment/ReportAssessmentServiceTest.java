@@ -1,17 +1,17 @@
 package org.flickit.assessment.core.application.service.assessment;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
+import org.flickit.assessment.core.application.domain.report.AssessmentReportItem.Space;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
-import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
-import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentExistencePort;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +23,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_ASSESSMENT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -40,10 +42,13 @@ class ReportAssessmentServiceTest {
     private LoadAssessmentReportInfoPort loadReportInfoPort;
 
     @Mock
-    private CheckAssessmentExistencePort checkAssessmentExistencePort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private LoadSpaceOwnerPort loadSpaceOwnerPort;
+
+    @Mock
+    private LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
 
     @Test
     void testReportAssessment_ValidResult() {
@@ -52,14 +57,16 @@ class ReportAssessmentServiceTest {
 
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
-        var attributes = List.of(
-            new AttributeReportItem(1L, "attrTitle1", 2, 1),
-            new AttributeReportItem(2L, "attrTitle2", 1, 2),
-            new AttributeReportItem(3L, "attrTitle3", 3, 3));
-        var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1");
-        var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", 3, expertGroup);
+        MaturityLevel softwareLevel = MaturityLevelMother.levelFour();
+        MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
+        List<MaturityLevel> maturityLevels = List.of(softwareLevel, teamLevel);
+
+        var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1", "picture/link");
+        var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", 3, maturityLevels, expertGroup);
         MaturityLevel assessmentMaturityLevel = MaturityLevelMother.levelThree();
+        LocalDateTime creationTime = LocalDateTime.now();
         LocalDateTime lastModificationTime = LocalDateTime.now();
+        Space space = new Space(1563L, "Space");
         AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
             "assessmentTitle",
             kit,
@@ -67,21 +74,19 @@ class ReportAssessmentServiceTest {
             1.5,
             true,
             true,
-            AssessmentColor.BLUE,
-            lastModificationTime);
+            creationTime,
+            lastModificationTime,
+            space);
 
-        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        MaturityLevel softwareLevel = MaturityLevelMother.levelFour();
-        MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
         var subjects = List.of(
-            new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", softwareLevel),
-            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", teamLevel));
-        var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, attributes, maturityLevels, subjects);
+            new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", 20.0, softwareLevel, List.of()),
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
+        var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
 
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
-        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
-        when(loadReportInfoPort.load(assessmentId)).thenReturn(assessmentReport);
+        when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
+        when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(currentUserId);
 
         ReportAssessmentUseCase.Result result = service.reportAssessment(param);
 
@@ -93,7 +98,6 @@ class ReportAssessmentServiceTest {
         assertEquals(assessmentReport.assessment().isCalculateValid(), result.assessment().isCalculateValid());
         assertEquals(assessmentReport.assessment().isConfidenceValid(), result.assessment().isConfidenceValid());
         assertEquals(assessmentReport.assessment().lastModificationTime(), result.assessment().lastModificationTime());
-        assertEquals(assessmentReport.assessment().color(), result.assessment().color());
         assertEquals(assessmentReport.assessment().maturityLevel().getId(), result.assessment().maturityLevel().getId());
         assertEquals(assessmentReport.assessment().maturityLevel().getIndex(), result.assessment().maturityLevel().getIndex());
         assertEquals(assessmentReport.assessment().maturityLevel().getTitle(), result.assessment().maturityLevel().getTitle());
@@ -102,26 +106,14 @@ class ReportAssessmentServiceTest {
         assertEquals(assessmentReport.assessment().assessmentKit().title(), result.assessment().assessmentKit().title());
         assertEquals(assessmentReport.assessment().assessmentKit().summary(), result.assessment().assessmentKit().summary());
         assertEquals(assessmentReport.assessment().assessmentKit().maturityLevelCount(), result.assessment().assessmentKit().maturityLevelCount());
+        assertEquals(assessmentReport.assessment().assessmentKit().maturityLevels(), result.assessment().assessmentKit().maturityLevels());
         assertEquals(assessmentReport.assessment().assessmentKit().expertGroup().id(), result.assessment().assessmentKit().expertGroup().id());
         assertEquals(assessmentReport.assessment().assessmentKit().expertGroup().title(), result.assessment().assessmentKit().expertGroup().title());
-
-        assertNotNull(result.topStrengths());
-        assertEquals(1, result.topStrengths().size());
-        assertNotNull(result.topWeaknesses());
-        assertEquals(2, result.topWeaknesses().size());
+        assertEquals(space.id(), result.assessment().space().id());
+        assertEquals(space.title(), result.assessment().space().title());
+        assertTrue(result.assessmentPermissions().manageable());
 
         assertEquals(assessmentReport.subjects().size(), result.subjects().size());
-    }
-
-    @Test
-    void testReportAssessment_AssessmentDoesNotExist_ThrowException() {
-        UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
-        ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
-
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(false);
-
-        assertThrows(ResourceNotFoundException.class, () -> service.reportAssessment(param));
     }
 
     @Test
@@ -130,9 +122,84 @@ class ReportAssessmentServiceTest {
         UUID assessmentId = UUID.randomUUID();
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
-        when(checkAssessmentExistencePort.existsById(param.getAssessmentId())).thenReturn(true);
-        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.reportAssessment(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.reportAssessment(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    }
+
+    @Test
+    void testReportAssessment_assessmentIsNotManageableByCurrentUser() {
+        UUID currentUserId = UUID.randomUUID();
+        UUID assessmentId = UUID.randomUUID();
+
+        ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
+
+        MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
+        Space space = new Space(1563L, "Space");
+        AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
+            "assessmentTitle",
+            null,
+            null,
+            1.5,
+            true,
+            true,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            space);
+
+        var subjects = List.of(
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
+        var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT)).thenReturn(true);
+        doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
+        when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
+        when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(UUID.randomUUID());
+        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(AssessmentUserRole.VIEWER);
+
+        ReportAssessmentUseCase.Result result = service.reportAssessment(param);
+
+        assertNotNull(assessmentReport);
+        assertNotNull(assessmentReport.assessment());
+        assertFalse(result.assessmentPermissions().manageable());
+
+        assertEquals(assessmentReport.subjects().size(), result.subjects().size());
+    }
+
+    @Test
+    void testReportAssessment_currentUserHasManagerRole() {
+        UUID currentUserId = UUID.randomUUID();
+        UUID assessmentId = UUID.randomUUID();
+
+        ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
+
+        MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
+        Space space = new Space(1563L, "Space");
+        AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
+            "assessmentTitle",
+            null,
+            null,
+            1.5,
+            true,
+            true,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            space);
+
+        var subjects = List.of(
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
+        var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT)).thenReturn(true);
+        doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
+        when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
+        when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(UUID.randomUUID());
+        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(AssessmentUserRole.MANAGER);
+
+        ReportAssessmentUseCase.Result result = service.reportAssessment(param);
+
+        assertTrue(result.assessmentPermissions().manageable());
+
     }
 }

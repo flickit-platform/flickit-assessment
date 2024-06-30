@@ -73,7 +73,7 @@
     </changeSet>
 
     <changeSet id="0.17-14" author="Ali Sedaghat">
-        <renameSequence oldSequenceName="baseinfo_profiletag_id_seq" newSequenceName="fak_kit_tag_id_seq"/>
+        <renameSequence oldSequenceName="baseinfo_assessmentkittag_id_seq" newSequenceName="fak_kit_tag_id_seq"/>
     </changeSet>
 
     <changeSet id="0.17-15" author="Ali Sedaghat">
@@ -350,4 +350,5 @@
                              columnNames="space_id, email"
                              constraintName="uq_fau_space_invitee_spaceid_email"/>
     </changeSet>
+
 </databaseChangeLog>

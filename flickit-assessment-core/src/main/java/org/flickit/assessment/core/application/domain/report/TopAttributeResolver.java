@@ -20,7 +20,7 @@ public class TopAttributeResolver {
     public List<TopAttribute> getTopStrengths() {
         return attributes.stream()
             .sorted(comparing(AttributeReportItem::index, reverseOrder()))
-            .filter(x -> isHigherThanOrEqualToMiddleLevel(x.maturityLevelIndex()))
+            .filter(x -> isHigherThanOrEqualToMiddleLevel(x.maturityLevel().getIndex()))
             .limit(TOP_COUNT)
             .map(x -> new TopAttribute(x.id(), x.title()))
             .toList();
@@ -33,7 +33,7 @@ public class TopAttributeResolver {
     public List<TopAttribute> getTopWeaknesses() {
         return attributes.stream()
             .sorted(comparingInt(AttributeReportItem::index))
-            .filter(x -> isLowerThanMiddleLevel(x.maturityLevelIndex()))
+            .filter(x -> isLowerThanMiddleLevel(x.maturityLevel().getIndex()))
             .limit(TOP_COUNT)
             .map(x -> new TopAttribute(x.id(), x.title()))
             .toList();

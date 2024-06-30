@@ -1,14 +1,14 @@
 package org.flickit.assessment.users.application.port.in.spaceuseraccess;
 
-import java.util.UUID;
-
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_SPACE_MEMBER_SPACE_ID_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_SPACE_MEMBER_EMAIL_NOT_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_SPACE_MEMBER_EMAIL_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_SPACE_MEMBER_SPACE_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InviteSpaceMemberUseCaseParamTest {
