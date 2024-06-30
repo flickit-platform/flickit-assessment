@@ -99,7 +99,7 @@ class GetKitQuestionDetailServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadQuestionPort.load(question.getId(), kitId)).thenReturn(question);
+        when(loadQuestionPort.load(question.getId(), kitVersionId)).thenReturn(question);
         when(loadAllAttributesPort.loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), kitVersionId)).thenReturn(List.of(attr1, attr2));
         when(loadMaturityLevelsPort.loadByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
         when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
@@ -141,6 +141,7 @@ class GetKitQuestionDetailServiceTest {
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(
+            loadActiveKitVersionIdPort,
             checkExpertGroupAccessPort,
             loadAllAttributesPort
         );
@@ -149,13 +150,15 @@ class GetKitQuestionDetailServiceTest {
     @Test
     void testGetKitQuestionDetail_WhenQuestionDoesNotExist_ThrowsException() {
         long kitId = 123L;
+        long kitVersionId = 153L;
         long questionId = 2L;
         var param = new Param(kitId, questionId, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadQuestionPort.load(questionId, kitId)).thenThrow(new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
+        when(loadQuestionPort.load(questionId, kitVersionId)).thenThrow(new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(QUESTION_ID_NOT_FOUND, exception.getMessage());

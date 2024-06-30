@@ -3,11 +3,11 @@ package org.flickit.assessment.kit.application.service.subject;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.subject.GetKitSubjectDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +34,7 @@ public class GetKitSubjectDetailService implements GetKitSubjectDetailUseCase {
 
         var subject = loadSubjectPort.load(param.getSubjectId(), kitVersionId);
         var attributes = subject.getAttributes().stream().map(this::toAttribute).toList();
-        var questionsCount = countSubjectQuestionsPort.countBySubjectId(param.getSubjectId());
+        var questionsCount = countSubjectQuestionsPort.countBySubjectId(param.getSubjectId(), kitVersionId);
         return new Result(questionsCount, subject.getDescription(), attributes);
     }
 

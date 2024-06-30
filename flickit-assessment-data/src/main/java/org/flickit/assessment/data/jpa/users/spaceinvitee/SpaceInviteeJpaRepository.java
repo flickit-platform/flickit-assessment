@@ -13,12 +13,16 @@ import java.util.UUID;
 
 public interface SpaceInviteeJpaRepository extends JpaRepository<SpaceInviteeJpaEntity, UUID> {
 
-    boolean existsBySpaceIdAndEmail(@Param("spaceId") long spaceId, @Param("email") String email);
+    boolean existsBySpaceIdAndEmail(long spaceId, String email);
+
+    void deleteByEmail(String email);
+
+    List<SpaceInviteeJpaEntity> findByEmail(String email);
 
     @Modifying
     @Query("""
-            UPDATE SpaceInviteeJpaEntity s SET
-                s.creationTime = :creationTime,
+            UPDATE SpaceInviteeJpaEntity s
+            SET s.creationTime = :creationTime,
                 s.expirationDate = :expirationDate,
                 s.createdBy = :createdBy
             WHERE s.spaceId = :spaceId AND s.email = :email
@@ -28,10 +32,6 @@ public interface SpaceInviteeJpaRepository extends JpaRepository<SpaceInviteeJpa
                 @Param("creationTime") LocalDateTime creationTime,
                 @Param("expirationDate") LocalDateTime expirationDate,
                 @Param("createdBy") UUID createdBy);
-
-    void deleteByEmail(@Param("email") String email);
-
-    List<SpaceInviteeJpaEntity> findByEmail(@Param("email") String email);
 
     @Query("""
             SELECT s

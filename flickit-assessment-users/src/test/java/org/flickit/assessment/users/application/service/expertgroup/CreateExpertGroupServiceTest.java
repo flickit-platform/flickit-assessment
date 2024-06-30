@@ -2,9 +2,9 @@ package org.flickit.assessment.users.application.service.expertgroup;
 
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.users.application.port.out.expertgroup.*;
-import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
+import org.flickit.assessment.users.application.port.out.expertgroup.CreateExpertGroupPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

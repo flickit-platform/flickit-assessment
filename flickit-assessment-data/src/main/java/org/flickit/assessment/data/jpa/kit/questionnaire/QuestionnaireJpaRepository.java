@@ -16,24 +16,25 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
 
     List<QuestionnaireJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
+    Optional<QuestionnaireJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
+
     @Modifying
     @Query("""
-        UPDATE QuestionnaireJpaEntity q
-        SET q.title = :title,
-        q.index = :index,
-        q.description = :description,
-        q.lastModificationTime = :lastModificationTime,
-        q.lastModifiedBy = :lastModifiedBy
-        WHERE q.id = :id AND q.kitVersionId = :kitVersionId
+            UPDATE QuestionnaireJpaEntity q
+            SET q.title = :title,
+                q.index = :index,
+                q.description = :description,
+                q.lastModificationTime = :lastModificationTime,
+                q.lastModifiedBy = :lastModifiedBy
+            WHERE q.id = :id AND q.kitVersionId = :kitVersionId
         """)
-    void update(
-        @Param(value = "id") long id,
-        @Param(value = "kitVersionId") long kitVersionId,
-        @Param(value = "title") String title,
-        @Param(value = "index") int index,
-        @Param(value = "description") String description,
-        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
-        @Param(value = "lastModifiedBy") UUID lastModifiedBy
+    void update(@Param(value = "id") long id,
+                @Param(value = "kitVersionId") long kitVersionId,
+                @Param(value = "title") String title,
+                @Param(value = "index") int index,
+                @Param(value = "description") String description,
+                @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
+                @Param(value = "lastModifiedBy") UUID lastModifiedBy
     );
 
     @Query("""
@@ -43,13 +44,11 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
                 q.index as index,
                 COUNT(DISTINCT question.id) as questionCount
             FROM QuestionnaireJpaEntity q
-            JOIN QuestionJpaEntity question
-                ON q.id = question.questionnaireId AND q.kitVersionId = question.kitVersionId
+            JOIN QuestionJpaEntity question ON q.id = question.questionnaireId AND q.kitVersionId = question.kitVersionId
             WHERE q.kitVersionId = :kitVersionId
             GROUP BY q.id, q.kitVersionId, q.index
             ORDER BY q.index
         """)
-    Page<QuestionnaireListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId, Pageable pageable);
-
-    Optional<QuestionnaireJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
+    Page<QuestionnaireListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId,
+                                                                           Pageable pageable);
 }

@@ -8,8 +8,10 @@ import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
+import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -42,9 +44,14 @@ class GetAssessmentServiceTest {
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
 
+    @Mock
+    private LoadAssessmentResultPort loadAssessmentResultPort;
+
     @Test
     void testGetAssessment_validResult() {
-        Assessment assessment = AssessmentMother.assessment();
+        var maturityLevel = MaturityLevelMother.levelThree();
+        var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, maturityLevel);
+        Assessment assessment = assessmentResult.getAssessment();
         UUID assessmentId = assessment.getId();
         User assessmentCreator = new User(assessment.getCreatedBy(), "Display name");
         UUID currentUserId = UUID.randomUUID();
@@ -52,6 +59,7 @@ class GetAssessmentServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT)).thenReturn(true);
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
 
@@ -68,6 +76,8 @@ class GetAssessmentServiceTest {
         assertEquals(assessment.getLastModificationTime(), result.lastModificationTime());
         assertEquals(assessmentCreator.getId(), result.createdBy().getId());
         assertEquals(assessmentCreator.getDisplayName(), result.createdBy().getDisplayName());
+        assertEquals(maturityLevel, result.maturityLevel());
+        assertEquals(assessmentResult.getIsCalculateValid(), result.isCalculateValid());
 
         verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
         verify(getAssessmentPort, times(1)).getAssessmentById(any());

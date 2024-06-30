@@ -4,7 +4,10 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase.Param;
-import org.flickit.assessment.users.application.port.out.expertgroup.*;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupPort;
+import org.flickit.assessment.users.application.port.out.expertgroup.UpdateExpertGroupPicturePort;
+import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.junit.jupiter.api.DisplayName;
@@ -19,9 +22,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -176,3 +180,4 @@ class UpdateExpertGroupPictureServiceTest {
         verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
     }
 }
+

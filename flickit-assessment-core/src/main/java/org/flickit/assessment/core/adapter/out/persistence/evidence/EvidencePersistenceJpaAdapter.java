@@ -50,11 +50,11 @@ public class EvidencePersistenceJpaAdapter implements
         var assessmentKitVersionId = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND))
             .getKitVersionId();
-        var question = questionRepository.findById(param.questionId())
+        var question = questionRepository.findByIdAndKitVersionId(param.questionId(), assessmentKitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(ADD_EVIDENCE_QUESTION_ID_NOT_FOUND));
         if (!Objects.equals(assessmentKitVersionId, question.getKitVersionId()))
             throw new ResourceNotFoundException(ADD_EVIDENCE_QUESTION_ID_NOT_FOUND);
-        var unsavedEntity = EvidenceMapper.mapCreateParamToJpaEntity(param, question.getRefNum());
+        var unsavedEntity = EvidenceMapper.mapCreateParamToJpaEntity(param);
         EvidenceJpaEntity entity = repository.save(unsavedEntity);
         return entity.getId();
     }

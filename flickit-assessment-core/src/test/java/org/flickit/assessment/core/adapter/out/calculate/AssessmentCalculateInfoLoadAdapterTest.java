@@ -45,8 +45,7 @@ import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEnt
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -188,12 +187,12 @@ class AssessmentCalculateInfoLoadAdapterTest {
         AttributeJpaEntity attribute6 = createAttributeEntity(attribute6Id, 6, kitVersionId, subjectValue3.getSubjectId());
         List<AttributeJpaEntity> attributes = List.of(attribute1, attribute2, attribute3, attribute4, attribute5, attribute6);
 
-        var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1.getRefNum(), attribute1Id);
-        var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2.getRefNum(), attribute2Id);
-        var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3.getRefNum(), attribute3Id);
-        var qav4 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute4.getRefNum(), attribute4Id);
-        var qav5 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute5.getRefNum(), attribute5Id);
-        var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6.getRefNum(), attribute6Id);
+        var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1Id);
+        var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2Id);
+        var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3Id);
+        var qav4 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute4Id);
+        var qav5 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute5Id);
+        var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6Id);
         List<AttributeValueJpaEntity> attributeValues = List.of(qav1, qav2, qav3, qav4, qav5, qav6);
 
         var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(), kitVersionId, 1, List.of(attribute1, attribute2));
@@ -286,9 +285,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
         List<AnswerJpaEntity> answerEntities = new ArrayList<>(List.of(answerQ1, answerQ2, answerQ4, answerQ5, answerQ6, answerQ9, answerQ10));
 
-        var answerOptionEntity1 = new AnswerOptionJpaEntity(1L, null, null, null, null, question1.getId(), null, null, null, null);
-        var answerOptionEntity2 = new AnswerOptionJpaEntity(2L, null, null, null, null, question2.getId(), null, null, null, null);
-        var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, null, question5.getId(), null, null, null, null);
+        var answerOptionEntity1 = new AnswerOptionJpaEntity(1L, null, null, null, question1.getId(), null, null, null, null);
+        var answerOptionEntity2 = new AnswerOptionJpaEntity(2L, null, null, null, question2.getId(), null, null, null, null);
+        var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, question5.getId(), null, null, null, null);
         List<AnswerOptionJpaEntity> answerOptionEntities = new ArrayList<>(List.of(answerOptionEntity1, answerOptionEntity2, answerOptionEntity3));
 
         var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, 1L, impact11, 1, kitVersionId, null, null, null, null);
@@ -327,7 +326,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.answerEntities());
         when(answerOptionRepository.findAllByIdInAndKitVersionId(any(), anyLong()))
             .thenReturn(context.answerOptionEntities());
-        when(answerOptionImpactRepository.findAllByOptionIdIn(any()))
+        when(answerOptionImpactRepository.findAllByOptionIdInAndKitVersionId(any(), eq(kitVersionId)))
             .thenReturn(context.answerOptionImpactEntities);
     }
 

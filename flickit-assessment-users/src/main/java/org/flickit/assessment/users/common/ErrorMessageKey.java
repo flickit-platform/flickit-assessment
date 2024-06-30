@@ -126,4 +126,10 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "update-expert-group-picture.expertGroupId.notNull";
     public static final String UPDATE_EXPERT_GROUP_PICTURE_PICTURE_NOT_NULL = "update-expert-group-picture.picture.notNull";
+
+    public static final String DELETE_SPACE_INVITATION_INVITE_ID_NOT_NULL = "delete-space-invitation.inviteId.notNull";
+    public static final String DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND = "delete-space-invitation.inviteId.notFound";
+
+    public static final String DELETE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group-picture.expertGroupId.notNull";
+
 }

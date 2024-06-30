@@ -66,7 +66,8 @@ class GetAssessmentUsersServiceTest {
             "admin@flickit.org",
             "Flickit Admin",
             picturePath,
-            manager);
+            manager,
+            true);
 
         PaginatedResponse<LoadAssessmentUsersPort.AssessmentUser> paginatedResponse =
             new PaginatedResponse<>(List.of(expectedAssessmentUser),
@@ -91,6 +92,7 @@ class GetAssessmentUsersServiceTest {
         assertNull(actualAssessmentUser.pictureLink());
         assertEquals(expectedAssessmentUser.role().id(), actualAssessmentUser.role().id());
         assertEquals(expectedAssessmentUser.role().title(), actualAssessmentUser.role().title());
+        assertEquals(expectedAssessmentUser.editable(), actualAssessmentUser.editable());
     }
 
     @Test
@@ -110,7 +112,8 @@ class GetAssessmentUsersServiceTest {
                 "admin@flickit.org",
                 "Flickit Admin",
                 "path/to/picture",
-                manager);
+                manager,
+                true);
 
         PaginatedResponse<LoadAssessmentUsersPort.AssessmentUser> paginatedResponse =
             new PaginatedResponse<>(List.of(expectedAssessmentUser),
@@ -137,5 +140,6 @@ class GetAssessmentUsersServiceTest {
         assertEquals("cdn.flickit.org/profile.jpg", actualAssessmentUser.pictureLink());
         assertEquals(expectedAssessmentUser.role().id(), actualAssessmentUser.role().id());
         assertEquals(expectedAssessmentUser.role().title(), actualAssessmentUser.role().title());
+        assertEquals(expectedAssessmentUser.editable(), actualAssessmentUser.editable());
     }
 }

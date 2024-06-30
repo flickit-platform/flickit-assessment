@@ -38,7 +38,8 @@ public class AssessmentMother {
             new AssessmentListItem.MaturityLevel(counter, "levelTitle"+counter, 1, 2),
             Boolean.TRUE,
             Boolean.TRUE,
-            Boolean.FALSE
+            Boolean.FALSE,
+            true
         );
     }
 }

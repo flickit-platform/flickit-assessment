@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.minio.MinioAdapter;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
+import org.flickit.assessment.core.application.domain.report.AssessmentReportItem.Space;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
@@ -25,6 +26,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
+import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -56,9 +58,10 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final SubjectJpaRepository subjectRepository;
     private final AttributeValueJpaRepository attributeValueJpaRepository;
     private final MinioAdapter minioAdapter;
+    private final SpaceJpaRepository spaceRepository;
 
     @Override
-    public Result load(UUID assessmentId) {
+    public Result load(UUID assessmentId, UUID currentUserId) {
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND);
 
@@ -78,6 +81,9 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         Map<Long, MaturityLevel> idToMaturityLevel = maturityLevelEntities.stream()
             .collect(toMap(MaturityLevelJpaEntity::getId, e -> mapToDomainModel(e, null)));
 
+        var spaceEntity = spaceRepository.findById(assessment.getSpaceId())
+            .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_SPACE_NOT_FOUND));
+
         AssessmentReportItem assessmentReportItem = new AssessmentReportItem(assessmentId,
             assessment.getTitle(),
             buildAssessmentKitItem(expertGroupEntity, assessmentKitEntity, idToMaturityLevel.values().stream().toList()),
@@ -86,7 +92,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentResultEntity.getIsCalculateValid(),
             assessmentResultEntity.getIsConfidenceValid(),
             assessment.getCreationTime(),
-            assessment.getLastModificationTime());
+            assessment.getLastModificationTime(),
+            new Space(spaceEntity.getId(), spaceEntity.getTitle()));
 
         List<AssessmentSubjectReportItem> subjects = buildSubjectReportItems(assessmentResultEntity, idToMaturityLevel);
 

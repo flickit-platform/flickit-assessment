@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
@@ -10,8 +11,10 @@ import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpa
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -21,6 +24,7 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
 
     private final LoadAssessmentListPort loadAssessmentsBySpace;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
+    private final AssessmentPermissionChecker assessmentPermissionChecker;
 
     @Override
     public PaginatedResponse<AssessmentListItem> getAssessmentList(Param param) {
@@ -30,11 +34,36 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
         if (!checkSpaceAccessPort.checkIsMember(spaceId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        return loadAssessmentsBySpace.loadSpaceAssessments(
+        var assessmentListItemPaginatedResponse = loadAssessmentsBySpace.loadSpaceAssessments(
             spaceId,
             param.getCurrentUserId(),
             param.getPage(),
             param.getSize()
         );
+
+        List<AssessmentListItem> items = assessmentListItemPaginatedResponse.getItems().stream()
+            .map(e -> {
+                if (!assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT))
+                    return new AssessmentListItem(e.id(),
+                        e.title(),
+                        e.kit(),
+                        e.space(),
+                        e.color(),
+                        e.lastModificationTime(),
+                        null,
+                        e.isCalculateValid(),
+                        e.isConfidenceValid(),
+                        e.manageable(),
+                        false);
+                else
+                    return e;
+            }).toList();
+
+        return new PaginatedResponse<>(items,
+            assessmentListItemPaginatedResponse.getPage(),
+            assessmentListItemPaginatedResponse.getSize(),
+            assessmentListItemPaginatedResponse.getSort(),
+            assessmentListItemPaginatedResponse.getOrder(),
+            assessmentListItemPaginatedResponse.getTotal());
     }
 }

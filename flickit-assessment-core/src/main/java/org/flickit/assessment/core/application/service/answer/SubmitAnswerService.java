@@ -48,7 +48,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
 
         if (Boolean.TRUE.equals(param.getIsNotApplicable())) {
-            var isMayNotBeApplicable = loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId());
+            var isMayNotBeApplicable = loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), assessmentResult.getKitVersionId());
             if (!isMayNotBeApplicable)
                 throw new ValidationException(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE);
         }
