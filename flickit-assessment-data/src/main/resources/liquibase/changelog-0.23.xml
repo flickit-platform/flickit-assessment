@@ -4,28 +4,92 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.23-01" author="Ali Sedaghat">
+    <changeSet id="0.23-01" author="Maziyar Gerami">
+        <dropColumn tableName="fak_answer_option" columnName="ref_num"/>
+    </changeSet>
+
+    <changeSet id="0.23-02" author="Maziyar Gerami">
+        <dropColumn tableName="fak_attribute" columnName="ref_num"/>
+    </changeSet>
+
+    <changeSet id="0.23-03" author="Maziyar Gerami">
+        <dropColumn tableName="fak_maturity_level" columnName="ref_num"/>
+    </changeSet>
+
+    <changeSet id="0.23-04" author="Maziyar Gerami">
+        <dropColumn tableName="fak_question" columnName="ref_num"/>
+    </changeSet>
+
+    <changeSet id="0.23-05" author="Maziyar Gerami">
+        <dropColumn tableName="fak_questionnaire" columnName="ref_num"/>
+    </changeSet>
+
+    <changeSet id="0.23-06" author="Maziyar Gerami">
+        <dropColumn tableName="fak_subject" columnName="ref_num"/>
+    </changeSet>
+
+    <changeSet id="0.23-07" author="Maziyar Gerami">
+        <dropColumn tableName="fac_attribute_value" columnName="attribute_ref_num"/>
+    </changeSet>
+
+    <changeSet id="0.23-08" author="Maziyar Gerami">
+        <dropColumn tableName="fac_evidence" columnName="question_ref_num"/>
+    </changeSet>
+
+    <changeSet id="0.23-09" author="Maziyar Gerami">
+        <dropColumn tableName="fac_answer" columnName="question_ref_num"/>
+    </changeSet>
+
+    <changeSet id="0.23-10" author="Maziyar Gerami">
+        <createTable tableName="fac_evidence_attachment">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_evidence_attachment"/>
+            </column>
+            <column name="evidence_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_fac_evidence_attachment_evidence"
+                             referencedTableName="fac_evidence" referencedColumnNames="id"/>
+            </column>
+            <column name="file_path" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_by" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_fac_evidence_attachment_user_createdBy"
+                             referencedTableName="account_user" referencedColumnNames="id"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.23-11" author="Maziyar Gerami">
+        <dropColumn tableName="fac_assessment" columnName="color_id"/>
+    </changeSet>
+
+    <changeSet id="0.23-12" author="Ali Sedaghat">
         <renameTable oldTableName="account_user" newTableName="fau_user"/>
     </changeSet>
 
-    <changeSet id="0.23-02" author="Ali Sedaghat">
+    <changeSet id="0.23-13" author="Ali Sedaghat">
         <sql>alter table fau_user rename constraint account_user_pkey to pk_fau_user;</sql>
     </changeSet>
 
-    <changeSet id="0.23-03" author="Ali Sedaghat">
+    <changeSet id="0.23-14" author="Ali Sedaghat">
         <dropColumn tableName="fau_user" columnName="current_space_id"/>
     </changeSet>
 
-    <changeSet id="0.23-04" author="Ali Sedaghat">
+    <changeSet id="0.23-15" author="Ali Sedaghat">
         <dropColumn tableName="fau_user" columnName="default_space_id"/>
     </changeSet>
 
-    <changeSet id="0.23-05" author="Ali Sedaghat">
+    <changeSet id="0.23-16" author="Ali Sedaghat">
         <dropUniqueConstraint tableName="fau_user" constraintName="account_user_email_key"/>
     </changeSet>
 
-    <changeSet id="0.23-06" author="Ali Sedaghat">
+    <changeSet id="0.23-17" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fau_user" columnNames="email" constraintName="uq_fauuser_email"/>
     </changeSet>
-
 </databaseChangeLog>

@@ -18,7 +18,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"colorId\": 1,\n    \"spaceId\": 1\n}",
+					"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"spaceId\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -50,7 +50,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"The title2\",\r\n    \"colorId\": 1\r\n}",
+					"raw": "{\r\n    \"title\": \"The title2\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -204,29 +204,6 @@
 						"{{api_path}}",
 						"assessments",
 						"ff1b2ae3-92b7-437d-b321-539753b71608"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Assessment Colors",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessment-colors"
 					]
 				}
 			},

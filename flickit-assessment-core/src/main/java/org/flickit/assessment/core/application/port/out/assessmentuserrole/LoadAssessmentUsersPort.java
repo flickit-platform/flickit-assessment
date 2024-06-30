@@ -15,7 +15,8 @@ public interface LoadAssessmentUsersPort {
         String email,
         String displayName,
         String picturePath,
-        Role role) {
+        Role role,
+        boolean editable) {
 
         public record Role(int id, String title) {
         }

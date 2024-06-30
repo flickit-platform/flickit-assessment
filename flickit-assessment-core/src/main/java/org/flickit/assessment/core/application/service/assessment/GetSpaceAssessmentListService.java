@@ -48,12 +48,12 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
                         e.title(),
                         e.kit(),
                         e.space(),
-                        e.color(),
                         e.lastModificationTime(),
                         null,
                         e.isCalculateValid(),
                         e.isConfidenceValid(),
-                        e.manageable());
+                        e.manageable(),
+                        false);
                 else
                     return e;
             }).toList();
