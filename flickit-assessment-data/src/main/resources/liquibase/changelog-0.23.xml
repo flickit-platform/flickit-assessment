@@ -90,6 +90,6 @@
     </changeSet>
 
     <changeSet id="0.23-17" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fau_user" columnNames="email" constraintName="uq_fauuser_email"/>
+        <addUniqueConstraint tableName="fau_user" columnNames="email" constraintName="uq_fau_user_email"/>
     </changeSet>
 </databaseChangeLog>
