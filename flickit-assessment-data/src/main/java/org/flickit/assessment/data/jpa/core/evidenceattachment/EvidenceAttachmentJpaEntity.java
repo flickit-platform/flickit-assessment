@@ -27,8 +27,8 @@ public class EvidenceAttachmentJpaEntity {
     @Column(name = "evidence_id", nullable = false, columnDefinition = "uuid")
     private UUID evidenceId;
 
-    @Column(name = "file", nullable = false)
-    private String file;
+    @Column(name = "file_path", nullable = false)
+    private String filePath;
 
     @Column(name = "description", length = 100)
     private String description;
