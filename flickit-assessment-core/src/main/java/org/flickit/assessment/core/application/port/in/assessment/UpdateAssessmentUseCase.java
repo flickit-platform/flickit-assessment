@@ -32,16 +32,12 @@ public interface UpdateAssessmentUseCase {
         @Size(max = 100, message = UPDATE_ASSESSMENT_TITLE_SIZE_MAX)
         String title;
 
-        @NotNull(message = UPDATE_ASSESSMENT_COLOR_ID_NOT_NULL)
-        Integer colorId;
-
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(UUID id, String title, Integer colorId, UUID currentUserId) {
+        public Param(UUID id, String title, UUID currentUserId) {
             this.id = id;
             this.title = title;
-            this.colorId = colorId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
