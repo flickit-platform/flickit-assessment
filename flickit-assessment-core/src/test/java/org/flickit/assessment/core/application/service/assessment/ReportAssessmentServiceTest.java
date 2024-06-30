@@ -144,7 +144,6 @@ class ReportAssessmentServiceTest {
             1.5,
             true,
             true,
-            AssessmentColor.BLUE,
             LocalDateTime.now(),
             LocalDateTime.now(),
             space);
@@ -184,7 +183,6 @@ class ReportAssessmentServiceTest {
             1.5,
             true,
             true,
-            AssessmentColor.BLUE,
             LocalDateTime.now(),
             LocalDateTime.now(),
             space);
