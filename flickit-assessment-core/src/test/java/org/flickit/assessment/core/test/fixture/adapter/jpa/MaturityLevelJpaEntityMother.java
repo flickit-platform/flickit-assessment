@@ -13,7 +13,6 @@ public class MaturityLevelJpaEntityMother {
         return new MaturityLevelJpaEntity(
             id,
             kitVersionId,
-            UUID.randomUUID(),
             "code" + id,
             index++,
             "title" + id,

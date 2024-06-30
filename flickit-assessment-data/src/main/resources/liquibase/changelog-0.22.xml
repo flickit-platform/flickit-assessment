@@ -4,28 +4,16 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.22-01" author="Maziyar Gerami">
-        <createTable tableName="fac_evidence_attachment">
-            <column name="id" type="uuid">
-                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_evidence_attachment"/>
-            </column>
-            <column name="evidence_id" type="uuid">
-                <constraints nullable="false" foreignKeyName="fk_fac_evidence_attachment_evidence"
-                             referencedTableName="fac_evidence" referencedColumnNames="id"/>
-            </column>
-            <column name="file" type="varchar">
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="varchar(100)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="created_by" type="uuid">
-                <constraints nullable="false" foreignKeyName="fk_fac_evidence_attachment_user_createdBy"
-                referencedTableName="account_user" referencedColumnNames="id"/>
-            </column>
-            <column name="creation_time" type="${datetime_with_time_zone_type}">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
+    <changeSet id="0.22-01" author="Mahdi Rezazadeh">
+        <sql>
+            INSERT INTO fac_assessment_user_role (assessment_id, user_id, role_id)
+            SELECT a.id        AS assessment_id,
+                   sp.owner_id AS user_id,
+                   3           AS role_id
+            FROM fac_assessment a
+                     JOIN fau_space sp ON a.space_id = sp.id
+            ON CONFLICT (assessment_id, user_id)
+            DO UPDATE SET role_id = EXCLUDED.role_id;
+        </sql>
     </changeSet>
 </databaseChangeLog>
