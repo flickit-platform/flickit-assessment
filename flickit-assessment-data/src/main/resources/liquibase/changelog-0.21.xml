@@ -328,36 +328,4 @@
             <column name="attribute_id" valueComputed="fak_attribute.id FROM fak_attribute WHERE fak_attribute.ref_num = attribute_ref_num"/>
         </update>
     </changeSet>
-
-    <changeSet id="0.21-48" author="Maziyar Gerami">
-        <dropColumn tableName="fak_answer_option" columnName="ref_num"/>
-    </changeSet>
-
-    <changeSet id="0.21-49" author="Maziyar Gerami">
-        <dropColumn tableName="fak_attribute" columnName="ref_num"/>
-    </changeSet>
-
-    <changeSet id="0.21-50" author="Maziyar Gerami">
-        <dropColumn tableName="fak_maturity_level" columnName="ref_num"/>
-    </changeSet>
-
-    <changeSet id="0.21-51" author="Maziyar Gerami">
-        <dropColumn tableName="fak_question" columnName="ref_num"/>
-    </changeSet>
-
-    <changeSet id="0.21-52" author="Maziyar Gerami">
-        <dropColumn tableName="fak_questionnaire" columnName="ref_num"/>
-    </changeSet>
-
-    <changeSet id="0.21-53" author="Maziyar Gerami">
-        <dropColumn tableName="fak_subject" columnName="ref_num"/>
-    </changeSet>
-
-    <changeSet id="0.21-54" author="Maziyar Gerami">
-        <dropColumn tableName="fac_attribute_value" columnName="attribute_ref_num"/>
-    </changeSet>
-
-    <changeSet id="0.21-55" author="Maziyar Gerami">
-        <dropColumn tableName="fac_evidence" columnName="question_ref_num"/>
-    </changeSet>
 </databaseChangeLog>
