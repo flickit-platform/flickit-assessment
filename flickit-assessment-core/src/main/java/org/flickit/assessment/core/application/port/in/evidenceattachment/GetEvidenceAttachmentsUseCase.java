@@ -33,5 +33,5 @@ public interface GetEvidenceAttachmentsUseCase {
         }
     }
 
-    record EvidenceAttachmentsItem(UUID id, String link, String description) {}
+    record EvidenceAttachmentsItem(UUID id, String link, String description, String createdBy) {}
 }
