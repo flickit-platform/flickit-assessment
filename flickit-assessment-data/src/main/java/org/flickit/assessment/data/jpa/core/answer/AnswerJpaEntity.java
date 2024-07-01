@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.envers.AuditTable;
-import org.hibernate.envers.Audited;
 
 import java.util.UUID;
 
@@ -13,7 +11,6 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Table(name = "fac_answer")
-@AuditTable("fac_answer_au")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,7 +23,6 @@ public class AnswerJpaEntity {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
-    @Audited
     private UUID id;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -43,22 +39,18 @@ public class AnswerJpaEntity {
     private UUID questionRefNum;
 
     @Column(name = "answer_option_id")
-    @Audited
     private Long answerOptionId;
 
     @Column(name = "confidence_level_id")
-    @Audited
     private Integer confidenceLevelId;
 
     @Column(name = "is_not_applicable")
-    @Audited
     private Boolean isNotApplicable;
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
     @Column(name = "last_modified_by", nullable = false)
-    @Audited
     private UUID lastModifiedBy;
 
     @Override

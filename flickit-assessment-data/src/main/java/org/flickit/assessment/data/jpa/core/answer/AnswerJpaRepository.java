@@ -1,6 +1,7 @@
 package org.flickit.assessment.data.jpa.core.answer;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,6 +28,15 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
         """)
     int getCountByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
+
+    @Modifying
+    @Query("UPDATE AnswerJpaEntity a SET " +
+        "a.answerOptionId = :answerOptionId, " +
+        "a.confidenceLevelId = :confidenceLevelId, " +
+        "a.isNotApplicable = :isNotApplicable, " +
+        "a.lastModifiedBy = :currentUserId " +
+        "WHERE a.id = :answerId")
+    void update(UUID answerId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable, UUID currentUserId);
 
     @Query("""
         SELECT a.questionnaireId AS questionnaireId, COUNT(a.questionnaireId) AS answerCount

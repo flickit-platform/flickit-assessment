@@ -16,42 +16,4 @@
             DO UPDATE SET role_id = EXCLUDED.role_id;
         </sql>
     </changeSet>
-
-    <changeSet id="0.22-02" author="Mahdi Rezazadeh">
-        <createTable tableName="fac_answer_au">
-            <column name="id" type="uuid">
-                <constraints nullable="false"/>
-            </column>
-            <column name="REV" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="REVTYPE" type="smallint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="answer_option_id" type="bigint"/>
-            <column name="confidence_level_id" type="tinyint"/>
-            <column name="is_not_applicable" type="boolean"/>
-            <column name="last_modified_by" type="uuid"/>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="0.22-03" author="Mahdi Rezazadeh">
-        <addPrimaryKey columnNames="id, REV" constraintName="pk_fac_answer_au" tableName="fac_answer_au"/>
-    </changeSet>
-
-    <changeSet id="0.22-04" author="Mahdi Rezazadeh">
-        <createTable tableName="revinfo">
-            <column name="id" type="bigint">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="timestamp" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_modification_time" type="${datetime_with_time_zone_type}"/>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="0.22-05" author="Mahdi Rezazadeh">
-        <createSequence sequenceName="revinfo_seq" incrementBy="50"/>
-    </changeSet>
 </databaseChangeLog>
