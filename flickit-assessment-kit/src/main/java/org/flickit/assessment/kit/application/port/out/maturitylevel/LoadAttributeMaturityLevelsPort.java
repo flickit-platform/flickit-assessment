@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface LoadAttributeMaturityLevelsPort {
 
-    List<Result> loadAttributeLevels(long kitId, long attributeId);
+    List<Result> loadAttributeLevels(long attributeId, long kitVersionId);
 
     record Result(Long id, String title, int index, int questionCount) {
     }

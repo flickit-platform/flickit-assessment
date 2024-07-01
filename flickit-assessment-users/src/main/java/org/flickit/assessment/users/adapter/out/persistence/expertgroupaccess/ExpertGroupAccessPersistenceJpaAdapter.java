@@ -34,7 +34,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<Member> loadExpertGroupMembers(long expertGroupId, int status, int page, int size) {
-        var pageResult = repository.findExpertGroupMembers(expertGroupId, status,
+        var pageResult = repository.findExpertGroupMembers(expertGroupId, status, LocalDateTime.now(),
             PageRequest.of(page, size, Sort.Direction.DESC, ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME));
 
         var items = pageResult

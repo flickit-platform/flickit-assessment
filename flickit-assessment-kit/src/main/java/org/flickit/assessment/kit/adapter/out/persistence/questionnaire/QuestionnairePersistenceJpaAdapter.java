@@ -13,9 +13,9 @@ import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMappe
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -45,6 +45,7 @@ public class QuestionnairePersistenceJpaAdapter implements
     @Override
     public void update(UpdateQuestionnairePort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.title(),
             param.index(),
             param.description(),
@@ -64,12 +65,13 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitId) {
-        QuestionnaireJpaEntity questionnaireEntity = repository.findQuestionnaireByIdAndKitId(questionnaireId, kitId)
+    public Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitVersionId) {
+        QuestionnaireJpaEntity questionnaireEntity = repository.findByIdAndKitVersionId(questionnaireId, kitVersionId)
             .orElseThrow(() ->  new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
 
-        List<QuestionJpaEntity> questionEntities = questionRepository.findAllByQuestionnaireIdOrderByIndexAsc(questionnaireId);
-        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByQuestionnaireId(questionnaireId);
+        List<QuestionJpaEntity> questionEntities = questionRepository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(questionnaireId, kitVersionId, null)
+            .getContent();
+        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByQuestionnaireIdAndKitVersionId(questionnaireId, kitVersionId);
 
         List<String> relatedSubjects = subjectEntities.stream()
             .map(SubjectJpaEntity::getTitle)

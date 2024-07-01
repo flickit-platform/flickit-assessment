@@ -41,7 +41,7 @@ class AddSpaceMemberServiceTest {
 
     @Test
     @DisplayName("Adding a valid member to a valid space should cause a successful addition")
-    void addSpaceMember_validParameters_successful() {
+    void testAddSpaceMember_validParameters_successful() {
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
@@ -62,7 +62,7 @@ class AddSpaceMemberServiceTest {
 
     @Test
     @DisplayName("Adding a member to a valid space should be done by a member; otherwise causes AccessDeniedException")
-    void addSpaceMember_inviterIsNotSpaceMember_AccessDeniedExceptionException() {
+    void testAddSpaceMember_inviterIsNotSpaceMember_AccessDeniedExceptionException() {
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
@@ -80,7 +80,7 @@ class AddSpaceMemberServiceTest {
 
     @Test
     @DisplayName("Adding a non-flickit user to a space should cause ResourceNotFoundException")
-    void addSpaceMember_inviteeIsNotFlickitUser_ResourceNotFoundException() {
+    void testAddSpaceMember_inviteeIsNotFlickitUser_ResourceNotFoundException() {
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();
@@ -99,7 +99,7 @@ class AddSpaceMemberServiceTest {
 
     @Test
     @DisplayName("Adding an already-member user to a space should cause ResourceAlreadyExistsException")
-    void addSpaceMember_inviteeIsMember_ResourceAlreadyExistsException() {
+    void testAddSpaceMember_inviteeIsMember_ResourceAlreadyExistsException() {
         long spaceId = 0;
         String email = "admin@asta.org";
         UUID currentUserId = UUID.randomUUID();

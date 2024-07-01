@@ -172,8 +172,18 @@ jobs:
           java-version: 17
           distribution: adopt
 
+      - name: Extract GitHub SHA
+        run: echo sha=${GITHUB_SHA:0:7} >> $GITHUB_OUTPUT
+        id: github_sha7
+
+      - name: Check output
+        env:
+          GITHUB_SHA_7: ${{ steps.github_sha7.outputs.sha }}
+        run: |
+          echo $GITHUB_SHA_7
+
       - name: Build and push image
-        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" ${{ env.JIB_CMD }}
+        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.github_sha7.outputs.sha }}" ${{ env.JIB_CMD }}
 
   darkube-deploy-latest:
     needs: [build-and-push-latest-image]
@@ -183,7 +193,7 @@ jobs:
 
     steps:
       - name: Run script
-        run: darkube deploy --ref main --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "latest" --job-id "$GITHUB_RUN_ID" --stateless-app true
+        run: darkube deploy --ref main --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "${GITHUB_SHA:0:7}" --job-id "$GITHUB_RUN_ID" --stateless-app true
         env:
           DARKUBE_DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_STAGING }}
           DARKUBE_APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}

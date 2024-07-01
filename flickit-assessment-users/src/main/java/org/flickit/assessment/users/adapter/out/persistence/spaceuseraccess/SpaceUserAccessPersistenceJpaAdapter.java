@@ -26,8 +26,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 public class SpaceUserAccessPersistenceJpaAdapter implements
     CreateSpaceUserAccessPort,
     CheckSpaceAccessPort,
-    LoadSpaceMembersPort,
-    DeleteSpaceMemberPort {
+    DeleteSpaceMemberPort,
+    LoadSpaceMembersPort {
 
     private final SpaceUserAccessJpaRepository repository;
     private final SpaceJpaRepository spaceRepository;
@@ -35,7 +35,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     @Override
     public void persist(SpaceUserAccess access) {
         SpaceUserAccessJpaEntity unsavedEntity = new SpaceUserAccessJpaEntity(access.getSpaceId(), access.getUserId(),
-            access.getCreatedBy(), access.getCreationTime());
+            access.getCreatedBy(), access.getCreationTime(), access.getCreationTime());
         repository.save(unsavedEntity);
     }
 
@@ -58,30 +58,33 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<Member> loadSpaceMembers(long spaceId, int page, int size) {
+        var spaceOwnerId = spaceRepository.loadOwnerIdById(spaceId)
+            .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
         var pageResult = repository.findMembers(spaceId,
-            PageRequest.of(page, size, Sort.Direction.DESC, SpaceUserAccessJpaEntity.Fields.CREATION_TIME));
+            PageRequest.of(page, size, Sort.Direction.DESC, SpaceUserAccessJpaEntity.Fields.LAST_SEEN));
 
         var items = pageResult.getContent()
             .stream()
-            .map(SpaceUserAccessPersistenceJpaAdapter::mapToResult)
+            .map(e -> mapToResult(e, spaceOwnerId))
             .toList();
 
         return new PaginatedResponse<>(
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            SpaceUserAccessJpaEntity.Fields.CREATION_TIME,
+            SpaceUserAccessJpaEntity.Fields.LAST_SEEN,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
     }
 
-    private static Member mapToResult(SpaceMembersView view) {
+    private static Member mapToResult(SpaceMembersView view, UUID spaceOwnerId) {
         return new Member(
             view.getId(),
             view.getEmail(),
             view.getDisplayName(),
             view.getBio(),
+            view.getId().equals(spaceOwnerId),
             view.getPicture(),
             view.getLinkedin());
     }

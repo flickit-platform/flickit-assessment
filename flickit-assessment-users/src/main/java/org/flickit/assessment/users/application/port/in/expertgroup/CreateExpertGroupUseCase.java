@@ -52,7 +52,7 @@ public interface CreateExpertGroupUseCase {
             this.bio = bio;
             this.about = about;
             this.picture = picture;
-            this.website = website;
+            this.website = (website != null && !website.isBlank()) ? website.strip() : null;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

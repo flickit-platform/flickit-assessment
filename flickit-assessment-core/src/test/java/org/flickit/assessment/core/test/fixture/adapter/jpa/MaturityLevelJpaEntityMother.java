@@ -9,15 +9,14 @@ public class MaturityLevelJpaEntityMother {
 
     public static int index = 1;
 
-    public static MaturityLevelJpaEntity maturityLevelEntity(Long id) {
+    public static MaturityLevelJpaEntity maturityLevelEntity(Long id, Long kitVersionId) {
         return new MaturityLevelJpaEntity(
             id,
-            UUID.randomUUID(),
+            kitVersionId,
             "code" + id,
             index++,
             "title" + id,
             id.intValue(),
-            1L,
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),

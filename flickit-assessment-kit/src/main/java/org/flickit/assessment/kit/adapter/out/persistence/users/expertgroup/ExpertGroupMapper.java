@@ -9,7 +9,7 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public class ExpertGroupMapper {
 
-    public static ExpertGroup toDomainModel(ExpertGroupJpaEntity expertGroup) {
+    public static ExpertGroup mapToDomainModel(ExpertGroupJpaEntity expertGroup) {
         return new ExpertGroup(expertGroup.getId(),
             expertGroup.getTitle(),
             expertGroup.getPicture(),

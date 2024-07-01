@@ -10,12 +10,10 @@ import org.flickit.assessment.core.application.port.out.evidence.CreateEvidenceP
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 
-import java.util.UUID;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvidenceMapper {
 
-    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param, UUID questionRefNum) {
+    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param) {
         return new EvidenceJpaEntity(
             null,
             param.description(),
@@ -25,7 +23,6 @@ public class EvidenceMapper {
             param.createdById(),
             param.assessmentId(),
             param.questionId(),
-            questionRefNum,
             param.type(),
             false
         );
@@ -37,7 +34,7 @@ public class EvidenceMapper {
             entity.getDescription(),
             entity.getType() != null ? EvidenceType.values()[entity.getType()].getTitle() : null,
             entity.getLastModificationTime(),
-            new GetEvidenceListUseCase.User(user.getId(), user.getDisplayName())
+            new GetEvidenceListUseCase.User(user.getId(), user.getDisplayName(), user.getPicture())
         );
     }
 

@@ -1,10 +1,10 @@
 package org.flickit.assessment.users.application.port.in.expertgroup;
 
-import org.flickit.assessment.users.application.domain.ExpertGroup;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.users.application.domain.ExpertGroup;
 
 import java.util.UUID;
 
@@ -24,6 +24,12 @@ public interface GetExpertGroupUseCase {
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
+
+        public Param(Long id, UUID currentUserId) {
+            this.id = id;
+            this.currentUserId = currentUserId;
+            this.validateSelf();
+        }
     }
 
     record Result(ExpertGroup expertGroup, String pictureLink, boolean editable) {

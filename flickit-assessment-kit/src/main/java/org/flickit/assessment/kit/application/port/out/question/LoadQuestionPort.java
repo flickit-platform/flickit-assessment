@@ -8,10 +8,10 @@ public interface LoadQuestionPort {
     /**
      * Loads question associated with a specific kit ID,
      * @param id The ID of needed question
-     * @param kitId The ID of the kit for which question is belonged to it.
-     * @return A Question  associated with the given ID and kit ID.
-     * @throws ResourceNotFoundException if the question or kit with given IDs are not found.
-     * Or the question does not belong to that kit
+     * @param kitVersionId The ID of the kit version for which question is belonged to it.
+     * @return A Question  associated with the given ID and kit version ID.
+     * @throws ResourceNotFoundException if the question or kit version with given IDs are not found.
+     * Or the question does not belong to that kit version
      */
-    Question load(long id, long kitId);
+    Question load(long id, long kitVersionId);
 }

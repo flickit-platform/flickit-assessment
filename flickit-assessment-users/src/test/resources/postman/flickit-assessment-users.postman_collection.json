@@ -16,8 +16,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -54,8 +53,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -92,8 +90,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -129,8 +126,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -166,8 +162,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -220,8 +215,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -239,14 +233,37 @@
 			"response": []
 		},
 		{
+			"name": "Get Space",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Delete Expert Group",
 			"request": {
 				"method": "DELETE",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -270,8 +287,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -296,8 +312,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -346,8 +361,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -384,8 +398,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -419,8 +432,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -448,8 +460,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -484,8 +495,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"body": {
@@ -517,8 +527,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -532,6 +541,371 @@
 						"{{id}}",
 						"members",
 						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Space List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces?page=0&size=5",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Space LastSeen",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/seen",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces",
+						"{{id}}",
+						"seen"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Space",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"new title\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Space",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/space/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"space",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Space Invitation",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/space-invitations/{{inviteId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"space-invitations",
+						"{{inviteId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Space Invitees",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/invitees?page=0&size=3",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces",
+						"{{id}}",
+						"invitees"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Leave Space",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/leave",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"spaces",
+						"{{id}}",
+						"leave"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update ExpertGroup LastSeen",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/seen",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"seen"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Expert Group",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"title\",\n    \"bio\": \"bio\",\n    \"about\": \"about\",\n    \"website\" : \"https://www.webite.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Expert Group Picture",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "pictureFile",
+							"type": "file",
+							"src": "/home/maziyar/Pictures/index.jpeg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/picture",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"picture"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Expert Group Picture",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/picture",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"expert-groups",
+						"{{id}}",
+						"picture"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tenant Info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/tenant/info",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"tenant",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tenant Logo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/tenant/logo",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"tenant",
+						"logo"
 					]
 				}
 			},
@@ -597,6 +971,10 @@
 			"key": "authorization_header",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "inviteId",
+			"value": "428f8bc2-f47f-4190-b620-3dad8bd8a20b"
 		}
 	]
 }

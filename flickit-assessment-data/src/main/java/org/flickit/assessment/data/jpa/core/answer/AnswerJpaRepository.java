@@ -1,7 +1,5 @@
 package org.flickit.assessment.data.jpa.core.answer;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,23 +13,21 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId);
 
-    List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
+    List<AnswerJpaEntity> findByAssessmentResultIdAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
 
-    Page<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIdAsc(UUID assessmentResultId, Long questionnaireId, Pageable pageable);
+    List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
     @Query("SELECT COUNT(a) as answerCount FROM AnswerJpaEntity a " +
         "WHERE a.assessmentResult.id=:assessmentResultId AND a.questionId IN :questionIds AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)")
     int getCountByQuestionIds(UUID assessmentResultId, List<Long> questionIds);
 
-    @Query("SELECT COUNT(a) FROM AnswerJpaEntity a where a.assessmentResult.id=:assessmentResultId " +
-        "AND (a.answerOptionId IS NOT NULL " +
-        "OR a.isNotApplicable = true)")
-    int getCountByAssessmentResultId(UUID assessmentResultId);
-
-    @Query("SELECT a.questionnaireId as questionnaireId, COUNT(a.questionnaireId) as answerCount FROM AnswerJpaEntity a " +
-        "where a.assessmentResult.id=:assessmentResultId AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true) " +
-        "GROUP BY a.questionnaireId")
-    List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(UUID assessmentResultId);
+    @Query("""
+            SELECT COUNT(a)
+            FROM AnswerJpaEntity a
+            WHERE a.assessmentResult.id=:assessmentResultId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+        """)
+    int getCountByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 
     @Modifying
     @Query("UPDATE AnswerJpaEntity a SET " +
@@ -49,5 +45,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
         GROUP BY a.questionnaireId
         """)
-    List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(@Param(value = "assessmentResultId") UUID assessmentResultId, @Param(value = "questionnaireIds") List<Long> questionnaireIds);
+    List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(
+        @Param(value = "assessmentResultId") UUID assessmentResultId,
+        @Param(value = "questionnaireIds") List<Long> questionnaireIds);
 }
