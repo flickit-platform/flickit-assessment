@@ -31,7 +31,6 @@ public class CreateAssessmentRestController {
             requestDto.spaceId(),
             requestDto.title(),
             requestDto.assessmentKitId(),
-            requestDto.colorId(),
             currentUserId
         );
     }

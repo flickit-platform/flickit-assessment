@@ -2,15 +2,14 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem.Space;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
-import org.flickit.assessment.core.application.port.in.assessment.ReportAssessmentUseCase;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -75,7 +74,6 @@ class ReportAssessmentServiceTest {
             1.5,
             true,
             true,
-            AssessmentColor.BLUE,
             creationTime,
             lastModificationTime,
             space);
@@ -100,7 +98,6 @@ class ReportAssessmentServiceTest {
         assertEquals(assessmentReport.assessment().isCalculateValid(), result.assessment().isCalculateValid());
         assertEquals(assessmentReport.assessment().isConfidenceValid(), result.assessment().isConfidenceValid());
         assertEquals(assessmentReport.assessment().lastModificationTime(), result.assessment().lastModificationTime());
-        assertEquals(assessmentReport.assessment().color(), result.assessment().color());
         assertEquals(assessmentReport.assessment().maturityLevel().getId(), result.assessment().maturityLevel().getId());
         assertEquals(assessmentReport.assessment().maturityLevel().getIndex(), result.assessment().maturityLevel().getIndex());
         assertEquals(assessmentReport.assessment().maturityLevel().getTitle(), result.assessment().maturityLevel().getTitle());
@@ -147,7 +144,6 @@ class ReportAssessmentServiceTest {
             1.5,
             true,
             true,
-            AssessmentColor.BLUE,
             LocalDateTime.now(),
             LocalDateTime.now(),
             space);
@@ -187,7 +183,6 @@ class ReportAssessmentServiceTest {
             1.5,
             true,
             true,
-            AssessmentColor.BLUE,
             LocalDateTime.now(),
             LocalDateTime.now(),
             space);

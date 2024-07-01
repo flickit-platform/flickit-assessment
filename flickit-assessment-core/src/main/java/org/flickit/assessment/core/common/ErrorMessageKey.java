@@ -14,7 +14,6 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MAX = "create-assessment.title.size.max";
     public static final String CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL = "create-assessment.assessmentKitId.notNull";
     public static final String CREATE_ASSESSMENT_SPACE_ID_NOT_NULL = "create-assessment.spaceId.notNull";
-    public static final String CREATE_ASSESSMENT_COLOR_ID_NOT_NULL = "create-assessment.colorId.notNull";
     public static final String CREATE_ASSESSMENT_DUPLICATE_TITLE_AND_SPACE_ID = "create-assessment.duplicate.titleAndSpaceId";
     public static final String CREATE_ASSESSMENT_KIT_NOT_ALLOWED = "create-assessment.kit.notAllowed";
 
@@ -56,7 +55,6 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_TITLE_NOT_BLANK = "update-assessment.title.notBlank";
     public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MIN = "update-assessment.title.min";
     public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MAX = "update-assessment.title.max";
-    public static final String UPDATE_ASSESSMENT_COLOR_ID_NOT_NULL = "update-assessment.color-id.notNull";
 
     public static final String CALCULATE_ASSESSMENT_ID_NOT_NULL = "calculate-assessment.assessment.id.notNull";
     public static final String CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "calculate-assessment.assessmentResult.notFount";
