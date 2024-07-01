@@ -9,6 +9,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -16,7 +17,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetSpaceAssessmentListUseCase {
 
-    PaginatedResponse<AssessmentListItem> getAssessmentList(Param param);
+    PaginatedResponse<SpaceAssessmentListItem> getAssessmentList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -44,4 +45,14 @@ public interface GetSpaceAssessmentListUseCase {
         }
     }
 
+    record SpaceAssessmentListItem(UUID id,
+                                   String title,
+                                   AssessmentListItem.Kit kit,
+                                   LocalDateTime lastModificationTime,
+                                   AssessmentListItem.MaturityLevel maturityLevel,
+                                   boolean isCalculateValid,
+                                   boolean isConfidenceValid,
+                                   Boolean manageable,
+                                   boolean viewable) {
+    }
 }
