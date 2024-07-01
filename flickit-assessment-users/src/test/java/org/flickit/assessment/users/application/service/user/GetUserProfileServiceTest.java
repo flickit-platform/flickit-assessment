@@ -4,7 +4,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.in.user.GetUserProfileUseCase;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.flickit.assessment.users.application.port.out.user.LoadUserProfilePort;
+import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +28,7 @@ class GetUserProfileServiceTest {
     private GetUserProfileService service;
 
     @Mock
-    private LoadUserProfilePort loadUserProfilePort;
+    private LoadUserPort loadUserPort;
 
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
@@ -44,7 +44,7 @@ class GetUserProfileServiceTest {
             "admin bio",
             "linkedin.com/flickit-admin",
             "path/to/picture");
-        when(loadUserProfilePort.loadUserProfile(currentUserId)).thenReturn(expectedUser);
+        when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
         String pictureLink = "cdn.flickit.org" + expectedUser.getPicture();
         when(createFileDownloadLinkPort.createDownloadLink(anyString(), any(Duration.class))).thenReturn(pictureLink);
 
@@ -70,7 +70,7 @@ class GetUserProfileServiceTest {
             "admin bio",
             "linkedin.com/flickit-admin",
             null);
-        when(loadUserProfilePort.loadUserProfile(currentUserId)).thenReturn(expectedUser);
+        when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
 
         User actualUser = service.getUserProfile(param);
 
@@ -94,7 +94,7 @@ class GetUserProfileServiceTest {
             "admin bio",
             "linkedin.com/flickit-admin",
             "");
-        when(loadUserProfilePort.loadUserProfile(currentUserId)).thenReturn(expectedUser);
+        when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
 
         User actualUser = service.getUserProfile(param);
 
@@ -112,7 +112,7 @@ class GetUserProfileServiceTest {
         UUID currentUserId = UUID.randomUUID();
         GetUserProfileUseCase.Param param = new GetUserProfileUseCase.Param(currentUserId);
 
-        when(loadUserProfilePort.loadUserProfile(currentUserId))
+        when(loadUserPort.loadUser(currentUserId))
             .thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class,

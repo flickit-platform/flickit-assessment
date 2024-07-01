@@ -8,5 +8,4 @@ public record GetUserProfileResponseDto(
     String displayName,
     String bio,
     String linkedin,
-    String picture
-) {}
+    String picture) {}
