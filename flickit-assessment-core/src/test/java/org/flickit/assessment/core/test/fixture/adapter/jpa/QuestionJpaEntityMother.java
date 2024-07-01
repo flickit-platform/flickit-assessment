@@ -14,7 +14,6 @@ public class QuestionJpaEntityMother {
         return new QuestionJpaEntity(
             questionId,
             kitVersionId,
-            UUID.randomUUID(),
             "code" + questionId,
             index++,
             "title" + questionId,

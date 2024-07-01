@@ -31,17 +31,13 @@ public interface CreateAssessmentUseCase {
         @NotNull(message = CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotNull(message = CREATE_ASSESSMENT_COLOR_ID_NOT_NULL)
-        Integer colorId;
-
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long spaceId, String title, Long kitId, Integer colorId, UUID currentUserId) {
+        public Param(Long spaceId, String title, Long kitId, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
             this.spaceId = spaceId;
             this.kitId = kitId;
-            this.colorId = colorId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

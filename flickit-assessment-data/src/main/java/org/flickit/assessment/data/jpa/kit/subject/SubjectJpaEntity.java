@@ -2,11 +2,9 @@ package org.flickit.assessment.data.jpa.kit.subject;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -30,9 +28,6 @@ public class SubjectJpaEntity {
     @EqualsAndHashCode.Include
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
-
-    @Column(name = "ref_num", nullable = false)
-    private UUID refNum;
 
     @Column(name = "code", length = 50, nullable = false)
     private String code;

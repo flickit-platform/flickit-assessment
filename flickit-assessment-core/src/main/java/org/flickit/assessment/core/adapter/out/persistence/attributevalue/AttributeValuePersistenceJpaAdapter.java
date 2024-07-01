@@ -39,8 +39,7 @@ public class AttributeValuePersistenceJpaAdapter implements
             .collect(toMap(AttributeJpaEntity::getId, Function.identity()));
 
         List<AttributeValueJpaEntity> entities = attributeIds.stream().map(attributeId -> {
-            AttributeJpaEntity attributeEntity = attrIdToAttrEntity.get(attributeId);
-            AttributeValueJpaEntity attributeValue = AttributeValueMapper.mapToJpaEntity(attributeId, attributeEntity.getRefNum());
+            AttributeValueJpaEntity attributeValue = AttributeValueMapper.mapToJpaEntity(attributeId);
             attributeValue.setAssessmentResult(assessmentResult);
             return attributeValue;
         }).toList();
