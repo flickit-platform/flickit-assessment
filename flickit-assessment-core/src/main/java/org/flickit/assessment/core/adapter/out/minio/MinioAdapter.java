@@ -28,7 +28,6 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_F
 public class MinioAdapter implements CreateFileDownloadLinkPort, UploadEvidenceAttachmentPort {
 
     public static final String SLASH = "/";
-    public static final String DOT = ".";
     private final MinioClient minioClient;
     private final MinioConfigProperties properties;
 
