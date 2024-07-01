@@ -26,16 +26,17 @@ public class GetEvidenceAttachmentsService implements GetEvidenceAttachmentsUseC
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     @Override
-    public List<EvidenceAttachmentsItem> getEvidenceAttachments(Param param) {
+    public List<Attachment> getEvidenceAttachments(Param param) {
         var portResult = loadEvidenceAttachmentsPort.loadEvidenceAttachments(param.getEvidenceId());
         return portResult
             .stream()
-            .map(this::mapToEvidenceAttachmentsItem).toList();
+            .map(this::mapToEvidenceAttachmentsItem)
+            .toList();
     }
 
-    private EvidenceAttachmentsItem mapToEvidenceAttachmentsItem(LoadEvidenceAttachmentsPort.Result evidenceAttachment) {
+    private Attachment mapToEvidenceAttachmentsItem(LoadEvidenceAttachmentsPort.Result evidenceAttachment) {
         var user = loadUserPort.loadById(evidenceAttachment.createdBy()).orElseThrow(() -> new ResourceNotFoundException(COMMON_CURRENT_USER_NOT_FOUND));
-        return new EvidenceAttachmentsItem(evidenceAttachment.id(),
+        return new Attachment(evidenceAttachment.id(),
             createFileDownloadLinkPort.createDownloadLink(evidenceAttachment.file(), EXPIRY_DURATION),
             evidenceAttachment.description(), user.getDisplayName());
     }

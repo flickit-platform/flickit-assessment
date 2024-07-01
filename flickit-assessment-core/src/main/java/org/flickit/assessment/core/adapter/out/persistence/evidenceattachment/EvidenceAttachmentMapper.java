@@ -10,6 +10,8 @@ public class EvidenceAttachmentMapper {
 
     static Result mapToPortResult(EvidenceAttachmentJpaEntity evidenceAttachment) {
         return new Result(evidenceAttachment.getId(),
-                evidenceAttachment.getFilePath(), evidenceAttachment.getDescription(), evidenceAttachment.getCreatedBy());
+            evidenceAttachment.getFilePath(),
+            evidenceAttachment.getDescription(),
+            evidenceAttachment.getCreatedBy());
     }
 }
