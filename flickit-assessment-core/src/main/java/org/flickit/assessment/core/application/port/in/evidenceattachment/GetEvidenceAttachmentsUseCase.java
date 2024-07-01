@@ -14,7 +14,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 
 public interface GetEvidenceAttachmentsUseCase {
 
-    List<EvidenceAttachmentListItem> getEvidenceAttachments(Param param);
+    List<EvidenceAttachmentsItem> getEvidenceAttachments(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -33,5 +33,5 @@ public interface GetEvidenceAttachmentsUseCase {
         }
     }
 
-    record EvidenceAttachmentListItem(UUID id, UUID evidenceId, String fileLink, String description) {}
+    record EvidenceAttachmentsItem(UUID id, String link, String description) {}
 }

@@ -7,6 +7,6 @@ public interface LoadEvidenceAttachmentsPort {
 
     List<Result> loadEvidenceAttachments(UUID evidenceId);
 
-    record Result(UUID id, UUID evidenceId, String file, String description){
+    record Result(UUID id, String file, String description){
     }
 }

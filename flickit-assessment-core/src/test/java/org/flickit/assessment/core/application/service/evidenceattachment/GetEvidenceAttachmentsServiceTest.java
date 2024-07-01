@@ -79,8 +79,8 @@ class GetEvidenceAttachmentsServiceTest {
         var param = new Param(evidenceId, currentUserId);
         var evidence = new Evidence(evidenceId, "des", currentUserId, UUID.randomUUID(), UUID.randomUUID(),
             0L, 1, LocalDateTime.now(), LocalDateTime.now(), false);
-        var attachment1 = new LoadEvidenceAttachmentsPort.Result(UUID.randomUUID(), evidenceId, "path/to/file", "des");
-        var attachment2 = new LoadEvidenceAttachmentsPort.Result(UUID.randomUUID(), evidenceId, "path/to/file", "des");
+        var attachment1 = new LoadEvidenceAttachmentsPort.Result(UUID.randomUUID(), "path/to/file", "des");
+        var attachment2 = new LoadEvidenceAttachmentsPort.Result(UUID.randomUUID(), "path/to/file", "des");
         var attachments = List.of(attachment1, attachment2);
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getEvidenceId())).thenReturn(evidence);

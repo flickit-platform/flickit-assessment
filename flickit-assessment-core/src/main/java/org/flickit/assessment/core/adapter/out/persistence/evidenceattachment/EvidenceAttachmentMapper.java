@@ -9,7 +9,7 @@ import org.flickit.assessment.data.jpa.core.evidenceattachment.EvidenceAttachmen
 public class EvidenceAttachmentMapper {
 
     static Result mapToPortResult(EvidenceAttachmentJpaEntity evidenceAttachment) {
-        return new Result(evidenceAttachment.getId(), evidenceAttachment.getEvidenceId(),
-            evidenceAttachment.getFile(), evidenceAttachment.getDescription());
+        return new Result(evidenceAttachment.getId(),
+                evidenceAttachment.getFile(), evidenceAttachment.getDescription());
     }
 }
