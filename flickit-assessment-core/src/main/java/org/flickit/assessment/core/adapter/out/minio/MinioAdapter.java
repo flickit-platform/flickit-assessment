@@ -6,7 +6,6 @@ import io.minio.PutObjectArgs;
 import io.minio.StatObjectArgs;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
-import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -80,16 +79,12 @@ public class MinioAdapter implements CreateFileDownloadLinkPort, UploadEvidenceA
     }
 
     @SneakyThrows
-    private void writeFile(String bucketName, String fileObjectName, InputStream fileInputStream, @Nullable String contentType) {
+    private void writeFile(String bucketName, String fileObjectName, InputStream fileInputStream, String contentType) {
         minioClient.putObject(PutObjectArgs.builder()
             .bucket(bucketName)
             .object(fileObjectName)
-            .contentType(getContentType(contentType))
+            .contentType(contentType)
             .stream(fileInputStream, fileInputStream.available(), -1)
             .build());
-    }
-
-    private String getContentType(@Nullable String contentType) {
-        return (contentType != null) ? contentType : "application/octet-stream";
     }
 }
