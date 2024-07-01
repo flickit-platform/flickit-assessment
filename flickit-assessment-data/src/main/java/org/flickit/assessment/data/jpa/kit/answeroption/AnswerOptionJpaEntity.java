@@ -29,9 +29,6 @@ public class AnswerOptionJpaEntity {
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 
-    @Column(name = "ref_num", nullable = false)
-    private UUID refNum;
-
     @Column(name = "index", nullable = false)
     private Integer index;
 
