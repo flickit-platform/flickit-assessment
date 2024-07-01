@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.port.in.evidenceattachment.AddEvi
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.CountEvidenceAttachmentsPort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
-import org.flickit.assessment.core.application.port.out.evidenceattachment.SaveEvidenceAttachmentPort;
+import org.flickit.assessment.core.application.port.out.evidenceattachment.CreateEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,7 @@ public class AddEvidenceAttachmentService implements AddEvidenceAttachmentUseCas
 
     private final FileProperties fileProperties;
     private final LoadEvidencePort loadEvidencePort;
-    private final SaveEvidenceAttachmentPort saveEvidenceAttachmentPort;
+    private final CreateEvidenceAttachmentPort createEvidenceAttachmentPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
     private final CountEvidenceAttachmentsPort countEvidenceAttachmentsPort;
     private final UploadEvidenceAttachmentPort uploadEvidenceAttachmentPort;
@@ -45,7 +45,7 @@ public class AddEvidenceAttachmentService implements AddEvidenceAttachmentUseCas
 
         String path = uploadEvidenceAttachmentPort.uploadAttachment(param.getAttachment());
 
-        var attachmentId = saveEvidenceAttachmentPort.saveAttachment(
+        var attachmentId = createEvidenceAttachmentPort.persist(
             param.getEvidenceId(), path, param.getDescription(), param.getCurrentUserId(), LocalDateTime.now());
         var attachmentLink = createFileDownloadLinkPort.createDownloadLink(path, EXPIRY_DURATION);
 

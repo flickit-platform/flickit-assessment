@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.port.in.evidenceattachment.AddEvi
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.CountEvidenceAttachmentsPort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
-import org.flickit.assessment.core.application.port.out.evidenceattachment.SaveEvidenceAttachmentPort;
+import org.flickit.assessment.core.application.port.out.evidenceattachment.CreateEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +45,7 @@ class AddEvidenceAttachmentServiceTest {
     private UploadEvidenceAttachmentPort uploadEvidenceAttachmentPort;
 
     @Mock
-    private SaveEvidenceAttachmentPort saveEvidenceAttachmentPort;
+    private CreateEvidenceAttachmentPort createEvidenceAttachmentPort;
 
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
@@ -70,7 +70,7 @@ class AddEvidenceAttachmentServiceTest {
 
         assertEquals(EVIDENCE_ID_NOT_FOUND, throwable.getMessage(), "Should return NotFoundException error");
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
-        verifyNoInteractions(uploadEvidenceAttachmentPort, saveEvidenceAttachmentPort, createFileDownloadLinkPort);
+        verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
     @Test
@@ -91,7 +91,7 @@ class AddEvidenceAttachmentServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage(), "Should return ValidationException error");
 
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
-        verifyNoInteractions(uploadEvidenceAttachmentPort, saveEvidenceAttachmentPort, createFileDownloadLinkPort);
+        verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
     @Test
@@ -118,7 +118,7 @@ class AddEvidenceAttachmentServiceTest {
         when(fileProperties.getAttachmentMaxSize()).thenReturn(DataSize.ofMegabytes(5));
         when(fileProperties.getAttachmentContentTypes()).thenReturn(List.of("text/plain"));
         when(uploadEvidenceAttachmentPort.uploadAttachment(attachment)).thenReturn(filePath);
-        when(saveEvidenceAttachmentPort.saveAttachment(eq(evidenceId), eq(filePath), eq(description), eq(currentUserId), timeArgumentCaptor.capture())).thenReturn(attachmentId);
+        when(createEvidenceAttachmentPort.persist(eq(evidenceId), eq(filePath), eq(description), eq(currentUserId), timeArgumentCaptor.capture())).thenReturn(attachmentId);
         when(createFileDownloadLinkPort.createDownloadLink(filePath, Duration.ofDays(1))).thenReturn(link);
 
         var result = service.addAttachment(param);
@@ -128,7 +128,7 @@ class AddEvidenceAttachmentServiceTest {
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
         verify(uploadEvidenceAttachmentPort).uploadAttachment(attachment);
         verify(createFileDownloadLinkPort).createDownloadLink(filePath, Duration.ofDays(1));
-        verify(saveEvidenceAttachmentPort).saveAttachment(eq(evidenceId), eq(filePath), eq(description), eq(currentUserId), timeArgumentCaptor.capture());
+        verify(createEvidenceAttachmentPort).persist(eq(evidenceId), eq(filePath), eq(description), eq(currentUserId), timeArgumentCaptor.capture());
     }
 
     @Test
@@ -151,7 +151,7 @@ class AddEvidenceAttachmentServiceTest {
             "When the attachments are more than the predefined maximum count, adding an attachment should fail with ValidationException.");
 
         assertEquals(ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX, throwable.getMessage());
-        verifyNoInteractions(uploadEvidenceAttachmentPort, saveEvidenceAttachmentPort, createFileDownloadLinkPort);
+        verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
     @Test
@@ -175,7 +175,7 @@ class AddEvidenceAttachmentServiceTest {
             "When the attachments are more than the predefined maximum file size, adding an attachment should fail with ValidationException");
 
         assertEquals(UPLOAD_FILE_SIZE_MAX, throwable.getMessage());
-        verifyNoInteractions(uploadEvidenceAttachmentPort, saveEvidenceAttachmentPort, createFileDownloadLinkPort);
+        verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
     @Test
@@ -200,6 +200,6 @@ class AddEvidenceAttachmentServiceTest {
             "When an attachment does not have a valid content type, adding an attachment should fail with ValidationException.");
 
         assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessage());
-        verifyNoInteractions(uploadEvidenceAttachmentPort, saveEvidenceAttachmentPort, createFileDownloadLinkPort);
+        verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 }
