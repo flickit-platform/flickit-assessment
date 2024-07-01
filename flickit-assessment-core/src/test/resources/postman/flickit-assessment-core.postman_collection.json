@@ -162,6 +162,51 @@
 			"response": []
 		},
 		{
+			"name": "Get Comparable Assessment List",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments?kitId=393&page=0&size=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments"
+					],
+					"query": [
+						{
+							"key": "kitId",
+							"value": "393"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Assessment",
 			"request": {
 				"method": "GET",
