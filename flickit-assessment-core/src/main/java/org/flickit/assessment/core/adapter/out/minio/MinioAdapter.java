@@ -22,7 +22,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
-import static org.flickit.assessment.core.adapter.out.minio.MinioConstants.ATTACHMENT_FILE_NAME;
 
 @Component("coreMinioAdapter")
 @AllArgsConstructor
@@ -76,11 +75,7 @@ public class MinioAdapter implements CreateFileDownloadLinkPort, UploadEvidenceA
         String bucketName = properties.getBucketNames().getAttachment();
         UUID uniqueDir = UUID.randomUUID();
 
-        String extension = "";
-        if (pictureFile.getOriginalFilename() != null)
-            extension = pictureFile.getOriginalFilename().substring(pictureFile.getOriginalFilename().indexOf(DOT));
-
-        String objectName = uniqueDir + ATTACHMENT_FILE_NAME + extension;
+        String objectName = uniqueDir + SLASH + pictureFile.getOriginalFilename();
         writeFile(bucketName, objectName, pictureFile.getInputStream(), pictureFile.getContentType());
         return bucketName + SLASH + objectName;
     }
