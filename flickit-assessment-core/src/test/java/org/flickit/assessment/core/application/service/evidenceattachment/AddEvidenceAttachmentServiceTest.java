@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.evidenceattachment;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -11,6 +12,7 @@ import org.flickit.assessment.core.application.port.out.evidenceattachment.Count
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.CreateEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.core.test.fixture.application.EvidenceMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -56,6 +58,9 @@ class AddEvidenceAttachmentServiceTest {
     @Mock
     private FileProperties fileProperties;
 
+    @Mock
+    AssessmentAccessChecker assessmentAccessChecker;
+
     @Test
     @DisplayName("Adding an attachment to non-existent evidence should return NotFoundException error.")
     void addEvidenceAttachment_NonExistEvidence_notFoundException() {
@@ -74,23 +79,20 @@ class AddEvidenceAttachmentServiceTest {
     }
 
     @Test
-    @DisplayName("Adding an attachment for an 'evidence' should be done by the creator of the evidence.")
+    @DisplayName("Adding an attachment for an 'evidence' should be done by those who have permission.")
     void addEvidenceAttachment_CurrentUserIsNotEvidenceCreator_ValidationException() {
         var evidenceId = UUID.randomUUID();
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
         var currentUserId = UUID.randomUUID();
-        var userId = UUID.randomUUID();
-        var time = LocalDateTime.now();
-        var param = new Param(evidenceId, attachment, null, currentUserId);
-        var evidence = new Evidence(evidenceId, "des", userId, userId, UUID.randomUUID(),
-            0L, 1, time, time, false);
+        var evidence = EvidenceMother.simpleEvidence();
+        var param = new Param(evidence.getId(), attachment, null, currentUserId);
 
-        when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
-
+        when(loadEvidencePort.loadNotDeletedEvidence(evidence.getId())).thenReturn(evidence);
+        when(assessmentAccessChecker.isAuthorized(any(), any(), any())).thenReturn(false);
         var throwable = assertThrows(AccessDeniedException.class, () -> service.addAttachment(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage(), "Should return ValidationException error");
 
-        verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage(), "Should return AccessDenied error");
+        verify(loadEvidencePort).loadNotDeletedEvidence(evidence.getId());
         verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
@@ -113,6 +115,7 @@ class AddEvidenceAttachmentServiceTest {
         ArgumentCaptor<LocalDateTime> timeArgumentCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
 
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
+        when(assessmentAccessChecker.isAuthorized(any(), any(), any())).thenReturn(true);
         when(fileProperties.getAttachmentMaxCount()).thenReturn(5);
         when(countEvidenceAttachmentsPort.countAttachments(evidenceId)).thenReturn(4);
         when(fileProperties.getAttachmentMaxSize()).thenReturn(DataSize.ofMegabytes(5));
@@ -144,6 +147,7 @@ class AddEvidenceAttachmentServiceTest {
             0L, 1, time, time, false);
 
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
+        when(assessmentAccessChecker.isAuthorized(any(), any(), any())).thenReturn(true);
         when(fileProperties.getAttachmentMaxCount()).thenReturn(5);
         when(countEvidenceAttachmentsPort.countAttachments(evidenceId)).thenReturn(5);
 
@@ -167,6 +171,7 @@ class AddEvidenceAttachmentServiceTest {
             0L, 1, time, time, false);
 
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
+        when(assessmentAccessChecker.isAuthorized(any(), any(), any())).thenReturn(true);
         when(fileProperties.getAttachmentMaxCount()).thenReturn(5);
         when(countEvidenceAttachmentsPort.countAttachments(evidenceId)).thenReturn(4);
         when(fileProperties.getAttachmentMaxSize()).thenReturn(DataSize.ofMegabytes(5));
@@ -191,6 +196,7 @@ class AddEvidenceAttachmentServiceTest {
             0L, 1, time, time, false);
 
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
+        when(assessmentAccessChecker.isAuthorized(any(), any(), any())).thenReturn(true);
         when(fileProperties.getAttachmentMaxCount()).thenReturn(5);
         when(countEvidenceAttachmentsPort.countAttachments(evidenceId)).thenReturn(4);
         when(fileProperties.getAttachmentMaxSize()).thenReturn(DataSize.ofMegabytes(5));

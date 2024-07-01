@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.evidenceattachment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ADD_EVIDENCE_ATTACHMENT;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX;
 
 @Service
@@ -30,6 +32,7 @@ public class AddEvidenceAttachmentService implements AddEvidenceAttachmentUseCas
 
     private final FileProperties fileProperties;
     private final LoadEvidencePort loadEvidencePort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final CreateEvidenceAttachmentPort createEvidenceAttachmentPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
     private final CountEvidenceAttachmentsPort countEvidenceAttachmentsPort;
@@ -38,7 +41,7 @@ public class AddEvidenceAttachmentService implements AddEvidenceAttachmentUseCas
     @Override
     public Result addAttachment(Param param) {
         var evidence = loadEvidencePort.loadNotDeletedEvidence(param.getEvidenceId());
-        if (!evidence.getCreatedById().equals(param.getCurrentUserId()))
+        if (!assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), ADD_EVIDENCE_ATTACHMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         validateAttachment(param.getAttachment(), param.getEvidenceId());
