@@ -35,7 +35,7 @@ public interface AddEvidenceAttachmentUseCase {
 
         public Param(UUID evidenceId, MultipartFile attachment, String description, UUID currentUserId) {
             this.evidenceId = evidenceId;
-            this.attachment = attachment;
+            this.attachment = (attachment != null && !attachment.isEmpty()) ? attachment : null;
             this.description = (description != null && !description.isBlank()) ? description.strip() : null;
             this.currentUserId = currentUserId;
             this.validateSelf();
