@@ -180,13 +180,13 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments?kitId=393&page=0&size=10",
+					"raw": "{{base_url}}/{{api_path}}/comparable-assessments?kitId=393&page=0&size=10",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"assessments"
+						"comparable-assessments"
 					],
 					"query": [
 						{
