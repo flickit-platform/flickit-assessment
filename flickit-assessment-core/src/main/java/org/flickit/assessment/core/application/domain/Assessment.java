@@ -14,7 +14,6 @@ public class Assessment {
     private final String code;
     private final String title;
     private final AssessmentKit assessmentKit;
-    private final int colorId;
     private final Space space;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;

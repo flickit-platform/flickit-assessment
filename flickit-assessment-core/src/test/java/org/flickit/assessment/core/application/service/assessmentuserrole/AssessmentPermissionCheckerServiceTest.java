@@ -3,9 +3,7 @@ package org.flickit.assessment.core.application.service.assessmentuserrole;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
-import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,13 +12,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,29 +26,7 @@ class AssessmentPermissionCheckerServiceTest {
     private AssessmentPermissionCheckerService service;
 
     @Mock
-    private GetAssessmentPort getAssessmentPort;
-
-    @Mock
-    private LoadSpaceOwnerPort loadSpaceOwnerPort;
-
-    @Mock
     private LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
-
-    @Test
-    void testIsAuthorized_userIsSpaceOwner_shouldBeFullyAuthorized() {
-        Assessment assessment = AssessmentMother.assessment();
-        var assessmentId = assessment.getId();
-        var userId = UUID.randomUUID();
-        when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-
-        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpace().getId())).thenReturn(userId);
-
-        AssessmentUserRole.MANAGER.getPermissions()
-            .forEach(x ->
-                assertTrue(service.isAuthorized(assessmentId, userId, x))
-            );
-        verifyNoInteractions(loadUserRoleForAssessmentPort);
-    }
 
     @Test
     void testIsAuthorized_userHasNotAnyRole_shouldReturnFalse() {
@@ -60,8 +34,6 @@ class AssessmentPermissionCheckerServiceTest {
         var assessmentId = assessment.getId();
         var userId = UUID.randomUUID();
 
-        when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpace().getId())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(null);
 
         AssessmentUserRole.VIEWER.getPermissions()
@@ -76,8 +48,6 @@ class AssessmentPermissionCheckerServiceTest {
         var assessmentId = assessment.getId();
         var userId = UUID.randomUUID();
 
-        when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-        when(loadSpaceOwnerPort.loadOwnerId(assessment.getSpace().getId())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(AssessmentUserRole.VIEWER);
 
         AssessmentUserRole.VIEWER.getPermissions()

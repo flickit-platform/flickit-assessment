@@ -49,7 +49,7 @@ public class AnswerPersistenceJpaAdapter implements
             !Objects.equals(question.getQuestionnaireId(), param.questionnaireId()))
             throw new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND);
 
-        AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param, question.getRefNum());
+        AnswerJpaEntity unsavedEntity = AnswerMapper.mapCreateParamToJpaEntity(param);
         unsavedEntity.setAssessmentResult(assessmentResult);
         AnswerJpaEntity entity = repository.save(unsavedEntity);
         return entity.getId();

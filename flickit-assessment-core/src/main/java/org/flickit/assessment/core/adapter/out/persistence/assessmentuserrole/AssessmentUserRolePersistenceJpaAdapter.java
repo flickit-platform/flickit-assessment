@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component
@@ -71,7 +70,6 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<AssessmentUser> loadAssessmentUsers(Param param) {
         Page<AssessmentUserView> pageResult = repository.findAssessmentUsers(param.assessmentId(),
-            MANAGER.getId(),
             PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, UserJpaEntity.Fields.NAME));
 
         List<AssessmentUser> assessmentUsers = pageResult.getContent().stream()
@@ -84,7 +82,8 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
                         e.getEmail(),
                         e.getDisplayName(),
                         e.getPicturePath(),
-                        new AssessmentUser.Role(e.getRoleId(), assessmentUserRole.getTitle()));
+                        new AssessmentUser.Role(e.getRoleId(), assessmentUserRole.getTitle()),
+                        e.getEditable());
                 }
             }) .filter(Objects::nonNull)
             .toList();
