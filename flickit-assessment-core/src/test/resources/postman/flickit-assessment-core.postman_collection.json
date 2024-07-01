@@ -135,13 +135,13 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments?spaceId=8&page=0&size=10",
+					"raw": "{{base_url}}/{{api_path}}/space-assessments?spaceId=8&page=0&size=10",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"assessments"
+						"space-assessments"
 					],
 					"query": [
 						{
