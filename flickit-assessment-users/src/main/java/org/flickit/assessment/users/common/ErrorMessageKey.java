@@ -132,12 +132,12 @@ public class ErrorMessageKey {
 
     public static final String DELETE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group-picture.expertGroupId.notNull";
 
-    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_NOT_NULL = "update-user.displayName.notNull";
-    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_SIZE_MIN = "update-user.displayName.size.min";
-    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_SIZE_MAX = "update-user.displayName.size.max";
-    public static final String UPDATE_USER_PROFILE_BIO_SIZE_MIN = "update-user.bio.size.min";
-    public static final String UPDATE_USER_PROFILE_BIO_SIZE_MAX = "update-user.bio.size.max";
-    public static final String UPDATE_USER_PROFILE_LINKEDIN_NOT_VALID = "update-user.linkedin.notValid";
+    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_NOT_NULL = "update-user-profile.displayName.notNull";
+    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_SIZE_MIN = "update-user-profile.displayName.size.min";
+    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_SIZE_MAX = "update-user-profile.displayName.size.max";
+    public static final String UPDATE_USER_PROFILE_BIO_SIZE_MIN = "update-user-profile.bio.size.min";
+    public static final String UPDATE_USER_PROFILE_BIO_SIZE_MAX = "update-user-profile.bio.size.max";
+    public static final String UPDATE_USER_PROFILE_LINKEDIN_NOT_VALID = "update-user-profile.linkedin.notValid";
 
     public static final String CREATE_USER_USER_ID_NOT_NULL = "create-user.userId.notNull";
     public static final String CREATE_USER_EMAIL_NOT_VALID = "create-user.email.notValid";
