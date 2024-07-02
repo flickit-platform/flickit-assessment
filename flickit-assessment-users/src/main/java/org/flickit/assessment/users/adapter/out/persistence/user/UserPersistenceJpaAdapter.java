@@ -8,6 +8,7 @@ import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.out.user.CreateUserPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
+import org.flickit.assessment.users.application.port.out.user.UpdateUserPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -20,7 +21,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.USER_ID_NOT_FO
 public class UserPersistenceJpaAdapter implements
     LoadUserEmailByUserIdPort,
     LoadUserPort,
-    CreateUserPort {
+    CreateUserPort,
+    UpdateUserPort {
 
     private final UserJpaRepository repository;
 
@@ -48,6 +50,16 @@ public class UserPersistenceJpaAdapter implements
         UserJpaEntity userEntity = UserMapper.mapToJpaEntity(id, email, displayName);
 
         return repository.save(userEntity).getId();
+    }
+
+    @Override
+    public void updateUser(Param param) {
+        UserJpaEntity userEntity = repository.findById(param.userId())
+            .orElseThrow(() -> new ResourceNotFoundException(USER_ID_NOT_FOUND));
+        userEntity.setDisplayName(param.displayName());
+        userEntity.setBio(param.bio());
+        userEntity.setLinkedin(param.linkedin());
+        repository.save(userEntity);
     }
 }
 
