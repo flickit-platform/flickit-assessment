@@ -45,18 +45,18 @@ class GetUserProfileServiceTest {
             "linkedin.com/flickit-admin",
             "path/to/picture");
         when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
-        String pictureLink = "cdn.flickit.org" + expectedUser.getPicture();
+        String pictureLink = "cdn.flickit.org" + expectedUser.getPicturePath();
         when(createFileDownloadLinkPort.createDownloadLink(anyString(), any(Duration.class))).thenReturn(pictureLink);
 
-        User actualUser = service.getUserProfile(param);
+        GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 
         assertNotNull(actualUser);
-        assertEquals(expectedUser.getId(), actualUser.getId());
-        assertEquals(expectedUser.getEmail(), actualUser.getEmail());
-        assertEquals(expectedUser.getDisplayName(), actualUser.getDisplayName());
-        assertEquals(expectedUser.getBio(), actualUser.getBio());
-        assertEquals(expectedUser.getLinkedin(), actualUser.getLinkedin());
-        assertEquals(expectedUser.getPicture(), actualUser.getPicture());
+        assertEquals(expectedUser.getId(), actualUser.id());
+        assertEquals(expectedUser.getEmail(), actualUser.email());
+        assertEquals(expectedUser.getDisplayName(), actualUser.displayName());
+        assertEquals(expectedUser.getBio(), actualUser.bio());
+        assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
+        assertEquals(pictureLink, actualUser.pictureLink());
     }
 
     @Test
@@ -72,15 +72,15 @@ class GetUserProfileServiceTest {
             null);
         when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
 
-        User actualUser = service.getUserProfile(param);
+        GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 
         assertNotNull(actualUser);
-        assertEquals(expectedUser.getId(), actualUser.getId());
-        assertEquals(expectedUser.getEmail(), actualUser.getEmail());
-        assertEquals(expectedUser.getDisplayName(), actualUser.getDisplayName());
-        assertEquals(expectedUser.getBio(), actualUser.getBio());
-        assertEquals(expectedUser.getLinkedin(), actualUser.getLinkedin());
-        assertEquals(expectedUser.getPicture(), actualUser.getPicture());
+        assertEquals(expectedUser.getId(), actualUser.id());
+        assertEquals(expectedUser.getEmail(), actualUser.email());
+        assertEquals(expectedUser.getDisplayName(), actualUser.displayName());
+        assertEquals(expectedUser.getBio(), actualUser.bio());
+        assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
+        assertNull(actualUser.pictureLink());
     }
 
     @Test
@@ -96,15 +96,15 @@ class GetUserProfileServiceTest {
             "");
         when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
 
-        User actualUser = service.getUserProfile(param);
+        GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 
         assertNotNull(actualUser);
-        assertEquals(expectedUser.getId(), actualUser.getId());
-        assertEquals(expectedUser.getEmail(), actualUser.getEmail());
-        assertEquals(expectedUser.getDisplayName(), actualUser.getDisplayName());
-        assertEquals(expectedUser.getBio(), actualUser.getBio());
-        assertEquals(expectedUser.getLinkedin(), actualUser.getLinkedin());
-        assertEquals(expectedUser.getPicture(), actualUser.getPicture());
+        assertEquals(expectedUser.getId(), actualUser.id());
+        assertEquals(expectedUser.getEmail(), actualUser.email());
+        assertEquals(expectedUser.getDisplayName(), actualUser.displayName());
+        assertEquals(expectedUser.getBio(), actualUser.bio());
+        assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
+        assertNull(actualUser.pictureLink());
     }
 
     @Test

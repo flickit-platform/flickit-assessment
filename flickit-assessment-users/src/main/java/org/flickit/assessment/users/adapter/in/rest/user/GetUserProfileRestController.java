@@ -2,8 +2,8 @@ package org.flickit.assessment.users.adapter.in.rest.user;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.in.user.GetUserProfileUseCase;
+import org.flickit.assessment.users.application.port.in.user.GetUserProfileUseCase.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,16 +21,16 @@ public class GetUserProfileRestController {
     @GetMapping("/user-profile")
     public ResponseEntity<GetUserProfileResponseDto> getUserProfile() {
         UUID currentUserId = userContext.getUser().id();
-        User userProfile = useCase.getUserProfile(new GetUserProfileUseCase.Param(currentUserId));
+        UserProfile userProfile = useCase.getUserProfile(new GetUserProfileUseCase.Param(currentUserId));
         return new ResponseEntity<>(toResponseDto(userProfile), HttpStatus.OK);
     }
 
-    private GetUserProfileResponseDto toResponseDto(User userProfile) {
-        return new GetUserProfileResponseDto(userProfile.getId(),
-            userProfile.getEmail(),
-            userProfile.getDisplayName(),
-            userProfile.getBio(),
-            userProfile.getLinkedin(),
-            userProfile.getPicture());
+    private GetUserProfileResponseDto toResponseDto(UserProfile userProfile) {
+        return new GetUserProfileResponseDto(userProfile.id(),
+            userProfile.email(),
+            userProfile.displayName(),
+            userProfile.bio(),
+            userProfile.linkedin(),
+            userProfile.pictureLink());
     }
 }

@@ -2,7 +2,6 @@ package org.flickit.assessment.users.application.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.UUID;
 
@@ -15,6 +14,5 @@ public class User {
     private final String displayName;
     private final String bio;
     private final String linkedin;
-    @Setter
-    private String picture;
+    private final String picturePath;
 }
