@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.minio.MinioAdapter;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem.Space;
@@ -92,7 +91,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentResultEntity.getConfidenceValue(),
             assessmentResultEntity.getIsCalculateValid(),
             assessmentResultEntity.getIsConfidenceValid(),
-            AssessmentColor.valueOfById(assessment.getColorId()),
             assessment.getCreationTime(),
             assessment.getLastModificationTime(),
             new Space(spaceEntity.getId(), spaceEntity.getTitle()));

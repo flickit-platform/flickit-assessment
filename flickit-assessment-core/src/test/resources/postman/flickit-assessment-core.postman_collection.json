@@ -18,7 +18,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"colorId\": 1,\n    \"spaceId\": 1\n}",
+					"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"spaceId\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -50,7 +50,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"The title2\",\r\n    \"colorId\": 1\r\n}",
+					"raw": "{\r\n    \"title\": \"The title2\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -135,18 +135,63 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments?spaceId=8&page=0&size=10",
+					"raw": "{{base_url}}/{{api_path}}/space-assessments?spaceId=8&page=0&size=10",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"assessments"
+						"space-assessments"
 					],
 					"query": [
 						{
 							"key": "spaceId",
 							"value": "8"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Comparable Assessment List",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/comparable-assessments?kitId=393&page=0&size=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"comparable-assessments"
+					],
+					"query": [
+						{
+							"key": "kitId",
+							"value": "393"
 						},
 						{
 							"key": "page",
@@ -204,29 +249,6 @@
 						"{{api_path}}",
 						"assessments",
 						"ff1b2ae3-92b7-437d-b321-539753b71608"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Assessment Colors",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment-colors",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessment-colors"
 					]
 				}
 			},
