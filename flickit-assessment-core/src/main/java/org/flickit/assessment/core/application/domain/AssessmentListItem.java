@@ -11,7 +11,7 @@ public record AssessmentListItem(UUID id,
                                  MaturityLevel maturityLevel,
                                  boolean isCalculateValid,
                                  boolean isConfidenceValid,
-                                 boolean manageable,
+                                 Boolean manageable,
                                  boolean viewable) {
 
     public record Kit(long id, String title, int maturityLevelsCount) {

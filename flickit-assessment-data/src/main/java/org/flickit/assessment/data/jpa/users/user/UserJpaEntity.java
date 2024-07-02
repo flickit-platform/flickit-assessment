@@ -1,8 +1,10 @@
 package org.flickit.assessment.data.jpa.users.user;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,7 +12,7 @@ import java.util.UUID;
 import static lombok.AccessLevel.PRIVATE;
 
 @Entity
-@Table(name = "account_user")
+@Table(name = "fau_user")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,8 +22,6 @@ public class UserJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
@@ -52,17 +52,22 @@ public class UserJpaEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @Column(name = "current_space_id")
-    private Long currentSpaceId;
-
-    @Column(name = "default_space_id")
-    private Long defaultSpaceId;
-
     @Column(name = "password", length = 128, nullable = false)
     private String password;
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
         public static final String NAME = "displayName";
+    }
+
+    public UserJpaEntity(UUID id, String email, String displayName, Boolean isSuperUser, Boolean isStaff,
+                         Boolean isActive, String password) {
+        this.id = id;
+        this.email = email;
+        this.displayName = displayName;
+        this.isSuperUser = isSuperUser;
+        this.isStaff = isStaff;
+        this.isActive = isActive;
+        this.password = password;
     }
 }
