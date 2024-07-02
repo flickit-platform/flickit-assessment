@@ -53,15 +53,15 @@ class GetSpaceAssessmentListServiceTest {
             0,
             "lastModificationTime",
             "DESC",
-            2);
+            0);
 
         UUID currentUserId = UUID.randomUUID();
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadAssessmentPort.loadSpaceAssessments(spaceId, currentUserId, 0, 10)).thenReturn(paginatedResponse);
 
         var param = new GetSpaceAssessmentListUseCase.Param(spaceId, currentUserId, 10, 0);
-        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(param);
-        assertEquals(paginatedResponse, result);
+        PaginatedResponse<GetSpaceAssessmentListUseCase.SpaceAssessmentListItem> result = service.getAssessmentList(param);
+        assertEquals(0, result.getItems().size());
     }
 
     @Test
@@ -140,7 +140,7 @@ class GetSpaceAssessmentListServiceTest {
         var param = new GetSpaceAssessmentListUseCase.Param(spaceId, currentUserId, 20, 0);
         var assessments = service.getAssessmentList(param);
 
-        List<AssessmentListItem> items = assessments.getItems();
+        List<GetSpaceAssessmentListUseCase.SpaceAssessmentListItem> items = assessments.getItems();
         assertEquals(1, items.size());
         assertNull(items.get(0).maturityLevel());
         assertFalse(items.get(0).viewable());
