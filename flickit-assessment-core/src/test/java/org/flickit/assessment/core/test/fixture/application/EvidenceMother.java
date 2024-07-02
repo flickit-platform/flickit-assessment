@@ -22,4 +22,18 @@ public class EvidenceMother {
         );
     }
 
+    public static Evidence simpleEvidenceWithId (UUID id) {
+        return new Evidence(
+            id,
+            "description",
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            1L,
+            1,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            false
+        );
+    }
 }
