@@ -59,4 +59,15 @@ public class UserJpaEntity {
     public static class Fields {
         public static final String NAME = "displayName";
     }
+
+    public UserJpaEntity(UUID id, String email, String displayName, Boolean isSuperUser, Boolean isStaff,
+                         Boolean isActive, String password) {
+        this.id = id;
+        this.email = email;
+        this.displayName = displayName;
+        this.isSuperUser = isSuperUser;
+        this.isStaff = isStaff;
+        this.isActive = isActive;
+        this.password = password;
+    }
 }
