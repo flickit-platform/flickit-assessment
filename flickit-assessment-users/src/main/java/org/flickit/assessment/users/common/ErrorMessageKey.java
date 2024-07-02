@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorMessageKey {
 
-    public static final String FILE_STORAGE_FILE_NOT_FOUND = "file-storage.file.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
     public static final String USER_BY_EMAIL_NOT_FOUND = "user-by-email.notFound";
     public static final String SPACE_ID_NOT_FOUND = "space.id.notFound";
@@ -17,6 +16,8 @@ public class ErrorMessageKey {
     public static final String GET_EXPERT_GROUP_LIST_PAGE_MIN = "get-expert-group-list.page.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MIN = "get-expert-group-list.size.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MAX = "get-expert-group-list.size.max";
+
+    public static final String UPDATE_EXPERT_GROUP_LAST_SEEN_EXPERT_GROUP_ID_NOT_NULL = "update-expertGroup-lastSeen.expertGroupId.notNull";
 
     public static final String GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND = "get-expert-group.expert-group.notFound";
     public static final String GET_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "get-expert-group.expert-group-id.notNull";
@@ -84,6 +85,52 @@ public class ErrorMessageKey {
     public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_NULL = "delete-space-member.userId.notNull";
     public static final String DELETE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "delete-space-member.spaceId.notNull";
     public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_FOUND = "delete-space-member.userId.notFound";
+
+    public static final String GET_SPACE_SPACE_ID_NOT_NULL = "get-space.spaceId.notNull";
+
+    public static final String GET_SPACE_LIST_PAGE_MIN = "get-space-list.page.min";
+    public static final String GET_SPACE_LIST_SIZE_MIN = "get-space-list.size.min";
+    public static final String GET_SPACE_LIST_SIZE_MAX = "get-space-list.size.max";
+
+    public static final String UPDATE_SPACE_LAST_SEEN_SPACE_ID_NOT_NULL = "update-space-lastSeen.spaceId.notNull";
+
+    public static final String DELETE_SPACE_ASSESSMENT_EXIST = "delete-space.assessments.exist";
+    public static final String DELETE_SPACE_SPACE_ID_NOT_NULL = "delete-space.spaceId.notNull";
+
+    public static final String GET_SPACE_INVITEES_SPACE_ID_NOT_NULL = "get-space-invitees.spaceId.notNull";
+    public static final String GET_SPACE_INVITEES_SIZE_MIN = "get-space-invitees.size.min";
+    public static final String GET_SPACE_INVITEES_SIZE_MAX = "get-space-invitees.size.max";
+    public static final String GET_SPACE_INVITEES_PAGE_MIN = "get-space-invitees.page.min";
+
+    public static final String UPDATE_SPACE_SPACE_ID_NOT_NULL = "update-space.spaceId.notNull";
+    public static final String UPDATE_SPACE_TITLE_NOT_BLANK = "update-space.title.notBlank";
+    public static final String UPDATE_SPACE_TITLE_SIZE_MIN = "update-space.title.size.min";
+    public static final String UPDATE_SPACE_TITLE_SIZE_MAX = "update-space.title.size.max";
+
+    public static final String LEAVE_SPACE_SPACE_ID_NOT_NULL = "leave-space.spaceId.notNull";
+    public static final String LEAVE_SPACE_OWNER_NOT_ALLOWED = "leave-space.owner.notAllowed";
+
+    public static final String UPDATE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "update-expert-group.expert-group-id.notNull";
+    public static final String UPDATE_EXPERT_GROUP_TITLE_NOT_BLANK = "update-expert-group.title.notBlank";
+    public static final String UPDATE_EXPERT_GROUP_TITLE_SIZE_MIN = "update-expert-group.title.size.min";
+    public static final String UPDATE_EXPERT_GROUP_TITLE_SIZE_MAX = "update-expert-group.title.size.max";
+    public static final String UPDATE_EXPERT_GROUP_BIO_NOT_BLANK = "update-expert-group.bio.notBlank";
+    public static final String UPDATE_EXPERT_GROUP_BIO_SIZE_MIN = "update-expert-group.bio.size.min";
+    public static final String UPDATE_EXPERT_GROUP_BIO_SIZE_MAX = "update-expert-group.bio.size.max";
+    public static final String UPDATE_EXPERT_GROUP_ABOUT_NOT_BLANK = "update-expert-group.about.notBlank";
+    public static final String UPDATE_EXPERT_GROUP_ABOUT_SIZE_MIN = "update-expert-group.about.size.min";
+    public static final String UPDATE_EXPERT_GROUP_ABOUT_SIZE_MAX = "update-expert-group.about.size.max";
+    public static final String UPDATE_EXPERT_GROUP_WEBSITE_NOT_URL = "update-expert-group.website.notUrl";
+    public static final String UPDATE_EXPERT_GROUP_WEBSITE_SIZE_MIN = "update-expert-group.website.size.min";
+    public static final String UPDATE_EXPERT_GROUP_WEBSITE_SIZE_MAX = "update-expert-group.website.size.max";
+
+    public static final String UPDATE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "update-expert-group-picture.expertGroupId.notNull";
+    public static final String UPDATE_EXPERT_GROUP_PICTURE_PICTURE_NOT_NULL = "update-expert-group-picture.picture.notNull";
+
+    public static final String DELETE_SPACE_INVITATION_INVITE_ID_NOT_NULL = "delete-space-invitation.inviteId.notNull";
+    public static final String DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND = "delete-space-invitation.inviteId.notFound";
+
+    public static final String DELETE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group-picture.expertGroupId.notNull";
 
     public static final String UPDATE_USER_DISPLAY_NAME_NOT_BLANK = "update-user.displayName.notBank";
     public static final String UPDATE_USER_BIO_SIZE_MAX = "update-user.bio.size.max";

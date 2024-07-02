@@ -10,7 +10,7 @@ import java.util.UUID;
 import static lombok.AccessLevel.PRIVATE;
 
 @Entity
-@Table(name = "account_user")
+@Table(name = "fau_user")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -51,12 +51,6 @@ public class UserJpaEntity {
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
-
-    @Column(name = "current_space_id")
-    private Long currentSpaceId;
-
-    @Column(name = "default_space_id")
-    private Long defaultSpaceId;
 
     @Column(name = "password", length = 128, nullable = false)
     private String password;

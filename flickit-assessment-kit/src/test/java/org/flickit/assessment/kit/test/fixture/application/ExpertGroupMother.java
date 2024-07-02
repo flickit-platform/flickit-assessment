@@ -9,6 +9,9 @@ public class ExpertGroupMother {
     private static long id = 123L;
 
     public static ExpertGroup createExpertGroup() {
-        return new ExpertGroup(id++, "title" + id, "path/to/picture/address", UUID.randomUUID());
+        return new ExpertGroup(id++,
+            "title" + id,
+            "path/to/picture",
+            UUID.randomUUID());
     }
 }

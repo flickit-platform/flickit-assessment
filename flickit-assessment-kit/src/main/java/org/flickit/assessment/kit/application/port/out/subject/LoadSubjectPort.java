@@ -4,5 +4,5 @@ import org.flickit.assessment.kit.application.domain.Subject;
 
 public interface LoadSubjectPort {
 
-    Subject load(long kitId, long subjectId);
+    Subject load(long subjectId, long kitVersionId);
 }

@@ -60,6 +60,7 @@ public interface GetEvidenceListUseCase {
     }
 
     record User(UUID id,
-                String displayName) {
+                String displayName,
+                String pictureLink) {
     }
 }

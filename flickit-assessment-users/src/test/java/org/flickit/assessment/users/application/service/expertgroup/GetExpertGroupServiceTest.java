@@ -4,7 +4,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupPort;
-import org.flickit.assessment.users.application.port.out.expertgroupaccess.UpdateExpertGroupLastSeenPort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,13 +26,12 @@ class GetExpertGroupServiceTest {
 
     @InjectMocks
     private GetExpertGroupService service;
-    @Mock
-    private LoadExpertGroupPort loadExpertGroupPort;
-    @Mock
-    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Mock
-    private UpdateExpertGroupLastSeenPort updateExpertGroupLastSeenPort;
+    private LoadExpertGroupPort loadExpertGroupPort;
+
+    @Mock
+    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
     void testGetExpertGroup_ValidInputs_ValidResults() {
@@ -49,17 +46,11 @@ class GetExpertGroupServiceTest {
         when(loadExpertGroupPort.loadExpertGroup(anyLong()))
             .thenReturn(expertGroup);
 
-        doNothing().when(updateExpertGroupLastSeenPort).updateLastSeen(anyLong(), any(UUID.class), any(LocalDateTime.class));
-
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
         GetExpertGroupUseCase.Result result = service.getExpertGroup(param);
 
         ArgumentCaptor<Long> expertGroupIdArgument = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<LocalDateTime> currentTimeArgument = ArgumentCaptor.forClass(LocalDateTime.class);
-        ArgumentCaptor<UUID> currentUserIdArgument = ArgumentCaptor.forClass(UUID.class);
         verify(loadExpertGroupPort).loadExpertGroup(expertGroupIdArgument.capture());
-        verify(updateExpertGroupLastSeenPort).updateLastSeen(expertGroupIdArgument.capture() , currentUserIdArgument.capture(), currentTimeArgument.capture());
-
 
         assertEquals(expertGroupId, expertGroupIdArgument.getValue());
         assertNotNull(result);
@@ -84,13 +75,9 @@ class GetExpertGroupServiceTest {
         var param = new GetExpertGroupUseCase.Param(expertGroupId, currentUserId);
         var result = service.getExpertGroup(param);
 
-        ArgumentCaptor<Long> expertGroupIdArgument = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<Long> loadPortParam = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<UUID> currentUserIdArgument = ArgumentCaptor.forClass(UUID.class);
-        ArgumentCaptor<LocalDateTime> currentTimeArgument = ArgumentCaptor.forClass(LocalDateTime.class);
 
         verify(loadExpertGroupPort).loadExpertGroup(loadPortParam.capture());
-        verify(updateExpertGroupLastSeenPort).updateLastSeen(expertGroupIdArgument.capture() , currentUserIdArgument.capture(), currentTimeArgument.capture());
 
         assertNotNull(result);
         assertNull(result.pictureLink());
@@ -110,11 +97,8 @@ class GetExpertGroupServiceTest {
         GetExpertGroupUseCase.Result result = service.getExpertGroup(param);
 
         ArgumentCaptor<Long> expertGroupIdArgument = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<UUID> currentUserIdArgument = ArgumentCaptor.forClass(UUID.class);
-        ArgumentCaptor<LocalDateTime> currentTimeArgument = ArgumentCaptor.forClass(LocalDateTime.class);
 
         verify(loadExpertGroupPort).loadExpertGroup(expertGroupIdArgument.capture());
-        verify(updateExpertGroupLastSeenPort).updateLastSeen(expertGroupIdArgument.capture() , currentUserIdArgument.capture(), currentTimeArgument.capture());
 
         assertEquals(expertGroupId, expertGroupIdArgument.getValue());
         assertNotNull(result);
@@ -134,7 +118,6 @@ class GetExpertGroupServiceTest {
         assertThat(throwable).hasMessage(GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND);
 
         verify(loadExpertGroupPort).loadExpertGroup(expertGroupId);
-        verifyNoInteractions(updateExpertGroupLastSeenPort, createFileDownloadLinkPort);
     }
 }
 

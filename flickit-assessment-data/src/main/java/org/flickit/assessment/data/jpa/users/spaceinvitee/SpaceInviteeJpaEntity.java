@@ -7,6 +7,8 @@ import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Table(name = "fau_space_invitee")
 @Getter
@@ -37,4 +39,9 @@ public class SpaceInviteeJpaEntity {
 
     @Column(name = "expiration_date", nullable = false)
     LocalDateTime expirationDate;
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String CREATION_TIME = "creationTime";
+    }
 }
