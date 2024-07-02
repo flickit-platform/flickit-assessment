@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.application.domain.report;
 
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 
 import java.time.LocalDateTime;
@@ -14,7 +13,6 @@ public record AssessmentReportItem(UUID id,
                                    Double confidenceValue,
                                    boolean isCalculateValid,
                                    boolean isConfidenceValid,
-                                   AssessmentColor color,
                                    LocalDateTime creationTime,
                                    LocalDateTime lastModificationTime,
                                    Space space) {

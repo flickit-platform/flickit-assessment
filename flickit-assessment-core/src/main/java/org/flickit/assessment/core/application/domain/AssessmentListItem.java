@@ -7,12 +7,11 @@ public record AssessmentListItem(UUID id,
                                  String title,
                                  Kit kit,
                                  Space space,
-                                 AssessmentColor color,
                                  LocalDateTime lastModificationTime,
                                  MaturityLevel maturityLevel,
                                  boolean isCalculateValid,
                                  boolean isConfidenceValid,
-                                 boolean manageable,
+                                 Boolean manageable,
                                  boolean viewable) {
 
     public record Kit(long id, String title, int maturityLevelsCount) {

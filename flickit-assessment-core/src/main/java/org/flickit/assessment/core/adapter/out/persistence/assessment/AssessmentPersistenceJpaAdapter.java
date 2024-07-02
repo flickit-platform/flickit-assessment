@@ -5,7 +5,6 @@ import org.flickit.assessment.common.application.domain.assessment.SpaceAccessCh
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Assessment;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.port.out.assessment.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
@@ -32,6 +31,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.ASSOCIATE;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -62,8 +62,8 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentListItem> loadUserAssessments(Long kitId, UUID userId, int page, int size) {
-        var pageResult = repository.findByUserId(kitId, userId, MANAGER.getId(), PageRequest.of(page, size));
+    public PaginatedResponse<AssessmentListItem> loadComparableAssessments(Long kitId, UUID userId, int page, int size) {
+        var pageResult = repository.findComparableAssessments(kitId, userId, ASSOCIATE.getId(), PageRequest.of(page, size));
 
         List<Long> kitVersionIds = pageResult.getContent().stream()
             .map(e -> e.getAssessmentKit().getKitVersionId())
@@ -101,12 +101,11 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessment().getTitle(),
                     kit,
                     space,
-                    AssessmentColor.valueOfById(e.getAssessment().getColorId()),
                     e.getAssessment().getLastModificationTime(),
                     maturityLevel,
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
-                    e.getManageable(),
+                    null,
                     true);
             }).toList();
 
@@ -121,10 +120,7 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentListItem> loadSpaceAssessments(Long spaceId,
-                                                                      UUID userId,
-                                                                      int page,
-                                                                      int size) {
+    public PaginatedResponse<AssessmentListItem> loadSpaceAssessments(Long spaceId, UUID userId, int page, int size) {
         var pageResult = repository.findBySpaceId(spaceId, MANAGER.getId(), userId,
             PageRequest.of(page, size, Sort.Direction.DESC, AssessmentResultJpaEntity.Fields.LAST_MODIFICATION_TIME));
 
@@ -163,7 +159,6 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessment().getTitle(),
                     kit,
                     space,
-                    AssessmentColor.valueOfById(e.getAssessment().getColorId()),
                     e.getAssessment().getLastModificationTime(),
                     maturityLevel,
                     e.getAssessmentResult().getIsCalculateValid(),
@@ -192,7 +187,6 @@ public class AssessmentPersistenceJpaAdapter implements
             param.id(),
             param.title(),
             param.code(),
-            param.colorId(),
             param.lastModificationTime(),
             param.lastModifiedBy());
         return new UpdateAssessmentPort.Result(param.id());

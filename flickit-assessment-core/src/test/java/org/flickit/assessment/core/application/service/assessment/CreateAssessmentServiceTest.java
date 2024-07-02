@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
@@ -79,7 +78,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             currentUserId
         );
         UUID expectedId = UUID.randomUUID();
@@ -102,7 +100,6 @@ class CreateAssessmentServiceTest {
         assertEquals("title-example", createPortParam.getValue().code());
         assertEquals(param.getTitle(), createPortParam.getValue().title());
         assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
-        assertEquals(param.getColorId(), createPortParam.getValue().colorId());
         assertNotNull(createPortParam.getValue().creationTime());
 
         ArgumentCaptor<UUID> grantPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
@@ -128,7 +125,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             currentUserId
         );
         UUID expectedId = UUID.randomUUID();
@@ -150,7 +146,6 @@ class CreateAssessmentServiceTest {
         assertEquals("title-example", createPortParam.getValue().code());
         assertEquals(param.getTitle(), createPortParam.getValue().title());
         assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
-        assertEquals(param.getColorId(), createPortParam.getValue().colorId());
         assertNotNull(createPortParam.getValue().creationTime());
 
         ArgumentCaptor<UUID> grantPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
@@ -172,7 +167,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             createdBy
         );
         UUID assessmentId = UUID.randomUUID();
@@ -205,7 +199,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             assessmentKitId,
-            1,
             createdBy
         );
 
@@ -242,7 +235,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             assessmentKitId,
-            1,
             currentUserId
         );
         Attribute qa1 = AttributeMother.simpleAttribute();
@@ -271,40 +263,12 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void testCreateAssessment_InvalidColor_UseDefaultColor() {
-        UUID currentUserId = UUID.randomUUID();
-        Param param = new Param(
-            1L,
-            "title example",
-            1L,
-            7,
-            currentUserId
-        );
-        List<Subject> expectedResponse = List.of();
-
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
-        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
-        when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(UUID.randomUUID());
-
-        service.createAssessment(param);
-
-        ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
-        verify(createAssessmentPort).persist(createPortParam.capture());
-
-        assertEquals(AssessmentColor.getDefault().getId(), createPortParam.getValue().colorId());
-        verify(loadSpaceOwnerPort, times(1)).loadOwnerId(any());
-        verify(grantUserAssessmentRolePort, times(2)).persist(any(), any(UUID.class), anyInt());
-    }
-
-    @Test
     void testCreateAssessment_WhenUserDoesNotHaveAccessToSpace_ThenThrowsException() {
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(
             1L,
             "title example",
             1L,
-            1,
             currentUserId
         );
 
@@ -321,7 +285,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             currentUserId
         );
 

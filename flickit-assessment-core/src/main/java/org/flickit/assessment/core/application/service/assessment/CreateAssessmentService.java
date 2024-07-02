@@ -27,7 +27,6 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.Assessment.generateSlugCode;
-import static org.flickit.assessment.core.application.domain.AssessmentColor.getValidId;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_KIT_NOT_ALLOWED;
@@ -74,7 +73,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             code,
             param.getTitle(),
             param.getKitId(),
-            getValidId(param.getColorId()),
             param.getSpaceId(),
             creationTime,
             NOT_DELETED_DELETION_TIME,

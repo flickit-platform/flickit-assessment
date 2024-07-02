@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
@@ -27,7 +26,7 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
     private final AssessmentPermissionChecker assessmentPermissionChecker;
 
     @Override
-    public PaginatedResponse<AssessmentListItem> getAssessmentList(Param param) {
+    public PaginatedResponse<SpaceAssessmentListItem> getAssessmentList(Param param) {
         UUID currentUserId = param.getCurrentUserId();
 
         Long spaceId = param.getSpaceId();
@@ -41,22 +40,18 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
             param.getSize()
         );
 
-        List<AssessmentListItem> items = assessmentListItemPaginatedResponse.getItems().stream()
+        List<SpaceAssessmentListItem> items = assessmentListItemPaginatedResponse.getItems().stream()
             .map(e -> {
-                if (!assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT))
-                    return new AssessmentListItem(e.id(),
-                        e.title(),
-                        e.kit(),
-                        e.space(),
-                        e.color(),
-                        e.lastModificationTime(),
-                        null,
-                        e.isCalculateValid(),
-                        e.isConfidenceValid(),
-                        e.manageable(),
-                        false);
-                else
-                    return e;
+                boolean viewable = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT);
+                return new SpaceAssessmentListItem(e.id(),
+                    e.title(),
+                    e.kit(),
+                    e.lastModificationTime(),
+                    viewable ? e.maturityLevel() : null,
+                    e.isCalculateValid(),
+                    e.isConfidenceValid(),
+                    e.manageable(),
+                    viewable);
             }).toList();
 
         return new PaginatedResponse<>(items,
