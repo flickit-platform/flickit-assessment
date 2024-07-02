@@ -17,11 +17,12 @@ public interface CreateUserUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<GetUserProfileUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = CREATE_USER_USER_ID_NOT_NULL)
         UUID userId;
 
+        @NotNull(message = CREATE_USER_EMAIL_NOT_NULL)
         @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = CREATE_USER_EMAIL_NOT_VALID)
         String email;
 
@@ -39,5 +40,4 @@ public interface CreateUserUseCase {
     }
 
     record Result(UUID userId) {}
-
 }

@@ -45,11 +45,11 @@ public class UserPersistenceJpaAdapter implements
     }
 
     @Override
-    public UUID createUser(Param param) {
+    public UUID createUser(UUID id, String displayName, String email) {
         UserJpaEntity userEntity = new UserJpaEntity();
-        userEntity.setId(param.id());
-        userEntity.setEmail(param.email());
-        userEntity.setDisplayName(param.displayName());
+        userEntity.setId(id);
+        userEntity.setEmail(email);
+        userEntity.setDisplayName(displayName);
         userEntity.setIsSuperUser(false);
         userEntity.setIsStaff(false);
         userEntity.setIsActive(true);
